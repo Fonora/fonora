@@ -1,10 +1,13 @@
 import { textToIpa } from './ipa.js';
 import { normalizeIpa } from './ipa-normalize.js';
 import { ipaPhonemesToFonora } from './ipa-to-fonora.js';
+import { findDictionaryEntry } from './glossary.js';
+import { decodeSymbols } from './decode.js';
 
-function resolveSource(encoded, unmapped) {
+function resolveSource(encoded, unmapped, primarySource) {
   const hasFallback = encoded.symbols.includes('?') || encoded.warnings.length > 0 || unmapped.length > 0;
-  return hasFallback ? 'fallback' : 'ipa';
+  if (hasFallback) return { source: 'fallback', hasFallback: true, primarySource };
+  return { source: primarySource, hasFallback: false, primarySource };
 }
 
 /**
@@ -20,10 +23,40 @@ export async function runIpaPipeline(input, rules, options = {}) {
   const testMode = options.testMode || 'manual';
   const rerunOf = options.rerunOf || null;
 
+  const dictMatch = findDictionaryEntry(trimmed);
+  if (dictMatch) {
+    const fonora = ipaPhonemesToFonora(dictMatch.pronunciation, rules);
+    const decoded = decodeSymbols(dictMatch.languageSpelling, rules);
+    const { source, hasFallback, primarySource } = resolveSource(fonora, [], 'dictionary');
+    return {
+      id,
+      input: trimmed,
+      testSet,
+      testMode,
+      rerunOf,
+      original: trimmed,
+      lang,
+      ipa: dictMatch.pronunciation,
+      normalizedPhonemes: dictMatch.pronunciation.split('').join(' '),
+      phonemeString: dictMatch.pronunciation,
+      sounds: dictMatch.pronunciation,
+      phoneticParse: dictMatch.pronunciation.split('').join(' + '),
+      symbols: dictMatch.languageSpelling,
+      decoded: decoded.pronunciation,
+      breakdown: fonora.groups,
+      warnings: fonora.warnings,
+      unmapped: [],
+      source,
+      primarySource,
+      hasFallback,
+      glossaryEntry: dictMatch,
+    };
+  }
+
   const ipa = await textToIpa(trimmed, lang);
   const normalized = normalizeIpa(ipa);
   const fonora = ipaPhonemesToFonora(normalized.phonemeString, rules);
-  const source = resolveSource(fonora, normalized.unmapped);
+  const { source, hasFallback, primarySource } = resolveSource(fonora, normalized.unmapped, 'ipa');
 
   return {
     id,
@@ -44,9 +77,9 @@ export async function runIpaPipeline(input, rules, options = {}) {
     warnings: [...normalized.warnings, ...fonora.warnings, ...(fonora.decodeWarnings || [])],
     unmapped: normalized.unmapped,
     source,
-    primarySource: 'ipa',
-    encoderMode: 'ipa',
-    hasFallback: source === 'fallback',
+    primarySource,
+    hasFallback,
+    glossaryEntry: null,
   };
 }
 
@@ -74,7 +107,6 @@ export async function translateIpaPhrase(text, rules, lang = 'en') {
     words: wordResults,
     warnings: wordResults.flatMap((r) => r.warnings || []),
     source: wordResults.some((r) => r.source === 'fallback') ? 'fallback' : 'ipa',
-    encoderMode: 'ipa',
   };
 }
 

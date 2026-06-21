@@ -11,7 +11,10 @@ const CONSONANT_MAP = {
   d: 'd',
   k: 'k',
   g: 'g',
+  ɡ: 'g',
+  q: 'k',
   f: 'f',
+  β: 'v',
   v: 'v',
   s: 's',
   z: 'z',
@@ -26,11 +29,16 @@ const CONSONANT_MAP = {
   j: 'y',
   w: 'w',
   l: 'l',
+  ʎ: 'l',
   r: 'r',
   ɹ: 'r',
   ɾ: 'r',
+  ɽ: 'r',
   ʁ: 'r',
   x: 'x',
+  χ: 'x',
+  ɕ: 'sh',
+  ʐ: 'j',
   ɣ: 'g',
   ç: 'sh',
   ɲ: 'ñ',
@@ -55,14 +63,19 @@ const VOWEL_MAP = {
   ɜ: 'e',
   ʌ: 'a',
   ɔ: 'o',
+  ɒ: 'o',
+  ø: 'o',
+  œ: 'o',
   o: 'o',
   i: 'i',
   ɪ: 'i',
   y: 'i',
   u: 'u',
   ʊ: 'u',
+  ɯ: 'u',
   ɨ: 'i',
   ʉ: 'u',
+  ɚ: ['e', 'r'],
   aɪ: ['a', 'i'],
   aʊ: ['a', 'u'],
   eɪ: ['e', 'i'],
@@ -83,7 +96,7 @@ const VOWEL_MAP = {
   yː: 'i',
 };
 
-const STRIP_CHARS = /[ˈˌːˑ\.˞ˤ˥˦˧˨˥˩ⁿʰʲʷ]/g;
+const STRIP_CHARS = /[ˈˌːˑ\.˞ˤ˥˦˧˨˥˩ⁿʰʲʷ\u0303\u031E\u032A\u1D5D-]/g;
 
 function stripStressAndMarks(ipa) {
   return ipa.replace(STRIP_CHARS, '').replace(/\d/g, '');

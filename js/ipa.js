@@ -1,5 +1,5 @@
 import ESpeakNg from '../vendor/espeak-ng/espeak-ng.js';
-import { voiceForLang } from './encoder-mode.js';
+import { voiceForLang } from './language-preferences.js';
 
 export const SUPPORTED_LANGUAGES = {
   en: 'en-us',

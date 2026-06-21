@@ -1,13 +1,12 @@
 import { escapeHtml } from './utils.js';
-import { runEncoderPipeline, runLegacyEncoderPipeline } from './encoder-pipeline.js';
 import { runIpaPipeline } from './ipa-pipeline.js';
+import { encodeSounds } from './encode.js';
+import { decodeSymbols } from './decode.js';
 import { pickCuratedWords, TEST_CATEGORIES, getMultilingualTestEntries } from './encoder-test-sets.js';
 import { getDefinedSounds } from './rules.js';
 import { addGlossaryEntry } from './glossary.js';
-import { ENCODER_MODES } from './encoder-mode.js';
 
 const REVIEWS_KEY = 'fonora-pronunciation-reviews-v1';
-const LEGACY_REVIEWS_KEY = 'fonora-encoder-reviews-v1';
 
 export const ISSUE_TAGS = [
   'vowel wrong',
@@ -34,9 +33,7 @@ let renderGeneration = 0;
 export function loadReviews() {
   try {
     const raw = localStorage.getItem(REVIEWS_KEY);
-    if (raw) return JSON.parse(raw);
-    const legacyRaw = localStorage.getItem(LEGACY_REVIEWS_KEY);
-    return legacyRaw ? JSON.parse(legacyRaw) : [];
+    return raw ? JSON.parse(raw) : [];
   } catch {
     return [];
   }
@@ -79,7 +76,6 @@ function pipelineToReview(card, result, reviewData) {
     fonoraOutput: result.symbols,
     breakdown: result.breakdown,
     encoderSource: result.source,
-    encoderMode: result.encoderMode || getPipelineFilter(),
     primarySource: result.primarySource,
     hasFallback: result.hasFallback,
     testSet: card.testSet,
@@ -170,7 +166,7 @@ export function exportReviewsCsv() {
   const reviews = loadReviews();
   const headers = [
     'id', 'cardId', 'english', 'ipa', 'lang', 'normalizedPhonemes', 'normalizedSpelling',
-    'phoneticParse', 'fonoraOutput', 'encoderSource', 'encoderMode', 'testSet', 'testMode',
+    'phoneticParse', 'fonoraOutput', 'encoderSource', 'testSet', 'testMode',
     'result', 'issueTags', 'notes', 'timestamp', 'rerunOf',
   ];
   const rows = reviews.map((r) =>
@@ -222,26 +218,13 @@ export function generateRandomSoundStrings(rules, count = 30) {
 }
 
 function sourceBadge(result) {
-  if (result.encoderMode === ENCODER_MODES.LEGACY && result.source === 'dictionary') {
-    return '<span class="translate-badge translate-badge--dict">Legacy · Dictionary</span>';
-  }
   if (result.source === 'dictionary') {
     return '<span class="translate-badge translate-badge--dict">Dictionary</span>';
   }
   if (result.source === 'fallback') {
     return '<span class="translate-badge translate-badge--miss">Fallback</span>';
   }
-  if (result.encoderMode === ENCODER_MODES.LEGACY) {
-    return '<span class="translate-badge translate-badge--encoded">Legacy Encoder</span>';
-  }
-  if (result.encoderMode === ENCODER_MODES.IPA || result.primarySource === 'ipa') {
-    return '<span class="translate-badge translate-badge--encoded">IPA Pipeline</span>';
-  }
-  return '<span class="translate-badge translate-badge--encoded">Auto-encoded</span>';
-}
-
-function doubleLetterActions(actions) {
-  return (actions || []).filter((a) => /double .+ → single/.test(a));
+  return '<span class="translate-badge translate-badge--encoded">IPA Pipeline</span>';
 }
 
 function renderBreakdown(breakdown) {
@@ -263,15 +246,10 @@ function passesFilter(card, result, review, filters) {
   if (filters.category && card.testSet !== filters.category) return false;
   if (filters.source) {
     if (filters.source === 'dictionary' && result.source !== 'dictionary') return false;
-    if (filters.source === 'auto-encoded' && result.primarySource !== 'auto-encoded') return false;
-    if (filters.source === 'ipa' && result.primarySource !== 'ipa' && result.encoderMode !== ENCODER_MODES.IPA) return false;
+    if (filters.source === 'ipa' && result.primarySource !== 'ipa' && result.source !== 'ipa') return false;
     if (filters.source === 'fallback' && result.source !== 'fallback' && !result.hasFallback) return false;
   }
   return true;
-}
-
-function getPipelineFilter() {
-  return document.getElementById('encoder-filter-pipeline')?.value || 'ipa';
 }
 
 function getFilters() {
@@ -280,48 +258,19 @@ function getFilters() {
     issueTag: document.getElementById('encoder-filter-tag')?.value || '',
     category: document.getElementById('encoder-filter-category')?.value || '',
     source: document.getElementById('encoder-filter-source')?.value || '',
-    pipeline: getPipelineFilter(),
   };
 }
 
-async function runLegacyForCard(card) {
-  return runLegacyEncoderPipeline(card.input, rulesRef, {
-    mode: card.testMode === 'random' ? 'sound' : 'english',
-    testSet: card.testSet,
-    testMode: card.testMode,
-    id: card.id,
-    rerunOf: card.rerunOf,
-  });
-}
-
-async function runIpaForCard(card) {
-  return runIpaPipeline(card.input, rulesRef, {
-    lang: card.lang || 'en',
-    testSet: card.testSet,
-    testMode: card.testMode,
-    id: card.id,
-    rerunOf: card.rerunOf,
-  });
-}
-
-async function ensureCardResults(card) {
+async function ensureCardResult(card) {
   if (sessionResults.has(card.id) && !sessionResults.get(card.id).loading) {
     return sessionResults.get(card.id);
   }
 
-  const mode = getPipelineFilter();
-  const entry = { loading: true, ipa: null, legacy: null, error: null };
+  const entry = { loading: true, result: null, error: null };
   sessionResults.set(card.id, entry);
 
   try {
-    if (mode === 'legacy' || mode === 'both') {
-      entry.legacy = await runLegacyForCard(card);
-      if (entry.legacy) entry.legacy.encoderMode = ENCODER_MODES.LEGACY;
-    }
-    if (mode === 'ipa' || mode === 'both') {
-      entry.ipa = await runIpaForCard(card);
-      if (entry.ipa) entry.ipa.encoderMode = ENCODER_MODES.IPA;
-    }
+    entry.result = await runIpaForCard(card);
     entry.loading = false;
   } catch (err) {
     entry.loading = false;
@@ -332,24 +281,54 @@ async function ensureCardResults(card) {
   return entry;
 }
 
-function primaryResultForMode(cached, mode) {
-  if (mode === 'legacy') return cached.legacy;
-  return cached.ipa || cached.legacy;
+async function runIpaForCard(card) {
+  if (card.testMode === 'random') {
+    const encoded = encodeSounds(card.input, rulesRef);
+    const decoded = decodeSymbols(encoded.symbols, rulesRef);
+    const hasFallback = encoded.symbols.includes('?') || encoded.warnings.length > 0;
+    return {
+      id: card.id,
+      input: card.input,
+      testSet: card.testSet,
+      testMode: card.testMode,
+      rerunOf: card.rerunOf,
+      original: card.input,
+      lang: card.lang || 'en',
+      ipa: '—',
+      normalizedPhonemes: card.input.split('').join(' '),
+      phonemeString: card.input,
+      sounds: card.input,
+      phoneticParse: card.input.split('').join(' + '),
+      symbols: encoded.symbols,
+      decoded: decoded.pronunciation,
+      breakdown: encoded.groups,
+      warnings: [...encoded.warnings, ...decoded.warnings],
+      unmapped: [],
+      source: hasFallback ? 'fallback' : 'sound',
+      primarySource: 'sound',
+      hasFallback,
+    };
+  }
+
+  return runIpaPipeline(card.input, rulesRef, {
+    lang: card.lang || 'en',
+    testSet: card.testSet,
+    testMode: card.testMode,
+    id: card.id,
+    rerunOf: card.rerunOf,
+  });
 }
 
-function renderPipelineRow(label, result, extraClass = '') {
+function renderPipelineRow(result) {
   if (!result) return '';
   return `
-    <div class="encoder-pipeline-row${extraClass}">
-      ${label ? `<div class="encoder-pipeline-row-label">${escapeHtml(label)}</div>` : ''}
-      <dl class="encoder-pipeline encoder-pipeline--compact">
-        <div><dt>Word</dt><dd><code>${escapeHtml(result.original)}</code></dd></div>
-        ${result.ipa !== undefined ? `<div><dt>IPA</dt><dd><code>${escapeHtml(result.ipa || '—')}</code></dd></div>` : ''}
-        <div><dt>Normalized Phonemes</dt><dd><code>${escapeHtml(result.normalizedPhonemes || result.phoneticParse || result.sounds || '—')}</code></dd></div>
-        <div><dt>Fonora</dt><dd><span class="symbol-text">${escapeHtml(result.symbols)}</span></dd></div>
-        <div><dt>Decoded</dt><dd><code>${escapeHtml(result.decoded)}</code></dd></div>
-      </dl>
-    </div>`;
+    <dl class="encoder-pipeline encoder-pipeline--compact">
+      <div><dt>Word</dt><dd><code>${escapeHtml(result.original)}</code></dd></div>
+      <div><dt>IPA</dt><dd><code>${escapeHtml(result.ipa || '—')}</code></dd></div>
+      <div><dt>Normalized Phonemes</dt><dd><code>${escapeHtml(result.normalizedPhonemes || result.phoneticParse || result.sounds || '—')}</code></dd></div>
+      <div><dt>Fonora</dt><dd><span class="symbol-text">${escapeHtml(result.symbols)}</span></dd></div>
+      <div><dt>Decoded</dt><dd><code>${escapeHtml(result.decoded)}</code></dd></div>
+    </dl>`;
 }
 
 function renderDashboard() {
@@ -385,10 +364,10 @@ async function renderCards() {
   const html = [];
 
   for (const card of sessionCards) {
-    const cached = await ensureCardResults(card);
+    const cached = await ensureCardResult(card);
     if (generation !== renderGeneration) return;
 
-    const result = primaryResultForMode(cached, filters.pipeline);
+    const result = cached.result;
     if (!result && !cached.error) continue;
 
     const review = cardReview(card.id);
@@ -411,10 +390,7 @@ async function renderCards() {
       continue;
     }
 
-    const pipelineHtml =
-      filters.pipeline === 'both'
-        ? `${renderPipelineRow('IPA Pipeline', cached.ipa, ' encoder-pipeline-row--ipa')}${renderPipelineRow('Legacy Encoder', cached.legacy, ' encoder-pipeline-row--legacy')}`
-        : renderPipelineRow('', result);
+    const pipelineHtml = renderPipelineRow(result);
 
     html.push(`
       <article class="encoder-card${dictClass}" data-card-id="${escapeHtml(card.id)}">
@@ -484,8 +460,8 @@ function bindCardEvents() {
 
     cardEl.querySelectorAll('.encoder-review-btn').forEach((btn) => {
       btn.addEventListener('click', async () => {
-        const cached = await ensureCardResults(card);
-        const result = primaryResultForMode(cached, getPipelineFilter());
+        const cached = await ensureCardResult(card);
+        const result = cached.result;
         if (!result) return;
         const existing = cardReview(cardId);
         const issueTags = [...cardEl.querySelectorAll('.encoder-issue-tag input:checked')].map((cb) => cb.dataset.tag);
@@ -711,7 +687,7 @@ export function setupEncoderTesting(rules) {
     downloadFile(exportReviewsCsv(), `fonora-encoder-reviews-${Date.now()}.csv`, 'text/csv');
   });
 
-  ['encoder-filter-status', 'encoder-filter-tag', 'encoder-filter-category', 'encoder-filter-source', 'encoder-filter-pipeline'].forEach((id) => {
+  ['encoder-filter-status', 'encoder-filter-tag', 'encoder-filter-category', 'encoder-filter-source'].forEach((id) => {
     document.getElementById(id)?.addEventListener('change', () => {
       sessionResults.clear();
       renderCards();

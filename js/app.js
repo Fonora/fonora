@@ -7,14 +7,10 @@ import {
   reverseLookup,
 } from './rules.js';
 import { normalizeSymbolInput, decodeSymbols, decodeText } from './decode.js';
-import { encodeSounds, translateEnglishWord, translateEnglishPhrase } from './encode.js';
+import { encodeSounds } from './encode.js';
 import { translateIpaWord, translateIpaPhrase } from './ipa-pipeline.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
-import {
-  ENCODER_MODES,
-  loadEncoderPreferences,
-  saveEncoderPreferences,
-} from './encoder-mode.js';
+import { loadLanguagePreference, saveLanguagePreference } from './language-preferences.js';
 import { loadGlossary, saveGlossary, migrateSampleGlossary, addGlossaryEntry, findDictionaryEntry, findDictionaryBySpelling } from './glossary.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { runTests } from './tests.js';
@@ -253,41 +249,14 @@ function updateDecodePanel() {
     : '<em class="no-warnings">No warnings.</em>';
 }
 
-function formatLegacyResult(result) {
+function formatIpaResult(result) {
   if (!result) return '';
   let html = '';
   if (result.source === 'dictionary') {
     html += '<span class="translate-badge translate-badge--dict">Dictionary override</span> ';
   } else {
-    html += '<span class="translate-badge translate-badge--encoded">Legacy Encoder</span> ';
+    html += '<span class="translate-badge translate-badge--encoded">IPA Pipeline</span> ';
   }
-  html += `<div class="encode-step"><strong>Original Text:</strong> ${escapeHtml(result.original || result.english || '')}</div>`;
-  if (result.cleaned) {
-    html += `<div class="encode-step"><strong>Cleaned:</strong> <code>${escapeHtml(result.cleaned)}</code></div>`;
-  }
-  const pronunciationForm = result.pronunciationForm ?? result.phonetic;
-  if (result.pronunciationActions?.length) {
-    html += `<div class="encode-step"><strong>Pronunciation rules:</strong><ul class="encode-list">${result.pronunciationActions.map((a) => `<li>${escapeHtml(a)}</li>`).join('')}</ul></div>`;
-  } else if (result.actions?.length && !result.conversionActions?.length) {
-    html += `<div class="encode-step"><strong>Pronunciation rules:</strong><ul class="encode-list">${result.actions.map((a) => `<li>${escapeHtml(a)}</li>`).join('')}</ul></div>`;
-  }
-  if (pronunciationForm) {
-    html += `<div class="encode-step"><strong>Normalized sound form:</strong> <code>${escapeHtml(pronunciationForm)}</code></div>`;
-  }
-  html += `<div class="encode-step"><strong>Normalized Fonora Phonemes:</strong> <code>${escapeHtml(result.soundUnits || result.normalized || result.sounds || '')}</code></div>`;
-  html += `<div class="encode-step"><strong>Fonora Symbols:</strong> <span class="symbol-text">${escapeHtml(result.symbols || '')}</span></div>`;
-  if (result.decoded) {
-    html += `<div class="encode-step"><strong>Decoded Back:</strong> <code>${escapeHtml(result.decoded)}</code></div>`;
-  }
-  if (result.warnings?.length) {
-    html += `<div class="encode-step"><strong>Warnings:</strong>${result.warnings.map((w) => `<div class="warning-item">${escapeHtml(w)}</div>`).join('')}</div>`;
-  }
-  return html;
-}
-
-function formatIpaResult(result) {
-  if (!result) return '';
-  let html = '<span class="translate-badge translate-badge--encoded">IPA Pipeline</span> ';
   html += `<div class="encode-step"><strong>Original Text:</strong> ${escapeHtml(result.original || '')}</div>`;
   html += `<div class="encode-step"><strong>IPA Output:</strong> <code>${escapeHtml(result.ipa || '')}</code></div>`;
   html += `<div class="encode-step"><strong>Normalized Fonora Phonemes:</strong> <code>${escapeHtml(result.normalizedPhonemes || result.normalized || '')}</code></div>`;
@@ -297,33 +266,6 @@ function formatIpaResult(result) {
     html += `<div class="encode-step"><strong>Warnings:</strong>${result.warnings.map((w) => `<div class="warning-item">${escapeHtml(w)}</div>`).join('')}</div>`;
   }
   return html;
-}
-
-function formatComparePanel(ipaResult, legacyResult) {
-  if (!ipaResult && !legacyResult) return '';
-  const row = (label, ipaVal, legacyVal) =>
-    `<tr><th>${escapeHtml(label)}</th><td><code>${escapeHtml(ipaVal || '—')}</code></td><td><code>${escapeHtml(legacyVal || '—')}</code></td></tr>`;
-  return `
-    <div class="encode-compare-panel">
-      <strong>Compare with Legacy</strong>
-      <table class="encode-compare-table">
-        <thead><tr><th></th><th>IPA</th><th>Legacy</th></tr></thead>
-        <tbody>
-          ${row('Pronunciation', ipaResult?.ipa || ipaResult?.normalizedPhonemes, legacyResult?.normalized || legacyResult?.sounds)}
-          ${row('Fonora', ipaResult?.symbols, legacyResult?.symbols)}
-          ${row('Decoded', ipaResult?.decoded, legacyResult?.decoded)}
-          ${row('Warnings', (ipaResult?.warnings || []).join('; '), (legacyResult?.warnings || []).join('; '))}
-        </tbody>
-      </table>
-    </div>`;
-}
-
-function formatEncodeResult(result, mode = ENCODER_MODES.IPA) {
-  if (!result) return '';
-  if (mode === ENCODER_MODES.LEGACY || result.encoderMode === ENCODER_MODES.LEGACY) {
-    return formatLegacyResult(result);
-  }
-  return formatIpaResult(result);
 }
 
 function setTranslateDetails(metaEl, toggleEl, html) {
@@ -338,7 +280,7 @@ function bindTranslateDetailsToggle(toggleEl, metaEl) {
 }
 
 function setupTranslator() {
-  const prefs = loadEncoderPreferences();
+  const savedLang = loadLanguagePreference();
   let wordApplyGeneration = 0;
   let phraseApplyGeneration = 0;
 
@@ -362,24 +304,9 @@ function setupTranslator() {
   const wordActions = document.getElementById('word-translate-actions');
   const wordStatus = document.getElementById('word-translate-status');
   const wordLang = document.getElementById('word-translate-lang');
-  const wordCompareLegacy = document.getElementById('word-compare-legacy');
   let wordDirty = false;
 
-  wordLang.value = prefs.lang || 'en';
-  wordCompareLegacy.checked = prefs.compareLegacy;
-  document.querySelector(`input[name="word-encoder-mode"][value="${prefs.mode}"]`)?.click();
-
-  function getWordEncoderMode() {
-    return document.querySelector('input[name="word-encoder-mode"]:checked')?.value || ENCODER_MODES.IPA;
-  }
-
-  function persistWordPrefs() {
-    saveEncoderPreferences({
-      mode: getWordEncoderMode(),
-      compareLegacy: wordCompareLegacy.checked,
-      lang: wordLang.value,
-    });
-  }
+  wordLang.value = savedLang;
 
   function setWordStatus(message, isError = false) {
     if (!wordStatus) return;
@@ -426,29 +353,15 @@ function setupTranslator() {
       return;
     }
 
-    const mode = getWordEncoderMode();
     const lang = wordLang.value || 'en';
-    const compare = wordCompareLegacy.checked;
 
     try {
-      setWordStatus(mode === ENCODER_MODES.IPA ? 'Loading IPA…' : 'Encoding…');
-      let result;
-      let legacyResult = null;
-
-      if (mode === ENCODER_MODES.LEGACY) {
-        result = translateEnglishWord(english, rules);
-      } else {
-        result = await translateIpaWord(english, rules, lang);
-        if (compare) legacyResult = translateEnglishWord(english, rules);
-      }
+      setWordStatus('Loading IPA…');
+      const result = await translateIpaWord(english, rules, lang);
 
       if (generation !== wordApplyGeneration) return;
 
-      let details = formatEncodeResult(result, mode);
-      if (compare && mode === ENCODER_MODES.IPA) {
-        details += formatComparePanel(result, legacyResult);
-      }
-      setTranslateDetails(wordMeta, wordDetailsToggle, details);
+      setTranslateDetails(wordMeta, wordDetailsToggle, formatIpaResult(result));
       setWordStatus('');
 
       if (!wordDirty) {
@@ -472,21 +385,9 @@ function setupTranslator() {
   });
 
   wordLang.addEventListener('change', () => {
-    persistWordPrefs();
+    saveLanguagePreference(wordLang.value);
+    phraseLang.value = wordLang.value;
     wordDirty = false;
-    applyWord();
-  });
-
-  document.querySelectorAll('input[name="word-encoder-mode"]').forEach((radio) => {
-    radio.addEventListener('change', () => {
-      persistWordPrefs();
-      wordDirty = false;
-      applyWord();
-    });
-  });
-
-  wordCompareLegacy.addEventListener('change', () => {
-    persistWordPrefs();
     applyWord();
   });
 
@@ -520,31 +421,14 @@ function setupTranslator() {
   const phraseDetailsToggle = document.getElementById('phrase-translate-show-details');
   const phraseDecode = document.getElementById('phrase-translate-decode');
   const phraseLang = document.getElementById('phrase-translate-lang');
-  const phraseCompareLegacy = document.getElementById('phrase-compare-legacy');
-  const phraseHint = document.getElementById('phrase-encode-hint');
   let phraseDirty = false;
 
-  phraseLang.value = prefs.lang || 'en';
-  phraseCompareLegacy.checked = prefs.compareLegacy;
-  document.querySelector(`input[name="phrase-encoder-mode"][value="${prefs.mode}"]`)?.click();
-
-  function getPhraseEncoderMode() {
-    return document.querySelector('input[name="phrase-encoder-mode"]:checked')?.value || ENCODER_MODES.IPA;
-  }
-
-  function updatePhraseHint() {
-    if (!phraseHint) return;
-    phraseHint.textContent =
-      getPhraseEncoderMode() === ENCODER_MODES.LEGACY
-        ? 'Phrase mode uses the Legacy Encoder (English spelling rules) word-by-word.'
-        : 'Phrase mode translates word-by-word via the IPA pipeline. Switch to Legacy Encoder for English spelling rules.';
-  }
+  phraseLang.value = savedLang;
 
   renderSymbolButtons(document.getElementById('phrase-translate-keyboard'), phraseOutput);
   attachKeyboardShortcuts(phraseOutput);
 
   bindTranslateDetailsToggle(phraseDetailsToggle, phraseMeta);
-  updatePhraseHint();
 
   async function applyPhrase() {
     const text = phraseInput.value.trim();
@@ -557,27 +441,14 @@ function setupTranslator() {
       return;
     }
 
-    const mode = getPhraseEncoderMode();
     const lang = phraseLang.value || 'en';
 
     try {
-      let result;
-      let legacyResult = null;
-
-      if (mode === ENCODER_MODES.LEGACY) {
-        result = translateEnglishPhrase(text, rules);
-      } else {
-        result = await translateIpaPhrase(text, rules, lang);
-        if (phraseCompareLegacy.checked) legacyResult = translateEnglishPhrase(text, rules);
-      }
+      const result = await translateIpaPhrase(text, rules, lang);
 
       if (generation !== phraseApplyGeneration) return;
 
-      let details = formatEncodeResult(result, mode);
-      if (phraseCompareLegacy.checked && mode === ENCODER_MODES.IPA) {
-        details += formatComparePanel(result, legacyResult);
-      }
-      setTranslateDetails(phraseMeta, phraseDetailsToggle, details);
+      setTranslateDetails(phraseMeta, phraseDetailsToggle, formatIpaResult(result));
       if (!phraseDirty) phraseOutput.value = result.symbols;
       phraseDecode.textContent = `Decodes to: ${decodeText(phraseOutput.value, rules).pronunciation || '(empty)'}`;
     } catch (err) {
@@ -592,37 +463,9 @@ function setupTranslator() {
   });
 
   phraseLang.addEventListener('change', () => {
-    saveEncoderPreferences({
-      mode: getPhraseEncoderMode(),
-      compareLegacy: phraseCompareLegacy.checked,
-      lang: phraseLang.value,
-    });
+    saveLanguagePreference(phraseLang.value);
     wordLang.value = phraseLang.value;
     phraseDirty = false;
-    applyPhrase();
-  });
-
-  document.querySelectorAll('input[name="phrase-encoder-mode"]').forEach((radio) => {
-    radio.addEventListener('change', () => {
-      saveEncoderPreferences({
-        mode: getPhraseEncoderMode(),
-        compareLegacy: phraseCompareLegacy.checked,
-        lang: phraseLang.value,
-      });
-      document.querySelector(`input[name="word-encoder-mode"][value="${getPhraseEncoderMode()}"]`)?.click();
-      updatePhraseHint();
-      phraseDirty = false;
-      applyPhrase();
-    });
-  });
-
-  phraseCompareLegacy.addEventListener('change', () => {
-    saveEncoderPreferences({
-      mode: getPhraseEncoderMode(),
-      compareLegacy: phraseCompareLegacy.checked,
-      lang: phraseLang.value,
-    });
-    wordCompareLegacy.checked = phraseCompareLegacy.checked;
     applyPhrase();
   });
 

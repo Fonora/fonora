@@ -45,14 +45,7 @@
       <div class="sub-tab-panel sub-tab-panel--active" id="sub-tab-word" data-sub-tab-panel="word">
         <div class="translate-layout">
           <div class="translate-main">
-            <p class="section-desc">Type text to get a Fonora spelling via the IPA pipeline (default) or Legacy Encoder. Edit the result with the symbol keyboard, then save to the dictionary.</p>
-
-            <fieldset class="encoder-mode-fieldset">
-              <legend>Encoder Mode</legend>
-              <label><input type="radio" name="word-encoder-mode" value="ipa" checked> IPA (Recommended)</label>
-              <label><input type="radio" name="word-encoder-mode" value="legacy"> Legacy Encoder</label>
-              <label class="encoder-compare-toggle"><input type="checkbox" id="word-compare-legacy"> Compare with Legacy</label>
-            </fieldset>
+            <p class="section-desc">Type text to get a Fonora spelling via the IPA pipeline. Edit the result with the symbol keyboard, then save to the dictionary.</p>
 
             <label for="word-translate-lang">Language</label>
             <select id="word-translate-lang" class="text-input">
@@ -99,14 +92,7 @@
       <div class="sub-tab-panel" id="sub-tab-phrase" data-sub-tab-panel="phrase" hidden>
         <div class="translate-layout">
           <div class="translate-main">
-            <p class="section-desc" id="phrase-mode-desc">Type text. Each word is translated separately via the IPA pipeline; edit the full Fonora phrase below.</p>
-
-            <fieldset class="encoder-mode-fieldset">
-              <legend>Encoder Mode</legend>
-              <label><input type="radio" name="phrase-encoder-mode" value="ipa" checked> IPA (Recommended)</label>
-              <label><input type="radio" name="phrase-encoder-mode" value="legacy"> Legacy Encoder</label>
-              <label class="encoder-compare-toggle"><input type="checkbox" id="phrase-compare-legacy"> Compare with Legacy</label>
-            </fieldset>
+            <p class="section-desc">Type text. Each word is translated separately via the IPA pipeline; edit the full Fonora phrase below.</p>
 
             <label for="phrase-translate-lang">Language</label>
             <select id="phrase-translate-lang" class="text-input">
@@ -131,7 +117,7 @@
             </div>
 
             <div id="phrase-translate-decode" class="translate-decode-preview"></div>
-            <p class="encode-hint" id="phrase-encode-hint">Phrase mode translates word-by-word. Switch to Legacy Encoder for English spelling rules.</p>
+            <p class="encode-hint">Phrase mode translates word-by-word via the IPA pipeline.</p>
           </div>
 
           <aside class="translate-details-panel">
@@ -365,13 +351,13 @@
     <!-- Pronunciation Testing -->
     <section class="panel tab-panel" id="tab-encoder-testing" data-tab-panel="encoder-testing" hidden>
       <h2>Pronunciation Testing</h2>
-      <p class="section-desc">Evaluate IPA → Fonora encoding across languages. Legacy Encoder comparison available. Review outputs, tag failures, and export results.</p>
+      <p class="section-desc">Evaluate IPA → Fonora encoding across languages. Review outputs, tag failures, and export results.</p>
 
       <div id="encoder-dashboard" class="encoder-dashboard"></div>
 
       <nav class="encoder-sub-tab-nav" aria-label="Pronunciation test modes">
         <button type="button" class="encoder-sub-tab-btn encoder-sub-tab-btn--active" data-encoder-sub-tab="multilingual">Multilingual</button>
-        <button type="button" class="encoder-sub-tab-btn" data-encoder-sub-tab="curated">Legacy curated sets</button>
+        <button type="button" class="encoder-sub-tab-btn" data-encoder-sub-tab="curated">Curated test sets</button>
         <button type="button" class="encoder-sub-tab-btn" data-encoder-sub-tab="random">Random generated</button>
         <button type="button" class="encoder-sub-tab-btn" data-encoder-sub-tab="manual">Manual batch</button>
       </nav>
@@ -451,19 +437,11 @@
             <option value="">All categories</option>
           </select>
         </label>
-        <label>Pipeline
-          <select id="encoder-filter-pipeline" class="text-input">
-            <option value="ipa">IPA Pipeline</option>
-            <option value="legacy">Legacy Encoder</option>
-            <option value="both">Both (compare)</option>
-          </select>
-        </label>
         <label>Source
           <select id="encoder-filter-source" class="text-input">
             <option value="">All sources</option>
             <option value="ipa">IPA Pipeline</option>
             <option value="dictionary">Dictionary</option>
-            <option value="auto-encoded">Legacy auto-encoded</option>
             <option value="fallback">Fallback/unknown</option>
           </select>
         </label>
