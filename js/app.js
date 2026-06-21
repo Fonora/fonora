@@ -260,7 +260,6 @@ function formatIpaResult(result) {
   html += `<div class="encode-step"><strong>Original Text:</strong> ${escapeHtml(result.original || '')}</div>`;
   html += `<div class="encode-step"><strong>IPA Output:</strong> <code>${escapeHtml(result.ipa || '')}</code></div>`;
   html += `<div class="encode-step"><strong>Normalized Fonora Phonemes:</strong> <code>${escapeHtml(result.normalizedPhonemes || result.normalized || '')}</code></div>`;
-  html += `<div class="encode-step"><strong>Fonora Symbols:</strong> <span class="symbol-text">${escapeHtml(result.symbols || '')}</span></div>`;
   html += `<div class="encode-step"><strong>Decoded Back:</strong> <code>${escapeHtml(result.decoded || '')}</code></div>`;
   if (result.warnings?.length) {
     html += `<div class="encode-step"><strong>Warnings:</strong>${result.warnings.map((w) => `<div class="warning-item">${escapeHtml(w)}</div>`).join('')}</div>`;
