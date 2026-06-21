@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fonora — Phonetic Symbol Research Tool</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div id="fallback-banner" class="fallback-banner" hidden>
+    Using fallback rules. language-rules.md could not be loaded.
+  </div>
+
+  <header class="site-header">
+    <h1>Fonora</h1>
+    <p class="tagline">Universal Phonetic Compression Language</p>
+  </header>
+
+  <nav class="tab-nav" aria-label="Sections">
+    <div class="tab-nav-inner">
+      <button type="button" class="tab-btn tab-btn--active" data-tab="translator">Translator</button>
+      <button type="button" class="tab-btn" data-tab="keyboard">Symbol Keyboard</button>
+      <button type="button" class="tab-btn" data-tab="mapping">Keyboard Mapping</button>
+      <button type="button" class="tab-btn" data-tab="grid">Sound Grid</button>
+      <button type="button" class="tab-btn" data-tab="decode">Decode</button>
+      <button type="button" class="tab-btn" data-tab="reverse">Reverse Lookup</button>
+      <button type="button" class="tab-btn" data-tab="dictionary">Dictionary</button>
+      <button type="button" class="tab-btn" data-tab="encoder-testing">Pronunciation Testing</button>
+      <button type="button" class="tab-btn" data-tab="quiz">Quiz</button>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <!-- Translator -->
+    <section class="panel tab-panel tab-panel--active" id="tab-translator" data-tab-panel="translator">
+      <h2>Translator</h2>
+
+      <nav class="sub-tab-nav" aria-label="Translator modes">
+        <button type="button" class="sub-tab-btn sub-tab-btn--active" data-sub-tab="word">Translate a word</button>
+        <button type="button" class="sub-tab-btn" data-sub-tab="phrase">Translate phrases</button>
+        <button type="button" class="sub-tab-btn" data-sub-tab="lookup">Dictionary lookup</button>
+      </nav>
+
+      <!-- Translate a word -->
+      <div class="sub-tab-panel sub-tab-panel--active" id="sub-tab-word" data-sub-tab-panel="word">
+        <div class="translate-layout">
+          <div class="translate-main">
+            <p class="section-desc">Type text to get a Fonora spelling via the IPA pipeline (default) or Legacy Encoder. Edit the result with the symbol keyboard, then save to the dictionary.</p>
+
+            <fieldset class="encoder-mode-fieldset">
+              <legend>Encoder Mode</legend>
+              <label><input type="radio" name="word-encoder-mode" value="ipa" checked> IPA (Recommended)</label>
+              <label><input type="radio" name="word-encoder-mode" value="legacy"> Legacy Encoder</label>
+              <label class="encoder-compare-toggle"><input type="checkbox" id="word-compare-legacy"> Compare with Legacy</label>
+            </fieldset>
+
+            <label for="word-translate-lang">Language</label>
+            <select id="word-translate-lang" class="text-input">
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+              <option value="ja">Japanese</option>
+              <option value="ar">Arabic</option>
+              <option value="zh">Mandarin</option>
+            </select>
+
+            <label for="word-translate-input">Text</label>
+            <input type="text" id="word-translate-input" class="text-input" placeholder="e.g. knife, hola, bonjour" autocomplete="off">
+
+            <div id="word-translate-status" class="translate-status" hidden></div>
+
+            <label for="word-translate-output">Fonora spelling</label>
+            <textarea id="word-translate-output" class="symbol-text symbol-input translate-output" rows="2" placeholder="Fonora symbols appear here…"></textarea>
+            <div id="word-translate-keyboard" class="symbol-buttons symbol-buttons--compact"></div>
+            <div class="button-row">
+              <button type="button" id="word-translate-normalize" class="btn">Normalize spacing</button>
+              <button type="button" id="word-translate-backspace" class="btn">Backspace</button>
+            </div>
+
+            <label for="word-translate-pronunciation">Normalized Fonora phonemes</label>
+            <input type="text" id="word-translate-pronunciation" class="text-input" placeholder="IPA-derived phonemes, editable">
+
+            <div id="word-translate-decode" class="translate-decode-preview"></div>
+            <div id="word-translate-actions"></div>
+          </div>
+
+          <aside class="translate-details-panel">
+            <label class="translate-details-toggle">
+              <input type="checkbox" id="word-translate-show-details" checked>
+              Show encoding details
+            </label>
+            <div id="word-translate-meta" class="translate-meta-panel"></div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Translate phrases -->
+      <div class="sub-tab-panel" id="sub-tab-phrase" data-sub-tab-panel="phrase" hidden>
+        <div class="translate-layout">
+          <div class="translate-main">
+            <p class="section-desc" id="phrase-mode-desc">Type text. Each word is translated separately via the IPA pipeline; edit the full Fonora phrase below.</p>
+
+            <fieldset class="encoder-mode-fieldset">
+              <legend>Encoder Mode</legend>
+              <label><input type="radio" name="phrase-encoder-mode" value="ipa" checked> IPA (Recommended)</label>
+              <label><input type="radio" name="phrase-encoder-mode" value="legacy"> Legacy Encoder</label>
+              <label class="encoder-compare-toggle"><input type="checkbox" id="phrase-compare-legacy"> Compare with Legacy</label>
+            </fieldset>
+
+            <label for="phrase-translate-lang">Language</label>
+            <select id="phrase-translate-lang" class="text-input">
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+              <option value="ja">Japanese</option>
+              <option value="ar">Arabic</option>
+              <option value="zh">Mandarin</option>
+            </select>
+
+            <label for="phrase-translate-input">Text</label>
+            <textarea id="phrase-translate-input" class="text-input" rows="3" placeholder="e.g. the big dog"></textarea>
+
+            <label for="phrase-translate-output">Fonora phrase</label>
+            <textarea id="phrase-translate-output" class="symbol-text symbol-input translate-output" rows="3" placeholder="Fonora symbols appear here…"></textarea>
+            <div id="phrase-translate-keyboard" class="symbol-buttons symbol-buttons--compact"></div>
+            <div class="button-row">
+              <button type="button" id="phrase-translate-normalize" class="btn">Normalize spacing</button>
+              <button type="button" id="phrase-translate-backspace" class="btn">Backspace</button>
+            </div>
+
+            <div id="phrase-translate-decode" class="translate-decode-preview"></div>
+            <p class="encode-hint" id="phrase-encode-hint">Phrase mode translates word-by-word. Switch to Legacy Encoder for English spelling rules.</p>
+          </div>
+
+          <aside class="translate-details-panel">
+            <label class="translate-details-toggle">
+              <input type="checkbox" id="phrase-translate-show-details" checked>
+              Show encoding details
+            </label>
+            <div id="phrase-translate-meta" class="translate-meta-panel"></div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Dictionary lookup -->
+      <div class="sub-tab-panel" id="sub-tab-lookup" data-sub-tab-panel="lookup" hidden>
+        <p class="section-desc">Strict dictionary search only. No auto-translation or encoding.</p>
+
+        <div class="translator-block">
+          <h3>English → Fonora</h3>
+          <input type="text" id="lookup-en" class="text-input" placeholder="English word" autocomplete="off">
+          <div id="lookup-en-result" class="translate-result"></div>
+        </div>
+
+        <div class="translator-block">
+          <h3>Fonora → English</h3>
+          <input type="text" id="lookup-lang" class="text-input symbol-text" placeholder="Fonora spelling">
+          <div id="lookup-lang-result" class="translate-result"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Symbol Keyboard -->
+    <section class="panel tab-panel" id="tab-keyboard" data-tab-panel="keyboard" hidden>
+      <h2>Symbol Keyboard</h2>
+      <p class="section-desc">Type symbols in the area below. Number keys and letter shortcuts insert symbols when focused.</p>
+
+      <textarea id="symbol-input" class="symbol-text symbol-input" rows="4" placeholder="Type or insert symbols here…"></textarea>
+
+      <div class="button-row">
+        <button type="button" id="btn-clear" class="btn">Clear</button>
+        <button type="button" id="btn-copy" class="btn">Copy</button>
+        <button type="button" id="btn-normalize" class="btn">Normalize spacing</button>
+        <button type="button" id="btn-backspace" class="btn">Backspace</button>
+      </div>
+
+      <div id="symbol-buttons" class="symbol-buttons"></div>
+    </section>
+
+    <!-- Keyboard Mapping -->
+    <section class="panel tab-panel" id="tab-mapping" data-tab-panel="mapping" hidden>
+      <h2>Keyboard Mapping</h2>
+      <p class="section-desc">Number and letter shortcuts loaded from language rules.</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Number</th>
+              <th>Letter</th>
+              <th>Symbol</th>
+              <th>Label</th>
+              <th>Kind</th>
+            </tr>
+          </thead>
+          <tbody id="keyboard-mapping-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Sound Grid -->
+    <section class="panel tab-panel" id="tab-grid" data-tab-panel="grid" hidden>
+      <h2>Sound Grid</h2>
+      <p class="section-desc">Place × manner grid from language rules. Click a defined cell to insert its symbol combination.</p>
+      <div class="table-wrap table-wrap--scroll">
+        <table class="sound-grid" id="sound-grid">
+          <thead id="sound-grid-head"></thead>
+          <tbody id="sound-grid-body"></tbody>
+        </table>
+      </div>
+
+      <div id="derived-sounds-section">
+        <h3>Special Derived Sounds</h3>
+        <p class="section-desc">Reversed place + modifier order. Each entry is defined individually in language rules — not generalized.</p>
+        <div class="table-wrap">
+          <table class="data-table" id="derived-sounds-table">
+            <thead>
+              <tr>
+                <th>Symbols</th>
+                <th>Sound</th>
+                <th>IPA</th>
+                <th>Status</th>
+                <th>Explanation</th>
+              </tr>
+            </thead>
+            <tbody id="derived-sounds-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="experimental-derived-section" hidden>
+        <h3>Experimental Derived Sounds <span class="draft-badge">Experimental</span></h3>
+        <p class="section-desc">Individually defined reversed-order sounds. Not finalized.</p>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Symbols</th>
+                <th>Sound</th>
+                <th>IPA</th>
+                <th>Status</th>
+                <th>Explanation</th>
+              </tr>
+            </thead>
+            <tbody id="experimental-derived-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="experimental-vowels-section" hidden>
+        <h3>Experimental Vowels <span class="draft-badge">Experimental</span></h3>
+        <p class="section-desc">Two-symbol vowels (throat + place). Long and short vowel spellings collapse to the same symbols during this readability-testing phase.</p>
+
+        <h4 class="examples-heading">Vowel mapping</h4>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Symbols</th>
+                <th>Vowel</th>
+                <th>IPA</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="experimental-vowels-body"></tbody>
+          </table>
+        </div>
+
+        <h4 class="examples-heading">Long vowels collapsed</h4>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Sound</th>
+                <th>Symbols</th>
+              </tr>
+            </thead>
+            <tbody id="experimental-vowel-collapsed-body"></tbody>
+          </table>
+        </div>
+
+        <h4 class="examples-heading">CV examples</h4>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Word</th>
+                <th>Spelling</th>
+              </tr>
+            </thead>
+            <tbody id="experimental-vowel-examples-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Decode -->
+    <section class="panel tab-panel" id="tab-decode" data-tab-panel="decode" hidden>
+      <h2>Decode Panel</h2>
+      <p class="section-desc">Live parsing of the symbol keyboard input. Type on the Symbol Keyboard tab to update this panel.</p>
+      <div class="decode-grid">
+        <div class="decode-field">
+          <h3>Normalized input</h3>
+          <div id="decode-normalized" class="decode-value"><em>(empty)</em></div>
+        </div>
+        <div class="decode-field">
+          <h3>Detected groups</h3>
+          <div id="decode-groups" class="decode-value"><em>(none)</em></div>
+        </div>
+        <div class="decode-field">
+          <h3>Pronunciation</h3>
+          <div id="decode-pronunciation" class="decode-value decode-pronunciation">(empty)</div>
+        </div>
+        <div class="decode-field">
+          <h3>Warnings</h3>
+          <div id="decode-warnings" class="decode-value"><em class="no-warnings">No warnings.</em></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reverse Lookup -->
+    <section class="panel tab-panel" id="tab-reverse" data-tab-panel="reverse" hidden>
+      <h2>Reverse Lookup</h2>
+      <p class="section-desc">Type a sound (e.g. p, sh, ng) to find its symbol combination.</p>
+      <div class="inline-form">
+        <input type="text" id="reverse-input" class="text-input" placeholder="Sound, e.g. sh">
+        <button type="button" id="reverse-btn" class="btn">Look up</button>
+      </div>
+      <div id="reverse-output" class="reverse-output"></div>
+    </section>
+
+    <!-- Dictionary -->
+    <section class="panel tab-panel" id="tab-dictionary" data-tab-panel="dictionary" hidden>
+      <h2>Mini Dictionary</h2>
+      <p class="section-desc">Controlled glossary for early vocabulary experiments. Stored in browser localStorage.</p>
+
+      <form id="glossary-form" class="dict-form">
+        <div class="form-row">
+          <label for="dict-english">English meaning</label>
+          <input type="text" id="dict-english" class="text-input" required>
+        </div>
+        <div class="form-row">
+          <label for="dict-spelling">Language spelling</label>
+          <input type="text" id="dict-spelling" class="text-input symbol-text" required>
+        </div>
+        <div class="form-row">
+          <label for="dict-pronunciation">Pronunciation</label>
+          <input type="text" id="dict-pronunciation" class="text-input">
+        </div>
+        <div class="form-row">
+          <label for="dict-notes">Notes</label>
+          <input type="text" id="dict-notes" class="text-input">
+        </div>
+        <button type="submit" class="btn btn--primary">Add entry</button>
+      </form>
+
+      <div class="search-row">
+        <label for="glossary-search">Search</label>
+        <input type="search" id="glossary-search" class="text-input" placeholder="Filter entries…">
+      </div>
+      <div id="glossary-list" class="glossary-list"></div>
+    </section>
+
+    <!-- Pronunciation Testing -->
+    <section class="panel tab-panel" id="tab-encoder-testing" data-tab-panel="encoder-testing" hidden>
+      <h2>Pronunciation Testing</h2>
+      <p class="section-desc">Evaluate IPA → Fonora encoding across languages. Legacy Encoder comparison available. Review outputs, tag failures, and export results.</p>
+
+      <div id="encoder-dashboard" class="encoder-dashboard"></div>
+
+      <nav class="encoder-sub-tab-nav" aria-label="Pronunciation test modes">
+        <button type="button" class="encoder-sub-tab-btn encoder-sub-tab-btn--active" data-encoder-sub-tab="multilingual">Multilingual</button>
+        <button type="button" class="encoder-sub-tab-btn" data-encoder-sub-tab="curated">Legacy curated sets</button>
+        <button type="button" class="encoder-sub-tab-btn" data-encoder-sub-tab="random">Random generated</button>
+        <button type="button" class="encoder-sub-tab-btn" data-encoder-sub-tab="manual">Manual batch</button>
+      </nav>
+
+      <div class="encoder-sub-tab-panel encoder-sub-tab-panel--active" data-encoder-sub-tab-panel="multilingual">
+        <p class="section-desc">Multilingual test set for validating one IPA pipeline across languages (English, Spanish, French, German, Japanese, Arabic).</p>
+        <div class="encoder-generate-row">
+          <button type="button" id="encoder-generate-multilingual" class="btn btn--primary">Generate multilingual set</button>
+        </div>
+      </div>
+
+      <div class="encoder-sub-tab-panel" data-encoder-sub-tab-panel="curated" hidden>
+        <p class="section-desc">Pick one or more categories, then generate 20–50 test cards.</p>
+        <div id="encoder-category-grid" class="encoder-category-grid"></div>
+        <div class="encoder-generate-row">
+          <label for="encoder-curated-count">Count</label>
+          <input type="number" id="encoder-curated-count" class="text-input encoder-count-input" value="30" min="20" max="50">
+          <button type="button" id="encoder-generate-curated" class="btn btn--primary">Generate</button>
+        </div>
+      </div>
+
+      <div class="encoder-sub-tab-panel" data-encoder-sub-tab-panel="random" hidden>
+        <p class="section-desc">Generate fake but readable sound strings to test encoder/decoder consistency.</p>
+        <div class="encoder-generate-row">
+          <label for="encoder-random-count">Count</label>
+          <input type="number" id="encoder-random-count" class="text-input encoder-count-input" value="30" min="20" max="50">
+          <button type="button" id="encoder-generate-random" class="btn btn--primary">Generate</button>
+        </div>
+      </div>
+
+      <div class="encoder-sub-tab-panel" data-encoder-sub-tab-panel="manual" hidden>
+        <p class="section-desc">Paste words, one per line.</p>
+        <label for="encoder-manual-input">Word list</label>
+        <textarea id="encoder-manual-input" class="text-input encoder-manual-input" rows="6" placeholder="hello&#10;thin&#10;change"></textarea>
+        <div class="encoder-generate-row">
+          <button type="button" id="encoder-generate-manual" class="btn btn--primary">Generate</button>
+        </div>
+      </div>
+
+      <div class="encoder-controls-bar">
+        <button type="button" id="encoder-rerun-failed" class="btn">Rerun Wrong + Unsure</button>
+        <button type="button" id="encoder-export-json" class="btn">Export JSON</button>
+        <button type="button" id="encoder-export-csv" class="btn">Export CSV</button>
+        <button type="button" id="encoder-clear-session" class="btn">Clear session</button>
+      </div>
+
+      <div class="encoder-filter-bar">
+        <label>Status
+          <select id="encoder-filter-status" class="text-input">
+            <option value="">All</option>
+            <option value="unreviewed">Unreviewed</option>
+            <option value="correct">Correct</option>
+            <option value="wrong">Wrong</option>
+            <option value="unsure">Unsure</option>
+          </select>
+        </label>
+        <label>Issue tag
+          <select id="encoder-filter-tag" class="text-input">
+            <option value="">All tags</option>
+            <option value="vowel wrong">vowel wrong</option>
+            <option value="consonant wrong">consonant wrong</option>
+            <option value="double-letter issue">double-letter issue</option>
+            <option value="silent-letter issue">silent-letter issue</option>
+            <option value="digraph issue">digraph issue</option>
+            <option value="th/dh issue">th/dh issue</option>
+            <option value="sh/ch/j issue">sh/ch/j issue</option>
+            <option value="ng issue">ng issue</option>
+            <option value="dictionary override issue">dictionary override issue</option>
+            <option value="fallback/unknown sound">fallback/unknown sound</option>
+            <option value="output unreadable">output unreadable</option>
+            <option value="should become glossary exception">should become glossary exception</option>
+            <option value="other">other</option>
+          </select>
+        </label>
+        <label>Category
+          <select id="encoder-filter-category" class="text-input">
+            <option value="">All categories</option>
+          </select>
+        </label>
+        <label>Pipeline
+          <select id="encoder-filter-pipeline" class="text-input">
+            <option value="ipa">IPA Pipeline</option>
+            <option value="legacy">Legacy Encoder</option>
+            <option value="both">Both (compare)</option>
+          </select>
+        </label>
+        <label>Source
+          <select id="encoder-filter-source" class="text-input">
+            <option value="">All sources</option>
+            <option value="ipa">IPA Pipeline</option>
+            <option value="dictionary">Dictionary</option>
+            <option value="auto-encoded">Legacy auto-encoded</option>
+            <option value="fallback">Fallback/unknown</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="encoder-card-list" class="encoder-card-list"></div>
+    </section>
+
+    <!-- Quiz -->
+    <section class="panel tab-panel" id="tab-quiz" data-tab-panel="quiz" hidden>
+      <h2>Test Mode</h2>
+      <p id="quiz-stats" class="quiz-stats">Attempts: 0 · Correct: 0 · Accuracy: 0%</p>
+
+      <div class="quiz-type-row">
+        <label><input type="radio" name="quiz-type" value="decode" checked> Decode quiz</label>
+        <label><input type="radio" name="quiz-type" value="construct"> Construct quiz</label>
+      </div>
+
+      <div class="quiz-layout">
+        <div class="quiz-main">
+          <div class="quiz-area">
+            <div class="quiz-prompt-label">Prompt</div>
+            <div id="quiz-prompt" class="quiz-prompt"></div>
+
+            <div id="quiz-decode-answer">
+              <label for="quiz-answer-decode">Your answer (sound)</label>
+              <input type="text" id="quiz-answer-decode" class="text-input">
+            </div>
+
+            <div id="quiz-construct-answer" hidden>
+              <label for="quiz-answer-construct">Your answer (symbols)</label>
+              <input type="text" id="quiz-answer-construct" class="text-input symbol-text">
+            </div>
+
+            <div class="button-row">
+              <button type="button" id="quiz-check" class="btn btn--primary">Check</button>
+              <button type="button" id="quiz-next" class="btn">Next question</button>
+            </div>
+            <div id="quiz-feedback" class="quiz-feedback"></div>
+          </div>
+        </div>
+
+        <aside class="quiz-hints-panel">
+          <label class="quiz-hints-toggle">
+            <input type="checkbox" id="quiz-show-hints" checked>
+            Show hints
+          </label>
+          <div id="quiz-hints" class="quiz-hints"></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Rules loaded from <code>language-rules.md</code>. Edit that file and reload to update the app.</p>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

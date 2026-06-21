@@ -1,0 +1,16 @@
+{
+  "name": "fonora",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "postinstall": "node scripts/copy-espeak.js",
+    "start": "node server.js",
+    "test": "node js/tests.js"
+  },
+  "dependencies": {
+    "espeak-ng": "^1.0.2"
+  }
+}

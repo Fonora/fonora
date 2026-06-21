@@ -1,0 +1,18 @@
+# Dependencies & generated assets
+node_modules/
+vendor/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs & env (future-proof)
+*.log
+.env
+.env.*
