@@ -1227,7 +1227,8 @@ code {
   color: #b91c1c;
 }
 
-.encoder-card-lang {
+.encoder-card-lang,
+.encoder-card-voice {
   font-size: 0.75rem;
   color: #1d4ed8;
   background: #dbeafe;
@@ -1300,4 +1301,127 @@ code {
     min-width: 0;
     width: 100%;
   }
+}
+
+/* Alphabet lab */
+.alphabet-status {
+  padding: 0.6rem 0.85rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  background: #eff6ff;
+  color: #1e40af;
+}
+
+.alphabet-status[data-kind="success"] {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.alphabet-actions {
+  margin-bottom: 1.25rem;
+}
+
+.alphabet-primary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.alphabet-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: #fff;
+  position: relative;
+}
+
+.alphabet-card--vowel_plane {
+  border-color: #c4b5fd;
+  background: #faf5ff;
+}
+
+.alphabet-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.35rem;
+}
+
+.alphabet-card-label {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.alphabet-card-id {
+  font-size: 0.7rem;
+  color: #888;
+  font-family: ui-monospace, monospace;
+}
+
+.alphabet-card-markdown {
+  font-size: 0.75rem;
+  color: #666;
+  margin-bottom: 0.5rem;
+}
+
+.alphabet-symbol-input {
+  width: 100%;
+  font-size: 1.75rem;
+  text-align: center;
+  padding: 0.35rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.alphabet-changed-badge {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+.alphabet-preview-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .alphabet-preview-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.alphabet-preview-table td,
+.alphabet-preview-table th {
+  font-size: 1.1rem;
+  padding: 0.35rem 0.5rem;
+}
+
+.vowel-sounds-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.vowel-sounds-cell {
+  min-width: 9rem;
+}
+
+.alphabet-sample-output {
+  font-size: 1.75rem;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 6px;
+  min-height: 2.5rem;
 }

@@ -70,13 +70,17 @@ Glossary entries are stored in browser `localStorage` under the key `fonora-glos
 | `js/ipa-to-fonora.js` | Phonemes → symbols via `language-rules.md` |
 | `js/ipa-pipeline.js` | IPA pipeline orchestration |
 | `js/language-preferences.js` | Language selection persistence |
-| `js/rules.js` | Parse `language-rules.md`, rule helpers |
+| `js/load-language-rules.js` | Parse `language-rules.md`, build symbol registry |
+| `js/symbol-compose.js` | Compose grid, vowels, and derived sounds from primaries |
+| `js/fonora-config.js` | Active rules bundle for app and IPA pipeline |
+| `js/rules.js` | Rule helpers (encode/decode entry lists) |
 | `js/encode.js` | Sounds → Fonora symbols |
 | `js/decode.js` | Fonora symbols → sounds (longest-match) |
 | `js/encoder-testing.js` | Pronunciation Testing tab UI |
 | `js/encoder-test-sets.js` | Curated and multilingual test word lists |
 | `js/app.js` | UI wiring |
-| `js/tests.js` | Unit tests |
+| `js/tests.js` | Node test runner |
+| `js/tests-core.js` | Shared unit tests (browser + Node) |
 | `language-rules.md` | Authoritative Fonora symbol mapping (human-editable) |
 | `docs/espeak-integration.md` | eSpeak NG integration details |
 
@@ -84,13 +88,16 @@ Glossary entries are stored in browser `localStorage` under the key `fonora-glos
 
 ```bash
 npm test
+npm run test:vowels          # vowel readability report → reports/
+npm run test:v2-collisions   # v1 vs v2 collision comparison → reports/
 ```
 
 Or open the app with `?test` in the URL to log test results in the browser console.
 
 ## Rule sections loaded from Markdown
 
-- Places, Modifiers, Sound Grid
-- Special Derived Sounds (defined)
-- Experimental Vowel System (draft — marked experimental in UI)
-- Experimental Derived Sounds (draft — e.g. `v` → `○⌔`)
+- Places (5), Modifiers (4), Sound Grid
+- Writing Conventions (derived symbols — e.g. `⊇` Vowel Carrier)
+- Vowels (primary/alternate planes with Vowel Carrier shorthand)
+- Derived Sounds (`th`, `dh`, `z` defined; `v` experimental)
+- IPA Supplemental Mappings (diphthongs and rhotic schwa)

@@ -29,13 +29,28 @@ On Heroku, `npm start` binds to `$PORT` automatically via [`server.js`](../serve
 
 | UI code | eSpeak voice |
 |---------|--------------|
-| `en` | `en-us` |
+| `en` | `en-us` (default; see English dialects below) |
 | `es` | `es` |
 | `fr` | `fr-fr` |
 | `de` | `de` |
 | `ja` | `ja` |
 | `ar` | `ar` |
 | `zh` | `zh` |
+
+### English dialects
+
+When the UI language is English, an optional dialect selector chooses the eSpeak NG voice. Default is `en-us`.
+
+| Dialect code | eSpeak voice |
+|--------------|--------------|
+| `en-us` | American English |
+| `en-gb` | British English |
+| `en-uk-rp` | Received Pronunciation |
+| `en-au` | Australian English |
+| `en-nz` | New Zealand English |
+| `en-sc` | Scottish English |
+
+Pass `englishDialect` or `voice` in pipeline options (see `js/ipa-pipeline.js`) to override programmatically.
 
 ## Size and performance
 

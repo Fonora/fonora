@@ -2,7 +2,8 @@ import { escapeHtml } from './utils.js';
 import { runIpaPipeline } from './ipa-pipeline.js';
 import { encodeSounds } from './encode.js';
 import { decodeSymbols } from './decode.js';
-import { pickCuratedWords, TEST_CATEGORIES, getMultilingualTestEntries } from './encoder-test-sets.js';
+import { pickCuratedWords, TEST_CATEGORIES, getMultilingualTestEntries, getEnglishDialectComparisonEntries } from './encoder-test-sets.js';
+import { ENGLISH_DIALECT_CODES } from './language-preferences.js';
 import { getDefinedSounds } from './rules.js';
 import { addGlossaryEntry } from './glossary.js';
 
@@ -70,6 +71,7 @@ function pipelineToReview(card, result, reviewData) {
     english: card.input,
     ipa: result.ipa || '',
     lang: result.lang || card.lang || 'en',
+    voice: result.voice || card.voice || '',
     normalizedPhonemes: result.normalizedPhonemes || result.normalizedSpelling || '',
     normalizedSpelling: result.normalizedSpelling || result.phonemeString || result.sounds || '',
     phoneticParse: result.phoneticParse || result.normalizedPhonemes || '',
@@ -165,7 +167,7 @@ export function exportReviewsJson() {
 export function exportReviewsCsv() {
   const reviews = loadReviews();
   const headers = [
-    'id', 'cardId', 'english', 'ipa', 'lang', 'normalizedPhonemes', 'normalizedSpelling',
+    'id', 'cardId', 'english', 'ipa', 'lang', 'voice', 'normalizedPhonemes', 'normalizedSpelling',
     'phoneticParse', 'fonoraOutput', 'encoderSource', 'testSet', 'testMode',
     'result', 'issueTags', 'notes', 'timestamp', 'rerunOf',
   ];
@@ -312,6 +314,8 @@ async function runIpaForCard(card) {
 
   return runIpaPipeline(card.input, rulesRef, {
     lang: card.lang || 'en',
+    voice: card.voice,
+    englishDialect: card.voice,
     testSet: card.testSet,
     testMode: card.testMode,
     id: card.id,
@@ -321,9 +325,13 @@ async function runIpaForCard(card) {
 
 function renderPipelineRow(result) {
   if (!result) return '';
+  const voiceRow = result.voice
+    ? `<div><dt>eSpeak Voice</dt><dd><code>${escapeHtml(result.voice)}</code></dd></div>`
+    : '';
   return `
     <dl class="encoder-pipeline encoder-pipeline--compact">
       <div><dt>Word</dt><dd><code>${escapeHtml(result.original)}</code></dd></div>
+      ${voiceRow}
       <div><dt>IPA</dt><dd><code>${escapeHtml(result.ipa || '—')}</code></dd></div>
       <div><dt>Normalized Phonemes</dt><dd><code>${escapeHtml(result.normalizedPhonemes || result.phoneticParse || result.sounds || '—')}</code></dd></div>
       <div><dt>Fonora</dt><dd><span class="symbol-text">${escapeHtml(result.symbols)}</span></dd></div>
@@ -397,6 +405,7 @@ async function renderCards() {
         <header class="encoder-card-header">
           <strong class="encoder-card-word">${escapeHtml(card.input)}</strong>
           ${card.lang ? `<span class="encoder-card-lang">${escapeHtml(card.lang)}</span>` : ''}
+          ${card.voice ? `<span class="encoder-card-voice">${escapeHtml(card.voice)}</span>` : ''}
           ${card.testSet ? `<span class="encoder-card-set">${escapeHtml(card.testSet)}</span>` : ''}
           ${result ? sourceBadge(result) : ''}
         </header>
@@ -590,6 +599,23 @@ function generateMultilingualCards() {
   populateCategoryFilter();
 }
 
+function generateEnglishDialectComparisonCards() {
+  const entries = getEnglishDialectComparisonEntries(ENGLISH_DIALECT_CODES);
+  sessionCards = entries.map(({ word, lang, voice, testSet }) => ({
+    id: `card-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    input: word,
+    lang,
+    voice,
+    testSet,
+    testMode: 'dialect-comparison',
+    rerunOf: null,
+  }));
+  sessionResults.clear();
+  sessionReviews.clear();
+  renderCards();
+  populateCategoryFilter();
+}
+
 function rerunFailedCards() {
   const failed = getFailedWordsForRerun();
   if (!failed.length) {
@@ -670,6 +696,10 @@ export function setupEncoderTesting(rules) {
   document.getElementById('encoder-generate-manual')?.addEventListener('click', generateManualCards);
   document.getElementById('encoder-generate-multilingual')?.addEventListener('click', () => {
     generateMultilingualCards();
+    populateCategoryFilter();
+  });
+  document.getElementById('encoder-generate-dialect-comparison')?.addEventListener('click', () => {
+    generateEnglishDialectComparisonCards();
     populateCategoryFilter();
   });
   document.getElementById('encoder-rerun-failed')?.addEventListener('click', rerunFailedCards);

@@ -22,6 +22,7 @@
         <div class="main-nav-primary">
           <button type="button" class="tab-btn tab-btn--active" data-tab="translator">Translator</button>
           <button type="button" class="tab-btn" data-tab="grid">Sound Grid</button>
+          <button type="button" class="tab-btn" data-tab="alphabet">Alphabet</button>
           <button type="button" class="tab-btn" data-tab="quiz">Quiz</button>
         </div>
 
@@ -78,6 +79,11 @@
               <option value="zh">Mandarin</option>
             </select>
 
+            <div id="word-translate-dialect-wrap">
+              <label for="word-translate-dialect">English dialect</label>
+              <select id="word-translate-dialect" class="text-input"></select>
+            </div>
+
             <label for="word-translate-input">Text</label>
             <input type="text" id="word-translate-input" class="text-input" placeholder="e.g. knife, hola, bonjour" autocomplete="off">
 
@@ -124,6 +130,11 @@
               <option value="ar">Arabic</option>
               <option value="zh">Mandarin</option>
             </select>
+
+            <div id="phrase-translate-dialect-wrap">
+              <label for="phrase-translate-dialect">English dialect</label>
+              <select id="phrase-translate-dialect" class="text-input"></select>
+            </div>
 
             <label for="phrase-translate-input">Text</label>
             <textarea id="phrase-translate-input" class="text-input" rows="3" placeholder="e.g. the big dog"></textarea>
@@ -208,12 +219,30 @@
     <!-- Sound Grid -->
     <section class="panel tab-panel" id="tab-grid" data-tab-panel="grid" hidden>
       <h2>Sound Grid</h2>
-      <p class="section-desc">Place × manner grid from language rules. Click a defined cell to insert its symbol combination.</p>
+      <p class="section-desc">Five places of articulation × four manners. Derived writing symbols (e.g. <span class="symbol-text">⊇</span> long vowel marker) are documented separately and do not appear here.</p>
       <div class="table-wrap table-wrap--scroll">
         <table class="sound-grid" id="sound-grid">
           <thead id="sound-grid-head"></thead>
           <tbody id="sound-grid-body"></tbody>
         </table>
+      </div>
+
+      <div id="writing-conventions-section">
+        <h3>Writing Conventions</h3>
+        <p class="section-desc">Derived symbols for readability. These are <strong>not</strong> places of articulation and are excluded from the sound grid.</p>
+        <div class="table-wrap">
+          <table class="data-table" id="writing-conventions-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Label</th>
+                <th>Expands to</th>
+                <th>Explanation</th>
+              </tr>
+            </thead>
+            <tbody id="writing-conventions-body"></tbody>
+          </table>
+        </div>
       </div>
 
       <div id="derived-sounds-section">
@@ -255,8 +284,8 @@
       </div>
 
       <div id="experimental-vowels-section" hidden>
-        <h3>Experimental Vowels <span class="draft-badge">Experimental</span></h3>
-        <p class="section-desc">Two-symbol vowels (throat + place). Long and short vowel spellings collapse to the same symbols during this readability-testing phase.</p>
+        <h3>Vowels</h3>
+        <p class="section-desc">Vowels combine a length plane (<span class="symbol-text">⊃</span> short, <span class="symbol-text">⊇</span> long) with an articulation component. Open vowels use the plane symbol alone.</p>
 
         <h4 class="examples-heading">Vowel mapping</h4>
         <div class="table-wrap">
@@ -264,25 +293,29 @@
             <thead>
               <tr>
                 <th>Symbols</th>
-                <th>Vowel</th>
+                <th>Key</th>
+                <th>Description</th>
+                <th>Recipe</th>
                 <th>IPA</th>
-                <th>Notes</th>
+                <th>≈ English</th>
               </tr>
             </thead>
             <tbody id="experimental-vowels-body"></tbody>
           </table>
         </div>
 
-        <h4 class="examples-heading">Long vowels collapsed</h4>
+        <h4 class="examples-heading">Short vs long vowels</h4>
         <div class="table-wrap">
           <table class="data-table">
             <thead>
               <tr>
-                <th>Sound</th>
-                <th>Symbols</th>
+                <th>Short word</th>
+                <th>Short spelling</th>
+                <th>Long word</th>
+                <th>Long spelling</th>
               </tr>
             </thead>
-            <tbody id="experimental-vowel-collapsed-body"></tbody>
+            <tbody id="experimental-vowel-length-body"></tbody>
           </table>
         </div>
 
@@ -383,9 +416,10 @@
       </nav>
 
       <div class="encoder-sub-tab-panel encoder-sub-tab-panel--active" data-encoder-sub-tab-panel="multilingual">
-        <p class="section-desc">Multilingual test set for validating one IPA pipeline across languages (English, Spanish, French, German, Japanese, Arabic).</p>
+        <p class="section-desc">Multilingual test set for validating one IPA pipeline across languages (English, Spanish, French, German, Japanese, Arabic). Use the dialect comparison set to compare en-us, en-gb, en-uk-rp, en-au, en-nz, and en-sc on tomato, water, car, dance, and route.</p>
         <div class="encoder-generate-row">
           <button type="button" id="encoder-generate-multilingual" class="btn btn--primary">Generate multilingual set</button>
+          <button type="button" id="encoder-generate-dialect-comparison" class="btn btn--primary">Generate English dialect comparison</button>
         </div>
       </div>
 
@@ -468,6 +502,59 @@
       </div>
 
       <div id="encoder-card-list" class="encoder-card-list"></div>
+    </section>
+
+    <!-- Alphabet Lab -->
+    <section class="panel tab-panel" id="tab-alphabet" data-tab-panel="alphabet" hidden>
+      <h2>Alphabet</h2>
+      <p class="section-desc">
+        Experiment with the <strong>9 primary symbols</strong> (5 places + 4 modifiers).
+        Derived writing symbols (e.g. <span class="symbol-text">⊇</span>) are documented in Writing Conventions, not edited here.
+        Apply to update the whole app for this browser session, or edit <code>language-rules.md</code> and reload.
+      </p>
+
+      <div id="alphabet-status" class="alphabet-status" hidden></div>
+
+      <div class="alphabet-actions button-row">
+        <button type="button" id="alphabet-apply" class="btn btn--primary">Apply to app</button>
+        <button type="button" id="alphabet-reset-draft" class="btn">Reset draft</button>
+        <button type="button" id="alphabet-clear" class="btn">Clear overrides (use markdown)</button>
+      </div>
+
+      <h3 class="examples-heading">Primary symbols</h3>
+      <div id="alphabet-primary-grid" class="alphabet-primary-grid"></div>
+
+      <div class="alphabet-preview-columns">
+        <div>
+          <h3 class="examples-heading">Sound grid preview</h3>
+          <div class="table-wrap">
+            <table class="data-table alphabet-preview-table">
+              <tbody id="alphabet-preview-grid"></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h3 class="examples-heading">Vowels preview</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Key</th><th>Symbols</th><th>Description</th><th>Recipe</th><th>≈ English</th></tr></thead>
+              <tbody id="alphabet-preview-vowels"></tbody>
+            </table>
+          </div>
+          <h3 class="examples-heading">CV examples</h3>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead><tr><th>Word</th><th>Spelling</th></tr></thead>
+              <tbody id="alphabet-preview-words"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="examples-heading">Sample encode</h3>
+      <label for="alphabet-sample-input">Phoneme string</label>
+      <input type="text" id="alphabet-sample-input" class="text-input" value="pa pe pi po pu" placeholder="pa pe pi…">
+      <div class="alphabet-sample-output symbol-text" id="alphabet-sample-output"></div>
     </section>
 
     <!-- Quiz -->

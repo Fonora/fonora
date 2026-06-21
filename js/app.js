@@ -1,23 +1,33 @@
 import {
   MODIFIER_ROW_ORDER,
-  loadRules,
+  GRID_PLACE_IDS,
+  getPrimarySymbolEntries,
+  formatVowelSoundExamples,
+} from './symbol-compose.js';
+import {
+  loadLanguageRulesFromString,
   buildKeyboardMap,
   findGridCell,
   getQuizEntries,
   reverseLookup,
 } from './rules.js';
+import { setActiveLanguageRulesBundle } from './fonora-config.js';
+import { registerIpaVowelMap, setActiveIpaVowelMap } from './ipa-normalize.js';
+import { loadAlphabetOverrides } from './alphabet-overrides.js';
+import { setupAlphabetLab } from './alphabet-lab.js';
 import { normalizeSymbolInput, decodeSymbols, decodeText } from './decode.js';
 import { encodeSounds } from './encode.js';
 import { translateIpaWord, translateIpaPhrase } from './ipa-pipeline.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
-import { loadLanguagePreference, saveLanguagePreference } from './language-preferences.js';
+import { loadLanguagePreference, loadEnglishDialectPreference, saveLanguagePreference, saveEnglishDialectPreference, ENGLISH_DIALECT_OPTIONS } from './language-preferences.js';
 import { loadGlossary, saveGlossary, migrateSampleGlossary, addGlossaryEntry, findDictionaryEntry, findDictionaryBySpelling } from './glossary.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
-import { runTests } from './tests.js';
 import { setupEncoderTesting } from './encoder-testing.js';
 
 let rules = null;
 let usingFallback = false;
+/** @type {string | null} */
+let markdownSource = null;
 const quizStats = { attempts: 0, correct: 0 };
 let currentQuiz = null;
 
@@ -55,7 +65,21 @@ function attachKeyboardShortcuts(textarea) {
 
 function showFallbackBanner() {
   const banner = document.getElementById('fallback-banner');
-  if (banner) banner.hidden = !usingFallback;
+  if (!banner) return;
+  banner.hidden = !usingFallback && !window.__fonoraAlphabetActive;
+}
+
+function updateAlphabetBanner(active) {
+  window.__fonoraAlphabetActive = active;
+  const banner = document.getElementById('fallback-banner');
+  if (!banner || usingFallback) return;
+  if (active) {
+    banner.hidden = false;
+    banner.textContent =
+      'Alphabet overrides active — language-rules.md provides defaults only; primaries come from your saved Alphabet experiment.';
+  } else {
+    banner.hidden = true;
+  }
 }
 
 function renderKeyboardSection() {
@@ -97,11 +121,13 @@ function renderSoundGrid() {
   thead.innerHTML = '';
   tbody.innerHTML = '';
 
+  const gridPlaces = rules.places.filter((p) => GRID_PLACE_IDS.includes(p.id));
+
   const headerRow = document.createElement('tr');
   headerRow.innerHTML = '<th>Manner</th>';
-  for (const place of rules.places) {
+  for (const place of gridPlaces) {
     const th = document.createElement('th');
-    th.textContent = place.label;
+    th.innerHTML = `<span class="symbol-text">${escapeHtml(place.symbol)}</span> ${escapeHtml(place.label)}`;
     headerRow.appendChild(th);
   }
   thead.appendChild(headerRow);
@@ -111,7 +137,7 @@ function renderSoundGrid() {
   for (const modId of MODIFIER_ROW_ORDER) {
     const tr = document.createElement('tr');
     tr.innerHTML = `<th>${labels[modId] || modId}</th>`;
-    for (const place of rules.places) {
+    for (const place of gridPlaces) {
       const cell = findGridCell(rules, modId, place.id);
       const td = document.createElement('td');
       if (!cell) {
@@ -161,7 +187,35 @@ function renderDerivedTable(sectionId, bodyId, entries, columns) {
   }
 }
 
+function renderWritingConventions() {
+  const section = document.getElementById('writing-conventions-section');
+  const tbody = document.getElementById('writing-conventions-body');
+  const derived = rules.derivedSymbols || [];
+  if (!section || !tbody) return;
+
+  if (!derived.length) {
+    section.hidden = true;
+    return;
+  }
+
+  section.hidden = false;
+  tbody.innerHTML = '';
+
+  for (const row of derived) {
+    const tr = document.createElement('tr');
+    tr.className = 'derived-row derived-row--defined';
+    tr.innerHTML = `
+      <td class="symbol-text">${escapeHtml(row.symbol)}</td>
+      <td>${escapeHtml(row.label)}</td>
+      <td class="symbol-text">${escapeHtml(row.expandsTo || '—')}</td>
+      <td>${escapeHtml(row.explanation)}</td>`;
+    bindInsertableRow(tr, row.symbol);
+    tbody.appendChild(tr);
+  }
+}
+
 function renderExperimentalSections() {
+  renderWritingConventions();
   renderDerivedTable('derived-sounds-section', 'derived-sounds-body', rules.specialDerivedSounds || [], (c) => [
     `<td class="symbol-text">${escapeHtml(c.symbols)}</td>`,
     `<td>${escapeHtml(c.sound)}</td>`,
@@ -180,7 +234,7 @@ function renderExperimentalSections() {
 
   const vowelSection = document.getElementById('experimental-vowels-section');
   const vowelsBody = document.getElementById('experimental-vowels-body');
-  const collapsedBody = document.getElementById('experimental-vowel-collapsed-body');
+  const lengthBody = document.getElementById('experimental-vowel-length-body');
   const examplesBody = document.getElementById('experimental-vowel-examples-body');
   const vowels = rules.experimentalVowels || [];
 
@@ -196,22 +250,29 @@ function renderExperimentalSections() {
       tr.innerHTML = `
         <td class="symbol-text">${escapeHtml(cell.symbols)}</td>
         <td>${escapeHtml(cell.vowel || cell.sound)}</td>
+        <td>${escapeHtml(cell.description || cell.explanation || '')}</td>
+        <td>${escapeHtml(cell.plane || '')} + ${escapeHtml(cell.component || '')}</td>
         <td>${escapeHtml(cell.ipa || '')}</td>
-        <td>${escapeHtml(cell.notes || cell.explanation || '')}</td>`;
+        <td>${escapeHtml(cell.approx || cell.notes || formatVowelSoundExamples(cell).join('; ') || '')}</td>`;
       bindInsertableRow(tr, cell.symbols);
       vowelsBody.appendChild(tr);
     }
 
-    if (collapsedBody) {
-      const collapsed = rules.experimentalVowelCollapsed || [];
-      collapsedBody.innerHTML = collapsed.length
-        ? collapsed
+    if (lengthBody) {
+      const pairs = rules.experimentalVowelLengthPairs || [];
+      lengthBody.innerHTML = pairs.length
+        ? pairs
             .map(
               (row) =>
-                `<tr><td>${escapeHtml(row.sound)}</td><td class="symbol-text">${escapeHtml(row.symbols)}</td></tr>`,
+                `<tr>
+                  <td>${escapeHtml(row.shortWord)}</td>
+                  <td class="symbol-text">${escapeHtml(row.shortSpelling)}</td>
+                  <td>${escapeHtml(row.longWord)}</td>
+                  <td class="symbol-text">${escapeHtml(row.longSpelling)}</td>
+                </tr>`,
             )
             .join('')
-        : '<tr><td colspan="2"><em>Long vowels map to the same symbols as short vowels.</em></td></tr>';
+        : '<tr><td colspan="4"><em>No short/long vowel pairs defined.</em></td></tr>';
     }
 
     if (examplesBody) {
@@ -258,6 +319,9 @@ function formatIpaResult(result) {
     html += '<span class="translate-badge translate-badge--encoded">IPA Pipeline</span> ';
   }
   html += `<div class="encode-step"><strong>Original Text:</strong> ${escapeHtml(result.original || '')}</div>`;
+  if (result.voice) {
+    html += `<div class="encode-step"><strong>eSpeak Voice:</strong> <code>${escapeHtml(result.voice)}</code></div>`;
+  }
   html += `<div class="encode-step"><strong>IPA Output:</strong> <code>${escapeHtml(result.ipa || '')}</code></div>`;
   html += `<div class="encode-step"><strong>Normalized Fonora Phonemes:</strong> <code>${escapeHtml(result.normalizedPhonemes || result.normalized || '')}</code></div>`;
   html += `<div class="encode-step"><strong>Decoded Back:</strong> <code>${escapeHtml(result.decoded || '')}</code></div>`;
@@ -279,7 +343,7 @@ function bindTranslateDetailsToggle(toggleEl, metaEl) {
 }
 
 function setupTranslator() {
-  const savedLang = loadLanguagePreference();
+  const savedPrefs = { lang: loadLanguagePreference(), englishDialect: loadEnglishDialectPreference() };
   let wordApplyGeneration = 0;
   let phraseApplyGeneration = 0;
 
@@ -303,9 +367,30 @@ function setupTranslator() {
   const wordActions = document.getElementById('word-translate-actions');
   const wordStatus = document.getElementById('word-translate-status');
   const wordLang = document.getElementById('word-translate-lang');
+  const wordDialectWrap = document.getElementById('word-translate-dialect-wrap');
+  const wordDialect = document.getElementById('word-translate-dialect');
   let wordDirty = false;
 
-  wordLang.value = savedLang;
+  wordLang.value = savedPrefs.lang;
+  if (wordDialect) {
+    wordDialect.innerHTML = ENGLISH_DIALECT_OPTIONS.map(
+      (opt) => `<option value="${escapeHtml(opt.code)}">${escapeHtml(opt.label)}</option>`,
+    ).join('');
+    wordDialect.value = savedPrefs.englishDialect;
+  }
+
+  function syncWordDialectVisibility() {
+    if (!wordDialectWrap) return;
+    wordDialectWrap.hidden = wordLang.value !== 'en';
+  }
+
+  function englishPipelineOptions(lang, dialectEl) {
+    if (lang !== 'en') return {};
+    const dialect = dialectEl?.value;
+    return dialect ? { englishDialect: dialect } : {};
+  }
+
+  syncWordDialectVisibility();
 
   function setWordStatus(message, isError = false) {
     if (!wordStatus) return;
@@ -353,10 +438,11 @@ function setupTranslator() {
     }
 
     const lang = wordLang.value || 'en';
+    const pipelineOptions = englishPipelineOptions(lang, wordDialect);
 
     try {
       setWordStatus('Loading IPA…');
-      const result = await translateIpaWord(english, rules, lang);
+      const result = await translateIpaWord(english, rules, lang, pipelineOptions);
 
       if (generation !== wordApplyGeneration) return;
 
@@ -386,6 +472,15 @@ function setupTranslator() {
   wordLang.addEventListener('change', () => {
     saveLanguagePreference(wordLang.value);
     phraseLang.value = wordLang.value;
+    phraseDialectWrap.hidden = phraseLang.value !== 'en';
+    syncWordDialectVisibility();
+    wordDirty = false;
+    applyWord();
+  });
+
+  wordDialect?.addEventListener('change', () => {
+    saveEnglishDialectPreference(wordDialect.value);
+    if (phraseDialect) phraseDialect.value = wordDialect.value;
     wordDirty = false;
     applyWord();
   });
@@ -420,9 +515,18 @@ function setupTranslator() {
   const phraseDetailsToggle = document.getElementById('phrase-translate-show-details');
   const phraseDecode = document.getElementById('phrase-translate-decode');
   const phraseLang = document.getElementById('phrase-translate-lang');
+  const phraseDialectWrap = document.getElementById('phrase-translate-dialect-wrap');
+  const phraseDialect = document.getElementById('phrase-translate-dialect');
   let phraseDirty = false;
 
-  phraseLang.value = savedLang;
+  phraseLang.value = savedPrefs.lang;
+  if (phraseDialect) {
+    phraseDialect.innerHTML = ENGLISH_DIALECT_OPTIONS.map(
+      (opt) => `<option value="${escapeHtml(opt.code)}">${escapeHtml(opt.label)}</option>`,
+    ).join('');
+    phraseDialect.value = savedPrefs.englishDialect;
+    phraseDialectWrap.hidden = phraseLang.value !== 'en';
+  }
 
   renderSymbolButtons(document.getElementById('phrase-translate-keyboard'), phraseOutput);
   attachKeyboardShortcuts(phraseOutput);
@@ -441,9 +545,10 @@ function setupTranslator() {
     }
 
     const lang = phraseLang.value || 'en';
+    const pipelineOptions = englishPipelineOptions(lang, phraseDialect);
 
     try {
-      const result = await translateIpaPhrase(text, rules, lang);
+      const result = await translateIpaPhrase(text, rules, lang, pipelineOptions);
 
       if (generation !== phraseApplyGeneration) return;
 
@@ -464,6 +569,15 @@ function setupTranslator() {
   phraseLang.addEventListener('change', () => {
     saveLanguagePreference(phraseLang.value);
     wordLang.value = phraseLang.value;
+    wordDialectWrap.hidden = wordLang.value !== 'en';
+    phraseDialectWrap.hidden = phraseLang.value !== 'en';
+    phraseDirty = false;
+    applyPhrase();
+  });
+
+  phraseDialect?.addEventListener('change', () => {
+    saveEnglishDialectPreference(phraseDialect.value);
+    if (wordDialect) wordDialect.value = phraseDialect.value;
     phraseDirty = false;
     applyPhrase();
   });
@@ -823,12 +937,54 @@ function setupTabs() {
   }
 }
 
+/** @type {Record<string, string>} — primary symbols from language-rules.md before overrides */
+let markdownPrimarySymbols = {};
+
 async function initApp() {
-  const loaded = await loadRules();
+  let loaded;
+  try {
+    const res = await fetch('language-rules.md');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    markdownSource = await res.text();
+    const baseBundle = loadLanguageRulesFromString(markdownSource, { primaryOverrides: {} });
+    markdownPrimarySymbols = Object.fromEntries(
+      getPrimarySymbolEntries(baseBundle.rules).map((e) => [e.id, e.symbol]),
+    );
+    loaded = loadLanguageRulesFromString(markdownSource, {
+      primaryOverrides: loadAlphabetOverrides(),
+    });
+    loaded.usingFallback = false;
+    loaded.loadError = null;
+  } catch (err) {
+    loaded = {
+      rules: null,
+      usingFallback: true,
+      loadError: err instanceof Error ? err.message : String(err),
+    };
+  }
+
+  applyRulesBundle(loaded);
+}
+
+function applyRulesBundle(loaded) {
   rules = loaded.rules;
-  usingFallback = loaded.usingFallback;
+  usingFallback = loaded.usingFallback ?? false;
+
+  if (loaded.rules) {
+    setActiveLanguageRulesBundle(loaded);
+    registerIpaVowelMap(loaded.ipaVowelMode, loaded.ipaVowelMap);
+    setActiveIpaVowelMap(loaded.ipaVowelMap);
+  } else {
+    const banner = document.getElementById('fallback-banner');
+    if (banner) {
+      banner.hidden = false;
+      banner.textContent = `Could not load language-rules.md: ${loaded.loadError || 'unknown error'}. Check that the dev server is running.`;
+    }
+    return;
+  }
 
   showFallbackBanner();
+  updateAlphabetBanner(loaded.symbolsFromOverrides);
   setupTabs();
   renderKeyboardSection();
   renderSoundGrid();
@@ -840,6 +996,16 @@ async function initApp() {
   setupEncoderTesting(rules);
   setupTranslator();
   updateDecodePanel();
+  setupAlphabetLab({
+    getRules: () => rules,
+    getMarkdownPrimarySymbols: () => markdownPrimarySymbols,
+    onApplyOverrides: (overrides) => {
+      if (!markdownSource) return;
+      const bundle = loadLanguageRulesFromString(markdownSource, { primaryOverrides: overrides });
+      applyRulesBundle(bundle);
+      updateAlphabetBanner(Object.keys(overrides).length > 0);
+    },
+  });
 
   initEspeak().then((result) => {
     if (!result.ok) {
@@ -852,9 +1018,11 @@ async function initApp() {
   });
 
   if (new URLSearchParams(window.location.search).has('test')) {
-    const { passed, total, failed } = runTests();
-    console.log(`Fonora tests: ${passed}/${total} passed`);
-    if (failed.length) console.table(failed);
+    import('./tests-core.js').then(({ runTests }) => {
+      const { passed, total, failed } = runTests({ bundle: loaded });
+      console.log(`Fonora tests: ${passed}/${total} passed`);
+      if (failed.length) console.table(failed);
+    });
   }
 }
 

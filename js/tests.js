@@ -1,9 +1,22 @@
-import { FALLBACK_RULES, parseLanguageRulesMarkdown, getEncodableEntries, getQuizEntries } from './rules.js';
-import { encodeSounds } from './encode.js';
-import { decodeSymbols, decodeText } from './decode.js';
-import { normalizeIpa } from './ipa-normalize.js';
-
-const rules = FALLBACK_RULES;
+/**
+ * Node test runner — not imported by the browser app.
+ */
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import {
+  buildSymbolRegistry,
+  validateSymbolRegistry,
+  parseLanguageRulesMarkdown,
+} from './load-language-rules.js';
+import { composeGridSymbol, applyPrimarySymbols, composeDerivedSymbol } from './symbol-compose.js';
+import { loadActiveRulesFixture, loadV1RulesFixture } from './load-rules-fixture.js';
+import { runTests } from './tests-core.js';
+import {
+  resolveEspeakVoice,
+  DEFAULT_ENGLISH_VOICE,
+  ENGLISH_DIALECT_CODES,
+} from './language-preferences.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -18,156 +31,61 @@ function test(name, fn) {
   }
 }
 
-function enc(sounds) {
-  return encodeSounds(sounds, rules);
-}
+const mdPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'language-rules.md');
+const markdown = readFileSync(mdPath, 'utf8');
 
-export function runTests() {
-  const results = [];
-  const t = (name, fn) => results.push(test(name, fn));
+const parserResult = test('parseLanguageRulesMarkdown builds composed registry', () => {
+  const rules = parseLanguageRulesMarkdown(markdown);
+  applyPrimarySymbols(rules);
+  const registry = buildSymbolRegistry(rules);
+  validateSymbolRegistry(registry, rules);
+  assert(rules.experimentalVowels.length === 10);
+  assert(rules.config.fonora_version === 'v2');
+  assert(rules.ipaVowelMap.æ === 'e');
+  assert(rules.ipaVowelMap['ɑː'] === 'ō');
+  const lips = registry.places.lips;
+  assert(rules.soundGrid.find((c) => c.sound === 'p').symbols === lips);
+  assert(registry.vowels.u === `${registry.places.throat}${lips}`);
+});
 
-  // Vowel symbols (2-symbol only)
-  t('a → ⊐⊐', () => assert(enc('a').symbols === '⊐⊐'));
-  t('e → ⊐∩', () => assert(enc('e').symbols === '⊐∩'));
-  t('i → ⊐⌒', () => assert(enc('i').symbols === '⊐⌒'));
-  t('o → ⊐∪', () => assert(enc('o').symbols === '⊐∪'));
-  t('u → ⊐○', () => assert(enc('u').symbols === '⊐○'));
-  t('no 3-symbol vowel encodings', () => {
-    assert(!rules.experimentalVowels.some((v) => /^⌔⊐/.test(v.symbols)));
-    assert(enc('pa').symbols === '○⊐⊐');
-  });
+const composeResult = test('composeGridSymbol matches sound grid', () => {
+  const rules = parseLanguageRulesMarkdown(markdown);
+  applyPrimarySymbols(rules);
+  const cell = rules.soundGrid.find((c) => c.modifierId === 'voice' && c.placeId === 'lips');
+  assert(cell.symbols === composeGridSymbol('voice', 'lips', rules.places, rules.modifiers));
+});
 
-  // CV examples
-  t('pa', () => assert(enc('pa').symbols === '○⊐⊐'));
-  t('pe', () => assert(enc('pe').symbols === '○⊐∩'));
-  t('pi', () => assert(enc('pi').symbols === '○⊐⌒'));
-  t('po', () => assert(enc('po').symbols === '○⊐∪'));
-  t('pu', () => assert(enc('pu').symbols === '○⊐○'));
+const derivedResult = test('derived sounds use composition not stale symbols', () => {
+  const rules = parseLanguageRulesMarkdown(markdown);
+  applyPrimarySymbols(rules);
+  const th = rules.specialDerivedSounds.find((d) => d.sound === 'th');
+  const z = rules.specialDerivedSounds.find((d) => d.sound === 'z');
+  assert(th.composition === 'reverse_front_tongue_friction');
+  assert(th.symbols === composeDerivedSymbol('reverse_front_tongue_friction', rules.places, rules.modifiers));
+  assert(z.composition === 'reverse_friction_voice');
+  assert(z.symbols === composeDerivedSymbol('reverse_friction_voice', rules.places, rules.modifiers));
+});
 
-  // Derived consonants
-  t('v → ○⌔', () => assert(enc('v').symbols === '○⌔'));
-  t('th → ∩⌕', () => assert(enc('th').symbols === '∩⌕'));
-  t('dh → ∩⌔', () => assert(enc('dh').symbols === '∩⌔'));
-  t('decode ○⊐⊐ → pa', () => assert(decodeSymbols('○⊐⊐', rules).pronunciation === 'pa'));
-  t('decode ⊐⊐ → a', () => assert(decodeSymbols('⊐⊐', rules).pronunciation === 'a'));
-  t('decode ○⌔ → v', () => assert(decodeSymbols('○⌔', rules).pronunciation === 'v'));
-  t('plain ⊐ is undefined', () => {
-    const r = decodeSymbols('⊐', rules);
-    assert(r.pronunciation === '?');
-    assert(r.warnings.some((w) => w.includes('undefined')));
-  });
-  t('ʔ is not encodable', () => assert(enc('ʔ').symbols === '?'));
-  t('plain ⊐ not in quiz', () => assert(!getQuizEntries(rules).some((c) => c.symbols === '⊐')));
-  t('quiz includes all encodable sounds', () => {
-    const encodable = getEncodableEntries(rules).filter((c) => c.sound && c.sound !== '?');
-    const quizSounds = new Set(getQuizEntries(rules).map((c) => c.sound));
-    for (const cell of encodable) {
-      assert(quizSounds.has(cell.sound), `missing sound ${cell.sound} (${cell.symbols})`);
-    }
-    assert(quizSounds.size === encodable.length);
-  });
-  t('quiz includes all vowels', () => {
-    for (const v of ['a', 'e', 'i', 'o', 'u']) {
-      const entry = getQuizEntries(rules).find((c) => c.sound === v);
-      assert(entry, `missing vowel ${v}`);
-      assert(/^⊐/.test(entry.symbols), `${v} symbols should start with ⊐`);
-    }
-  });
-  t('vowel quiz decode answer', () => {
-    const a = getQuizEntries(rules).find((c) => c.sound === 'a');
-    assert(decodeSymbols(a.symbols, rules).pronunciation === 'a');
-  });
-  t('vowel quiz construct answer', () => {
-    const e = getQuizEntries(rules).find((c) => c.sound === 'e');
-    assert(enc('e').symbols === e.symbols);
-  });
-  t('no 3-symbol vowel decode', () => {
-    const r = decodeSymbols('⌔⊐⊐', rules);
-    assert(r.pronunciation !== 'ā');
-  });
+const voiceResult = test('resolveEspeakVoice defaults and dialect overrides', () => {
+  assert(resolveEspeakVoice('en') === DEFAULT_ENGLISH_VOICE);
+  assert(resolveEspeakVoice('en', {}) === DEFAULT_ENGLISH_VOICE);
+  assert(resolveEspeakVoice('en', { englishDialect: 'en-gb' }) === 'en-gb');
+  assert(resolveEspeakVoice('en', { voice: 'en-au' }) === 'en-au');
+  assert(resolveEspeakVoice('es') === 'es');
+  assert(resolveEspeakVoice('en', { englishDialect: 'not-a-voice' }) === DEFAULT_ENGLISH_VOICE);
+  assert(ENGLISH_DIALECT_CODES.includes('en-uk-rp'));
+  assert(ENGLISH_DIALECT_CODES.includes('en-sc'));
+});
 
-  t('decode preserves word spaces', () => {
-    const symbols = `${enc('pa').symbols} ${enc('pe').symbols}`;
-    assert(decodeText(symbols, rules).pronunciation.includes(' '));
-  });
-  t('normalize collapses symbol spaces', () => assert(decodeSymbols('⌔ ○', rules).pronunciation === 'b'));
+const { passed, total, failed } = runTests({
+  bundle: loadActiveRulesFixture(),
+  v1Bundle: loadV1RulesFixture(),
+});
 
-  // IPA normalization (no WASM required)
-  t('IPA knife → n a i f', () => {
-    const n = normalizeIpa('naɪf');
-    assert(n.phonemeString === 'naif');
-    assert(n.display === 'n a i f');
-    assert(n.unmapped.length === 0);
-  });
-  t('IPA island strips stress', () => {
-    const n = normalizeIpa('ˈaɪlənd');
-    assert(n.phonemes.join('') === 'ailend');
-  });
-  t('IPA ŋ → ng', () => {
-    const n = normalizeIpa('sɪŋ');
-    assert(n.phonemeString.includes('ng'));
-  });
-  t('IPA θ → th', () => {
-    const n = normalizeIpa('θɪn');
-    assert(n.phonemeString.startsWith('th'));
-  });
-  t('IPA vowel collapse ɪ → i', () => {
-    const n = normalizeIpa('sɪt');
-    assert(n.phonemeString === 'sit');
-  });
-  t('IPA unknown phoneme → ?', () => {
-    const n = normalizeIpa('ʈ');
-    assert(n.phonemeString === '?');
-    assert(n.unmapped.includes('ʈ'));
-  });
-  t('IPA script g (U+0261) → g', () => {
-    const n = normalizeIpa('dˈɑːɡ');
-    assert(n.phonemeString === 'dag');
-    assert(n.unmapped.length === 0);
-  });
-  t('IPA rhotic schwa ɚ → er', () => {
-    const n = normalizeIpa('bˈʌɾɚ');
-    assert(n.phonemeString === 'barer');
-    assert(n.unmapped.length === 0);
-  });
-  t('IPA strips combining tilde and maps nasal vowel', () => {
-    const n = normalizeIpa('bɔ̃ʒˈuʁ');
-    assert(n.phonemeString === 'bojur');
-    assert(n.unmapped.length === 0);
-  });
-  t('IPA encode naif round-trip', () => {
-    const n = normalizeIpa('naɪf');
-    const encoded = enc(n.phonemeString);
-    assert(encoded.symbols.length > 0);
-    assert(!encoded.symbols.includes('?'));
-  });
+const allFailed = [...failed, ...(parserResult.ok ? [] : [parserResult]), ...(composeResult.ok ? [] : [composeResult]), ...(derivedResult.ok ? [] : [derivedResult]), ...(voiceResult.ok ? [] : [voiceResult])];
+const allPassed = passed + (parserResult.ok ? 1 : 0) + (composeResult.ok ? 1 : 0) + (derivedResult.ok ? 1 : 0) + (voiceResult.ok ? 1 : 0);
+const allTotal = total + 4;
 
-  const passed = results.filter((r) => r.ok).length;
-  const failed = results.filter((r) => !r.ok);
-  return { passed, total: results.length, failed, results };
-}
-
-if (typeof process !== 'undefined' && process.argv?.[1]?.endsWith('tests.js')) {
-  const { readFileSync } = await import('node:fs');
-  const { fileURLToPath } = await import('node:url');
-  const { dirname, join } = await import('node:path');
-
-  const { passed, total, failed } = runTests();
-
-  const parserResult = test('parser loads collapsed vowels from MD', () => {
-    const mdPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'language-rules.md');
-    const parsed = parseLanguageRulesMarkdown(readFileSync(mdPath, 'utf8'));
-    assert(parsed.experimentalVowels.length === 5);
-    assert(parsed.experimentalVowels.every((v) => v.symbols.length === 2));
-    assert(parsed.experimentalVowelCollapsed.length === 5);
-    assert(parsed.experimentalVowelExamples.some((e) => e.word === 'pay' && e.spelling === '○⊐⊐'));
-  });
-
-  const allFailed = [...failed, ...(parserResult.ok ? [] : [parserResult])];
-  const allPassed = passed + (parserResult.ok ? 1 : 0);
-  const allTotal = total + 1;
-
-  for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
-  console.log(`${allPassed}/${allTotal} tests passed`);
-  process.exit(allFailed.length ? 1 : 0);
-}
+for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
+console.log(`${allPassed}/${allTotal} tests passed`);
+process.exit(allFailed.length ? 1 : 0);

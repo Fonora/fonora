@@ -3,6 +3,8 @@ import { normalizeIpa } from './ipa-normalize.js';
 import { ipaPhonemesToFonora } from './ipa-to-fonora.js';
 import { findDictionaryEntry } from './glossary.js';
 import { decodeSymbols } from './decode.js';
+import { resolvePipelineOptions, getActiveLanguageRulesBundle } from './fonora-config.js';
+import { resolveEspeakVoice } from './language-preferences.js';
 
 function resolveSource(encoded, unmapped, primarySource) {
   const hasFallback = encoded.symbols.includes('?') || encoded.warnings.length > 0 || unmapped.length > 0;
@@ -17,11 +19,13 @@ export async function runIpaPipeline(input, rules, options = {}) {
   const trimmed = input.trim();
   if (!trimmed) return null;
 
-  const lang = options.lang || 'en';
-  const id = options.id || `card-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const testSet = options.testSet || '';
-  const testMode = options.testMode || 'manual';
-  const rerunOf = options.rerunOf || null;
+  const pipelineOptions = resolvePipelineOptions(options);
+  const lang = pipelineOptions.lang || 'en';
+  const voice = resolveEspeakVoice(lang, pipelineOptions);
+  const id = pipelineOptions.id || `card-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  const testSet = pipelineOptions.testSet || '';
+  const testMode = pipelineOptions.testMode || 'manual';
+  const rerunOf = pipelineOptions.rerunOf || null;
 
   const dictMatch = findDictionaryEntry(trimmed);
   if (dictMatch) {
@@ -36,6 +40,7 @@ export async function runIpaPipeline(input, rules, options = {}) {
       rerunOf,
       original: trimmed,
       lang,
+      voice: null,
       ipa: dictMatch.pronunciation,
       normalizedPhonemes: dictMatch.pronunciation.split('').join(' '),
       phonemeString: dictMatch.pronunciation,
@@ -53,8 +58,12 @@ export async function runIpaPipeline(input, rules, options = {}) {
     };
   }
 
-  const ipa = await textToIpa(trimmed, lang);
-  const normalized = normalizeIpa(ipa);
+  const ipa = await textToIpa(trimmed, lang, pipelineOptions);
+  const activeBundle = getActiveLanguageRulesBundle();
+  const normalized = normalizeIpa(ipa, {
+    vowelMode: pipelineOptions.vowelMode,
+    vowelMap: pipelineOptions.vowelMap ?? activeBundle?.ipaVowelMap,
+  });
   const fonora = ipaPhonemesToFonora(normalized.phonemeString, rules);
   const { source, hasFallback, primarySource } = resolveSource(fonora, normalized.unmapped, 'ipa');
 
@@ -66,6 +75,7 @@ export async function runIpaPipeline(input, rules, options = {}) {
     rerunOf,
     original: trimmed,
     lang,
+    voice,
     ipa,
     normalizedPhonemes: normalized.display,
     phonemeString: normalized.phonemeString,
@@ -86,18 +96,21 @@ export async function runIpaPipeline(input, rules, options = {}) {
 /**
  * Translate a phrase word-by-word through the IPA pipeline.
  */
-export async function translateIpaPhrase(text, rules, lang = 'en') {
+export async function translateIpaPhrase(text, rules, lang = 'en', pipelineOptions = {}) {
   const words = text.trim().split(/\s+/).filter(Boolean);
   if (!words.length) return null;
 
   const wordResults = [];
   for (const word of words) {
-    wordResults.push(await runIpaPipeline(word, rules, { lang, testMode: 'phrase' }));
+    wordResults.push(await runIpaPipeline(word, rules, { lang, testMode: 'phrase', ...pipelineOptions }));
   }
+
+  const voice = resolveEspeakVoice(lang, pipelineOptions);
 
   return {
     original: text,
     lang,
+    voice,
     ipa: wordResults.map((r) => r.ipa).join(' '),
     normalizedPhonemes: wordResults.map((r) => r.normalizedPhonemes).join(' '),
     phonemeString: wordResults.map((r) => r.phonemeString).join(' '),
@@ -110,8 +123,8 @@ export async function translateIpaPhrase(text, rules, lang = 'en') {
   };
 }
 
-export async function translateIpaWord(word, rules, lang = 'en') {
-  const result = await runIpaPipeline(word, rules, { lang, testMode: 'word' });
+export async function translateIpaWord(word, rules, lang = 'en', pipelineOptions = {}) {
+  const result = await runIpaPipeline(word, rules, { lang, testMode: 'word', ...pipelineOptions });
   if (!result) return null;
   return {
     ...result,

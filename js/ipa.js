@@ -1,8 +1,8 @@
 import ESpeakNg from '../vendor/espeak-ng/espeak-ng.js';
-import { voiceForLang } from './language-preferences.js';
+import { DEFAULT_ENGLISH_VOICE, resolveEspeakVoice } from './language-preferences.js';
 
 export const SUPPORTED_LANGUAGES = {
-  en: 'en-us',
+  en: DEFAULT_ENGLISH_VOICE,
   es: 'es',
   fr: 'fr-fr',
   de: 'de',
@@ -64,12 +64,14 @@ export async function initEspeak() {
  * Canonical pronunciation source: text → raw IPA string.
  * @param {string} text
  * @param {string} lang - UI language code (en, es, fr, de, ja, ar, zh)
+ * @param {{ voice?: string, englishDialect?: string } | string} [options] - voice override or options bag
  */
-export async function textToIpa(text, lang = 'en') {
+export async function textToIpa(text, lang = 'en', options = {}) {
   const trimmed = text.trim();
   if (!trimmed) return '';
 
-  const voice = SUPPORTED_LANGUAGES[lang] || voiceForLang(lang) || 'en-us';
+  const opts = typeof options === 'string' ? { voice: options } : options;
+  const voice = resolveEspeakVoice(lang, opts);
   const raw = await runEspeak(trimmed, voice);
   return stripIpaDecorations(raw.replace(/\s+/g, ' '));
 }

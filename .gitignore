@@ -16,3 +16,6 @@ Thumbs.db
 *.log
 .env
 .env.*
+
+# Generated test reports
+reports/

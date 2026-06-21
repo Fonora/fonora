@@ -28,6 +28,11 @@ export const TEST_CATEGORIES = [
     words: ['a', 'e', 'i', 'o', 'u'],
   },
   {
+    id: 'vowel-length-english',
+    label: 'Vowel length (English IPA)',
+    words: ['bit', 'beat', 'pull', 'pool', 'met', 'mate', 'hop', 'hope', 'cap', 'cape'],
+  },
+  {
     id: 'cv-syllables',
     label: 'Consonant + vowel syllables',
     words: CV_SYLLABLES,
@@ -101,7 +106,7 @@ export const TEST_CATEGORIES = [
   },
   {
     id: 'ch-and-z-words',
-    label: 'ch → c and z → s',
+    label: 'ch → c and z derived sound',
     words: ['chat', 'chip', 'change', 'church', 'ship', 'zoo', 'zero', 'zip', 'lazy', 'amazing'],
   },
   {
@@ -116,6 +121,11 @@ export const TEST_CATEGORIES = [
     id: 'known-problem-words',
     label: 'Known problem words',
     words: ['hello', 'hell', 'shell', 'thin', 'this', 'thing', 'that', 'change', 'cheese', 'judge', 'king', 'sink', 'know', 'write', 'phone', 'enough', 'laugh', 'light', 'night'],
+  },
+  {
+    id: 'english-dialect-comparison',
+    label: 'English dialect comparison',
+    words: ['tomato', 'water', 'car', 'dance', 'route'],
   },
 ];
 
@@ -176,6 +186,25 @@ export function getMultilingualTestEntries() {
     lang: entry.lang,
     testSet: `${entry.category} (${entry.lang})`,
   }));
+}
+
+/** Words with well-known dialect-specific pronunciations. */
+export const ENGLISH_DIALECT_COMPARISON_WORDS = ['tomato', 'water', 'car', 'dance', 'route'];
+
+/**
+ * Build test entries for each word × English dialect voice.
+ * @param {string[]} dialects - eSpeak voice codes (e.g. en-us, en-gb)
+ * @returns {{ word: string, lang: string, voice: string, testSet: string }[]}
+ */
+export function getEnglishDialectComparisonEntries(dialects) {
+  return ENGLISH_DIALECT_COMPARISON_WORDS.flatMap((word) =>
+    dialects.map((voice) => ({
+      word,
+      lang: 'en',
+      voice,
+      testSet: `English dialect (${voice})`,
+    })),
+  );
 }
 
 export function getCategoryById(id) {

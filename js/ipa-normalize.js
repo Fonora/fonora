@@ -1,7 +1,12 @@
+/**
+ * IPA → Fonora phoneme normalization.
+ * Vowel maps are loaded from language-rules.md at runtime (see setActiveIpaVowelMap).
+ */
+
 const IPA_MULTIGRAPHS = [
   'tʃ', 'dʒ', 'ʈʃ', 'ts', 'dz', 'pf', 'kx',
   'aɪ', 'aʊ', 'eɪ', 'oʊ', 'ɔɪ', 'əʊ', 'ɪə', 'eə', 'ʊə',
-  'iː', 'uː', 'oː', 'aː', 'eː', 'ɑː', 'ɔː', 'ɜː', 'yː',
+  'iː', 'uː', 'oː', 'aː', 'eː', 'ɑː', 'ɔː', 'ɜː', 'yː', 'ɛː', 'æː',
 ];
 
 const CONSONANT_MAP = {
@@ -52,68 +57,61 @@ const CONSONANT_MAP = {
   ʔ: '?',
 };
 
-const VOWEL_MAP = {
-  a: 'a',
-  ɑ: 'a',
-  æ: 'a',
-  ɐ: 'a',
-  e: 'e',
-  ɛ: 'e',
-  ə: 'e',
-  ɜ: 'e',
-  ʌ: 'a',
-  ɔ: 'o',
-  ɒ: 'o',
-  ø: 'o',
-  œ: 'o',
-  o: 'o',
-  i: 'i',
-  ɪ: 'i',
-  y: 'i',
-  u: 'u',
-  ʊ: 'u',
-  ɯ: 'u',
-  ɨ: 'i',
-  ʉ: 'u',
-  ɚ: ['e', 'r'],
-  aɪ: ['a', 'i'],
-  aʊ: ['a', 'u'],
-  eɪ: ['e', 'i'],
-  oʊ: ['o', 'u'],
-  əʊ: ['o', 'u'],
-  ɔɪ: ['o', 'i'],
-  ɪə: ['i', 'e'],
-  eə: ['e', 'e'],
-  ʊə: ['u', 'e'],
-  iː: 'i',
-  uː: 'u',
-  oː: 'o',
-  aː: 'a',
-  eː: 'e',
-  ɑː: 'a',
-  ɔː: 'o',
-  ɜː: 'e',
-  yː: 'i',
-};
+/** @type {Record<string, Record<string, string | string[]>>} */
+const vowelMapsByMode = {};
 
-const STRIP_CHARS = /[ˈˌːˑ\.˞ˤ˥˦˧˨˥˩ⁿʰʲʷ\u0303\u031E\u032A\u1D5D-]/g;
+/** @type {Record<string, string | string[]>} */
+let activeVowelMap = {};
+
+/**
+ * Register IPA vowel maps derived from markdown (keyed by ipa_vowel_mode).
+ * @param {string} mode
+ * @param {Record<string, string | string[]>} map
+ */
+export function registerIpaVowelMap(mode, map) {
+  vowelMapsByMode[mode] = map;
+}
+
+/**
+ * Set the active vowel map used when vowelMode is omitted.
+ * @param {Record<string, string | string[]>} map
+ */
+export function setActiveIpaVowelMap(map) {
+  activeVowelMap = map || {};
+}
+
+/**
+ * Build a vowel map object from parsed language rules.
+ * @param {import('./load-language-rules.js').parseLanguageRulesMarkdown extends (...args: any) => infer R ? R : never} rules
+ */
+export function buildVowelMapFromRules(rules) {
+  return rules.ipaVowelMap || {};
+}
+
+function resolveVowelMap(options = {}) {
+  if (options.vowelMap) return options.vowelMap;
+  const mode = options.vowelMode;
+  if (mode && vowelMapsByMode[mode]) return vowelMapsByMode[mode];
+  if (Object.keys(activeVowelMap).length) return activeVowelMap;
+  return {};
+}
+
+const STRIP_CHARS = /[ˈˌˑ\.˞ˤ˥˦˧˨˥˩ⁿʰʲʷ\u0303\u031E\u032A\u1D5D-]/g;
 
 function stripStressAndMarks(ipa) {
   return ipa.replace(STRIP_CHARS, '').replace(/\d/g, '');
 }
 
-function sortedMultigraphs() {
-  const keys = new Set([...Object.keys(CONSONANT_MAP), ...Object.keys(VOWEL_MAP), ...IPA_MULTIGRAPHS]);
+function sortedMultigraphs(vowelMap) {
+  const keys = new Set([...Object.keys(CONSONANT_MAP), ...Object.keys(vowelMap), ...IPA_MULTIGRAPHS]);
   return [...keys].sort((a, b) => b.length - a.length);
 }
 
-const MULTIGRAPHS = sortedMultigraphs();
-
-function mapToken(token) {
+function mapToken(token, vowelMap) {
   if (!token) return { phonemes: [], unmapped: [] };
   if (CONSONANT_MAP[token]) return { phonemes: [CONSONANT_MAP[token]], unmapped: [] };
-  if (VOWEL_MAP[token]) {
-    const mapped = VOWEL_MAP[token];
+  if (vowelMap[token]) {
+    const mapped = vowelMap[token];
     return {
       phonemes: Array.isArray(mapped) ? mapped : [mapped],
       unmapped: [],
@@ -124,8 +122,12 @@ function mapToken(token) {
 
 /**
  * Convert raw IPA into Fonora-reduced phoneme inventory.
+ * @param {string} rawIpa
+ * @param {{ vowelMode?: string, vowelMap?: Record<string, string | string[]> }} [options]
  */
-export function normalizeIpa(rawIpa) {
+export function normalizeIpa(rawIpa, options = {}) {
+  const vowelMap = resolveVowelMap(options);
+  const multigraphs = sortedMultigraphs(vowelMap);
   const cleaned = stripStressAndMarks(String(rawIpa || '').trim());
   const phonemes = [];
   const unmapped = [];
@@ -140,9 +142,9 @@ export function normalizeIpa(rawIpa) {
     }
 
     let matched = false;
-    for (const graph of MULTIGRAPHS) {
+    for (const graph of multigraphs) {
       if (cleaned.slice(i, i + graph.length) !== graph) continue;
-      const result = mapToken(graph);
+      const result = mapToken(graph, vowelMap);
       phonemes.push(...result.phonemes);
       if (result.unmapped.length) {
         unmapped.push(...result.unmapped);
@@ -156,7 +158,7 @@ export function normalizeIpa(rawIpa) {
     if (matched) continue;
 
     const single = cleaned[i];
-    const result = mapToken(single);
+    const result = mapToken(single, vowelMap);
     phonemes.push(...result.phonemes);
     if (result.unmapped.length) {
       unmapped.push(single);

@@ -8,7 +8,9 @@
   "scripts": {
     "postinstall": "node scripts/copy-espeak.js",
     "start": "node server.js",
-    "test": "node js/tests.js"
+    "test": "node js/tests.js",
+    "test:vowels": "node scripts/vowel-readability-report.js",
+    "test:v2-collisions": "node scripts/vowel-v2-collision-report.js"
   },
   "dependencies": {
     "espeak-ng": "^1.0.2"
