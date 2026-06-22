@@ -15,6 +15,8 @@ import {
   summarizeValidationResults,
 } from './pronunciation-validation.js';
 import { V2_COLLISION_GROUPS } from './vowel-v2-collision-groups.js';
+import { containsDoubleVowelMarker, validateVowelSymbolString } from './vowel-grammar.js';
+import { VOWEL_ARCHITECTURE_WORDS } from './vowel-architecture-set.js';
 import { ASCII_EQUALS } from './load-language-rules.js';
 
 function assert(cond, msg) {
@@ -53,6 +55,8 @@ export function runTests(options) {
   const lips = registry.places.lips;
   const voice = registry.modifiers.voice;
   const friction = registry.modifiers.friction;
+  const nasal = registry.modifiers.nasal;
+  const glide = registry.modifiers.glide;
   const throat = registry.places.throat;
   const vowelMarker = registry.modifiers.vowel;
   const front = registry.places.frontTongue;
@@ -71,8 +75,18 @@ export function runTests(options) {
     assert(registry.places.frontTongue === '∩');
     assert(throat === '⊃');
     assert(vowelMarker === '⚬');
-    assert(Object.keys(registry.vowels).length >= 13);
+    assert(Object.keys(registry.vowels).length === 12);
+    assert(!registry.vowels.oo);
     assert(rules.places.length === 5);
+    assert(v2Bundle.fonoraVersion === 'v3');
+  });
+
+  t('v3 vowel inventory conforms to grammar', () => {
+    for (const [key, sym] of Object.entries(registry.vowels)) {
+      const result = validateVowelSymbolString(sym);
+      assert(result.ok, `${key} "${sym}": ${result.reason}`);
+      assert(!containsDoubleVowelMarker(sym), `${key} must not contain ⚬⚬`);
+    }
   });
 
   t('sound grid composed from primaries (5 places only)', () => {
@@ -86,22 +100,21 @@ export function runTests(options) {
   t('core vowels composed from recipes', () => {
     assert(registry.vowels.ee === `${vowelMarker}${front}`);
     assert(registry.vowels.i === `${vowelMarker}${middle}`);
-    assert(registry.vowels.e === `${vowelMarker}${vowelMarker}${front}`);
-    assert(registry.vowels.ae === `${vowelMarker}${vowelMarker}${middle}`);
+    assert(registry.vowels.e === `${vowelMarker}${voice}`);
+    assert(registry.vowels.ae === `${vowelMarker}${friction}`);
     assert(registry.vowels.a === `${vowelMarker}${throat}`);
-    assert(registry.vowels.o === `${vowelMarker}${vowelMarker}${back}`);
-    assert(registry.vowels.oh === `${vowelMarker}${back}`);
+    assert(registry.vowels.o === `${vowelMarker}${back}`);
+    assert(registry.vowels.oh === `${vowelMarker}${nasal}`);
     assert(registry.vowels.u === `${vowelMarker}${lips}`);
-    assert(registry.vowels.oo === `${vowelMarker}${vowelMarker}${lips}`);
   });
 
   t('composite vowels composed from recipes', () => {
-    const glide = registry.modifiers.glide;
-    assert(registry.vowels.eye === `${vowelMarker}${vowelMarker}${back}${glide}${front}`);
-    assert(registry.vowels.ow === `${vowelMarker}${vowelMarker}${back}${glide}${lips}`);
-    assert(registry.vowels.oy === `${vowelMarker}${vowelMarker}${back}${glide}${middle}`);
-    assert(registry.vowels.ay === `${vowelMarker}${vowelMarker}${front}${glide}${front}`);
+    assert(registry.vowels.eye === `${vowelMarker}${throat}${glide}${front}`);
+    assert(registry.vowels.ow === `${vowelMarker}${throat}${glide}${lips}`);
+    assert(registry.vowels.oy === `${vowelMarker}${back}${glide}${front}`);
+    assert(registry.vowels.ay === `${vowelMarker}${voice}${glide}${front}`);
     assert(registry.vowels.eye !== registry.vowels.oy);
+    assert(registry.vowels.oy !== `${vowelMarker}${back}${glide}${middle}`);
   });
 
   t('primary symbol swap recomposes vowel recipes', () => {
@@ -109,7 +122,6 @@ export function runTests(options) {
     trial.places.find((p) => p.id === 'lips').symbol = '◆';
     applyPrimarySymbols(trial);
     assert(trial.vowels.find((v) => v.key === 'u').symbols === `${vowelMarker}◆`);
-    assert(trial.vowels.find((v) => v.key === 'oo').symbols === `${vowelMarker}${vowelMarker}◆`);
   });
 
   t('no ASCII = in inventory', () => {
@@ -157,7 +169,6 @@ export function runTests(options) {
   t('vowel length pairs produce distinct spellings', () => {
     const pairs = [
       ['pi', 'pee', `${lips}${vowelSym(rules, 'i')}`, `${lips}${vowelSym(rules, 'ee')}`],
-      ['pu', 'poo', `${lips}${vowelSym(rules, 'u')}`, `${lips}${vowelSym(rules, 'oo')}`],
     ];
     for (const [shortWord, longWord, shortSym, longSym] of pairs) {
       assert(enc(shortWord, rules).symbols === shortSym, `${shortWord} expected ${shortSym}`);
@@ -187,11 +198,11 @@ export function runTests(options) {
 
   t('z round-trip encoding and decoding', () => {
     const zSym = rules.specialDerivedSounds.find((d) => d.sound === 'z').symbols;
-    for (const word of ['z', 'zoo', 'buzz']) {
-      const encoded = enc(word, rules);
-      assert(encoded.symbols.includes(zSym), `${word} should contain z symbols`);
-      const decoded = decodeSymbols(encoded.symbols, rules);
-      assert(decoded.pronunciation === word, `${word} round-trip expected ${word}, got ${decoded.pronunciation}`);
+    for (const [phonemes, expectedKeys] of [['z', 'z'], ['z u', 'z u'], ['b a z', 'b a z']]) {
+      const encoded = ipaPhonemesToFonora(phonemes, rules);
+      assert(encoded.symbols.includes(zSym), `${phonemes} should contain z symbols`);
+      const decoded = decodeToPhonemeKeys(encoded.symbols, rules);
+      assert(decoded.phonemeKeys === expectedKeys, `${phonemes} round-trip expected "${expectedKeys}", got "${decoded.phonemeKeys}"`);
     }
   });
 
@@ -253,7 +264,8 @@ export function runTests(options) {
     assert(keys.includes('ae'));
     assert(keys.includes('oh'));
     assert(keys.includes('eye'));
-    assert(keys.length === 13);
+    assert(!keys.includes('oo'));
+    assert(keys.length === 12);
   });
 
   t('quiz uses markdown-derived encodable entries', () => {
@@ -267,19 +279,30 @@ export function runTests(options) {
     assert(decodeSymbols(`${voice} ${lips}`, rules).pronunciation === 'b');
   });
 
-  t('normalize preserves spaces between defined phoneme symbol groups', () => {
-    const spaced = ipaPhonemesToFonora('bor', rules).symbols;
-    assert(normalizeSymbolInput(spaced, rules) === spaced);
-    assert(decodeToPhonemeKeys(normalizeSymbolInput(spaced, rules), rules).phonemeKeys === 'b o r');
+  t('ipaPhonemesToFonora outputs contiguous symbols without phoneme spaces', () => {
+    const result = ipaPhonemesToFonora('bor', rules);
+    assert(!result.symbols.includes(' '), 'symbols must not contain phoneme boundary spaces');
+    assert(decodeToPhonemeKeys(result.symbols, rules).phonemeKeys === 'b o r');
   });
 
-  t('collision audit: o+r vs oy is boundary-dependent not display-only', () => {
+  t('decode accepts optional manual spaces between phoneme groups', () => {
+    const contiguous = ipaPhonemesToFonora('bor', rules).symbols;
+    const bSym = enc('b', rules).symbols;
+    const oSym = vowelSym(rules, 'o');
+    const rSym = enc('r', rules).symbols;
+    const spaced = `${bSym} ${oSym} ${rSym}`;
+    assert(normalizeSymbolInput(spaced, rules) === spaced);
+    assert(decodeToPhonemeKeys(normalizeSymbolInput(spaced, rules), rules).phonemeKeys === 'b o r');
+    assert(contiguous.replace(/\s+/g, '') === spaced.replace(/\s+/g, ''));
+  });
+
+  t('v3: o+r and oy produce distinct unspaced symbol strings', () => {
     const barLike = ipaPhonemesToFonora('bor', rules);
     const boyLike = ipaPhonemesToFonora('boy', rules);
     assert(barLike.decoded === 'b o r');
     assert(boyLike.decoded === 'b oy');
-    assert(barLike.symbols.replace(/\s+/g, '') === boyLike.symbols.replace(/\s+/g, ''));
-    assert(decodeToPhonemeKeys(barLike.symbols.replace(/\s+/g, ''), rules).phonemeKeys === 'b oy');
+    assert(barLike.symbols.replace(/\s+/g, '') !== boyLike.symbols.replace(/\s+/g, ''));
+    assert(decodeToPhonemeKeys(barLike.symbols.replace(/\s+/g, ''), rules).phonemeKeys === 'b o r');
   });
 
   t('collision audit: th+t and t+s share symbols (sequence collision)', () => {
@@ -294,10 +317,39 @@ export function runTests(options) {
     assert(!n.phonemeString.includes('ee'));
   });
 
-  t('IPA length marks map to long vowel phonemes', () => {
+  t('IPA length marks map to vowel phonemes', () => {
     assert(normalizeIpa('iː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'ee');
-    assert(normalizeIpa('uː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'oo');
+    assert(normalizeIpa('uː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'u');
     assert(normalizeIpa('eː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'e');
+  });
+
+  t('vowel architecture word set uses v3 symbols only', () => {
+    const ipaFixtures = {
+      cat: 'kæt',
+      bed: 'bɛd',
+      sit: 'sɪt',
+      see: 'siː',
+      cup: 'kʌp',
+      father: 'fɑːðɚ',
+      go: 'ɡoʊ',
+      book: 'bʊk',
+      boot: 'buːt',
+      pie: 'paɪ',
+      now: 'naʊ',
+      boy: 'bɔɪ',
+      say: 'seɪ',
+    };
+    for (const word of VOWEL_ARCHITECTURE_WORDS) {
+      const ipa = ipaFixtures[word];
+      assert(ipa, `missing IPA fixture for ${word}`);
+      const encoded = encodeFromIpa(ipa, v2Bundle);
+      assert(!containsDoubleVowelMarker(encoded.symbols), `${word} must not contain ⚬⚬`);
+      for (const sym of Object.values(registry.vowels)) {
+        if (!encoded.symbols.includes(sym)) continue;
+        const result = validateVowelSymbolString(sym);
+        assert(result.ok, `${word} vowel ${sym}: ${result.reason}`);
+      }
+    }
   });
 
   t('cat/cot/cut distinguish via markdown IPA map', () => {
@@ -336,9 +388,11 @@ export function runTests(options) {
     assert(normalizeIpaForComparison(recoveredIpa) === normalizeIpaForComparison('bɔɪ'));
   });
 
-  t('pronunciation validation: detectCollisionWarnings for o+r sequence', () => {
-    const warnings = detectCollisionWarnings('b o r', rules);
-    assert(warnings.some((w) => w.label.includes('o + r')));
+  t('pronunciation validation: detectCollisionWarnings for vowel+glide sequences', () => {
+    const oPlusR = detectCollisionWarnings('b o r', rules);
+    assert(!oPlusR.some((w) => w.label.includes('o + r')), 'v3 o+r must not collide with oy');
+    const oPlusY = detectCollisionWarnings('b o y', rules);
+    assert(oPlusY.some((w) => w.label.includes('o + y')));
   });
 
   t('pronunciation validation: summarizeValidationResults', () => {

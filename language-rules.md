@@ -4,8 +4,8 @@
 
 | key | value |
 | --- | ----- |
-| fonora_version | v2 |
-| ipa_vowel_mode | v2 |
+| fonora_version | v3 |
+| ipa_vowel_mode | v3 |
 
 ## Places of Articulation
 
@@ -25,11 +25,11 @@ The **4 manner modifiers** plus the **vowel indicator** (keyboard **0**).
 
 | id | symbol | key_number | key_letter | label | explanation |
 | --- | --- | ---: | --- | --- | --- |
-| vowel | ⚬ | 0 | 0 | Vowel | Vowel indicator; prefixes vowel spellings |
+| vowel | ⚬ | 0 | 0 | Vowel | Vowel indicator; prefixes all vowel spellings |
 | voice | ⌇ | 6 | b | Voice | Adds voicing to a place sound |
 | friction | ⌀ | 7 | d | Friction | Adds friction/fricative quality |
 | nasal | ⏌ | 8 | j | Nasal | Adds nasal airflow |
-| glide | ⌣ | 9 | g | Glide / Liquid | Creates glide or liquid sounds |
+| glide | ⌣ | 9 | g | Glide / Liquid | Glide in diphthongs; liquid consonants in grid |
 
 ## Sound Grid
 
@@ -65,32 +65,36 @@ Symbols are **composed** from Places + Modifiers at load time (`modifier + place
 
 ## Vowels
 
-Vowels are **composed** from recipe tokens at load time. Token `vowel` = **⚬**; repeat `vowel` for **⚬⚬**. Places and `glide` use primary symbols.
+Vowels use a fixed **v3 grammar** (no double-vowel marker):
+
+* **Simple vowel:** `⚬X` — exactly 2 symbols (`X` = vowel class: place or manner glyph)
+* **Diphthong:** `⚬X⌣Y` — exactly 4 symbols (`⌣` = glide; `Y` = destination articulation place)
+
+Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction`, `nasal`) compose `X`; `glide` → **⌣**; trailing place id → `Y`.
 
 **Mapping rule:** IPA tokens in each table are authoritative. English words in *Example* are teaching aids only.
 
-### Core Vowels
+### Simple Vowels (⚬X)
 
 | key | recipe | ipa | lexical_set | example |
 | --- | --- | --- | --- | --- |
-| ee | vowel, front_tongue | iː, i | FLEECE | see |
+| ee | vowel, front_tongue | i, iː | FLEECE | see |
 | i | vowel, middle_tongue | ɪ | KIT | sit |
-| e | vowel, vowel, front_tongue | ɛ, e, eː, ɜ, ɜː | DRESS | bed |
-| ae | vowel, vowel, middle_tongue | æ | TRAP | cat |
-| a | vowel, throat | ʌ, ə, ɐ | CUP | cup |
-| o | vowel, vowel, back_tongue | ɑ, ɒ, ɔ, ɑː, ɔː | LOT / THOUGHT | father |
-| oh | vowel, back_tongue | o, oː | GOAT | go |
-| u | vowel, lips | ʊ | FOOT | book |
-| oo | vowel, vowel, lips | uː, u, ʉ, ɯ | GOOSE | boot |
+| e | vowel, voice | ɛ, e, eː | DRESS / FACE base | bed |
+| a | vowel, throat | ʌ, ə, ɐ, a | CUP / schwa / open | cup |
+| ae | vowel, friction | æ | TRAP | cat |
+| o | vowel, back_tongue | ɑ, ɒ, ɔ, ɑː, ɔː | LOT / THOUGHT | father |
+| oh | vowel, nasal | o, oː, oʊ, əʊ | GOAT | go |
+| u | vowel, lips | ʊ, u, uː, ʉ, ɯ | FOOT / GOOSE | book / boot |
 
-### Derived / Composite Vowels
+### Diphthongs (⚬X⌣Y)
 
 | key | recipe | ipa | lexical_set | example |
 | --- | --- | --- | --- | --- |
-| eye | vowel, vowel, back_tongue, glide, front_tongue | aɪ | PRICE | pie |
-| ow | vowel, vowel, back_tongue, glide, lips | aʊ, əʊ, oʊ | MOUTH / GOAT diphthong | now |
-| oy | vowel, vowel, back_tongue, glide, middle_tongue | ɔɪ | CHOICE | boy |
-| ay | vowel, vowel, front_tongue, glide, front_tongue | eɪ | FACE | say |
+| eye | vowel, throat, glide, front_tongue | aɪ | PRICE | pie |
+| ow | vowel, throat, glide, lips | aʊ | MOUTH | now |
+| oy | vowel, back_tongue, glide, front_tongue | ɔɪ | CHOICE | boy |
+| ay | vowel, voice, glide, front_tongue | eɪ | FACE | say |
 
 Phoneme keys (`ee`, `i`, `ae`, …) are encoder identifiers. Sound Grid and Alphabet UIs are generated from these tables at load time.
 
@@ -114,7 +118,7 @@ Non-grid orderings composed from primary symbols at load time (reversed `place +
 ## Notes
 
 * **Symbol core:** 5 places + 4 manner modifiers + **⚬** vowel indicator (keyboard 0).
+* **V3 vowel grammar:** simple = 2 symbols; diphthong = 4 symbols. The legacy double-vowel marker **⚬⚬** is not used.
 * **language-rules.md** supplies structure and default symbols; Alphabet tab overrides replace primaries for browser testing.
 * Sound grid, vowels, derived sounds, and CV examples recompose from active primaries on load.
-* **Homograph note:** composite **oy** uses glide → middle (`⚬⚬∪⌣◠`) to stay distinct from **eye** (`⚬⚬∪⌣∩`) until a dedicated base is finalized.
 * Do not use ASCII `=` (U+003D) as a symbol.

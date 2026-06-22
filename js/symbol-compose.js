@@ -55,7 +55,7 @@ const VOWEL_RECIPE_PARTS = {
 };
 
 /**
- * @param {string} recipe — comma-separated tokens (e.g. `vowel, vowel, front_tongue`)
+ * @param {string} recipe — comma-separated tokens (e.g. `vowel, throat, glide, front_tongue`)
  */
 export function composeVowelFromRecipe(recipe, places, modifiers) {
   if (!recipe) return '';
@@ -205,13 +205,11 @@ const CV_EXAMPLE_WORDS = [
   { word: 'pie', vowel: 'eye' },
   { word: 'pay', vowel: 'ay' },
   { word: 'poe', vowel: 'oh' },
-  { word: 'poo', vowel: 'oo' },
+  { word: 'poo', vowel: 'u' },
 ];
 
 const VOWEL_LENGTH_PAIRS = [
   { short: 'i', long: 'ee', demoShort: 'pi', demoLong: 'pee' },
-  { short: 'u', long: 'oo', demoShort: 'pu', demoLong: 'poo' },
-  { short: 'ae', long: 'e', demoShort: 'bat', demoLong: 'bed' },
 ];
 
 export function composeVowelLengthPairs(rules) {

@@ -9,6 +9,10 @@ import {
   speakOriginal,
   speakFonoraReadback,
 } from './pronunciation-validation.js';
+import {
+  validateVowelArchitectureSet,
+  summarizeVowelArchitectureRows,
+} from './vowel-architecture-validation.js';
 
 let rulesRef = null;
 let bundleRef = null;
@@ -253,6 +257,67 @@ async function runBatchValidation() {
   if (status) status.hidden = true;
 }
 
+function renderVowelArchitectureSummary(summary) {
+  const el = document.getElementById('pv-vowel-architecture-summary');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="encoder-stat"><span class="encoder-stat-label">Words tested</span><span class="encoder-stat-value">${summary.wordsTested}</span></div>
+    <div class="encoder-stat"><span class="encoder-stat-label">Grammar pass</span><span class="encoder-stat-value encoder-stat-value--ok">${summary.grammarPass}</span></div>
+    <div class="encoder-stat"><span class="encoder-stat-label">⚬⚬ hits</span><span class="encoder-stat-value encoder-stat-value--bad">${summary.doubleVowelHits}</span></div>
+    <div class="encoder-stat"><span class="encoder-stat-label">Errors</span><span class="encoder-stat-value encoder-stat-value--warn">${summary.errors}</span></div>
+  `;
+}
+
+function renderVowelArchitectureTable(rows) {
+  const el = document.getElementById('pv-vowel-architecture-table');
+  if (!el) return;
+
+  if (!rows?.length) {
+    el.innerHTML = '<p class="pv-empty">Run the vowel architecture test to see results.</p>';
+    return;
+  }
+
+  const body = rows.map((r) => {
+    if (r.error) {
+      return `<tr class="pv-row--error"><td>${escapeHtml(r.word)}</td><td colspan="5"><span class="warning-item">${escapeHtml(r.error)}</span></td></tr>`;
+    }
+    const rowClass = r.grammarOk && !r.hasDoubleVowel ? 'pv-row--match' : 'pv-row--mismatch';
+    return `<tr class="${rowClass}">
+      <td>${escapeHtml(r.word)}</td>
+      <td><code>${escapeHtml(r.ipa || '—')}</code></td>
+      <td><code>${escapeHtml(r.phonemes || '—')}</code></td>
+      <td><span class="symbol-text">${escapeHtml(r.symbols || '—')}</span></td>
+      <td><code>${escapeHtml(r.decoded || '—')}</code></td>
+      <td>${r.grammarOk && !r.hasDoubleVowel ? matchBadge(true) : matchBadge(false)}</td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="table-wrap">
+      <table class="data-table pv-batch-table">
+        <thead><tr><th>Word</th><th>IPA</th><th>Phonemes</th><th>Fonora symbols</th><th>Decoded</th><th>Grammar</th></tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+    </div>`;
+}
+
+async function runVowelArchitectureValidation() {
+  const status = document.getElementById('pv-vowel-architecture-status');
+  if (status) {
+    status.hidden = false;
+    status.textContent = 'Running vowel architecture test…';
+  }
+
+  try {
+    const rows = await validateVowelArchitectureSet(rulesRef, bundleRef, getValidationOptions());
+    renderVowelArchitectureSummary(summarizeVowelArchitectureRows(rows));
+    renderVowelArchitectureTable(rows);
+    if (status) status.hidden = true;
+  } catch (err) {
+    if (status) status.textContent = err.message || String(err);
+  }
+}
+
 function populateDialectSelect() {
   const sel = document.getElementById('pv-dialect');
   if (!sel) return;
@@ -284,6 +349,14 @@ export function setupPronunciationValidation(rules) {
   renderSingleResult(null);
   renderBatchTable([]);
 
+  renderVowelArchitectureSummary({
+    wordsTested: 0,
+    grammarPass: 0,
+    doubleVowelHits: 0,
+    errors: 0,
+  });
+  renderVowelArchitectureTable([]);
+
   document.getElementById('pv-validate-single')?.addEventListener('click', () => {
     const word = document.getElementById('pv-single-input')?.value.trim();
     if (word) runSingleValidation(word);
@@ -303,4 +376,6 @@ export function setupPronunciationValidation(rules) {
     const ta = document.getElementById('pv-batch-input');
     if (ta) ta.value = DEFAULT_VALIDATION_WORDS.join('\n');
   });
+
+  document.getElementById('pv-run-vowel-architecture')?.addEventListener('click', runVowelArchitectureValidation);
 }

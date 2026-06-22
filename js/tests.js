@@ -40,10 +40,11 @@ const parserResult = test('parseLanguageRulesMarkdown builds composed registry',
   applyPrimarySymbols(rules);
   const registry = buildSymbolRegistry(rules);
   validateSymbolRegistry(registry, rules);
-  assert(getVowelEntries(rules).length === 13);
-  assert(rules.config.fonora_version === 'v2');
+  assert(getVowelEntries(rules).length === 12);
+  assert(rules.config.fonora_version === 'v3');
   assert(rules.ipaVowelMap.æ === 'ae');
   assert(rules.ipaVowelMap['ɑː'] === 'o');
+  assert(rules.ipaVowelMap['uː'] === 'u');
   const lips = registry.places.lips;
   assert(rules.soundGrid.find((c) => c.sound === 'p').symbols === lips);
   assert(registry.vowels.u === `${registry.modifiers.vowel}${lips}`);

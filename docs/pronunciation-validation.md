@@ -67,6 +67,14 @@ Paste one word per line (default list includes bar/boy/bor minimal pairs, vowel 
 
 Summary statistics: words tested, exact IPA matches, mismatches, collision warnings, recovery success rate.
 
+### V3 vowel architecture validation
+
+Dedicated test set (`cat`, `bed`, `sit`, `see`, `cup`, `father`, `go`, `book`, `boot`, `pie`, `now`, `boy`, `say`) runs through the same pipeline and displays:
+
+| Word | IPA | Phonemes | Fonora symbols | Decoded | Grammar |
+
+Grammar pass requires every vowel chunk to match v3 shape (`⚬X` or `⚬X⌣Y`) and forbids the legacy `⚬⚬` marker. Logic lives in `js/vowel-architecture-validation.js` and `js/vowel-grammar.js`.
+
 ### Mismatch investigation
 
 When IPA or phoneme keys mismatch, the UI shows:
@@ -75,13 +83,13 @@ When IPA or phoneme keys mismatch, the UI shows:
 - Original symbols
 - Decoder path (`symbol→key (ipa) · …`)
 - Pipeline decoded keys
-- Collision warnings when source keys contain known concatenation patterns (e.g. `o + r ↔ oy`)
+- Collision warnings when source keys contain known concatenation patterns (e.g. `o + y ↔ oy`)
 
 ## Collision audit integration
 
 Warnings reuse `findConcatenationCollisions()` from `js/collision-audit.js`. If source phoneme keys contain a sequence that participates in a known collision class, an informational warning is shown — for example:
 
-> Contains known vowel+glide collision pattern (o + r ↔ oy)
+> Contains known vowel+glide collision pattern (o + y ↔ oy)
 
 This does not block validation; it helps diagnose symbol-system ambiguity.
 
@@ -89,6 +97,8 @@ This does not block validation; it helps diagnose symbol-system ambiguity.
 
 | File | Role |
 |------|------|
+| `js/vowel-grammar.js` | V3 vowel symbol grammar validation |
+| `js/vowel-architecture-validation.js` | Dedicated v3 vowel word-set validation |
 | `js/pronunciation-validation.js` | Core validation logic (browser + Node) |
 | `js/pronunciation-validation-ui.js` | Tab UI wiring |
 | `scripts/pronunciation-validation-report.js` | CLI batch report |

@@ -5,6 +5,7 @@
 
 import { getVowelEntries, vowelPhonemeKey } from './vowel-display.js';
 import { applyPrimarySymbols, getPrimaryInventory } from './symbol-compose.js';
+import { assertVowelInventoryGrammar, containsDoubleVowelMarker } from './vowel-grammar.js';
 
 const ASCII_EQUALS = '=';
 const FULLWIDTH_EQUALS = '＝';
@@ -248,7 +249,9 @@ function parseVowelsSection(body) {
     const sectionBody = nl === -1 ? '' : part.slice(nl + 1);
     if (
       title.includes('core vowel') ||
+      title.includes('simple vowel') ||
       title.includes('composite vowel') ||
+      title.includes('diphthong') ||
       title.includes('derived / composite')
     ) {
       rows.push(...rowsToObjects(parseTableRows(sectionBody.split('\n'))));
@@ -385,6 +388,17 @@ export function validateSymbolRegistry(registry, rules, options = {}) {
   for (const sym of registry.allSymbols) {
     if (sym === ASCII_EQUALS) {
       errors.push(`ASCII equals in inventory symbol set`);
+    }
+    if (containsDoubleVowelMarker(sym)) {
+      errors.push(`Legacy double-vowel marker ⚬⚬ in symbol "${sym}"`);
+    }
+  }
+
+  if ((rules.config?.fonora_version || '') === 'v3') {
+    try {
+      assertVowelInventoryGrammar(getVowelEntries(rules));
+    } catch (err) {
+      errors.push(err.message.replace(/^V3 vowel grammar violations:\n/, ''));
     }
   }
 

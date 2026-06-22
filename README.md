@@ -103,6 +103,6 @@ Or open the app with `?test` in the URL to log test results in the browser conso
 ## Rule sections loaded from Markdown
 
 - Places (5), Modifiers (vowel indicator ⚬ + 4 manners), Sound Grid
-- Vowels (recipe-composed from ⚬, places, glide — core + composite)
+- Vowels (v3 grammar: simple `⚬X`, diphthong `⚬X⌣Y` — recipe-composed from ⚬, places, manner glyphs, glide)
 - Derived / Reserved Sounds (`th`, `dh`, `v`, `z` defined)
 - IPA Supplemental Mappings (diphthongs and rhotic schwa)

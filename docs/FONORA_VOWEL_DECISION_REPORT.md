@@ -1,5 +1,7 @@
 # Fonora Vowel-System Decision Report
 
+> **Superseded by v3 vowel architecture** (see `language-rules.md`, `fonora_version: v3`). This report analyzed the retired v2 double-vowel system (`⚬⚬`). Retained for historical context only.
+
 **Status:** Decision document only — no language redesign, no code changes, no `language-rules.md` edits yet.
 
 **Date:** 2026-06-22  

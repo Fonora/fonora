@@ -6,7 +6,7 @@ import { decodeToPhonemeKeys } from './decode.js';
  */
 export function ipaPhonemesToFonora(phonemeString, rules) {
   const encoded = encodeSounds(phonemeString, rules);
-  const symbols = encoded.groups.map((g) => g.symbols).join(' ');
+  const symbols = encoded.symbols;
   const roundTrip = decodeToPhonemeKeys(symbols, rules);
   return {
     ...encoded,

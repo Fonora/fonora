@@ -286,7 +286,7 @@ async function ensureCardResult(card) {
 async function runIpaForCard(card) {
   if (card.testMode === 'random') {
     const encoded = encodeSounds(card.input, rulesRef);
-    const symbols = encoded.groups.map((g) => g.symbols).join(' ');
+    const symbols = encoded.symbols;
     const recovered = decodeToPhonemeKeys(symbols, rulesRef);
     const hasFallback = encoded.symbols.includes('?') || encoded.warnings.length > 0;
     return {
