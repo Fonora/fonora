@@ -2,7 +2,7 @@
 
 > **Post-cleanup addendum (June 2026)** — UI and pipeline changes after this audit:
 >
-> - **Rules version:** v3 (`fonora_version: v3`, vowel grammar `⚬X` / `⚬X⌣Y`); v2 double-vowel `⚬⚬` retired.
+> - **Rules version:** v3 (`fonora_version: v3`, vowel grammar `⚬X` / `⚬XᵔY`); v2 double-vowel `⚬⚬` retired.
 > - **Removed UI:** Mini Dictionary, Decode panel, separate Keyboard Mapping tab. Keyboard mapping merged into **Keyboard** page.
 > - **Removed pipeline feature:** Glossary / dictionary bypass (`glossary.js` deleted); all words use eSpeak IPA.
 > - **Tests:** `npm test` now **46/46** assertions (was 37/37 at audit time).
@@ -100,7 +100,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 
 | Markdown concept | Runtime | Status |
 | --- | --- | --- |
-| 5 places (∋ ∩ ◠ ∪ ⊃) | Composed into grid | ✓ |
+| 5 places (∋ ∩ ⌓ ∪ ⊃) | Composed into grid | ✓ |
 | 4 manner modifiers + vowel ⚬ | Composed into grid | ✓ |
 | Sound grid (plain + 4 manners × 5 places) | `composeGridSymbol()` | ✓ |
 | 13 vowel keys with recipes | `composeVowelFromRecipe()` | ✓ |

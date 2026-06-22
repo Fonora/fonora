@@ -1,16 +1,16 @@
 /**
  * V3 vowel symbol grammar — enforced at encode/decode validation time.
  * Simple vowel: ⚬X (2 symbols)
- * Diphthong: ⚬X⌣Y (4 symbols)
+ * Diphthong: ⚬XᵔY (4 symbols)
  */
 
 export const DOUBLE_VOWEL_MARKER = '⚬⚬';
 
-/** Vowel-class glyphs allowed as X in ⚬X or ⚬X⌣Y */
-export const VOWEL_CLASS_GLYPHS = new Set(['∋', '∩', '◠', '∪', '⊃', '⌇', '⌀', '⏌']);
+/** Vowel-class glyphs allowed as X in ⚬X or ⚬XᵔY */
+export const VOWEL_CLASS_GLYPHS = new Set(['∋', '∩', '⌓', '∪', '⊃', '⌇', '⌀', '⏌']);
 
-/** Destination places allowed as Y in ⚬X⌣Y */
-export const DIPHTHONG_DESTINATION_GLYPHS = new Set(['∋', '∩', '◠', '∪', '⊃']);
+/** Destination places allowed as Y in ⚬XᵔY */
+export const DIPHTHONG_DESTINATION_GLYPHS = new Set(['∋', '∩', '⌓', '∪', '⊃']);
 
 export function containsDoubleVowelMarker(text) {
   return String(text || '').includes(DOUBLE_VOWEL_MARKER);
@@ -35,13 +35,13 @@ export function validateVowelSymbolString(symbols) {
     return { ok: true, kind: 'simple' };
   }
 
-  if (rest.length === 3 && rest[1] === '⌣' && VOWEL_CLASS_GLYPHS.has(rest[0]) && DIPHTHONG_DESTINATION_GLYPHS.has(rest[2])) {
+  if (rest.length === 3 && rest[1] === 'ᵔ' && VOWEL_CLASS_GLYPHS.has(rest[0]) && DIPHTHONG_DESTINATION_GLYPHS.has(rest[2])) {
     return { ok: true, kind: 'diphthong' };
   }
 
   return {
     ok: false,
-    reason: `invalid v3 vowel shape (len ${rest.length + 1}): expected ⚬X (2) or ⚬X⌣Y (4)`,
+    reason: `invalid v3 vowel shape (len ${rest.length + 1}): expected ⚬X (2) or ⚬XᵔY (4)`,
   };
 }
 

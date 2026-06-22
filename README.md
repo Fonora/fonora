@@ -18,7 +18,7 @@ flowchart LR
   Fonora --> Decode[decode.js]
 ```
 
-Rules version: **v3** (`language-rules.md` — vowel grammar `⚬X`, diphthong `⚬X⌣Y`).
+Rules version: **v3** (`language-rules.md` — vowel grammar `⚬X`, diphthong `⚬XᵔY`).
 
 ## What it does
 
@@ -127,7 +127,7 @@ See [docs/pronunciation-validation.md](docs/pronunciation-validation.md) for val
 ## Rule sections loaded from Markdown
 
 - Places (5), Modifiers (vowel indicator ⚬ + 4 manners), Sound Grid
-- Vowels (v3 grammar: simple `⚬X`, diphthong `⚬X⌣Y`)
+- Vowels (v3 grammar: simple `⚬X`, diphthong `⚬XᵔY`)
 - Derived / Reserved Sounds (`th`, `dh`, `v`, `z` defined)
 - IPA Supplemental Mappings (diphthongs and rhotic schwa)
 

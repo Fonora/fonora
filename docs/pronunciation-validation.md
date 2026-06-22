@@ -73,7 +73,7 @@ Dedicated test set (`cat`, `bed`, `sit`, `see`, `cup`, `father`, `go`, `book`, `
 
 | Word | IPA | Phonemes | Fonora symbols | Decoded | Grammar |
 
-Grammar pass requires every vowel chunk to match v3 shape (`⚬X` or `⚬X⌣Y`) and forbids the legacy `⚬⚬` marker. Logic lives in `js/vowel-architecture-validation.js` and `js/vowel-grammar.js`.
+Grammar pass requires every vowel chunk to match v3 shape (`⚬X` or `⚬XᵔY`) and forbids the legacy `⚬⚬` marker. Logic lives in `js/vowel-architecture-validation.js` and `js/vowel-grammar.js`.
 
 ### Mismatch investigation
 

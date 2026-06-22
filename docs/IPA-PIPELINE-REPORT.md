@@ -42,7 +42,7 @@ See [espeak-integration.md](espeak-integration.md) for setup and voice codes.
 Vowels use recipe-composed symbols from `language-rules.md`:
 
 - Simple vowels: `⚬X` (vowel indicator + place or manner glyph)
-- Diphthongs: `⚬X⌣Y` (includes glide modifier `⌣`)
+- Diphthongs: `⚬XᵔY` (includes glide modifier `ᵔ`)
 
 The legacy v2 double-vowel marker `⚬⚬` is retired. See [FONORA_VOWEL_DECISION_REPORT.md](FONORA_VOWEL_DECISION_REPORT.md) for historical v2 analysis only.
 

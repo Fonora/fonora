@@ -78,8 +78,8 @@ export const TEST_CATEGORIES = [
     words: ['king', 'sink', 'ring', 'sing', 'long', 'song', 'think', 'bank', 'tank', 'pink'],
   },
   {
-    id: 'glide-liquid-words',
-    label: 'Glide/liquid words',
+    id: 'glide-words',
+    label: 'Glide words',
     words: ['way', 'we', 'you', 'yes', 'law', 'low', 'lay', 'ray', 'row', 'real', 'wheel', 'year'],
   },
   {

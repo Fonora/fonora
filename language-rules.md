@@ -15,7 +15,7 @@ The **5 primary places** — edit symbols here; the sound grid and vowels recomp
 | --- | --- | ---: | --- | --- | --- | --- |
 | lips | ∋ | 1 | p | Lips | p | Lips/front-most articulation |
 | front_tongue | ∩ | 2 | t | Front Tongue | t | Front tongue/alveolar or dental articulation |
-| middle_tongue | ◠ | 3 | c | Middle Tongue | c | Middle tongue/palatal or post-alveolar articulation |
+| middle_tongue | ⌓ | 3 | c | Middle Tongue | c | Middle tongue/palatal or post-alveolar articulation |
 | back_tongue | ∪ | 4 | k | Back Tongue | k | Back tongue/velar articulation |
 | throat | ⊃ | 5 | h | Throat | h | Throat/glottal articulation |
 
@@ -29,7 +29,7 @@ The **4 manner modifiers** plus the **vowel indicator** (keyboard **0**).
 | voice | ⌇ | 6 | b | Voice | Adds voicing to a place sound |
 | friction | ⌀ | 7 | d | Friction | Adds friction/fricative quality |
 | nasal | ⏌ | 8 | j | Nasal | Adds nasal airflow |
-| glide | ⌣ | 9 | g | Glide / Liquid | Glide in diphthongs; liquid consonants in grid |
+| glide | ᵔ | 9 | g | Glide | Transition between vowel positions; used in diphthongs and grid glide consonants |
 
 ## Sound Grid
 
@@ -68,9 +68,9 @@ Symbols are **composed** from Places + Modifiers at load time (`modifier + place
 Vowels use a fixed **v3 grammar** (no double-vowel marker):
 
 * **Simple vowel:** `⚬X` — exactly 2 symbols (`X` = vowel class: place or manner glyph)
-* **Diphthong:** `⚬X⌣Y` — exactly 4 symbols (`⌣` = glide; `Y` = destination articulation place)
+* **Diphthong:** `⚬XᵔY` — exactly 4 symbols (`ᵔ` = glide; `Y` = destination articulation place)
 
-Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction`, `nasal`) compose `X`; `glide` → **⌣**; trailing place id → `Y`.
+Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction`, `nasal`) compose `X`; `glide` → **ᵔ**; trailing place id → `Y`.
 
 **Mapping rule:** IPA tokens in each table are authoritative. English words in *Example* are teaching aids only.
 
@@ -87,7 +87,7 @@ Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction
 | oh | vowel, nasal | o, oː, oʊ, əʊ | GOAT | go |
 | u | vowel, lips | ʊ, u, uː, ʉ, ɯ | FOOT / GOOSE | book / boot |
 
-### Diphthongs (⚬X⌣Y)
+### Diphthongs (⚬XᵔY)
 
 | key | recipe | ipa | lexical_set | example |
 | --- | --- | --- | --- | --- |

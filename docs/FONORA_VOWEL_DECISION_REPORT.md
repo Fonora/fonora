@@ -25,18 +25,18 @@ Current tests mostly verify **cross-key** distinctions (TRAP vs LOT vs STRUT →
 | Key | Recipe | Symbol | Lexical set (rules) | IPA tokens | Example (rules) |
 | --- | --- | --- | --- | --- | --- |
 | ee | vowel, front_tongue | ⚬∩ | FLEECE | i, iː | see |
-| i | vowel, middle_tongue | ⚬◠ | KIT | ɪ | sit |
+| i | vowel, middle_tongue | ⚬⌓ | KIT | ɪ | sit |
 | **e** | vowel, vowel, front_tongue | ⚬⚬∩ | DRESS | ɛ, e, eː, **ɜ, ɜː** | bed |
-| ae | vowel, vowel, middle_tongue | ⚬⚬◠ | TRAP | æ | cat |
+| ae | vowel, vowel, middle_tongue | ⚬⚬⌓ | TRAP | æ | cat |
 | **a** | vowel, throat | ⚬⊃ | CUP | **ʌ, ə, ɐ** | cup |
 | **o** | vowel, vowel, back_tongue | ⚬⚬∪ | LOT / THOUGHT | **ɑ, ɒ, ɔ, ɑː, ɔː** | father |
 | oh | vowel, back_tongue | ⚬∪ | GOAT | o, oː | go |
 | u | vowel, lips | ⚬∋ | FOOT | ʊ | book |
 | oo | vowel, vowel, lips | ⚬⚬∋ | GOOSE | u, uː, ʉ, ɯ | boot |
-| eye | vowel, vowel, back_tongue, glide, front_tongue | ⚬⚬∪⌣∩ | PRICE | aɪ | pie |
-| **ow** | vowel, vowel, back_tongue, glide, lips | ⚬⚬∪⌣∋ | MOUTH / GOAT diphthong | **aʊ, əʊ, oʊ** | now |
-| oy | vowel, vowel, back_tongue, glide, middle_tongue | ⚬⚬∪⌣◠ | CHOICE | ɔɪ | boy |
-| ay | vowel, vowel, front_tongue, glide, front_tongue | ⚬⚬∩⌣∩ | FACE | eɪ | say |
+| eye | vowel, vowel, back_tongue, glide, front_tongue | ⚬⚬∪ᵔ∩ | PRICE | aɪ | pie |
+| **ow** | vowel, vowel, back_tongue, glide, lips | ⚬⚬∪ᵔ∋ | MOUTH / GOAT diphthong | **aʊ, əʊ, oʊ** | now |
+| oy | vowel, vowel, back_tongue, glide, middle_tongue | ⚬⚬∪ᵔ⌓ | CHOICE | ɔɪ | boy |
+| ay | vowel, vowel, front_tongue, glide, front_tongue | ⚬⚬∩ᵔ∩ | FACE | eɪ | say |
 
 **Supplemental (not a vowel key):** `ɚ` → phoneme sequence `a` + `r` (splits rhotic schwa across STRUT-family vowel + /r/).
 
@@ -212,10 +212,10 @@ Cross-key contrasts preserved: TRAP `ae` vs `o` (*cat*/*cot*), STRUT `a` vs `o` 
 | --- | --- | --- | --- |
 | **hot** | hˈɑːt | h **o** t | ⊃ ⚬⚬∪ ∩ |
 | **caught** | kˈɔːt | k **o** t | ∪ ⚬⚬∪ ∩ |
-| **father** | fˈɑːðɚ | f **o** dh a r | ⌀∋ ⚬⚬∪ ∩⌇ ⚬⊃ ⌣◠ |
-| **car** | kˈɑːɹ | k **o** r | ∪ ⚬⚬∪ ⌣◠ |
+| **father** | fˈɑːðɚ | f **o** dh a r | ⌀∋ ⚬⚬∪ ∩⌇ ⚬⊃ ᵔ⌓ |
+| **car** | kˈɑːɹ | k **o** r | ∪ ⚬⚬∪ ᵔ⌓ |
 | cot | kˈɑːt | k **o** t | ∪ ⚬⚬∪ ∩ |
-| core | kˈoːɹ | k **oh** r | ∪ ⚬∪ ⌣◠ |
+| core | kˈoːɹ | k **oh** r | ∪ ⚬∪ ᵔ⌓ |
 | saw | sˈɔː | s **o** | ⌀∩ ⚬⚬∪ |
 
 **hot**, **caught**, **father**, and **car** all use ⚬⚬∪ — identical vowel symbol regardless of THOUGHT vs PALM class.
@@ -274,20 +274,20 @@ Rules lexical_set explicitly names **both**: MOUTH / GOAT diphthong.
 
 | Contrast | Families | Fonora result |
 | --- | --- | --- |
-| MOUTH vs GOAT diphthong | aʊ vs oʊ | Same key `ow`, symbol ⚬⚬∪⌣∋ |
+| MOUTH vs GOAT diphthong | aʊ vs oʊ | Same key `ow`, symbol ⚬⚬∪ᵔ∋ |
 | GOAT monophthong vs diphthong | `oh` vs `ow` | **Distinct keys** — *core* uses `oh`, *go* uses `ow` |
 
 ### 4. Real word examples (en-us pipeline)
 
 | Word | eSpeak IPA | Fonora keys | Fonora symbols |
 | --- | --- | --- | --- |
-| **now** | nˈaʊ | n **ow** | ⏌∩ ⚬⚬∪⌣∋ |
-| **go** | ɡˈoʊ | g **ow** | ⌇∪ ⚬⚬∪⌣∋ |
-| hello | həlˈoʊ | h a l **ow** | ⊃ ⚬⊃ ⌣∪ ⚬⚬∪⌣∋ |
-| sofa | sˈoʊfə | s **ow** f a | ⌀∩ ⚬⚬∪⌣∋ ⚬⊃ |
-| core | kˈoːɹ | k **oh** r | ∪ ⚬∪ ⌣◠ |
+| **now** | nˈaʊ | n **ow** | ⏌∩ ⚬⚬∪ᵔ∋ |
+| **go** | ɡˈoʊ | g **ow** | ⌇∪ ⚬⚬∪ᵔ∋ |
+| hello | həlˈoʊ | h a l **ow** | ⊃ ⚬⊃ ᵔ∪ ⚬⚬∪ᵔ∋ |
+| sofa | sˈoʊfə | s **ow** f a | ⌀∩ ⚬⚬∪ᵔ∋ ⚬⊃ |
+| core | kˈoːɹ | k **oh** r | ∪ ⚬∪ ᵔ⌓ |
 
-**now** and **go** share ⚬⚬∪⌣∋ — classic MOUTH/GOAT diphthong collision in spelling.
+**now** and **go** share ⚬⚬∪ᵔ∋ — classic MOUTH/GOAT diphthong collision in spelling.
 
 ### 5. Merger acceptability
 
@@ -352,7 +352,7 @@ No new base characters (5 places + 4 manners + ⚬) are required for potential s
 | `vowel, voice` | ⚬⌇ | Voiced vowel marker / alternate tier |
 | `vowel, friction` | ⚬⌀ | Fricative-colored vowel (research) |
 | `vowel, nasal` | ⚬⏌ | Nasalized vowel (research) |
-| `vowel, glide` | ⚬⌣ | Glide-colored monophthong (research) |
+| `vowel, glide` | ⚬ᵔ | Glide-colored monophthong (research) |
 
 ### Unused composite glide recipes (place permutations not assigned)
 
@@ -360,11 +360,11 @@ Existing composites use: back+glide+{front,lips,middle}. **Unused** permutations
 
 | Recipe pattern | Example symbol | Notes |
 | --- | --- | --- |
-| vowel, vowel, **front_tongue**, glide, **lips** | ⚬⚬∩⌣∋ | MOUTH-like with front anchor (distinct from ⚬⚬∪⌣∋) |
-| vowel, vowel, **front_tongue**, glide, **middle_tongue** | ⚬⚬∩⌣◠ | Unused PRICE/CHOICE variant plane |
-| vowel, vowel, **middle_tongue**, glide, **lips** | ⚬⚬◠⌣∋ | Unused |
-| vowel, vowel, **throat**, glide, **{place}** | ⚬⚬⊃⌣∩ … | Central-vowel diphthong plane |
-| vowel, vowel, **{place}**, glide, **{manner}** | e.g. ⚬⚬∪⌣⌇ | Manner-terminated composites (42 unused candidates scanned) |
+| vowel, vowel, **front_tongue**, glide, **lips** | ⚬⚬∩ᵔ∋ | MOUTH-like with front anchor (distinct from ⚬⚬∪ᵔ∋) |
+| vowel, vowel, **front_tongue**, glide, **middle_tongue** | ⚬⚬∩ᵔ⌓ | Unused PRICE/CHOICE variant plane |
+| vowel, vowel, **middle_tongue**, glide, **lips** | ⚬⚬⌓ᵔ∋ | Unused |
+| vowel, vowel, **throat**, glide, **{place}** | ⚬⚬⊃ᵔ∩ … | Central-vowel diphthong plane |
+| vowel, vowel, **{place}**, glide, **{manner}** | e.g. ⚬⚬∪ᵔ⌇ | Manner-terminated composites (42 unused candidates scanned) |
 
 **Collision check required before any adoption:** `audit:collisions` documents that sequences `o + w`, `o + y`, `o + r`, `e + y` match composite symbols for `ow`, `eye`, `oy`, `ay`. New recipes must be validated against concatenation hazards.
 
