@@ -5,7 +5,7 @@
  */
 
 export const IPA_MULTIGRAPHS = [
-  'tʃ', 'dʒ', 'ʈʃ', 'ts', 'dz', 'pf', 'kx',
+  'tʃ', 'dʒ', 'ʈʃ', 'dz', 'pf', 'kx',
   'aɪ', 'aʊ', 'eɪ', 'oʊ', 'ɔɪ', 'əʊ', 'ɪə', 'iə', 'eə', 'ʊə',
   'iː', 'uː', 'oː', 'aː', 'eː', 'ɑː', 'ɔː', 'ɜː', 'yː', 'ɛː', 'æː',
   'ᵻ',
@@ -58,9 +58,8 @@ export const SUPPLEMENTAL_CONSONANT_MAP = {
   ʐ: 'j',
   ɣ: 'g',
   ç: 'sh',
-  ʈʃ: 'c',
+  ʈʃ: 'ch',
   dʒ: 'j',
-  ts: 'c',
   dz: 'j',
   pf: 'f',
   kx: 'x',
@@ -71,7 +70,7 @@ export const SUPPLEMENTAL_CONSONANT_MAP = {
 let activeConsonantMap = { ...SUPPLEMENTAL_CONSONANT_MAP };
 
 /**
- * Parse IPA notation from a rules cell (e.g. `/p/`, `/tʃ/ or /c/`).
+ * Parse IPA notation from a rules cell (e.g. `/p/`, `/tʃ/`).
  * @param {string} ipaField
  * @returns {string[]}
  */

@@ -95,6 +95,26 @@ const piperGResult = test('ipaToPiperPhonemeIds accepts ASCII g via IPA normaliz
   assert(ids.includes(66), 'expected voiced velar stop phoneme id');
 });
 
+const outsideResult = await (async () => {
+  try {
+    await initEspeak();
+    const bundle = loadActiveRulesFixture();
+    applyBundleMaps(bundle);
+    const ipa = await textToIpa('outside', 'en', { englishDialect: 'en-us' });
+    const normalized = normalizeIpa(ipa, {
+      vowelMode: bundle.ipaVowelMode,
+      vowelMap: bundle.ipaVowelMap,
+    });
+    const encoded = encodeFromIpa(ipa, bundle);
+    assert(normalized.display === 'ow t s eye d', `keys: ${normalized.display}`);
+    assert(encoded.symbols === '⚬⊃ᵔ∋∩⌀∩⚬⊃ᵔ∪⌇∩', `symbols: ${encoded.symbols}`);
+    assert(!normalized.phonemeString.includes('ch'), 'ts must not merge to ch');
+    return { name: 'outside encodes ow t s eye d without ts affricate merge', ok: true };
+  } catch (e) {
+    return { name: 'outside encodes ow t s eye d without ts affricate merge', ok: false, error: e.message };
+  }
+})();
+
 const voiceResult = test('resolveEspeakVoice defaults and dialect overrides', () => {
   assert(resolveEspeakVoice('en') === DEFAULT_ENGLISH_VOICE);
   assert(resolveEspeakVoice('en', {}) === DEFAULT_ENGLISH_VOICE);
@@ -167,6 +187,7 @@ const allFailed = [
   ...(composeResult.ok ? [] : [composeResult]),
   ...(derivedResult.ok ? [] : [derivedResult]),
   ...(piperGResult.ok ? [] : [piperGResult]),
+  ...(outsideResult.ok ? [] : [outsideResult]),
   ...(ipaFormatResult.ok ? [] : [ipaFormatResult]),
   ...(voiceResult.ok ? [] : [voiceResult]),
 ];
@@ -178,8 +199,9 @@ const allPassed =
   + (derivedResult.ok ? 1 : 0)
   + (ipaFormatResult.ok ? 1 : 0)
   + (piperGResult.ok ? 1 : 0)
+  + (outsideResult.ok ? 1 : 0)
   + (voiceResult.ok ? 1 : 0);
-const allTotal = total + corpusResults.length + 6;
+const allTotal = total + corpusResults.length + 7;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

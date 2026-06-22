@@ -44,8 +44,7 @@ These IPA tokens appear in the Sound Grid or Derived Sounds tables. They are **b
 | b | b | grid voice lips |
 | t | t | grid plain front_tongue |
 | d | d | grid voice front_tongue |
-| tʃ | c | grid plain middle_tongue |
-| c | c | grid plain middle_tongue (alternate IPA) |
+| tʃ | ch | grid plain middle_tongue |
 | k | k | grid plain back_tongue |
 | g | g | grid voice back_tongue |
 | h | h | grid plain throat |
@@ -88,13 +87,14 @@ These entries live in `js/ipa-normalize.js` only — not separate rows in markdo
 | ʐ | j | Retroflex sibilant → j |
 | ɣ | g | Voiced velar fricative → g |
 | ç | sh | Voiceless palatal fricative → sh |
-| ʈʃ | c | Retroflex affricate → c |
+| ʈʃ | ch | Retroflex affricate → ch |
 | dʒ | j | Voiced affricate → j |
-| ts | c | Voiceless alveolar affricate → c |
 | dz | j | Voiced alveolar affricate → j |
 | pf | f | Labiodental affricate → f |
 | kx | x | Velar + fricative cluster → x |
 | ʔ | ? | Glottal stop → unknown fallback |
+
+English **t** + **s** sequences (e.g. *outside* /aʊtsaɪd/) tokenize as separate **`t`** and **`s`** phonemes — not merged into an affricate.
 
 When adding a **new grid or derived sound** in `language-rules.md`, add IPA tokens to the cell's `ipa` column — the map rebuilds on reload. No code change needed unless eSpeak emits IPA variants not covered by the cell notation.
 

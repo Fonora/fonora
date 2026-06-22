@@ -359,7 +359,7 @@ export function runTests(options) {
   t('English IPA engineering table maps NURSE and weak vowels', () => {
     const map = { vowelMap: rulesBundle.ipaVowelMap };
     assert(normalizeIpa('bˈɜːd', map).phonemeString === 'bad');
-    assert(normalizeIpa('tʃˈɜːtʃ', map).phonemeString === 'cac');
+    assert(normalizeIpa('tʃˈɜːtʃ', map).phonemeString === 'chach');
     assert(normalizeIpa('ɹˈoʊzᵻz', map).phonemeString === 'rohziz');
     assert(normalizeIpa('fˈɑːðɚ', map).phonemeString === 'fodha');
     assert(normalizeIpa('ɛkspˈiəɹɪəns', map).phonemeString === 'ekspirins');

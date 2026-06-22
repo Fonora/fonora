@@ -39,7 +39,7 @@ Symbols are **composed** from Places + Modifiers at load time (`modifier + place
 | --- | --- | --- | --- | --- | --- |
 | plain | lips | p | /p/ | defined | Plain lips stop |
 | plain | front_tongue | t | /t/ | defined | Plain front tongue stop |
-| plain | middle_tongue | c | /tʃ/ or /c/ | defined | Plain middle tongue stop/affricate placeholder |
+| plain | middle_tongue | ch | /tʃ/ | defined | Voiceless palato-alveolar affricate (English "ch") |
 | plain | back_tongue | k | /k/ | defined | Plain back tongue stop |
 | plain | throat | h | /h/ | defined | Plain throat sound (glottal fricative) |
 | voice | lips | b | /b/ | defined | Voiced lips sound |
