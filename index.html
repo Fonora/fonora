@@ -21,6 +21,7 @@
       <nav class="main-nav" aria-label="Sections">
         <div class="main-nav-primary">
           <button type="button" class="tab-btn tab-btn--active" data-tab="translator">Translator</button>
+          <button type="button" class="tab-btn" data-tab="reader">Reader</button>
           <button type="button" class="tab-btn" data-tab="grid">Sound Grid</button>
           <button type="button" class="tab-btn" data-tab="alphabet">Alphabet</button>
           <button type="button" class="tab-btn" data-tab="quiz">Quiz</button>
@@ -86,6 +87,7 @@
       <div class="button-row">
         <button type="button" id="translate-normalize" class="btn">Normalize spacing</button>
         <button type="button" id="translate-backspace" class="btn">Backspace</button>
+        <button type="button" id="translate-read-in-reader" class="btn btn--primary">Read in Reader</button>
       </div>
 
       <label for="translate-pronunciation">Normalized Fonora phonemes</label>
@@ -431,6 +433,38 @@
           </table>
         </div>
       </div>
+    </section>
+
+    <!-- Reader -->
+    <section class="panel tab-panel" id="tab-reader" data-tab-panel="reader" hidden>
+      <h2>Fonora Reader</h2>
+
+      <div class="tts-controls">
+        <label for="tts-piper-voice">Neural voice</label>
+        <select id="tts-piper-voice" class="text-input"></select>
+        <label for="tts-dialect">Dialect</label>
+        <select id="tts-dialect" class="text-input"></select>
+      </div>
+
+      <label for="tts-input">Fonora text</label>
+      <textarea id="tts-input" class="symbol-text symbol-input text-input--full" rows="4" placeholder="Type or insert Fonora symbols…" autocomplete="off"></textarea>
+
+      <div class="button-row">
+        <button type="button" id="tts-play" class="btn btn--primary">▶ Play</button>
+        <button type="button" id="tts-stop" class="btn" disabled>■ Stop</button>
+        <button type="button" id="tts-normalize" class="btn">Normalize spacing</button>
+        <button type="button" id="tts-backspace" class="btn">Backspace</button>
+      </div>
+
+      <div id="tts-keyboard" class="symbol-buttons symbol-buttons--compact"></div>
+
+      <div id="tts-loading" class="tts-loading" hidden role="status" aria-live="polite">
+        <span class="tts-loading-spinner" aria-hidden="true"></span>
+        <span id="tts-loading-message" class="tts-loading-message">Loading…</span>
+      </div>
+
+      <div id="tts-display" class="tts-display symbol-text" aria-live="polite"></div>
+      <div id="tts-status" class="tts-status" hidden></div>
     </section>
 
     <!-- Quiz -->

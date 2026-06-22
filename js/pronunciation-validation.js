@@ -251,13 +251,71 @@ export function summarizeValidationResults(results) {
 }
 
 /** Browser speech synthesis helpers (no-op safe outside browser). */
+export function speechLangFromDialect(dialect) {
+  if (!dialect) return 'en-US';
+  if (dialect.startsWith('en-')) {
+    const region = dialect.slice(3).toUpperCase();
+    return region === 'UK-RP' ? 'en-GB' : `en-${region}`;
+  }
+  return dialect;
+}
+
+export function cancelBrowserSpeech() {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+export function listSpeechVoices(langPrefix = 'en') {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return [];
+  const prefix = String(langPrefix || 'en').toLowerCase();
+  return window.speechSynthesis.getVoices()
+    .filter((voice) => voice.lang?.toLowerCase().startsWith(prefix))
+    .sort((a, b) => {
+      const score = (voice) => {
+        let s = 0;
+        if (voice.default) s += 4;
+        if (/google|natural|premium|enhanced|samantha|alex|karen|daniel|zira|david/i.test(voice.name)) s += 3;
+        if (/microsoft.*online|neural/i.test(voice.name)) s += 2;
+        if (/microsoft.*desktop|sam\b/i.test(voice.name)) s -= 3;
+        return s;
+      };
+      return score(b) - score(a) || a.name.localeCompare(b.name);
+    });
+}
+
+export function speakAsync(text, lang = 'en-US', options = {}) {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined' || !window.speechSynthesis) {
+      reject(new Error('Speech synthesis unavailable'));
+      return;
+    }
+    const trimmed = String(text || '').trim();
+    if (!trimmed) {
+      resolve();
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(trimmed);
+    utterance.lang = lang;
+    if (options.voiceName) {
+      const voice = window.speechSynthesis.getVoices().find((item) => item.name === options.voiceName);
+      if (voice) utterance.voice = voice;
+    }
+    utterance.onend = () => resolve();
+    utterance.onerror = (event) => {
+      reject(event.error || new Error('Speech synthesis failed'));
+    };
+    window.speechSynthesis.speak(utterance);
+  });
+}
+
 export function speakOriginal(word, lang = 'en-US') {
   if (typeof window === 'undefined' || !window.speechSynthesis) {
     return { ok: false, error: 'Speech synthesis unavailable' };
   }
+  cancelBrowserSpeech();
   const utterance = new SpeechSynthesisUtterance(word);
   utterance.lang = lang;
-  window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
   return { ok: true };
 }

@@ -28,6 +28,8 @@ import { loadLanguagePreference, loadEnglishDialectPreference, saveLanguagePrefe
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
+import { setupFonoraReader, loadReaderFromTranslation } from './fonora-tts-ui.js';
+import { setReaderWordSources } from './fonora-tts.js';
 
 let rules = null;
 let usingFallback = false;
@@ -320,6 +322,7 @@ function setupTranslator() {
   const savedPrefs = { lang: loadLanguagePreference(), englishDialect: loadEnglishDialectPreference() };
   let applyGeneration = 0;
   let outputDirty = false;
+  let lastTranslateWords = null;
 
   const inputEl = document.getElementById('translate-input');
   const outputEl = document.getElementById('translate-output');
@@ -411,6 +414,9 @@ function setupTranslator() {
         pronEl.value = result.normalizedPhonemes || '';
       }
 
+      lastTranslateWords = result.words || null;
+      setReaderWordSources(lastTranslateWords);
+
       refreshDecodePreview();
     } catch (err) {
       if (generation !== applyGeneration) return;
@@ -460,6 +466,16 @@ function setupTranslator() {
   document.getElementById('translate-backspace').addEventListener('click', () => {
     deleteSymbolBeforeCursor(outputEl);
     outputDirty = true;
+  });
+
+  document.getElementById('translate-read-in-reader')?.addEventListener('click', () => {
+    const symbols = outputEl.value.trim();
+    if (!symbols) {
+      setStatus('Translate some text first.', true);
+      return;
+    }
+    loadReaderFromTranslation(symbols, lastTranslateWords);
+    showTab('reader');
   });
 }
 
@@ -756,6 +772,12 @@ function applyRulesBundle(loaded) {
   setupTestMode();
   setupEncoderTesting(rules);
   setupPronunciationValidation(rules);
+  setupFonoraReader(rules);
+  const ttsInput = document.getElementById('tts-input');
+  if (ttsInput) {
+    renderSymbolButtons(document.getElementById('tts-keyboard'), ttsInput);
+    attachKeyboardShortcuts(ttsInput);
+  }
   setupTranslator();
   setupAlphabetLab({
     getRules: () => rules,

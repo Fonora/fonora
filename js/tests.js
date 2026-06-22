@@ -22,6 +22,9 @@ import {
   DEFAULT_ENGLISH_VOICE,
   ENGLISH_DIALECT_CODES,
 } from './language-preferences.js';
+import { buildPhonemeKeyLexicon } from './fonora-speak-lexicon.js';
+import { ipaToEspeakSynthesisInput, segmentIpa } from './ipa-espeak-format.js';
+import { ipaToPiperPhonemeIds } from './piper-audio.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -74,6 +77,24 @@ const derivedResult = test('derived sounds use composition not stale symbols', (
   assert(z.symbols === composeDerivedSymbol('reverse_friction_voice', rules.places, rules.modifiers));
 });
 
+const ipaFormatResult = test('ipaToEspeakSynthesisInput segments stress and underscores', () => {
+  assert(ipaToEspeakSynthesisInput('ðə') === 'ð_ˈə');
+  assert(ipaToEspeakSynthesisInput('dʒeɪmz') === 'dʒ_ˈeɪ_m_z');
+  assert(ipaToEspeakSynthesisInput('bɔɪ') === 'b_ˈɔɪ');
+  assert(segmentIpa('sʌn').join(',') === 's,ʌ,n');
+  assert(segmentIpa('bɪg').join(',') === 'b,ɪ,ɡ');
+});
+
+const piperGResult = test('ipaToPiperPhonemeIds accepts ASCII g via IPA normalization', () => {
+  const map = {
+    _: [0], '^': [1], '$': [2], 'ˈ': [120],
+    b: [15], ɡ: [66], ɪ: [74], n: [26], ŋ: [44],
+  };
+  const ids = ipaToPiperPhonemeIds('bɪgɪnɪŋ', map);
+  assert(ids.length > 0);
+  assert(ids.includes(66), 'expected voiced velar stop phoneme id');
+});
+
 const voiceResult = test('resolveEspeakVoice defaults and dialect overrides', () => {
   assert(resolveEspeakVoice('en') === DEFAULT_ENGLISH_VOICE);
   assert(resolveEspeakVoice('en', {}) === DEFAULT_ENGLISH_VOICE);
@@ -121,6 +142,19 @@ async function runCorpusIpaTests() {
   })();
 
   results.push(corpusResult);
+
+  const lexiconResult = await (async () => {
+    try {
+      await initEspeak();
+      const lexicon = await buildPhonemeKeyLexicon(bundle.rules, bundle, ['the'], 'en-us');
+      assert(lexicon.get('dh a') === 'the', `expected dh a -> the, got ${lexicon.get('dh a')}`);
+      return { name: 'Fonora speak lexicon maps dh a to the', ok: true };
+    } catch (e) {
+      return { name: 'Fonora speak lexicon maps dh a to the', ok: false, error: e.message };
+    }
+  })();
+
+  results.push(lexiconResult);
   return results;
 }
 
@@ -132,6 +166,8 @@ const allFailed = [
   ...(parserResult.ok ? [] : [parserResult]),
   ...(composeResult.ok ? [] : [composeResult]),
   ...(derivedResult.ok ? [] : [derivedResult]),
+  ...(piperGResult.ok ? [] : [piperGResult]),
+  ...(ipaFormatResult.ok ? [] : [ipaFormatResult]),
   ...(voiceResult.ok ? [] : [voiceResult]),
 ];
 const allPassed =
@@ -140,8 +176,10 @@ const allPassed =
   + (parserResult.ok ? 1 : 0)
   + (composeResult.ok ? 1 : 0)
   + (derivedResult.ok ? 1 : 0)
+  + (ipaFormatResult.ok ? 1 : 0)
+  + (piperGResult.ok ? 1 : 0)
   + (voiceResult.ok ? 1 : 0);
-const allTotal = total + corpusResults.length + 4;
+const allTotal = total + corpusResults.length + 6;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

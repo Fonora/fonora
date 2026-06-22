@@ -1660,3 +1660,140 @@ code {
 .pv-row--error {
   background: #fff7ed;
 }
+
+.tts-controls {
+  margin-bottom: 1rem;
+}
+
+.tts-read-mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.tts-read-mode-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.tts-engine-row {
+  border: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.tts-engine-row legend {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  padding: 0;
+}
+
+.tts-engine-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-right: 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.tts-controls label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.tts-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: #eff6ff;
+  border: 2px solid #60a5fa;
+  border-radius: 8px;
+  color: #1e3a8a;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.tts-loading[hidden] {
+  display: none !important;
+}
+
+.tts-loading-spinner {
+  flex-shrink: 0;
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 3px solid #bfdbfe;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: tts-spin 0.75s linear infinite;
+}
+
+@keyframes tts-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tts-loading-message {
+  line-height: 1.4;
+}
+
+.tts-display {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  min-height: 3.5rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.tts-display--loading {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.tts-word {
+  border-radius: 4px;
+  padding: 0.05em 0.1em;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tts-word--active {
+  background: #fef08a;
+  box-shadow: 0 0 0 2px #facc15;
+}
+
+.tts-word--done {
+  background: #dcfce7;
+}
+
+.tts-empty {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.tts-status {
+  font-size: 0.9rem;
+  color: #444;
+  margin-top: 0.75rem;
+}
+
+.tts-status--error {
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+.tts-status--success {
+  color: #166534;
+}

@@ -8,6 +8,7 @@ import {
   summarizeValidationResults,
   speakOriginal,
   speakFonoraReadback,
+  speechLangFromDialect,
 } from './pronunciation-validation.js';
 import {
   validateVowelArchitectureSet,
@@ -185,15 +186,6 @@ function renderBatchTable(results) {
       }
     });
   });
-}
-
-function speechLangFromDialect(dialect) {
-  if (!dialect) return 'en-US';
-  if (dialect.startsWith('en-')) {
-    const region = dialect.slice(3).toUpperCase();
-    return region === 'UK-RP' ? 'en-GB' : `en-${region}`;
-  }
-  return dialect;
 }
 
 function bindAudioButtons(container) {
