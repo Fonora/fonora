@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fonora | Open Source Phonetic Oral Script Language</title>
+  <title>Fonora | Universal Phonetic Script</title>
   <meta name="description" content="Fonora is an open-source phonetic writing system designed around nine simple symbols that visually represent how speech sounds are produced.">
   <meta name="keywords" content="fonora, phonetic language, phonetic writing system, universal writing system, constructed language, conlang, speech symbols, oral language, phonetic alphabet, open source language">
-  <meta property="og:title" content="Fonora | Open Source Phonetic Oral Script Language">
+  <meta property="og:title" content="Fonora | Universal Phonetic Script">
   <meta property="og:description" content="Fonora is an open-source phonetic writing system designed around nine simple symbols that visually represent how speech sounds are produced.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://fonora.org/">
@@ -14,7 +14,7 @@
   <link rel="canonical" href="https://fonora.org/">
   <!-- Social preview image — set og:image when a sharing asset is ready:
   <meta property="og:image" content="https://fonora.org/og-image.png">
-  <meta property="og:image:alt" content="Fonora — open-source phonetic oral script language">
+  <meta property="og:image:alt" content="Fonora — universal phonetic script">
   -->
   <link rel="stylesheet" href="app.css">
 </head>
@@ -27,7 +27,7 @@
     <div class="site-header-inner">
       <a href="#home" class="site-brand" data-tab="home" aria-label="Fonora — go to home">
         <span class="site-name">Fonora</span>
-        <span class="tagline">A Phonetic Oral Script Language</span>
+        <span class="tagline">Universal Phonetic Script</span>
       </a>
 
       <nav class="main-nav" aria-label="Main navigation">
@@ -68,12 +68,15 @@
     <section class="home-page tab-panel tab-panel--active" id="tab-home" data-tab-panel="home" aria-labelledby="home-title">
       <header class="home-hero">
         <h1 id="home-title">Fonora</h1>
-        <p class="home-subtitle">A Phonetic Oral Script Language</p>
+        <p class="home-subtitle">A universal script built from speech itself</p>
         <p class="home-intro">
-          Fonora is an experimental open-source writing system designed to represent spoken language using a small set of intuitive symbols.
+          Fonora is an experimental open-source writing system that represents spoken sounds using a small set of intuitive symbols.
         </p>
         <p class="home-intro">
-          Unlike traditional alphabets, each symbol is based on how a sound is physically produced in the mouth, helping readers understand both how a sound is written and how it is spoken.
+          Instead of memorizing hundreds of letters and spelling rules, readers learn a handful of symbols that describe how sounds are physically produced in the mouth.
+        </p>
+        <p class="home-intro">
+          Designed to be phonetic, minimal, and language independent, Fonora explores whether human speech can be written in a simpler, more universal way.
         </p>
         <div class="home-cta">
           <button type="button" class="btn btn--primary" data-tab="translator">Try the Translator</button>
@@ -82,75 +85,80 @@
       </header>
 
       <article class="home-section" aria-labelledby="about-heading">
-        <h2 id="about-heading">What is Fonora?</h2>
-        <p>Fonora is an open-source project created by <a href="https://jamescalhoun.co" target="_blank" rel="noopener">James Calhoun</a>.</p>
-  
-        <p>The goal is to develop a universal phonetic writing system built from only nine core symbols.</p>
-        <p>These symbols represent locations and actions within the human vocal system, allowing written text to visually describe how sounds are produced.</p>
-        <p>Rather than memorizing arbitrary letters, readers learn a small set of symbols that correspond to physical speech mechanics.</p>
+        <h2 id="about-heading">What Is Fonora?</h2>
+        <p>Fonora is an open-source research project that explores the question:</p>
+        <p class="home-pullquote"><strong>What if writing was based on how speech is produced rather than how words are traditionally spelled?</strong></p>
+        <p>Most writing systems evolved over centuries and often contain complex spelling rules, silent letters, and historical inconsistencies.</p>
+        <p>Fonora takes a different approach. Every symbol is derived from a physical action inside the human vocal system. Written text becomes a visual representation of speech itself.</p>
+        <p>The long-term goal is to create a highly learnable phonetic script that can be used to represent spoken language across linguistic boundaries.</p>
       </article>
-
-      <section class="home-section" aria-labelledby="principles-heading">
-        <h2 id="principles-heading">Core Principles</h2>
-        <div class="home-principles">
-          <article class="home-principle">
-            <h3>Universal</h3>
-            <p>Fonora is designed to represent spoken sounds rather than English spelling rules, allowing words from many languages to be written using the same system.</p>
-          </article>
-          <article class="home-principle">
-            <h3>Phonetic</h3>
-            <p>Words are written according to pronunciation rather than traditional spelling. For example, words that sound identical may share the same Fonora spelling regardless of their conventional spelling.</p>
-          </article>
-          <article class="home-principle">
-            <h3>Oral</h3>
-            <p>The symbols are based on where and how sounds are created within the mouth and vocal tract.</p>
-          </article>
-          <article class="home-principle">
-            <h3>Minimal</h3>
-            <p>The system is intentionally constrained to a small number of visual primitives to maximize learnability and simplicity.</p>
-          </article>
-          <article class="home-principle">
-            <h3>Open Source</h3>
-            <p>Fonora is an experimental community project that can evolve through research, testing, and contribution.</p>
-          </article>
-        </div>
-      </section>
 
       <section class="home-section" aria-labelledby="how-heading">
         <h2 id="how-heading">How It Works</h2>
-        <p>Fonora is built around nine fundamental symbols.</p>
+        <p>Fonora is built from only <b>nine</b> core symbols.</p>
+        <p>Five symbols represent where sounds are produced in the mouth and vocal tract.</p>
+        <p>Four symbols modify those locations to create different sound types.</p>
+        <p>Together they form a compact system capable of representing a wide range of human speech sounds.</p>
 
-        <h3 class="home-how-subheading">Places of articulation</h3>
-        <p>The symbols represent where sounds are produced in the mouth and vocal tract:</p>
+        <h3 class="home-how-subheading">Places of Articulation</h3>
+        <p>The primary symbols describe where a sound is produced:</p>
         <div id="home-places" class="home-symbol-grid" role="list" aria-label="Place symbols"></div>
 
-        <h3 class="home-how-subheading">Sound modifiers</h3>
-        <p>Each place combines with sound modifiers — voicing, friction, nasal airflow, and glide transitions between positions:</p>
+        <h3 class="home-how-subheading">Sound Modifiers</h3>
+        <p>Additional symbols modify those positions:</p>
         <div id="home-modifiers" class="home-symbol-grid" role="list" aria-label="Modifier symbols"></div>
 
-        <p>These combinations generate the core sound inventory used to construct words.</p>
-        <p>
-          <button type="button" class="btn" data-tab="grid">Explore the Sound Grid</button>
-        </p>
+        <p>By combining locations and modifiers, Fonora generates its complete sound inventory.</p>
+      </section>
+
+      <section class="home-section" aria-labelledby="why-heading">
+        <h2 id="why-heading">Why Fonora?</h2>
+        <div class="home-principles">
+          <article class="home-principle">
+            <h3>Learnable</h3>
+            <p>A small number of visual building blocks can generate an entire writing system.</p>
+          </article>
+          <article class="home-principle">
+            <h3>Phonetic</h3>
+            <p>Words are written according to pronunciation rather than historical spelling.</p>
+          </article>
+          <article class="home-principle">
+            <h3>Universal</h3>
+            <p>The system is designed around speech sounds rather than any specific language.</p>
+          </article>
+          <article class="home-principle">
+            <h3>Visual</h3>
+            <p>Symbols reflect how sounds are physically produced, making pronunciation easier to infer.</p>
+          </article>
+          <article class="home-principle">
+            <h3>Minimal</h3>
+            <p>Every symbol serves a specific purpose. The system aims to remain compact and efficient.</p>
+          </article>
+          <article class="home-principle">
+            <h3>Open</h3>
+            <p>Fonora is an open-source experiment that can evolve through testing, research, and community contribution.</p>
+          </article>
+        </div>
       </section>
 
       <section class="home-section" aria-labelledby="goals-heading">
         <h2 id="goals-heading">Project Goals</h2>
         <ul class="home-list home-list--goals">
           <li>Create a highly learnable writing system</li>
-          <li>Minimize memorization</li>
-          <li>Encode pronunciation directly</li>
-          <li>Work across multiple languages</li>
-          <li>Remain visually simple</li>
-          <li>Stay open and accessible</li>
+          <li>Reduce memorization and spelling complexity</li>
+          <li>Represent pronunciation directly</li>
+          <li>Support multiple spoken languages</li>
+          <li>Remain visually simple and compact</li>
+          <li>Stay open, accessible, and community-driven</li>
         </ul>
       </section>
 
       <section class="home-section home-section--status" aria-labelledby="status-heading">
         <h2 id="status-heading">Experimental Research Project</h2>
-        <p>Fonora is currently an active research and development project.</p>
-        <p>The language, symbols, encoding rules, and tooling may evolve as testing and experimentation continue.</p>
-        <p>This website serves as both documentation and a testing platform for the language.</p>
+        <p>Fonora is an active research project.</p>
+        <p>The symbol inventory, phonetic mappings, encoding rules, and tooling continue to evolve through experimentation and real-world testing.</p>
+        <p>This website serves as both documentation for the system and a laboratory for exploring new approaches to written language.</p>
+        <p class="home-status-emphasis"><strong>The goal of Fonora</strong> is to create a universal phonetic writing system where the symbols themselves describe how sounds are produced, allowing readers and speakers to infer pronunciation directly from the written form.</p>
       </section>
     </section>
 
