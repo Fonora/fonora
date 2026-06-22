@@ -55,7 +55,7 @@ const VOWEL_RECIPE_PARTS = {
 };
 
 /**
- * @param {string} recipe — comma-separated tokens (e.g. `vowel, throat, glide, front_tongue`)
+ * @param {string} recipe — comma-separated tokens (e.g. `vowel, throat, glide, back_tongue`)
  */
 export function composeVowelFromRecipe(recipe, places, modifiers) {
   if (!recipe) return '';

@@ -11,8 +11,12 @@ import {
 } from './load-language-rules.js';
 import { composeGridSymbol, applyPrimarySymbols, composeDerivedSymbol, composeVowelFromRecipe } from './symbol-compose.js';
 import { getVowelEntries } from './vowel-display.js';
-import { loadActiveRulesFixture } from './load-rules-fixture.js';
+import { loadActiveRulesFixture, applyBundleMaps } from './load-rules-fixture.js';
 import { runTests } from './tests-core.js';
+import { initEspeak, textToIpa } from './ipa.js';
+import { normalizeIpa } from './ipa-normalize.js';
+import { encodeFromIpa } from './ipa-encode-helper.js';
+import { TEST_CATEGORIES } from './encoder-test-sets.js';
 import {
   resolveEspeakVoice,
   DEFAULT_ENGLISH_VOICE,
@@ -85,9 +89,59 @@ const { passed, total, failed } = runTests({
   bundle: loadActiveRulesFixture(),
 });
 
-const allFailed = [...failed, ...(parserResult.ok ? [] : [parserResult]), ...(composeResult.ok ? [] : [composeResult]), ...(derivedResult.ok ? [] : [derivedResult]), ...(voiceResult.ok ? [] : [voiceResult])];
-const allPassed = passed + (parserResult.ok ? 1 : 0) + (composeResult.ok ? 1 : 0) + (derivedResult.ok ? 1 : 0) + (voiceResult.ok ? 1 : 0);
-const allTotal = total + 4;
+async function runCorpusIpaTests() {
+  const bundle = loadActiveRulesFixture();
+  applyBundleMaps(bundle);
+  const results = [];
+
+  const corpusResult = await (async () => {
+    try {
+      await initEspeak();
+      const words = [...new Set(TEST_CATEGORIES.flatMap((c) => c.words))];
+      const failures = [];
+      for (const word of words) {
+        const ipa = await textToIpa(word, 'en', { englishDialect: 'en-us' });
+        const normalized = normalizeIpa(ipa, {
+          vowelMode: bundle.ipaVowelMode,
+          vowelMap: bundle.ipaVowelMap,
+        });
+        const encoded = encodeFromIpa(ipa, bundle);
+        if (normalized.phonemeString.includes('?') || encoded.symbols.includes('?')) {
+          failures.push(`${word}: phonemes=${normalized.phonemeString} symbols=${encoded.symbols}`);
+        }
+        if (normalized.unmapped.length) {
+          failures.push(`${word}: unmapped ${normalized.unmapped.join(', ')}`);
+        }
+      }
+      assert(failures.length === 0, failures.slice(0, 8).join('; '));
+      return { name: 'English encoder corpus has no ? or unmapped IPA vowels', ok: true };
+    } catch (e) {
+      return { name: 'English encoder corpus has no ? or unmapped IPA vowels', ok: false, error: e.message };
+    }
+  })();
+
+  results.push(corpusResult);
+  return results;
+}
+
+const corpusResults = await runCorpusIpaTests();
+
+const allFailed = [
+  ...failed,
+  ...corpusResults.filter((r) => !r.ok),
+  ...(parserResult.ok ? [] : [parserResult]),
+  ...(composeResult.ok ? [] : [composeResult]),
+  ...(derivedResult.ok ? [] : [derivedResult]),
+  ...(voiceResult.ok ? [] : [voiceResult]),
+];
+const allPassed =
+  passed
+  + corpusResults.filter((r) => r.ok).length
+  + (parserResult.ok ? 1 : 0)
+  + (composeResult.ok ? 1 : 0)
+  + (derivedResult.ok ? 1 : 0)
+  + (voiceResult.ok ? 1 : 0);
+const allTotal = total + corpusResults.length + 4;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

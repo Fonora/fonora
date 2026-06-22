@@ -58,9 +58,9 @@ Symbols are **composed** from Places + Modifiers at load time (`modifier + place
 | nasal | back_tongue | ng | /ŋ/ | defined | Nasal back tongue sound |
 | nasal | throat | ? | ? | reserved | Open research gap |
 | glide | lips | w | /w/ | defined | Glide lips sound |
-| glide | front_tongue | y | /j/ | defined | Glide front tongue sound |
+| glide | front_tongue | l | /l/ | defined | Glide front tongue sound (alveolar /l/) |
 | glide | middle_tongue | r | /r/ | defined | Glide middle tongue sound |
-| glide | back_tongue | l | /l/ | defined | Glide back tongue sound |
+| glide | back_tongue | y | /j/ | defined | Glide back tongue sound (/j/ without tongue-tip contact) |
 | glide | throat | ? | ? | reserved | Open research gap |
 
 ## Vowels
@@ -91,10 +91,10 @@ Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction
 
 | key | recipe | ipa | lexical_set | example |
 | --- | --- | --- | --- | --- |
-| eye | vowel, throat, glide, front_tongue | aɪ | PRICE | pie |
+| eye | vowel, throat, glide, back_tongue | aɪ | PRICE | pie |
 | ow | vowel, throat, glide, lips | aʊ | MOUTH | now |
-| oy | vowel, back_tongue, glide, front_tongue | ɔɪ | CHOICE | boy |
-| ay | vowel, voice, glide, front_tongue | eɪ | FACE | say |
+| oy | vowel, back_tongue, glide, back_tongue | ɔɪ | CHOICE | boy |
+| ay | vowel, voice, glide, back_tongue | eɪ | FACE | say |
 
 Phoneme keys (`ee`, `i`, `ae`, …) are encoder identifiers. Sound Grid and Alphabet UIs are generated from these tables at load time.
 

@@ -33,10 +33,10 @@ Current tests mostly verify **cross-key** distinctions (TRAP vs LOT vs STRUT →
 | oh | vowel, back_tongue | ⚬∪ | GOAT | o, oː | go |
 | u | vowel, lips | ⚬∋ | FOOT | ʊ | book |
 | oo | vowel, vowel, lips | ⚬⚬∋ | GOOSE | u, uː, ʉ, ɯ | boot |
-| eye | vowel, vowel, back_tongue, glide, front_tongue | ⚬⚬∪ᵔ∩ | PRICE | aɪ | pie |
+| eye | vowel, vowel, back_tongue, glide, back_tongue | ⚬⚬∪ᵔ∪ | PRICE | aɪ | pie |
 | **ow** | vowel, vowel, back_tongue, glide, lips | ⚬⚬∪ᵔ∋ | MOUTH / GOAT diphthong | **aʊ, əʊ, oʊ** | now |
 | oy | vowel, vowel, back_tongue, glide, middle_tongue | ⚬⚬∪ᵔ⌓ | CHOICE | ɔɪ | boy |
-| ay | vowel, vowel, front_tongue, glide, front_tongue | ⚬⚬∩ᵔ∩ | FACE | eɪ | say |
+| ay | vowel, vowel, front_tongue, glide, back_tongue | ⚬⚬∩ᵔ∪ | FACE | eɪ | say |
 
 **Supplemental (not a vowel key):** `ɚ` → phoneme sequence `a` + `r` (splits rhotic schwa across STRUT-family vowel + /r/).
 
@@ -283,7 +283,7 @@ Rules lexical_set explicitly names **both**: MOUTH / GOAT diphthong.
 | --- | --- | --- | --- |
 | **now** | nˈaʊ | n **ow** | ⏌∩ ⚬⚬∪ᵔ∋ |
 | **go** | ɡˈoʊ | g **ow** | ⌇∪ ⚬⚬∪ᵔ∋ |
-| hello | həlˈoʊ | h a l **ow** | ⊃ ⚬⊃ ᵔ∪ ⚬⚬∪ᵔ∋ |
+| hello | həlˈoʊ | h a l **ow** | ⊃ ⚬⊃ ᵔ∩ ⚬⚬∪ᵔ∋ |
 | sofa | sˈoʊfə | s **ow** f a | ⌀∩ ⚬⚬∪ᵔ∋ ⚬⊃ |
 | core | kˈoːɹ | k **oh** r | ∪ ⚬∪ ᵔ⌓ |
 
@@ -363,7 +363,7 @@ Existing composites use: back+glide+{front,lips,middle}. **Unused** permutations
 | vowel, vowel, **front_tongue**, glide, **lips** | ⚬⚬∩ᵔ∋ | MOUTH-like with front anchor (distinct from ⚬⚬∪ᵔ∋) |
 | vowel, vowel, **front_tongue**, glide, **middle_tongue** | ⚬⚬∩ᵔ⌓ | Unused PRICE/CHOICE variant plane |
 | vowel, vowel, **middle_tongue**, glide, **lips** | ⚬⚬⌓ᵔ∋ | Unused |
-| vowel, vowel, **throat**, glide, **{place}** | ⚬⚬⊃ᵔ∩ … | Central-vowel diphthong plane |
+| vowel, vowel, **throat**, glide, **{place}** | ⚬⚬⊃ᵔ∪ … | Central-vowel diphthong plane |
 | vowel, vowel, **{place}**, glide, **{manner}** | e.g. ⚬⚬∪ᵔ⌇ | Manner-terminated composites (42 unused candidates scanned) |
 
 **Collision check required before any adoption:** `audit:collisions` documents that sequences `o + w`, `o + y`, `o + r`, `e + y` match composite symbols for `ow`, `eye`, `oy`, `ay`. New recipes must be validated against concatenation hazards.

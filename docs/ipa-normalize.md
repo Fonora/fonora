@@ -4,8 +4,31 @@ Module: [`js/ipa-normalize.js`](../js/ipa-normalize.js)
 
 Raw eSpeak IPA passes through `normalizeIpa()` before encoding.
 
-- **Vowels** — tokens from `language-rules.md`, built into `ipaVowelMap` at load time.
+- **Vowels** — tokens from `language-rules.md`, merged with `ENGLISH_IPA_VOWEL_NORMALIZATION` at runtime (engineering mappings while the vowel inventory is refined).
 - **Consonants** — grid + derived IPA from markdown via `buildConsonantMapFromRules()`, merged with `SUPPLEMENTAL_CONSONANT_MAP` for multilingual variants.
+- **Unknown IPA** — logs a warning and maps to fallback vowel phoneme `a` (never `?` in the phoneme string).
+
+`registerConsonantMapFromRules(rules)` runs when the rules bundle loads (app startup and tests).
+
+`npm test` includes **consonant map is built from language rules**, which fails if markdown IPA tokens are missing from the active map.
+
+## English vowel engineering table (`ENGLISH_IPA_VOWEL_NORMALIZATION`)
+
+Temporary mappings in `js/ipa-normalize.js` — consistency over linguistic perfection. Overrides conflicting supplemental entries (e.g. `ɚ → a` instead of `a + r`). Full audit: [IPA_VOWEL_NORMALIZATION_AUDIT.md](IPA_VOWEL_NORMALIZATION_AUDIT.md).
+
+| IPA token | Fonora phoneme | Notes |
+| --- | --- | --- |
+| ɪ, i, ᵻ | i | KIT / FLEECE / weak vowel |
+| ɛ, e | e | DRESS |
+| æ | ae | TRAP |
+| ʌ, ə, ɚ, ɜ, ɜː | a | STRUT / schwa / NURSE |
+| ɔ, ɑ, o | o | LOT / THOUGHT |
+| ʊ, u | u | FOOT / GOOSE |
+| ɪə, iə | i | NEAR / FLEECE+schwa (engineering) |
+| eə | a | SQUARE (engineering) |
+| ʊə | u | CURE (engineering) |
+
+Run `npm run audit:ipa-vowels` to regenerate the token inventory report from eSpeak en-us output.
 
 `registerConsonantMapFromRules(rules)` runs when the rules bundle loads (app startup and tests).
 
@@ -35,9 +58,9 @@ These IPA tokens appear in the Sound Grid or Derived Sounds tables. They are **b
 | ɲ | ñ | grid nasal middle_tongue |
 | ŋ | ng | grid nasal back_tongue |
 | w | w | grid glide lips |
-| j | y | grid glide front_tongue |
+| j | y | grid glide back_tongue |
 | r | r | grid glide middle_tongue |
-| l | l | grid glide back_tongue |
+| l | l | grid glide front_tongue |
 | θ | th | derived th |
 | ð | dh | derived dh |
 | v | v | derived v |

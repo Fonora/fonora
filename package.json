@@ -13,7 +13,9 @@
     "test:minimal-pairs": "node scripts/vowel-v2-collision-report.js",
     "test:v2-collisions": "npm run test:minimal-pairs",
     "audit:collisions": "node scripts/collision-audit.js",
-    "test:pronunciation-validation": "node scripts/pronunciation-validation-report.js"
+    "test:pronunciation-validation": "node scripts/pronunciation-validation-report.js",
+    "audit:ipa-vowels": "node scripts/ipa-vowel-normalization-audit.js",
+    "report:ipa-diagnostics": "node scripts/ipa-normalization-diagnostics.js"
   },
   "dependencies": {
     "espeak-ng": "^1.0.2"

@@ -4,11 +4,43 @@
  * Consonant maps merge markdown grid/derived IPA with supplemental multilingual variants.
  */
 
-const IPA_MULTIGRAPHS = [
+export const IPA_MULTIGRAPHS = [
   'tʃ', 'dʒ', 'ʈʃ', 'ts', 'dz', 'pf', 'kx',
-  'aɪ', 'aʊ', 'eɪ', 'oʊ', 'ɔɪ', 'əʊ', 'ɪə', 'eə', 'ʊə',
+  'aɪ', 'aʊ', 'eɪ', 'oʊ', 'ɔɪ', 'əʊ', 'ɪə', 'iə', 'eə', 'ʊə',
   'iː', 'uː', 'oː', 'aː', 'eː', 'ɑː', 'ɔː', 'ɜː', 'yː', 'ɛː', 'æː',
+  'ᵻ',
 ];
+
+/**
+ * Temporary engineering mappings: English IPA vowels → Fonora vowel categories.
+ * Merged on top of language-rules.md vowel maps for consistency while the vowel
+ * inventory is refined. Not linguistic truth — keeps the encoder functional.
+ */
+export const ENGLISH_IPA_VOWEL_NORMALIZATION = {
+  ɪ: 'i',
+  i: 'i',
+  ᵻ: 'i',
+  ɛ: 'e',
+  e: 'e',
+  æ: 'ae',
+  ʌ: 'a',
+  ə: 'a',
+  ɚ: 'a',
+  ɜ: 'a',
+  'ɜː': 'a',
+  ɔ: 'o',
+  ɑ: 'o',
+  o: 'o',
+  ʊ: 'u',
+  u: 'u',
+  ɪə: 'i',
+  iə: 'i',
+  eə: 'a',
+  'ʊə': 'u',
+};
+
+/** Safe vowel phoneme used when an IPA token has no explicit mapping. */
+export const DEFAULT_VOWEL_FALLBACK_PHONEME = 'a';
 
 /** Multilingual IPA variants not declared as separate rows in language-rules.md. */
 export const SUPPLEMENTAL_CONSONANT_MAP = {
@@ -181,12 +213,35 @@ export function buildVowelMapFromRules(rules) {
   return rules.ipaVowelMap || {};
 }
 
-function resolveVowelMap(options = {}) {
+function resolveBaseVowelMap(options = {}) {
   if (options.vowelMap) return options.vowelMap;
   const mode = options.vowelMode;
   if (mode && vowelMapsByMode[mode]) return vowelMapsByMode[mode];
   if (Object.keys(activeVowelMap).length) return activeVowelMap;
   return {};
+}
+
+/**
+ * Merge rules-derived vowel map with English engineering normalization.
+ * Engineering entries override rules on conflict (e.g. ɚ → a instead of a+r).
+ * @param {Record<string, string | string[]>} [baseMap]
+ */
+export function mergeEnglishVowelNormalization(baseMap = {}) {
+  return { ...baseMap, ...ENGLISH_IPA_VOWEL_NORMALIZATION };
+}
+
+/**
+ * Effective vowel map used by normalizeIpa unless skipEnglishNormalization is set.
+ * @param {{ vowelMode?: string, vowelMap?: Record<string, string | string[]>, skipEnglishNormalization?: boolean }} [options]
+ */
+export function buildEffectiveVowelMap(options = {}) {
+  const base = resolveBaseVowelMap(options);
+  if (options.skipEnglishNormalization) return base;
+  return mergeEnglishVowelNormalization(base);
+}
+
+function resolveVowelMap(options = {}) {
+  return buildEffectiveVowelMap(options);
 }
 
 const STRIP_CHARS = /[ˈˌˑ\.˞ˤ˥˦˧˨˥˩ⁿʰʲʷ\u0303\u031E\u032A\u1D5D-]/g;
@@ -201,31 +256,66 @@ function sortedMultigraphs(vowelMap) {
   return [...keys].sort((a, b) => b.length - a.length);
 }
 
-function mapToken(token, vowelMap) {
-  if (!token) return { phonemes: [], unmapped: [] };
+function mapToken(token, vowelMap, fallbackPhoneme = DEFAULT_VOWEL_FALLBACK_PHONEME) {
+  if (!token) return { phonemes: [], unmapped: [], usedFallback: false };
   const consonantMap = getConsonantMap();
-  if (consonantMap[token]) return { phonemes: [consonantMap[token]], unmapped: [] };
+  if (consonantMap[token]) {
+    return { phonemes: [consonantMap[token]], unmapped: [], usedFallback: false };
+  }
   if (vowelMap[token]) {
     const mapped = vowelMap[token];
     return {
       phonemes: Array.isArray(mapped) ? mapped : [mapped],
       unmapped: [],
+      usedFallback: false,
     };
   }
-  return { phonemes: ['?'], unmapped: [token] };
+  return {
+    phonemes: [fallbackPhoneme],
+    unmapped: [token],
+    usedFallback: true,
+  };
+}
+
+/**
+ * Resolve current mapping for an IPA token (consonant map, then effective vowel map).
+ * @param {string} token
+ * @param {{ vowelMode?: string, vowelMap?: Record<string, string | string[]>, skipEnglishNormalization?: boolean }} [options]
+ * @returns {{ phonemes: string[], source: 'consonant' | 'vowel' | 'fallback' | 'none' }}
+ */
+export function lookupIpaTokenMapping(token, options = {}) {
+  if (!token) return { phonemes: [], source: 'none' };
+  const consonantMap = getConsonantMap();
+  if (consonantMap[token]) {
+    return { phonemes: [consonantMap[token]], source: 'consonant' };
+  }
+  const vowelMap = buildEffectiveVowelMap(options);
+  if (vowelMap[token]) {
+    const mapped = vowelMap[token];
+    return {
+      phonemes: Array.isArray(mapped) ? mapped : [mapped],
+      source: 'vowel',
+    };
+  }
+  return {
+    phonemes: [DEFAULT_VOWEL_FALLBACK_PHONEME],
+    source: 'fallback',
+  };
 }
 
 /**
  * Convert raw IPA into Fonora-reduced phoneme inventory.
  * @param {string} rawIpa
- * @param {{ vowelMode?: string, vowelMap?: Record<string, string | string[]> }} [options]
+ * @param {{ vowelMode?: string, vowelMap?: Record<string, string | string[]>, skipEnglishNormalization?: boolean, fallbackPhoneme?: string }} [options]
  */
 export function normalizeIpa(rawIpa, options = {}) {
   const vowelMap = resolveVowelMap(options);
+  const fallbackPhoneme = options.fallbackPhoneme || DEFAULT_VOWEL_FALLBACK_PHONEME;
   const multigraphs = sortedMultigraphs(vowelMap);
   const cleaned = stripStressAndMarks(String(rawIpa || '').trim());
   const phonemes = [];
   const ipaSegments = [];
+  const normalizedIpaSegments = [];
   const unmapped = [];
   const warnings = [];
   let i = 0;
@@ -240,12 +330,15 @@ export function normalizeIpa(rawIpa, options = {}) {
     let matched = false;
     for (const graph of multigraphs) {
       if (cleaned.slice(i, i + graph.length) !== graph) continue;
-      const result = mapToken(graph, vowelMap);
+      const result = mapToken(graph, vowelMap, fallbackPhoneme);
       phonemes.push(...result.phonemes);
       ipaSegments.push(graph);
+      normalizedIpaSegments.push(result.phonemes.join(''));
       if (result.unmapped.length) {
         unmapped.push(...result.unmapped);
-        warnings.push(`Unmapped IPA "${graph}" → ?`);
+        warnings.push(
+          `Unmapped IPA "${graph}" → fallback vowel "${fallbackPhoneme}"`,
+        );
       }
       i += graph.length;
       matched = true;
@@ -255,12 +348,15 @@ export function normalizeIpa(rawIpa, options = {}) {
     if (matched) continue;
 
     const single = cleaned[i];
-    const result = mapToken(single, vowelMap);
+    const result = mapToken(single, vowelMap, fallbackPhoneme);
     phonemes.push(...result.phonemes);
-    ipaSegments.push(result.unmapped.length ? '?' : single);
+    ipaSegments.push(single);
+    normalizedIpaSegments.push(result.phonemes.join(''));
     if (result.unmapped.length) {
       unmapped.push(single);
-      warnings.push(`Unmapped IPA "${single}" → ?`);
+      warnings.push(
+        `Unmapped IPA "${single}" → fallback vowel "${fallbackPhoneme}"`,
+      );
     }
     i++;
   }
@@ -272,6 +368,7 @@ export function normalizeIpa(rawIpa, options = {}) {
     display: phonemes.join(' '),
     ipaSegments,
     ipaFromSegments: ipaSegments.join(''),
+    normalizedIpa: normalizedIpaSegments.join(''),
     warnings,
     unmapped: [...new Set(unmapped)],
   };

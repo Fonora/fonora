@@ -148,10 +148,10 @@ export function runTests(options) {
   });
 
   t('composite vowels composed from recipes', () => {
-    assert(registry.vowels.eye === `${vowelMarker}${throat}${glide}${front}`);
+    assert(registry.vowels.eye === `${vowelMarker}${throat}${glide}${back}`);
     assert(registry.vowels.ow === `${vowelMarker}${throat}${glide}${lips}`);
-    assert(registry.vowels.oy === `${vowelMarker}${back}${glide}${front}`);
-    assert(registry.vowels.ay === `${vowelMarker}${voice}${glide}${front}`);
+    assert(registry.vowels.oy === `${vowelMarker}${back}${glide}${back}`);
+    assert(registry.vowels.ay === `${vowelMarker}${voice}${glide}${back}`);
     assert(registry.vowels.eye !== registry.vowels.oy);
     assert(registry.vowels.oy !== `${vowelMarker}${back}${glide}${middle}`);
   });
@@ -354,6 +354,43 @@ export function runTests(options) {
     const n = normalizeIpa('kæt', { vowelMap: rulesBundle.ipaVowelMap });
     assert(n.phonemeString.includes('ae'));
     assert(!n.phonemeString.includes('ee'));
+  });
+
+  t('English IPA engineering table maps NURSE and weak vowels', () => {
+    const map = { vowelMap: rulesBundle.ipaVowelMap };
+    assert(normalizeIpa('bˈɜːd', map).phonemeString === 'bad');
+    assert(normalizeIpa('tʃˈɜːtʃ', map).phonemeString === 'cac');
+    assert(normalizeIpa('ɹˈoʊzᵻz', map).phonemeString === 'rohziz');
+    assert(normalizeIpa('fˈɑːðɚ', map).phonemeString === 'fodha');
+    assert(normalizeIpa('ɛkspˈiəɹɪəns', map).phonemeString === 'ekspirins');
+    for (const result of [
+      normalizeIpa('bˈɜːd', map),
+      normalizeIpa('ɹˈoʊzᵻz', map),
+      normalizeIpa('ɛkspˈiəɹɪəns', map),
+    ]) {
+      assert(!result.phonemeString.includes('?'), `unexpected ? in ${result.phonemeString}`);
+      assert(result.unmapped.length === 0, `unexpected unmapped: ${result.unmapped.join(', ')}`);
+    }
+  });
+
+  t('unknown IPA vowel falls back to safe category without ? phoneme', () => {
+    const result = normalizeIpa('kœt', { vowelMap: rulesBundle.ipaVowelMap });
+    assert(result.phonemeString === 'kat');
+    assert(!result.phonemeString.includes('?'));
+    assert(result.unmapped.includes('œ'));
+    assert(result.warnings.some((w) => w.includes('fallback vowel "a"')));
+    const encoded = ipaPhonemesToFonora(result.phonemeString, rules);
+    assert(!encoded.symbols.includes('?'));
+    assert(encoded.decoded.includes('a'));
+  });
+
+  t('encodeFromIpa round-trip survives English NURSE vowels', () => {
+    for (const ipa of ['bˈɜːd', 'tʃˈɜːtʃ', 'nˈɜːs']) {
+      const result = encodeFromIpa(ipa, rulesBundle);
+      assert(!result.symbols.includes('?'), `${ipa} produced ? symbols`);
+      assert(result.decoded, `${ipa} missing decoded keys`);
+      assert(decodeToPhonemeKeys(result.symbols, rules).warnings.length === 0);
+    }
   });
 
   t('IPA length marks map to vowel phonemes', () => {

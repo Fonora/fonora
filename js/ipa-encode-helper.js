@@ -11,7 +11,10 @@ export function encodeFromIpa(ipa, bundle) {
   return {
     ipa,
     phonemes: normalized.phonemeString,
+    normalizedIpa: normalized.normalizedIpa,
     symbols: fonora.symbols,
     decoded: fonora.decoded,
+    warnings: [...normalized.warnings, ...(fonora.warnings || []), ...(fonora.decodeWarnings || [])],
+    unmapped: normalized.unmapped,
   };
 }
