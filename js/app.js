@@ -2,8 +2,13 @@ import {
   MODIFIER_ROW_ORDER,
   GRID_PLACE_IDS,
   getPrimarySymbolEntries,
-  formatVowelSoundExamples,
 } from './symbol-compose.js';
+import {
+  getVowelEntries,
+  soundGridVowelRowHtml,
+  findVowelForCell,
+  isVowelQuizCell,
+} from './vowel-display.js';
 import {
   loadLanguageRulesFromString,
   buildKeyboardMap,
@@ -145,13 +150,19 @@ function renderSoundGrid() {
         td.textContent = '—';
       } else {
         const ok = cell.status === 'defined';
-        td.className = `grid-cell ${ok ? 'grid-cell--defined' : 'grid-cell--undefined'}`;
+        const statusClass =
+          cell.status === 'reserved'
+            ? 'grid-cell--reserved'
+            : ok
+              ? 'grid-cell--defined'
+              : 'grid-cell--undefined';
+        td.className = `grid-cell ${statusClass}`;
         td.innerHTML = `
           <div class="grid-cell-symbols symbol-text">${cell.symbols}</div>
           <div class="grid-cell-sound">${cell.sound}</div>
           <div class="grid-cell-ipa">${cell.ipa}</div>
           <div class="grid-cell-explanation">${cell.explanation}</div>
-          ${ok ? '' : '<div class="grid-cell-status">undefined</div>'}`;
+          ${ok ? '' : `<div class="grid-cell-status">${escapeHtml(cell.status || 'undefined')}</div>`}`;
         if (ok) {
           td.tabIndex = 0;
           td.setAttribute('role', 'button');
@@ -162,6 +173,20 @@ function renderSoundGrid() {
     }
     tbody.appendChild(tr);
   }
+}
+
+function formatDerivedStatus(status) {
+  if (status === 'experimental') return '<span class="draft-badge">Experimental</span>';
+  if (status === 'reserved') return '<span class="draft-badge draft-badge--reserved">Reserved</span>';
+  return escapeHtml(status || '');
+}
+
+function getDerivedDisplayEntries() {
+  return [
+    ...(rules.specialDerivedSounds || []),
+    ...(rules.experimentalDerivedSounds || []),
+    ...(rules.reservedDerivedSounds || []),
+  ];
 }
 
 function renderDerivedTable(sectionId, bodyId, entries, columns) {
@@ -179,64 +204,33 @@ function renderDerivedTable(sectionId, bodyId, entries, columns) {
 
   for (const cell of entries) {
     const tr = document.createElement('tr');
-    const ok = cell.status === 'defined' || cell.status === 'experimental';
-    tr.className = ok ? 'derived-row derived-row--defined' : 'derived-row derived-row--undefined';
+    const insertable = cell.status === 'defined' || cell.status === 'experimental';
+    tr.className = insertable
+      ? 'derived-row derived-row--defined'
+      : cell.status === 'reserved'
+        ? 'derived-row derived-row--reserved'
+        : 'derived-row derived-row--undefined';
     tr.innerHTML = columns(cell).join('');
-    if (ok) bindInsertableRow(tr, cell.symbols);
-    tbody.appendChild(tr);
-  }
-}
-
-function renderWritingConventions() {
-  const section = document.getElementById('writing-conventions-section');
-  const tbody = document.getElementById('writing-conventions-body');
-  const derived = rules.derivedSymbols || [];
-  if (!section || !tbody) return;
-
-  if (!derived.length) {
-    section.hidden = true;
-    return;
-  }
-
-  section.hidden = false;
-  tbody.innerHTML = '';
-
-  for (const row of derived) {
-    const tr = document.createElement('tr');
-    tr.className = 'derived-row derived-row--defined';
-    tr.innerHTML = `
-      <td class="symbol-text">${escapeHtml(row.symbol)}</td>
-      <td>${escapeHtml(row.label)}</td>
-      <td class="symbol-text">${escapeHtml(row.expandsTo || '—')}</td>
-      <td>${escapeHtml(row.explanation)}</td>`;
-    bindInsertableRow(tr, row.symbol);
+    if (insertable) bindInsertableRow(tr, cell.symbols);
     tbody.appendChild(tr);
   }
 }
 
 function renderExperimentalSections() {
-  renderWritingConventions();
-  renderDerivedTable('derived-sounds-section', 'derived-sounds-body', rules.specialDerivedSounds || [], (c) => [
+  renderDerivedTable('derived-sounds-section', 'derived-sounds-body', getDerivedDisplayEntries(), (c) => [
     `<td class="symbol-text">${escapeHtml(c.symbols)}</td>`,
     `<td>${escapeHtml(c.sound)}</td>`,
     `<td>${escapeHtml(c.ipa)}</td>`,
-    `<td>${escapeHtml(c.status)}</td>`,
+    `<td>${formatDerivedStatus(c.status)}</td>`,
     `<td>${escapeHtml(c.explanation)}</td>`,
   ]);
 
-  renderDerivedTable('experimental-derived-section', 'experimental-derived-body', rules.experimentalDerivedSounds || [], (c) => [
-    `<td class="symbol-text">${escapeHtml(c.symbols)}</td>`,
-    `<td>${escapeHtml(c.sound)}</td>`,
-    `<td>${escapeHtml(c.ipa)}</td>`,
-    `<td><span class="draft-badge">Experimental</span></td>`,
-    `<td>${escapeHtml(c.explanation)}</td>`,
-  ]);
+  const experimentalDerivedSection = document.getElementById('experimental-derived-section');
+  if (experimentalDerivedSection) experimentalDerivedSection.hidden = true;
 
   const vowelSection = document.getElementById('experimental-vowels-section');
   const vowelsBody = document.getElementById('experimental-vowels-body');
-  const lengthBody = document.getElementById('experimental-vowel-length-body');
-  const examplesBody = document.getElementById('experimental-vowel-examples-body');
-  const vowels = rules.experimentalVowels || [];
+  const vowels = getVowelEntries(rules);
 
   if (!vowelSection || !vowelsBody || !vowels.length) {
     if (vowelSection) vowelSection.hidden = true;
@@ -247,39 +241,9 @@ function renderExperimentalSections() {
     for (const cell of vowels) {
       const tr = document.createElement('tr');
       tr.className = 'derived-row derived-row--defined experimental-vowel-row';
-      tr.innerHTML = `
-        <td class="symbol-text">${escapeHtml(cell.symbols)}</td>
-        <td>${escapeHtml(cell.vowel || cell.sound)}</td>
-        <td>${escapeHtml(cell.description || cell.explanation || '')}</td>
-        <td>${escapeHtml(cell.plane || '')} + ${escapeHtml(cell.component || '')}</td>
-        <td>${escapeHtml(cell.ipa || '')}</td>
-        <td>${escapeHtml(cell.approx || cell.notes || formatVowelSoundExamples(cell).join('; ') || '')}</td>`;
+      tr.innerHTML = soundGridVowelRowHtml(cell, escapeHtml).join('');
       bindInsertableRow(tr, cell.symbols);
       vowelsBody.appendChild(tr);
-    }
-
-    if (lengthBody) {
-      const pairs = rules.experimentalVowelLengthPairs || [];
-      lengthBody.innerHTML = pairs.length
-        ? pairs
-            .map(
-              (row) =>
-                `<tr>
-                  <td>${escapeHtml(row.shortWord)}</td>
-                  <td class="symbol-text">${escapeHtml(row.shortSpelling)}</td>
-                  <td>${escapeHtml(row.longWord)}</td>
-                  <td class="symbol-text">${escapeHtml(row.longSpelling)}</td>
-                </tr>`,
-            )
-            .join('')
-        : '<tr><td colspan="4"><em>No short/long vowel pairs defined.</em></td></tr>';
-    }
-
-    if (examplesBody) {
-      const examples = rules.experimentalVowelExamples || [];
-      examplesBody.innerHTML = examples.length
-        ? examples.map((ex) => `<tr><td>${escapeHtml(ex.word)}</td><td class="symbol-text">${escapeHtml(ex.spelling)}</td></tr>`).join('')
-        : '<tr><td colspan="2"><em>No examples in language rules.</em></td></tr>';
     }
   }
 }
@@ -697,23 +661,25 @@ function buildSymbolLabelMap(r) {
   return map;
 }
 
-function isVowelQuizCell(cell) {
-  return Boolean(cell.vowel) || (cell.experimental && /^⊐/.test(cell.symbols || ''));
-}
-
 function getQuizHintLines(cell) {
   const labelMap = buildSymbolLabelMap(rules);
   const symbols = cell.symbols || '';
+  const vowelDef = findVowelForCell(rules, cell);
 
-  if (isVowelQuizCell(cell)) {
+  if (vowelDef || isVowelQuizCell(rules, cell)) {
     const lines = [];
     for (const ch of symbols) {
       const label = labelMap[ch];
       if (label) lines.push({ symbol: ch, label });
     }
+    if (vowelDef?.example) {
+      lines.push({ symbol: symbols, label: `as in ${vowelDef.example}`, vowelNote: true });
+    }
     const note = cell.notes || cell.explanation;
-    if (note) lines.push({ symbol: symbols, label: note, vowelNote: true });
-    return lines.length ? lines : [{ symbol: symbols, label: 'Experimental vowel' }];
+    if (note && note !== vowelDef?.lexicalSet) {
+      lines.push({ symbol: symbols, label: note, vowelNote: true });
+    }
+    return lines.length ? lines : [{ symbol: symbols, label: 'Vowel' }];
   }
 
   const seen = new Set();
@@ -779,8 +745,8 @@ function startQuiz(type) {
   document.getElementById('quiz-answer-construct').value = '';
   const decodeAnswer = document.getElementById('quiz-decode-answer');
   const constructAnswer = document.getElementById('quiz-construct-answer');
-  const vowelBadge = isVowelQuizCell(currentQuiz.cell)
-    ? ' <span class="draft-badge">Experimental vowel</span>'
+  const vowelBadge = isVowelQuizCell(rules, currentQuiz.cell)
+    ? ' <span class="draft-badge">Vowel</span>'
     : '';
   if (type === 'decode') {
     document.getElementById('quiz-prompt').innerHTML =

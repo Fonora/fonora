@@ -2,12 +2,11 @@ import {
   getPrimarySymbolEntries,
   composeGridSymbol,
   composeCvExamples,
-  formatVowelSoundExamples,
   applyPrimarySymbols,
   MODIFIER_ROW_ORDER,
 } from './symbol-compose.js';
-import { encodeSounds } from './encode.js';
 import { escapeHtml } from './utils.js';
+import { alphabetVowelRowHtml, getVowelEntries } from './vowel-display.js';
 import {
   loadAlphabetOverrides,
   saveAlphabetOverrides,
@@ -29,8 +28,6 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
   const previewGrid = document.getElementById('alphabet-preview-grid');
   const previewVowels = document.getElementById('alphabet-preview-vowels');
   const previewWords = document.getElementById('alphabet-preview-words');
-  const sampleInput = document.getElementById('alphabet-sample-input');
-  const sampleOutput = document.getElementById('alphabet-sample-output');
   const statusEl = document.getElementById('alphabet-status');
 
   /** @type {Record<string, string>} */
@@ -94,7 +91,6 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
       card.innerHTML = `
         <div class="alphabet-card-head">
           <span class="alphabet-card-label">${escapeHtml(entry.label)}</span>
-          <span class="alphabet-card-id">${escapeHtml(entry.id)}</span>
         </div>
         <div class="alphabet-card-markdown" title="Value in language-rules.md">
           MD: <span class="symbol-text">${escapeHtml(mdSym)}</span>
@@ -146,13 +142,9 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
     }
 
     previewVowels.innerHTML = '';
-    for (const v of rules.experimentalVowels || []) {
-      const sounds = formatVowelSoundExamples(v);
-      const soundsHtml = sounds.length
-        ? `<ul class="vowel-sounds-list">${sounds.map((s) => `<li>${escapeHtml(s)}</li>`).join('')}</ul>`
-        : '';
+    for (const v of getVowelEntries(rules)) {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${escapeHtml(v.vowel)}</td><td class="symbol-text">${escapeHtml(v.symbols)}</td><td>${escapeHtml(v.description || v.explanation || '')}</td><td>${escapeHtml(v.plane || '')} + ${escapeHtml(v.component || '')}</td><td class="vowel-sounds-cell">${soundsHtml}</td>`;
+      tr.innerHTML = alphabetVowelRowHtml(v, escapeHtml).join('');
       previewVowels.appendChild(tr);
     }
 
@@ -162,15 +154,6 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
       tr.innerHTML = `<td>${escapeHtml(ex.word)}</td><td class="symbol-text">${escapeHtml(ex.spelling)}</td>`;
       previewWords.appendChild(tr);
     }
-
-    updateSampleOutput(rules);
-  }
-
-  function updateSampleOutput(rules) {
-    if (!sampleInput || !sampleOutput) return;
-    const text = sampleInput.value.trim() || 'pa pe pi po pu';
-    const encoded = encodeSounds(text.replace(/\s+/g, ''), rules);
-    sampleOutput.textContent = encoded.symbols || '(empty)';
   }
 
   document.getElementById('alphabet-apply')?.addEventListener('click', () => {
@@ -207,8 +190,6 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
     renderPrimaryEditor();
     renderPreviews();
   });
-
-  sampleInput?.addEventListener('input', () => updateSampleOutput(previewRules()));
 
   if (hasAlphabetOverrides()) {
     setStatus('Alphabet overrides loaded from localStorage.', 'info');

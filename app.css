@@ -361,6 +361,12 @@ code {
   color: #666;
 }
 
+.grid-cell--reserved {
+  background: #f8f8f8;
+  border-style: dashed;
+  color: #777;
+}
+
 .grid-cell--empty {
   color: #aaa;
   text-align: center;
@@ -411,6 +417,11 @@ code {
   background: #fafafa;
 }
 
+.derived-row--reserved {
+  color: #777;
+  background: #f8f8f8;
+}
+
 #derived-sounds-section h3 {
   margin-top: 1.5rem;
 }
@@ -428,8 +439,21 @@ code {
   vertical-align: middle;
 }
 
+.draft-badge--reserved {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
 #experimental-vowels-section h3 {
   margin-top: 1.5rem;
+}
+
+.data-table .recipe-cell {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: normal;
+  color: #444;
 }
 
 .examples-heading {
@@ -1343,21 +1367,12 @@ code {
 }
 
 .alphabet-card-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
   margin-bottom: 0.35rem;
 }
 
 .alphabet-card-label {
   font-weight: 600;
   font-size: 0.85rem;
-}
-
-.alphabet-card-id {
-  font-size: 0.7rem;
-  color: #888;
-  font-family: ui-monospace, monospace;
 }
 
 .alphabet-card-markdown {
@@ -1387,41 +1402,19 @@ code {
   border-radius: 3px;
 }
 
-.alphabet-preview-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.alphabet-preview-stack {
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 900px) {
-  .alphabet-preview-columns {
-    grid-template-columns: 1fr;
-  }
+.alphabet-preview-block {
+  min-width: 0;
 }
 
 .alphabet-preview-table td,
 .alphabet-preview-table th {
   font-size: 1.1rem;
   padding: 0.35rem 0.5rem;
-}
-
-.vowel-sounds-list {
-  margin: 0;
-  padding-left: 1.1rem;
-  font-size: 0.9rem;
-  line-height: 1.45;
-}
-
-.vowel-sounds-cell {
-  min-width: 9rem;
-}
-
-.alphabet-sample-output {
-  font-size: 1.75rem;
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  background: #f8fafc;
-  border-radius: 6px;
-  min-height: 2.5rem;
 }

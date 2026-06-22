@@ -219,7 +219,7 @@
     <!-- Sound Grid -->
     <section class="panel tab-panel" id="tab-grid" data-tab-panel="grid" hidden>
       <h2>Sound Grid</h2>
-      <p class="section-desc">Five places of articulation × four manners. Derived writing symbols (e.g. <span class="symbol-text">⊇</span> long vowel marker) are documented separately and do not appear here.</p>
+      <p class="section-desc">Five places of articulation × four manners. The vowel indicator <span class="symbol-text">⚬</span> (keyboard 0) is documented under Modifiers and used in the vowel table, not in this grid.</p>
       <div class="table-wrap table-wrap--scroll">
         <table class="sound-grid" id="sound-grid">
           <thead id="sound-grid-head"></thead>
@@ -227,27 +227,9 @@
         </table>
       </div>
 
-      <div id="writing-conventions-section">
-        <h3>Writing Conventions</h3>
-        <p class="section-desc">Derived symbols for readability. These are <strong>not</strong> places of articulation and are excluded from the sound grid.</p>
-        <div class="table-wrap">
-          <table class="data-table" id="writing-conventions-table">
-            <thead>
-              <tr>
-                <th>Symbol</th>
-                <th>Label</th>
-                <th>Expands to</th>
-                <th>Explanation</th>
-              </tr>
-            </thead>
-            <tbody id="writing-conventions-body"></tbody>
-          </table>
-        </div>
-      </div>
-
       <div id="derived-sounds-section">
-        <h3>Special Derived Sounds</h3>
-        <p class="section-desc">Reversed place + modifier order. Each entry is defined individually in language rules — not generalized.</p>
+        <h3>Derived / Reserved Sounds</h3>
+        <p class="section-desc">Reversed-order and modifier-pair sounds defined outside the main grid. Status: <strong>defined</strong>, <strong>experimental</strong>, or <strong>reserved</strong>.</p>
         <div class="table-wrap">
           <table class="data-table" id="derived-sounds-table">
             <thead>
@@ -264,28 +246,13 @@
         </div>
       </div>
 
-      <div id="experimental-derived-section" hidden>
-        <h3>Experimental Derived Sounds <span class="draft-badge">Experimental</span></h3>
-        <p class="section-desc">Individually defined reversed-order sounds. Not finalized.</p>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Symbols</th>
-                <th>Sound</th>
-                <th>IPA</th>
-                <th>Status</th>
-                <th>Explanation</th>
-              </tr>
-            </thead>
-            <tbody id="experimental-derived-body"></tbody>
-          </table>
-        </div>
+      <div id="experimental-derived-section" hidden aria-hidden="true">
+        <table><tbody id="experimental-derived-body"></tbody></table>
       </div>
 
       <div id="experimental-vowels-section" hidden>
         <h3>Vowels</h3>
-        <p class="section-desc">Vowels combine a length plane (<span class="symbol-text">⊃</span> short, <span class="symbol-text">⊇</span> long) with an articulation component. Open vowels use the plane symbol alone.</p>
+        <p class="section-desc">Vowels are built from recipes: <span class="symbol-text">⚬</span> (vowel indicator), doubled <span class="symbol-text">⚬⚬</span>, place symbols, and <span class="symbol-text">⌣</span> glide for composites.</p>
 
         <h4 class="examples-heading">Vowel mapping</h4>
         <div class="table-wrap">
@@ -294,41 +261,13 @@
               <tr>
                 <th>Symbols</th>
                 <th>Key</th>
-                <th>Description</th>
+                <th>Lexical set</th>
                 <th>Recipe</th>
                 <th>IPA</th>
-                <th>≈ English</th>
+                <th>Example</th>
               </tr>
             </thead>
             <tbody id="experimental-vowels-body"></tbody>
-          </table>
-        </div>
-
-        <h4 class="examples-heading">Short vs long vowels</h4>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Short word</th>
-                <th>Short spelling</th>
-                <th>Long word</th>
-                <th>Long spelling</th>
-              </tr>
-            </thead>
-            <tbody id="experimental-vowel-length-body"></tbody>
-          </table>
-        </div>
-
-        <h4 class="examples-heading">CV examples</h4>
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Word</th>
-                <th>Spelling</th>
-              </tr>
-            </thead>
-            <tbody id="experimental-vowel-examples-body"></tbody>
           </table>
         </div>
       </div>
@@ -508,8 +447,7 @@
     <section class="panel tab-panel" id="tab-alphabet" data-tab-panel="alphabet" hidden>
       <h2>Alphabet</h2>
       <p class="section-desc">
-        Experiment with the <strong>9 primary symbols</strong> (5 places + 4 modifiers).
-        Derived writing symbols (e.g. <span class="symbol-text">⊇</span>) are documented in Writing Conventions, not edited here.
+        Experiment with primary symbols (5 places, vowel indicator <span class="symbol-text">⚬</span>, 4 manner modifiers).
         Apply to update the whole app for this browser session, or edit <code>language-rules.md</code> and reload.
       </p>
 
@@ -524,8 +462,8 @@
       <h3 class="examples-heading">Primary symbols</h3>
       <div id="alphabet-primary-grid" class="alphabet-primary-grid"></div>
 
-      <div class="alphabet-preview-columns">
-        <div>
+      <div class="alphabet-preview-stack">
+        <div class="alphabet-preview-block">
           <h3 class="examples-heading">Sound grid preview</h3>
           <div class="table-wrap">
             <table class="data-table alphabet-preview-table">
@@ -533,14 +471,16 @@
             </table>
           </div>
         </div>
-        <div>
+        <div class="alphabet-preview-block">
           <h3 class="examples-heading">Vowels preview</h3>
           <div class="table-wrap">
             <table class="data-table">
-              <thead><tr><th>Key</th><th>Symbols</th><th>Description</th><th>Recipe</th><th>≈ English</th></tr></thead>
+              <thead><tr><th>Key</th><th>Symbols</th><th>Example</th></tr></thead>
               <tbody id="alphabet-preview-vowels"></tbody>
             </table>
           </div>
+        </div>
+        <div class="alphabet-preview-block">
           <h3 class="examples-heading">CV examples</h3>
           <div class="table-wrap">
             <table class="data-table">
@@ -550,11 +490,6 @@
           </div>
         </div>
       </div>
-
-      <h3 class="examples-heading">Sample encode</h3>
-      <label for="alphabet-sample-input">Phoneme string</label>
-      <input type="text" id="alphabet-sample-input" class="text-input" value="pa pe pi po pu" placeholder="pa pe pi…">
-      <div class="alphabet-sample-output symbol-text" id="alphabet-sample-output"></div>
     </section>
 
     <!-- Quiz -->

@@ -3,6 +3,7 @@
  * language-rules.md is the human-editable source of truth.
  */
 
+import { getVowelEntries, vowelPhonemeKey } from './vowel-display.js';
 import { applyPrimarySymbols, getPrimaryInventory } from './symbol-compose.js';
 
 const ASCII_EQUALS = '=';
@@ -17,6 +18,7 @@ const PLACE_ID_TO_REGISTRY_KEY = {
 };
 
 const MODIFIER_ID_TO_REGISTRY_KEY = {
+  vowel: 'vowel',
   voice: 'voice',
   friction: 'friction',
   nasal: 'nasal',
@@ -135,8 +137,13 @@ function parseDerivedSoundsSection(body) {
 }
 
 function loadDerivedSounds(sections) {
-  if (sections['derived sounds']) {
-    return parseDerivedSoundsSection(sections['derived sounds']);
+  const sectionBody =
+    sections['derived / reserved sounds'] ||
+    sections['derived sounds'] ||
+    '';
+
+  if (sectionBody.trim()) {
+    return parseDerivedSoundsSection(sectionBody);
   }
 
   const legacyDefined = rowsToObjects(
@@ -158,6 +165,7 @@ function splitDerivedSoundsByStatus(derivedSounds) {
   return {
     specialDerivedSounds: derivedSounds.filter((d) => d.status === 'defined'),
     experimentalDerivedSounds: derivedSounds.filter((d) => d.status === 'experimental'),
+    reservedDerivedSounds: derivedSounds.filter((d) => d.status === 'reserved'),
   };
 }
 
@@ -173,40 +181,83 @@ function mapDerivedSoundRow(r, defaults = {}) {
   };
 }
 
+function parseRecipeTokens(recipeRaw) {
+  if (!recipeRaw) return [];
+  if (Array.isArray(recipeRaw)) return recipeRaw;
+  return recipeRaw
+    .split(/,\s*/)
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
+
+function parseIpaTokens(ipaRaw) {
+  return (ipaRaw || '')
+    .split(/[,/\s]+/)
+    .map((t) => t.trim())
+    .filter(Boolean);
+}
+
+function firstExampleToken(exampleRaw) {
+  return (exampleRaw || '').split(/[,;]+/)[0].trim();
+}
+
 function mapVowelRow(r) {
-  const vowel = r.vowel || r.sound;
-  const planeRaw = (r.plane || '').toLowerCase();
-  const plane =
-    planeRaw === 'alternate' ? 'alternate' : planeRaw === 'primary' ? 'primary' : '';
-  const component = r.component || r.componentPlace || '';
-  const symbols = r.symbol || r.symbols || '';
+  const key = r.key || r.vowel || r.sound;
+  const tierRaw = (r.tier || r.category || '').toLowerCase();
+  const tier =
+    tierRaw.includes('composite') || tierRaw.includes('derived')
+      ? 'composite'
+      : tierRaw.includes('core')
+        ? 'core'
+        : r.recipe?.includes('glide')
+          ? 'composite'
+          : 'core';
+  const recipe = r.recipe || '';
+  const recipeTokens = parseRecipeTokens(recipe);
+  const lexicalSet = r.lexicalSet || r.lexical_set || r.description || '';
+  const example = firstExampleToken(r.example || r.approx || '');
+  const ipa = r.ipa || '';
+  const ipaTokens = parseIpaTokens(ipa);
   return {
-    symbols,
-    sound: vowel,
-    vowel,
-    plane,
-    component,
-    ipa: r.ipa || '',
-    approx: r.approx || '',
-    description: r.description || '',
-    notes: r.notes || r.approx || '',
-    status: 'experimental',
-    explanation: r.description || r.notes || `Vowel ${vowel}`,
-    experimental: true,
+    key,
+    vowel: key,
+    sound: key,
+    symbols: r.symbol || r.symbols || '',
+    lexicalSet,
+    description: lexicalSet,
+    ipa,
+    ipaTokens,
+    example,
+    recipe,
+    recipeTokens,
+    approx: example,
+    tier,
+    status: r.status || 'defined',
+    explanation: lexicalSet || example || `Vowel ${key}`,
+    experimental: false,
   };
 }
 
 function parseVowelsSection(body) {
-  const rows = rowsToObjects(parseTableRows(body.split('\n')));
-  return rows
-    .filter((r) => {
-      const vowel = r.vowel || r.sound;
-      if (!vowel) return false;
-      const planeRaw = (r.plane || '').toLowerCase();
-      if (planeRaw !== 'primary' && planeRaw !== 'alternate') return false;
-      return Boolean(r.component);
-    })
-    .map(mapVowelRow);
+  const rows = [];
+  const subparts = body.split(/^### /m);
+  for (const part of subparts) {
+    if (!part.trim()) continue;
+    const nl = part.indexOf('\n');
+    const title = (nl === -1 ? part : part.slice(0, nl)).trim().toLowerCase();
+    const sectionBody = nl === -1 ? '' : part.slice(nl + 1);
+    if (
+      title.includes('core vowel') ||
+      title.includes('composite vowel') ||
+      title.includes('derived / composite')
+    ) {
+      rows.push(...rowsToObjects(parseTableRows(sectionBody.split('\n'))));
+    }
+  }
+  if (!rows.length) {
+    rows.push(...rowsToObjects(parseTableRows(body.split('\n'))));
+  }
+  return rows.filter((r) => (r.key || r.vowel || r.sound) && r.recipe).map(mapVowelRow);
 }
 
 function parseSupplementalIpaMappings(body) {
@@ -223,12 +274,9 @@ function parseSupplementalIpaMappings(body) {
 function buildIpaVowelMapFromVowels(vowelRows, supplemental = {}) {
   const map = { ...supplemental };
   for (const row of vowelRows) {
-    const phoneme = row.vowel || row.sound;
+    const phoneme = row.key || row.vowel || row.sound;
     if (!phoneme || !row.ipa) continue;
-    const tokens = row.ipa
-      .split(/[,/\s]+/)
-      .map((t) => t.trim())
-      .filter(Boolean);
+    const tokens = row.ipaTokens?.length ? row.ipaTokens : parseIpaTokens(row.ipa);
     for (const token of tokens) {
       map[token] = phoneme;
     }
@@ -266,8 +314,8 @@ export function buildSymbolRegistry(rules) {
 
   /** @type {Record<string, string>} */
   const vowels = {};
-  for (const v of rules.experimentalVowels || []) {
-    vowels[v.vowel || v.sound] = v.symbols;
+  for (const v of getVowelEntries(rules)) {
+    vowels[vowelPhonemeKey(v)] = v.symbols;
   }
 
   /** @type {Record<string, string>} */
@@ -290,7 +338,8 @@ export function collectAllSymbols(rules) {
     ...(rules.soundGrid || []),
     ...(rules.specialDerivedSounds || []),
     ...(rules.experimentalDerivedSounds || []),
-    ...(rules.experimentalVowels || []),
+    ...(rules.reservedDerivedSounds || []),
+    ...(getVowelEntries(rules) || []),
     ...(rules.vowelSymbolAliases || []),
   ]) {
     if (cell.symbols) symbols.add(cell.symbols);
@@ -309,7 +358,7 @@ export function validateSymbolRegistry(registry, rules, options = {}) {
   for (const key of requiredPlaces) {
     if (!registry.places[key]) errors.push(`Missing place registry key: ${key}`);
   }
-  const requiredModifiers = ['voice', 'friction', 'nasal', 'glide'];
+  const requiredModifiers = ['vowel', 'voice', 'friction', 'nasal', 'glide'];
   for (const key of requiredModifiers) {
     if (!registry.modifiers[key]) errors.push(`Missing modifier registry key: ${key}`);
   }
@@ -366,7 +415,8 @@ export function parseLanguageRulesMarkdown(markdown) {
     ) || '';
 
   const derivedSounds = loadDerivedSounds(sections);
-  const { specialDerivedSounds, experimentalDerivedSounds } = splitDerivedSoundsByStatus(derivedSounds);
+  const { specialDerivedSounds, experimentalDerivedSounds, reservedDerivedSounds } =
+    splitDerivedSoundsByStatus(derivedSounds);
 
   return {
     config,
@@ -376,8 +426,10 @@ export function parseLanguageRulesMarkdown(markdown) {
     soundGrid: rowsToObjects(parseTableRows((sections['sound grid'] || '').split('\n'))),
     specialDerivedSounds,
     experimentalVowels,
+    vowels: experimentalVowels,
     experimentalVowelExamples,
     experimentalDerivedSounds,
+    reservedDerivedSounds,
     ipaVowelMap,
     notes: (sections.notes || '')
       .split('\n')

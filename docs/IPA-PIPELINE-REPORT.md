@@ -40,7 +40,7 @@ The former English spelling-based Legacy Encoder (`normalize.js`, `encoder-rules
 
 ## Unmapped IPA phonemes
 
-Retroflexes, tones, Arabic emphatics, uvulars, and other sounds outside the Fonora inventory map to `?` fallback. Vowels collapse to five categories (`a`, `e`, `i`, `o`, `u`).
+Retroflexes, tones, Arabic emphatics, uvulars, and other sounds outside the Fonora inventory map to `?` fallback. Vowels map to 13 phoneme keys defined in `language-rules.md` (core + composite), not English orthography.
 
 ## Recommendations
 

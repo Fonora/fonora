@@ -3,6 +3,8 @@
  * Edit primaries once (markdown or Alphabet lab) — sound grid, vowels, and examples follow.
  */
 
+import { buildVowelByKeyMap, getVowelEntries } from './vowel-display.js';
+
 const MODIFIER_ROW_ORDER = ['plain', 'voice', 'friction', 'nasal', 'glide'];
 
 /** Place ids that appear as sound-grid columns (excludes derived writing symbols). */
@@ -37,6 +39,32 @@ const DERIVED_COMPOSITIONS = {
 export function composeDerivedSymbol(composition, places, modifiers) {
   const recipe = DERIVED_COMPOSITIONS[composition];
   return recipe ? recipe(places, modifiers) : null;
+}
+
+const VOWEL_RECIPE_PARTS = {
+  vowel: (_places, modifiers) => modifierSymbol(modifiers, 'vowel'),
+  voice: (_places, modifiers) => modifierSymbol(modifiers, 'voice'),
+  friction: (_places, modifiers) => modifierSymbol(modifiers, 'friction'),
+  nasal: (_places, modifiers) => modifierSymbol(modifiers, 'nasal'),
+  glide: (_places, modifiers) => modifierSymbol(modifiers, 'glide'),
+  lips: (places) => placeSymbol(places, 'lips'),
+  front_tongue: (places) => placeSymbol(places, 'front_tongue'),
+  middle_tongue: (places) => placeSymbol(places, 'middle_tongue'),
+  back_tongue: (places) => placeSymbol(places, 'back_tongue'),
+  throat: (places) => placeSymbol(places, 'throat'),
+};
+
+/**
+ * @param {string} recipe — comma-separated tokens (e.g. `vowel, vowel, front_tongue`)
+ */
+export function composeVowelFromRecipe(recipe, places, modifiers) {
+  if (!recipe) return '';
+  return recipe
+    .split(/,\s*/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .map((part) => VOWEL_RECIPE_PARTS[part]?.(places, modifiers) ?? '')
+    .join('');
 }
 
 /** Primary alphabet only: 5 places + 4 modifiers (9-symbol core). */
@@ -107,7 +135,7 @@ export function composeGridSymbol(modifierId, placeId, places, modifiers) {
 export function composeVowelSymbol(plane, componentPlaceId, places, rules = {}) {
   const throat = placeSymbol(places, 'throat');
   const component = placeSymbol(places, componentPlaceId);
-  const longMarker = getDerivedSymbol(rules, 'vowel_carrier') || '⊇';
+  const longMarker = modifierSymbol(rules.modifiers || [], 'vowel') || '⚬';
 
   if (plane === 'alternate') {
     if (componentPlaceId === 'throat') {
@@ -137,8 +165,10 @@ export function applyPrimarySymbols(rules, primaryOverrides = {}) {
     cell.symbols = composeGridSymbol(cell.modifierId, cell.placeId, places, modifiers);
   }
 
-  for (const vowel of rules.experimentalVowels || []) {
-    if (vowel.plane && vowel.component) {
+  for (const vowel of getVowelEntries(rules)) {
+    if (vowel.recipe) {
+      vowel.symbols = composeVowelFromRecipe(vowel.recipe, places, modifiers);
+    } else if (vowel.plane && vowel.component) {
       vowel.symbols = composeVowelSymbol(vowel.plane, vowel.component, places, rules);
     }
   }
@@ -148,6 +178,7 @@ export function applyPrimarySymbols(rules, primaryOverrides = {}) {
 
   composeDerivedSounds(rules.specialDerivedSounds, places, modifiers);
   composeDerivedSounds(rules.experimentalDerivedSounds, places, modifiers);
+  composeDerivedSounds(rules.reservedDerivedSounds, places, modifiers);
 
   rules.vowelSymbolAliases = [];
 
@@ -163,76 +194,6 @@ function applyOverridesToPrimaries(rules, overrides) {
   }
 }
 
-/** Example word for an IPA token in "v as in word" vowel sound lines. */
-const IPA_AS_IN_WORD = {
-  'ʌ': 'cup',
-  'ə': 'about',
-  'ɐ': 'arena',
-  'a': 'father',
-  'æ': 'apple',
-  'ɛ': 'bed',
-  'e': 'café',
-  'ɜ': 'bird',
-  'ɪ': 'bit',
-  'i': 'see',
-  'y': 'suite',
-  'ɨ': 'roses',
-  'ɑ': 'hot',
-  'ɒ': 'lot',
-  'ɔ': 'caught',
-  'o': 'no',
-  'ø': 'peu',
-  'œ': 'peu',
-  'ʊ': 'book',
-  'u': 'flute',
-  'ʉ': 'boot',
-  'ɯ': 'good',
-  'eː': 'day',
-  'iː': 'see',
-  'yː': 'suite',
-  'oː': 'go',
-  'ɔː': 'law',
-  'ɑː': 'father',
-  'uː': 'boot',
-};
-
-/** Per-vowel teaching examples (IPA-aligned; from language-rules.md). */
-const VOWEL_APPROX_WORDS = {
-  a: ['cup', 'about'],
-  ā: ['Saal'],
-  e: ['bed', 'cat'],
-  ē: [],
-  i: ['bit'],
-  ī: ['see'],
-  o: ['hot'],
-  ō: ['father', 'law'],
-  u: ['book'],
-  ū: ['boot'],
-};
-
-/**
- * @param {{ vowel?: string, sound?: string, description?: string, approx?: string, ipa?: string }} vowelRow
- * @returns {string[]} e.g. ["Open vowel ≈ cup", "Open vowel ≈ about"]
- */
-export function formatVowelSoundExamples(vowelRow) {
-  const desc = vowelRow.description || vowelRow.explanation || vowelRow.vowel || vowelRow.sound || '';
-  const letter = vowelRow.vowel || vowelRow.sound || '';
-  const fromApprox = (vowelRow.approx || '')
-    .split(/[,;]+/)
-    .map((w) => w.trim())
-    .filter(Boolean);
-  const words = fromApprox.length
-    ? fromApprox
-    : VOWEL_APPROX_WORDS[letter]
-      ?? (vowelRow.ipa || '')
-        .split(/[,/\s]+/)
-        .map((t) => t.trim())
-        .filter(Boolean)
-        .map((token) => IPA_AS_IN_WORD[token])
-        .filter(Boolean);
-  return words.map((word) => `${desc} ≈ ${word}`);
-}
-
 /** Standard CV demo words — short vs long pairs for length distinction. */
 const CV_EXAMPLE_WORDS = [
   { word: 'pa', vowel: 'a' },
@@ -240,26 +201,22 @@ const CV_EXAMPLE_WORDS = [
   { word: 'pi', vowel: 'i' },
   { word: 'po', vowel: 'o' },
   { word: 'pu', vowel: 'u' },
-  { word: 'pay', vowel: 'ā' },
-  { word: 'pee', vowel: 'ē' },
-  { word: 'pie', vowel: 'ī' },
-  { word: 'poe', vowel: 'ō' },
-  { word: 'pew', vowel: 'ū' },
+  { word: 'pee', vowel: 'ee' },
+  { word: 'pie', vowel: 'eye' },
+  { word: 'pay', vowel: 'ay' },
+  { word: 'poe', vowel: 'oh' },
+  { word: 'poo', vowel: 'oo' },
 ];
 
 const VOWEL_LENGTH_PAIRS = [
-  { short: 'a', long: 'ā', demoShort: 'pa', demoLong: 'pay' },
-  { short: 'e', long: 'ē', demoShort: 'pe', demoLong: 'pee' },
-  { short: 'i', long: 'ī', demoShort: 'pi', demoLong: 'pie' },
-  { short: 'o', long: 'ō', demoShort: 'po', demoLong: 'poe' },
-  { short: 'u', long: 'ū', demoShort: 'pu', demoLong: 'pew' },
+  { short: 'i', long: 'ee', demoShort: 'pi', demoLong: 'pee' },
+  { short: 'u', long: 'oo', demoShort: 'pu', demoLong: 'poo' },
+  { short: 'ae', long: 'e', demoShort: 'bat', demoLong: 'bed' },
 ];
 
 export function composeVowelLengthPairs(rules) {
   const lips = placeSymbol(rules.places, 'lips');
-  const vowelBySound = Object.fromEntries(
-    (rules.experimentalVowels || []).map((v) => [v.vowel || v.sound, v.symbols]),
-  );
+  const vowelBySound = buildVowelByKeyMap(rules);
   return VOWEL_LENGTH_PAIRS.filter((p) => vowelBySound[p.short] && vowelBySound[p.long]).map((p) => ({
     shortSound: p.short,
     longSound: p.long,
@@ -274,19 +231,17 @@ export function composeVowelLengthPairs(rules) {
 
 export function composeCvExamples(rules) {
   const lips = placeSymbol(rules.places, 'lips');
-  const vowelBySound = Object.fromEntries(
-    (rules.experimentalVowels || []).map((v) => [v.vowel || v.sound, v.symbols]),
-  );
+  const vowelBySound = buildVowelByKeyMap(rules);
   return CV_EXAMPLE_WORDS.filter((ex) => vowelBySound[ex.vowel]).map((ex) => ({
     word: ex.word,
     spelling: `${lips}${vowelBySound[ex.vowel]}`,
   }));
 }
 
-/** The 9 primary symbols (5 places + 4 modifiers) for the Alphabet lab. */
+/** Primary alphabet: 5 places + vowel indicator + 4 manner modifiers. */
 export function getPrimarySymbolEntries(rules) {
   const placeIds = GRID_PLACE_IDS;
-  const modifierIds = ['voice', 'friction', 'nasal', 'glide'];
+  const modifierIds = ['vowel', 'voice', 'friction', 'nasal', 'glide'];
   const entries = [];
 
   for (const id of placeIds) {

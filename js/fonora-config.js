@@ -1,6 +1,5 @@
 /** Default markdown paths — symbols are never hardcoded here. */
 export const LANGUAGE_RULES_PATH = 'language-rules.md';
-export const LANGUAGE_RULES_V1_PATH = 'fixtures/language-rules-v1.md';
 
 /** Active rules bundle set at app startup from markdown. */
 let activeBundle = null;

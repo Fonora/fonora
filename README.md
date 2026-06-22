@@ -96,8 +96,7 @@ Or open the app with `?test` in the URL to log test results in the browser conso
 
 ## Rule sections loaded from Markdown
 
-- Places (5), Modifiers (4), Sound Grid
-- Writing Conventions (derived symbols — e.g. `⊇` Vowel Carrier)
-- Vowels (primary/alternate planes with Vowel Carrier shorthand)
-- Derived Sounds (`th`, `dh`, `z` defined; `v` experimental)
+- Places (5), Modifiers (vowel indicator ⚬ + 4 manners), Sound Grid
+- Vowels (recipe-composed from ⚬, places, glide — core + composite)
+- Derived / Reserved Sounds (`th`, `dh`, `v`, `z` defined)
 - IPA Supplemental Mappings (diphthongs and rhotic schwa)

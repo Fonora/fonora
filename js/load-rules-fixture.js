@@ -19,10 +19,6 @@ export function loadActiveRulesFixture(options = {}) {
   return loadRulesFixture('language-rules.md', options);
 }
 
-export function loadV1RulesFixture(options = {}) {
-  return loadRulesFixture('fixtures/language-rules-v1.md', { expectFullwidthLips: false, ...options });
-}
-
 export function applyIpaVowelMap(bundle) {
   registerIpaVowelMap(bundle.ipaVowelMode, bundle.ipaVowelMap);
   setActiveIpaVowelMap(bundle.ipaVowelMap);
