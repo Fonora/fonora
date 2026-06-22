@@ -17,15 +17,14 @@ import {
   reverseLookup,
 } from './rules.js';
 import { setActiveLanguageRulesBundle } from './fonora-config.js';
-import { registerIpaVowelMap, setActiveIpaVowelMap } from './ipa-normalize.js';
+import { registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules } from './ipa-normalize.js';
 import { loadAlphabetOverrides } from './alphabet-overrides.js';
 import { setupAlphabetLab } from './alphabet-lab.js';
-import { normalizeSymbolInput, decodeSymbols, decodeText, decodeToPhonemeKeys } from './decode.js';
+import { normalizeSymbolInput, decodeToPhonemeKeys } from './decode.js';
 import { encodeSounds } from './encode.js';
 import { translateIpaPhrase } from './ipa-pipeline.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
 import { loadLanguagePreference, loadEnglishDialectPreference, saveLanguagePreference, saveEnglishDialectPreference, ENGLISH_DIALECT_OPTIONS } from './language-preferences.js';
-import { loadGlossary, saveGlossary, migrateSampleGlossary, addGlossaryEntry } from './glossary.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
@@ -184,7 +183,7 @@ function formatDerivedStatus(status) {
 
 function getDerivedDisplayEntries() {
   return [
-    ...(rules.specialDerivedSounds || []),
+    ...(rules.derivedSounds || []),
     ...(rules.experimentalDerivedSounds || []),
     ...(rules.reservedDerivedSounds || []),
   ];
@@ -217,7 +216,7 @@ function renderDerivedTable(sectionId, bodyId, entries, columns) {
   }
 }
 
-function renderExperimentalSections() {
+function renderSupplementalSoundTables() {
   renderDerivedTable('derived-sounds-section', 'derived-sounds-body', getDerivedDisplayEntries(), (c) => [
     `<td class="symbol-text">${escapeHtml(c.symbols)}</td>`,
     `<td>${escapeHtml(c.sound)}</td>`,
@@ -226,11 +225,8 @@ function renderExperimentalSections() {
     `<td>${escapeHtml(c.explanation)}</td>`,
   ]);
 
-  const experimentalDerivedSection = document.getElementById('experimental-derived-section');
-  if (experimentalDerivedSection) experimentalDerivedSection.hidden = true;
-
-  const vowelSection = document.getElementById('experimental-vowels-section');
-  const vowelsBody = document.getElementById('experimental-vowels-body');
+  const vowelSection = document.getElementById('vowels-section');
+  const vowelsBody = document.getElementById('vowels-body');
   const vowels = getVowelEntries(rules);
 
   if (!vowelSection || !vowelsBody || !vowels.length) {
@@ -241,7 +237,7 @@ function renderExperimentalSections() {
     vowelsBody.innerHTML = '';
     for (const cell of vowels) {
       const tr = document.createElement('tr');
-      tr.className = 'derived-row derived-row--defined experimental-vowel-row';
+      tr.className = 'derived-row derived-row--defined vowel-table-row';
       tr.innerHTML = soundGridVowelRowHtml(cell, escapeHtml).join('');
       bindInsertableRow(tr, cell.symbols);
       vowelsBody.appendChild(tr);
@@ -249,30 +245,23 @@ function renderExperimentalSections() {
   }
 }
 
-function updateDecodePanel() {
-  const input = document.getElementById('symbol-input').value;
-  const result = decodeText(input, rules);
-
-  document.getElementById('decode-normalized').innerHTML = result.normalized
-    ? `<span class="symbol-text">${escapeHtml(result.normalized)}</span>`
-    : '<em>(empty)</em>';
-
-  const groupsEl = document.getElementById('decode-groups');
-  groupsEl.innerHTML = result.groups.length
-    ? result.groups
-        .map(
-          (g) =>
-            `<div class="decode-group"><span class="symbol-text">${escapeHtml(g.symbols)}</span> → ${escapeHtml(g.sound)} (${escapeHtml(g.ipa || '—')}) — ${escapeHtml(g.status)}${g.experimental ? ' <span class="draft-badge">Experimental</span>' : ''}</div>`
-        )
-        .join('')
-    : '<em>(none)</em>';
-
-  document.getElementById('decode-pronunciation').textContent = result.pronunciation || '(empty)';
-
-  const warningsEl = document.getElementById('decode-warnings');
-  warningsEl.innerHTML = result.warnings.length
-    ? result.warnings.map((w) => `<div class="warning-item">${escapeHtml(w)}</div>`).join('')
-    : '<em class="no-warnings">No warnings.</em>';
+function setupUtilityButtons() {
+  const textarea = document.getElementById('symbol-input');
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    textarea.value = '';
+  });
+  document.getElementById('btn-copy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(textarea.value);
+    } catch {
+      textarea.select();
+      document.execCommand('copy');
+    }
+  });
+  document.getElementById('btn-normalize').addEventListener('click', () => {
+    textarea.value = normalizeSymbolInput(textarea.value, rules);
+  });
+  document.getElementById('btn-backspace').addEventListener('click', () => deleteSymbolBeforeCursor(textarea));
 }
 
 function formatIpaResult(result) {
@@ -292,9 +281,6 @@ function formatIpaResult(result) {
     for (const word of result.words) {
       html += `<div class="encode-step translate-result--nested">`;
       html += `<strong>${escapeHtml(word.original || word.input || '')}</strong>`;
-      if (word.source === 'dictionary') {
-        html += ' <span class="translate-badge translate-badge--dict">Dictionary</span>';
-      }
       html += `<div>IPA: <code>${escapeHtml(word.ipa || '')}</code></div>`;
       html += `<div>Phonemes: <code>${escapeHtml(word.normalizedPhonemes || '')}</code></div>`;
       html += `</div>`;
@@ -305,11 +291,7 @@ function formatIpaResult(result) {
     return html;
   }
 
-  if (result.source === 'dictionary') {
-    html += '<span class="translate-badge translate-badge--dict">Dictionary override</span> ';
-  } else {
-    html += '<span class="translate-badge translate-badge--encoded">IPA Pipeline</span> ';
-  }
+  html += '<span class="translate-badge translate-badge--encoded">IPA Pipeline</span> ';
   html += `<div class="encode-step"><strong>Original Text:</strong> ${escapeHtml(result.original || '')}</div>`;
   if (result.voice) {
     html += `<div class="encode-step"><strong>eSpeak Voice:</strong> <code>${escapeHtml(result.voice)}</code></div>`;
@@ -481,28 +463,6 @@ function setupTranslator() {
   });
 }
 
-function setupUtilityButtons() {
-  const textarea = document.getElementById('symbol-input');
-  document.getElementById('btn-clear').addEventListener('click', () => {
-    textarea.value = '';
-    textarea.dispatchEvent(new Event('input'));
-  });
-  document.getElementById('btn-copy').addEventListener('click', async () => {
-    try {
-      await navigator.clipboard.writeText(textarea.value);
-    } catch {
-      textarea.select();
-      document.execCommand('copy');
-    }
-  });
-  document.getElementById('btn-normalize').addEventListener('click', () => {
-    textarea.value = normalizeSymbolInput(textarea.value, rules);
-    textarea.dispatchEvent(new Event('input'));
-  });
-  document.getElementById('btn-backspace').addEventListener('click', () => deleteSymbolBeforeCursor(textarea));
-  textarea.addEventListener('input', updateDecodePanel);
-}
-
 function setupReverseLookup() {
   const input = document.getElementById('reverse-input');
   const output = document.getElementById('reverse-output');
@@ -586,6 +546,16 @@ function updateQuizHints() {
 }
 
 function setupTestMode() {
+  const constructInput = document.getElementById('quiz-answer-construct');
+  renderSymbolButtons(document.getElementById('quiz-keyboard'), constructInput);
+  attachKeyboardShortcuts(constructInput);
+  document.getElementById('quiz-normalize')?.addEventListener('click', () => {
+    constructInput.value = normalizeSymbolInput(constructInput.value, rules);
+  });
+  document.getElementById('quiz-backspace')?.addEventListener('click', () => {
+    deleteSymbolBeforeCursor(constructInput);
+  });
+
   document.querySelectorAll('[name="quiz-type"]').forEach((radio) => {
     radio.addEventListener('change', () => {
       if (radio.checked) startQuiz(radio.value);
@@ -655,49 +625,7 @@ function updateQuizStats() {
   document.getElementById('quiz-stats').textContent = `Attempts: ${quizStats.attempts} · Correct: ${quizStats.correct} · Accuracy: ${acc}%`;
 }
 
-function setupDictionary() {
-  migrateSampleGlossary();
-  renderGlossaryList();
-  document.getElementById('glossary-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    addGlossaryEntry({
-      english: document.getElementById('dict-english').value.trim(),
-      languageSpelling: document.getElementById('dict-spelling').value.trim(),
-      pronunciation: document.getElementById('dict-pronunciation').value.trim(),
-      notes: document.getElementById('dict-notes').value.trim(),
-    });
-    e.target.reset();
-    renderGlossaryList(document.getElementById('glossary-search').value);
-  });
-  document.getElementById('glossary-search').addEventListener('input', (e) => renderGlossaryList(e.target.value));
-}
-
-function renderGlossaryList(filter = '') {
-  const list = document.getElementById('glossary-list');
-  const q = filter.toLowerCase();
-  const filtered = loadGlossary().filter((e) => !q || [e.english, e.languageSpelling, e.pronunciation, e.notes].join(' ').toLowerCase().includes(q));
-  list.innerHTML = filtered.length
-    ? filtered
-        .map(
-          (e) => `
-      <div class="glossary-entry">
-        <div class="glossary-entry-main"><strong>${escapeHtml(e.english)}</strong> → <span class="symbol-text glossary-spelling">${escapeHtml(e.languageSpelling)}</span> <span class="glossary-pron">(${escapeHtml(e.pronunciation)})</span></div>
-        ${e.notes ? `<div class="glossary-notes">${escapeHtml(e.notes)}</div>` : ''}
-        <button type="button" class="btn btn--small btn-delete" data-id="${escapeHtml(e.id)}">Delete</button>
-      </div>`
-        )
-        .join('')
-    : '<em>No entries.</em>';
-
-  list.querySelectorAll('.btn-delete').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      saveGlossary(loadGlossary().filter((e) => e.id !== btn.dataset.id));
-      renderGlossaryList(document.getElementById('glossary-search').value);
-    });
-  });
-}
-
-const MORE_TAB_IDS = new Set(['keyboard', 'mapping', 'dictionary', 'decode', 'reverse', 'encoder-testing', 'pronunciation-validation']);
+const MORE_TAB_IDS = new Set(['keyboard', 'reverse', 'encoder-testing', 'pronunciation-validation']);
 
 function closeNavDropdown() {
   const dropdown = document.getElementById('nav-more');
@@ -807,6 +735,7 @@ function applyRulesBundle(loaded) {
     setActiveLanguageRulesBundle(loaded);
     registerIpaVowelMap(loaded.ipaVowelMode, loaded.ipaVowelMap);
     setActiveIpaVowelMap(loaded.ipaVowelMap);
+    registerConsonantMapFromRules(loaded.rules);
   } else {
     const banner = document.getElementById('fallback-banner');
     if (banner) {
@@ -821,15 +750,13 @@ function applyRulesBundle(loaded) {
   setupTabs();
   renderKeyboardSection();
   renderSoundGrid();
-  renderExperimentalSections();
+  renderSupplementalSoundTables();
   setupUtilityButtons();
   setupReverseLookup();
   setupTestMode();
-  setupDictionary();
   setupEncoderTesting(rules);
   setupPronunciationValidation(rules);
   setupTranslator();
-  updateDecodePanel();
   setupAlphabetLab({
     getRules: () => rules,
     getMarkdownPrimarySymbols: () => markdownPrimarySymbols,

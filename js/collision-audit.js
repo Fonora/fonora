@@ -530,9 +530,11 @@ export function formatCollisionAuditMarkdown(audit) {
 
   lines.push('## 6. Test suite review');
   lines.push('');
-  lines.push('### What `npm run test:v2-collisions` actually tests');
+  lines.push('### What `npm run test:minimal-pairs` actually tests');
   lines.push('');
   for (const item of audit.testGaps.v2Checks) lines.push(`- ${item}`);
+  lines.push('');
+  lines.push('(`npm run test:v2-collisions` is a deprecated alias for the same script.)');
   lines.push('');
   lines.push('### Misleading claims');
   lines.push('');
@@ -541,8 +543,6 @@ export function formatCollisionAuditMarkdown(audit) {
   lines.push('### Recommended separate reports');
   lines.push('');
   for (const item of audit.testGaps.recommendedReports) lines.push(`- ${item}`);
-  lines.push('');
-  lines.push('**Rename suggestion:** `test:v2-collisions` → `test:v2-minimal-pairs` or report "distinct symbol outputs per minimal-pair group".');
   lines.push('');
 
   lines.push('## 7. Recommended fix order (no language redesign yet)');

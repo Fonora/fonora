@@ -62,8 +62,8 @@ const composeResult = test('composeGridSymbol matches sound grid', () => {
 const derivedResult = test('derived sounds use composition not stale symbols', () => {
   const rules = parseLanguageRulesMarkdown(markdown);
   applyPrimarySymbols(rules);
-  const th = rules.specialDerivedSounds.find((d) => d.sound === 'th');
-  const z = rules.specialDerivedSounds.find((d) => d.sound === 'z');
+  const th = rules.derivedSounds.find((d) => d.sound === 'th');
+  const z = rules.derivedSounds.find((d) => d.sound === 'z');
   assert(th.composition === 'reverse_front_tongue_friction');
   assert(th.symbols === composeDerivedSymbol('reverse_front_tongue_friction', rules.places, rules.modifiers));
   assert(z.composition === 'reverse_friction_voice');

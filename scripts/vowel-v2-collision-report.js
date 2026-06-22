@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Vowel minimal-pair collision report (current language-rules.md).
- * Run: node scripts/vowel-v2-collision-report.js
- *      npm run test:v2-collisions
+ * Vowel minimal-pair distinctness report (current language-rules.md).
+ * Run: npm run test:minimal-pairs
+ *      npm run test:v2-collisions  (alias)
  */
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';

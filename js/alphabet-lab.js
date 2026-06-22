@@ -1,18 +1,66 @@
 import {
   getPrimarySymbolEntries,
-  composeGridSymbol,
-  composeCvExamples,
   applyPrimarySymbols,
-  MODIFIER_ROW_ORDER,
 } from './symbol-compose.js';
 import { escapeHtml } from './utils.js';
-import { alphabetVowelRowHtml, getVowelEntries } from './vowel-display.js';
+import { buildKeyboardMap, getEncodableEntries } from './rules.js';
 import {
   loadAlphabetOverrides,
   saveAlphabetOverrides,
   clearAlphabetOverrides,
   hasAlphabetOverrides,
 } from './alphabet-overrides.js';
+
+const ALPHABET_LETTERS = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+function buildAlphabetChart(rules) {
+  const encodable = getEncodableEntries(rules).filter((c) => c.sound && c.sound !== '?');
+  const keyboard = buildKeyboardMap(rules);
+  const primaryEntries = [...rules.places, ...rules.modifiers];
+
+  return ALPHABET_LETTERS.map((letter) => {
+    const keyboardSymbol = keyboard.byLetter[letter];
+    if (keyboardSymbol) {
+      const primary = primaryEntries.find((e) => e.symbol === keyboardSymbol);
+      return {
+        letter: letter.toUpperCase(),
+        symbol: keyboardSymbol,
+        sound: primary?.label || '—',
+        notes: 'Keyboard shortcut',
+      };
+    }
+
+    const exact = encodable.find((c) => c.sound === letter);
+    if (exact) {
+      return {
+        letter: letter.toUpperCase(),
+        symbol: exact.symbols,
+        sound: exact.sound,
+        notes: exact.explanation || exact.lexicalSet || '',
+      };
+    }
+
+    const candidates = encodable
+      .filter((c) => c.sound.startsWith(letter))
+      .sort((a, b) => a.symbols.length - b.symbols.length || a.sound.length - b.sound.length);
+    if (candidates.length) {
+      const best = candidates[0];
+      return {
+        letter: letter.toUpperCase(),
+        symbol: best.symbols,
+        sound: best.sound,
+        notes: best.explanation || best.lexicalSet || '',
+      };
+    }
+
+    return {
+      letter: letter.toUpperCase(),
+      symbol: '—',
+      sound: '—',
+      notes: '',
+    };
+  });
+}
 
 /**
  * @param {object} opts
@@ -25,9 +73,7 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
   if (!panel) return;
 
   const gridEl = document.getElementById('alphabet-primary-grid');
-  const previewGrid = document.getElementById('alphabet-preview-grid');
-  const previewVowels = document.getElementById('alphabet-preview-vowels');
-  const previewWords = document.getElementById('alphabet-preview-words');
+  const chartBody = document.getElementById('alphabet-chart-body');
   const statusEl = document.getElementById('alphabet-status');
 
   /** @type {Record<string, string>} */
@@ -110,50 +156,27 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
           draftOverrides[entry.id] = val;
         }
         renderPrimaryEditor();
-        renderPreviews();
+        renderAlphabetChart();
       });
 
       gridEl.appendChild(card);
     }
   }
 
-  function renderPreviews() {
-    const rules = previewRules();
-    const { places, modifiers } = rules;
-
-    previewGrid.innerHTML = '';
-    const head = document.createElement('tr');
-    head.innerHTML = '<th></th>' + places.map((p) =>
-      `<th class="symbol-text">${escapeHtml(p.symbol)}</th>`,
-    ).join('');
-    previewGrid.appendChild(head);
-
-    for (const modId of MODIFIER_ROW_ORDER) {
-      const tr = document.createElement('tr');
-      const modLabel = modId === 'plain' ? 'plain' : modifiers.find((m) => m.id === modId)?.symbol || modId;
-      tr.innerHTML = `<th class="symbol-text">${escapeHtml(modLabel)}</th>`;
-      for (const place of places) {
-        const td = document.createElement('td');
-        td.className = 'symbol-text';
-        td.textContent = composeGridSymbol(modId, place.id, places, modifiers);
-        tr.appendChild(td);
-      }
-      previewGrid.appendChild(tr);
-    }
-
-    previewVowels.innerHTML = '';
-    for (const v of getVowelEntries(rules)) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = alphabetVowelRowHtml(v, escapeHtml).join('');
-      previewVowels.appendChild(tr);
-    }
-
-    previewWords.innerHTML = '';
-    for (const ex of composeCvExamples(rules)) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${escapeHtml(ex.word)}</td><td class="symbol-text">${escapeHtml(ex.spelling)}</td>`;
-      previewWords.appendChild(tr);
-    }
+  function renderAlphabetChart() {
+    if (!chartBody) return;
+    const rows = buildAlphabetChart(previewRules());
+    chartBody.innerHTML = rows
+      .map(
+        (row) => `
+      <tr>
+        <td class="alphabet-chart-letter">${escapeHtml(row.letter)}</td>
+        <td class="symbol-text alphabet-chart-symbol">${escapeHtml(row.symbol)}</td>
+        <td>${escapeHtml(row.sound)}</td>
+        <td class="alphabet-chart-notes">${escapeHtml(row.notes)}</td>
+      </tr>`,
+      )
+      .join('');
   }
 
   document.getElementById('alphabet-apply')?.addEventListener('click', () => {
@@ -172,13 +195,13 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
       'success',
     );
     renderPrimaryEditor();
-    renderPreviews();
+    renderAlphabetChart();
   });
 
   document.getElementById('alphabet-reset-draft')?.addEventListener('click', () => {
     draftOverrides = { ...loadAlphabetOverrides() };
     renderPrimaryEditor();
-    renderPreviews();
+    renderAlphabetChart();
     setStatus('Draft reset to last saved overrides.', 'info');
   });
 
@@ -188,7 +211,7 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
     onApplyOverrides({});
     setStatus('Cleared overrides. Reloaded symbols from language-rules.md.', 'success');
     renderPrimaryEditor();
-    renderPreviews();
+    renderAlphabetChart();
   });
 
   if (hasAlphabetOverrides()) {
@@ -196,5 +219,5 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
   }
 
   renderPrimaryEditor();
-  renderPreviews();
+  renderAlphabetChart();
 }

@@ -1,11 +1,12 @@
 import { getEncodableEntries, getQuizEntries, getVowelPhonemeKeys, vowelSymbolForKey } from './rules.js';
 import { encodeSounds } from './encode.js';
 import { decodeSymbols, decodeText, decodeToPhonemeKeys, normalizeSymbolInput } from './decode.js';
-import { normalizeIpa, registerIpaVowelMap, setActiveIpaVowelMap } from './ipa-normalize.js';
+import { normalizeIpa, registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules, findConsonantMapSyncIssues, buildConsonantMapFromRules } from './ipa-normalize.js';
 import { applyPrimarySymbols } from './symbol-compose.js';
 import { encodeFromIpa } from './ipa-encode-helper.js';
 import { ipaPhonemesToFonora } from './ipa-to-fonora.js';
 import { findConcatenationCollisions } from './collision-audit.js';
+import { resolvePipelineOptions, setActiveLanguageRulesBundle } from './fonora-config.js';
 import {
   groupsToIpa,
   normalizeIpaForComparison,
@@ -49,9 +50,9 @@ export function runTests(options) {
     throw new Error('runTests requires options.bundle from loaded language rules');
   }
 
-  const v2Bundle = options.bundle;
-  const rules = v2Bundle.rules;
-  const registry = v2Bundle.registry;
+  const rulesBundle = options.bundle;
+  const rules = rulesBundle.rules;
+  const registry = rulesBundle.registry;
   const lips = registry.places.lips;
   const voice = registry.modifiers.voice;
   const friction = registry.modifiers.friction;
@@ -63,8 +64,10 @@ export function runTests(options) {
   const middle = registry.places.middleTongue;
   const back = registry.places.backTongue;
 
-  registerIpaVowelMap(v2Bundle.ipaVowelMode, v2Bundle.ipaVowelMap);
-  setActiveIpaVowelMap(v2Bundle.ipaVowelMap);
+  registerIpaVowelMap(rulesBundle.ipaVowelMode, rulesBundle.ipaVowelMap);
+  setActiveIpaVowelMap(rulesBundle.ipaVowelMap);
+  registerConsonantMapFromRules(rules);
+  setActiveLanguageRulesBundle(rulesBundle);
 
   const results = [];
   const t = (name, fn) => results.push(test(name, fn));
@@ -78,7 +81,23 @@ export function runTests(options) {
     assert(Object.keys(registry.vowels).length === 12);
     assert(!registry.vowels.oo);
     assert(rules.places.length === 5);
-    assert(v2Bundle.fonoraVersion === 'v3');
+    assert(rulesBundle.fonoraVersion === 'v3');
+    assert(rulesBundle.ipaVowelMode === 'v3');
+  });
+
+  t('resolvePipelineOptions defaults to v3', () => {
+    assert(resolvePipelineOptions({}).fonoraVersion === 'v3');
+    assert(resolvePipelineOptions({}).vowelMode === 'v3');
+    setActiveLanguageRulesBundle(null);
+    assert(resolvePipelineOptions({}).fonoraVersion === 'v3');
+    setActiveLanguageRulesBundle(rulesBundle);
+  });
+
+  t('consonant map is built from language rules', () => {
+    const built = buildConsonantMapFromRules(rules);
+    assert(Object.keys(built).length >= 20, 'expected grid + derived IPA tokens');
+    const issues = findConsonantMapSyncIssues(rules);
+    assert(issues.length === 0, issues.join('; '));
   });
 
   t('v3 vowel inventory conforms to grammar', () => {
@@ -178,8 +197,8 @@ export function runTests(options) {
   });
 
   t('th/dh composed from primary alphabet only', () => {
-    const th = rules.specialDerivedSounds.find((d) => d.sound === 'th');
-    const dh = rules.specialDerivedSounds.find((d) => d.sound === 'dh');
+    const th = rules.derivedSounds.find((d) => d.sound === 'th');
+    const dh = rules.derivedSounds.find((d) => d.sound === 'dh');
     const ft = registry.places.frontTongue;
     assert(th.symbols === `${ft}${friction}`);
     assert(dh.symbols === `${ft}${voice}`);
@@ -187,7 +206,7 @@ export function runTests(options) {
   });
 
   t('z derived sound uses reversed friction+voice (voiced counterpart of s)', () => {
-    const z = rules.specialDerivedSounds.find((d) => d.sound === 'z');
+    const z = rules.derivedSounds.find((d) => d.sound === 'z');
     const s = rules.soundGrid.find((c) => c.sound === 's');
     assert(z.composition === 'reverse_friction_voice');
     assert(z.symbols === `${friction}${voice}`);
@@ -197,7 +216,7 @@ export function runTests(options) {
   });
 
   t('z round-trip encoding and decoding', () => {
-    const zSym = rules.specialDerivedSounds.find((d) => d.sound === 'z').symbols;
+    const zSym = rules.derivedSounds.find((d) => d.sound === 'z').symbols;
     for (const [phonemes, expectedKeys] of [['z', 'z'], ['z u', 'z u'], ['b a z', 'b a z']]) {
       const encoded = ipaPhonemesToFonora(phonemes, rules);
       assert(encoded.symbols.includes(zSym), `${phonemes} should contain z symbols`);
@@ -207,26 +226,26 @@ export function runTests(options) {
   });
 
   t('z words from IPA contain z phoneme', () => {
-    const zSym = rules.specialDerivedSounds.find((d) => d.sound === 'z').symbols;
+    const zSym = rules.derivedSounds.find((d) => d.sound === 'z').symbols;
     for (const ipa of ['zuː', 'zɪɹoʊ', 'zɪp']) {
-      const result = encodeFromIpa(ipa, v2Bundle);
+      const result = encodeFromIpa(ipa, rulesBundle);
       assert(result.symbols.includes(zSym), `IPA ${ipa} should encode z as ${zSym}`);
       assert(result.decoded.includes('z'), `IPA ${ipa} should recover z phoneme key`);
     }
   });
 
   t('buzz decodes correctly from IPA', () => {
-    const zSym = rules.specialDerivedSounds.find((d) => d.sound === 'z').symbols;
-    const result = encodeFromIpa('bʌz', v2Bundle);
+    const zSym = rules.derivedSounds.find((d) => d.sound === 'z').symbols;
+    const result = encodeFromIpa('bʌz', rulesBundle);
     assert(result.symbols.includes(zSym));
     assert(result.decoded === 'b a z');
     assert(decodeToPhonemeKeys(result.symbols, rules).phonemeKeys === 'b a z');
   });
 
   t('music encoding remains unaffected by z derived sound', () => {
-    const zSym = rules.specialDerivedSounds.find((d) => d.sound === 'z').symbols;
+    const zSym = rules.derivedSounds.find((d) => d.sound === 'z').symbols;
     const sSym = rules.soundGrid.find((c) => c.sound === 's').symbols;
-    const result = encodeFromIpa('mjuzɪk', v2Bundle);
+    const result = encodeFromIpa('mjuzɪk', rulesBundle);
     assert(result.symbols.includes(zSym), 'music should still encode medial /z/');
     assert(!result.symbols.includes(sSym), 'music should not gain spurious /s/ symbols');
     const roundTrip = decodeToPhonemeKeys(result.symbols, rules);
@@ -235,11 +254,11 @@ export function runTests(options) {
   });
 
   t('z derived sound has no symbol collisions with s, v, th, or dh', () => {
-    const zSym = rules.specialDerivedSounds.find((d) => d.sound === 'z').symbols;
+    const zSym = rules.derivedSounds.find((d) => d.sound === 'z').symbols;
     const sSym = rules.soundGrid.find((c) => c.sound === 's').symbols;
-    const vSym = rules.specialDerivedSounds.find((c) => c.sound === 'v').symbols;
-    const thSym = rules.specialDerivedSounds.find((d) => d.sound === 'th').symbols;
-    const dhSym = rules.specialDerivedSounds.find((d) => d.sound === 'dh').symbols;
+    const vSym = rules.derivedSounds.find((c) => c.sound === 'v').symbols;
+    const thSym = rules.derivedSounds.find((d) => d.sound === 'th').symbols;
+    const dhSym = rules.derivedSounds.find((d) => d.sound === 'dh').symbols;
     const symbols = [sSym, vSym, thSym, dhSym, zSym];
     assert(new Set(symbols).size === symbols.length, `collision among derived/grid fricatives: ${symbols.join(', ')}`);
     assert(enc('s', rules).symbols === sSym);
@@ -253,7 +272,7 @@ export function runTests(options) {
     const trial = structuredClone(rules);
     trial.modifiers.find((m) => m.id === 'friction').symbol = 'ƒ';
     applyPrimarySymbols(trial);
-    const th = trial.specialDerivedSounds.find((d) => d.sound === 'th');
+    const th = trial.derivedSounds.find((d) => d.sound === 'th');
     assert(th.symbols.endsWith('ƒ'));
     assert(!th.symbols.includes(friction));
   });
@@ -312,15 +331,15 @@ export function runTests(options) {
   });
 
   t('IPA normalization maps TRAP vowel to ae phoneme', () => {
-    const n = normalizeIpa('kæt', { vowelMap: v2Bundle.ipaVowelMap });
+    const n = normalizeIpa('kæt', { vowelMap: rulesBundle.ipaVowelMap });
     assert(n.phonemeString.includes('ae'));
     assert(!n.phonemeString.includes('ee'));
   });
 
   t('IPA length marks map to vowel phonemes', () => {
-    assert(normalizeIpa('iː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'ee');
-    assert(normalizeIpa('uː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'u');
-    assert(normalizeIpa('eː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'e');
+    assert(normalizeIpa('iː', { vowelMap: rulesBundle.ipaVowelMap }).phonemeString === 'ee');
+    assert(normalizeIpa('uː', { vowelMap: rulesBundle.ipaVowelMap }).phonemeString === 'u');
+    assert(normalizeIpa('eː', { vowelMap: rulesBundle.ipaVowelMap }).phonemeString === 'e');
   });
 
   t('vowel architecture word set uses v3 symbols only', () => {
@@ -342,7 +361,7 @@ export function runTests(options) {
     for (const word of VOWEL_ARCHITECTURE_WORDS) {
       const ipa = ipaFixtures[word];
       assert(ipa, `missing IPA fixture for ${word}`);
-      const encoded = encodeFromIpa(ipa, v2Bundle);
+      const encoded = encodeFromIpa(ipa, rulesBundle);
       assert(!containsDoubleVowelMarker(encoded.symbols), `${word} must not contain ⚬⚬`);
       for (const sym of Object.values(registry.vowels)) {
         if (!encoded.symbols.includes(sym)) continue;
@@ -353,16 +372,16 @@ export function runTests(options) {
   });
 
   t('cat/cot/cut distinguish via markdown IPA map', () => {
-    const cat = encodeFromIpa('kæt', v2Bundle);
-    const cot = encodeFromIpa('kɑt', v2Bundle);
-    const cut = encodeFromIpa('kʌt', v2Bundle);
+    const cat = encodeFromIpa('kæt', rulesBundle);
+    const cot = encodeFromIpa('kɑt', rulesBundle);
+    const cut = encodeFromIpa('kʌt', rulesBundle);
     assert(new Set([cat.symbols, cot.symbols, cut.symbols]).size === 3);
   });
 
   t('composite diphthongs encode as single vowel symbols', () => {
-    const pie = encodeFromIpa('paɪ', v2Bundle);
+    const pie = encodeFromIpa('paɪ', rulesBundle);
     assert(pie.symbols.includes(vowelSym(rules, 'eye')));
-    const say = encodeFromIpa('seɪ', v2Bundle);
+    const say = encodeFromIpa('seɪ', rulesBundle);
     assert(say.symbols.includes(vowelSym(rules, 'ay')));
   });
 
@@ -381,7 +400,7 @@ export function runTests(options) {
   t('pronunciation validation: symbols round-trip IPA for boy', () => {
     const encoded = ipaPhonemesToFonora('boy', rules);
     const recovery = symbolsToRecoveredIpa(encoded.symbols, rules);
-    const normalized = normalizeIpa('bɔɪ', { vowelMap: v2Bundle.ipaVowelMap });
+    const normalized = normalizeIpa('bɔɪ', { vowelMap: rulesBundle.ipaVowelMap });
     const recoveredIpa = recovery.phonemeKeys === normalized.display
       ? normalized.ipaFromSegments
       : phonemeKeysToRecoveredIpa(recovery.phonemeKeys, rules, 'bɔɪ');
@@ -409,5 +428,5 @@ export function runTests(options) {
 
   const passed = results.filter((r) => r.ok).length;
   const failed = results.filter((r) => !r.ok);
-  return { passed, total: results.length, failed, results, bundle: v2Bundle };
+  return { passed, total: results.length, failed, results, bundle: rulesBundle };
 }

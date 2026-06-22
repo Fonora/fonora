@@ -155,7 +155,7 @@ function buildMismatchNotes(source, recovery, fonora, normalized) {
 
 /**
  * Validate one English word through the full pronunciation pipeline.
- * Bypasses dictionary overrides so eSpeak IPA is always the source.
+ * Validate whether Fonora preserves pronunciation through the full pipeline.
  */
 export async function validatePronunciation(word, rules, bundle, options = {}) {
   const trimmed = String(word || '').trim();

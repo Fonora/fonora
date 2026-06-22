@@ -18,19 +18,35 @@ flowchart LR
   Fonora --> Decode[decode.js]
 ```
 
+Rules version: **v3** (`language-rules.md` — vowel grammar `⚬X`, diphthong `⚬X⌣Y`).
+
 ## What it does
 
 - Loads symbol rules from `language-rules.md` at runtime
-- IPA pipeline: eSpeak NG → IPA → Fonora phonemes → symbols
-- Symbol keyboard with number/letter shortcuts and clickable buttons
+- IPA pipeline: eSpeak NG → IPA → Fonora phonemes → symbols (no dictionary bypass)
+- **Keyboard** — symbol input, clickable buttons, and keyboard mapping table
 - Place × manner sound grid
-- Live decode panel with spacing normalization
+- **Alphabet** — primary symbol experiments + A–Z reference chart
 - Reverse sound → symbol lookup
-- Simple decode/construct quiz mode for all encodable sounds (session stats only)
-- Mini dictionary with localStorage persistence
-- Translator with language selection
-- Pronunciation Testing tab for IPA → Fonora evaluation
-- Pronunciation Validation Mode for encode/decode IPA round-trip testing
+- Decode/construct quiz (session stats; construct mode includes symbol keyboard)
+- Translator with language selection and full-width editing
+- Pronunciation Testing — manual IPA → Fonora review across languages
+- Pronunciation Validation — automated encode/decode IPA round-trip testing
+
+See [docs/README.md](docs/README.md) for the full documentation index.
+
+## App navigation
+
+| Section | Location | Purpose |
+| --- | --- | --- |
+| Translator | Primary nav | Text → IPA → Fonora; editable output |
+| Sound Grid | Primary nav | Place × manner reference |
+| Alphabet | Primary nav | Primary symbol overrides + A–Z chart |
+| Quiz | Primary nav | Decode or construct encodable sounds |
+| Keyboard | More | Type symbols; mapping table |
+| Reverse Lookup | More | Sound → symbol |
+| Pronunciation Testing | More | Manual review + export |
+| Pronunciation Validation | More | Automated IPA round-trip |
 
 ## Run locally
 
@@ -39,8 +55,10 @@ Install dependencies (copies eSpeak NG WASM to `vendor/espeak-ng/`):
 ```bash
 cd fonora
 npm install
-python3 -m http.server 8000
+npm start
 ```
+
+Or: `python3 -m http.server 8000`
 
 Then open [http://localhost:8000](http://localhost:8000).
 
@@ -55,10 +73,6 @@ If the Markdown file cannot be loaded, the app shows a warning banner and most f
 ## eSpeak NG
 
 See [docs/espeak-integration.md](docs/espeak-integration.md) for voice codes, WASM setup, GPL license note, and browser compatibility.
-
-## Dictionary
-
-Glossary entries are stored in browser `localStorage` under the key `fonora-glossary-v1`. Dictionary entries override the IPA pipeline for known words.
 
 ## Files
 
@@ -77,32 +91,46 @@ Glossary entries are stored in browser `localStorage` under the key `fonora-glos
 | `js/rules.js` | Rule helpers (encode/decode entry lists) |
 | `js/encode.js` | Sounds → Fonora symbols |
 | `js/decode.js` | Fonora symbols → sounds (longest-match) |
+| `js/alphabet-lab.js` | Alphabet tab UI |
+| `js/alphabet-overrides.js` | localStorage primary symbol overrides |
+| `js/collision-audit.js` | Symbol collision analysis |
 | `js/encoder-testing.js` | Pronunciation Testing tab UI |
-| `js/pronunciation-validation.js` | Pronunciation Validation Mode core logic |
+| `js/pronunciation-validation.js` | Pronunciation Validation core logic |
 | `js/pronunciation-validation-ui.js` | Pronunciation Validation tab UI |
 | `js/encoder-test-sets.js` | Curated and multilingual test word lists |
 | `js/app.js` | UI wiring |
 | `js/tests.js` | Node test runner |
 | `js/tests-core.js` | Shared unit tests (browser + Node) |
 | `language-rules.md` | Authoritative Fonora symbol mapping (human-editable) |
-| `docs/espeak-integration.md` | eSpeak NG integration details |
+| `docs/README.md` | Documentation index |
+| `docs/ipa-normalize.md` | Consonant IPA map (grid + supplemental) |
 
 ## Tests
 
 ```bash
-npm test
-npm run test:vowels          # vowel readability report → reports/
-npm run test:v2-collisions   # vowel minimal-pair collision report → reports/
-npm run test:pronunciation-validation  # IPA round-trip validation report → reports/
+npm test                              # 48 unit/integration assertions
+npm run test:vowels                   # vowel readability report → reports/
+npm run test:minimal-pairs          # minimal-pair distinctness report → reports/
+npm run test:v2-collisions          # deprecated alias for test:minimal-pairs
+npm run audit:collisions            # full collision audit → docs/FONORA_COLLISION_AUDIT.md
+npm run test:pronunciation-validation # IPA round-trip batch report → reports/
 ```
 
-See [docs/pronunciation-validation.md](docs/pronunciation-validation.md) for how validation works.
+| Command | UI equivalent |
+| --- | --- |
+| `npm test` | Append `?test` to the app URL (results in browser console) |
+| `npm run test:pronunciation-validation` | Pronunciation Validation tab (batch + single word) |
+| `npm run test:vowels`, `test:minimal-pairs`, `audit:collisions` | CLI/report only |
 
-Or open the app with `?test` in the URL to log test results in the browser console.
+See [docs/pronunciation-validation.md](docs/pronunciation-validation.md) for validation semantics.
 
 ## Rule sections loaded from Markdown
 
 - Places (5), Modifiers (vowel indicator ⚬ + 4 manners), Sound Grid
-- Vowels (v3 grammar: simple `⚬X`, diphthong `⚬X⌣Y` — recipe-composed from ⚬, places, manner glyphs, glide)
+- Vowels (v3 grammar: simple `⚬X`, diphthong `⚬X⌣Y`)
 - Derived / Reserved Sounds (`th`, `dh`, `v`, `z` defined)
 - IPA Supplemental Mappings (diphthongs and rhotic schwa)
+
+## Known implementation notes
+
+- Consonant IPA: grid/derived tokens auto-built from `language-rules.md`; supplemental variants in [docs/ipa-normalize.md](docs/ipa-normalize.md)

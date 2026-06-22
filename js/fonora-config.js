@@ -25,7 +25,7 @@ export function getActiveIpaVowelMode() {
 }
 
 export function resolvePipelineOptions(options = {}) {
-  const fonoraVersion = options.fonoraVersion ?? activeBundle?.fonoraVersion ?? 'v2';
+  const fonoraVersion = options.fonoraVersion ?? activeBundle?.fonoraVersion ?? 'v3';
   const vowelMode = options.vowelMode ?? activeBundle?.ipaVowelMode ?? 'default';
   return {
     ...options,

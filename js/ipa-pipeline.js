@@ -1,7 +1,6 @@
 import { textToIpa } from './ipa.js';
 import { normalizeIpa } from './ipa-normalize.js';
 import { ipaPhonemesToFonora } from './ipa-to-fonora.js';
-import { findDictionaryEntry } from './glossary.js';
 import { resolvePipelineOptions, getActiveLanguageRulesBundle } from './fonora-config.js';
 import { resolveEspeakVoice } from './language-preferences.js';
 
@@ -25,36 +24,6 @@ export async function runIpaPipeline(input, rules, options = {}) {
   const testSet = pipelineOptions.testSet || '';
   const testMode = pipelineOptions.testMode || 'manual';
   const rerunOf = pipelineOptions.rerunOf || null;
-
-  const dictMatch = findDictionaryEntry(trimmed);
-  if (dictMatch) {
-    const fonora = ipaPhonemesToFonora(dictMatch.pronunciation, rules);
-    const { source, hasFallback, primarySource } = resolveSource(fonora, [], 'dictionary');
-    return {
-      id,
-      input: trimmed,
-      testSet,
-      testMode,
-      rerunOf,
-      original: trimmed,
-      lang,
-      voice: null,
-      ipa: dictMatch.pronunciation,
-      normalizedPhonemes: fonora.decoded || dictMatch.pronunciation.split('').join(' '),
-      phonemeString: dictMatch.pronunciation,
-      sounds: dictMatch.pronunciation,
-      phoneticParse: (fonora.decoded || dictMatch.pronunciation).replace(/ /g, ' + '),
-      symbols: dictMatch.languageSpelling,
-      decoded: fonora.decoded,
-      breakdown: fonora.groups,
-      warnings: fonora.warnings,
-      unmapped: [],
-      source,
-      primarySource,
-      hasFallback,
-      glossaryEntry: dictMatch,
-    };
-  }
 
   const ipa = await textToIpa(trimmed, lang, pipelineOptions);
   const activeBundle = getActiveLanguageRulesBundle();
@@ -87,7 +56,6 @@ export async function runIpaPipeline(input, rules, options = {}) {
     source,
     primarySource,
     hasFallback,
-    glossaryEntry: null,
   };
 }
 

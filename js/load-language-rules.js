@@ -6,6 +6,7 @@
 import { getVowelEntries, vowelPhonemeKey } from './vowel-display.js';
 import { applyPrimarySymbols, getPrimaryInventory } from './symbol-compose.js';
 import { assertVowelInventoryGrammar, containsDoubleVowelMarker } from './vowel-grammar.js';
+import { buildConsonantMapFromRules, mergeConsonantMaps } from './ipa-normalize.js';
 
 const ASCII_EQUALS = '=';
 const FULLWIDTH_EQUALS = '＝';
@@ -164,7 +165,7 @@ function loadDerivedSounds(sections) {
 
 function splitDerivedSoundsByStatus(derivedSounds) {
   return {
-    specialDerivedSounds: derivedSounds.filter((d) => d.status === 'defined'),
+    derivedSounds: derivedSounds.filter((d) => d.status === 'defined'),
     experimentalDerivedSounds: derivedSounds.filter((d) => d.status === 'experimental'),
     reservedDerivedSounds: derivedSounds.filter((d) => d.status === 'reserved'),
   };
@@ -339,7 +340,7 @@ export function collectAllSymbols(rules) {
   }
   for (const cell of [
     ...(rules.soundGrid || []),
-    ...(rules.specialDerivedSounds || []),
+    ...(rules.derivedSounds || []),
     ...(rules.experimentalDerivedSounds || []),
     ...(rules.reservedDerivedSounds || []),
     ...(getVowelEntries(rules) || []),
@@ -413,24 +414,18 @@ export function parseLanguageRulesMarkdown(markdown) {
   const sections = splitMarkdownSections(markdown);
   const config = parseConfiguration(sections.configuration || '');
 
-  const experimentalVowels = parseVowelsSection(sections.vowels || '');
+  const vowels = parseVowelsSection(sections.vowels || '');
   const supplementalIpa = parseSupplementalIpaMappings(sections['ipa supplemental mappings'] || '');
-  const ipaVowelMap = buildIpaVowelMapFromVowels(experimentalVowels, supplementalIpa);
-
-  const experimentalVowelExamples = rowsToObjects(
-    parseTableRows((sections['vowel examples'] || '').split('\n')),
-  )
-    .filter((r) => r.word)
-    .map((r) => ({ word: r.word, spelling: r.spelling || '' }));
+  const ipaVowelMap = buildIpaVowelMapFromVowels(vowels, supplementalIpa);
 
   const derivedSymbolsKey =
     Object.keys(sections).find(
       (k) => k === 'derived symbols' || k === 'writing conventions',
     ) || '';
 
-  const derivedSounds = loadDerivedSounds(sections);
-  const { specialDerivedSounds, experimentalDerivedSounds, reservedDerivedSounds } =
-    splitDerivedSoundsByStatus(derivedSounds);
+  const derivedSoundsAll = loadDerivedSounds(sections);
+  const { derivedSounds, experimentalDerivedSounds, reservedDerivedSounds } =
+    splitDerivedSoundsByStatus(derivedSoundsAll);
 
   return {
     config,
@@ -438,10 +433,8 @@ export function parseLanguageRulesMarkdown(markdown) {
     modifiers: rowsToObjects(parseTableRows((sections.modifiers || '').split('\n'))),
     derivedSymbols: parseDerivedSymbolsSection(sections[derivedSymbolsKey] || ''),
     soundGrid: rowsToObjects(parseTableRows((sections['sound grid'] || '').split('\n'))),
-    specialDerivedSounds,
-    experimentalVowels,
-    vowels: experimentalVowels,
-    experimentalVowelExamples,
+    derivedSounds,
+    vowels,
     experimentalDerivedSounds,
     reservedDerivedSounds,
     ipaVowelMap,
@@ -473,7 +466,8 @@ export function loadLanguageRulesFromMarkdown(markdown, options = {}) {
     registry,
     ipaVowelMap: rules.ipaVowelMap,
     ipaVowelMode: rules.config.ipa_vowel_mode || 'default',
-    fonoraVersion: rules.config.fonora_version || 'v2',
+    fonoraVersion: rules.config.fonora_version || 'v3',
+    consonantMap: mergeConsonantMaps(buildConsonantMapFromRules(rules)),
     symbolsFromOverrides: hasOverrides,
   };
 }
@@ -490,7 +484,7 @@ export async function loadLanguageRules(url = 'language-rules.md') {
       registry: null,
       ipaVowelMap: null,
       ipaVowelMode: 'default',
-      fonoraVersion: 'v2',
+      fonoraVersion: 'v3',
       usingFallback: true,
       loadError: err instanceof Error ? err.message : String(err),
     };

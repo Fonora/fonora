@@ -20,7 +20,7 @@ Recovered IPA
 Match / mismatch
 ```
 
-Dictionary overrides are **bypassed** so every word uses the eSpeak IPA pipeline as the pronunciation source.
+Every word uses the eSpeak IPA pipeline. There is no dictionary or glossary override in the app.
 
 ## Success metric
 
@@ -115,6 +115,5 @@ npm run test:pronunciation-validation # batch report via eSpeak (requires npm in
 - Change symbol mappings or language rules
 - Add spaces, separators, or boundary markers to the language
 - Redesign the phoneme inventory
-- Use dictionary entries as pronunciation source
 
-Use **Pronunciation Testing** (separate tab) for human review workflows with glossary promotion and issue tagging.
+Use **Pronunciation Testing** (More menu) for manual multilingual review, issue tagging, and JSON/CSV export. That tab does not run automated pass/fail assertions.

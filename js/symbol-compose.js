@@ -173,10 +173,9 @@ export function applyPrimarySymbols(rules, primaryOverrides = {}) {
     }
   }
 
-  rules.experimentalVowelExamples = composeCvExamples(rules);
-  rules.experimentalVowelLengthPairs = composeVowelLengthPairs(rules);
+  rules.vowelLengthPairs = composeVowelLengthPairs(rules);
 
-  composeDerivedSounds(rules.specialDerivedSounds, places, modifiers);
+  composeDerivedSounds(rules.derivedSounds, places, modifiers);
   composeDerivedSounds(rules.experimentalDerivedSounds, places, modifiers);
   composeDerivedSounds(rules.reservedDerivedSounds, places, modifiers);
 

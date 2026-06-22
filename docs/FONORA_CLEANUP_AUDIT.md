@@ -1,5 +1,16 @@
 # Fonora Language System Cleanup Audit
 
+> **Post-cleanup addendum (June 2026)** — UI and pipeline changes after this audit:
+>
+> - **Rules version:** v3 (`fonora_version: v3`, vowel grammar `⚬X` / `⚬X⌣Y`); v2 double-vowel `⚬⚬` retired.
+> - **Removed UI:** Mini Dictionary, Decode panel, separate Keyboard Mapping tab. Keyboard mapping merged into **Keyboard** page.
+> - **Removed pipeline feature:** Glossary / dictionary bypass (`glossary.js` deleted); all words use eSpeak IPA.
+> - **Tests:** `npm test` now **46/46** assertions (was 37/37 at audit time).
+> - **Alphabet tab:** Sound grid / vowels / CV previews replaced with A–Z reference chart.
+> - **Tier 3 refactor (June 2026):** `experimentalVowels` → `rules.vowels`; `specialDerivedSounds` → `rules.derivedSounds`; `#vowels-section` DOM ids; dead `#experimental-derived-section` removed; `CONSONANT_MAP` generated from markdown at load + `SUPPLEMENTAL_CONSONANT_MAP`.
+>
+> Findings below remain largely valid unless contradicted by this addendum.
+
 **Branch:** `cleanup-language-system-review`  
 **Date:** 2026-06-21  
 **Scope:** Full read-only audit of language rules, encoder/decoder, IPA pipeline, UI, and automated tests. No core mapping changes. Low-risk doc/label fixes only.
@@ -17,7 +28,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 **Strengths**
 
 - Markdown-driven places, modifiers, sound grid, vowel recipes, derived sounds, and IPA supplemental mappings compose correctly at load time.
-- `npm test` passes **37/37** assertions (33 core + 4 parser/compose/voice tests).
+- `npm test` passes **48/48** assertions (unit + integration; count grew after audit).
 - Vowel report scripts run successfully and regenerate consistent output under current rules.
 - Legacy spelling encoder files (`normalize.js`, `encoder-rules.md`, `encoder-pipeline.js`) are gone.
 
@@ -55,7 +66,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 | Derived sound compositions | `language-rules.md` | Keep in markdown |
 | IPA supplemental mappings | `language-rules.md` | Keep in markdown |
 | Consonant IPA→phoneme map | **Hardcoded** `CONSONANT_MAP` | Generate from grid + derived at load, or add markdown section |
-| Throat `/h/` override | **Hardcoded** in `rules.js` | Document in markdown or encode as explicit derived sound |
+| Throat `/h/` override | **Hardcoded** in `rules.js` (audit) | Grid + tests use plain `⊃`; see mismatch table note |
 | CV demo examples | Hardcoded in `symbol-compose.js` | Optional markdown section or keep as UI-only |
 | Alphabet primary overrides | `localStorage` via `alphabet-overrides.js` | Keep as runtime experiment layer |
 
@@ -65,8 +76,8 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 | --- | --- |
 | `load-language-rules.js` | Parses markdown, builds IPA map, builds registry, validates, loads bundles — consider splitting parser vs runtime builder |
 | `rules.js` | Facade + encode/decode entry builders + throat `/h/` override + keyboard map + re-exports |
-| `app.js` | UI wiring, rules loading, grid rendering, translator, dictionary, quiz, alphabet lab bootstrap |
-| `encoder-testing.js` | Session management, pipeline execution, filtering, review persistence, export, glossary promotion |
+| `app.js` | UI wiring, rules loading, grid rendering, translator, quiz, alphabet lab bootstrap |
+| `encoder-testing.js` | Session management, pipeline execution, filtering, review persistence, export |
 
 ### Naming problems
 
@@ -77,7 +88,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 | `encodeSounds(pronunciation)` | Input is Fonora phoneme keys, not IPA or English | `encodePhonemes(phonemeString)` |
 | `ipaPhonemesToFonora()` | Input is already normalized phonemes | `phonemesToFonora()` |
 | `ipa-to-fonora.js` | Misleading layer name | `phoneme-to-fonora.js` |
-| `languageSpelling` (glossary) | Means Fonora symbol output | `fonoraSymbols` or `symbolOutput` |
+| `languageSpelling` (removed glossary field) | Was Fonora symbol output in deleted dictionary UI | N/A — feature removed |
 | `#experimental-vowels-section` | Visible production vowel table | `#vowels-section` |
 | `getDefinedSounds()` | Returns phoneme keys | `getEncodablePhonemeKeys()` |
 
@@ -95,7 +106,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 | 13 vowel keys with recipes | `composeVowelFromRecipe()` | ✓ |
 | Derived sounds (`th`, `dh`, `v`, `z`) | `DERIVED_COMPOSITIONS` | ✓ |
 | IPA supplemental `ɚ → a, r` | Merged into `ipaVowelMap` | ✓ |
-| Config `fonora_version: v2`, `ipa_vowel_mode: v2` | Bundle metadata | ✓ |
+| Config `fonora_version: v3`, `ipa_vowel_mode: v3` | Bundle metadata | ✓ |
 | Reserved throat manner cells | Excluded from encode/decode | ✓ (with `/h/` override) |
 
 ### Mismatches
@@ -103,7 +114,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 | Issue | Details | Severity |
 | --- | --- | --- |
 | Hardcoded consonant map | `CONSONANT_MAP` in `ipa-normalize.js` must be manually synced with grid/derived sounds. Extra mappings (`ts→c`, `dz→j`, `β→v`, etc.) exist for multilingual IPA but are not documented. | **High** |
-| Throat `/h/` encoding | Plain throat ⊃ documents `/h/` in grid, but encoder remaps `h` to friction+throat ⌀⊃ so ⊃ stays available for vowel `a` (⚬⊃). Not documented in markdown. | **Medium** |
+| Throat `/h/` encoding | Plain throat ⊃ documents `/h/` in grid; unit tests expect `h` ↔ `⊃`. Earlier audit noted a possible friction+throat remap — not in current `encodeSounds()` path. | **Low** (verify if IPA pipeline differs) |
 | IPA vowel token collisions | `buildIpaVowelMapFromVowels()` last-writer-wins when rows share IPA tokens. The `e` row claims `ɛ, e, eː, ɜ, ɜː` alongside other mappings. | **Medium** |
 | `plain` modifier | Used in sound grid but not listed in modifiers table. Works (`plain` → empty prefix). | **Low** |
 | Middle tongue plain `c` | Markdown IPA: `/tʃ/ or /c/`; grid sound is `c`; normalize maps `tʃ→c`, `ts→c`. | **Low** (document) |
@@ -147,9 +158,8 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 - `plain` grid modifier semantics
 - Hardcoded `CONSONANT_MAP` and how to extend it
 - IPA vowel map collision / precedence rules when rows share tokens
-- Dictionary override semantics (bypasses eSpeak; stores phoneme string + symbols)
-- Alphabet lab override scope (primaries only; recomposes dependents)
-- Difference between `npm test`, `test:vowels`, and `test:v2-collisions`
+- Alphabet lab override scope (primaries only; recomposes dependents; A–Z chart)
+- Difference between `npm test`, `test:vowels`, `test:v2-collisions`, and `audit:collisions`
 - Homophone testing strategy (manual only today)
 - What `Random` mode in Pronunciation Testing does (phoneme-string encoder, not IPA)
 
@@ -158,7 +168,6 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 - Runtime throat `/h/` remapping
 - `β→v`, `ts→c`, `dz→j`, and other multilingual consonant normalizations
 - `resolvePipelineOptions()` / `fonora-config.js` bundle resolution
-- Glossary `findDictionaryEntry()` short-circuit in pipeline
 - `symbolsFromOverrides` flag for alphabet experiments
 - CV demo words and vowel length pairs composed in `symbol-compose.js`
 
@@ -220,7 +229,6 @@ Pronunciation Testing cards show: word, lang/voice, test set, source badge, IPA,
 | `ipa-normalize.js` | Core IPA layer |
 | `load-language-rules.js` + `symbol-compose.js` | Markdown source-of-truth pipeline |
 | `encoder-test-sets.js` curated words | Pronunciation Testing harness |
-| `glossary.js` | Dictionary overrides |
 | `alphabet-lab.js` + overrides | Primary symbol experiments |
 | Legacy parser section fallbacks | Harmless backward compatibility for older markdown |
 
@@ -235,7 +243,7 @@ Pronunciation Testing cards show: word, lang/voice, test set, source badge, IPA,
 | `applyIpaVowelMap()` adoption | DRY in app/tests |
 | Consolidate collision test fixtures | Reduce drift between vowel suites |
 | Split `app.js` | Maintainability |
-| Rename `languageSpelling` → `fonoraSymbols` | Reduce spelling/phoneme confusion |
+| Rename `languageSpelling` → `fonoraSymbols` | N/A — glossary removed |
 
 ---
 
@@ -247,9 +255,11 @@ Pronunciation Testing cards show: word, lang/voice, test set, source badge, IPA,
 | --- | --- | --- | --- |
 | Unit/integration | `npm test` | Phoneme encoder + direct IPA (`encodeFromIpa`) | **Yes** (exit 1 on fail) |
 | Vowel readability | `npm run test:vowels` | Full `runIpaPipeline()` via eSpeak | Report only |
-| V2 collisions | `npm run test:v2-collisions` | eSpeak → normalize → encode (no dictionary) | Report only + console fallback count |
+| V2 collisions | `npm run test:v2-collisions` | eSpeak → normalize → encode | Report only + console fallback count |
+| Collision audit | `npm run audit:collisions` | Symbol inventory + concatenation hazards | Regenerates `docs/FONORA_COLLISION_AUDIT.md` |
 | Browser | `?test` URL param | Same as `npm test` core | Console only |
-| Pronunciation Testing UI | Manual | Full pipeline (+ dictionary) | **Human review only** |
+| Pronunciation Testing UI | Manual | Full IPA pipeline | **Human review only** |
+| Pronunciation Validation UI | Automated | Full round-trip | Pass/fail + collision warnings |
 
 ### Architecture alignment
 
@@ -295,7 +305,7 @@ Pronunciation Testing cards show: word, lang/voice, test set, source badge, IPA,
 
 | Check | Available | Result |
 | --- | --- | --- |
-| `npm test` | Yes | **37/37 passed** |
+| `npm test` | Yes | **48/48 passed** |
 | `npm run test:vowels` | Yes | Passed; regenerated `reports/vowel-readability-report.md` |
 | `npm run test:v2-collisions` | Yes | Passed; regenerated `reports/vowel-v2-collision-report.md` |
 | ESLint | No script | Not configured |

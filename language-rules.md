@@ -120,5 +120,6 @@ Non-grid orderings composed from primary symbols at load time (reversed `place +
 * **Symbol core:** 5 places + 4 manner modifiers + **⚬** vowel indicator (keyboard 0).
 * **V3 vowel grammar:** simple = 2 symbols; diphthong = 4 symbols. The legacy double-vowel marker **⚬⚬** is not used.
 * **language-rules.md** supplies structure and default symbols; Alphabet tab overrides replace primaries for browser testing.
+* Consonant IPA→phoneme normalization is documented in [docs/ipa-normalize.md](docs/ipa-normalize.md) and enforced by `npm test`.
 * Sound grid, vowels, derived sounds, and CV examples recompose from active primaries on load.
 * Do not use ASCII `=` (U+003D) as a symbol.

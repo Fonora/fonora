@@ -10,7 +10,8 @@
     "start": "node server.js",
     "test": "node js/tests.js",
     "test:vowels": "node scripts/vowel-readability-report.js",
-    "test:v2-collisions": "node scripts/vowel-v2-collision-report.js",
+    "test:minimal-pairs": "node scripts/vowel-v2-collision-report.js",
+    "test:v2-collisions": "npm run test:minimal-pairs",
     "audit:collisions": "node scripts/collision-audit.js",
     "test:pronunciation-validation": "node scripts/pronunciation-validation-report.js"
   },

@@ -1,6 +1,7 @@
 /**
  * IPA → Fonora phoneme normalization.
- * Vowel maps are loaded from language-rules.md at runtime (see setActiveIpaVowelMap).
+ * Vowel maps load from language-rules.md at runtime (see setActiveIpaVowelMap).
+ * Consonant maps merge markdown grid/derived IPA with supplemental multilingual variants.
  */
 
 const IPA_MULTIGRAPHS = [
@@ -9,45 +10,22 @@ const IPA_MULTIGRAPHS = [
   'iː', 'uː', 'oː', 'aː', 'eː', 'ɑː', 'ɔː', 'ɜː', 'yː', 'ɛː', 'æː',
 ];
 
-const CONSONANT_MAP = {
-  p: 'p',
-  b: 'b',
-  t: 't',
-  d: 'd',
-  k: 'k',
-  g: 'g',
+/** Multilingual IPA variants not declared as separate rows in language-rules.md. */
+export const SUPPLEMENTAL_CONSONANT_MAP = {
   ɡ: 'g',
   q: 'k',
-  f: 'f',
   β: 'v',
-  v: 'v',
-  s: 's',
-  z: 'z',
-  h: 'h',
-  m: 'm',
-  n: 'n',
-  ŋ: 'ng',
-  ʃ: 'sh',
   ʒ: 'j',
-  θ: 'th',
-  ð: 'dh',
-  j: 'y',
-  w: 'w',
-  l: 'l',
   ʎ: 'l',
-  r: 'r',
   ɹ: 'r',
   ɾ: 'r',
   ɽ: 'r',
   ʁ: 'r',
-  x: 'x',
   χ: 'x',
   ɕ: 'sh',
   ʐ: 'j',
   ɣ: 'g',
   ç: 'sh',
-  ɲ: 'ñ',
-  tʃ: 'c',
   ʈʃ: 'c',
   dʒ: 'j',
   ts: 'c',
@@ -56,6 +34,121 @@ const CONSONANT_MAP = {
   kx: 'x',
   ʔ: '?',
 };
+
+/** @type {Record<string, string>} */
+let activeConsonantMap = { ...SUPPLEMENTAL_CONSONANT_MAP };
+
+/**
+ * Parse IPA notation from a rules cell (e.g. `/p/`, `/tʃ/ or /c/`).
+ * @param {string} ipaField
+ * @returns {string[]}
+ */
+export function parseIpaNotation(ipaField) {
+  if (!ipaField || ipaField === '?') return [];
+  return ipaField.split(/\s+or\s+/i).flatMap((part) => {
+    const tokens = [];
+    const re = /\/([^/]+)\//g;
+    let match;
+    while ((match = re.exec(part)) !== null) tokens.push(match[1]);
+    return tokens;
+  });
+}
+
+function derivedSoundLists(rules) {
+  return [
+    rules?.derivedSounds,
+    rules?.experimentalDerivedSounds,
+  ];
+}
+
+/**
+ * IPA tokens declared in sound grid + derived sounds and their expected phoneme keys.
+ * @param {object} rules
+ * @returns {{ token: string, sound: string, source: string }[]}
+ */
+export function collectRulesIpaConsonantExpectations(rules) {
+  /** @type {{ token: string, sound: string, source: string }[]} */
+  const expectations = [];
+
+  const add = (ipaField, sound, source) => {
+    if (!sound || sound === '?') return;
+    for (const token of parseIpaNotation(ipaField)) {
+      expectations.push({ token, sound, source });
+    }
+  };
+
+  for (const cell of rules.soundGrid || []) {
+    if (cell.status === 'defined') add(cell.ipa, cell.sound, 'sound grid');
+  }
+
+  for (const list of derivedSoundLists(rules)) {
+    for (const cell of list || []) {
+      if (cell.status === 'defined' || cell.status === 'experimental') {
+        add(cell.ipa, cell.sound, 'derived sounds');
+      }
+    }
+  }
+
+  return expectations;
+}
+
+/**
+ * Build consonant IPA→phoneme map from language-rules.md grid and derived sounds.
+ * @param {object} rules
+ * @returns {Record<string, string>}
+ */
+export function buildConsonantMapFromRules(rules) {
+  /** @type {Record<string, string>} */
+  const map = {};
+  for (const { token, sound } of collectRulesIpaConsonantExpectations(rules)) {
+    map[token] = sound;
+  }
+  return map;
+}
+
+/**
+ * Merge rules-derived consonant map with supplemental multilingual variants.
+ * Rules entries take precedence over supplemental keys on conflict.
+ * @param {Record<string, string>} rulesMap
+ * @param {Record<string, string>} [supplemental]
+ */
+export function mergeConsonantMaps(rulesMap, supplemental = SUPPLEMENTAL_CONSONANT_MAP) {
+  return { ...supplemental, ...rulesMap };
+}
+
+export function getConsonantMap() {
+  return activeConsonantMap;
+}
+
+/**
+ * Rebuild active consonant map from loaded rules.
+ * @param {object} rules
+ */
+export function registerConsonantMapFromRules(rules) {
+  activeConsonantMap = mergeConsonantMaps(buildConsonantMapFromRules(rules));
+}
+
+/**
+ * Compare active consonant map against language-rules.md consonant IPA declarations.
+ * @param {object} rules
+ * @param {Record<string, string>} [map]
+ * @returns {string[]}
+ */
+export function findConsonantMapSyncIssues(rules, map = getConsonantMap()) {
+  const issues = [];
+  for (const { token, sound, source } of collectRulesIpaConsonantExpectations(rules)) {
+    if (!(token in map)) {
+      issues.push(`Missing consonant map["${token}"] for ${source} (expected phoneme "${sound}")`);
+      continue;
+    }
+    if (map[token] !== sound) {
+      issues.push(
+        `consonant map["${token}"] is "${map[token]}" but ${source} expects "${sound}"`,
+      );
+    }
+  }
+  return issues;
+}
 
 /** @type {Record<string, Record<string, string | string[]>>} */
 const vowelMapsByMode = {};
@@ -82,7 +175,7 @@ export function setActiveIpaVowelMap(map) {
 
 /**
  * Build a vowel map object from parsed language rules.
- * @param {import('./load-language-rules.js').parseLanguageRulesMarkdown extends (...args: any) => infer R ? R : never} rules
+ * @param {object} rules
  */
 export function buildVowelMapFromRules(rules) {
   return rules.ipaVowelMap || {};
@@ -103,13 +196,15 @@ function stripStressAndMarks(ipa) {
 }
 
 function sortedMultigraphs(vowelMap) {
-  const keys = new Set([...Object.keys(CONSONANT_MAP), ...Object.keys(vowelMap), ...IPA_MULTIGRAPHS]);
+  const consonantMap = getConsonantMap();
+  const keys = new Set([...Object.keys(consonantMap), ...Object.keys(vowelMap), ...IPA_MULTIGRAPHS]);
   return [...keys].sort((a, b) => b.length - a.length);
 }
 
 function mapToken(token, vowelMap) {
   if (!token) return { phonemes: [], unmapped: [] };
-  if (CONSONANT_MAP[token]) return { phonemes: [CONSONANT_MAP[token]], unmapped: [] };
+  const consonantMap = getConsonantMap();
+  if (consonantMap[token]) return { phonemes: [consonantMap[token]], unmapped: [] };
   if (vowelMap[token]) {
     const mapped = vowelMap[token];
     return {

@@ -39,10 +39,7 @@
             <span class="nav-dropdown-chevron" aria-hidden="true">▾</span>
           </button>
           <div class="nav-dropdown-menu" id="nav-more-menu" role="menu" hidden>
-            <button type="button" class="tab-btn nav-dropdown-item" data-tab="keyboard" role="menuitem">Symbol Keyboard</button>
-            <button type="button" class="tab-btn nav-dropdown-item" data-tab="mapping" role="menuitem">Keyboard Mapping</button>
-            <button type="button" class="tab-btn nav-dropdown-item" data-tab="dictionary" role="menuitem">Dictionary</button>
-            <button type="button" class="tab-btn nav-dropdown-item" data-tab="decode" role="menuitem">Decode</button>
+            <button type="button" class="tab-btn nav-dropdown-item" data-tab="keyboard" role="menuitem">Keyboard</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-tab="reverse" role="menuitem">Reverse Lookup</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-tab="encoder-testing" role="menuitem">Pronunciation Testing</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-tab="pronunciation-validation" role="menuitem">Pronunciation Validation</button>
@@ -57,12 +54,12 @@
     <section class="panel tab-panel tab-panel--active" id="tab-translator" data-tab-panel="translator">
       <h2>Translator</h2>
 
-      <div class="translate-layout">
-        <div class="translate-main">
-          <p class="section-desc">Type a word or phrase to get a Fonora spelling via the IPA pipeline. Each word is translated separately. Edit the result with the symbol keyboard.</p>
+      <p class="section-desc">Type a word or phrase to get a Fonora spelling via the IPA pipeline. Each word is translated separately. Edit the result with the symbol keyboard.</p>
 
+      <div class="translate-controls">
+        <div class="translate-control">
           <label for="translate-lang">Language</label>
-          <select id="translate-lang" class="text-input">
+          <select id="translate-lang" class="text-input text-input--full">
             <option value="en">English</option>
             <option value="es">Spanish</option>
             <option value="fr">French</option>
@@ -71,47 +68,46 @@
             <option value="ar">Arabic</option>
             <option value="zh">Mandarin</option>
           </select>
-
-          <div id="translate-dialect-wrap">
-            <label for="translate-dialect">English dialect</label>
-            <select id="translate-dialect" class="text-input"></select>
-          </div>
-
-          <label for="translate-input">Text</label>
-          <textarea id="translate-input" class="text-input" rows="3" placeholder="e.g. knife, hola, the big dog" autocomplete="off"></textarea>
-
-          <div id="translate-status" class="translate-status" hidden></div>
-
-          <label for="translate-output">Fonora spelling</label>
-          <textarea id="translate-output" class="symbol-text symbol-input translate-output" rows="3" placeholder="Fonora symbols appear here…"></textarea>
-          <div id="translate-keyboard" class="symbol-buttons symbol-buttons--compact"></div>
-          <div class="button-row">
-            <button type="button" id="translate-normalize" class="btn">Normalize spacing</button>
-            <button type="button" id="translate-backspace" class="btn">Backspace</button>
-          </div>
-
-          <label for="translate-pronunciation">Normalized Fonora phonemes</label>
-          <input type="text" id="translate-pronunciation" class="text-input" placeholder="IPA-derived phonemes, editable for single words">
-
-          <div id="translate-decode" class="translate-decode-preview"></div>
         </div>
+        <div class="translate-control" id="translate-dialect-wrap">
+          <label for="translate-dialect">English dialect</label>
+          <select id="translate-dialect" class="text-input text-input--full"></select>
+        </div>
+      </div>
 
-        <aside class="translate-details-panel">
-          <label class="translate-details-toggle">
-            <input type="checkbox" id="translate-show-details" checked>
-            Show encoding details
-          </label>
-          <div id="translate-meta" class="translate-meta-panel"></div>
-        </aside>
+      <label for="translate-input">Text</label>
+      <textarea id="translate-input" class="text-input text-input--full" rows="4" placeholder="e.g. knife, hola, the big dog" autocomplete="off"></textarea>
+
+      <div id="translate-status" class="translate-status" hidden></div>
+
+      <label for="translate-output">Fonora spelling</label>
+      <textarea id="translate-output" class="symbol-text symbol-input translate-output text-input--full" rows="4" placeholder="Fonora symbols appear here…"></textarea>
+      <div id="translate-keyboard" class="symbol-buttons symbol-buttons--compact"></div>
+      <div class="button-row">
+        <button type="button" id="translate-normalize" class="btn">Normalize spacing</button>
+        <button type="button" id="translate-backspace" class="btn">Backspace</button>
+      </div>
+
+      <label for="translate-pronunciation">Normalized Fonora phonemes</label>
+      <input type="text" id="translate-pronunciation" class="text-input text-input--full" placeholder="IPA-derived phonemes, editable for single words">
+
+      <div id="translate-decode" class="translate-decode-preview"></div>
+
+      <div class="translate-details-section">
+        <label class="translate-details-toggle">
+          <input type="checkbox" id="translate-show-details" checked>
+          Show encoding details
+        </label>
+        <div id="translate-meta" class="translate-meta-panel"></div>
       </div>
     </section>
 
-    <!-- Symbol Keyboard -->
+    <!-- Keyboard -->
     <section class="panel tab-panel" id="tab-keyboard" data-tab-panel="keyboard" hidden>
-      <h2>Symbol Keyboard</h2>
+      <h2>Keyboard</h2>
       <p class="section-desc">Type symbols in the area below. Number keys and letter shortcuts insert symbols when focused.</p>
 
-      <textarea id="symbol-input" class="symbol-text symbol-input" rows="4" placeholder="Type or insert symbols here…"></textarea>
+      <textarea id="symbol-input" class="symbol-text symbol-input text-input--full" rows="4" placeholder="Type or insert symbols here…"></textarea>
 
       <div class="button-row">
         <button type="button" id="btn-clear" class="btn">Clear</button>
@@ -121,14 +117,11 @@
       </div>
 
       <div id="symbol-buttons" class="symbol-buttons"></div>
-    </section>
 
-    <!-- Keyboard Mapping -->
-    <section class="panel tab-panel" id="tab-mapping" data-tab-panel="mapping" hidden>
-      <h2>Keyboard Mapping</h2>
+      <h3 class="examples-heading">Keyboard mapping</h3>
       <p class="section-desc">Number and letter shortcuts loaded from language rules.</p>
       <div class="table-wrap">
-        <table class="data-table">
+        <table class="data-table keyboard-mapping-table">
           <thead>
             <tr>
               <th>Number</th>
@@ -173,11 +166,7 @@
         </div>
       </div>
 
-      <div id="experimental-derived-section" hidden aria-hidden="true">
-        <table><tbody id="experimental-derived-body"></tbody></table>
-      </div>
-
-      <div id="experimental-vowels-section" hidden>
+      <div id="vowels-section" hidden>
         <h3>Vowels</h3>
         <p class="section-desc">Vowels use v3 grammar: simple vowels are <span class="symbol-text">⚬X</span> (2 symbols); diphthongs are <span class="symbol-text">⚬X⌣Y</span> (4 symbols). Recipes combine the vowel indicator <span class="symbol-text">⚬</span>, place or manner glyphs, and glide <span class="symbol-text">⌣</span>.</p>
 
@@ -194,32 +183,8 @@
                 <th>Example</th>
               </tr>
             </thead>
-            <tbody id="experimental-vowels-body"></tbody>
+            <tbody id="vowels-body"></tbody>
           </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- Decode -->
-    <section class="panel tab-panel" id="tab-decode" data-tab-panel="decode" hidden>
-      <h2>Decode Panel</h2>
-      <p class="section-desc">Live parsing of the symbol keyboard input. Type on the Symbol Keyboard tab to update this panel.</p>
-      <div class="decode-grid">
-        <div class="decode-field">
-          <h3>Normalized input</h3>
-          <div id="decode-normalized" class="decode-value"><em>(empty)</em></div>
-        </div>
-        <div class="decode-field">
-          <h3>Detected groups</h3>
-          <div id="decode-groups" class="decode-value"><em>(none)</em></div>
-        </div>
-        <div class="decode-field">
-          <h3>Pronunciation</h3>
-          <div id="decode-pronunciation" class="decode-value decode-pronunciation">(empty)</div>
-        </div>
-        <div class="decode-field">
-          <h3>Warnings</h3>
-          <div id="decode-warnings" class="decode-value"><em class="no-warnings">No warnings.</em></div>
         </div>
       </div>
     </section>
@@ -233,38 +198,6 @@
         <button type="button" id="reverse-btn" class="btn">Look up</button>
       </div>
       <div id="reverse-output" class="reverse-output"></div>
-    </section>
-
-    <!-- Dictionary -->
-    <section class="panel tab-panel" id="tab-dictionary" data-tab-panel="dictionary" hidden>
-      <h2>Mini Dictionary</h2>
-      <p class="section-desc">Controlled glossary for early vocabulary experiments. Stored in browser localStorage.</p>
-
-      <form id="glossary-form" class="dict-form">
-        <div class="form-row">
-          <label for="dict-english">English meaning</label>
-          <input type="text" id="dict-english" class="text-input" required>
-        </div>
-        <div class="form-row">
-          <label for="dict-spelling">Language spelling</label>
-          <input type="text" id="dict-spelling" class="text-input symbol-text" required>
-        </div>
-        <div class="form-row">
-          <label for="dict-pronunciation">Pronunciation</label>
-          <input type="text" id="dict-pronunciation" class="text-input">
-        </div>
-        <div class="form-row">
-          <label for="dict-notes">Notes</label>
-          <input type="text" id="dict-notes" class="text-input">
-        </div>
-        <button type="submit" class="btn btn--primary">Add entry</button>
-      </form>
-
-      <div class="search-row">
-        <label for="glossary-search">Search</label>
-        <input type="search" id="glossary-search" class="text-input" placeholder="Filter entries…">
-      </div>
-      <div id="glossary-list" class="glossary-list"></div>
     </section>
 
     <!-- Pronunciation Testing -->
@@ -345,10 +278,8 @@
             <option value="th/dh issue">th/dh issue</option>
             <option value="sh/ch/j issue">sh/ch/j issue</option>
             <option value="ng issue">ng issue</option>
-            <option value="dictionary override issue">dictionary override issue</option>
             <option value="fallback/unknown sound">fallback/unknown sound</option>
             <option value="output unreadable">output unreadable</option>
-            <option value="should become glossary exception">should become glossary exception</option>
             <option value="other">other</option>
           </select>
         </label>
@@ -361,7 +292,6 @@
           <select id="encoder-filter-source" class="text-input">
             <option value="">All sources</option>
             <option value="ipa">IPA Pipeline</option>
-            <option value="dictionary">Dictionary</option>
             <option value="fallback">Fallback/unknown</option>
           </select>
         </label>
@@ -376,7 +306,6 @@
       <p class="section-desc">
         Validate whether Fonora preserves pronunciation through the full pipeline:
         English → IPA → Fonora phonemes → symbols → recovered phonemes → recovered IPA.
-        Dictionary overrides are bypassed so eSpeak IPA is always the source.
       </p>
 
       <div id="pv-dashboard" class="encoder-dashboard pv-dashboard"></div>
@@ -446,33 +375,20 @@
       <h3 class="examples-heading">Primary symbols</h3>
       <div id="alphabet-primary-grid" class="alphabet-primary-grid"></div>
 
-      <div class="alphabet-preview-stack">
-        <div class="alphabet-preview-block">
-          <h3 class="examples-heading">Sound grid preview</h3>
-          <div class="table-wrap">
-            <table class="data-table alphabet-preview-table">
-              <tbody id="alphabet-preview-grid"></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="alphabet-preview-block">
-          <h3 class="examples-heading">Vowels preview</h3>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>Key</th><th>Symbols</th><th>Example</th></tr></thead>
-              <tbody id="alphabet-preview-vowels"></tbody>
-            </table>
-          </div>
-        </div>
-        <div class="alphabet-preview-block">
-          <h3 class="examples-heading">CV examples</h3>
-          <div class="table-wrap">
-            <table class="data-table">
-              <thead><tr><th>Word</th><th>Spelling</th></tr></thead>
-              <tbody id="alphabet-preview-words"></tbody>
-            </table>
-          </div>
-        </div>
+      <h3 class="examples-heading">Fonora alphabet (A–Z)</h3>
+      <p class="section-desc">Representative symbols for each letter — keyboard shortcuts, then best-matching sounds from the rule set.</p>
+      <div class="table-wrap">
+        <table class="data-table alphabet-chart-table">
+          <thead>
+            <tr>
+              <th>Letter</th>
+              <th>Symbol</th>
+              <th>Sound</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="alphabet-chart-body"></tbody>
+        </table>
       </div>
     </section>
 
@@ -499,7 +415,12 @@
 
             <div id="quiz-construct-answer" hidden>
               <label for="quiz-answer-construct">Your answer (symbols)</label>
-              <input type="text" id="quiz-answer-construct" class="text-input symbol-text">
+              <textarea id="quiz-answer-construct" class="text-input text-input--full symbol-text symbol-input quiz-symbol-input" rows="2" placeholder="Type or insert symbols…"></textarea>
+              <div id="quiz-keyboard" class="symbol-buttons symbol-buttons--compact"></div>
+              <div class="button-row">
+                <button type="button" id="quiz-normalize" class="btn">Normalize spacing</button>
+                <button type="button" id="quiz-backspace" class="btn">Backspace</button>
+              </div>
             </div>
 
             <div class="button-row">

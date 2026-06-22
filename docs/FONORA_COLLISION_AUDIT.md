@@ -10,7 +10,7 @@ Rules version: v3
 - **Concatenation → sequence collisions:** 12
 - **Greedy decoder hazards:** 17
 - **Word-level boundary issues:** 0 (none)
-- **v2 collision test scope:** 5 minimal-pair groups / 13 words — symbol distinctness only
+- **Minimal-pair test scope (`npm run test:minimal-pairs`):** 5 groups / 13 words — symbol distinctness only (`test:v2-collisions` is a deprecated alias)
 
 The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-trip** in the IPA pipeline. It does **not** remove underlying symbol ambiguity where `o + r` and `oy` share symbols, or where `th + t` and `t + s` share symbols.
 
@@ -160,7 +160,7 @@ No issues in the tested word set.
 
 ## 6. Test suite review
 
-### What `npm run test:v2-collisions` actually tests
+### What `npm run test:minimal-pairs` actually tests
 
 - Within-group distinct Fonora symbol strings (fonora field)
 - Does NOT check exact symbol collisions in inventory
@@ -180,8 +180,6 @@ No issues in the tested word set.
 - boundary-dependent round-trip failures
 - word-level phoneme-key recovery mismatches
 
-**Rename suggestion:** `test:v2-collisions` → `test:v2-minimal-pairs` or report "distinct symbol outputs per minimal-pair group".
-
 ## 7. Recommended fix order (no language redesign yet)
 
 1. **Documentation / UI (done partially):** Label recovered output as phoneme keys, not English spellings.
@@ -189,7 +187,7 @@ No issues in the tested word set.
 3. **Human language-design decisions required:**
    - `o + r` vs `oy` (also affects `o + y`→`eye`, `o + w`→`ow`, `e + y`→`ay`)
    - `th + t` vs `t + s`, `dh + t` vs `t + d`, `v + p` vs `p + b` (derived reverse order vs grid)
-4. **Test suite:** Add `npm run audit:collisions` to CI; extend word-risk list; rename v2 collision test.
+4. **Test suite:** Add `npm run audit:collisions` to CI; extend word-risk list. (`test:minimal-pairs` renamed from legacy `test:v2-collisions`.)
 5. **Do not yet:** invent new symbols or remove mappings without explicit design approval.
 
 ## 8. Issue classification
@@ -201,4 +199,4 @@ No issues in the tested word set.
 | Vowel+glide sequences equal diphthongs (eye/ow/oy/ay) | language-design collision | yes — homograph note exists |
 | th+t equals t+s symbol strings | language-design collision | yes |
 | Unspaced greedy decode mis-recovery | decoder + boundary issue | partially mitigated by spacing |
-| v2 test "0 collisions" wording | test/documentation bug | no — rename/clarify |
+| v2 test "0 collisions" wording | test/documentation bug | no — clarified via `test:minimal-pairs` rename |

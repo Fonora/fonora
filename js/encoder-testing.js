@@ -5,7 +5,6 @@ import { decodeSymbols, decodeText, decodeToPhonemeKeys } from './decode.js';
 import { pickCuratedWords, TEST_CATEGORIES, getMultilingualTestEntries, getEnglishDialectComparisonEntries } from './encoder-test-sets.js';
 import { ENGLISH_DIALECT_CODES } from './language-preferences.js';
 import { getDefinedSounds, isVowelPhonemeKey } from './rules.js';
-import { addGlossaryEntry } from './glossary.js';
 
 const REVIEWS_KEY = 'fonora-pronunciation-reviews-v1';
 
@@ -18,10 +17,8 @@ export const ISSUE_TAGS = [
   'th/dh issue',
   'sh/ch/j issue',
   'ng issue',
-  'dictionary override issue',
   'fallback/unknown sound',
   'output unreadable',
-  'should become glossary exception',
   'other',
 ];
 
@@ -127,9 +124,6 @@ export function getDashboardStats() {
     }
   }
 
-  const dictionaryCount = reviews.filter(
-    (r) => r.encoderSource === 'dictionary' || r.primarySource === 'dictionary',
-  ).length;
   const fallbackCount = reviews.filter(
     (r) => r.encoderSource === 'fallback' || r.hasFallback,
   ).length;
@@ -142,7 +136,6 @@ export function getDashboardStats() {
     accuracy,
     topIssueTags,
     worstCategory,
-    dictionaryCount,
     fallbackCount,
   };
 }
@@ -220,9 +213,6 @@ export function generateRandomSoundStrings(rules, count = 30) {
 }
 
 function sourceBadge(result) {
-  if (result.source === 'dictionary') {
-    return '<span class="translate-badge translate-badge--dict">Dictionary</span>';
-  }
   if (result.source === 'fallback') {
     return '<span class="translate-badge translate-badge--miss">Fallback</span>';
   }
@@ -247,7 +237,6 @@ function passesFilter(card, result, review, filters) {
   if (filters.issueTag && !(review?.issueTags || []).includes(filters.issueTag)) return false;
   if (filters.category && card.testSet !== filters.category) return false;
   if (filters.source) {
-    if (filters.source === 'dictionary' && result.source !== 'dictionary') return false;
     if (filters.source === 'ipa' && result.primarySource !== 'ipa' && result.source !== 'ipa') return false;
     if (filters.source === 'fallback' && result.source !== 'fallback' && !result.hasFallback) return false;
   }
@@ -357,7 +346,6 @@ function renderDashboard() {
     <div class="encoder-stat"><span class="encoder-stat-label">Accuracy</span><span class="encoder-stat-value">${stats.accuracy}%</span></div>
     <div class="encoder-stat encoder-stat--wide"><span class="encoder-stat-label">Top issues</span><span class="encoder-stat-value">${tagHtml}</span></div>
     <div class="encoder-stat encoder-stat--wide"><span class="encoder-stat-label">Worst category</span><span class="encoder-stat-value">${escapeHtml(stats.worstCategory)}</span></div>
-    <div class="encoder-stat"><span class="encoder-stat-label">Dictionary overrides</span><span class="encoder-stat-value">${stats.dictionaryCount}</span></div>
     <div class="encoder-stat"><span class="encoder-stat-label">Fallback/unknown</span><span class="encoder-stat-value">${stats.fallbackCount}</span></div>
   `;
 }
@@ -382,7 +370,6 @@ async function renderCards() {
     const review = cardReview(card.id);
     if (result && !passesFilter(card, result, review, filters)) continue;
 
-    const dictClass = result?.source === 'dictionary' ? ' encoder-card--dict' : '';
     const reviewResult = review?.result || '';
 
     if (cached.loading) {
@@ -402,7 +389,7 @@ async function renderCards() {
     const pipelineHtml = renderPipelineRow(result);
 
     html.push(`
-      <article class="encoder-card${dictClass}" data-card-id="${escapeHtml(card.id)}">
+      <article class="encoder-card" data-card-id="${escapeHtml(card.id)}">
         <header class="encoder-card-header">
           <strong class="encoder-card-word">${escapeHtml(card.input)}</strong>
           ${card.lang ? `<span class="encoder-card-lang">${escapeHtml(card.lang)}</span>` : ''}
@@ -437,19 +424,6 @@ async function renderCards() {
           <label class="encoder-notes-label">Notes
             <textarea class="encoder-notes text-input" rows="2" placeholder="Optional notes">${escapeHtml(review?.notes || '')}</textarea>
           </label>
-
-          ${reviewResult === 'wrong' ? `
-            <details class="encoder-glossary-promote">
-              <summary>Add as Glossary Exception</summary>
-              <form class="encoder-glossary-form">
-                <label>English<input type="text" class="text-input encoder-glossary-english" value="${escapeHtml(card.input)}"></label>
-                <label>Fonora spelling<input type="text" class="text-input symbol-text encoder-glossary-spelling" placeholder="Symbols"></label>
-                <label>Pronunciation<input type="text" class="text-input encoder-glossary-pronunciation" placeholder="Sound units" value="${escapeHtml(result?.sounds || result?.phonemeString || '')}"></label>
-                <label>Notes<textarea class="text-input encoder-glossary-notes" rows="2" placeholder="Optional"></textarea></label>
-                <button type="submit" class="btn btn--primary btn--sm">Save to dictionary</button>
-              </form>
-            </details>
-          ` : ''}
         </div>
       </article>
     `);
@@ -507,23 +481,6 @@ function bindCardEvents() {
       review.notes = notesEl.value;
       review.timestamp = Date.now();
       saveReview(review);
-    });
-
-    const glossaryForm = cardEl.querySelector('.encoder-glossary-form');
-    glossaryForm?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const english = glossaryForm.querySelector('.encoder-glossary-english').value.trim();
-      const languageSpelling = glossaryForm.querySelector('.encoder-glossary-spelling').value.trim();
-      const pronunciation = glossaryForm.querySelector('.encoder-glossary-pronunciation').value.trim();
-      const notesVal = glossaryForm.querySelector('.encoder-glossary-notes').value.trim();
-      const date = new Date().toLocaleDateString();
-      const fullNotes = notesVal
-        ? `${notesVal}\nPromoted from encoder testing on ${date}`
-        : `Promoted from encoder testing on ${date}`;
-      if (addGlossaryEntry({ english, languageSpelling, pronunciation, notes: fullNotes })) {
-        glossaryForm.innerHTML = '<p class="encoder-glossary-saved">Saved to dictionary.</p>';
-        renderCards();
-      }
     });
   });
 }

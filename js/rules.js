@@ -72,7 +72,7 @@ function getDecoderGridCells(r) {
 
 export function getDecodableEntries(r) {
   const grid = getDecoderGridCells(r);
-  const derived = (r.specialDerivedSounds || []).filter((c) => c.status === 'defined');
+  const derived = (r.derivedSounds || []).filter((c) => c.status === 'defined');
   const expDerived = (r.experimentalDerivedSounds || []).filter((c) => c.status === 'experimental');
   const vowels = getVowelEntries(r).filter(
     (c) => c.status !== 'undefined' && !isVoiceThroatCombo(c.symbols, r),
@@ -83,7 +83,7 @@ export function getDecodableEntries(r) {
 
 export function getEncodableEntries(r) {
   const grid = getEncoderGridCells(r);
-  const derived = (r.specialDerivedSounds || []).filter((c) => c.status === 'defined');
+  const derived = (r.derivedSounds || []).filter((c) => c.status === 'defined');
   const expDerived = (r.experimentalDerivedSounds || []).filter((c) => c.status === 'experimental');
   const vowels = getVowelEntries(r).filter(
     (c) => c.status !== 'undefined' && !isVoiceThroatCombo(c.symbols, r),

@@ -1,10 +1,9 @@
 /**
- * Shared vowel data access and UI helpers — single source from language-rules.md
- * (`rules.experimentalVowels` / `rules.vowels`).
+ * Shared vowel data access and UI helpers — single source from language-rules.md (`rules.vowels`).
  */
 
 export function getVowelEntries(rules) {
-  return rules?.experimentalVowels || rules?.vowels || [];
+  return rules?.vowels || [];
 }
 
 export function vowelPhonemeKey(v) {

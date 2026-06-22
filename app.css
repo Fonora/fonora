@@ -444,7 +444,7 @@ code {
   color: #6b7280;
 }
 
-#experimental-vowels-section h3 {
+#vowels-section h3 {
   margin-top: 1.5rem;
 }
 
@@ -463,12 +463,12 @@ code {
   color: #444;
 }
 
-.experimental-vowel-row {
+.vowel-table-row {
   cursor: pointer;
 }
 
-.experimental-vowel-row:hover,
-.experimental-vowel-row:focus {
+.vowel-table-row:hover,
+.vowel-table-row:focus {
   background: #fffbeb;
   outline: 2px solid #f59e0b;
   outline-offset: -2px;
@@ -542,6 +542,13 @@ code {
   font-size: 0.95rem;
   min-width: 10rem;
   flex: 1;
+}
+
+.text-input--full {
+  width: 100%;
+  flex: none;
+  display: block;
+  box-sizing: border-box;
 }
 
 .reverse-output,
@@ -834,42 +841,60 @@ code {
   border-bottom-color: #111;
 }
 
-.sub-tab-panel label,
-.translate-main label {
+.translate-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 0.75rem 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.translate-control label {
+  display: block;
+  font-size: 0.85rem;
+  color: #444;
+  margin: 0 0 0.35rem;
+}
+
+.translate-main label,
+#tab-translator > label {
   display: block;
   font-size: 0.85rem;
   color: #444;
   margin: 0.75rem 0 0.35rem;
 }
 
-.sub-tab-panel label:first-of-type,
-.translate-main label:first-of-type {
+#tab-translator > .section-desc + .translate-controls ~ label:first-of-type,
+#tab-translator > label:first-of-type {
   margin-top: 0;
 }
 
 .translate-output {
-  min-height: 3rem;
+  min-height: 3.5rem;
   font-size: 1.5rem;
 }
 
-.translate-layout {
-  display: grid;
-  grid-template-columns: 1fr min(18rem, 34%);
-  gap: 1rem;
-  align-items: start;
-}
-
-@media (max-width: 720px) {
-  .translate-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
-.translate-details-panel {
+.translate-details-section {
+  margin-top: 1.25rem;
   padding: 1rem;
   background: #f5f5f5;
   border: 1px solid #e5e5e5;
   border-radius: 4px;
+}
+
+.sub-tab-panel label {
+  display: block;
+  font-size: 0.85rem;
+  color: #444;
+  margin: 0.75rem 0 0.35rem;
+}
+
+.sub-tab-panel label:first-of-type {
+  margin-top: 0;
+}
+
+.quiz-symbol-input {
+  min-height: 3rem;
+  font-size: 1.25rem;
 }
 
 .translate-details-toggle {
@@ -1355,6 +1380,24 @@ code {
   margin-bottom: 1.5rem;
 }
 
+.alphabet-chart-table .alphabet-chart-letter {
+  font-weight: 600;
+  width: 3rem;
+}
+
+.alphabet-chart-table .alphabet-chart-symbol {
+  font-size: 1.35rem;
+}
+
+.alphabet-chart-notes {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.keyboard-mapping-table {
+  max-width: 36rem;
+}
+
 .alphabet-card {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -1420,6 +1463,8 @@ code {
   font-size: 1.1rem;
   padding: 0.35rem 0.5rem;
 }
+
+/* kept for potential reuse */
 
 /* Pronunciation Validation Mode */
 .pv-dashboard {
