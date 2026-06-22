@@ -1,9 +1,45 @@
 import { translateIpaPhrase } from './ipa-pipeline.js';
 import { escapeHtml } from './utils.js';
-import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from './fonora-tts.js';
+import { speakFonoraPhrase, cancelSpeech, setReaderWordSources, tokenizeFonoraPhrase } from './fonora-tts.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
 import { primeAudioContext } from './espeak-audio.js';
 import { DEFAULT_ENGLISH_VOICE } from './language-preferences.js';
+import { getSamplePlaybackPlan } from './piper-audio.js';
+
+/** Split CJK samples into phrases for Fonora rendering and word-by-word playback. */
+function splitCjkClauses(text, lang) {
+  const pattern =
+    lang === 'zh'
+      ? /(?<=[。！？；，])/u
+      : /(?<=[。！？])/u;
+  return String(text || '')
+    .split(pattern)
+    .map((clause) => clause.trim())
+    .filter(Boolean);
+}
+
+async function translateSampleText(text, rules, lang) {
+  const pipelineOptions = { englishDialect: DEFAULT_ENGLISH_VOICE };
+  if (lang !== 'ja' && lang !== 'zh') {
+    return translateIpaPhrase(text, rules, lang, pipelineOptions);
+  }
+
+  const clauses = splitCjkClauses(text, lang);
+  const phraseResults = [];
+  for (const clause of clauses) {
+    phraseResults.push(await translateIpaPhrase(clause, rules, lang, pipelineOptions));
+  }
+
+  return {
+    original: text,
+    lang,
+    symbols: phraseResults.map((r) => r.symbols).join(' '),
+    clauses,
+    words: phraseResults.flatMap((r) => r.words || []),
+    warnings: phraseResults.flatMap((r) => r.warnings || []),
+    source: phraseResults.some((r) => r.source === 'fallback') ? 'fallback' : 'ipa',
+  };
+}
 
 /** Public-domain excerpts — Universal Declaration of Human Rights, Article 1. */
 const SAMPLES = [
@@ -12,7 +48,6 @@ const SAMPLES = [
     language: 'English',
     lang: 'en',
     experimental: false,
-    audio: true,
     source: 'Universal Declaration of Human Rights, Article 1',
     text:
       'All human beings are born free and equal in dignity and rights. They are endowed with reason and conscience and should act towards one another in a spirit of brotherhood.',
@@ -22,7 +57,6 @@ const SAMPLES = [
     language: 'Spanish',
     lang: 'es',
     experimental: true,
-    audio: false,
     source: 'Declaración Universal de los Derechos Humanos, Artículo 1',
     text:
       'Todas las personas nacen libres e iguales en dignidad y derechos y, dotadas como están de razón y conciencia, deben comportarse fraternalmente los unos con los otros.',
@@ -32,7 +66,6 @@ const SAMPLES = [
     language: 'French',
     lang: 'fr',
     experimental: true,
-    audio: false,
     source: 'Déclaration universelle des droits de l’homme, Article 1',
     text:
       'Tous les êtres humains naissent libres et égaux en dignité et en droits. Ils sont doués de raison et de conscience et doivent agir les uns envers les autres dans un esprit de fraternité.',
@@ -42,7 +75,6 @@ const SAMPLES = [
     language: 'German',
     lang: 'de',
     experimental: true,
-    audio: false,
     source: 'Allgemeine Erklärung der Menschenrechte, Artikel 1',
     text:
       'Alle Menschen sind frei und gleich an Würde und Rechten geboren. Sie sind mit Vernunft und Gewissen begabt und sollen einander im Geist der Brüderlichkeit begegnen.',
@@ -52,7 +84,7 @@ const SAMPLES = [
     language: 'Japanese',
     lang: 'ja',
     experimental: true,
-    audio: false,
+    audioEnabled: false,
     source: '世界人権宣言、第1条',
     text:
       'すべての人間は、生まれながらにして自由であり、かつ、尊厳と権利とについて平等である。人間は、理性と良心とを授けられており、互いに同胞の精神をもって行動しなければならない。',
@@ -62,7 +94,6 @@ const SAMPLES = [
     language: 'Arabic',
     lang: 'ar',
     experimental: true,
-    audio: false,
     dir: 'rtl',
     source: 'الإعلان العالمي لحقوق الإنسان، المادة 1',
     text:
@@ -73,7 +104,6 @@ const SAMPLES = [
     language: 'Mandarin',
     lang: 'zh',
     experimental: true,
-    audio: false,
     source: '《世界人权宣言》第一条',
     text: '人人生而自由，在尊严和权利上一律平等。他们赋有理性和良心，并应以兄弟关系的精神相对待。',
   },
@@ -89,11 +119,29 @@ let playingId = null;
 let cancelPlayback = false;
 let samplesUiReady = false;
 
-function bindSamplesUi(listEl) {
+function playbackEngineLabel(sample) {
+  if (sample.audioEnabled === false) return '';
+  return 'Neural voice';
+}
+
+function renderSampleAudioControls(sample) {
+  if (sample.audioEnabled === false) {
+    return `
+        <button type="button" class="btn btn--secondary sample-audio-btn sample-audio-btn--disabled" disabled aria-label="${escapeHtml(sample.language)} audio coming soon">Audio coming soon</button>`;
+  }
+
+  const engineLabel = playbackEngineLabel(sample);
+  return `
+        <button type="button" class="btn btn--primary sample-audio-btn" data-sample-play="${escapeHtml(sample.id)}" disabled aria-label="Listen to ${escapeHtml(sample.language)} Fonora sample">▶ Listen</button>
+        <span class="sample-audio-engine">${escapeHtml(engineLabel)}</span>
+        <span class="sample-audio-status" id="sample-${escapeHtml(sample.id)}-status" hidden role="status"></span>`;
+}
+
+function bindSamplesUi() {
   if (samplesUiReady) return;
   samplesUiReady = true;
 
-  listEl.addEventListener('click', (event) => {
+  document.addEventListener('click', (event) => {
     const playBtn = event.target.closest('[data-sample-play]');
     if (!playBtn || playBtn.disabled) return;
     if (playingId === playBtn.dataset.samplePlay) {
@@ -102,6 +150,28 @@ function bindSamplesUi(listEl) {
     }
     playSample(playBtn.dataset.samplePlay);
   });
+}
+
+function getSampleFonoraElements(sampleId) {
+  const elements = [];
+  const pageEl = document.getElementById(`sample-${sampleId}-fonora`);
+  if (pageEl) elements.push(pageEl);
+  if (sampleId === 'en') {
+    const homeEl = document.getElementById('home-sample-fonora');
+    if (homeEl) elements.push(homeEl);
+  }
+  return elements;
+}
+
+function getAudioStatusElements(sampleId) {
+  const elements = [];
+  const pageEl = document.getElementById(`sample-${sampleId}-status`);
+  if (pageEl) elements.push(pageEl);
+  if (sampleId === 'en') {
+    const homeEl = document.getElementById('home-sample-status');
+    if (homeEl) elements.push(homeEl);
+  }
+  return elements;
 }
 
 function renderSampleCards(listEl) {
@@ -113,10 +183,6 @@ function renderSampleCard(sample) {
   const renderingLabel = sample.experimental
     ? 'Experimental phonetic rendering'
     : 'Fonora phonetic rendering';
-
-  const audioBtn = sample.audio
-    ? `<button type="button" class="btn btn--primary sample-audio-btn" data-sample-play="${escapeHtml(sample.id)}" disabled aria-label="Listen to English sample">▶ Listen</button>`
-    : `<button type="button" class="btn sample-audio-btn sample-audio-btn--disabled" disabled aria-disabled="true">Audio coming soon</button>`;
 
   return `
     <article class="sample-card" id="sample-${escapeHtml(sample.id)}" aria-labelledby="sample-${escapeHtml(sample.id)}-lang">
@@ -139,16 +205,16 @@ function renderSampleCard(sample) {
       </div>
 
       <div class="sample-card__audio">
-        ${audioBtn}
-        <span class="sample-audio-status" id="sample-${escapeHtml(sample.id)}-status" hidden role="status"></span>
+${renderSampleAudioControls(sample)}
       </div>
     </article>`;
 }
 
 function setFonoraOutput(sampleId, html, meta = '') {
-  const fonoraEl = document.getElementById(`sample-${sampleId}-fonora`);
+  for (const fonoraEl of getSampleFonoraElements(sampleId)) {
+    fonoraEl.innerHTML = html;
+  }
   const metaEl = document.getElementById(`sample-${sampleId}-meta`);
-  if (fonoraEl) fonoraEl.innerHTML = html;
   if (metaEl) {
     if (meta) {
       metaEl.hidden = false;
@@ -160,9 +226,44 @@ function setFonoraOutput(sampleId, html, meta = '') {
   }
 }
 
+function renderFonoraWords(sampleId, symbols) {
+  const words = tokenizeFonoraPhrase(symbols);
+  const html = words
+    .map((word, index) => `<span class="tts-word" data-index="${index}">${escapeHtml(word)}</span>`)
+    .join(' ');
+  for (const fonoraEl of getSampleFonoraElements(sampleId)) {
+    fonoraEl.innerHTML = html;
+  }
+}
+
+function highlightSampleWord(sampleId, index, { active = false, done = false } = {}) {
+  for (const fonoraEl of getSampleFonoraElements(sampleId)) {
+    const el = fonoraEl.querySelector(`.tts-word[data-index="${index}"]`);
+    if (!el) continue;
+    el.classList.toggle('tts-word--active', active);
+    el.classList.toggle('tts-word--done', done);
+  }
+}
+
+function clearSampleWordHighlight(sampleId) {
+  for (const fonoraEl of getSampleFonoraElements(sampleId)) {
+    fonoraEl.querySelectorAll('.tts-word').forEach((el) => {
+      el.classList.remove('tts-word--active', 'tts-word--done');
+    });
+  }
+}
+
+function setSampleFonoraPlaybackState(sampleId, { loading = false } = {}) {
+  for (const fonoraEl of getSampleFonoraElements(sampleId)) {
+    fonoraEl.classList.toggle('sample-card__fonora--loading', loading);
+    fonoraEl.classList.toggle('home-sample-preview__fonora--loading', loading);
+  }
+}
+
 function resetPlayButtons() {
   document.querySelectorAll('[data-sample-play]').forEach((btn) => {
-    const ready = sampleResults.has(btn.dataset.samplePlay);
+    const sample = SAMPLES.find((item) => item.id === btn.dataset.samplePlay);
+    const ready = sample?.audioEnabled !== false && sampleResults.has(btn.dataset.samplePlay);
     btn.disabled = !ready;
     btn.textContent = '▶ Listen';
   });
@@ -170,6 +271,8 @@ function resetPlayButtons() {
 
 function setPlayButtonsLocked(locked, activeId = null) {
   document.querySelectorAll('[data-sample-play]').forEach((btn) => {
+    const sample = SAMPLES.find((item) => item.id === btn.dataset.samplePlay);
+    if (sample?.audioEnabled === false) return;
     const isActive = btn.dataset.samplePlay === activeId;
     if (locked && isActive) {
       btn.disabled = false;
@@ -180,46 +283,58 @@ function setPlayButtonsLocked(locked, activeId = null) {
 }
 
 function setAudioStatus(sampleId, message, { isError = false } = {}) {
-  const el = document.getElementById(`sample-${sampleId}-status`);
-  if (!el) return;
-  if (!message) {
-    el.hidden = true;
-    el.textContent = '';
-    el.className = 'sample-audio-status';
-    return;
+  for (const el of getAudioStatusElements(sampleId)) {
+    if (!message) {
+      el.hidden = true;
+      el.textContent = '';
+      el.className = 'sample-audio-status';
+      continue;
+    }
+    el.hidden = false;
+    el.textContent = message;
+    el.className = `sample-audio-status${isError ? ' sample-audio-status--error' : ''}`;
   }
-  el.hidden = false;
-  el.textContent = message;
-  el.className = `sample-audio-status${isError ? ' sample-audio-status--error' : ''}`;
 }
 
 async function renderSampleFonora(sample, rules) {
   try {
-    const result = await translateIpaPhrase(sample.text, rules, sample.lang, {
-      englishDialect: DEFAULT_ENGLISH_VOICE,
-    });
+    const result = await translateSampleText(sample.text, rules, sample.lang);
 
     if (!result?.symbols) {
       setFonoraOutput(sample.id, '<span class="sample-error">No Fonora output generated.</span>');
       return;
     }
 
-    sampleResults.set(sample.id, { symbols: result.symbols, words: result.words || [] });
+    sampleResults.set(sample.id, {
+      symbols: result.symbols,
+      words: result.words || [],
+      clauses: result.clauses || null,
+    });
 
     const hasFallback = result.source === 'fallback' || (result.warnings?.length ?? 0) > 0;
     const metaParts = [];
     if (sample.experimental) {
       metaParts.push('Non-English mappings are experimental and may change.');
     }
+    if (sample.lang === 'ja') {
+      metaParts.push('Japanese audio playback is not available yet — Fonora phonetic read-aloud requires a compatible neural voice.');
+    }
+    if (sample.lang === 'zh') {
+      metaParts.push('Chinese is rendered in phrases (not one block) for clearer playback and highlighting.');
+    }
+    if (sample.audioEnabled !== false) {
+      metaParts.push('Playback uses neural voices and reads recovered Fonora phonetics.');
+    }
     if (hasFallback) {
       metaParts.push('Some sounds could not be mapped and appear as fallback symbols.');
     }
 
-    setFonoraOutput(sample.id, escapeHtml(result.symbols), metaParts.join(' '));
+    setFonoraOutput(sample.id, '', metaParts.join(' '));
+    renderFonoraWords(sample.id, result.symbols);
 
-    if (sample.audio) {
-      const playBtn = document.querySelector(`[data-sample-play="${sample.id}"]`);
-      if (playBtn) playBtn.disabled = false;
+    const playBtns = document.querySelectorAll(`[data-sample-play="${sample.id}"]`);
+    for (const playBtn of playBtns) {
+      if (sample.audioEnabled !== false) playBtn.disabled = false;
     }
   } catch (err) {
     setFonoraOutput(
@@ -247,31 +362,50 @@ async function loadAllSamples(rules) {
 async function playSample(sampleId) {
   if (!rulesRef || playingId) return;
 
+  const sample = SAMPLES.find((item) => item.id === sampleId);
   const data = sampleResults.get(sampleId);
-  if (!data?.symbols) return;
+  if (!sample || sample.audioEnabled === false || !data?.symbols) return;
 
-  const playBtn = document.querySelector(`[data-sample-play="${sampleId}"]`);
+  const plan = getSamplePlaybackPlan(sample.lang);
+  if (!plan) return;
+  const playBtns = document.querySelectorAll(`[data-sample-play="${sampleId}"]`);
 
   playingId = sampleId;
   cancelPlayback = false;
   setPlayButtonsLocked(true, sampleId);
-  if (playBtn) playBtn.textContent = 'Loading…';
+  for (const playBtn of playBtns) playBtn.textContent = 'Loading…';
   setAudioStatus(sampleId, '');
 
   try {
     await primeAudioContext();
+    clearSampleWordHighlight(sampleId);
+    setSampleFonoraPlaybackState(sampleId, { loading: true });
+    for (const playBtn of playBtns) playBtn.textContent = '■ Stop';
+
+    let result;
     setReaderWordSources(data.words);
-    if (playBtn) playBtn.textContent = '■ Stop';
-    await speakFonoraPhrase(data.symbols, rulesRef, {
+    result = await speakFonoraPhrase(data.symbols, rulesRef, {
+      engine: 'piper',
+      piperVoice: plan.piperVoice,
       shouldCancel: () => cancelPlayback,
       onPrepare: (message) => setAudioStatus(sampleId, message),
+      onWordStart: (index) => {
+        setSampleFonoraPlaybackState(sampleId, { loading: false });
+        highlightSampleWord(sampleId, index, { active: true });
+      },
+      onWordEnd: (index) => highlightSampleWord(sampleId, index, { active: false, done: true }),
     });
     if (!cancelPlayback) {
-      setAudioStatus(sampleId, 'Playback complete.');
+      const suffix = result.skipped > 0 ? ` (${result.skipped} word${result.skipped === 1 ? '' : 's'} skipped)` : '';
+      setAudioStatus(sampleId, `Playback complete${suffix}.`);
+    } else {
+      clearSampleWordHighlight(sampleId);
     }
   } catch (err) {
+    clearSampleWordHighlight(sampleId);
     setAudioStatus(sampleId, err.message || 'Playback failed.', { isError: true });
   } finally {
+    setSampleFonoraPlaybackState(sampleId, { loading: false });
     playingId = null;
     cancelPlayback = false;
     resetPlayButtons();
@@ -284,6 +418,8 @@ function stopSamplePlayback() {
   cancelPlayback = true;
   cancelSpeech();
   setAudioStatus(id, '');
+  clearSampleWordHighlight(id);
+  setSampleFonoraPlaybackState(id, { loading: false });
   playingId = null;
   resetPlayButtons();
 }
@@ -296,13 +432,44 @@ export function ensureSamplesLoaded() {
   return loadPromise;
 }
 
+function getEnglishSample() {
+  return SAMPLES.find((item) => item.id === 'en');
+}
+
+async function loadHomeSample(rules) {
+  const sample = getEnglishSample();
+  const originalEl = document.getElementById('home-sample-original');
+  const sourceEl = document.getElementById('home-sample-source');
+  const fonoraEl = document.getElementById('home-sample-fonora');
+  if (!sample || !fonoraEl) return;
+
+  if (originalEl) originalEl.textContent = sample.text;
+  if (sourceEl) sourceEl.textContent = sample.source;
+
+  const espeak = await initEspeak();
+  if (!espeak.ok) {
+    const message = getEspeakInitError() || espeak.error || 'IPA pipeline unavailable.';
+    fonoraEl.innerHTML = `<span class="sample-error">${escapeHtml(message)}</span>`;
+    return;
+  }
+
+  await renderSampleFonora(sample, rules);
+}
+
+export function setupHomeSample(rules) {
+  rulesRef = rules;
+  bindSamplesUi();
+  if (!document.getElementById('home-sample-fonora')) return;
+  loadHomeSample(rules);
+}
+
 export function setupSamples(rules) {
   rulesRef = rules;
   const listEl = document.getElementById('samples-list');
   if (!listEl) return;
 
   renderSampleCards(listEl);
-  bindSamplesUi(listEl);
+  bindSamplesUi();
   loadPromise = null;
   loadedForRules = null;
   sampleResults.clear();

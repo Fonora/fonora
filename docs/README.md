@@ -29,7 +29,7 @@ Removed from the UI (June 2026 cleanup): Mini Dictionary, Decode panel, separate
 
 | Command / entry | What it runs | UI equivalent |
 | --- | --- | --- |
-| `npm test` | 57 unit/integration assertions (`js/tests-core.js` + integration) | `?test` in URL → console |
+| `npm test` | 59 unit/integration assertions (`js/tests-core.js` + integration) | `?test` in URL → console |
 | `npm run test:pronunciation-validation` | Batch IPA round-trip report | Pronunciation Validation tab |
 | `npm run test:vowels` | Vowel readability report → `reports/` | — |
 | `npm run test:minimal-pairs` | Minimal-pair distinctness report | — |

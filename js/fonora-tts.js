@@ -1,10 +1,15 @@
 /**
- * Fonora text-to-speech — decode symbols and speak Fonora phonetics via Piper.
+ * Fonora text-to-speech — decode symbols and speak Fonora phonetics via Piper or eSpeak IPA.
  */
 import { decodeToPhonemeKeys } from './decode.js';
 import { getAllSymbols } from './rules.js';
 import { phonemeKeysToRecoveredIpa } from './pronunciation-validation.js';
-import { cancelEspeakAudio } from './espeak-audio.js';
+import {
+  cancelEspeakAudio,
+  initEspeakAudio,
+  synthesizeEspeakIpa,
+  playEspeakSamples,
+} from './espeak-audio.js';
 import { initPiperAudio, isPiperAudioReady, playPiperIpa } from './piper-audio.js';
 
 export function tokenizeFonoraPhrase(text) {
@@ -61,19 +66,63 @@ export function resolveFonoraPhoneticText(word, rules, index = -1) {
     sourceIpa = source.sourceIpa || '';
   }
 
-  const ipa = phonemeKeysToRecoveredIpa(word.phonemeKeys, rules, sourceIpa);
+  const recovered = phonemeKeysToRecoveredIpa(word.phonemeKeys, rules, sourceIpa);
+  const sourceClean = String(sourceIpa || '')
+    .replace(/^\/+|\/+$/g, '')
+    .replace(/[\u200d\u200c\u2060\ufeff]/g, '')
+    .trim();
+
+  let ipa = recovered;
+  let mode = 'fonora-ipa';
+  if ((!ipa || ipa.includes('?')) && sourceClean && !sourceClean.includes('?')) {
+    ipa = sourceClean;
+    mode = 'source-ipa';
+  }
+
   if (!ipa || ipa.includes('?')) return null;
-  return { text: ipa, mode: 'fonora-ipa', phonemeKeys: word.phonemeKeys, sourceIpa: sourceIpa || null };
+  return { text: ipa, mode, phonemeKeys: word.phonemeKeys, sourceIpa: sourceIpa || null };
 }
 
 export function cancelSpeech() {
   cancelEspeakAudio();
 }
 
-/** Speak each Fonora word using recovered IPA and Piper neural synthesis. */
+async function speakIpaWithEngine(ipa, { engine, piperVoice, espeakVoice, onPrepare, piperReady, espeakReady }) {
+  const tryPiper = (engine === 'piper' || engine === 'auto') && piperVoice && piperReady;
+
+  if (tryPiper) {
+    try {
+      await playPiperIpa(ipa, piperVoice, onPrepare);
+      return;
+    } catch (err) {
+      if (engine !== 'auto') throw err;
+    }
+  }
+
+  if ((engine === 'espeak' || engine === 'auto') && espeakReady) {
+    const samples = await synthesizeEspeakIpa(ipa, espeakVoice);
+    if (!samples?.length) {
+      throw new Error('No audio generated from recovered IPA');
+    }
+    await playEspeakSamples(samples);
+    return;
+  }
+
+  throw new Error('Speech synthesis unavailable for recovered IPA');
+}
+
+/**
+ * Speak each Fonora word using recovered IPA.
+ * @param {object} options
+ * @param {'piper'|'espeak'|'auto'} [options.engine='piper']
+ * @param {string} [options.piperVoice]
+ * @param {string} [options.espeakVoice='en-us']
+ */
 export async function speakFonoraPhrase(text, rules, options = {}) {
   const {
+    engine = 'piper',
     piperVoice = 'en_US-lessac-medium',
+    espeakVoice = 'en-us',
     onWordStart,
     onWordEnd,
     shouldCancel = () => false,
@@ -85,12 +134,29 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
     return { words, spoken: 0, cancelled: false, skipped: 0 };
   }
 
-  if (!isPiperAudioReady(piperVoice)) {
-    onPrepare?.('Loading neural voice…');
+  let piperReady = false;
+  if ((engine === 'piper' || engine === 'auto') && piperVoice) {
+    if (!isPiperAudioReady(piperVoice)) {
+      onPrepare?.('Loading neural voice…');
+    }
+    const piperInit = await initPiperAudio(piperVoice, onPrepare);
+    piperReady = piperInit.ok;
+    if (engine === 'piper' && !piperInit.ok) {
+      throw new Error(piperInit.error || 'Neural voice failed to load');
+    }
   }
-  const piperInit = await initPiperAudio(piperVoice, onPrepare);
-  if (!piperInit.ok) {
-    throw new Error(piperInit.error || 'Neural voice failed to load');
+
+  let espeakReady = false;
+  if (engine === 'espeak' || engine === 'auto') {
+    const espeakInit = await initEspeakAudio();
+    espeakReady = espeakInit.ok;
+    if (engine === 'espeak' && !espeakInit.ok) {
+      throw new Error(espeakInit.error || 'eSpeak audio failed to load');
+    }
+  }
+
+  if (engine === 'auto' && !piperReady && !espeakReady) {
+    throw new Error('No speech engine available');
   }
 
   let spoken = 0;
@@ -112,17 +178,31 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
 
     try {
       onWordStart?.(i, word, speakTarget);
-      await playPiperIpa(speakTarget.text, piperVoice, onPrepare);
+      await speakIpaWithEngine(speakTarget.text, {
+        engine,
+        piperVoice,
+        espeakVoice,
+        onPrepare,
+        piperReady,
+        espeakReady,
+      });
       spoken += 1;
       onWordEnd?.(i, word, null, speakTarget);
     } catch (err) {
+      skipped += 1;
       onWordEnd?.(i, word, err, speakTarget);
-      throw err;
+      if (engine === 'piper') {
+        throw err;
+      }
     }
 
     if (shouldCancel()) {
       return { words, spoken, skipped, cancelled: true };
     }
+  }
+
+  if (spoken === 0 && skipped > 0) {
+    throw new Error('Could not speak any words from Fonora rendering');
   }
 
   return { words, spoken, skipped, cancelled: false };

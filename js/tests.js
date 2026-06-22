@@ -25,7 +25,7 @@ import {
 } from './language-preferences.js';
 import { buildPhonemeKeyLexicon } from './fonora-speak-lexicon.js';
 import { ipaToEspeakSynthesisInput, segmentIpa } from './ipa-espeak-format.js';
-import { ipaToPiperPhonemeIds } from './piper-audio.js';
+import { ipaToPiperPhonemeIds, canMapIpaToPiper, getPiperVoiceForLang, getSamplePlaybackPlan, PIPER_VOICE_BY_LANG } from './piper-audio.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -94,6 +94,28 @@ const piperGResult = test('ipaToPiperPhonemeIds accepts ASCII g via IPA normaliz
   const ids = ipaToPiperPhonemeIds('bɪgɪnɪŋ', map);
   assert(ids.length > 0);
   assert(ids.includes(66), 'expected voiced velar stop phoneme id');
+});
+
+const sampleVoiceResult = test('getPiperVoiceForLang maps sample languages', () => {
+  assert(getPiperVoiceForLang('es') === 'es_ES-davefx-medium');
+  assert(getPiperVoiceForLang('ja') === null);
+});
+
+const samplePlanResult = test('getSamplePlaybackPlan uses Piper for supported languages', () => {
+  assert(getSamplePlaybackPlan('ja') === null);
+  const es = getSamplePlaybackPlan('es');
+  assert(es.engine === 'piper');
+  assert(es.piperVoice === PIPER_VOICE_BY_LANG.es);
+});
+
+const piperLengthResult = test('ipaToPiperPhonemeIds splits vowel length marks for Piper', () => {
+  const map = {
+    _: [0], '^': [1], '$': [2], 'ˈ': [120], a: [10], 'ː': [11], n: [26], s: [48],
+  };
+  assert(canMapIpaToPiper('aː', map));
+  const ids = ipaToPiperPhonemeIds('aː', map);
+  assert(ids.includes(10));
+  assert(ids.includes(11));
 });
 
 const outsideResult = await (async () => {
@@ -188,6 +210,9 @@ const allFailed = [
   ...(composeResult.ok ? [] : [composeResult]),
   ...(derivedResult.ok ? [] : [derivedResult]),
   ...(piperGResult.ok ? [] : [piperGResult]),
+  ...(piperLengthResult.ok ? [] : [piperLengthResult]),
+  ...(sampleVoiceResult.ok ? [] : [sampleVoiceResult]),
+  ...(samplePlanResult.ok ? [] : [samplePlanResult]),
   ...(outsideResult.ok ? [] : [outsideResult]),
   ...(ipaFormatResult.ok ? [] : [ipaFormatResult]),
   ...(voiceResult.ok ? [] : [voiceResult]),
@@ -200,9 +225,12 @@ const allPassed =
   + (derivedResult.ok ? 1 : 0)
   + (ipaFormatResult.ok ? 1 : 0)
   + (piperGResult.ok ? 1 : 0)
+  + (piperLengthResult.ok ? 1 : 0)
+  + (sampleVoiceResult.ok ? 1 : 0)
+  + (samplePlanResult.ok ? 1 : 0)
   + (outsideResult.ok ? 1 : 0)
   + (voiceResult.ok ? 1 : 0);
-const allTotal = total + corpusResults.length + 7;
+const allTotal = total + corpusResults.length + 10;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

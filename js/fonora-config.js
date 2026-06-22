@@ -4,6 +4,10 @@ export const LANGUAGE_RULES_PATH = 'docs/language-rules.md';
 /** Production site origin for canonical URLs and sharing metadata. */
 export const SITE_ORIGIN = 'https://fonora.org';
 
+/** Piper voice model CDN — browser fetches .onnx files lazily on first Listen. */
+export const PIPER_VOICE_BASE_URL =
+  'https://huggingface.co/rhasspy/piper-voices/resolve/main/';
+
 /** Active rules bundle set at app startup from markdown. */
 let activeBundle = null;
 

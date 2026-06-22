@@ -3,12 +3,23 @@
  */
 import { segmentIpa } from './ipa-espeak-format.js';
 import { playEspeakSamples, primeAudioContext } from './espeak-audio.js';
+import { PIPER_VOICE_BASE_URL } from './fonora-config.js';
 
 export const PIPER_VOICE_OPTIONS = [
   { id: 'en_US-lessac-medium', label: 'Lessac (US, natural)' },
   { id: 'en_US-libritts_r-medium', label: 'LibriTTS R (US, natural)' },
   { id: 'en_GB-alba-medium', label: 'Alba (British, natural)' },
 ];
+
+/** Piper neural voices for multilingual Samples playback (lazy-loaded from HuggingFace). */
+export const PIPER_VOICE_BY_LANG = {
+  en: 'en_US-lessac-medium',
+  es: 'es_ES-davefx-medium',
+  fr: 'fr_FR-siwis-medium',
+  de: 'de_DE-thorsten-medium',
+  ar: 'ar_JO-kareem-medium',
+  zh: 'zh_CN-huayan-medium',
+};
 
 const PIPER_SPLIT = {
   dʒ: ['d', 'ʒ'],
@@ -22,6 +33,14 @@ const PIPER_SPLIT = {
   ɪə: ['ɪ', 'ə'],
   eə: ['e', 'ə'],
   ʊə: ['ʊ', 'ə'],
+  'aː': ['a', 'ː'],
+  'iː': ['i', 'ː'],
+  'uː': ['u', 'ː'],
+  'oː': ['o', 'ː'],
+  'eː': ['e', 'ː'],
+  'ɜː': ['ɜ', 'ː'],
+  'ɔː': ['ɔ', 'ː'],
+  'æː': ['æ', 'ː'],
 };
 
 const STRESS_MARKS = new Set(['ˈ', 'ˌ']);
@@ -32,6 +51,20 @@ let initError = null;
 let voiceId = null;
 let voiceData = null;
 let onnxRuntime = null;
+
+export function getPiperVoiceForLang(lang) {
+  return PIPER_VOICE_BY_LANG[lang] ?? null;
+}
+
+/**
+ * Playback plan for Samples — Piper neural only (no eSpeak IPA fallback).
+ * @returns {{ engine: 'piper', piperVoice: string } | null}
+ */
+export function getSamplePlaybackPlan(lang) {
+  const piperVoice = getPiperVoiceForLang(lang);
+  if (!piperVoice) return null;
+  return { engine: 'piper', piperVoice };
+}
 
 function expandSegmentsForPiper(segments) {
   const out = [];
@@ -75,6 +108,16 @@ export function ipaToPiperPhonemeIds(ipa, phonemeIdMap) {
   return ids;
 }
 
+/** True when every IPA segment maps into a Piper voice phoneme inventory. */
+export function canMapIpaToPiper(ipa, phonemeIdMap) {
+  try {
+    ipaToPiperPhonemeIds(ipa, phonemeIdMap);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function loadPiperModule() {
   return import('/vendor/piper-tts-web/piper-tts-web.js');
 }
@@ -98,8 +141,8 @@ async function ensurePiper(voice, onProgress) {
     initPromise = (async () => {
       onProgress?.('Loading neural voice engine…');
       const mod = await loadPiperModule();
-      const provider = new mod.HuggingFaceVoiceProvider();
-      onProgress?.('Downloading voice model (~60 MB, one-time)…');
+      const provider = new mod.HuggingFaceVoiceProvider({ baseUrl: PIPER_VOICE_BASE_URL });
+      onProgress?.('Downloading voice model (~20–60 MB, one-time)…');
       const data = await provider.fetch(voice);
       const runtime = createOnnxRuntime(mod);
       voiceData = data;

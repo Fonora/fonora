@@ -67,32 +67,54 @@
   <main class="main-content" id="main-content">
     <!-- Home -->
     <section class="home-page tab-panel tab-panel--active" id="tab-home" data-tab-panel="home" aria-labelledby="home-title">
-      <header class="home-hero">
-        <h1 id="home-title">Fonora</h1>
-        <p class="home-subtitle">A universal script built from speech itself</p>
-        <p class="home-intro">
-          Fonora is an experimental open-source writing system that represents spoken sounds using a small set of intuitive symbols.
-        </p>
-        <p class="home-intro">
-          Instead of memorizing hundreds of letters and spelling rules, readers learn a handful of symbols that describe how sounds are physically produced in the mouth.
-        </p>
-        <p class="home-intro">
-          Designed to be phonetic, minimal, and language independent, Fonora explores whether human speech can be written in a simpler, more universal way.
-        </p>
-        <div class="home-cta">
-          <button type="button" class="btn btn--primary" data-tab="translator">Try the Translator</button>
-          <button type="button" class="btn" data-tab="grid">Explore the Sound Grid</button>
-        </div>
-      </header>
+      <section class="home-section home-section--intro" aria-labelledby="home-title">
+        <header class="home-intro-header">
+          <h1 id="home-title">Fonora</h1>
+          <p class="home-subtitle">A universal script built from speech itself</p>
+        </header>
 
-      <article class="home-section" aria-labelledby="about-heading">
-        <h2 id="about-heading">What Is Fonora?</h2>
-        <p>Fonora is an open-source research project that explores a simple question:</p>
-        <p class="home-pullquote"><strong>What if writing was based on how speech is produced rather than how words are traditionally spelled?</strong></p>
-        <p>Most writing systems evolved over centuries and often contain complex spelling rules, silent letters, and historical inconsistencies.</p>
-        <p>Fonora takes a different approach. Every symbol is derived from a physical action inside the human vocal system. Written text becomes a visual representation of speech itself.</p>
-        <p>The long-term goal is to create a highly learnable phonetic script that can be used to represent spoken language across linguistic boundaries.</p>
-      </article>
+        <div class="home-prose">
+          <p>
+            Fonora is an experimental open-source writing system that represents speech using a small set of symbols based on how sounds are physically produced in the mouth.
+          </p>
+          <p>
+            Rather than relying on historical spelling conventions, Fonora encodes pronunciation directly. The symbols themselves describe where and how sounds are formed, helping readers infer how words should be spoken from the written form alone.
+          </p>
+          <p>
+            The goal is to create a simple, highly learnable phonetic script capable of representing speech across languages and dialects using a minimal visual vocabulary.
+          </p>
+        </div>
+      </section>
+
+      <section class="home-section home-section--sample" aria-labelledby="home-sample-lang">
+        <article class="home-sample-preview">
+          <header class="home-sample-preview__header">
+            <h2 class="home-sample-preview__lang" id="home-sample-lang">English</h2>
+            <p class="home-sample-preview__source" id="home-sample-source"></p>
+          </header>
+
+          <div class="home-sample-preview__block">
+            <h3 class="home-sample-preview__label">Original text</h3>
+            <p class="home-sample-preview__original" id="home-sample-original"></p>
+          </div>
+
+          <div class="home-sample-preview__block">
+            <h3 class="home-sample-preview__label">Fonora rendering</h3>
+            <div class="home-sample-preview__fonora symbol-text" id="home-sample-fonora" aria-live="polite">
+              <span class="sample-loading">Generating Fonora rendering…</span>
+            </div>
+          </div>
+
+          <footer class="home-sample-preview__footer">
+            <div class="home-sample-preview__actions">
+              <button type="button" class="btn btn--primary sample-audio-btn" data-sample-play="en" disabled aria-label="Listen to English Fonora sample">▶ Listen</button>
+              <span class="sample-audio-engine">Neural voice</span>
+              <span class="sample-audio-status" id="home-sample-status" hidden role="status"></span>
+            </div>
+            <button type="button" class="btn home-sample-more-btn" data-tab="samples">More language samples</button>
+          </footer>
+        </article>
+      </section>
 
       <section class="home-section" aria-labelledby="how-heading">
         <h2 id="how-heading">How It Works</h2>
@@ -590,11 +612,11 @@
         Fonora is designed to represent speech, not spelling. These samples show how paragraph-length text from different languages may appear when rendered through the Fonora phonetic system.
       </p>
       <p class="samples-intro">
-        The goal is to visually demonstrate how Fonora can represent speech across languages and dialects — using the same symbol inventory regardless of the source writing system.
+        The goal is to visually demonstrate how Fonora can represent speech across languages and dialects using the same symbol inventory regardless of the source writing system.
       </p>
 
       <p class="samples-disclaimer" role="note">
-        Fonora is experimental. Samples may change as the phonetic mapping system improves.
+        Fonora is experimental. Samples may change as the phonetic mapping system improves. Listen uses neural voices and reads recovered Fonora phonetics. Japanese audio is not available yet.
       </p>
 
       <div id="samples-list" class="samples-list" aria-live="polite"></div>

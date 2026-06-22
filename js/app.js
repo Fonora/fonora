@@ -30,7 +30,7 @@ import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js
 import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
 import { setupFonoraReader, loadReaderFromTranslation } from './fonora-tts-ui.js';
-import { setupSamples, ensureSamplesLoaded } from './samples.js';
+import { setupSamples, setupHomeSample, ensureSamplesLoaded } from './samples.js';
 import { setReaderWordSources } from './fonora-tts.js';
 
 let rules = null;
@@ -859,6 +859,7 @@ function applyRulesBundle(loaded) {
   setupPronunciationValidation(rules);
   setupFonoraReader(rules);
   setupSamples(rules);
+  setupHomeSample(rules);
   const ttsInput = document.getElementById('tts-input');
   if (ttsInput) {
     renderSymbolButtons(document.getElementById('tts-keyboard'), ttsInput);
