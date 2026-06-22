@@ -20,7 +20,7 @@ const suite = await runV2CollisionSuite();
 const report = formatV2CollisionReport(suite);
 
 const ml = await runMultilingualRegression();
-console.log(`Multilingual regression: V1 fallbacks ${ml.v1Fallbacks}/${ml.total}, V2 fallbacks ${ml.v2Fallbacks}/${ml.total}`);
+console.log(`Multilingual regression: fallbacks ${ml.fallbacks}/${ml.total}`);
 
 writeFileSync(outPath, report, 'utf8');
 console.log(report);

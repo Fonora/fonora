@@ -4,7 +4,7 @@ import { encodeSounds } from './encode.js';
 import { decodeSymbols } from './decode.js';
 import { pickCuratedWords, TEST_CATEGORIES, getMultilingualTestEntries, getEnglishDialectComparisonEntries } from './encoder-test-sets.js';
 import { ENGLISH_DIALECT_CODES } from './language-preferences.js';
-import { getDefinedSounds } from './rules.js';
+import { getDefinedSounds, isVowelPhonemeKey } from './rules.js';
 import { addGlossaryEntry } from './glossary.js';
 
 const REVIEWS_KEY = 'fonora-pronunciation-reviews-v1';
@@ -181,18 +181,18 @@ export function exportReviewsCsv() {
   return [headers.join(','), ...rows].join('\n');
 }
 
-function isVowelSound(sound) {
-  return /^[aeiouāēīōū]$/.test(sound);
+function isVowelSound(sound, rules) {
+  return isVowelPhonemeKey(rules, sound);
 }
 
-function isConsonantSound(sound, definedSounds) {
-  return definedSounds.includes(sound) && !isVowelSound(sound);
+function isConsonantSound(sound, definedSounds, rules) {
+  return definedSounds.includes(sound) && !isVowelSound(sound, rules);
 }
 
 export function generateRandomSoundStrings(rules, count = 30) {
   const defined = getDefinedSounds(rules);
-  const vowels = defined.filter(isVowelSound);
-  const consonants = defined.filter((s) => isConsonantSound(s, defined));
+  const vowels = defined.filter((s) => isVowelSound(s, rules));
+  const consonants = defined.filter((s) => isConsonantSound(s, defined, rules));
   const results = [];
 
   for (let n = 0; n < count; n++) {

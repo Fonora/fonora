@@ -1,4 +1,4 @@
-import { getEncodableEntries, getQuizEntries } from './rules.js';
+import { getEncodableEntries, getQuizEntries, getVowelPhonemeKeys, vowelSymbolForKey } from './rules.js';
 import { encodeSounds } from './encode.js';
 import { decodeSymbols, decodeText } from './decode.js';
 import { normalizeIpa, registerIpaVowelMap, setActiveIpaVowelMap } from './ipa-normalize.js';
@@ -24,9 +24,13 @@ function enc(sounds, rules) {
   return encodeSounds(sounds, rules);
 }
 
+function vowelSym(rules, key) {
+  return vowelSymbolForKey(rules, key);
+}
+
 /**
  * Browser-safe test runner. Requires a loaded rules bundle (from markdown fetch).
- * @param {{ bundle: object, v1Bundle?: object }} options
+ * @param {{ bundle: object }} options
  */
 export function runTests(options) {
   if (!options?.bundle?.rules) {
@@ -34,14 +38,13 @@ export function runTests(options) {
   }
 
   const v2Bundle = options.bundle;
-  const v1Bundle = options.v1Bundle ?? null;
   const rules = v2Bundle.rules;
   const registry = v2Bundle.registry;
   const lips = registry.places.lips;
   const voice = registry.modifiers.voice;
   const friction = registry.modifiers.friction;
   const throat = registry.places.throat;
-  const longMarker = registry.derivedWriting.vowel_carrier;
+  const vowelMarker = registry.modifiers.vowel;
   const front = registry.places.frontTongue;
   const middle = registry.places.middleTongue;
   const back = registry.places.backTongue;
@@ -53,12 +56,12 @@ export function runTests(options) {
   const t = (name, fn) => results.push(test(name, fn));
 
   t('registry loaded from markdown', () => {
-    assert(lips === '⊟');
+    assert(lips === '∋');
     assert(lips !== ASCII_EQUALS);
     assert(registry.places.frontTongue === '∩');
     assert(throat === '⊃');
-    assert(longMarker === '⊇');
-    assert(Object.keys(registry.vowels).length >= 10);
+    assert(vowelMarker === '⚬');
+    assert(Object.keys(registry.vowels).length >= 13);
     assert(rules.places.length === 5);
   });
 
@@ -70,21 +73,33 @@ export function runTests(options) {
     assert(rules.places.every((p) => ['lips', 'front_tongue', 'middle_tongue', 'back_tongue', 'throat'].includes(p.id)));
   });
 
-  t('vowels composed from short/long plane + component', () => {
-    assert(registry.vowels.a === throat);
-    assert(registry.vowels.ā === longMarker);
-    assert(registry.vowels.e === `${throat}${front}`);
-    assert(registry.vowels.ē === `${longMarker}${front}`);
-    assert(registry.vowels.u === `${throat}${lips}`);
-    assert(registry.vowels.ū === `${longMarker}${lips}`);
+  t('core vowels composed from recipes', () => {
+    assert(registry.vowels.ee === `${vowelMarker}${front}`);
+    assert(registry.vowels.i === `${vowelMarker}${middle}`);
+    assert(registry.vowels.e === `${vowelMarker}${vowelMarker}${front}`);
+    assert(registry.vowels.ae === `${vowelMarker}${vowelMarker}${middle}`);
+    assert(registry.vowels.a === `${vowelMarker}${throat}`);
+    assert(registry.vowels.o === `${vowelMarker}${vowelMarker}${back}`);
+    assert(registry.vowels.oh === `${vowelMarker}${back}`);
+    assert(registry.vowels.u === `${vowelMarker}${lips}`);
+    assert(registry.vowels.oo === `${vowelMarker}${vowelMarker}${lips}`);
   });
 
-  t('primary symbol swap recomposes derived forms', () => {
+  t('composite vowels composed from recipes', () => {
+    const glide = registry.modifiers.glide;
+    assert(registry.vowels.eye === `${vowelMarker}${vowelMarker}${back}${glide}${front}`);
+    assert(registry.vowels.ow === `${vowelMarker}${vowelMarker}${back}${glide}${lips}`);
+    assert(registry.vowels.oy === `${vowelMarker}${vowelMarker}${back}${glide}${middle}`);
+    assert(registry.vowels.ay === `${vowelMarker}${vowelMarker}${front}${glide}${front}`);
+    assert(registry.vowels.eye !== registry.vowels.oy);
+  });
+
+  t('primary symbol swap recomposes vowel recipes', () => {
     const trial = structuredClone(rules);
     trial.places.find((p) => p.id === 'lips').symbol = '◆';
     applyPrimarySymbols(trial);
-    assert(trial.soundGrid.find((c) => c.sound === 'p').symbols === '◆');
-    assert(trial.experimentalVowels.find((v) => v.vowel === 'u').symbols === `${throat}◆`);
+    assert(trial.vowels.find((v) => v.key === 'u').symbols === `${vowelMarker}◆`);
+    assert(trial.vowels.find((v) => v.key === 'oo').symbols === `${vowelMarker}${vowelMarker}◆`);
   });
 
   t('no ASCII = in inventory', () => {
@@ -96,19 +111,15 @@ export function runTests(options) {
     assert(enc('b', rules).symbols === `${voice}${lips}`);
   });
 
-  t('short open vowel uses throat symbol', () => assert(enc('a', rules).symbols === throat));
-  t('long open vowel uses long marker alone', () => assert(enc('ā', rules).symbols === longMarker));
-  t('rounded vowel uses throat + lips', () => assert(enc('u', rules).symbols === registry.vowels.u));
-  t('pa uses composed lips + short open', () => assert(enc('pa', rules).symbols === `${lips}${throat}`));
-  t('pā uses composed lips + long open', () => assert(enc('pā', rules).symbols === `${lips}${longMarker}`));
+  t('schwa vowel encodes as ⚬⊃', () => assert(enc('a', rules).symbols === vowelSym(rules, 'a')));
+  t('FLEECE vowel encodes as ⚬∩', () => assert(enc('ee', rules).symbols === vowelSym(rules, 'ee')));
+  t('pa uses lips + schwa', () => assert(enc('pa', rules).symbols === `${lips}${vowelSym(rules, 'a')}`));
+  t('pee uses lips + FLEECE', () => assert(enc('pee', rules).symbols === `${lips}${vowelSym(rules, 'ee')}`));
 
-  t('short and long CV pairs produce distinct spellings', () => {
+  t('vowel length pairs produce distinct spellings', () => {
     const pairs = [
-      ['pa', 'pā', `${lips}${throat}`, `${lips}${longMarker}`],
-      ['pe', 'pē', `${lips}${throat}${front}`, `${lips}${longMarker}${front}`],
-      ['pi', 'pī', `${lips}${throat}${middle}`, `${lips}${longMarker}${middle}`],
-      ['po', 'pō', `${lips}${throat}${back}`, `${lips}${longMarker}${back}`],
-      ['pu', 'pū', `${lips}${throat}${lips}`, `${lips}${longMarker}${lips}`],
+      ['pi', 'pee', `${lips}${vowelSym(rules, 'i')}`, `${lips}${vowelSym(rules, 'ee')}`],
+      ['pu', 'poo', `${lips}${vowelSym(rules, 'u')}`, `${lips}${vowelSym(rules, 'oo')}`],
     ];
     for (const [shortWord, longWord, shortSym, longSym] of pairs) {
       assert(enc(shortWord, rules).symbols === shortSym, `${shortWord} expected ${shortSym}`);
@@ -138,7 +149,7 @@ export function runTests(options) {
 
   t('z round-trip encoding and decoding', () => {
     const zSym = rules.specialDerivedSounds.find((d) => d.sound === 'z').symbols;
-    for (const word of ['z', 'zū', 'buzz', 'zīp']) {
+    for (const word of ['z', 'zoo', 'buzz']) {
       const encoded = enc(word, rules);
       assert(encoded.symbols.includes(zSym), `${word} should contain z symbols`);
       const decoded = decodeSymbols(encoded.symbols, rules);
@@ -178,7 +189,7 @@ export function runTests(options) {
   t('z derived sound has no symbol collisions with s, v, th, or dh', () => {
     const zSym = rules.specialDerivedSounds.find((d) => d.sound === 'z').symbols;
     const sSym = rules.soundGrid.find((c) => c.sound === 's').symbols;
-    const vSym = rules.experimentalDerivedSounds.find((c) => c.sound === 'v').symbols;
+    const vSym = rules.specialDerivedSounds.find((c) => c.sound === 'v').symbols;
     const thSym = rules.specialDerivedSounds.find((d) => d.sound === 'th').symbols;
     const dhSym = rules.specialDerivedSounds.find((d) => d.sound === 'dh').symbols;
     const symbols = [sSym, vSym, thSym, dhSym, zSym];
@@ -199,25 +210,34 @@ export function runTests(options) {
     assert(!th.symbols.includes(friction));
   });
 
+  t('vowel phoneme keys come from markdown definitions', () => {
+    const keys = getVowelPhonemeKeys(rules);
+    assert(keys.includes('ee'));
+    assert(keys.includes('ae'));
+    assert(keys.includes('oh'));
+    assert(keys.includes('eye'));
+    assert(keys.length === 13);
+  });
+
   t('quiz uses markdown-derived encodable entries', () => {
     const encodable = getEncodableEntries(rules).filter((c) => c.sound && c.sound !== '?');
     const quizSounds = new Set(getQuizEntries(rules).map((c) => c.sound));
     assert(quizSounds.size === encodable.length);
   });
 
-  t('decode composed pa', () => assert(decodeSymbols(`${lips}${throat}`, rules).pronunciation === 'pa'));
+  t('decode composed pa', () => assert(decodeSymbols(`${lips}${vowelSym(rules, 'a')}`, rules).pronunciation === 'pa'));
   t('normalize collapses symbol spaces', () => assert(decodeSymbols(`${voice} ${lips}`, rules).pronunciation === 'b'));
 
-  t('IPA normalization maps TRAP vowel to front phoneme', () => {
+  t('IPA normalization maps TRAP vowel to ae phoneme', () => {
     const n = normalizeIpa('kæt', { vowelMap: v2Bundle.ipaVowelMap });
-    assert(n.phonemeString.includes('e'));
-    assert(!n.phonemeString.includes('ā'));
+    assert(n.phonemeString.includes('ae'));
+    assert(!n.phonemeString.includes('ee'));
   });
 
   t('IPA length marks map to long vowel phonemes', () => {
-    assert(normalizeIpa('iː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'ī');
-    assert(normalizeIpa('uː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'ū');
-    assert(normalizeIpa('eː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'ē');
+    assert(normalizeIpa('iː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'ee');
+    assert(normalizeIpa('uː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'oo');
+    assert(normalizeIpa('eː', { vowelMap: v2Bundle.ipaVowelMap }).phonemeString === 'e');
   });
 
   t('cat/cot/cut distinguish via markdown IPA map', () => {
@@ -227,12 +247,12 @@ export function runTests(options) {
     assert(new Set([cat.symbols, cot.symbols, cut.symbols]).size === 3);
   });
 
-  if (v1Bundle) {
-    t('V1 fixture loads from markdown', () => {
-      assert(v1Bundle.registry.places.lips === '○');
-      assert(v1Bundle.rules.experimentalVowels.length === 5);
-    });
-  }
+  t('composite diphthongs encode as single vowel symbols', () => {
+    const pie = encodeFromIpa('paɪ', v2Bundle);
+    assert(pie.symbols.includes(vowelSym(rules, 'eye')));
+    const say = encodeFromIpa('seɪ', v2Bundle);
+    assert(say.symbols.includes(vowelSym(rules, 'ay')));
+  });
 
   t('collision groups defined', () => assert(V2_COLLISION_GROUPS.length === 5));
 

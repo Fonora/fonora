@@ -9,8 +9,9 @@ import {
   validateSymbolRegistry,
   parseLanguageRulesMarkdown,
 } from './load-language-rules.js';
-import { composeGridSymbol, applyPrimarySymbols, composeDerivedSymbol } from './symbol-compose.js';
-import { loadActiveRulesFixture, loadV1RulesFixture } from './load-rules-fixture.js';
+import { composeGridSymbol, applyPrimarySymbols, composeDerivedSymbol, composeVowelFromRecipe } from './symbol-compose.js';
+import { getVowelEntries } from './vowel-display.js';
+import { loadActiveRulesFixture } from './load-rules-fixture.js';
 import { runTests } from './tests-core.js';
 import {
   resolveEspeakVoice,
@@ -39,13 +40,15 @@ const parserResult = test('parseLanguageRulesMarkdown builds composed registry',
   applyPrimarySymbols(rules);
   const registry = buildSymbolRegistry(rules);
   validateSymbolRegistry(registry, rules);
-  assert(rules.experimentalVowels.length === 10);
+  assert(getVowelEntries(rules).length === 13);
   assert(rules.config.fonora_version === 'v2');
-  assert(rules.ipaVowelMap.æ === 'e');
-  assert(rules.ipaVowelMap['ɑː'] === 'ō');
+  assert(rules.ipaVowelMap.æ === 'ae');
+  assert(rules.ipaVowelMap['ɑː'] === 'o');
   const lips = registry.places.lips;
   assert(rules.soundGrid.find((c) => c.sound === 'p').symbols === lips);
-  assert(registry.vowels.u === `${registry.places.throat}${lips}`);
+  assert(registry.vowels.u === `${registry.modifiers.vowel}${lips}`);
+  const ee = getVowelEntries(rules).find((v) => v.key === 'ee');
+  assert(ee.symbols === composeVowelFromRecipe(ee.recipe, rules.places, rules.modifiers));
 });
 
 const composeResult = test('composeGridSymbol matches sound grid', () => {
@@ -79,7 +82,6 @@ const voiceResult = test('resolveEspeakVoice defaults and dialect overrides', ()
 
 const { passed, total, failed } = runTests({
   bundle: loadActiveRulesFixture(),
-  v1Bundle: loadV1RulesFixture(),
 });
 
 const allFailed = [...failed, ...(parserResult.ok ? [] : [parserResult]), ...(composeResult.ok ? [] : [composeResult]), ...(derivedResult.ok ? [] : [derivedResult]), ...(voiceResult.ok ? [] : [voiceResult])];
