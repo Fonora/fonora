@@ -34,10 +34,10 @@ The [`Procfile`](../Procfile) runs `web: npm start`. Heroku sets `$PORT`; the se
 
 - `vendor/espeak-ng/` — IPA pipeline
 - `vendor/espeak-audio/` — Reader audio playback
-- `vendor/onnx/` — Piper neural TTS
+- `vendor/onnx/` — Piper neural TTS (copied from `onnxruntime-web@1.20.x`, must match `piper-tts-web`)
 - `vendor/piper-tts-web/` — Piper browser bundle
 
-`node_modules/` is also present on Heroku; the server falls back to `node_modules/piper-tts-web/dist/` if vendor copy is missing.
+`node_modules/` is also present on Heroku; the server falls back to `node_modules/` when `vendor/` copies are missing (see `URL_ALIASES` in [`server.js`](../server.js)). The browser also falls back to unpkg for ONNX WASM if `/vendor/onnx/` returns 404.
 
 ### Custom domain
 

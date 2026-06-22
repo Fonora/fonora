@@ -3,7 +3,11 @@
  */
 import { segmentIpa } from './ipa-espeak-format.js';
 import { playEspeakSamples, primeAudioContext } from './espeak-audio.js';
-import { PIPER_VOICE_BASE_URL } from './fonora-config.js';
+import {
+  ONNX_WASM_BASE_PATH,
+  ONNX_WASM_CDN_BASE,
+  PIPER_VOICE_BASE_URL,
+} from './fonora-config.js';
 
 export const PIPER_VOICE_OPTIONS = [
   { id: 'en_US-lessac-medium', label: 'Lessac (US, natural)' },
@@ -51,6 +55,7 @@ let initError = null;
 let voiceId = null;
 let voiceData = null;
 let onnxRuntime = null;
+let onnxWasmBasePath = null;
 
 export function getPiperVoiceForLang(lang) {
   return PIPER_VOICE_BY_LANG[lang] ?? null;
@@ -122,12 +127,35 @@ async function loadPiperModule() {
   return import('/vendor/piper-tts-web/piper-tts-web.js');
 }
 
-function createOnnxRuntime(mod) {
+async function probeOnnxWasmBase(basePath) {
+  const url = new URL('ort-wasm-simd-threaded.wasm', basePath).href;
+  try {
+    const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+async function resolveOnnxWasmBasePath() {
+  if (onnxWasmBasePath) return onnxWasmBasePath;
+  if (await probeOnnxWasmBase(ONNX_WASM_BASE_PATH)) {
+    onnxWasmBasePath = ONNX_WASM_BASE_PATH;
+    return onnxWasmBasePath;
+  }
+  if (await probeOnnxWasmBase(ONNX_WASM_CDN_BASE)) {
+    onnxWasmBasePath = ONNX_WASM_CDN_BASE;
+    return onnxWasmBasePath;
+  }
+  throw new Error('ONNX Runtime WASM not found at /vendor/onnx/ or CDN fallback');
+}
+
+function createOnnxRuntime(mod, basePath) {
   const numThreads = (typeof crossOriginIsolated !== 'undefined' && crossOriginIsolated)
     ? navigator.hardwareConcurrency
     : 1;
   return new mod.OnnxWebRuntime({
-    basePath: '/vendor/onnx/',
+    basePath,
     numThreads,
   });
 }
@@ -138,13 +166,15 @@ async function ensurePiper(voice, onProgress) {
   if (!initPromise || voiceId !== voice) {
     voiceId = voice;
     initError = null;
+    onnxWasmBasePath = null;
     initPromise = (async () => {
       onProgress?.('Loading neural voice engine…');
       const mod = await loadPiperModule();
       const provider = new mod.HuggingFaceVoiceProvider({ baseUrl: PIPER_VOICE_BASE_URL });
       onProgress?.('Downloading voice model (~20–60 MB, one-time)…');
       const data = await provider.fetch(voice);
-      const runtime = createOnnxRuntime(mod);
+      const wasmBasePath = await resolveOnnxWasmBasePath();
+      const runtime = createOnnxRuntime(mod, wasmBasePath);
       voiceData = data;
       onnxRuntime = runtime;
       return { voiceData: data, onnxRuntime: runtime };
@@ -153,6 +183,7 @@ async function ensurePiper(voice, onProgress) {
       initPromise = null;
       voiceData = null;
       onnxRuntime = null;
+      onnxWasmBasePath = null;
       throw err;
     });
   }

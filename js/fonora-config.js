@@ -8,6 +8,11 @@ export const SITE_ORIGIN = 'https://fonora.org';
 export const PIPER_VOICE_BASE_URL =
   'https://huggingface.co/rhasspy/piper-voices/resolve/main/';
 
+/** ONNX Runtime WASM for Piper — must match piper-tts-web’s onnxruntime-web (1.20.x). */
+export const ONNX_RUNTIME_VERSION = '1.20.1';
+export const ONNX_WASM_BASE_PATH = '/vendor/onnx/';
+export const ONNX_WASM_CDN_BASE = `https://unpkg.com/onnxruntime-web@${ONNX_RUNTIME_VERSION}/dist/`;
+
 /** Active rules bundle set at app startup from markdown. */
 let activeBundle = null;
 

@@ -1,7 +1,7 @@
 /**
  * Node test runner — not imported by the browser app.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -106,6 +106,18 @@ const samplePlanResult = test('getSamplePlaybackPlan uses Piper for supported la
   const es = getSamplePlaybackPlan('es');
   assert(es.engine === 'piper');
   assert(es.piperVoice === PIPER_VOICE_BY_LANG.es);
+});
+
+const vendorOnnxResult = test('vendor/onnx WASM bundle matches Piper runtime', () => {
+  const vendorRoot = join(dirname(fileURLToPath(import.meta.url)), '..', 'vendor', 'onnx');
+  assert(
+    existsSync(join(vendorRoot, 'ort-wasm-simd-threaded.wasm')),
+    'vendor/onnx/ort-wasm-simd-threaded.wasm missing — run npm install',
+  );
+  assert(
+    existsSync(join(vendorRoot, 'ort-wasm-simd-threaded.mjs')),
+    'vendor/onnx/ort-wasm-simd-threaded.mjs missing — run npm install',
+  );
 });
 
 const piperLengthResult = test('ipaToPiperPhonemeIds splits vowel length marks for Piper', () => {
@@ -213,6 +225,7 @@ const allFailed = [
   ...(piperLengthResult.ok ? [] : [piperLengthResult]),
   ...(sampleVoiceResult.ok ? [] : [sampleVoiceResult]),
   ...(samplePlanResult.ok ? [] : [samplePlanResult]),
+  ...(vendorOnnxResult.ok ? [] : [vendorOnnxResult]),
   ...(outsideResult.ok ? [] : [outsideResult]),
   ...(ipaFormatResult.ok ? [] : [ipaFormatResult]),
   ...(voiceResult.ok ? [] : [voiceResult]),
@@ -228,9 +241,10 @@ const allPassed =
   + (piperLengthResult.ok ? 1 : 0)
   + (sampleVoiceResult.ok ? 1 : 0)
   + (samplePlanResult.ok ? 1 : 0)
+  + (vendorOnnxResult.ok ? 1 : 0)
   + (outsideResult.ok ? 1 : 0)
   + (voiceResult.ok ? 1 : 0);
-const allTotal = total + corpusResults.length + 10;
+const allTotal = total + corpusResults.length + 11;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

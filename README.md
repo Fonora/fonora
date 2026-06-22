@@ -76,7 +76,7 @@ Edit [`docs/language-rules.md`](docs/language-rules.md) and reload the browser. 
 ## Tests
 
 ```bash
-npm test                              # 59 unit/integration assertions
+npm test                              # 61 unit/integration assertions
 npm run test:vowels                   # vowel readability report → reports/
 npm run test:minimal-pairs            # minimal-pair distinctness report → reports/
 npm run audit:collisions              # collision audit → docs/FONORA_COLLISION_AUDIT.md
