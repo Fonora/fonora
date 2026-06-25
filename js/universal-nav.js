@@ -180,7 +180,7 @@ function updateDocumentTitle() {
     document.title = state.activeTab === 'home' ? 'Fonora | Universal Phonetic Script' : `Fonora — ${label}`;
   } else {
     const label = FONORAN_TITLES[state.activeTab] ?? 'Fonoran';
-    document.title = state.activeTab === 'home' ? 'Fonoran — Experimental Language' : `Fonoran — ${label}`;
+    document.title = state.activeTab === 'home' ? 'Fonoran: Experimental Language' : `Fonoran: ${label}`;
   }
 }
 
