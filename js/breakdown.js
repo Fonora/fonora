@@ -109,7 +109,7 @@ function resolveChunkIpa(cell, group, sourceNorm) {
 }
 
 /**
- * Color category for a pronunciation chunk — driven by language-rules.md structure.
+ * Color category for a pronunciation chunk, driven by language-rules.md structure.
  */
 export function resolveChunkCategory(rules, cell, group) {
   if (!cell && group?.sound && isVowelPhonemeKey(rules, group.sound)) return 'vowel';
@@ -259,7 +259,7 @@ function renderChunkCard(chunk, wordIndex, chunkIndex, rules) {
 }
 
 function renderAlignedChunkColumns(chunks, wordIndex, rules) {
-  if (!chunks.length) return '<em class="breakdown-empty">—</em>';
+  if (!chunks.length) return '<em class="breakdown-empty">-</em>';
 
   return `
     <div class="breakdown-columns">
@@ -277,7 +277,7 @@ function renderPhonemeKeyColumns(chunks) {
 
 function renderCombinedInteractive(word, wordIndex, rules) {
   if (!word.chunks?.length) {
-    return `<div class="breakdown-combined symbol-text">${escapeHtml(word.symbols || '—')}</div>`;
+    return `<div class="breakdown-combined symbol-text">${escapeHtml(word.symbols || '-')}</div>`;
   }
   return `
     <div class="breakdown-combined breakdown-combined--interactive symbol-text" role="group" aria-label="Combined Fonora for ${escapeHtml(word.original || 'word')}">
@@ -343,7 +343,7 @@ function renderTechRow(label, value, { mono = false } = {}) {
 function renderTechnicalDetails(analysis) {
   const wordSections = (analysis.words || [])
     .map((word) => {
-      const title = escapeHtml(word.original || '—');
+      const title = escapeHtml(word.original || '-');
       let html = `<div class="breakdown-tech-word"><strong>${title}</strong>`;
       html += renderTechRow('Original IPA', word.ipa ? `<code>${escapeHtml(word.ipa)}</code>` : '');
       html += renderTechRow(

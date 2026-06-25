@@ -1,7 +1,7 @@
 {
   "name": "fonora",
   "version": "0.1.0",
-  "description": "Open-source phonetic oral script language — research tools and documentation",
+  "description": "Open-source phonetic oral script language, research tools and documentation",
   "homepage": "https://fonora.org",
   "repository": {
     "type": "git",

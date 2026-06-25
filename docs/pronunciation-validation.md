@@ -55,9 +55,9 @@ For each word:
 | Recovery Analysis | Recovered phoneme keys, recovered IPA, decoder path |
 | Comparison | Source IPA, recovered IPA, match/mismatch indicator |
 
-**▶ Original** — browser speech synthesis speaks the English word (expected pronunciation).
+**▶ Original**: browser speech synthesis speaks the English word (expected pronunciation).
 
-**▶ Fonora Readback** — speaks recovered phoneme keys joined as a pseudo-word (what the Fonora writing system encodes). Browser TTS cannot speak IPA directly; this exposes raw encoded behavior without compensation.
+**▶ Fonora Readback**: speaks recovered phoneme keys joined as a pseudo-word (what the Fonora writing system encodes). Browser TTS cannot speak IPA directly; this exposes raw encoded behavior without compensation.
 
 ### Batch testing
 
@@ -87,7 +87,7 @@ When IPA or phoneme keys mismatch, the UI shows:
 
 ## Collision audit integration
 
-Warnings reuse `findConcatenationCollisions()` from `js/collision-audit.js`. If source phoneme keys contain a sequence that participates in a known collision class, an informational warning is shown — for example:
+Warnings reuse `findConcatenationCollisions()` from `js/collision-audit.js`. If source phoneme keys contain a sequence that participates in a known collision class, an informational warning is shown, for example:
 
 > Contains known vowel+glide collision pattern (o + y ↔ oy)
 

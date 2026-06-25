@@ -1,11 +1,13 @@
 import { escapeHtml } from './utils.js';
 import {
+  DEFAULT_DOC_PATH,
   DOC_CATALOG,
   DOC_LAYER_ORDER,
   docViewerHref,
   githubDocUrl,
-  normalizeDocPath,
+  isDocsRoute,
   openDocViewer,
+  parseDocFromLocation,
   splitDocRef,
 } from './doc-urls.js';
 import { extractMarkdownTitle, renderMarkdown } from './markdown-render.js';
@@ -67,16 +69,15 @@ function setViewerState({ title, path, error = null }) {
 
 export async function loadDocViewer(repoPath) {
   const { path, anchor: refAnchor } = splitDocRef(repoPath);
-  const params = new URLSearchParams(window.location.search);
-  const anchor = refAnchor || params.get('anchor') || '';
+  const anchor = refAnchor || '';
 
   const contentEl = document.getElementById('docs-viewer-content');
   if (!contentEl) return;
 
   currentPath = path;
-  const anchorParam = anchor ? `&anchor=${encodeURIComponent(anchor)}` : '';
-  const url = `${window.location.pathname}?path=${encodeURIComponent(path)}${anchorParam}#docs`;
-  if (`${window.location.search}${window.location.hash}` !== `?path=${encodeURIComponent(path)}${anchorParam}#docs`) {
+  const url = docViewerHref(anchor ? `${path}#${anchor}` : path);
+  const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  if (current !== url) {
     history.replaceState(null, '', url);
   }
 
@@ -84,7 +85,7 @@ export async function loadDocViewer(repoPath) {
   setViewerState({ title: 'Loading…', path });
 
   try {
-    const res = await fetch(path);
+    const res = await fetch(path.startsWith('/') ? path : `/${path}`);
     if (!res.ok) throw new Error(`Could not load ${path} (HTTP ${res.status})`);
     const markdown = await res.text();
     const title = extractMarkdownTitle(markdown);
@@ -103,17 +104,23 @@ export async function loadDocViewer(repoPath) {
 }
 
 export function onDocsTabActivated() {
-  const params = new URLSearchParams(window.location.search);
-  const path = params.get('path');
-  if (path) {
-    const normalized = normalizeDocPath(path);
-    if (normalized !== currentPath) {
-      loadDocViewer(normalized).catch(() => {});
+  const parsed = parseDocFromLocation();
+  if (parsed) {
+    if (new URLSearchParams(window.location.search).has('path')) {
+      history.replaceState(
+        null,
+        '',
+        docViewerHref(parsed.anchor ? `${parsed.path}#${parsed.anchor}` : parsed.path),
+      );
+    }
+    const ref = parsed.anchor ? `${parsed.path}#${parsed.anchor}` : parsed.path;
+    if (ref !== `${currentPath}${parsed.anchor ? `#${parsed.anchor}` : ''}`) {
+      loadDocViewer(ref).catch(() => {});
     }
     return;
   }
   if (!currentPath) {
-    loadDocViewer('docs/README.md').catch(() => {});
+    loadDocViewer(DEFAULT_DOC_PATH).catch(() => {});
   }
 }
 
@@ -133,14 +140,14 @@ export function setupDocsViewer() {
 
   page.addEventListener('click', handleDocClick);
   window.addEventListener('popstate', () => {
-    if (window.location.hash.replace(/^#/, '') === 'docs') {
+    if (isDocsRoute()) {
       onDocsTabActivated();
     }
   });
 
   renderSidebar(null);
 
-  if (window.location.hash.replace(/^#/, '') === 'docs') {
+  if (isDocsRoute()) {
     onDocsTabActivated();
   }
 }

@@ -27,8 +27,8 @@ function renderInventoryRows(rows) {
 
 /**
  * @param {object} opts
- * @param {() => object} opts.getRules — active rules (with overrides applied)
- * @param {() => Record<string, string>} opts.getMarkdownPrimarySymbols — symbols from language-rules.md
+ * @param {() => object} opts.getRules, active rules (with overrides applied)
+ * @param {() => Record<string, string>} opts.getMarkdownPrimarySymbols, symbols from language-rules.md
  * @param {(overrides: Record<string, string>) => void} opts.onApplyOverrides
  */
 export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyOverrides }) {
@@ -147,7 +147,7 @@ export function setupAlphabetLab({ getRules, getMarkdownPrimarySymbols, onApplyO
     setStatus(
       Object.keys(clean).length
         ? `Saved ${Object.keys(clean).length} override(s) to localStorage. App updated.`
-        : 'No overrides — using markdown symbols only.',
+        : 'No overrides, using markdown symbols only.',
       'success',
     );
     renderPrimaryEditor();

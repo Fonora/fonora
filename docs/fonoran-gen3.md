@@ -1,10 +1,10 @@
-# Fonoran Gen 3 — Grid-Native Language Architecture
+# Fonoran Gen 3: Grid-Native Language Architecture
 
-> **Status:** experimental rebase — all prior Fonoran work (Gen 1 inventory, Gen 2 primitives, English-adjacent roots) is **disposable**  
+> **Status:** experimental rebase, all prior Fonoran work (Gen 1 inventory, Gen 2 primitives, English-adjacent roots) is **disposable**  
 > **Branch:** `feature/fonoran-language-experiment`  
 > **Does not modify:** Fonora translator, phoneme pipeline, IPA mapping, sound grid, quiz, reader, or `language-rules.md`
 
-For the live vocabulary you build by hand, use the [Fonoran language lab](fonoran.md) at `/fonoran/` — Gen 3 JSON here is **reference semantics** for DDA inference and the English meaning picker, not your working dictionary.
+For the live vocabulary you build by hand, use the [Fonoran language lab](fonoran.md) at `/fonoran/`, Gen 3 JSON here is **reference semantics** for DDA inference and the English meaning picker, not your working dictionary.
 
 ---
 
@@ -22,8 +22,8 @@ Gen 3 asks a different question:
 Assume no prior human language existed. Assume no word for *water* waiting to be filled. Begin with:
 
 ```
-∋ ∩ ⌓ ∪ ⊃   — places
-⌇ ⌀ ⏌ ᵔ ⚬   — modifiers
+∋ ∩ ⌓ ∪ ⊃  , places
+⌇ ⌀ ⏌ ᵔ ⚬  , modifiers
 ```
 
 Words are **outputs**. Coordinates are **inputs**.
@@ -40,7 +40,7 @@ Words are **outputs**. Coordinates are **inputs**.
 
 ### 1.1 Core premise
 
-Fonora is not an alphabet. It is a **map of speech production** — a ordered path from inner source (throat) through articulation to outer interface (lips).
+Fonora is not an alphabet. It is a **map of speech production**: a ordered path from inner source (throat) through articulation to outer interface (lips).
 
 Gen 3 treats this map as a **semantic manifold**: every speech gesture occupies a position in articulatory space, and that position carries meaning **before** any word is chosen.
 
@@ -63,7 +63,7 @@ Meaning is **position** in a coordinate system built from:
 | **Mode** | Manner modifier | *What kind of dynamics?* |
 | **Aspect** | Vowel class (⚬X) | *What quality qualifies the gesture?* |
 
-A root is a **named stable coordinate**. A compound is a **path through coordinate space**. Familiar concepts like *river* or *planet* appear only at the **derivation layer** — never as primitives.
+A root is a **named stable coordinate**. A compound is a **path through coordinate space**. Familiar concepts like *river* or *planet* appear only at the **derivation layer**: never as primitives.
 
 ### 1.4 The lip-to-throat journey as ontology
 
@@ -86,35 +86,35 @@ These were design questions, not starting axioms:
 | Does front-of-mouth imply nearness? | **Partially.** Place 2 = **index** (pinpoint), not proximity. Nearness is derived: `near` = index + packet + contact. |
 | Does back-of-mouth imply distance? | **Partially.** Place 4 = **emanation** (field extension). Far = emanation + packet + field. Distance is a compound, not a place. |
 | Does throat imply abstraction? | **No.** Throat = **origin** (generative source). Abstraction is coordinate-derived (e.g. `unknown` = origin + hollow + source). |
-| Does friction imply transformation? | **Yes.** Friction = **flux** — continuous change without discrete jumps. |
-| Does nasal imply containment? | **Yes.** Nasal = **hollow** — resonant interior, permeable cavity. |
-| Does glide imply transition? | **Yes.** Glide = **passage** — between states, not either state. |
+| Does friction imply transformation? | **Yes.** Friction = **flux**: continuous change without discrete jumps. |
+| Does nasal imply containment? | **Yes.** Nasal = **hollow**: resonant interior, permeable cavity. |
+| Does glide imply transition? | **Yes.** Glide = **passage**: between states, not either state. |
 
 ---
 
 ## 2. Articulation Meaning Map
 
-### 2.1 Places — Depth axis (D)
+### 2.1 Places: Depth axis (D)
 
 | # | Symbol | Key | Name | Semantic core |
 | ---: | --- | --- | --- | --- |
-| 1 | ∋ | p | **interface** | Outer contact surface — where inner meets outer; boundaries, faces, thresholds |
-| 2 | ∩ | t | **index** | Pinpoint selection — this-here, singularity, zero-dimensional designation |
-| 3 | ⌓ | c | **junction** | Articulation/combination — where elements bind, pattern, compose |
-| 4 | ∪ | k | **emanation** | Projection — field extension, propagation, reach from a center |
-| 5 | ⊃ | h | **origin** | Generative source — breath, potential, pre-articulate emergence |
+| 1 | ∋ | p | **interface** | Outer contact surface, where inner meets outer; boundaries, faces, thresholds |
+| 2 | ∩ | t | **index** | Pinpoint selection, this-here, singularity, zero-dimensional designation |
+| 3 | ⌓ | c | **junction** | Articulation/combination, where elements bind, pattern, compose |
+| 4 | ∪ | k | **emanation** | Projection, field extension, propagation, reach from a center |
+| 5 | ⊃ | h | **origin** | Generative source, breath, potential, pre-articulate emergence |
 
-### 2.2 Manners — Mode axis (M)
+### 2.2 Manners: Mode axis (M)
 
 | # | Symbol | Key | Name | Semantic core |
 | ---: | --- | --- | --- | --- |
-| — | (none) | — | **packet** | Discrete bounded unit — stasis with edges |
-| 6 | ⌇ | b | **live** | Self-sustaining activation — agency without biology |
-| 7 | ⌀ | d | **flux** | Continuous transformation — unbroken change |
-| 8 | ⏌ | j | **hollow** | Resonant interior — cavity, collective volume |
-| 9 | ᵔ | g | **passage** | Transition — path between states |
+| - | (none) | - | **packet** | Discrete bounded unit, stasis with edges |
+| 6 | ⌇ | b | **live** | Self-sustaining activation, agency without biology |
+| 7 | ⌀ | d | **flux** | Continuous transformation, unbroken change |
+| 8 | ⏌ | j | **hollow** | Resonant interior, cavity, collective volume |
+| 9 | ᵔ | g | **passage** | Transition, path between states |
 
-### 2.3 Vowel classes — Aspect axis (A)
+### 2.3 Vowel classes: Aspect axis (A)
 
 Vowel (⚬) marks that a consonant skeleton is **qualified**. The qualifying glyph is itself an articulatory dimension:
 
@@ -131,7 +131,7 @@ Vowel (⚬) marks that a consonant skeleton is **qualified**. The qualifying gly
 
 ### 2.4 Grid gaps as semantic constraints
 
-Fonora reserves throat+nasal and throat+glide (no defined phoneme). Gen 3 treats these gaps as **illegal coordinates** — the generator rotates manner/place until a defined cell is found. Gaps force diversity; they are features of the archaeology, not bugs.
+Fonora reserves throat+nasal and throat+glide (no defined phoneme). Gen 3 treats these gaps as **illegal coordinates**: the generator rotates manner/place until a defined cell is found. Gaps force diversity; they are features of the archaeology, not bugs.
 
 ---
 
@@ -147,11 +147,11 @@ Every Gen 3 root is fully explained by a **DDA triple**:
 
 | Notation | Reading |
 | --- | --- |
-| `⟨interface, packet, focal⟩` | A bounded unit at the outer boundary — **limit, edge** |
-| `⟨index, live, animated⟩` | An activated point — **agent** |
-| `⟨emanation, flux, turbulent⟩` | Propagating continuous change — **flow** |
-| `⟨origin, hollow, source⟩` | Generative interior absence — **unknown** |
-| `⟨junction, passage, struct⟩` | Structured connection — **bond, path** |
+| `⟨interface, packet, focal⟩` | A bounded unit at the outer boundary, **limit, edge** |
+| `⟨index, live, animated⟩` | An activated point, **agent** |
+| `⟨emanation, flux, turbulent⟩` | Propagating continuous change, **flow** |
+| `⟨origin, hollow, source⟩` | Generative interior absence, **unknown** |
+| `⟨junction, passage, struct⟩` | Structured connection, **bond, path** |
 
 ### 3.2 Coordinate → phoneme (mechanical)
 
@@ -219,7 +219,7 @@ flow + path  =  ⟨emanation,flux,turbulent⟩ + ⟨index,passage,struct⟩
 
 Every root must satisfy: **given ⟨D,M,A⟩, a reader can derive the onset, vowel, and gloss without consulting English.**
 
-Example — **`agent`** = `de`:
+Example, **`agent`** = `de`:
 
 | Coordinate | Maps to | Phoneme |
 | --- | --- | --- |
@@ -228,7 +228,7 @@ Example — **`agent`** = `de`:
 | A:animated | vowel e | ⚬⌇ |
 | → | voice + front | **d** + **e** = **de** |
 
-Gloss: *activated locus; point that acts* — not "person," not "human."
+Gloss: *activated locus; point that acts*, not "person," not "human."
 
 ---
 
@@ -299,11 +299,11 @@ Gloss: *activated locus; point that acts* — not "person," not "human."
 | cycle | ⟨origin, passage, resonant⟩* | hoh | return path |
 | unknown | ⟨origin, hollow, source⟩* | ta | opaque origin |
 
-\* Repair steps applied — throat+nasal/glide gaps or duplicate collision within inventory. Coordinates in config remain authoritative; phonetic form is grid-resolved.
+\* Repair steps applied, throat+nasal/glide gaps or duplicate collision within inventory. Coordinates in config remain authoritative; phonetic form is grid-resolved.
 
 ### 5.6 Primitive families (orthogonal groupings)
 
-These cross-cut depth — useful for derivation, not for storage:
+These cross-cut depth, useful for derivation, not for storage:
 
 | Family | Members | Coordinate theme |
 | --- | --- | --- |
@@ -320,7 +320,7 @@ These cross-cut depth — useful for derivation, not for storage:
 
 ## 6. Example Derivations
 
-Familiar concepts appear **only here** — as composition of grid-native primitives.
+Familiar concepts appear **only here**: as composition of grid-native primitives.
 
 | Concept | Composition | Compound | Coordinate gloss |
 | --- | --- | --- | --- |
@@ -346,9 +346,9 @@ planet   = pee + ko + le                = peekole
 ```
 
 A speaker encountering `peekole` can parse:
-1. **pee** — there is a boundary/limit
-2. **ko** — it extends as a field
-3. **le** — the indexed point moves in passage
+1. **pee**: there is a boundary/limit
+2. **ko**: it extends as a field
+3. **le**: the indexed point moves in passage
 
 → a bounded body moving through space. The label *planet* is English annotation only.
 
@@ -361,7 +361,7 @@ agent    = ⟨index, live, animated⟩      = de    "activated locus"
 speaker  = kee + de                     = keede
 ```
 
-Not *person* + *speech*. **Emission + activation** — works for human speaker, animal call, or mechanical signal source.
+Not *person* + *speech*. **Emission + activation**: works for human speaker, animal call, or mechanical signal source.
 
 ### 6.3 What cannot be primitive in Gen 3
 
@@ -381,11 +381,11 @@ Not *person* + *speech*. **Emission + activation** — works for human speaker, 
 
 | Asset | Gen 3 disposition |
 | --- | --- |
-| `data/fonoran-roots.json` (Gen 1) | **Removed** — archived in [fonoran-generator-archive.md](fonoran-generator-archive.md) |
-| `data/fonoran-gen2-*.json` | **Removed** — archived in [fonoran-generator-archive.md](fonoran-generator-archive.md) |
-| `tools/fonoran-generator.html` | **Removed** — Gen 1 UI sandbox |
-| `docs/fonoran-language.md` | **Removed** — see archive doc |
-| `docs/fonoran-gen2.md` | **Removed** — see archive doc |
+| `data/fonoran-roots.json` (Gen 1) | **Removed**: archived in [fonoran-generator-archive.md](fonoran-generator-archive.md) |
+| `data/fonoran-gen2-*.json` | **Removed**: archived in [fonoran-generator-archive.md](fonoran-generator-archive.md) |
+| `tools/fonoran-generator.html` | **Removed**: Gen 1 UI sandbox |
+| `docs/fonoran-language.md` | **Removed**: see archive doc |
+| `docs/fonoran-gen2.md` | **Removed**: see archive doc |
 
 Gen 3 is the current experimental authority for **grid-native semantics**. Production language building uses the lab at `/fonoran/` ([fonoran.md](fonoran.md)).
 
@@ -407,11 +407,11 @@ Compound templates multiply expressivity:
 
 ### 8.2 Research backlog
 
-1. **Fonora symbol roots** — map CV romanization to ⚬X consonant+vowel spellings
-2. **Full cell enumeration** — generate all 175+ valid grid cells, not just 36 named primitives
-3. **Derivation grammar** — rules for which compound orders are legal
-4. **Gen 3 generator UI** — read-only explorer for coordinates and compounds
-5. **Vowel-as-grammar reconnection** — inflection vowels (a/e/i/o/u roles) on grid-native roots
+1. **Fonora symbol roots**: map CV romanization to ⚬X consonant+vowel spellings
+2. **Full cell enumeration**: generate all 175+ valid grid cells, not just 36 named primitives
+3. **Derivation grammar**: rules for which compound orders are legal
+4. **Gen 3 generator UI**: read-only explorer for coordinates and compounds
+5. **Vowel-as-grammar reconnection**: inflection vowels (a/e/i/o/u roles) on grid-native roots
 
 ---
 
@@ -423,7 +423,7 @@ node tools/fonoran-gen3.js --derivations  # print example compounds
 node tools/fonoran-gen3.js --json          # full output to stdout
 ```
 
-Edit primitives or the articulation map in `data/fonoran-gen3-config.json`, then re-run. The inventory is **coordinate-derived archaeology** — not a dictionary to be edited by hand.
+Edit primitives or the articulation map in `data/fonoran-gen3-config.json`, then re-run. The inventory is **coordinate-derived archaeology**: not a dictionary to be edited by hand.
 
 ---
 

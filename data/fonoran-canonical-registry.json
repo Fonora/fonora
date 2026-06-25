@@ -119,8 +119,8 @@
       "fidelity_score": 54,
       "repair_severity": "high",
       "semantic_drift": [
-        "Low coordinate fidelity — sound may not evoke grid position",
-        "Deep grid rotation — learner must rely on notation not surface form"
+        "Low coordinate fidelity, sound may not evoke grid position",
+        "Deep grid rotation, learner must rely on notation not surface form"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -238,7 +238,7 @@
           "phonetic_form": "w+o"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     },
     {
       "id": "envelope",
@@ -256,8 +256,8 @@
       "fidelity_score": 64,
       "repair_severity": "high",
       "semantic_drift": [
-        "Low coordinate fidelity — sound may not evoke grid position",
-        "Deep grid rotation — learner must rely on notation not surface form"
+        "Low coordinate fidelity, sound may not evoke grid position",
+        "Deep grid rotation, learner must rely on notation not surface form"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -375,7 +375,7 @@
           "phonetic_form": "m+o"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     },
     {
       "id": "here",
@@ -393,8 +393,8 @@
       "fidelity_score": 59,
       "repair_severity": "high",
       "semantic_drift": [
-        "Low coordinate fidelity — sound may not evoke grid position",
-        "Deep grid rotation — learner must rely on notation not surface form"
+        "Low coordinate fidelity, sound may not evoke grid position",
+        "Deep grid rotation, learner must rely on notation not surface form"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -512,7 +512,7 @@
           "phonetic_form": "t+i+t"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     },
     {
       "id": "mark",
@@ -668,8 +668,8 @@
       "fidelity_score": 68,
       "repair_severity": "high",
       "semantic_drift": [
-        "Low coordinate fidelity — sound may not evoke grid position",
-        "Deep grid rotation — learner must rely on notation not surface form"
+        "Low coordinate fidelity, sound may not evoke grid position",
+        "Deep grid rotation, learner must rely on notation not surface form"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -787,7 +787,7 @@
           "phonetic_form": "sh+oh"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     },
     {
       "id": "lattice",
@@ -1058,7 +1058,7 @@
       "fidelity_score": 79,
       "repair_severity": "medium",
       "semantic_drift": [
-        "CVC + grid shift — compound segmentation may obscure morpheme boundaries"
+        "CVC + grid shift, compound segmentation may obscure morpheme boundaries"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -1176,7 +1176,7 @@
           "phonetic_form": "gh+o"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     },
     {
       "id": "cycle",
@@ -1309,7 +1309,7 @@
       "fidelity_score": 74,
       "repair_severity": "high",
       "semantic_drift": [
-        "Deep grid rotation — learner must rely on notation not surface form"
+        "Deep grid rotation, learner must rely on notation not surface form"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -1427,7 +1427,7 @@
           "phonetic_form": "ng+i"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     },
     {
       "id": "near",
@@ -1445,7 +1445,7 @@
       "fidelity_score": 64,
       "repair_severity": "high",
       "semantic_drift": [
-        "Low coordinate fidelity — sound may not evoke grid position"
+        "Low coordinate fidelity, sound may not evoke grid position"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -1563,7 +1563,7 @@
           "phonetic_form": "t+i+t"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     },
     {
       "id": "far",
@@ -1581,7 +1581,7 @@
       "fidelity_score": 70,
       "repair_severity": "high",
       "semantic_drift": [
-        "Deep grid rotation — learner must rely on notation not surface form"
+        "Deep grid rotation, learner must rely on notation not surface form"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -1699,7 +1699,7 @@
           "phonetic_form": "k+e+t"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     },
     {
       "id": "static",
@@ -1787,7 +1787,7 @@
       "repair_severity": "high",
       "semantic_drift": [
         "High repair on core derivation primitive",
-        "Deep grid rotation — learner must rely on notation not surface form"
+        "Deep grid rotation, learner must rely on notation not surface form"
       ],
       "status": "pending_review",
       "canonical_root": null,
@@ -1905,7 +1905,7 @@
           "phonetic_form": "gh+o"
         }
       ],
-      "review_note": "Fidelity < 80 — select coordinate-faithful candidate (A–D). No grid repair."
+      "review_note": "Fidelity < 80, select coordinate-faithful candidate (A–D). No grid repair."
     }
   ],
   "pending_review_ids": [

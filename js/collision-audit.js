@@ -1,5 +1,5 @@
 /**
- * Fonora symbol collision audit — inventory, exact/concat collisions,
+ * Fonora symbol collision audit, inventory, exact/concat collisions,
  * greedy decoder hazards, and word-level round-trip checks.
  */
 import { textToIpa, initEspeak } from './ipa.js';
@@ -114,7 +114,7 @@ export function findExactCollisions(inventory) {
       recommendation:
         rows.every((r) => r.key === rows[0].key)
           ? 'Document alias only'
-          : 'Language-design decision required — distinct phoneme keys share one symbol string',
+          : 'Language-design decision required, distinct phoneme keys share one symbol string',
     }));
 }
 
@@ -170,7 +170,7 @@ export function findConcatenationCollisions(rules, maxLen = CONCAT_MAX_LEN) {
         symbols,
         collisionType: 'sequence-equals-sequence',
         exampleWordRisk: `${unique[0].join('')} vs ${unique[1].join('')} share symbols`,
-        recommendation: 'Language-design decision — distinct phoneme sequences indistinguishable without boundaries',
+        recommendation: 'Language-design decision, distinct phoneme sequences indistinguishable without boundaries',
       });
     }
   }
@@ -191,12 +191,12 @@ function concatExampleRisk(seq, singleKey) {
 function classifyConcatRecommendation(seq, singleKey) {
   const compositeVowels = new Set(['eye', 'ow', 'oy', 'ay']);
   if (compositeVowels.has(singleKey) && seq.length === 2) {
-    return 'Known vowel+glide vs diphthong collision — requires symbol boundaries or recipe change (documented in language-rules homograph note)';
+    return 'Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note)';
   }
   if (seq.length === 2 && seq.every((k) => k.length === 1 || k.length === 2)) {
-    return 'Fatal without boundaries — encoder cannot distinguish sequences from greedy decode';
+    return 'Fatal without boundaries, encoder cannot distinguish sequences from greedy decode';
   }
-  return 'Human review — may be acceptable merger or requires boundary convention';
+  return 'Human review, may be acceptable merger or requires boundary convention';
 }
 
 function dedupeConcatHits(hits) {
@@ -318,10 +318,10 @@ export function analyzeTestSuiteGaps() {
       'Does NOT check exact symbol collisions in inventory',
       'Does NOT check phoneme-key concatenation collisions',
       'Does NOT check unspaced greedy decode hazards',
-      'Recovered keys now space-separated — no longer English spellings',
+      'Recovered keys now space-separated, no longer English spellings',
     ],
     misleadingClaims: [
-      '"0 collision groups" means minimal-pair groups have distinct symbol outputs — not zero symbol-system collisions',
+      '"0 collision groups" means minimal-pair groups have distinct symbol outputs, not zero symbol-system collisions',
       'Spacing in pipeline output can hide concatenation collisions during round-trip',
     ],
     recommendedReports: [
@@ -387,7 +387,7 @@ function buildExecutiveSummary({ exact, concatenation, greedy, wordIssues, testG
     greedyHazardCount: greedy.length,
     wordIssueCount: wordIssues.length,
     boundaryDependentWords: boundaryWords.map((w) => w.word),
-    v2TestScope: `${testGaps.v2CollisionGroups} minimal-pair groups / ${testGaps.v2Words} words — symbol distinctness only`,
+    v2TestScope: `${testGaps.v2CollisionGroups} minimal-pair groups / ${testGaps.v2Words} words, symbol distinctness only`,
   };
 }
 
@@ -522,7 +522,7 @@ export function formatCollisionAuditMarkdown(audit) {
         `\`${w.symbols}\``,
         w.recoveredKeys,
         w.unspacedRecovered,
-        w.issues.join(', ') || '—',
+        w.issues.join(', ') || '-',
       ]),
     ),
   );
@@ -562,12 +562,12 @@ export function formatCollisionAuditMarkdown(audit) {
     mdTable(
       ['issue', 'class', 'needs human decision?'],
       [
-        ['Recovered keys looked like English (boy)', 'code bug / display', 'no — fixed'],
+        ['Recovered keys looked like English (boy)', 'code bug / display', 'no, fixed'],
         ['o+r symbol sequence equals oy', 'language-design collision', 'yes'],
-        ['Vowel+glide sequences equal diphthongs (eye/ow/oy/ay)', 'language-design collision', 'yes — homograph note exists'],
+        ['Vowel+glide sequences equal diphthongs (eye/ow/oy/ay)', 'language-design collision', 'yes, homograph note exists'],
         ['th+t equals t+s symbol strings', 'language-design collision', 'yes'],
         ['Unspaced greedy decode mis-recovery', 'decoder + boundary issue', 'partially mitigated by spacing'],
-        ['v2 test "0 collisions" wording', 'test/documentation bug', 'no — rename/clarify'],
+        ['v2 test "0 collisions" wording', 'test/documentation bug', 'no, rename/clarify'],
       ],
     ),
   );

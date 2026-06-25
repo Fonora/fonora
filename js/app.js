@@ -34,7 +34,7 @@ import { setupBreakdown, prefillBreakdownFromWordSources } from './breakdown-ui.
 import { setupSamples, setupHomeSample, ensureSamplesLoaded } from './samples.js';
 import { setupOpenProblems } from './open-problems-ui.js';
 import { setupDocsViewer, onDocsTabActivated, loadDocViewer } from './docs-viewer-ui.js';
-import { openDocViewer } from './doc-urls.js';
+import { openDocViewer, DEFAULT_DOC_PATH, docViewerHref, isDocsRoute } from './doc-urls.js';
 import { initUniversalNav, setActiveTab, setNavContext, closeNavDropdown, MORE_TAB_IDS } from './universal-nav.js';
 import { setReaderWordSources } from './fonora-tts.js';
 
@@ -90,7 +90,7 @@ function updateAlphabetBanner(active) {
   if (active) {
     banner.hidden = false;
     banner.textContent =
-      'Alphabet overrides active — language-rules.md provides defaults only; primaries come from your saved Alphabet experiment.';
+      'Alphabet overrides active. language-rules.md provides defaults only; primaries come from your saved Alphabet experiment.';
   } else {
     banner.hidden = true;
   }
@@ -139,7 +139,7 @@ const HOME_MANNER_ROWS = [
 function renderHomeSymbolCard({ symbol, label, note, kind }) {
   const glyph = symbol
     ? `<span class="home-symbol-glyph symbol-text" aria-hidden="true">${escapeHtml(symbol)}</span>`
-    : '<span class="home-symbol-glyph home-symbol-glyph--empty" aria-hidden="true">—</span>';
+    : '<span class="home-symbol-glyph home-symbol-glyph--empty" aria-hidden="true">-<//span>';
   const noteHtml = note ? `<span class="home-symbol-note">${escapeHtml(note)}</span>` : '';
   return `
     <div class="home-symbol-card home-symbol-card--${kind}" role="listitem">
@@ -203,7 +203,7 @@ function renderSoundGrid() {
       const td = document.createElement('td');
       if (!cell) {
         td.className = 'grid-cell grid-cell--empty';
-        td.textContent = '—';
+        td.textContent = '-';
       } else {
         const ok = cell.status === 'defined';
         const statusClass =
@@ -542,7 +542,7 @@ function setupReverseLookup() {
       ? matches
           .map(
             (m) =>
-              `<div class="reverse-result"><span class="symbol-text">${escapeHtml(m.symbols)}</span><span class="reverse-meta">${escapeHtml(m.sound)} · ${escapeHtml(m.ipa || '—')} · ${escapeHtml(m.explanation || '')}${m.experimental ? ' · experimental' : ''}</span></div>`
+              `<div class="reverse-result"><span class="symbol-text">${escapeHtml(m.symbols)}</span><span class="reverse-meta">${escapeHtml(m.sound)} · ${escapeHtml(m.ipa || '-')} · ${escapeHtml(m.explanation || '')}${m.experimental ? ' · experimental' : ''}</span></div>`
           )
           .join('')
       : '<em>No defined mapping for this sound.</em>';
@@ -608,7 +608,7 @@ function updateQuizHints() {
       ? lines
           .map(
             (line) =>
-              `<div class="quiz-hint"><span class="quiz-hint-symbol symbol-text">${escapeHtml(line.symbol)}</span><span class="quiz-hint-label">— ${escapeHtml(line.label)}</span></div>`,
+              `<div class="quiz-hint"><span class="quiz-hint-symbol symbol-text">${escapeHtml(line.symbol)}</span><span class="quiz-hint-label">: ${escapeHtml(line.label)}</span></div>`,
           )
           .join('')
       : '<em class="quiz-hint-label">No component hints for this entry.</em>'
@@ -696,15 +696,13 @@ function updateQuizStats() {
 }
 
 function getTabFromHash() {
+  if (isDocsRoute()) return 'docs';
   const id = window.location.hash.replace(/^#/, '');
   if (id === 'about') return 'platform';
   if (id === 'home') return 'home';
   if (id) {
     const panel = document.querySelector(`[data-tab-panel="${id}"]`);
     if (panel) return id;
-  }
-  if (new URLSearchParams(window.location.search).has('path')) {
-    return 'docs';
   }
   return 'platform';
 }
@@ -724,8 +722,8 @@ function setHashForTab(tabId) {
   }
   const hash = tabId === 'home' ? '#home' : `#${tabId}`;
   if (tabId === 'docs') {
-    const path = new URLSearchParams(window.location.search).get('path') || 'docs/platform-overview.md';
-    const next = `${base}?path=${encodeURIComponent(path)}#docs`;
+    if (isDocsRoute()) return;
+    const next = docViewerHref(DEFAULT_DOC_PATH);
     if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== next) {
       history.replaceState(null, '', next);
     }
@@ -831,10 +829,11 @@ function setupTabs() {
   });
 
   window.addEventListener('hashchange', () => showTab(getTabFromHash()));
+  window.addEventListener('popstate', () => showTab(getTabFromHash()));
   showTab(getTabFromHash());
 }
 
-/** @type {Record<string, string>} — primary symbols from language-rules.md before overrides */
+/** @type {Record<string, string>}, primary symbols from language-rules.md before overrides */
 let markdownPrimarySymbols = {};
 
 async function initApp() {

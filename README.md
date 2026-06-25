@@ -1,22 +1,22 @@
 # Fonora
 
-**[fonora.org](https://fonora.org)** — an open-source phonetic writing platform.
+**[fonora.org](https://fonora.org)**: an open-source phonetic writing platform.
 
-This repository contains the **Fonora script**, the **Fonoran experimental language**, and the **Language Builder Tools** used to create and evolve Fonoran — plus research documentation and interactive web apps.
+This repository contains the **Fonora script**, the **Fonoran experimental language**, and the **Language Builder Tools** used to create and evolve Fonoran, plus research documentation and interactive web apps.
 
 See **[docs/platform-overview.md](docs/platform-overview.md)** for the full platform map and architecture diagram.
 
 ## Three layers
 
-### 1. Fonora — the script
+### 1. Fonora: the script
 
-**Fonora** is a phonetic **writing system** built from nine core symbols that represent where and how speech sounds are produced. It is not a spoken language — it is the script used to write pronunciation.
+**Fonora** is a phonetic **writing system** built from nine core symbols that represent where and how speech sounds are produced. It is not a spoken language, it is the script used to write pronunciation.
 
 ```
 Text → eSpeak NG → IPA → ipa-normalize.js → encodeSounds() → Fonora symbols
 ```
 
-Rules version: **v3** ([`docs/language-rules.md`](docs/language-rules.md) — vowel grammar `⚬X`, diphthong `⚬XᵔY`).
+Rules version: **v3** ([`docs/language-rules.md`](docs/language-rules.md), vowel grammar `⚬X`, diphthong `⚬XᵔY`).
 
 | Script tool | Purpose |
 | --- | --- |
@@ -30,7 +30,7 @@ Rules version: **v3** ([`docs/language-rules.md`](docs/language-rules.md) — vo
 
 Docs: [language-rules.md](docs/language-rules.md) · [multilingual-support.md](docs/multilingual-support.md) · [IPA pipeline report](docs/IPA-PIPELINE-REPORT.md)
 
-### 2. Fonoran — the language
+### 2. Fonoran: the language
 
 **Fonoran** is an **experimental constructed language** built using Fonora. It has primitive root syllables, compound words, English meanings, derivation trees, and a semantic coordinate system (DDA).
 
@@ -57,8 +57,8 @@ CLI generators and audits: `npm run fonoran:gen3`, `fonoran:canonical:init`, `fo
 
 ## Live site
 
-**https://fonora.org** — main script app  
-**https://fonora.org/fonoran/** — language builder
+**https://fonora.org**: main script app  
+**https://fonora.org/fonoran/**: language builder
 
 ## Development
 
@@ -109,11 +109,11 @@ npm run fonoran:export                # export PostgreSQL bucket → JSON backup
 
 ### Contributing
 
-Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Fonoran vocabulary proposals use a Google Form (see [docs/fonoran-auth-and-release.md](docs/fonoran-auth-and-release.md)). Full documentation index: [docs/README.md](docs/README.md).
+Contributions welcome, see [CONTRIBUTING.md](CONTRIBUTING.md). Fonoran vocabulary proposals use a Google Form (see [docs/fonoran-auth-and-release.md](docs/fonoran-auth-and-release.md)). Full documentation index: [docs/README.md](docs/README.md).
 
 ## License
 
-[MIT](LICENSE) — Copyright (c) 2026 James Calhoun.
+[MIT](LICENSE), Copyright (c) 2026 James Calhoun.
 
 eSpeak NG is GPL-licensed; see [docs/espeak-integration.md](docs/espeak-integration.md).
 

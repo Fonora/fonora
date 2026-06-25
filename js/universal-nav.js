@@ -3,6 +3,8 @@
  * Mount into #app-header-root.
  */
 
+import { docViewerHref, isDocsRoute } from './doc-urls.js';
+
 const SCRIPT_TABS = [
   { id: 'home', label: 'Home', primary: true },
   { id: 'translator', label: 'Translator', primary: true },
@@ -102,7 +104,8 @@ function rootPath(context) {
 }
 
 function docHref(context, path) {
-  return `${rootPath(context)}/?path=${encodeURIComponent(path)}#docs`;
+  const prefix = context === 'language' ? '..' : '';
+  return `${prefix}${docViewerHref(path)}`;
 }
 
 function platformTabHref(context, tabId) {
@@ -258,18 +261,18 @@ function renderFonoranRow2(activeTab) {
 function updateDocumentTitle() {
   if (state.context === 'platform') {
     if (state.activeTab === 'open-problems') {
-      document.title = 'Fonora — Research';
+      document.title = 'Fonora | Research';
     } else if (state.activeTab === 'docs') {
-      document.title = 'Fonora — Docs';
+      document.title = 'Fonora | Docs';
     } else {
       document.title = 'Fonora | Phonetic Writing Platform';
     }
   } else if (state.context === 'script') {
     const label = SCRIPT_TITLES[state.activeTab] ?? 'Fonora';
-    document.title = state.activeTab === 'home' ? 'Fonora Script | Universal Phonetic Writing' : `Fonora Script — ${label}`;
+    document.title = state.activeTab === 'home' ? 'Fonora Script | Universal Phonetic Writing' : `Fonora Script | ${label}`;
   } else {
     const label = FONORAN_TITLES[state.activeTab] ?? 'Fonoran';
-    document.title = state.activeTab === 'home' ? 'Fonoran | Experimental Language' : `Fonoran — ${label}`;
+    document.title = state.activeTab === 'home' ? 'Fonoran | Experimental Language' : `Fonoran | ${label}`;
   }
 }
 
@@ -491,7 +494,7 @@ export function initUniversalNav(options = {}) {
     options.context ??
     (window.location.pathname.includes('/fonoran')
       ? 'language'
-      : !window.location.hash && !new URLSearchParams(window.location.search).has('path')
+      : !window.location.hash && !isDocsRoute()
         ? 'platform'
         : 'script');
   state.activeTab =

@@ -1,5 +1,5 @@
 /**
- * Pronunciation Validation Mode — tests whether Fonora preserves pronunciation
+ * Pronunciation Validation Mode, tests whether Fonora preserves pronunciation
  * through encode/decode without modifying language rules or mappings.
  */
 import { textToIpa } from './ipa.js';
@@ -25,7 +25,7 @@ export function normalizeIpaForComparison(ipa) {
     .trim();
 }
 
-/** Build IPA string from decoded symbol groups (static cell metadata — may list variants). */
+/** Build IPA string from decoded symbol groups (static cell metadata, may list variants). */
 export function groupsToIpa(groups) {
   return (groups || [])
     .map((g) => String(g.ipa || '').replace(/^\/+|\/+$/g, '').trim())

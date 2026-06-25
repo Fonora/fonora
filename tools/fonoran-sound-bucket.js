@@ -74,13 +74,13 @@ function enrichSound(s, bucket) {
 
 function legacyLabelFromHint(hint) {
   if (!hint) return null;
-  return hint.split(' — ')[0]?.trim() || null;
+  return hint.split(', ')[0]?.trim() || null;
 }
 
 function legacyGlossFromHint(hint) {
   if (!hint) return null;
-  const parts = hint.split(' — ');
-  return parts.slice(1).join(' — ').trim() || null;
+  const parts = hint.split(', ');
+  return parts.slice(1).join(', ').trim() || null;
 }
 
 function suggestCompoundMeaning(components, bucket, soundsBySpelling) {
@@ -172,7 +172,7 @@ export async function getLab() {
 }
 
 /**
- * Decide what the human should look at next — base sounds before compounds,
+ * Decide what the human should look at next, base sounds before compounds,
  * unreviewed before settled. Returns a plain-English nudge plus the item id.
  */
 export function computeNextStep(sounds, compounds, soundStates, compoundStates) {
@@ -185,7 +185,7 @@ export function computeNextStep(sounds, compounds, soundStates, compoundStates) 
       phase: 'base',
       message: `You have ${sounds.length} base sounds. `
         + `${baseDone} reviewed, ${soundStates.draft + soundStates.needs_review} still need review. `
-        + 'Start with the base sounds — every word is built from them.',
+        + 'Start with the base sounds. Every word is built from them.',
       target: { type: 'sound', id: nextSound.spelling },
     };
   }
@@ -221,18 +221,18 @@ export const FONORAN_RULES = {
       name: 'Compound',
       pattern: 'sound + sound (+ sound…)',
       example: 'xaech + lik → xaechlik',
-      rule: 'Concatenate spellings with no separator. Meaning is usually the ideas combined — but you can name it anything.',
+      rule: 'Concatenate spellings with no separator. Meaning is usually the ideas combined, but you can name it anything.',
     },
   ],
   not_yet: [
-    'Grammar endings (noun a / verb e) — proposed in older docs, not used in current vocabulary',
+    'Grammar endings (noun a / verb e), proposed in older docs, not used in current vocabulary',
     'Sentence word order',
-    'Separate modifier affixes — modifiers are just more sounds in the chain',
+    'Separate modifier affixes, modifiers are just more sounds in the chain',
   ],
   invent: [
     'Open Build → tap 2+ sounds → save with a meaning',
     'Or pick an existing compound and rename it',
-    'Changing a base sound\'s meaning does not auto-rename compounds — clear and redefine those if needed',
+    'Changing a base sound\'s meaning does not auto-rename compounds, clear and redefine those if needed',
   ],
 };
 
@@ -654,7 +654,7 @@ export async function seedBucket() {
   await writeEnglishLexicon();
   const bucket = {
     version: '2.0-blank-slate',
-    philosophy: 'Build from scratch. English lexicon is reference only — not assigned to sounds.',
+    philosophy: 'Build from scratch. English lexicon is reference only, not assigned to sounds.',
     seeded_from: null,
     updated_at: new Date().toISOString(),
     sounds: [],
@@ -667,10 +667,10 @@ export async function seedBucket() {
 }
 
 const SCORE_EXPLAIN = {
-  learnability: 'How easy the language is to learn — penalised when many sounds look or sound alike.',
-  pronounceability: 'How easy the words are to say out loud — long words and consonant pile-ups hurt this.',
-  memorability: 'How easy words are to remember — rhyming clusters and look-alike roots make this harder.',
-  parseability: 'How reliably a word splits back into its parts — lower when one word can be read two ways.',
+  learnability: 'How easy the language is to learn, penalised when many sounds look or sound alike.',
+  pronounceability: 'How easy the words are to say out loud, long words and consonant pile-ups hurt this.',
+  memorability: 'How easy words are to remember, rhyming clusters and look-alike roots make this harder.',
+  parseability: 'How reliably a word splits back into its parts, lower when one word can be read two ways.',
   compoundLength: 'Average characters per compound word. Shorter is usually friendlier.',
   algorithmicFeel: 'How much the spellings were machine-adjusted rather than chosen. Lower feels more human.',
 };

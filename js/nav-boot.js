@@ -1,5 +1,5 @@
 /**
- * Synchronous boot flags (head) — drives first-paint nav + panel CSS before modules load.
+ * Synchronous boot flags (head), drives first-paint nav + panel CSS before modules load.
  */
 (function () {
   const SCRIPT_TABS = new Set([
@@ -31,9 +31,10 @@
   ]);
 
   const html = document.documentElement;
-  const path = window.location.pathname;
+  const path = window.location.pathname.replace(/\/$/, '') || '/';
   const hash = window.location.hash.replace(/^#/, '');
   const hasDocPath = new URLSearchParams(window.location.search).has('path');
+  const isDocsRoute = path === '/docs' || path.startsWith('/docs/') || hasDocPath || hash === 'docs';
 
   if (path.includes('/fonoran')) {
     const page = hash && FONORAN_PAGES.has(hash) ? hash : 'home';
@@ -49,7 +50,7 @@
     return;
   }
 
-  if (hasDocPath || hash === 'docs') {
+  if (isDocsRoute) {
     html.setAttribute('data-fonora-nav', 'platform');
     html.setAttribute('data-fonora-tab', 'docs');
     return;

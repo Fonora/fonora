@@ -2,7 +2,7 @@
 
 **Help solve the hard parts of building a compact phonetic writing system.**
 
-Fonora is an experimental, open-source research project. This page documents known linguistic, readability, encoding, and multilingual limitations — and invites contributors to help close them.
+Fonora is an experimental, open-source research project. This page documents known linguistic, readability, encoding, and multilingual limitations, and invites contributors to help close them.
 
 **Live page:** More → **Open Problems** on [fonora.org](https://fonora.org/#open-problems)
 
@@ -10,7 +10,7 @@ Rendered docs: More → **Docs** on [fonora.org](https://fonora.org/?path=docs%2
 
 ## Introduction
 
-Fonora is a compact phonetic writing system built from nine core symbols. Limitations are expected and documented openly. The project offers broad phonetic approximation through an eSpeak-driven IPA pipeline — not a finished universal script. Human readability still needs testing.
+Fonora is a compact phonetic writing system built from nine core symbols. Limitations are expected and documented openly. The project offers broad phonetic approximation through an eSpeak-driven IPA pipeline, not a finished universal script. Human readability still needs testing.
 
 We invite linguists, language speakers, typographers, engineers, educators, and curious users to contribute.
 
@@ -19,7 +19,7 @@ We invite linguists, language speakers, typographers, engineers, educators, and 
 | Area | Status | Summary |
 | --- | --- | --- |
 | Readability & human testing | Needs Testing | Automated tests exist; large-scale human decode/read studies do not |
-| Symbol collisions / decoding ambiguity | Partially Solved | Spacing fixes greedy decode; concatenation hazards remain — see [FONORA_COLLISION_AUDIT.md](FONORA_COLLISION_AUDIT.md) |
+| Symbol collisions / decoding ambiguity | Partially Solved | Spacing fixes greedy decode; concatenation hazards remain, see [FONORA_COLLISION_AUDIT.md](FONORA_COLLISION_AUDIT.md) |
 | Vowel architecture | Partially Solved | v3 grammar active; English engineering overlay collapses some contrasts |
 | Multilingual phoneme gaps | Open | Shared vowel inventory; global supplemental consonant map; unmapped IPA → `?` or `a` |
 | Tone languages | Research Needed | No tone notation in symbol inventory |
@@ -37,7 +37,7 @@ See the **Open Problems** page in the app for per-language topic lists (English,
 
 ## How to help
 
-1. [Open a GitHub issue](https://github.com/jamesc137/fonora/issues/new/choose) — use a template when possible
+1. [Open a GitHub issue](https://github.com/jamesc137/fonora/issues/new/choose), use a template when possible
 2. Submit a language test set (see [multilingual-support.md](multilingual-support.md))
 3. Submit minimal pairs for collision or merger cases
 4. Review mappings as a native speaker via the Translator

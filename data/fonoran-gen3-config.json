@@ -14,41 +14,41 @@
         "symbol": "∋",
         "key": "p",
         "name": "interface",
-        "semantic_core": "The outer contact surface — where inner and outer meet, where form becomes perceptible to the world.",
+        "semantic_core": "The outer contact surface, where inner and outer meet, where form becomes perceptible to the world.",
         "questions_answered": ["What is bounded?", "What touches the exterior?", "Where does inside end?"],
-        "not": "Not 'physical objects' — abstraction can sit at the interface (a threshold is abstract yet lip-positioned)."
+        "not": "Not 'physical objects', abstraction can sit at the interface (a threshold is abstract yet lip-positioned)."
       },
       "2": {
         "symbol": "∩",
         "key": "t",
         "name": "index",
-        "semantic_core": "Pinpoint selection — this-here, singularity, the act of pointing at one distinguishable locus.",
+        "semantic_core": "Pinpoint selection, this-here, singularity, the act of pointing at one distinguishable locus.",
         "questions_answered": ["Which one?", "Where exactly?", "What is designated?"],
-        "not": "Not 'nearness' alone — nearness is a relation; index is the zero-dimensional pointer."
+        "not": "Not 'nearness' alone, nearness is a relation; index is the zero-dimensional pointer."
       },
       "3": {
         "symbol": "⌓",
         "key": "c",
         "name": "junction",
-        "semantic_core": "Articulation and combination — where elements meet, bind, pattern, and compose structure.",
+        "semantic_core": "Articulation and combination, where elements meet, bind, pattern, and compose structure.",
         "questions_answered": ["How do parts combine?", "What is the grammar of assembly?", "Where is linkage?"],
-        "not": "Not 'organization' in a social sense — junction is pre-social combinatorics."
+        "not": "Not 'organization' in a social sense, junction is pre-social combinatorics."
       },
       "4": {
         "symbol": "∪",
         "key": "k",
         "name": "emanation",
-        "semantic_core": "Projection and field extension — force, wave, or presence radiating outward from a center.",
+        "semantic_core": "Projection and field extension, force, wave, or presence radiating outward from a center.",
         "questions_answered": ["What spreads?", "What reaches beyond?", "What propagates?"],
-        "not": "Not 'movement' alone — movement is dynamic; emanation is the locus of propagation."
+        "not": "Not 'movement' alone, movement is dynamic; emanation is the locus of propagation."
       },
       "5": {
         "symbol": "⊃",
         "key": "h",
         "name": "origin",
-        "semantic_core": "Generative source before full articulation — breath, potential, the pre-form from which form emerges.",
+        "semantic_core": "Generative source before full articulation, breath, potential, the pre-form from which form emerges.",
         "questions_answered": ["Where does it come from?", "What precedes shape?", "What is not yet articulated?"],
-        "not": "Not 'abstract concept' as a catch-all — origin is specifically pre-articulate generativity."
+        "not": "Not 'abstract concept' as a catch-all, origin is specifically pre-articulate generativity."
       }
     },
     "manners": {
@@ -56,40 +56,40 @@
         "symbol": "(none)",
         "key": "0",
         "name": "packet",
-        "semantic_core": "Discrete bounded unit — a stasis with edges, countable, separable.",
+        "semantic_core": "Discrete bounded unit, a stasis with edges, countable, separable.",
         "hypothesis": "Stops = things-as-units. A packet can be still."
       },
       "voice": {
         "symbol": "⌇",
         "key": "6",
         "name": "live",
-        "semantic_core": "Self-sustaining activation — what maintains itself, acts, persists through voicing.",
+        "semantic_core": "Self-sustaining activation, what maintains itself, acts, persists through voicing.",
         "hypothesis": "Voicing = animation without specifying biology."
       },
       "friction": {
         "symbol": "⌀",
         "key": "7",
         "name": "flux",
-        "semantic_core": "Continuous transformation — unbroken change, flow, wearing, becoming without discrete jumps.",
+        "semantic_core": "Continuous transformation, unbroken change, flow, wearing, becoming without discrete jumps.",
         "hypothesis": "Fricatives = process that never fully stops."
       },
       "nasal": {
         "symbol": "⏌",
         "key": "8",
         "name": "hollow",
-        "semantic_core": "Resonant interior — contained space that participates in what surrounds it; cavity, collective volume.",
-        "hypothesis": "Nasals = inside that is not sealed — containment with permeability."
+        "semantic_core": "Resonant interior, contained space that participates in what surrounds it; cavity, collective volume.",
+        "hypothesis": "Nasals = inside that is not sealed, containment with permeability."
       },
       "glide": {
         "symbol": "ᵔ",
         "key": "9",
         "name": "passage",
-        "semantic_core": "Transition between states — path, relay, crossing, approach without arrival.",
+        "semantic_core": "Transition between states, path, relay, crossing, approach without arrival.",
         "hypothesis": "Glides = neither A nor B; the between."
       }
     },
     "vowel_roles": {
-      "description": "Vowel class (⚬X) qualifies the consonant skeleton — what KIND of presence the coordinate has.",
+      "description": "Vowel class (⚬X) qualifies the consonant skeleton, what KIND of presence the coordinate has.",
       "classes": {
         "contact": { "fonora": "⚬∋", "roman": "u", "meaning": "surface-touch quality; tactile presence" },
         "focal": { "fonora": "⚬∩", "roman": "ee", "meaning": "particular, indexed, this-one quality" },
@@ -110,8 +110,8 @@
       "M": { "name": "mode", "range": ["packet", "live", "flux", "hollow", "passage"], "maps_to": "manner modifier" },
       "A": { "name": "aspect", "range": ["contact", "focal", "struct", "field", "source", "animated", "turbulent", "resonant"], "maps_to": "vowel class (⚬X)" }
     },
-    "notation": "⟨D:depth, M:mode, A:aspect⟩ — e.g. ⟨emanation, flux, turbulent⟩ = propagating continuous change",
-    "compound_notation": "root₁ + root₂ + … — general → specific (same as Gen 1 compounding rule, grid-native roots only)"
+    "notation": "⟨D:depth, M:mode, A:aspect⟩, e.g. ⟨emanation, flux, turbulent⟩ = propagating continuous change",
+    "compound_notation": "root₁ + root₂ + …, general → specific (same as Gen 1 compounding rule, grid-native roots only)"
   },
 
   "depth_to_place": { "interface": "1", "index": "2", "junction": "3", "emanation": "4", "origin": "5" },

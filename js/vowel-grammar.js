@@ -1,5 +1,5 @@
 /**
- * V3 vowel symbol grammar — enforced at encode/decode validation time.
+ * V3 vowel symbol grammar, enforced at encode/decode validation time.
  * Simple vowel: ⚬X (2 symbols)
  * Diphthong: ⚬XᵔY (4 symbols)
  */

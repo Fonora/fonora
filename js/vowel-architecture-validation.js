@@ -1,5 +1,5 @@
 /**
- * V3 vowel architecture validation — dedicated word set with grammar checks.
+ * V3 vowel architecture validation, dedicated word set with grammar checks.
  */
 import { validatePronunciation, validatePronunciationBatch } from './pronunciation-validation.js';
 import { containsDoubleVowelMarker, validateVowelSymbolString } from './vowel-grammar.js';

@@ -43,7 +43,7 @@ function test(name, fn) {
   }
 }
 
-const mdPath = join(dirname(fileURLToPath(import.meta.url)), '..', LANGUAGE_RULES_PATH);
+const mdPath = join(dirname(fileURLToPath(import.meta.url)), '..', LANGUAGE_RULES_PATH.replace(/^\//, ''));
 const markdown = readFileSync(mdPath, 'utf8');
 
 const parserResult = test('parseLanguageRulesMarkdown builds composed registry', () => {

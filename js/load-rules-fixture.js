@@ -9,10 +9,11 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
 /**
  * Load a language-rules markdown file from the repo (Node tests/scripts).
- * @param {string} relativePath — path relative to repo root
+ * @param {string} relativePath, path relative to repo root
  */
 export function loadRulesFixture(relativePath, options = {}) {
-  const markdown = readFileSync(join(ROOT, relativePath), 'utf8');
+  const repoPath = String(relativePath).replace(/^\//, '');
+  const markdown = readFileSync(join(ROOT, repoPath), 'utf8');
   return loadLanguageRulesFromString(markdown, options);
 }
 

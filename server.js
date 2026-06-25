@@ -76,6 +76,11 @@ const SECURITY_HEADERS = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
 };
 
+function isDocsViewerRoute(pathname) {
+  const path = pathname.replace(/\/$/, '') || '/';
+  return path === '/docs' || path.startsWith('/docs/');
+}
+
 function normalizePathname(pathname) {
   let path = decodeURIComponent(pathname);
   if (path.endsWith('/')) path += 'index.html';
@@ -141,6 +146,21 @@ createServer(async (req, res) => {
       res.writeHead(404, { 'Content-Type': 'application/json', ...SECURITY_HEADERS });
       res.end(JSON.stringify({ error: 'Not found' }));
       return;
+    }
+
+    if (isDocsViewerRoute(url.pathname)) {
+      const staticPath = resolveFilePath(normalizePathname(url.pathname));
+      if (!staticPath || !existsSync(staticPath)) {
+        const indexPath = join(root, 'index.html');
+        const body = await readFile(indexPath);
+        res.writeHead(200, {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'no-cache',
+          ...SECURITY_HEADERS,
+        });
+        res.end(body);
+        return;
+      }
     }
 
     const pathname = normalizePathname(url.pathname);

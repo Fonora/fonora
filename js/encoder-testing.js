@@ -113,7 +113,7 @@ export function getDashboardStats() {
     byCategory[cat].total++;
     if (r.result === 'wrong' || r.result === 'unsure') byCategory[cat].failed++;
   }
-  let worstCategory = '—';
+  let worstCategory = '-';
   let worstRate = -1;
   for (const [cat, stats] of Object.entries(byCategory)) {
     if (stats.total < 3) continue;
@@ -220,7 +220,7 @@ function sourceBadge(result) {
 }
 
 function renderBreakdown(breakdown) {
-  if (!breakdown?.length) return '<em>—</em>';
+  if (!breakdown?.length) return '<em>-</em>';
   return breakdown
     .map(
       (g) =>
@@ -286,7 +286,7 @@ async function runIpaForCard(card) {
       rerunOf: card.rerunOf,
       original: card.input,
       lang: card.lang || 'en',
-      ipa: '—',
+      ipa: '-',
       normalizedPhonemes: recovered.phonemeKeys || card.input.split('').join(' '),
       phonemeString: card.input,
       sounds: card.input,
@@ -322,8 +322,8 @@ function renderPipelineRow(result) {
     <dl class="encoder-pipeline encoder-pipeline--compact">
       <div><dt>Word</dt><dd><code>${escapeHtml(result.original)}</code></dd></div>
       ${voiceRow}
-      <div><dt>IPA</dt><dd><code>${escapeHtml(result.ipa || '—')}</code></dd></div>
-      <div><dt>Normalized Phonemes</dt><dd><code>${escapeHtml(result.normalizedPhonemes || result.phoneticParse || result.sounds || '—')}</code></dd></div>
+      <div><dt>IPA</dt><dd><code>${escapeHtml(result.ipa || '-')}</code></dd></div>
+      <div><dt>Normalized Phonemes</dt><dd><code>${escapeHtml(result.normalizedPhonemes || result.phoneticParse || result.sounds || '-')}</code></dd></div>
       <div><dt>Fonora</dt><dd><span class="symbol-text">${escapeHtml(result.symbols)}</span></dd></div>
       <div><dt>Recovered phoneme keys</dt><dd><code>${escapeHtml(result.decoded)}</code></dd></div>
     </dl>`;
@@ -336,7 +336,7 @@ function renderDashboard() {
 
   const tagHtml = stats.topIssueTags.length
     ? stats.topIssueTags.map((t) => `${escapeHtml(t.tag)} (${t.count})`).join(', ')
-    : '—';
+    : '-';
 
   el.innerHTML = `
     <div class="encoder-stat"><span class="encoder-stat-label">Total tested</span><span class="encoder-stat-value">${stats.total}</span></div>

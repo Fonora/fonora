@@ -18,7 +18,7 @@ import {
 import { V2_COLLISION_GROUPS } from './vowel-v2-collision-groups.js';
 import { containsDoubleVowelMarker, validateVowelSymbolString } from './vowel-grammar.js';
 import { VOWEL_ARCHITECTURE_WORDS } from './vowel-architecture-set.js';
-import { docViewerHref, githubDocUrl, normalizeDocPath } from './doc-urls.js';
+import { docViewerHref, githubDocUrl, normalizeDocPath, parseDocFromLocation } from './doc-urls.js';
 import { renderMarkdown } from './markdown-render.js';
 import { ASCII_EQUALS } from './load-language-rules.js';
 
@@ -570,8 +570,11 @@ export function runTests(options) {
 
   t('doc viewer builds GitHub and in-app URLs', () => {
     assert(githubDocUrl('docs/foo.md').includes('github.com/jamesc137/fonora/blob/main/docs/foo.md'));
-    assert(docViewerHref('docs/foo.md') === '?path=docs%2Ffoo.md#docs');
-    assert(docViewerHref('docs/foo.md#section') === '?path=docs%2Ffoo.md&anchor=section#docs');
+    assert(docViewerHref('docs/foo.md') === '/docs/foo');
+    assert(docViewerHref('docs/foo.md#section') === '/docs/foo#section');
+    assert(docViewerHref('docs/platform-overview.md') === '/docs');
+    assert(parseDocFromLocation({ pathname: '/docs', hash: '', search: '' })?.path === 'docs/platform-overview.md');
+    assert(parseDocFromLocation({ pathname: '/docs/language-rules', hash: '', search: '' })?.path === 'docs/language-rules.md');
   });
 
   t('markdown renderer handles headings and tables', () => {

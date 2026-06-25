@@ -10,7 +10,7 @@ Rules version: v3
 - **Concatenation → sequence collisions:** 15
 - **Greedy decoder hazards:** 20
 - **Word-level boundary issues:** 3 (none)
-- **v2 collision test scope:** 5 minimal-pair groups / 13 words — symbol distinctness only
+- **v2 collision test scope:** 5 minimal-pair groups / 13 words, symbol distinctness only
 
 The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-trip** in the IPA pipeline. It does **not** remove underlying symbol ambiguity where `o + r` and `oy` share symbols, or where `th + t` and `t + s` share symbols.
 
@@ -70,25 +70,25 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 
 | sequence A | sequence B | symbols | type | example risk | recommendation |
 | --- | --- | --- | --- | --- | --- |
-| o + y | oy | `⚬∪ᵔ∪` | sequence-equals-single | oy may encode as oy diphthong/composite | Known vowel+glide vs diphthong collision — requires symbol boundaries or recipe change (documented in language-rules homograph note) |
-| e + y | ay | `⚬⌇ᵔ∪` | sequence-equals-single | ey may encode as ay diphthong/composite | Known vowel+glide vs diphthong collision — requires symbol boundaries or recipe change (documented in language-rules homograph note) |
-| a + y | eye | `⚬⊃ᵔ∪` | sequence-equals-single | ay may encode as eye diphthong/composite | Known vowel+glide vs diphthong collision — requires symbol boundaries or recipe change (documented in language-rules homograph note) |
-| a + w | ow | `⚬⊃ᵔ∋` | sequence-equals-single | aw may encode as ow diphthong/composite | Known vowel+glide vs diphthong collision — requires symbol boundaries or recipe change (documented in language-rules homograph note) |
-| th + ch | t + sh | `∩⌀⌓` | sequence-equals-sequence | thch vs tsh share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| th + t | t + s | `∩⌀∩` | sequence-equals-sequence | tht vs ts share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| th + p | t + f | `∩⌀∋` | sequence-equals-sequence | thp vs tf share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| th + k | t + x | `∩⌀∪` | sequence-equals-sequence | thk vs tx share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| th + h | t + kh | `∩⌀⊃` | sequence-equals-sequence | thh vs tkh share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| dh + ch | t + j | `∩⌇⌓` | sequence-equals-sequence | dhch vs tj share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| dh + t | t + d | `∩⌇∩` | sequence-equals-sequence | dht vs td share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| dh + p | t + b | `∩⌇∋` | sequence-equals-sequence | dhp vs tb share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| dh + k | t + g | `∩⌇∪` | sequence-equals-sequence | dhk vs tg share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| dh + h | t + gh | `∩⌇⊃` | sequence-equals-sequence | dhh vs tgh share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| v + ch | p + j | `∋⌇⌓` | sequence-equals-sequence | vch vs pj share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| v + t | p + d | `∋⌇∩` | sequence-equals-sequence | vt vs pd share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| v + p | p + b | `∋⌇∋` | sequence-equals-sequence | vp vs pb share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| v + k | p + g | `∋⌇∪` | sequence-equals-sequence | vk vs pg share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
-| v + h | p + gh | `∋⌇⊃` | sequence-equals-sequence | vh vs pgh share symbols | Language-design decision — distinct phoneme sequences indistinguishable without boundaries |
+| o + y | oy | `⚬∪ᵔ∪` | sequence-equals-single | oy may encode as oy diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
+| e + y | ay | `⚬⌇ᵔ∪` | sequence-equals-single | ey may encode as ay diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
+| a + y | eye | `⚬⊃ᵔ∪` | sequence-equals-single | ay may encode as eye diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
+| a + w | ow | `⚬⊃ᵔ∋` | sequence-equals-single | aw may encode as ow diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
+| th + ch | t + sh | `∩⌀⌓` | sequence-equals-sequence | thch vs tsh share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| th + t | t + s | `∩⌀∩` | sequence-equals-sequence | tht vs ts share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| th + p | t + f | `∩⌀∋` | sequence-equals-sequence | thp vs tf share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| th + k | t + x | `∩⌀∪` | sequence-equals-sequence | thk vs tx share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| th + h | t + kh | `∩⌀⊃` | sequence-equals-sequence | thh vs tkh share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| dh + ch | t + j | `∩⌇⌓` | sequence-equals-sequence | dhch vs tj share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| dh + t | t + d | `∩⌇∩` | sequence-equals-sequence | dht vs td share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| dh + p | t + b | `∩⌇∋` | sequence-equals-sequence | dhp vs tb share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| dh + k | t + g | `∩⌇∪` | sequence-equals-sequence | dhk vs tg share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| dh + h | t + gh | `∩⌇⊃` | sequence-equals-sequence | dhh vs tgh share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| v + ch | p + j | `∋⌇⌓` | sequence-equals-sequence | vch vs pj share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| v + t | p + d | `∋⌇∩` | sequence-equals-sequence | vt vs pd share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| v + p | p + b | `∋⌇∋` | sequence-equals-sequence | vp vs pb share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| v + k | p + g | `∋⌇∪` | sequence-equals-sequence | vk vs pg share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
+| v + h | p + gh | `∋⌇⊃` | sequence-equals-sequence | vh vs pgh share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
 
 ## 4. Greedy decoder hazards
 
@@ -129,41 +129,41 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 
 | word | IPA | phoneme keys | symbols | recovered keys | unspaced | issues |
 | --- | --- | --- | --- | --- | --- | --- |
-| bar | bˈɑːɹ | a o r | `⚬⊃⚬∪ᵔ⌓` | a o r | a o r | — |
-| boy | bˈɔɪ | a oy | `⚬⊃⚬∪ᵔ∪` | a oy | a oy | — |
-| bor | bˈoːɹ | a oh r | `⚬⊃⚬⏌ᵔ⌓` | a oh r | a oh r | — |
-| car | kˈɑːɹ | a o r | `⚬⊃⚬∪ᵔ⌓` | a o r | a o r | — |
-| core | kˈoːɹ | a oh r | `⚬⊃⚬⏌ᵔ⌓` | a oh r | a oh r | — |
-| coy | kˈɔɪ | a oy | `⚬⊃⚬∪ᵔ∪` | a oy | a oy | — |
-| far | fˈɑːɹ | a o r | `⚬⊃⚬∪ᵔ⌓` | a o r | a o r | — |
-| foy | fˈɔɪ | a oy | `⚬⊃⚬∪ᵔ∪` | a oy | a oy | — |
-| for | fˈɔːɹ | a o r | `⚬⊃⚬∪ᵔ⌓` | a o r | a o r | — |
-| saw | sˈɔː | a o | `⚬⊃⚬∪` | a o | a o | — |
-| soar | sˈoːɹ | a oh r | `⚬⊃⚬⏌ᵔ⌓` | a oh r | a oh r | — |
-| soy | sˈɔɪ | a oy | `⚬⊃⚬∪ᵔ∪` | a oy | a oy | — |
-| hat | hˈæt | a ae a | `⚬⊃⚬⌀⚬⊃` | a ae a | a ae a | — |
-| hot | hˈɑːt | a o a | `⚬⊃⚬∪⚬⊃` | a o a | a o a | — |
-| hut | hˈʌt | a a a | `⚬⊃⚬⊃⚬⊃` | a a a | a a a | — |
-| cat | kˈæt | a ae a | `⚬⊃⚬⌀⚬⊃` | a ae a | a ae a | — |
-| cot | kˈɑːt | a o a | `⚬⊃⚬∪⚬⊃` | a o a | a o a | — |
-| cut | kˈʌt | a a a | `⚬⊃⚬⊃⚬⊃` | a a a | a a a | — |
-| bad | bˈæd | a ae a | `⚬⊃⚬⌀⚬⊃` | a ae a | a ae a | — |
-| bod | bˈɑːd | a o a | `⚬⊃⚬∪⚬⊃` | a o a | a o a | — |
-| bud | bˈʌd | a a a | `⚬⊃⚬⊃⚬⊃` | a a a | a a a | — |
-| bake | bˈeɪk | a ay a | `⚬⊃⚬⌇ᵔ∪⚬⊃` | a ay a | a ay a | — |
-| back | bˈæk | a ae a | `⚬⊃⚬⌀⚬⊃` | a ae a | a ae a | — |
-| book | bˈʊk | a u a | `⚬⊃⚬∋⚬⊃` | a u a | a u a | — |
-| boot | bˈuːt | a u a | `⚬⊃⚬∋⚬⊃` | a u a | a u a | — |
-| eight | ˈeɪt | ay a | `⚬⌇ᵔ∪⚬⊃` | ay a | ay a | — |
-| ate | ˈeɪt | ay a | `⚬⌇ᵔ∪⚬⊃` | ay a | ay a | — |
-| hello | həlˈoʊ | a a a oh | `⚬⊃⚬⊃⚬⊃⚬⏌` | a a a oh | a a a oh | — |
-| thin | θˈɪn | a i a | `⚬⊃⚬⌓⚬⊃` | a i a | a i a | — |
-| this | ðˈɪs | a i a | `⚬⊃⚬⌓⚬⊃` | a i a | a i a | — |
-| zoo | zˈuː | a u | `⚬⊃⚬∋` | a u | a u | — |
-| buzz | bˈʌz | a a a | `⚬⊃⚬⊃⚬⊃` | a a a | a a a | — |
-| music | mjˈuːzɪk | a a u a i a | `⚬⊃⚬⊃⚬∋⚬⊃⚬⌓⚬⊃` | a a u a i a | a a u a i a | — |
-| father | fˈɑːðɚ | a o a a | `⚬⊃⚬∪⚬⊃⚬⊃` | a o a a | a o a a | — |
-| palm | pˈɑːm | a o a | `⚬⊃⚬∪⚬⊃` | a o a | a o a | — |
+| bar | bˈɑːɹ | a o r | `⚬⊃⚬∪ᵔ⌓` | a o r | a o r | - |
+| boy | bˈɔɪ | a oy | `⚬⊃⚬∪ᵔ∪` | a oy | a oy | - |
+| bor | bˈoːɹ | a oh r | `⚬⊃⚬⏌ᵔ⌓` | a oh r | a oh r | - |
+| car | kˈɑːɹ | a o r | `⚬⊃⚬∪ᵔ⌓` | a o r | a o r | - |
+| core | kˈoːɹ | a oh r | `⚬⊃⚬⏌ᵔ⌓` | a oh r | a oh r | - |
+| coy | kˈɔɪ | a oy | `⚬⊃⚬∪ᵔ∪` | a oy | a oy | - |
+| far | fˈɑːɹ | a o r | `⚬⊃⚬∪ᵔ⌓` | a o r | a o r | - |
+| foy | fˈɔɪ | a oy | `⚬⊃⚬∪ᵔ∪` | a oy | a oy | - |
+| for | fˈɔːɹ | a o r | `⚬⊃⚬∪ᵔ⌓` | a o r | a o r | - |
+| saw | sˈɔː | a o | `⚬⊃⚬∪` | a o | a o | - |
+| soar | sˈoːɹ | a oh r | `⚬⊃⚬⏌ᵔ⌓` | a oh r | a oh r | - |
+| soy | sˈɔɪ | a oy | `⚬⊃⚬∪ᵔ∪` | a oy | a oy | - |
+| hat | hˈæt | a ae a | `⚬⊃⚬⌀⚬⊃` | a ae a | a ae a | - |
+| hot | hˈɑːt | a o a | `⚬⊃⚬∪⚬⊃` | a o a | a o a | - |
+| hut | hˈʌt | a a a | `⚬⊃⚬⊃⚬⊃` | a a a | a a a | - |
+| cat | kˈæt | a ae a | `⚬⊃⚬⌀⚬⊃` | a ae a | a ae a | - |
+| cot | kˈɑːt | a o a | `⚬⊃⚬∪⚬⊃` | a o a | a o a | - |
+| cut | kˈʌt | a a a | `⚬⊃⚬⊃⚬⊃` | a a a | a a a | - |
+| bad | bˈæd | a ae a | `⚬⊃⚬⌀⚬⊃` | a ae a | a ae a | - |
+| bod | bˈɑːd | a o a | `⚬⊃⚬∪⚬⊃` | a o a | a o a | - |
+| bud | bˈʌd | a a a | `⚬⊃⚬⊃⚬⊃` | a a a | a a a | - |
+| bake | bˈeɪk | a ay a | `⚬⊃⚬⌇ᵔ∪⚬⊃` | a ay a | a ay a | - |
+| back | bˈæk | a ae a | `⚬⊃⚬⌀⚬⊃` | a ae a | a ae a | - |
+| book | bˈʊk | a u a | `⚬⊃⚬∋⚬⊃` | a u a | a u a | - |
+| boot | bˈuːt | a u a | `⚬⊃⚬∋⚬⊃` | a u a | a u a | - |
+| eight | ˈeɪt | ay a | `⚬⌇ᵔ∪⚬⊃` | ay a | ay a | - |
+| ate | ˈeɪt | ay a | `⚬⌇ᵔ∪⚬⊃` | ay a | ay a | - |
+| hello | həlˈoʊ | a a a oh | `⚬⊃⚬⊃⚬⊃⚬⏌` | a a a oh | a a a oh | - |
+| thin | θˈɪn | a i a | `⚬⊃⚬⌓⚬⊃` | a i a | a i a | - |
+| this | ðˈɪs | a i a | `⚬⊃⚬⌓⚬⊃` | a i a | a i a | - |
+| zoo | zˈuː | a u | `⚬⊃⚬∋` | a u | a u | - |
+| buzz | bˈʌz | a a a | `⚬⊃⚬⊃⚬⊃` | a a a | a a a | - |
+| music | mjˈuːzɪk | a a u a i a | `⚬⊃⚬⊃⚬∋⚬⊃⚬⌓⚬⊃` | a a u a i a | a a u a i a | - |
+| father | fˈɑːðɚ | a o a a | `⚬⊃⚬∪⚬⊃⚬⊃` | a o a a | a o a a | - |
+| palm | pˈɑːm | a o a | `⚬⊃⚬∪⚬⊃` | a o a | a o a | - |
 | tht | tˌiːˌeɪtʃtˈiː | a ee ay a a ee | `⚬⌀⚬⌇⚬⌇ᵔ∪⚬⊃⚬⌀⚬⌇` | ae e ay a ae e | ae e ay a ae e | recovered-keys-mismatch |
 | ts | tˌiːˈɛs | a ee e a | `⚬⌀⚬∩⚬⊃` | ae ee a | ae ee a | recovered-keys-mismatch |
 | pb | pˌiːbˈiː | a ee a ee | `⚬⌀⚬⌇⚬⌀⚬⌇` | ae e ae e | ae e ae e | recovered-keys-mismatch |
@@ -176,13 +176,13 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 - Does NOT check exact symbol collisions in inventory
 - Does NOT check phoneme-key concatenation collisions
 - Does NOT check unspaced greedy decode hazards
-- Recovered keys now space-separated — no longer English spellings
+- Recovered keys now space-separated, no longer English spellings
 
 (`npm run test:v2-collisions` is a deprecated alias for the same script.)
 
 ### Misleading claims
 
-- "0 collision groups" means minimal-pair groups have distinct symbol outputs — not zero symbol-system collisions
+- "0 collision groups" means minimal-pair groups have distinct symbol outputs, not zero symbol-system collisions
 - Spacing in pipeline output can hide concatenation collisions during round-trip
 
 ### Recommended separate reports
@@ -206,9 +206,9 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 
 | issue | class | needs human decision? |
 | --- | --- | --- |
-| Recovered keys looked like English (boy) | code bug / display | no — fixed |
+| Recovered keys looked like English (boy) | code bug / display | no, fixed |
 | o+r symbol sequence equals oy | language-design collision | yes |
-| Vowel+glide sequences equal diphthongs (eye/ow/oy/ay) | language-design collision | yes — homograph note exists |
+| Vowel+glide sequences equal diphthongs (eye/ow/oy/ay) | language-design collision | yes, homograph note exists |
 | th+t equals t+s symbol strings | language-design collision | yes |
 | Unspaced greedy decode mis-recovery | decoder + boundary issue | partially mitigated by spacing |
-| v2 test "0 collisions" wording | test/documentation bug | no — rename/clarify |
+| v2 test "0 collisions" wording | test/documentation bug | no, rename/clarify |

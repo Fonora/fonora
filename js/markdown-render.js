@@ -1,5 +1,5 @@
 import { escapeHtml } from './utils.js';
-import { resolveMarkdownHref } from './doc-urls.js';
+import { resolveMarkdownHref, repoPathFromViewerHref } from './doc-urls.js';
 
 function slugifyHeading(text) {
   return text
@@ -16,11 +16,10 @@ function inlineFormat(text, docPath) {
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_match, label, href) => {
     const resolved = resolveMarkdownHref(href, docPath);
-    const isDoc = resolved.includes('#docs') || (href.endsWith('.md') && !/^https?:\/\//i.test(href));
+    const docPathAttr = repoPathFromViewerHref(resolved);
+    const isDoc = Boolean(docPathAttr) || (href.endsWith('.md') && !/^https?:\/\//i.test(href));
     if (isDoc && !/^https?:\/\//i.test(resolved)) {
-      const pathMatch = resolved.match(/[?&]path=([^&#]+)/);
-      const docPath = pathMatch ? decodeURIComponent(pathMatch[1]) : href;
-      return `<a href="${escapeHtml(resolved)}" class="doc-internal-link" data-doc-path="${escapeHtml(docPath)}">${label}</a>`;
+      return `<a href="${escapeHtml(resolved)}" class="doc-internal-link" data-doc-path="${escapeHtml(docPathAttr ?? href)}">${label}</a>`;
     }
     const external = /^https?:\/\//i.test(resolved);
     const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';

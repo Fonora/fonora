@@ -3,6 +3,7 @@
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech } from '../js/fonora-tts.js';
     import { initUniversalNav, setActiveTab, setFonoranUndoDisabled, setFonoranAuth } from '../js/universal-nav.js';
+    import { bindModalDismiss, setModalBackdropOpen } from '../js/modal-dismiss.js';
 
     const AUTH = {
       required: false,
@@ -113,7 +114,7 @@
         access_denied: 'Sign-in cancelled.',
         domain: 'That Google account is not allowed. Use an @fonora.org address.',
         email_unverified: 'Google email is not verified.',
-        invalid_state: 'Sign-in expired — try again.',
+        invalid_state: 'Sign-in expired. Try again.',
       };
       toast(messages[err] ?? `Sign-in failed (${err}).`);
     }
@@ -505,7 +506,7 @@
       return STATE.lab.compounds.filter(c => !c.generator_hint && c.state !== 'rejected');
     }
 
-    /** Roots first, then compounds — matches computeNextStep in the lab API. */
+    /** Roots first, then compounds, matches computeNextStep in the lab API. */
     function reviewItems() {
       return [
         ...userSounds().map(s => ({ ...s, reviewKind: 'sound' })),
@@ -1050,6 +1051,7 @@
         },
         securityLevel: 'loose',
       });
+      await new Promise((resolve) => requestAnimationFrame(resolve));
       await window.mermaid.run({ nodes: rootEl.querySelectorAll('.mermaid') });
       const wrap = rootEl.querySelector('.mermaid-wrap');
       bindMermaidGraphClicks(wrap?.querySelector('svg'), graphNodes, onNavigate);
@@ -1096,7 +1098,7 @@
       const components = f.components ?? [];
       const compose = buildBuiltFromComposeHtml(f, { removable });
       if (!components.length) {
-        const empty = '<p class="word-preview__footnote sans">Primitive root — not built from other pieces.</p>';
+        const empty = '<p class="word-preview__footnote sans">Primitive root. Not built from other pieces.</p>';
         return wrapSection ? empty : empty;
       }
       const body = `<div class="word-compose" aria-label="Word composition">${compose}</div>`;
@@ -1154,17 +1156,17 @@
       const meaningClass = focus.meaning ? '' : 'unnamed';
       const badgeKind = kind === 'root' ? 'root' : 'word';
       const builtFromHtml = showBuiltFrom ? buildBuiltFromSectionHtml(focus, { removable: builtFromRemovable }) : '';
-
-      const showToolbar = showBadges || metaExtra || (showHear && hasSpelling);
-      const toolbarClass = showToolbar && !showBadges && !metaExtra ? ' word-preview__toolbar--end' : '';
+      const hearHtml = showHear && hasSpelling
+        ? `<div class="word-preview__hear-row"><button type="button" class="hear-min word-preview__hear"${hearId ? ` id="${hearId}"` : ''} aria-label="Listen to ${escapeHtml(focus.spelling)}">▶ Listen</button></div>`
+        : '';
+      const showToolbar = showBadges || metaExtra;
 
       return `<div class="word-preview">
         <div class="word-preview__card">
-          ${showToolbar ? `<div class="word-preview__toolbar${toolbarClass}">
+          ${showToolbar ? `<div class="word-preview__toolbar">
             ${showBadges ? `<div class="word-preview__badges" aria-label="Word status">
               ${typeBadge(badgeKind)} ${badge(focus.state || 'draft')}${metaExtra ? ` ${metaExtra}` : ''}
             </div>` : (metaExtra ? `<div class="word-preview__badges">${metaExtra}</div>` : '')}
-            ${showHear && hasSpelling ? `<button type="button" class="hear-min word-preview__hear"${hearId ? ` id="${hearId}"` : ''} aria-label="Listen to ${escapeHtml(focus.spelling)}">▶ Listen</button>` : ''}
           </div>` : ''}
           <div class="word-preview__hero">
             ${pron?.script ? `<div class="word-preview__script fonora-script symbol-text">${escapeHtml(pron.script)}</div>` : ''}
@@ -1179,6 +1181,7 @@
               </p>` : ''}
             </div>
           </div>
+          ${hearHtml}
           ${previewNote ? `<p class="sans word-preview__note">${previewNote}</p>` : ''}
           ${builtFromHtml}
           ${footerHtml}
@@ -1273,7 +1276,7 @@
         ${buildWordPreviewHtml(f, {
           kind: 'word',
           speakParts,
-          metaExtra: '<span class="word-preview__kind">Approved word</span>',
+          showBadges: false,
           hearId: 'lander-showcase-hear',
         })}
         ${buildUsedInChipsHtml(data.used_in)}
@@ -1762,7 +1765,7 @@
         components: kind === 'compound' ? (item.components ?? []) : [],
       };
       const claimNote = item.generator_hint && !item.meaning?.trim()
-        ? 'Generator suggestion — save below to name it.'
+        ? 'Generator suggestion. Save below to name it.'
         : item.generator_hint ? 'Generator suggestion.' : '';
       const id = kind === 'sound' ? item.spelling : item.id;
       return `
@@ -1855,13 +1858,13 @@
       const f = data.focus;
       if (!data.mermaid) return;
       const body = $('sheet-body');
+      openSheet();
       body.innerHTML = `
         <div class="explorer-section showcase-graph">
           <h4>Word Tree · <span class="mono">${escapeHtml(f.spelling)}</span></h4>
           <p class="sans graph-hint">Tap a node to explore that root or word.</p>
           <div class="mermaid-wrap"><pre class="mermaid">${escapeHtml(data.mermaid)}</pre></div>
         </div>`;
-      openSheet();
       await renderExplorerMermaidIn(body, data.mermaid, data.graph_nodes, (navKind, ref) => {
         closeSheet();
         if (onNavigate) onNavigate(navKind, ref);
@@ -1871,23 +1874,36 @@
 
     function openDdaSheet(data, explorerKind, ref) {
       const dda = labItemDda(explorerKind, ref);
-      $('sheet-body').innerHTML = buildDdaPanelHtml(dda, data.focus.components);
       openSheet();
+      $('sheet-body').innerHTML = buildDdaPanelHtml(dda, data.focus.components);
     }
 
     async function openExplorer(kind, id, preview = null) {
       try {
-        await mountExplorer($('sheet-body'), kind, id, preview);
+        const body = $('sheet-body');
+        body.innerHTML = '<p class="fonoran-split-loading">Loading…</p>';
         openSheet();
-      } catch (e) { toast(e.message); }
+        await mountExplorer(body, kind, id, preview);
+      } catch (e) {
+        closeSheet();
+        toast(e.message);
+      }
     }
 
     function openSheet() {
-      $('sheet').classList.add('open');
+      const sheet = $('sheet');
+      const backdrop = $('sheet-backdrop');
+      setModalBackdropOpen(backdrop, true);
+      sheet.hidden = false;
+      sheet.classList.add('open');
     }
 
     function closeSheet() {
-      $('sheet').classList.remove('open');
+      const sheet = $('sheet');
+      const backdrop = $('sheet-backdrop');
+      setModalBackdropOpen(backdrop, false);
+      sheet.classList.remove('open');
+      sheet.hidden = true;
     }
 
     function openChain(kind, id) {
@@ -2252,8 +2268,12 @@
         renderWordComposer();
       } catch (e) { toast(e.message); }
     });
-    $('sheet-close').addEventListener('click', closeSheet);
-    $('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
+    bindModalDismiss({
+      backdrop: $('sheet-backdrop'),
+      panel: $('sheet'),
+      close: closeSheet,
+      isOpen: () => $('sheet')?.classList.contains('open'),
+    });
     $('adv-reset-review').addEventListener('click', async () => {
       if (!confirm('Move every root and word back to needs review? Meanings stay; you re-approve from scratch.')) return;
       const r = await api('/api/fonoran/lab/reset-review', { method: 'POST', body: '{}' });

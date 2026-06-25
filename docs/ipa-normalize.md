@@ -4,9 +4,9 @@ Module: [`js/ipa-normalize.js`](../js/ipa-normalize.js)
 
 Raw eSpeak IPA passes through `normalizeIpa()` before encoding.
 
-- **Vowels** — tokens from `language-rules.md`, merged with `ENGLISH_IPA_VOWEL_NORMALIZATION` at runtime (engineering mappings while the vowel inventory is refined).
-- **Consonants** — grid + derived IPA from markdown via `buildConsonantMapFromRules()`, merged with `SUPPLEMENTAL_CONSONANT_MAP` for multilingual variants.
-- **Unknown IPA** — logs a warning and maps to fallback vowel phoneme `a` (never `?` in the phoneme string).
+- **Vowels**: tokens from `language-rules.md`, merged with `ENGLISH_IPA_VOWEL_NORMALIZATION` at runtime (engineering mappings while the vowel inventory is refined).
+- **Consonants**: grid + derived IPA from markdown via `buildConsonantMapFromRules()`, merged with `SUPPLEMENTAL_CONSONANT_MAP` for multilingual variants.
+- **Unknown IPA**: logs a warning and maps to fallback vowel phoneme `a` (never `?` in the phoneme string).
 
 `registerConsonantMapFromRules(rules)` runs when the rules bundle loads (app startup and tests).
 
@@ -14,7 +14,7 @@ Raw eSpeak IPA passes through `normalizeIpa()` before encoding.
 
 ## English vowel engineering table (`ENGLISH_IPA_VOWEL_NORMALIZATION`)
 
-Temporary mappings in `js/ipa-normalize.js` — consistency over linguistic perfection. Overrides conflicting supplemental entries (e.g. `ɚ → a` instead of `a + r`). Applied **only when pipeline language is English** (`lang: en`). Other languages use vowel tokens from `language-rules.md` directly. See [multilingual-support.md](multilingual-support.md). Full audit: [IPA_VOWEL_NORMALIZATION_AUDIT.md](IPA_VOWEL_NORMALIZATION_AUDIT.md).
+Temporary mappings in `js/ipa-normalize.js`, consistency over linguistic perfection. Overrides conflicting supplemental entries (e.g. `ɚ → a` instead of `a + r`). Applied **only when pipeline language is English** (`lang: en`). Other languages use vowel tokens from `language-rules.md` directly. See [multilingual-support.md](multilingual-support.md). Full audit: [IPA_VOWEL_NORMALIZATION_AUDIT.md](IPA_VOWEL_NORMALIZATION_AUDIT.md).
 
 | IPA token | Fonora phoneme | Notes |
 | --- | --- | --- |
@@ -36,7 +36,7 @@ Run `npm run audit:ipa-vowels` to regenerate the token inventory report from eSp
 
 ## From language-rules.md (generated at load)
 
-These IPA tokens appear in the Sound Grid or Derived Sounds tables. They are **built automatically** from `language-rules.md` — do not duplicate in code.
+These IPA tokens appear in the Sound Grid or Derived Sounds tables. They are **built automatically** from `language-rules.md`, do not duplicate in code.
 
 | IPA token | Fonora phoneme | Source |
 | --- | --- | --- |
@@ -71,7 +71,7 @@ Vowels and diphthongs are not in the consonant map; see vowel tables in `languag
 
 ## Supplemental mappings (`SUPPLEMENTAL_CONSONANT_MAP`)
 
-These entries live in `js/ipa-normalize.js` only — not separate rows in markdown. They normalize common eSpeak IPA variants to existing Fonora phoneme keys. Rules-derived entries take precedence on conflict.
+These entries live in `js/ipa-normalize.js` only, not separate rows in markdown. They normalize common eSpeak IPA variants to existing Fonora phoneme keys. Rules-derived entries take precedence on conflict.
 
 | IPA token | Fonora phoneme | Notes |
 | --- | --- | --- |
@@ -96,13 +96,13 @@ These entries live in `js/ipa-normalize.js` only — not separate rows in markdo
 | kx | x | Velar + fricative cluster → x |
 | ʔ | ? | Glottal stop → unknown fallback |
 
-English **t** + **s** sequences (e.g. *outside* /aʊtsaɪd/) tokenize as separate **`t`** and **`s`** phonemes — not merged into an affricate.
+English **t** + **s** sequences (e.g. *outside* /aʊtsaɪd/) tokenize as separate **`t`** and **`s`** phonemes, not merged into an affricate.
 
-When adding a **new grid or derived sound** in `language-rules.md`, add IPA tokens to the cell's `ipa` column — the map rebuilds on reload. No code change needed unless eSpeak emits IPA variants not covered by the cell notation.
+When adding a **new grid or derived sound** in `language-rules.md`, add IPA tokens to the cell's `ipa` column, the map rebuilds on reload. No code change needed unless eSpeak emits IPA variants not covered by the cell notation.
 
 When adding **new multilingual IPA** not tied to a markdown row, add to `SUPPLEMENTAL_CONSONANT_MAP` and document here.
 
 ## Related
 
-- [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md) — full pipeline
-- [FONORA_COLLISION_AUDIT.md](FONORA_COLLISION_AUDIT.md) — symbol concatenation hazards
+- [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md), full pipeline
+- [FONORA_COLLISION_AUDIT.md](FONORA_COLLISION_AUDIT.md), symbol concatenation hazards

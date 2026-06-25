@@ -1,6 +1,6 @@
 /**
  * Compose derived Fonora symbols from primary place/modifier glyphs.
- * Edit primaries once (markdown or Alphabet lab) — sound grid, vowels, and examples follow.
+ * Edit primaries once (markdown or Alphabet lab), sound grid, vowels, and examples follow.
  */
 
 import { buildVowelByKeyMap, getVowelEntries } from './vowel-display.js';
@@ -55,7 +55,7 @@ const VOWEL_RECIPE_PARTS = {
 };
 
 /**
- * @param {string} recipe — comma-separated tokens (e.g. `vowel, throat, glide, back_tongue`)
+ * @param {string} recipe, comma-separated tokens (e.g. `vowel, throat, glide, back_tongue`)
  */
 export function composeVowelFromRecipe(recipe, places, modifiers) {
   if (!recipe) return '';
@@ -130,7 +130,7 @@ export function composeGridSymbol(modifierId, placeId, places, modifiers) {
  * @param {VowelPlane} plane
  * @param {string} componentPlaceId
  * @param {Array<{ id: string, symbol: string }>} places
- * @param {object} rules — for derived writing symbols (vowel carrier)
+ * @param {object} rules, for derived writing symbols (vowel carrier)
  */
 export function composeVowelSymbol(plane, componentPlaceId, places, rules = {}) {
   const throat = placeSymbol(places, 'throat');
@@ -152,8 +152,8 @@ export function composeVowelSymbol(plane, componentPlaceId, places, rules = {}) 
 }
 
 /**
- * @param {object} rules — parsed rules; mutated in place
- * @param {Record<string, string>} [primaryOverrides] — id → symbol for places/modifiers
+ * @param {object} rules, parsed rules; mutated in place
+ * @param {Record<string, string>} [primaryOverrides], id → symbol for places/modifiers
  */
 export function applyPrimarySymbols(rules, primaryOverrides = {}) {
   applyOverridesToPrimaries(rules, primaryOverrides);
@@ -193,7 +193,7 @@ function applyOverridesToPrimaries(rules, overrides) {
   }
 }
 
-/** Standard CV demo words — short vs long pairs for length distinction. */
+/** Standard CV demo words, short vs long pairs for length distinction. */
 const CV_EXAMPLE_WORDS = [
   { word: 'pa', vowel: 'a' },
   { word: 'pe', vowel: 'e' },

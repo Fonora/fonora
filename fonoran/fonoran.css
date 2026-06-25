@@ -8,6 +8,7 @@
       --surface:var(--layout-surface);
       --border:var(--layout-border);
       --bg:var(--layout-page-bg);
+      --fonoran-word-card-max-width:640px;
     }
     body.app-body--fonoran {
       font-family: var(--font-serif);
@@ -35,7 +36,7 @@
     .badge-compound { background:#f3f0ff; color:#5f3dc4; }
 
     /* review cards */
-    .review { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; text-align:center; max-width:640px; margin:0 auto; }
+    .review { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.25rem; text-align:center; max-width:var(--fonoran-word-card-max-width); margin:0 auto; }
     .position { font-family:-apple-system,sans-serif; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:1rem; }
     .review-word { font-family:ui-monospace,Menlo,monospace; font-size:1.6rem; font-weight:700; color:var(--word); line-height:1.05; margin:0.35rem 0 0; }
     .fonora-script { font-size:2.4rem; line-height:1.35; margin:0 0 0.15rem; color:var(--text); }
@@ -566,7 +567,6 @@
 
     .toast { position:fixed; left:50%; bottom:1.25rem; transform:translateX(-50%); background:var(--word); color:#fff; font-family:-apple-system,sans-serif; font-size:0.88rem; padding:0.6rem 1.1rem; border-radius:99px; z-index:80; opacity:0; transition:opacity 0.2s; pointer-events:none; }
     .toast.show { opacity:1; }
-    .sheet .close { float:right; border:none; background:none; font-size:1.4rem; cursor:pointer; color:var(--muted); line-height:1; }
     .chain { text-align:center; }
     .chain .c-word { font-family:ui-monospace,Menlo,monospace; font-size:1.8rem; font-weight:700; color:var(--word); }
     .chain .c-arrow { color:var(--muted); font-size:1.1rem; margin:0.35rem 0; }
@@ -597,6 +597,12 @@
       margin:0 0 0.55rem;
     }
     .word-preview__toolbar--end { justify-content:flex-end; }
+    .word-preview__hear-row {
+      margin:0.65rem 0 0;
+    }
+    .word-preview__hear-row .word-preview__hear {
+      margin:0;
+    }
     .word-preview__badges {
       display:flex;
       flex-wrap:wrap;
@@ -661,7 +667,6 @@
     }
     .word-preview__like { font-style:italic; }
     .word-preview__like::before { content:' · '; font-style:normal; }
-    .word-preview__toolbar .word-preview__hear { margin:0; flex-shrink:0; }
     .word-preview__footnote {
       margin:0.55rem 0 0;
       font-size:0.8rem;
@@ -682,12 +687,14 @@
     .review .word-preview__identity,
     .review .word-preview__pron,
     .review .word-preview__footnote,
-    .review .word-preview__note { text-align:center; }
+    .review .word-preview__note,
+    .review .word-preview__hear-row { text-align:center; }
     .review .word-preview__headline { justify-content:center; }
     .review .word-preview .word-compose { justify-content:center; }
     .composer-hero .word-preview__identity,
     .composer-hero .word-preview__pron,
-    .composer-hero .word-preview__footnote { text-align:center; }
+    .composer-hero .word-preview__footnote,
+    .composer-hero .word-preview__hear-row { text-align:center; }
     .composer-hero .word-preview__headline { justify-content:center; }
     .composer-hero .word-preview .word-compose { justify-content:center; }
     .fonoran-showcase .word-preview { margin-bottom:0.75rem; }
@@ -721,15 +728,17 @@
       position:fixed;
       top:50%;
       left:50%;
+      display:flex;
+      flex-direction:column;
       width:min(720px,calc(100vw - 2rem));
       max-height:min(90vh,820px);
       margin:0;
       background:var(--surface);
       border:1px solid var(--border);
       border-radius:var(--radius);
-      padding:1.1rem 1.25rem 1.75rem;
+      padding:0;
       z-index:60;
-      overflow-y:auto;
+      overflow:hidden;
       visibility:hidden;
       pointer-events:none;
       opacity:0;
@@ -737,11 +746,46 @@
       transition:transform 0.2s ease, opacity 0.2s ease, visibility 0.2s;
       box-shadow:0 16px 48px rgba(0,0,0,.14);
     }
-    .sheet.open { visibility:visible; pointer-events:auto; opacity:1; transform:translate(-50%,-50%) scale(1); }
+    .sheet[hidden] { display:none; }
+    .sheet.open { display:flex; visibility:visible; pointer-events:auto; opacity:1; transform:translate(-50%,-50%) scale(1); }
+    .sheet__chrome {
+      flex-shrink:0;
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      padding:0.55rem 0.65rem 0.45rem;
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+    }
+    .sheet__close {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:2rem;
+      height:2rem;
+      border:1px solid var(--border);
+      border-radius:6px;
+      background:var(--bg);
+      font-size:1.25rem;
+      line-height:1;
+      cursor:pointer;
+      color:var(--text);
+    }
+    .sheet__close:hover {
+      background:var(--accent-soft);
+      border-color:var(--accent);
+      color:var(--accent);
+    }
+    .sheet__body {
+      overflow-y:auto;
+      padding:1rem 1.25rem 1.75rem;
+      flex:1;
+      min-height:0;
+    }
 
     /* --- Fonoran lander (shared intro/section typography in app.css) --- */
-    .fonoran-showcase { padding:1.25rem 1.35rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--layout-card-radius); }
-    .fonoran-showcase__toolbar { display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:center; align-items:center; margin-top:1.25rem; }
+    .fonoran-showcase { max-width:var(--fonoran-word-card-max-width); margin-inline:auto; padding:1.25rem 1.35rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--layout-card-radius); }
+    .fonoran-showcase__toolbar { display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:center; align-items:center; max-width:var(--fonoran-word-card-max-width); margin:1.25rem auto 0; }
     .showcase-graph { text-align:center; }
     .showcase-graph .graph-hint { text-align:center; }
     .showcase-graph .mermaid-wrap { display:flex; justify-content:center; margin-left:auto; margin-right:auto; }
@@ -798,7 +842,7 @@
     .lander-health__score { margin-bottom:0; }
     .lander-health__method { background:var(--bg); border:1px solid var(--border); border-radius:var(--layout-card-radius); padding:1.1rem 1.15rem; }
     .lander-health__method h3 { margin:0 0 0.5rem; font-size:1.05rem; font-weight:600; }
-    .lander-health__method-lead { margin:0 0 1rem; font-family:-apple-system,sans-serif; font-size:0.88rem; color:#444; line-height:1.5; max-width:var(--layout-prose-max); }
+    .lander-health__method-lead { margin:0 0 1rem; font-family:-apple-system,sans-serif; font-size:0.88rem; color:#444; line-height:1.5; }
     .lander-health__method-grid { display:grid; gap:0.65rem; margin-bottom:1rem; }
     @media (min-width:640px){ .lander-health__method-grid { grid-template-columns:1fr 1fr; } }
     .lander-health__method-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.8rem 0.9rem; }
@@ -813,7 +857,7 @@
     .lander-health__metric-val { display:block; font-family:ui-monospace,Menlo,monospace; font-size:1.35rem; font-weight:700; color:var(--word); }
     .lander-health__metric-label { display:block; font-family:-apple-system,sans-serif; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin-top:0.15rem; }
     .lander-health__metric-note { margin:0.35rem 0 0; font-family:-apple-system,sans-serif; font-size:0.74rem; color:var(--muted); line-height:1.35; text-align:left; }
-    .lander-health__footnote { margin:0; font-family:-apple-system,sans-serif; font-size:0.8rem; color:var(--muted); line-height:1.45; max-width:var(--layout-prose-max); }
+    .lander-health__footnote { margin:0; font-family:-apple-system,sans-serif; font-size:0.8rem; color:var(--muted); line-height:1.45; }
     .lander-health__actions { display:flex; justify-content:center; margin-top:1rem; }
     .fonoran-compare-card { display:flex; flex-direction:column; gap:0.5rem; }
     .fonoran-compare-card--script { border-top:3px solid #2563eb; }

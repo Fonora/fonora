@@ -1,5 +1,5 @@
 /**
- * Piper neural TTS — synthesize Fonora IPA via phoneme IDs (lazy-loads model from HuggingFace).
+ * Piper neural TTS, synthesize Fonora IPA via phoneme IDs (lazy-loads model from HuggingFace).
  */
 import { segmentIpa } from './ipa-espeak-format.js';
 import { playEspeakSamples, primeAudioContext } from './espeak-audio.js';
@@ -62,7 +62,7 @@ export function getPiperVoiceForLang(lang) {
 }
 
 /**
- * Playback plan for Samples — Piper neural only (no eSpeak IPA fallback).
+ * Playback plan for Samples, Piper neural only (no eSpeak IPA fallback).
  * @returns {{ engine: 'piper', piperVoice: string } | null}
  */
 export function getSamplePlaybackPlan(lang) {

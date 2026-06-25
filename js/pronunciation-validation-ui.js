@@ -55,11 +55,11 @@ function renderMismatchInvestigation(result) {
     <details class="pv-investigation" open>
       <summary>Mismatch investigation</summary>
       <dl class="encoder-pipeline encoder-pipeline--compact">
-        <div><dt>Original phoneme keys</dt><dd><code>${escapeHtml(result.sourcePhonemeKeys || '—')}</code></dd></div>
-        <div><dt>Recovered phoneme keys</dt><dd><code>${escapeHtml(result.recoveredPhonemeKeys || '—')}</code></dd></div>
-        <div><dt>Original symbols</dt><dd><span class="symbol-text">${escapeHtml(result.symbols || '—')}</span></dd></div>
-        <div><dt>Decoder path</dt><dd><code class="pv-decoder-path">${escapeHtml(result.decoderPath || '—')}</code></dd></div>
-        <div><dt>Pipeline decoded keys</dt><dd><code>${escapeHtml(result.pipelineDecodedKeys || '—')}</code></dd></div>
+        <div><dt>Original phoneme keys</dt><dd><code>${escapeHtml(result.sourcePhonemeKeys || '-')}</code></dd></div>
+        <div><dt>Recovered phoneme keys</dt><dd><code>${escapeHtml(result.recoveredPhonemeKeys || '-')}</code></dd></div>
+        <div><dt>Original symbols</dt><dd><span class="symbol-text">${escapeHtml(result.symbols || '-')}</span></dd></div>
+        <div><dt>Decoder path</dt><dd><code class="pv-decoder-path">${escapeHtml(result.decoderPath || '-')}</code></dd></div>
+        <div><dt>Pipeline decoded keys</dt><dd><code>${escapeHtml(result.pipelineDecodedKeys || '-')}</code></dd></div>
       </dl>
       ${result.mismatchNotes?.length ? `
         <ul class="pv-notes-list">
@@ -101,27 +101,27 @@ function renderSingleResult(result) {
       <section class="pv-section">
         <h4>Source Analysis</h4>
         <dl class="encoder-pipeline encoder-pipeline--compact">
-          <div><dt>IPA (eSpeak)</dt><dd><code>${escapeHtml(result.sourceIpa || '—')}</code></dd></div>
-          <div><dt>Fonora phoneme keys</dt><dd><code>${escapeHtml(result.sourcePhonemeKeys || '—')}</code></dd></div>
-          <div><dt>Fonora symbols</dt><dd><span class="symbol-text">${escapeHtml(result.symbols || '—')}</span></dd></div>
+          <div><dt>IPA (eSpeak)</dt><dd><code>${escapeHtml(result.sourceIpa || '-')}</code></dd></div>
+          <div><dt>Fonora phoneme keys</dt><dd><code>${escapeHtml(result.sourcePhonemeKeys || '-')}</code></dd></div>
+          <div><dt>Fonora symbols</dt><dd><span class="symbol-text">${escapeHtml(result.symbols || '-')}</span></dd></div>
         </dl>
       </section>
 
       <section class="pv-section">
         <h4>Recovery Analysis</h4>
         <dl class="encoder-pipeline encoder-pipeline--compact">
-          <div><dt>Recovered phoneme keys</dt><dd><code>${escapeHtml(result.recoveredPhonemeKeys || '—')}</code></dd></div>
-        <div><dt>Recovered IPA</dt><dd><code>${escapeHtml(result.recoveredIpa || '—')}</code></dd></div>
-        ${result.recoveredIpaFromCells && result.recoveredIpaFromCells !== result.recoveredIpa ? `<div><dt>Cell metadata IPA</dt><dd><code>${escapeHtml(result.recoveredIpaFromCells)}</code> <span class="pv-meta-note">(all variants — diagnostic)</span></dd></div>` : ''}
-        <div><dt>Decoder path</dt><dd><code class="pv-decoder-path">${escapeHtml(result.decoderPath || '—')}</code></dd></div>
+          <div><dt>Recovered phoneme keys</dt><dd><code>${escapeHtml(result.recoveredPhonemeKeys || '-')}</code></dd></div>
+        <div><dt>Recovered IPA</dt><dd><code>${escapeHtml(result.recoveredIpa || '-')}</code></dd></div>
+        ${result.recoveredIpaFromCells && result.recoveredIpaFromCells !== result.recoveredIpa ? `<div><dt>Cell metadata IPA</dt><dd><code>${escapeHtml(result.recoveredIpaFromCells)}</code> <span class="pv-meta-note">(all variants, diagnostic)</span></dd></div>` : ''}
+        <div><dt>Decoder path</dt><dd><code class="pv-decoder-path">${escapeHtml(result.decoderPath || '-')}</code></dd></div>
         </dl>
       </section>
 
       <section class="pv-section pv-comparison">
         <h4>Comparison</h4>
         <div class="pv-comparison-grid">
-          <div><span class="pv-comparison-label">Original IPA:</span> <code>${escapeHtml(result.sourceIpa || '—')}</code></div>
-          <div><span class="pv-comparison-label">Recovered IPA:</span> <code>${escapeHtml(result.recoveredIpa || '—')}</code></div>
+          <div><span class="pv-comparison-label">Original IPA:</span> <code>${escapeHtml(result.sourceIpa || '-')}</code></div>
+          <div><span class="pv-comparison-label">Recovered IPA:</span> <code>${escapeHtml(result.recoveredIpa || '-')}</code></div>
           <div><span class="pv-comparison-label">Status:</span> ${matchBadge(result.ipaMatch)}</div>
         </div>
         ${!result.phonemeKeysMatch ? `<div class="pv-key-note">Phoneme keys: ${matchBadge(result.phonemeKeysMatch)}</div>` : ''}
@@ -157,8 +157,8 @@ function renderBatchTable(results) {
     const warn = r.collisionWarnings?.length ? ' ⚠' : '';
     return `<tr class="${rowClass}" data-word="${escapeHtml(r.word)}">
       <td><button type="button" class="pv-word-link">${escapeHtml(r.word)}${warn}</button></td>
-      <td><code>${escapeHtml(r.sourceIpa || '—')}</code></td>
-      <td><code>${escapeHtml(r.recoveredIpa || '—')}</code></td>
+      <td><code>${escapeHtml(r.sourceIpa || '-')}</code></td>
+      <td><code>${escapeHtml(r.recoveredIpa || '-')}</code></td>
       <td>${matchBadge(r.ipaMatch)}</td>
     </tr>`;
   }).join('');
@@ -276,10 +276,10 @@ function renderVowelArchitectureTable(rows) {
     const rowClass = r.grammarOk && !r.hasDoubleVowel ? 'pv-row--match' : 'pv-row--mismatch';
     return `<tr class="${rowClass}">
       <td>${escapeHtml(r.word)}</td>
-      <td><code>${escapeHtml(r.ipa || '—')}</code></td>
-      <td><code>${escapeHtml(r.phonemes || '—')}</code></td>
-      <td><span class="symbol-text">${escapeHtml(r.symbols || '—')}</span></td>
-      <td><code>${escapeHtml(r.decoded || '—')}</code></td>
+      <td><code>${escapeHtml(r.ipa || '-')}</code></td>
+      <td><code>${escapeHtml(r.phonemes || '-')}</code></td>
+      <td><span class="symbol-text">${escapeHtml(r.symbols || '-')}</span></td>
+      <td><code>${escapeHtml(r.decoded || '-')}</code></td>
       <td>${r.grammarOk && !r.hasDoubleVowel ? matchBadge(true) : matchBadge(false)}</td>
     </tr>`;
   }).join('');

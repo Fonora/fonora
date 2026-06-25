@@ -72,7 +72,7 @@ export function getEspeakAudioInitError() {
   return initError?.message || null;
 }
 
-/** Call synchronously from a user click/tap before any await — unlocks Web Audio. */
+/** Call synchronously from a user click/tap before any await, unlocks Web Audio. */
 export function primeAudioContext() {
   if (typeof window === 'undefined') return;
   if (!audioContext) {

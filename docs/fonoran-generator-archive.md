@@ -1,6 +1,6 @@
 # Fonoran generator archive (historical)
 
-> **Status:** archival reference only — code and data for Gen 1 and Gen 2 were removed during the lab-first cleanup. Gen 3+ tooling remains in the repo for expert review and English lexicon seeding. This document preserves how the earlier bulk generators worked so they can be re-explored later.
+> **Status:** archival reference only, code and data for Gen 1 and Gen 2 were removed during the lab-first cleanup. Gen 3+ tooling remains in the repo for expert review and English lexicon seeding. This document preserves how the earlier bulk generators worked so they can be re-explored later.
 
 ## Overview
 
@@ -10,12 +10,12 @@ Fonoran went through several generations of **algorithmic vocabulary generation*
 | --- | --- | --- | --- |
 | **Gen 1** | Hand-authored roots → grammar vowels → families & compounds | ~175 roots → thousands of inflected forms | Removed (English-adjacent inventory) |
 | **Gen 2** | Human primitives + articulation coordinates → roots + IE collision repair | ~40 primitives → full inventory JSON | Removed (superseded by Gen 3) |
-| **Gen 3 / 3.1** | DDA coordinates → grid-native roots & derivations | Full primitive grid + compounds | **Kept** — expert tools, health scoring, lexicon seeds |
+| **Gen 3 / 3.1** | DDA coordinates → grid-native roots & derivations | Full primitive grid + compounds | **Kept**: expert tools, health scoring, lexicon seeds |
 | **Lab (current)** | User builds syllables and compounds one-by-one | Your `fonoran-sound-bucket.json` | **Production** |
 
 ---
 
-## Gen 1 — hand-authored roots + grammar vowels
+## Gen 1: hand-authored roots + grammar vowels
 
 ### Philosophy
 
@@ -35,8 +35,8 @@ Fonoran went through several generations of **algorithmic vocabulary generation*
 
 Two JSON files drove everything:
 
-- **`fonoran-roots.json`** — ~175 roots in ten categories (shape, nature, motion, perception, body, society, object, time, space, number). Each entry: `{ meaning, category }` keyed by root spelling.
-- **`fonoran-grammar.json`** — `grammar_vowels`, articulation symbolism, stored compounds, contractions, and worked examples.
+- **`fonoran-roots.json`**: ~175 roots in ten categories (shape, nature, motion, perception, body, society, object, time, space, number). Each entry: `{ meaning, category }` keyed by root spelling.
+- **`fonoran-grammar.json`**: `grammar_vowels`, articulation symbolism, stored compounds, contractions, and worked examples.
 
 ### Word families
 
@@ -47,7 +47,7 @@ Ra = M as object    Re = M as action    Ri = M as quality
 Ro = M as abstract  Ru = M as system
 ```
 
-Example — `lum` (light): **luma** lamp, **lume** illuminate, **lumi** bright, **lumo** luminosity, **lumu** lighting system.
+Example, `lum` (light): **luma** lamp, **lume** illuminate, **lumi** bright, **lumo** luminosity, **lumu** lighting system.
 
 ### Compounding
 
@@ -78,7 +78,7 @@ Roots were largely **English/Latin cognates** (`wa` = water, `ter` = earth, `man
 
 ---
 
-## Gen 2 — coordinate-driven root machine
+## Gen 2: coordinate-driven root machine
 
 ### Philosophy
 
@@ -90,12 +90,12 @@ Invert Gen 1: design the **machine that creates words**, not the words themselve
 
 ### Data model
 
-- **`fonoran-gen2-config.json`** — primitives, semantic frameworks (evaluated contact-geometry ontology), `depth_to_place`, manner mappings, collision thresholds.
-- **`fonoran-gen2-roots.json`** — generated output (deterministic re-run from config).
+- **`fonoran-gen2-config.json`**: primitives, semantic frameworks (evaluated contact-geometry ontology), `depth_to_place`, manner mappings, collision thresholds.
+- **`fonoran-gen2-roots.json`**: generated output (deterministic re-run from config).
 
 ### Algorithm (summary)
 
-1. For each primitive, map semantic domain → base place + manner via selected framework (Framework C — contact geometry — was primary).
+1. For each primitive, map semantic domain → base place + manner via selected framework (Framework C, contact geometry, was primary).
 2. Apply `place_offset` and primitive hash for vowel/coda selection.
 3. Build CVC syllable from grid coordinates.
 4. Score against reference lexicons; if collision score exceeds threshold, rotate place/manner/vowel and retry.
@@ -121,12 +121,12 @@ Still started from **human concepts** (water, person, light) assigned to coordin
 
 ---
 
-## Gen 3 / 3.1 — grid-native (still in repo)
+## Gen 3 / 3.1: grid-native (still in repo)
 
 Gen 3 rebased entirely on **DDA coordinates** (Depth, Mode/Dynamics, Aspect). Human concepts appear only at the **derivation layer**, never as primitives.
 
 - **Gen 3:** `tools/fonoran-gen3.js` → `data/fonoran-gen3-roots.json`
-- **Gen 3.1:** readability repairs, distinctiveness — `tools/fonoran-gen3-1.js` → `data/fonoran-gen3-1-roots.json`
+- **Gen 3.1:** readability repairs, distinctiveness, `tools/fonoran-gen3-1.js` → `data/fonoran-gen3-1-roots.json`
 - **Canonical stabilization:** human-approved roots → `data/fonoran-canonical-registry.json`
 - **Expert UIs (retired):** Gen 3 review and canonical review HTML pages were removed; use live tooling at `/fonoran/` (Language Explorer, Advanced → Run DDA, compound parser).
 
@@ -135,7 +135,7 @@ Full design docs (still present):
 - [fonoran-gen3.md](fonoran-gen3.md)
 - [fonoran-gen3-1.md](fonoran-gen3-1.md)
 
-Gen 3 JSON is **reference data** for DDA inference and the English meaning picker — not the live dictionary. Audits and constitution exports go to `reports/` (gitignored). The lab bucket is authoritative for the language you are building.
+Gen 3 JSON is **reference data** for DDA inference and the English meaning picker, not the live dictionary. Audits and constitution exports go to `reports/` (gitignored). The lab bucket is authoritative for the language you are building.
 
 ---
 
@@ -143,8 +143,8 @@ Gen 3 JSON is **reference data** for DDA inference and the English meaning picke
 
 Two API-only experiments never shipped in UI:
 
-- **Registry vocabulary** (`/api/fonoran/vocabulary`) — flat dictionary from canonical registry + gen3.1 derivations + stress-test concepts.
-- **Story mode** (`/api/fonoran/stories`, `/api/fonoran/feedback`) — resolve passage tokens against that vocabulary; collect like/dislike feedback.
+- **Registry vocabulary** (`/api/fonoran/vocabulary`), flat dictionary from canonical registry + gen3.1 derivations + stress-test concepts.
+- **Story mode** (`/api/fonoran/stories`, `/api/fonoran/feedback`), resolve passage tokens against that vocabulary; collect like/dislike feedback.
 
 These were removed during cleanup. Passage/feedback JSON lived in `data/fonoran-story-*.json`.
 
@@ -154,9 +154,9 @@ These were removed during cleanup. Passage/feedback JSON lived in `data/fonoran-
 
 `/fonoran/` stores your language in **`data/fonoran-sound-bucket.json`**:
 
-- **Sounds** — user-created syllables with optional English meanings and review state.
-- **Compounds** — concatenations of approved sounds with meanings.
-- **Review workflow** — `draft → needs_review → approved | rejected | revised`, with undo.
+- **Sounds**: user-created syllables with optional English meanings and review state.
+- **Compounds**: concatenations of approved sounds with meanings.
+- **Review workflow**: `draft → needs_review → approved | rejected | revised`, with undo.
 
 The English picker loads **`fonoran-english-lexicon.json`** (auto-built from gen3.1 primitive glosses + stress-test concept words). It suggests English glosses only; it does not assign Fonoran forms.
 

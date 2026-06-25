@@ -117,7 +117,7 @@
           <article class="home-layer-card">
             <p class="home-layer-card__tag">Language</p>
             <h3>Fonoran</h3>
-            <p>An experimental constructed language written in Fonora — roots, compounds, semantic coordinates, and a growing dictionary.</p>
+            <p>An experimental constructed language written in Fonora: roots, compounds, semantic coordinates, and a growing dictionary.</p>
             <div class="home-layer-card__actions">
               <a href="fonoran/" class="btn btn--primary">Explore Language</a>
             </div>
@@ -147,8 +147,32 @@
         </div>
       </section>
 
+      <section class="home-section home-section--showcase content-section" aria-labelledby="how-heading">
+        <h2 id="how-heading">How It Works</h2>
+
+        <h3 class="home-how-subheading">Places of Articulation</h3>
+        <div id="home-places" class="home-symbol-grid" role="list" aria-label="Place symbols"></div>
+
+        <h3 class="home-how-subheading">Sound Modifiers</h3>
+        <div id="home-modifiers" class="home-symbol-grid" role="list" aria-label="Modifier symbols"></div>
+
+        <div class="home-how-summary">
+          <p>Fonora is built from only <b>nine</b> core symbols.</p>
+          <ul>
+            <li>Five symbols represent where sounds are produced in the mouth and vocal tract.</li>
+            <li>Four symbols modify those locations to create different sound types.</li>
+          </ul>
+          <p>Together they form a compact system capable of representing a wide range of human speech sounds.</p>
+        </div>
+
+        <div class="home-section-actions">
+          <button type="button" class="btn btn--primary" data-tab="grid">See Sound Grid</button>
+          <button type="button" class="btn" data-tab="alphabet">See Full Alphabet</button>
+        </div>
+      </section>
+
       <section class="home-section home-section--sample content-section" aria-labelledby="sample-heading">
-        <h2 id="sample-heading">See Fonora in Action</h2>
+        <h2 id="sample-heading">Fonora Script in Action</h2>
 
         <article class="home-sample-preview">
 
@@ -173,31 +197,6 @@
             <button type="button" class="btn home-sample-more-btn" data-tab="samples">More language samples</button>
           </footer>
         </article>
-      </section>
-
-      <section class="home-section content-section" aria-labelledby="how-heading">
-        <h2 id="how-heading">How It Works</h2>
-        <p>Fonora is built from only <b>nine</b> core symbols.</p>
-        <ul>
-          <li>Five symbols represent where sounds are produced in the mouth and vocal tract.</li>
-          <li>Four symbols modify those locations to create different sound types.</li>
-        </ul>
-        <p>Together they form a compact system capable of representing a wide range of human speech sounds.</p>
-
-        <h3 class="home-how-subheading">Places of Articulation</h3>
-        <p>The primary symbols describe where a sound is produced:</p>
-        <div id="home-places" class="home-symbol-grid" role="list" aria-label="Place symbols"></div>
-
-        <h3 class="home-how-subheading">Sound Modifiers</h3>
-        <p>Additional symbols modify those positions:</p>
-        <div id="home-modifiers" class="home-symbol-grid" role="list" aria-label="Modifier symbols"></div>
-
-        <p>By combining locations and modifiers, Fonora generates its complete sound inventory.</p>
-
-        <div class="home-section-actions">
-          <button type="button" class="btn btn--primary" data-tab="grid">See Sound Grid</button>
-          <button type="button" class="btn" data-tab="alphabet">See Full Alphabet</button>
-        </div>
       </section>
 
       <section class="home-section content-section" aria-labelledby="why-heading">
@@ -230,7 +229,7 @@
         </div>
       </section>
 
-      <section class="home-section content-section" aria-labelledby="goals-heading">
+      <section class="home-section home-section--card content-section" aria-labelledby="goals-heading">
         <h2 id="goals-heading">Project Goals</h2>
         <ul class="home-list home-list--goals">
           <li>Create a highly learnable writing system</li>
@@ -240,14 +239,12 @@
           <li>Remain visually simple and compact</li>
           <li>Stay open, accessible, and community-driven</li>
         </ul>
-      </section>
 
-      <section class="home-section home-section--status content-section" aria-labelledby="status-heading">
-        <h2 id="status-heading">Experimental Research Project</h2>
-        <p>Fonora is an active research project.</p>
-        <p>The symbol inventory, phonetic mappings, encoding rules, and tooling continue to evolve through experimentation and real-world testing.</p>
-        <p>This website serves as both documentation for the system and a laboratory for exploring new approaches to written language.</p>
-        <p class="home-status-emphasis"><strong>The goal of Fonora</strong> is to create a universal phonetic writing system where the symbols themselves describe how sounds are produced, allowing readers and speakers to infer pronunciation directly from the written form.</p>
+        <h2 id="status-heading" class="home-section__subheading">Experimental Research Project</h2>
+        <p>Fonora is an active open-source research project.</p>
+        <p>Its symbol inventory, phonetic mappings, encoding rules, and tools continue to evolve through experimentation, testing, and community feedback.</p>
+        <p>This website serves as both documentation and a research platform for exploring new approaches to written language.</p>
+        <p>The goal of Fonora is to develop a universal phonetic writing system whose symbols describe how speech is physically produced, allowing pronunciation to be inferred directly from the written form.</p>
       </section>
     </section>
 
@@ -546,7 +543,7 @@
         <h3>V3 vowel architecture validation</h3>
         <p class="section-desc">
           Validates the dedicated vowel word set through the full pipeline. Every output must use
-          <span class="symbol-text">⚬X</span> or <span class="symbol-text">⚬XᵔY</span> — no legacy
+          <span class="symbol-text">⚬X</span> or <span class="symbol-text">⚬XᵔY</span>. No legacy
           <span class="symbol-text">⚬⚬</span> marker.
         </p>
         <div class="encoder-generate-row">
@@ -689,7 +686,7 @@
     <section class="panel tab-panel" id="tab-breakdown" data-tab-panel="breakdown" hidden>
       <h2>Fonora Breakdown</h2>
 
-        <p class="section-desc">Learn how spoken sounds become Fonora symbols — see pronunciation, symbol components, and how each sound is physically produced. Hover or tap to link sounds across the word.</p>
+        <p class="section-desc">Learn how spoken sounds become Fonora symbols: see pronunciation, symbol components, and how each sound is physically produced. Hover or tap to link sounds across the word.</p>
 
       <div class="translate-controls">
         <div class="translate-control">

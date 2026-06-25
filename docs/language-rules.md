@@ -1,6 +1,6 @@
 # Language Rules
 
-These are the authoritative **encoding rules** for the Fonora phonetic script (Script Layer). The experimental **Fonoran** language is written using this script — see [platform-overview.md](platform-overview.md) and [fonoran.md](fonoran.md) for the language and builder tools.
+These are the authoritative **encoding rules** for the Fonora phonetic script (Script Layer). The experimental **Fonoran** language is written using this script, see [platform-overview.md](platform-overview.md) and [fonoran.md](fonoran.md) for the language and builder tools.
 
 ## Configuration
 
@@ -11,7 +11,7 @@ These are the authoritative **encoding rules** for the Fonora phonetic script (S
 
 ## Places of Articulation
 
-The **5 primary places** — edit symbols here; the sound grid and vowels recompose automatically.
+The **5 primary places**: edit symbols here; the sound grid and vowels recompose automatically.
 
 | id | symbol | key_number | key_letter | label | sound | explanation |
 | --- | --- | ---: | --- | --- | --- | --- |
@@ -35,7 +35,7 @@ The **4 manner modifiers** plus the **vowel indicator** (keyboard **0**).
 
 ## Sound Grid
 
-Symbols are **composed** from Places + Modifiers at load time (`modifier + place`). Five places only — no derived symbols.
+Symbols are **composed** from Places + Modifiers at load time (`modifier + place`). Five places only, no derived symbols.
 
 | modifier_id | place_id | sound | ipa | status | explanation |
 | --- | --- | --- | --- | --- | --- |
@@ -69,8 +69,8 @@ Symbols are **composed** from Places + Modifiers at load time (`modifier + place
 
 Vowels use a fixed **v3 grammar** (no double-vowel marker):
 
-* **Simple vowel:** `⚬X` — exactly 2 symbols (`X` = vowel class: place or manner glyph)
-* **Diphthong:** `⚬XᵔY` — exactly 4 symbols (`ᵔ` = glide; `Y` = destination articulation place)
+* **Simple vowel:** `⚬X`, exactly 2 symbols (`X` = vowel class: place or manner glyph)
+* **Diphthong:** `⚬XᵔY`, exactly 4 symbols (`ᵔ` = glide; `Y` = destination articulation place)
 
 Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction`, `nasal`) compose `X`; `glide` → **ᵔ**; trailing place id → `Y`.
 

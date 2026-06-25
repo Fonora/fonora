@@ -1,5 +1,5 @@
 /**
- * Shared vowel data access and UI helpers — single source from language-rules.md (`rules.vowels`).
+ * Shared vowel data access and UI helpers, single source from language-rules.md (`rules.vowels`).
  */
 
 export function getVowelEntries(rules) {

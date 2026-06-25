@@ -14,7 +14,7 @@ export const IPA_MULTIGRAPHS = [
 /**
  * Temporary engineering mappings: English IPA vowels → Fonora vowel categories.
  * Merged on top of language-rules.md vowel maps for consistency while the vowel
- * inventory is refined. Not linguistic truth — keeps the encoder functional.
+ * inventory is refined. Not linguistic truth, keeps the encoder functional.
  */
 export const ENGLISH_IPA_VOWEL_NORMALIZATION = {
   ɪ: 'i',
@@ -50,7 +50,7 @@ export const SUPPLEMENTAL_CONSONANT_MAP = {
   ʒ: 'j',
   ʎ: 'l',
   ɹ: 'r',
-  /** American English intervocalic flap — preserve spelling-like /t/ in Fonora keys. */
+  /** American English intervocalic flap, preserve spelling-like /t/ in Fonora keys. */
   ɾ: 't',
   ɽ: 'r',
   ʁ: 'r',

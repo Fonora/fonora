@@ -1,14 +1,14 @@
-/** Default markdown paths — symbols are never hardcoded here. */
-export const LANGUAGE_RULES_PATH = 'docs/language-rules.md';
+/** Default markdown paths, symbols are never hardcoded here. */
+export const LANGUAGE_RULES_PATH = '/docs/language-rules.md';
 
 /** Production site origin for canonical URLs and sharing metadata. */
 export const SITE_ORIGIN = 'https://fonora.org';
 
-/** Piper voice model CDN — browser fetches .onnx files lazily on first Listen. */
+/** Piper voice model CDN, browser fetches .onnx files lazily on first Listen. */
 export const PIPER_VOICE_BASE_URL =
   'https://huggingface.co/rhasspy/piper-voices/resolve/main/';
 
-/** ONNX Runtime WASM for Piper — must match piper-tts-web’s onnxruntime-web (1.20.x). */
+/** ONNX Runtime WASM for Piper, must match piper-tts-web’s onnxruntime-web (1.20.x). */
 export const ONNX_RUNTIME_VERSION = '1.20.1';
 export const ONNX_WASM_BASE_PATH = '/vendor/onnx/';
 export const ONNX_WASM_CDN_BASE = `https://unpkg.com/onnxruntime-web@${ONNX_RUNTIME_VERSION}/dist/`;

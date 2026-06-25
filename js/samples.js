@@ -41,7 +41,7 @@ async function translateSampleText(text, rules, lang) {
   };
 }
 
-/** Public-domain excerpts — Universal Declaration of Human Rights, Article 1. */
+/** Public-domain excerpts, Universal Declaration of Human Rights, Article 1. */
 const SAMPLES = [
   {
     id: 'en',
@@ -317,7 +317,7 @@ async function renderSampleFonora(sample, rules) {
       metaParts.push('Non-English mappings are experimental and may change.');
     }
     if (sample.lang === 'ja') {
-      metaParts.push('Japanese audio playback is not available yet — Fonora phonetic read-aloud requires a compatible neural voice.');
+      metaParts.push('Japanese audio playback is not available yet, Fonora phonetic read-aloud requires a compatible neural voice.');
     }
     if (sample.lang === 'zh') {
       metaParts.push('Chinese is rendered in phrases (not one block) for clearer playback and highlighting.');

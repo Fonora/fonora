@@ -95,7 +95,7 @@ export function validateComponents(components, bucket, { targetWordId = null, al
       const st = effectiveState(word);
       if (st === 'rejected') throw new Error(`Word "${word.spelling}" is rejected`);
       if (!allowUnapprovedWords && !REUSABLE_WORD_STATES.includes(st)) {
-        throw new Error(`Word "${word.spelling}" is not approved yet — approve it first or enable experimental mode`);
+        throw new Error(`Word "${word.spelling}" is not approved yet, approve it first or enable experimental mode`);
       }
     } else {
       throw new Error(`Invalid component type: ${comp.type}`);
@@ -105,7 +105,7 @@ export function validateComponents(components, bucket, { targetWordId = null, al
   if (wouldCreateCycle(components, bucket, targetWordId)) {
     const wordComp = components.find(c => c.type === 'word');
     const label = wordComp ? findWord(bucket, wordComp.ref)?.spelling ?? wordComp.ref : 'component';
-    throw new Error(`Cannot use ${label} here — it would create a circular derivation`);
+    throw new Error(`Cannot use ${label} here, it would create a circular derivation`);
   }
 }
 

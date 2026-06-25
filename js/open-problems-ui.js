@@ -119,7 +119,7 @@ export function renderOpenProblemsPage() {
     <section class="op-intro" aria-labelledby="op-intro-heading">
       <h3 id="op-intro-heading" class="visually-hidden">Introduction</h3>
       <p>
-        Fonora is an <strong>experimental</strong>, open-source research project — a compact phonetic writing system
+        Fonora is an <strong>experimental</strong>, open-source research project, a compact phonetic writing system
         built from nine core symbols. Limitations are expected; we document them openly so contributors can help close gaps.
       </p>
       <p>
@@ -142,7 +142,7 @@ export function renderOpenProblemsPage() {
     <section class="op-section" aria-labelledby="op-categories-heading">
       <h3 id="op-categories-heading" class="op-section-title">Problem categories</h3>
       <p class="op-section-desc">
-        Known limitations grouped by research area. Status reflects current code and docs — not a promise of future scope.
+        Known limitations grouped by research area. Status reflects current code and docs, not a promise of future scope.
       </p>
       <div class="op-card-grid">
         ${PROBLEM_CATEGORIES.map(renderProblemCard).join('')}

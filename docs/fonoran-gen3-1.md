@@ -1,6 +1,6 @@
-# Fonoran Gen 3.1 — Phonetic Distinctiveness Layer
+# Fonoran Gen 3.1: Phonetic Distinctiveness Layer
 
-> **Status:** experimental — extends Gen 3 without changing semantic coordinate theory  
+> **Status:** experimental, extends Gen 3 without changing semantic coordinate theory  
 > **Previous:** [`fonoran-gen3.md`](fonoran-gen3.md) (frozen for comparison)
 
 Gen 3.1 adds a **phonetic distribution layer** on top of unchanged DDA semantics (depth · mode · aspect). Coordinates in `⟨D,M,A⟩` notation are identical in meaning to Gen 3; only **roman phonetic realization** is optimized for human learnability.
@@ -30,9 +30,9 @@ Semantic aspect **A** remains authoritative in coordinates. Phonetic vowel may *
 
 When a root uses a non-canonical vowel, coordinates record:
 
-- `vowel_canonical` — vowel from aspect map (semantic)
-- `vowel` — phonetic realization chosen
-- `phonetic_spread: true` — spread applied
+- `vowel_canonical`, vowel from aspect map (semantic)
+- `vowel`, phonetic realization chosen
+- `phonetic_spread: true`, spread applied
 
 Example: **mark** stays `⟨index, flux, focal⟩` but root may be `si` (phonetic `i`) instead of Gen 3's `see`.
 
@@ -72,7 +72,7 @@ For each primitive (derivation-linked first):
 | Memorability | improve | **85** (Gen 3: 70) ✓ |
 | Grid repair rate | ≤22% ideal | **31%** (documented tradeoff) |
 
-Grid repair rate rose slightly because distinctiveness sometimes requires manner/place rotation at reserved throat cells — a documented tradeoff for rhyme reduction (see `npm run fonoran:gen3:compare`).
+Grid repair rate rose slightly because distinctiveness sometimes requires manner/place rotation at reserved throat cells, a documented tradeoff for rhyme reduction (see `npm run fonoran:gen3:compare`).
 
 ---
 
@@ -117,6 +117,6 @@ Gen 3 files are **preserved** for side-by-side reference and DDA inference.
 
 ## Design notes
 
-- **CVC extensions** use plain codas from the Fonora grid (`p,t,ch,k,h`) — not English borrowings
+- **CVC extensions** use plain codas from the Fonora grid (`p,t,ch,k,h`), not English borrowings
 - Three-root compounds remain in examples (working-memory load documented; not shortened in 3.1)
 - Future Gen 3.2 may add compound boundary markers without touching DDA theory

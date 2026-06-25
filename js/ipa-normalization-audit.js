@@ -1,5 +1,5 @@
 /**
- * IPA normalization audit helpers — token inventory and corpus coverage.
+ * IPA normalization audit helpers, token inventory and corpus coverage.
  */
 import {
   ENGLISH_IPA_VOWEL_NORMALIZATION,
@@ -59,7 +59,7 @@ export function tokenizeCleanedIpa(cleaned, multigraphs) {
 }
 
 function mappingLabel(phonemes) {
-  if (!phonemes.length) return '—';
+  if (!phonemes.length) return '-';
   return phonemes.join('+');
 }
 
@@ -165,7 +165,7 @@ export function formatAuditMarkdown(rows, meta = {}) {
     '',
     `Generated: ${meta.generatedAt || new Date().toISOString()}`,
     `Dialect: ${meta.dialect || 'en-us'}`,
-    `Corpus words: ${meta.wordCount ?? '—'}`,
+    `Corpus words: ${meta.wordCount ?? '-'}`,
     `Unique IPA tokens: ${summary.uniqueTokens}`,
     `Unmapped before engineering table: ${summary.unmappedBeforeCount}`,
     `Still unmapped (fallback only): ${summary.stillUnmappedCount}`,
@@ -226,7 +226,7 @@ export function formatDiagnosticsMarkdown(rows, meta = {}) {
   ];
 
   for (const row of rows) {
-    const warn = row.warnings?.length ? row.warnings.join('; ') : '—';
+    const warn = row.warnings?.length ? row.warnings.join('; ') : '-';
     lines.push(
       `| ${row.word} | ${escapeCell(row.ipa)} | ${escapeCell(row.normalizedIpa)} | ${escapeCell(row.fonoraPhonemes)} | ${escapeCell(row.fonoraSymbols)} | ${escapeCell(row.decoded)} | ${escapeCell(warn)} |`,
     );
@@ -243,5 +243,5 @@ export function formatDiagnosticsMarkdown(rows, meta = {}) {
 }
 
 function escapeCell(value) {
-  return String(value || '—').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+  return String(value || '-').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 }

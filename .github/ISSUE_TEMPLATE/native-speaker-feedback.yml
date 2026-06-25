@@ -8,7 +8,7 @@ body:
     attributes:
       value: |
         Review Fonora Translator or Reader output as a native or fluent speaker.
-        No phonetics background required — describe what sounds right or wrong.
+        No phonetics background required, describe what sounds right or wrong.
 
   - type: input
     id: language
@@ -32,7 +32,7 @@ body:
       label: Overall impression
       options:
         - mostly accurate
-        - mixed — some words wrong
+        - mixed: some words wrong
         - mostly wrong
         - cannot judge (need audio / more context)
     validations:

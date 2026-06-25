@@ -1,6 +1,6 @@
 # Fonoran auth, contributions, and release plan
 
-> **Status:** implemented — Google OAuth for Fonoran write access.
+> **Status:** implemented, Google OAuth for Fonoran write access.
 
 This document covers how to protect live Fonoran vocabulary in production, how contributors apply to help, and what must be true before merging `feature/fonoran-language-experiment` and deploying to [fonora.org](https://fonora.org).
 
@@ -14,7 +14,7 @@ For deployment mechanics, see [deploy.md](deploy.md). For vocabulary model and A
 | --- | --- |
 | **Fonora script** stays open | Public read + GitHub PRs for `language-rules.md` and encoder changes |
 | **Fonoran language** edits are controlled | Google OAuth for builder write access; public read-only dictionary |
-| **Contributor intake** | Google Form (Workspace) — no in-app form, no admin panel |
+| **Contributor intake** | Google Form (Workspace), no in-app form, no admin panel |
 | **Admin workflow** | You sign in with Google, use existing builder tabs (Root Creator, Review, etc.) |
 | **Open source repo** | Auth middleware and docs in git; secrets and live vocabulary stay out of git |
 
@@ -28,7 +28,7 @@ For deployment mechanics, see [deploy.md](deploy.md). For vocabulary model and A
 
 ---
 
-## Authentication (Phase 1 — required before production writes)
+## Authentication (Phase 1: required before production writes)
 
 ### Identity provider
 
@@ -43,13 +43,13 @@ For deployment mechanics, see [deploy.md](deploy.md). For vocabulary model and A
 
 ```
 Public (no login)
-  GET  /api/fonoran/*          — lab, dictionary, graph, health, lexicon
-  GET  /fonoran/               — lander, dictionary, explorer (read-only UI)
+  GET  /api/fonoran/*         , lab, dictionary, graph, health, lexicon
+  GET  /fonoran/              , lander, dictionary, explorer (read-only UI)
 
 Admin (@fonora.org Google session)
-  POST /api/fonoran/*          — create roots, compounds, review, DDA, undo
-  PATCH /api/fonoran/*         — edit sounds, compounds, review state
-  /fonoran/ builder tabs       — Root Creator, Word Creator, Review, Advanced
+  POST /api/fonoran/*         , create roots, compounds, review, DDA, undo
+  PATCH /api/fonoran/*        , edit sounds, compounds, review state
+  /fonoran/ builder tabs      , Root Creator, Word Creator, Review, Advanced
 ```
 
 ### Implementation sketch
@@ -67,7 +67,7 @@ Admin (@fonora.org Google session)
 | `GOOGLE_CLIENT_ID` | OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | OAuth client secret |
 | `SESSION_SECRET` | Random 32+ byte secret for signing cookies |
-| `ALLOWED_DOMAIN` | e.g. `fonora.org` — only `@fonora.org` accounts may write |
+| `ALLOWED_DOMAIN` | e.g. `fonora.org`, only `@fonora.org` accounts may write |
 | `AUTH_CALLBACK_URL` | Optional override; default derived from request host |
 
 Existing vars unchanged: `DATABASE_URL`, `FONORAN_STORAGE`, etc.
@@ -110,7 +110,7 @@ Use a **Google Form** in Workspace (linked from `/fonoran/` lander and [CONTRIBU
 - Collect email addresses (Workspace)
 - Limit to one response per Google account (optional)
 - Notification email to `you@fonora.org` on each submission
-- Do **not** embed Form API keys in the repo — link to the public Form URL only
+- Do **not** embed Form API keys in the repo, link to the public Form URL only
 
 ### Placeholder URL
 
@@ -166,9 +166,9 @@ Live vocabulary on production lives in **PostgreSQL** (or local gitignored JSON)
 
 ### Blockers before production deploy ⚠️
 
-1. **Unauthenticated write API** — all `POST`/`PATCH` routes in `fonoran-api.js` are open today. Do **not** deploy with `DATABASE_URL` until Phase 1 auth ships (or temporarily disable mutating routes).
-2. **Dangerous ops exposed** — `POST /api/fonoran/lab/seed`, `reset-review`, and `undo` must require admin session.
-3. **CI** — GitHub Actions runs on PR to `main`; open PR to validate CI on this branch.
+1. **Unauthenticated write API**: all `POST`/`PATCH` routes in `fonoran-api.js` are open today. Do **not** deploy with `DATABASE_URL` until Phase 1 auth ships (or temporarily disable mutating routes).
+2. **Dangerous ops exposed**: `POST /api/fonoran/lab/seed`, `reset-review`, and `undo` must require admin session.
+3. **CI**: GitHub Actions runs on PR to `main`; open PR to validate CI on this branch.
 
 ### Safe to merge to `main` for open source? 
 
@@ -215,18 +215,18 @@ Optional follow-up (not blockers for merge):
 
 ## Implementation order
 
-1. **Google Workspace** — email + OAuth app + Form
-2. **Auth middleware** — session + write protection on API
-3. **Builder login UX** — sign in button, hide writes when logged out
-4. **Merge to `main`** — open source release
-5. **Production deploy** — with Postgres + auth env vars
-6. **Form link** — on lander and CONTRIBUTING
+1. **Google Workspace**: email + OAuth app + Form
+2. **Auth middleware**: session + write protection on API
+3. **Builder login UX**: sign in button, hide writes when logged out
+4. **Merge to `main`**: open source release
+5. **Production deploy**: with Postgres + auth env vars
+6. **Form link**: on lander and CONTRIBUTING
 
 ---
 
 ## Related docs
 
-- [platform-overview.md](platform-overview.md) — three-layer architecture
-- [fonoran.md](fonoran.md) — vocabulary model and API
-- [deploy.md](deploy.md) — Heroku, PostgreSQL, production checklist
-- [CONTRIBUTING.md](../CONTRIBUTING.md) — contribution paths
+- [platform-overview.md](platform-overview.md), three-layer architecture
+- [fonoran.md](fonoran.md), vocabulary model and API
+- [deploy.md](deploy.md), Heroku, PostgreSQL, production checklist
+- [CONTRIBUTING.md](../CONTRIBUTING.md), contribution paths

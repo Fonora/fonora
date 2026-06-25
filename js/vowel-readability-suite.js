@@ -178,7 +178,7 @@ export function formatVowelReadabilityReport(suiteResult) {
   lines.push('| ----- | ----- | ---------- | --------------------- |');
   for (const g of suiteResult.withinGroupCollisions) {
     if (!g.hasCollision) {
-      lines.push(`| ${g.groupLabel} | ${g.words.join(', ')} | No | — |`);
+      lines.push(`| ${g.groupLabel} | ${g.words.join(', ')} | No | - |`);
       continue;
     }
     for (const c of g.decodedCollisions) {

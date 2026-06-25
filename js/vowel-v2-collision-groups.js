@@ -1,5 +1,5 @@
 /**
- * Critical V2 collision test groups — English minimal pairs for vowel-plane evaluation.
+ * Critical V2 collision test groups, English minimal pairs for vowel-plane evaluation.
  */
 export const V2_COLLISION_GROUPS = [
   {

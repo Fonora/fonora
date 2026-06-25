@@ -1,6 +1,6 @@
 # Fonora Language System Cleanup Audit
 
-> **Post-cleanup addendum (June 2026)** — UI and pipeline changes after this audit:
+> **Post-cleanup addendum (June 2026)**: UI and pipeline changes after this audit:
 >
 > - **Rules version:** v3 (`fonora_version: v3`, vowel grammar `⚬X` / `⚬XᵔY`); v2 double-vowel `⚬⚬` retired.
 > - **Removed UI:** Mini Dictionary, Decode panel, separate Keyboard Mapping tab. Keyboard mapping merged into **Keyboard** page.
@@ -74,7 +74,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 
 | Module | Concern |
 | --- | --- |
-| `load-language-rules.js` | Parses markdown, builds IPA map, builds registry, validates, loads bundles — consider splitting parser vs runtime builder |
+| `load-language-rules.js` | Parses markdown, builds IPA map, builds registry, validates, loads bundles, consider splitting parser vs runtime builder |
 | `rules.js` | Facade + encode/decode entry builders + throat `/h/` override + keyboard map + re-exports |
 | `app.js` | UI wiring, rules loading, grid rendering, translator, quiz, alphabet lab bootstrap |
 | `encoder-testing.js` | Session management, pipeline execution, filtering, review persistence, export |
@@ -88,7 +88,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 | `encodeSounds(pronunciation)` | Input is Fonora phoneme keys, not IPA or English | `encodePhonemes(phonemeString)` |
 | `ipaPhonemesToFonora()` | Input is already normalized phonemes | `phonemesToFonora()` |
 | `ipa-to-fonora.js` | Misleading layer name | `phoneme-to-fonora.js` |
-| `languageSpelling` (removed glossary field) | Was Fonora symbol output in deleted dictionary UI | N/A — feature removed |
+| `languageSpelling` (removed glossary field) | Was Fonora symbol output in deleted dictionary UI | N/A, feature removed |
 | `#experimental-vowels-section` | Visible production vowel table | `#vowels-section` |
 | `getDefinedSounds()` | Returns phoneme keys | `getEncodablePhonemeKeys()` |
 
@@ -114,7 +114,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → Fonora phonemes → encodeSo
 | Issue | Details | Severity |
 | --- | --- | --- |
 | Hardcoded consonant map | `CONSONANT_MAP` in `ipa-normalize.js` must be manually synced with grid/derived sounds. Extra mappings (`ts→c`, `dz→j`, `β→v`, etc.) exist for multilingual IPA but are not documented. | **High** |
-| Throat `/h/` encoding | Plain throat ⊃ documents `/h/` in grid; unit tests expect `h` ↔ `⊃`. Earlier audit noted a possible friction+throat remap — not in current `encodeSounds()` path. | **Low** (verify if IPA pipeline differs) |
+| Throat `/h/` encoding | Plain throat ⊃ documents `/h/` in grid; unit tests expect `h` ↔ `⊃`. Earlier audit noted a possible friction+throat remap, not in current `encodeSounds()` path. | **Low** (verify if IPA pipeline differs) |
 | IPA vowel token collisions | `buildIpaVowelMapFromVowels()` last-writer-wins when rows share IPA tokens. The `e` row claims `ɛ, e, eː, ɜ, ɜː` alongside other mappings. | **Medium** |
 | `plain` modifier | Used in sound grid but not listed in modifiers table. Works (`plain` → empty prefix). | **Low** |
 | Middle tongue plain `c` | Markdown IPA: `/tʃ/ or /c/`; grid sound is `c`; normalize maps `tʃ→c`, `ts→c`. | **Low** (document) |
@@ -243,7 +243,7 @@ Pronunciation Testing cards show: word, lang/voice, test set, source badge, IPA,
 | `applyIpaVowelMap()` adoption | DRY in app/tests |
 | Consolidate collision test fixtures | Reduce drift between vowel suites |
 | Split `app.js` | Maintainability |
-| Rename `languageSpelling` → `fonoraSymbols` | N/A — glossary removed |
+| Rename `languageSpelling` → `fonoraSymbols` | N/A, glossary removed |
 
 ---
 
@@ -269,7 +269,7 @@ Pronunciation Testing cards show: word, lang/voice, test set, source badge, IPA,
 | Tests validate phonetics not spelling | ✓ for IPA-path tests; phoneme encoder tests use phoneme strings intentionally |
 | Failures are language-system not stale spelling encoder | ✓ legacy encoder removed; issue tags still reference spelling concepts |
 | Homophones (`eight`/`ate`) expected same output | **Not automated**; words exist in `same-sound-groups` fixture for manual review |
-| Vowel distinctions tested | ✓ TRAP/LOT/STRUT groups distinguish (`kaet`/`kot`/`kat`); 1 known collision group (`palm`/`pom` — identical eSpeak IPA) |
+| Vowel distinctions tested | ✓ TRAP/LOT/STRUT groups distinguish (`kaet`/`kot`/`kat`); 1 known collision group (`palm`/`pom`, identical eSpeak IPA) |
 
 ### Test output detail
 
@@ -286,10 +286,10 @@ Pronunciation Testing cards show: word, lang/voice, test set, source badge, IPA,
 
 ### Notable test findings
 
-- **`car` decodes to `koy`** while `core` decodes to `kohr` — symbols differ but decoded form for `car` may surprise reviewers (rhotic / phoneme-key interaction).
+- **`car` decodes to `koy`** while `core` decodes to `kohr`, symbols differ but decoded form for `car` may surprise reviewers (rhotic / phoneme-key interaction).
 - **Multilingual regression:** 3/13 words hit `?` fallback in v2 collision suite console output.
 - **`V2_COLLISION_GROUPS` test** only checks `length === 5`; does not run collision suite in `npm test`.
-- **Random test mode** uses phoneme-string encoder with IPA shown as `—` — easy to misread as broken pipeline.
+- **Random test mode** uses phoneme-string encoder with IPA shown as `-`, easy to misread as broken pipeline.
 
 ### Recommended test improvements (future work)
 
@@ -334,34 +334,34 @@ Pronunciation Testing cards show: word, lang/voice, test set, source badge, IPA,
 
 Execute in small, reviewable commits after manual approval:
 
-### Commit 1 — Documentation (done on this branch)
+### Commit 1: Documentation (done on this branch)
 - Audit report + stale doc/label fixes
 
-### Commit 2 — Safe dead code removal
+### Commit 2: Safe dead code removal
 - Remove `#experimental-derived-section` and unused exports (`getCategoryById`, `allVowelTestWords`, `allV2CollisionWords`, `formatWordRow`)
 - Remove orphan `vowel-normalize-experiment.js` or add npm script if still wanted
 - Remove redundant `english-dialect-comparison` TEST_CATEGORY
 
-### Commit 3 — Naming refactor (behavior-preserving)
+### Commit 3: Naming refactor (behavior-preserving)
 - Rename `experimentalVowels` → `vowels` (keep alias temporarily)
 - Rename `specialDerivedSounds` → `derivedSounds`
 - Rename DOM ids `experimental-vowels-*` → `vowels-*`
 - Use `applyIpaVowelMap()` in app and tests
 
-### Commit 4 — Single source of truth for consonants
+### Commit 4: Single source of truth for consonants
 - Generate `CONSONANT_MAP` from composed grid + derived sounds at load
 - Document or markdown-specify multilingual extras (`ts`, `dz`, `β`, etc.)
 
-### Commit 5 — Throat `/h/` documentation
+### Commit 5: Throat `/h/` documentation
 - Add note to `language-rules.md` explaining encoder override
 - Or promote `/h/` to explicit derived/reserved composition
 
-### Commit 6 — Test harness improvements
+### Commit 6: Test harness improvements
 - Homophone auto-tests for `same-sound-groups`
 - Collision suite wired into `npm test`
 - Phonetic issue tags in Pronunciation Testing UI
 
-### Commit 7 — Consolidate vowel test fixtures
+### Commit 7: Consolidate vowel test fixtures
 - Merge or clearly separate `VOWEL_MINIMAL_PAIR_GROUPS` vs `V2_COLLISION_GROUPS`
 - Deduplicate dialect comparison fixtures
 
@@ -371,12 +371,12 @@ Execute in small, reviewable commits after manual approval:
 
 1. **Confirm `/h/` → ⌀⊃ override** is intentional and should be documented vs encoded differently in markdown.
 2. **IPA vowel map precedence** when multiple rows claim the same token (especially `e` row).
-3. **`car` → decoded `koy`** — is this acceptable or a decode/phoneme-key bug?
-4. **Spelling-era issue tags** — rename vs keep for human reviewers?
-5. **`composeVowelSymbol` plane path** — safe to delete?
-6. **`derivedSymbols` parser** — planned feature or dead code?
-7. **Multilingual `?` fallbacks (3/13)** — expand consonant map or accept as known gaps?
-8. **Reports in git** — commit regenerated reports or gitignore `reports/`?
+3. **`car` → decoded `koy`**: is this acceptable or a decode/phoneme-key bug?
+4. **Spelling-era issue tags**: rename vs keep for human reviewers?
+5. **`composeVowelSymbol` plane path**: safe to delete?
+6. **`derivedSymbols` parser**: planned feature or dead code?
+7. **Multilingual `?` fallbacks (3/13)**: expand consonant map or accept as known gaps?
+8. **Reports in git**: commit regenerated reports or gitignore `reports/`?
 
 ---
 

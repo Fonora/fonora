@@ -1,5 +1,5 @@
 /**
- * Fonora text-to-speech — decode symbols and speak Fonora phonetics via Piper or eSpeak IPA.
+ * Fonora text-to-speech, decode symbols and speak Fonora phonetics via Piper or eSpeak IPA.
  */
 import { decodeToPhonemeKeys } from './decode.js';
 import { getAllSymbols } from './rules.js';

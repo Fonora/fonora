@@ -97,7 +97,7 @@ function syncReaderControls() {
   if (piperVoice) {
     voiceNote.textContent = `Neural voice: ${piperVoice.replace(/_/g, ' ')}. Falls back to eSpeak IPA if the voice fails to load.`;
   } else {
-    voiceNote.textContent = 'No Piper neural voice for this language — playback uses eSpeak IPA.';
+    voiceNote.textContent = 'No Piper neural voice for this language, playback uses eSpeak IPA.';
   }
 }
 
@@ -234,9 +234,9 @@ async function handlePlay() {
       showStatus('Stopped.');
       clearWordHighlight();
     } else if (result.skipped > 0) {
-      showStatus(`Finished — ${result.spoken} spoken, ${result.skipped} skipped.`, { isError: true });
+      showStatus(`Finished, ${result.spoken} spoken, ${result.skipped} skipped.`, { isError: true });
     } else {
-      showStatus(`Finished — ${result.spoken} word${result.spoken === 1 ? '' : 's'}.`, { isSuccess: true });
+      showStatus(`Finished, ${result.spoken} word${result.spoken === 1 ? '' : 's'}.`, { isSuccess: true });
     }
   } catch (err) {
     hideLoading();

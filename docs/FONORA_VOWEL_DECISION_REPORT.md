@@ -2,7 +2,7 @@
 
 > **Superseded by v3 vowel architecture** (see `language-rules.md`, `fonora_version: v3`). This report analyzed the retired v2 double-vowel system (`⚬⚬`). Retained for historical context only.
 
-**Status:** Decision document only — no language redesign, no code changes, no `language-rules.md` edits yet.
+**Status:** Decision document only, no language redesign, no code changes, no `language-rules.md` edits yet.
 
 **Date:** 2026-06-22  
 **Rules version:** v2 (`ipa_vowel_mode: v2`)  
@@ -80,10 +80,10 @@ Related (not same minimal pair, but same key): FACE monophthong `eː` also maps 
 
 | Criterion | Assessment |
 | --- | --- |
-| Human readability | **Poor** for English learners — *bed* and *bird* are a classic minimal pair; merged spelling removes a high-frequency contrast. |
-| Phonetic precision | **Poor** — NURSE and DRESS are separate standard lexical sets with distinct vowel quality. |
-| Cross-dialect tolerance | **Mixed** — NURse vowel quality varies (rhotic vs non-rhotic), but merging with DRESS is not dialect-driven; it is inventory compression. |
-| Minimal symbol count | **Strong** — one core front vowel slot (⚬⚬∩) covers two major English classes. |
+| Human readability | **Poor** for English learners, *bed* and *bird* are a classic minimal pair; merged spelling removes a high-frequency contrast. |
+| Phonetic precision | **Poor**: NURSE and DRESS are separate standard lexical sets with distinct vowel quality. |
+| Cross-dialect tolerance | **Mixed**: NURse vowel quality varies (rhotic vs non-rhotic), but merging with DRESS is not dialect-driven; it is inventory compression. |
+| Minimal symbol count | **Strong**: one core front vowel slot (⚬⚬∩) covers two major English classes. |
 
 ### 6. Recommended options
 
@@ -101,7 +101,7 @@ Related (not same minimal pair, but same key): FACE monophthong `eː` also maps 
 | Suite | Impact if split |
 | --- | --- |
 | `npm test` | Update `normalizeIpa('ɜː')` expectations; add round-trip tests for *bed* vs *bird* distinct symbols |
-| `test:v2-collisions` | No current group covers DRESS/NURSE — **new minimal-pair group recommended** |
+| `test:v2-collisions` | No current group covers DRESS/NURSE, **new minimal-pair group recommended** |
 | `audit:collisions` | `e + y` ↔ `ay` collision unchanged; no direct `e`-family concat collision today |
 | Pronunciation validation | Would still round-trip; **new metric**: within-family homograph rate |
 | Vowel readability report | Would gain a DRESS/NURSE distinction row |
@@ -130,7 +130,7 @@ Related (not same minimal pair, but same key): FACE monophthong `eː` also maps 
 | Stressed vs unstressed syllables | e.g. *cup* vs *about* (final vowel) | Both use `a` when schwa/ʌ-class |
 | STRUT vs near-open weak | ʌ vs ɐ | Same key |
 
-**Note:** TRAP (`ae`) and STRUT (`a`) remain **distinct keys** — `cat`/`cut` still contrast.
+**Note:** TRAP (`ae`) and STRUT (`a`) remain **distinct keys**: `cat`/`cut` still contrast.
 
 ### 4. Real word examples (en-us pipeline)
 
@@ -142,16 +142,16 @@ Related (not same minimal pair, but same key): FACE monophthong `eː` also maps 
 | sofa | sˈoʊfə | s ow f **a** | Final schwa → `a` |
 | cut | kˈʌt | k **a** t | Same key as schwa words |
 
-*cup* and unstressed vowels in *about* / *hello* / *sofa* all use ⚬⊃ — but **cup** vs **cut** still differ from *cat* via `ae`.
+*cup* and unstressed vowels in *about* / *hello* / *sofa* all use ⚬⊃, but **cup** vs **cut** still differ from *cat* via `ae`.
 
 ### 5. Merger acceptability
 
 | Criterion | Assessment |
 | --- | --- |
-| Human readability | **Mixed** — learners may accept one “short central” glyph for schwa + STRUT; linguists expect schwa as separate category. |
-| Phonetic precision | **Moderate loss** — stress-neutral schwa is not the same phoneme as stressed STRUT, but merger matches some practical orthographies. |
-| Cross-dialect tolerance | **Good** — STRUT vowel quality varies widely; schwa is universal; single central key is defensible for a **phonemic shorthand** system. |
-| Minimal symbol count | **Strong** — one throat-place vowel (⚬⊃) for all central lax vowels. |
+| Human readability | **Mixed**: learners may accept one “short central” glyph for schwa + STRUT; linguists expect schwa as separate category. |
+| Phonetic precision | **Moderate loss**: stress-neutral schwa is not the same phoneme as stressed STRUT, but merger matches some practical orthographies. |
+| Cross-dialect tolerance | **Good**: STRUT vowel quality varies widely; schwa is universal; single central key is defensible for a **phonemic shorthand** system. |
+| Minimal symbol count | **Strong**: one throat-place vowel (⚬⊃) for all central lax vowels. |
 
 ### 6. Recommended options
 
@@ -169,7 +169,7 @@ Related (not same minimal pair, but same key): FACE monophthong `eː` also maps 
 | Suite | Impact if split |
 | --- | --- |
 | `npm test` | `schwa vowel encodes as ⚬⊃` → would need two central keys; `pa`/`pee` demos unchanged |
-| `test:v2-collisions` | Group 1 (*cat/cot/cut*) unaffected — uses `ae`/`o`/`a` as **different keys** |
+| `test:v2-collisions` | Group 1 (*cat/cot/cut*) unaffected, uses `ae`/`o`/`a` as **different keys** |
 | `audit:collisions` | No concat collision on `a` alone |
 | Pronunciation validation | *hello*, *about* would change symbols if schwa split |
 | Supplemental `ɚ` → `a` + `r` | Splitting schwa affects rhotic decomposition policy |
@@ -187,11 +187,11 @@ Related (not same minimal pair, but same key): FACE monophthong `eː` also maps 
 | ɑː | PALM / START / CAR (en-us: often [ɑɹ]) |
 | ɔː | THOUGHT / NORTH / FORCE (en-us: often [ɔɹ]) |
 
-Rules lexical_set: **LOT / THOUGHT** — PALM/START is **not named** but included via ɑː.
+Rules lexical_set: **LOT / THOUGHT**: PALM/START is **not named** but included via ɑː.
 
 ### 2. Current example words (rules)
 
-- **Rules example:** *father* (PALM/FATHER — uses ɑː, not LOT short vowel)
+- **Rules example:** *father* (PALM/FATHER, uses ɑː, not LOT short vowel)
 
 The example word documents PALM-class while the lexical_set name says LOT/THOUGHT.
 
@@ -201,8 +201,8 @@ The example word documents PALM-class while the lexical_set name says LOT/THOUGH
 | --- | --- | --- |
 | LOT vs THOUGHT (short vs long back) | ɑ vs ɔː | Same key `o` when mapped |
 | PALM/START vs LOT | ɑː vs ɑ | Same key `o` |
-| THOUGHT vs PALM (en-us) | ɔː vs ɑː | Same key `o` — **hot/caught/father/car** merge |
-| PALM vs GOAT (monophthong) | ɑː vs o | **Distinct** — `o` vs `oh` (*car* vs *core*) |
+| THOUGHT vs PALM (en-us) | ɔː vs ɑː | Same key `o`, **hot/caught/father/car** merge |
+| PALM vs GOAT (monophthong) | ɑː vs o | **Distinct**: `o` vs `oh` (*car* vs *core*) |
 
 Cross-key contrasts preserved: TRAP `ae` vs `o` (*cat*/*cot*), STRUT `a` vs `o` (*cut*/*cot*).
 
@@ -218,16 +218,16 @@ Cross-key contrasts preserved: TRAP `ae` vs `o` (*cat*/*cot*), STRUT `a` vs `o` 
 | core | kˈoːɹ | k **oh** r | ∪ ⚬∪ ᵔ⌓ |
 | saw | sˈɔː | s **o** | ⌀∩ ⚬⚬∪ |
 
-**hot**, **caught**, **father**, and **car** all use ⚬⚬∪ — identical vowel symbol regardless of THOUGHT vs PALM class.
+**hot**, **caught**, **father**, and **car** all use ⚬⚬∪, identical vowel symbol regardless of THOUGHT vs PALM class.
 
 ### 5. Merger acceptability
 
 | Criterion | Assessment |
 | --- | --- |
-| Human readability | **Poor for en-us learners** — *hot*/*caught* and *car*/*core* involve distinct vowel classes; only the latter pair is separated (`o` vs `oh`). |
-| Phonetic precision | **Poor** — three major back-vowel classes in one key; rules text already acknowledges two (LOT/THOUGHT) and silently adds PALM via IPA. |
-| Cross-dialect tolerance | **Mixed** — merger absorbs GB/US differences into one glyph, but hides contrasts that **are** maintained in each dialect internally. |
-| Minimal symbol count | **Strong** — one back double-vowel slot (⚬⚬∪) covers most non-GOAT back vowels. |
+| Human readability | **Poor for en-us learners**: *hot*/*caught* and *car*/*core* involve distinct vowel classes; only the latter pair is separated (`o` vs `oh`). |
+| Phonetic precision | **Poor**: three major back-vowel classes in one key; rules text already acknowledges two (LOT/THOUGHT) and silently adds PALM via IPA. |
+| Cross-dialect tolerance | **Mixed**: merger absorbs GB/US differences into one glyph, but hides contrasts that **are** maintained in each dialect internally. |
+| Minimal symbol count | **Strong**: one back double-vowel slot (⚬⚬∪) covers most non-GOAT back vowels. |
 
 ### 6. Recommended options
 
@@ -246,9 +246,9 @@ Cross-key contrasts preserved: TRAP `ae` vs `o` (*cat*/*cot*), STRUT `a` vs `o` 
 | Suite | Impact if split |
 | --- | --- |
 | `npm test` | `cat/cot/cut`, `encodeFromIpa('kɑt')` assertions; recipe composition tests for `o` |
-| `test:v2-collisions` | Groups 1, 2, 4, 5 use `o` — would **still pass** if splits distinguish *cot* vs *caught* vs *car* |
-| `audit:collisions` | **`o + r` ↔ `oy`** and **`o + y` ↔ `eye`**, **`o + w` ↔ `ow`** — splits may **reduce** vowel+glide collisions if sequences no longer match composites |
-| Pronunciation validation | 5 collision warnings on *bar/car/far/for/farther* — structural; splitting `o` may change collision class membership |
+| `test:v2-collisions` | Groups 1, 2, 4, 5 use `o`, would **still pass** if splits distinguish *cot* vs *caught* vs *car* |
+| `audit:collisions` | **`o + r` ↔ `oy`** and **`o + y` ↔ `eye`**, **`o + w` ↔ `ow`**: splits may **reduce** vowel+glide collisions if sequences no longer match composites |
+| Pronunciation validation | 5 collision warnings on *bar/car/far/for/farther*, structural; splitting `o` may change collision class membership |
 | Vowel test sets | Groups 5–8 (*pan/pawn*, *father/fodder*, *car/core*, *palm/pom*) document contrasts **partially lost** in spelling |
 
 ---
@@ -275,7 +275,7 @@ Rules lexical_set explicitly names **both**: MOUTH / GOAT diphthong.
 | Contrast | Families | Fonora result |
 | --- | --- | --- |
 | MOUTH vs GOAT diphthong | aʊ vs oʊ | Same key `ow`, symbol ⚬⚬∪ᵔ∋ |
-| GOAT monophthong vs diphthong | `oh` vs `ow` | **Distinct keys** — *core* uses `oh`, *go* uses `ow` |
+| GOAT monophthong vs diphthong | `oh` vs `ow` | **Distinct keys**: *core* uses `oh`, *go* uses `ow` |
 
 ### 4. Real word examples (en-us pipeline)
 
@@ -287,16 +287,16 @@ Rules lexical_set explicitly names **both**: MOUTH / GOAT diphthong.
 | sofa | sˈoʊfə | s **ow** f a | ⌀∩ ⚬⚬∪ᵔ∋ ⚬⊃ |
 | core | kˈoːɹ | k **oh** r | ∪ ⚬∪ ᵔ⌓ |
 
-**now** and **go** share ⚬⚬∪ᵔ∋ — classic MOUTH/GOAT diphthong collision in spelling.
+**now** and **go** share ⚬⚬∪ᵔ∋, classic MOUTH/GOAT diphthong collision in spelling.
 
 ### 5. Merger acceptability
 
 | Criterion | Assessment |
 | --- | --- |
-| Human readability | **Poor** — *now* and *go* are a standard minimal pair in teaching materials. |
+| Human readability | **Poor**: *now* and *go* are a standard minimal pair in teaching materials. |
 | Phonetic precision | **Poor** for diphthong classes; **partial** relief via `oh` for monophthong GOAT only. |
-| Cross-dialect tolerance | **Mixed** — əʊ (GB) and oʊ (US) both land on `ow`; MOUTH still collides with both. |
-| Minimal symbol count | **Strong** — one back+glide+lips composite covers two diphthong families. |
+| Cross-dialect tolerance | **Mixed**: əʊ (GB) and oʊ (US) both land on `ow`; MOUTH still collides with both. |
+| Minimal symbol count | **Strong**: one back+glide+lips composite covers two diphthong families. |
 
 ### 6. Recommended options
 
@@ -315,10 +315,10 @@ Rules lexical_set explicitly names **both**: MOUTH / GOAT diphthong.
 | Suite | Impact if split |
 | --- | --- |
 | `npm test` | `composite diphthongs` test for `ow`; encode/decode round-trips for *hello* |
-| `test:v2-collisions` | No *now*/*go* group today — **add recommended** |
-| `audit:collisions` | **`o + w` ↔ `ow`** collision — splitting/rerouting may resolve or move collision to different sequence |
+| `test:v2-collisions` | No *now*/*go* group today, **add recommended** |
+| `audit:collisions` | **`o + w` ↔ `ow`** collision, splitting/rerouting may resolve or move collision to different sequence |
 | Pronunciation validation | *hello* end vowel uses `ow`; would change under split |
-| Homograph note (`language-rules.md`) | Composite recipes for `eye`/`oy`/`ow`/`ay` were chosen to avoid cross-composite clashes — **new composite must be checked against `o+w`, `o+y`, `o+r` sequences** |
+| Homograph note (`language-rules.md`) | Composite recipes for `eye`/`oy`/`ow`/`ay` were chosen to avoid cross-composite clashes, **new composite must be checked against `o+w`, `o+y`, `o+r` sequences** |
 
 ---
 
@@ -378,14 +378,14 @@ Four throat-column grid cells are **reserved** (`?`): voice+throat, friction+thr
 
 | Artifact | What it validates today | Sensitivity to vowel splits |
 | --- | --- | --- |
-| `npm test` (43 tests) | Recipe composition, `ae`/`o`/`a` cross-key distinction, schwa→`a`, composites | **High** — normalization assertions hard-coded to current map |
-| `npm run test:v2-collisions` | 5 groups, 13 words — **distinct symbols per group** | **Low for cross-key splits**; passes today even with within-key mergers |
-| `npm run test:vowels` | Readability across minimal-pair groups | **Medium** — documents expected contrasts |
-| `npm run audit:collisions` | Concat hazards, `o+r`/`o+w`/`e+y` | **High** — any new composite or key changes hazard table |
-| `npm run test:pronunciation-validation` | 22-word IPA round-trip (100% today) | **Low** — round-trip succeeds; splits change symbols not pipeline integrity |
-| Pronunciation Validation UI | Collision warnings on `o+r` words | **Medium** — warnings shift if `o` splits or recipes change |
+| `npm test` (43 tests) | Recipe composition, `ae`/`o`/`a` cross-key distinction, schwa→`a`, composites | **High**: normalization assertions hard-coded to current map |
+| `npm run test:v2-collisions` | 5 groups, 13 words, **distinct symbols per group** | **Low for cross-key splits**; passes today even with within-key mergers |
+| `npm run test:vowels` | Readability across minimal-pair groups | **Medium**: documents expected contrasts |
+| `npm run audit:collisions` | Concat hazards, `o+r`/`o+w`/`e+y` | **High**: any new composite or key changes hazard table |
+| `npm run test:pronunciation-validation` | 22-word IPA round-trip (100% today) | **Low**: round-trip succeeds; splits change symbols not pipeline integrity |
+| Pronunciation Validation UI | Collision warnings on `o+r` words | **Medium**: warnings shift if `o` splits or recipes change |
 
-**Important:** v2 collision “0 groups with collision” means **minimal-pair groups produce different symbol strings from each other** — not that English vowel families are faithfully preserved **within** a key.
+**Important:** v2 collision “0 groups with collision” means **minimal-pair groups produce different symbol strings from each other**: not that English vowel families are faithfully preserved **within** a key.
 
 ---
 
@@ -397,7 +397,7 @@ Four throat-column grid cells are **reserved** (`?`): voice+throat, friction+thr
 | **Learner readability (en-us)** | Split `o` (PALM/THOUGHT) and `ow` (MOUTH/GOAT) first; then `e` (NURSE) |
 | **Phonetic / lexical-set fidelity** | Split all four; use unused recipes above |
 | **Research / reversible experiments** | Testing-mode overlays or dialect profiles before committing markdown |
-| **Collision reduction** | Splitting `o` may reduce `o+r` vs `oy` ambiguity for some words — requires re-run `audit:collisions` after any change |
+| **Collision reduction** | Splitting `o` may reduce `o+r` vs `oy` ambiguity for some words, requires re-run `audit:collisions` after any change |
 
 ---
 

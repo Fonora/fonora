@@ -91,7 +91,6 @@
 
           <section class="fonoran-lander__compare content-section" aria-labelledby="compare-heading">
             <h2 id="compare-heading">Fonora vs. Fonoran</h2>
-            <p class="section-lead">Think of it as:</p>
             <div class="fonoran-compare-grid content-card-grid content-card-grid--2">
               <article class="fonoran-compare-card content-card fonoran-compare-card--script">
                 <p class="home-layer-card__tag">Fonora</p>
@@ -144,7 +143,7 @@
           <footer class="lander-footer">
             <a href="../docs/fonoran.md">Read the Fonoran guide</a>
             <span aria-hidden="true">·</span>
-            <a href="../?path=docs%2Fplatform-overview.md#docs">Platform overview</a>
+            <a href="../docs">Platform overview</a>
           </footer>
         </div>
       </section>
@@ -332,7 +331,13 @@
     </div>
   </footer>
 
-  <div id="sheet" class="sheet explorer-sheet"><button type="button" class="close" id="sheet-close">×</button><div id="sheet-body"></div></div>
+  <div id="sheet-backdrop" class="modal-backdrop" hidden aria-hidden="true"></div>
+  <div id="sheet" class="sheet explorer-sheet" role="dialog" aria-modal="true" aria-label="Word explorer" hidden>
+    <div class="sheet__chrome">
+      <button type="button" class="close sheet__close" id="sheet-close" data-modal-close aria-label="Close">×</button>
+    </div>
+    <div id="sheet-body" class="sheet__body"></div>
+  </div>
   <div id="toast" class="toast"></div>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script type="module" src="fonoran-app.js"></script>

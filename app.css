@@ -11,7 +11,6 @@
   --layout-main-pt: 1.75rem;
   --layout-main-pb: 2.5rem;
   --layout-section-gap: 3rem;
-  --layout-prose-max: 38rem;
   --layout-card-padding: 1.1rem 1.15rem;
   --layout-card-radius: 8px;
   --layout-border: #e5e7eb;
@@ -71,13 +70,34 @@ body {
   font-size: 0.9rem;
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  background: rgba(15, 23, 42, 0.35);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0.2s;
+}
+
+.modal-backdrop--open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+html.modal-open {
+  overflow: hidden;
+}
+
 .app-header {
   flex-shrink: 0;
   position: sticky;
   top: 0;
   z-index: 20;
   width: 100%;
-  background: transparent;
+  background: var(--layout-surface);
   border-bottom: none;
 }
 
@@ -491,7 +511,7 @@ html[data-fonora-page='advanced'] #page-advanced {
 .home-layer-card {
   margin: 0;
   padding: var(--layout-card-padding);
-  background: var(--layout-page-bg);
+  background: var(--layout-surface);
   border: 1px solid var(--layout-border);
   border-radius: var(--layout-card-radius);
 }
@@ -754,15 +774,10 @@ code {
   display: none;
 }
 
-/* Shared lander + home typography */
-.home-page,
-.platform-home {
-  --home-prose-width: var(--layout-prose-max);
-}
+/* Shared lander + home typography — full content width within layout max */
 
 .home-intro-header {
   margin-bottom: 1.25rem;
-  max-width: var(--home-prose-width);
 }
 
 .home-intro-header h1 {
@@ -783,7 +798,6 @@ code {
 }
 
 .home-prose {
-  max-width: var(--home-prose-width);
   color: var(--text-body);
   line-height: 1.55;
 }
@@ -811,7 +825,6 @@ code {
   font-size: 0.92rem;
   line-height: 1.45;
   color: var(--text-muted);
-  max-width: var(--layout-prose-max);
 }
 
 .section-foot {
@@ -819,7 +832,6 @@ code {
   font-size: 0.92rem;
   line-height: 1.55;
   color: var(--text-body);
-  max-width: var(--layout-prose-max);
 }
 
 .lander-footer {
@@ -841,11 +853,6 @@ code {
 }
 
 /* Home page (script lander sections) */
-.home-section > p,
-.home-section > .home-list {
-  max-width: var(--home-prose-width);
-}
-
 .home-section p {
   margin: 0 0 0.9rem;
   font-size: 1rem;
@@ -861,6 +868,25 @@ code {
   letter-spacing: -0.01em;
 }
 
+.home-how-subheading:first-of-type {
+  margin-top: 1rem;
+}
+
+.home-how-summary {
+  margin-top: 1.75rem;
+}
+
+.home-how-summary ul {
+  margin: 0 0 0.9rem;
+  padding-left: 1.35rem;
+  line-height: 1.65;
+  color: var(--text-body);
+}
+
+.home-how-summary li {
+  margin-bottom: 0.35rem;
+}
+
 .home-section-actions {
   display: flex;
   flex-wrap: wrap;
@@ -873,7 +899,6 @@ code {
   grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
   gap: 0.75rem;
   margin: 0.5rem 0 1.5rem;
-  max-width: 44rem;
 }
 
 .home-symbol-card {
@@ -923,7 +948,6 @@ code {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
   gap: 0.85rem;
-  max-width: 52rem;
 }
 
 .home-principle {
@@ -980,13 +1004,12 @@ code {
 
 .home-status-emphasis {
   margin-top: 1rem;
-  max-width: var(--home-prose-width);
   font-size: 1rem;
   line-height: 1.65;
   color: #0f172a;
 }
 
-.home-section--sample {
+.home-section--showcase {
   padding-top: 2.5rem;
 }
 
@@ -1095,14 +1118,20 @@ code {
   white-space: nowrap;
 }
 
-.home-section--status {
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+.home-section--card {
+  background: var(--layout-surface);
+  border: 1px solid var(--layout-border);
   border-radius: 10px;
   padding: 1.5rem 1.5rem 1.35rem;
 }
 
-.home-section--status p:last-child {
+.home-section--card .home-section__subheading {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--layout-border);
+}
+
+.home-section--card p:last-child {
   margin-bottom: 0;
 }
 
@@ -3458,7 +3487,7 @@ body.app-body--fonoran .btn-primary:hover {
 
 /* Open Problems */
 .open-problems-root {
-  max-width: 56rem;
+  max-width: none;
 }
 
 .op-header {
@@ -3483,7 +3512,6 @@ body.app-body--fonoran .btn-primary:hover {
 
 .op-intro {
   margin-bottom: 2rem;
-  max-width: 42rem;
   line-height: 1.65;
   color: #333;
 }
@@ -3819,7 +3847,7 @@ body.app-body--fonoran .btn-primary:hover {
 
 .doc-viewer-sidebar {
   position: sticky;
-  top: calc(var(--app-header-offset, 7rem) + 0.5rem);
+  top: var(--app-header-offset, 7rem);
   background: var(--layout-surface);
   border: 1px solid var(--layout-border);
   border-radius: var(--layout-card-radius);
@@ -3882,7 +3910,7 @@ body.app-body--fonoran .btn-primary:hover {
 
 .doc-viewer-toolbar {
   position: sticky;
-  top: calc(var(--app-header-offset, 7rem) + 0.5rem);
+  top: var(--app-header-offset, 7rem);
   z-index: 5;
   display: flex;
   flex-wrap: wrap;
@@ -3890,10 +3918,11 @@ body.app-body--fonoran .btn-primary:hover {
   justify-content: space-between;
   gap: 0.75rem;
   margin-bottom: 1.25rem;
-  padding-top: 0.25rem;
+  padding-top: 0.75rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--layout-border);
   background: var(--layout-page-bg);
+  box-shadow: 0 -1px 0 var(--layout-page-bg);
 }
 
 .doc-viewer-toolbar h2 {
@@ -3926,7 +3955,6 @@ body.app-body--fonoran .btn-primary:hover {
 .doc-viewer-content h4 {
   margin: 1.5rem 0 0.65rem;
   scroll-margin-top: calc(var(--app-header-offset, 7rem) + 1.25rem);
-}
   line-height: 1.3;
   letter-spacing: -0.01em;
 }

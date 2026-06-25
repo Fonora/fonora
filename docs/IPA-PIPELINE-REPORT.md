@@ -10,7 +10,7 @@ Text → eSpeak NG → IPA → ipa-normalize.js → encodeSounds() → Fonora sy
 
 The former English spelling-based Legacy Encoder (`normalize.js`, `encoder-rules.md`, `encoder-pipeline.js`) has been removed.
 
-There is **no dictionary or glossary bypass** — every word uses eSpeak IPA as the pronunciation source (`js/ipa-pipeline.js`).
+There is **no dictionary or glossary bypass**: every word uses eSpeak IPA as the pronunciation source (`js/ipa-pipeline.js`).
 
 ## eSpeak NG integration
 
@@ -69,13 +69,13 @@ Retroflexes, tones, Arabic emphatics, uvulars, and other sounds outside the Fono
 ## Recommendations (future work)
 
 1. Native script input for better CJK/Arabic IPA quality
-2. Per-language normalize tweaks — English overlay exists; see [multilingual-support.md](multilingual-support.md)
+2. Per-language normalize tweaks, English overlay exists; see [multilingual-support.md](multilingual-support.md)
 3. Extend `SUPPLEMENTAL_CONSONANT_MAP` when eSpeak emits IPA not covered by markdown cells
 4. Document or encode throat `/h/` behavior explicitly in `language-rules.md` if behavior changes
 5. Consider `@echogarden/espeak-ng-emscripten` if the npm package stalls
 
 ## Related tools
 
-- **Translator tab** — interactive pipeline with editable Fonora output
-- **Pronunciation Validation** — automated encode/decode IPA round-trip ([pronunciation-validation.md](pronunciation-validation.md))
-- **Pronunciation Testing** — manual multilingual review harness with export
+- **Translator tab**: interactive pipeline with editable Fonora output
+- **Pronunciation Validation**: automated encode/decode IPA round-trip ([pronunciation-validation.md](pronunciation-validation.md))
+- **Pronunciation Testing**: manual multilingual review harness with export

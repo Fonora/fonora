@@ -1,4 +1,4 @@
-/** Open Problems content — grounded in repo docs (docs/, README, CONTRIBUTING). */
+/** Open Problems content, grounded in repo docs (docs/, README, CONTRIBUTING). */
 
 export const GITHUB_ISSUES_URL = 'https://github.com/jamesc137/fonora/issues';
 export const GITHUB_NEW_ISSUE_URL = 'https://github.com/jamesc137/fonora/issues/new/choose';
@@ -46,7 +46,7 @@ export const PROBLEM_CATEGORIES = [
     skills: ['UX research', 'education', 'linguistics', 'typography'],
     contributions: ['test native-speaker pronunciation', 'submit minimal pairs', 'add examples', 'file GitHub issue'],
     docs: [
-      { label: 'README — test commands', href: 'README.md' },
+      { label: 'README: test commands', href: 'README.md' },
       { label: 'Pronunciation Testing (manual review)', href: 'docs/pronunciation-validation.md' },
     ],
   },
@@ -72,7 +72,7 @@ export const PROBLEM_CATEGORIES = [
     skills: ['phonetics', 'lexical sets', 'symbol grammar design'],
     contributions: ['propose mapping', 'submit minimal pairs', 'improve docs', 'file GitHub issue'],
     docs: [
-      { label: 'language-rules.md — vowels', href: 'docs/language-rules.md' },
+      { label: 'language-rules.md: vowels', href: 'docs/language-rules.md' },
       { label: 'IPA_VOWEL_NORMALIZATION_AUDIT.md', href: 'docs/IPA_VOWEL_NORMALIZATION_AUDIT.md' },
       { label: 'FONORA_VOWEL_DECISION_REPORT.md (historical v2)', href: 'docs/FONORA_VOWEL_DECISION_REPORT.md' },
     ],
@@ -100,8 +100,8 @@ export const PROBLEM_CATEGORIES = [
     skills: ['tonal phonology', 'symbol design', 'typography'],
     contributions: ['propose mapping', 'improve docs', 'file GitHub issue'],
     docs: [
-      { label: 'IPA-PIPELINE-REPORT.md — unmapped phonemes', href: 'docs/IPA-PIPELINE-REPORT.md' },
-      { label: 'multilingual-support.md — known limitations', href: 'docs/multilingual-support.md' },
+      { label: 'IPA-PIPELINE-REPORT.md: unmapped phonemes', href: 'docs/IPA-PIPELINE-REPORT.md' },
+      { label: 'multilingual-support.md: known limitations', href: 'docs/multilingual-support.md' },
     ],
   },
   {
@@ -113,9 +113,9 @@ export const PROBLEM_CATEGORIES = [
     skills: ['Arabic phonology', 'IPA', 'eSpeak voice testing'],
     contributions: ['propose mapping', 'test native-speaker pronunciation', 'submit minimal pairs', 'file GitHub issue'],
     docs: [
-      { label: 'multilingual-support.md — throat fricatives', href: 'docs/multilingual-support.md' },
-      { label: 'ipa-normalize.md — supplemental map', href: 'docs/ipa-normalize.md' },
-      { label: 'language-rules.md — reserved throat cells', href: 'docs/language-rules.md' },
+      { label: 'multilingual-support.md: throat fricatives', href: 'docs/multilingual-support.md' },
+      { label: 'ipa-normalize.md: supplemental map', href: 'docs/ipa-normalize.md' },
+      { label: 'language-rules.md: reserved throat cells', href: 'docs/language-rules.md' },
     ],
   },
   {
@@ -127,8 +127,8 @@ export const PROBLEM_CATEGORIES = [
     skills: ['Hindi phonology', 'IPA', 'minimal-pair design'],
     contributions: ['propose mapping', 'submit minimal pairs', 'submit language test set', 'file GitHub issue'],
     docs: [
-      { label: 'ipa-normalize.md — supplemental mappings', href: 'docs/ipa-normalize.md' },
-      { label: 'multilingual-support.md — adding language behavior', href: 'docs/multilingual-support.md' },
+      { label: 'ipa-normalize.md: supplemental mappings', href: 'docs/ipa-normalize.md' },
+      { label: 'multilingual-support.md: adding language behavior', href: 'docs/multilingual-support.md' },
     ],
   },
   {
@@ -140,8 +140,8 @@ export const PROBLEM_CATEGORIES = [
     skills: ['Mandarin phonology', 'tonal notation', 'CJK pipeline work'],
     contributions: ['propose mapping', 'add examples', 'test native-speaker pronunciation', 'file GitHub issue'],
     docs: [
-      { label: 'multilingual-support.md — CJK notes', href: 'docs/multilingual-support.md' },
-      { label: 'IPA-PIPELINE-REPORT.md — native script input', href: 'docs/IPA-PIPELINE-REPORT.md' },
+      { label: 'multilingual-support.md: CJK notes', href: 'docs/multilingual-support.md' },
+      { label: 'IPA-PIPELINE-REPORT.md: native script input', href: 'docs/IPA-PIPELINE-REPORT.md' },
     ],
   },
   {
@@ -154,7 +154,7 @@ export const PROBLEM_CATEGORIES = [
     contributions: ['propose mapping', 'submit minimal pairs', 'add examples', 'file GitHub issue'],
     docs: [
       { label: 'multilingual-support.md', href: 'docs/multilingual-support.md' },
-      { label: 'language-rules.md — grid (x, kh)', href: 'docs/language-rules.md' },
+      { label: 'language-rules.md: grid (x, kh)', href: 'docs/language-rules.md' },
       { label: 'ipa-normalize.md', href: 'docs/ipa-normalize.md' },
     ],
   },
@@ -167,7 +167,7 @@ export const PROBLEM_CATEGORIES = [
     skills: ['typography', 'UX', 'education', 'accessibility'],
     contributions: ['add examples', 'improve docs', 'test readability with real users', 'file GitHub issue'],
     docs: [
-      { label: 'language-rules.md — symbol core', href: 'docs/language-rules.md' },
+      { label: 'language-rules.md: symbol core', href: 'docs/language-rules.md' },
       { label: 'CONTRIBUTING.md', href: 'CONTRIBUTING.md' },
     ],
   },
@@ -225,7 +225,7 @@ export const LANGUAGE_FOCUS = [
     ],
     contributions: ['submit minimal pairs', 'test native-speaker pronunciation', 'propose mapping'],
     docs: [
-      { label: 'multilingual-support.md — English overlay', href: 'docs/multilingual-support.md' },
+      { label: 'multilingual-support.md: English overlay', href: 'docs/multilingual-support.md' },
       { label: 'IPA_VOWEL_NORMALIZATION_AUDIT.md', href: 'docs/IPA_VOWEL_NORMALIZATION_AUDIT.md' },
     ],
   },
@@ -236,7 +236,7 @@ export const LANGUAGE_FOCUS = [
     topics: [
       'Taps/trills: ɾ and r distinctions depend on eSpeak output and global supplemental map',
       'Dialectal vowel quality shares the rules map (no Spanish-specific overlay)',
-      'lang: es vs lang: en fixes perro-class vowel bugs — more dialect work needed',
+      'lang: es vs lang: en fixes perro-class vowel bugs, more dialect work needed',
     ],
     contributions: ['submit minimal pairs', 'test native-speaker pronunciation', 'add examples'],
     docs: [{ label: 'multilingual-support.md', href: 'docs/multilingual-support.md' }],
@@ -280,7 +280,7 @@ export const LANGUAGE_FOCUS = [
       'Native Arabic script input would improve IPA quality',
     ],
     contributions: ['propose mapping', 'test native-speaker pronunciation', 'file GitHub issue'],
-    docs: [{ label: 'multilingual-support.md — throat fricatives', href: 'docs/multilingual-support.md' }],
+    docs: [{ label: 'multilingual-support.md: throat fricatives', href: 'docs/multilingual-support.md' }],
   },
   {
     id: 'zh',
@@ -292,7 +292,7 @@ export const LANGUAGE_FOCUS = [
       'CJK samples split into clauses; IPA quality varies',
     ],
     contributions: ['propose mapping', 'add examples', 'improve docs'],
-    docs: [{ label: 'multilingual-support.md — CJK', href: 'docs/multilingual-support.md' }],
+    docs: [{ label: 'multilingual-support.md: CJK', href: 'docs/multilingual-support.md' }],
   },
   {
     id: 'hi',
@@ -311,7 +311,7 @@ export const LANGUAGE_FOCUS = [
     name: 'Japanese',
     status: 'partial',
     topics: [
-      'No Piper neural voice — Reader uses eSpeak IPA fallback',
+      'No Piper neural voice, Reader uses eSpeak IPA fallback',
       'Mora timing and pitch accent not encoded',
       'Long vowels and gemination rely on vowel keys and consonant sequences',
       'Samples disable Japanese audio',
