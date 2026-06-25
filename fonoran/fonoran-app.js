@@ -4,6 +4,10 @@
     import { speakFonoraPhrase, cancelSpeech } from '../js/fonora-tts.js';
     import { initUniversalNav, setActiveTab, setFonoranUndoDisabled } from '../js/universal-nav.js';
 
+    const LANDER_SHOWCASE_WORD_ID = 'cmp-kaso';
+    let landerShowcaseToken = 0;
+    let landerHealthToken = 0;
+
     const STATE = {
       lab: null, page: 'home', rules: null,
       wordCursor: 0,
@@ -177,7 +181,11 @@
     }
 
     function renderActivePage() {
-      if (STATE.page === 'home') wireLander();
+      if (STATE.page === 'home') {
+        wireLander();
+        renderLanderShowcase();
+        renderLanderHealth();
+      }
       else if (STATE.page === 'create') renderWordComposer();
       else if (STATE.page === 'review') renderWords();
       else if (STATE.page === 'roots') renderRoots();
@@ -192,6 +200,27 @@
         el.dataset.landerWired = '1';
         el.addEventListener('click', () => switchPage(el.dataset.gotoPage));
       });
+      const exploreBtn = $('lander-showcase-explore');
+      if (exploreBtn && !exploreBtn.dataset.landerWired) {
+        exploreBtn.dataset.landerWired = '1';
+        exploreBtn.addEventListener('click', openShowcaseExplorer);
+      }
+      const healthBtn = $('lander-health-open');
+      if (healthBtn && !healthBtn.dataset.landerWired) {
+        healthBtn.dataset.landerWired = '1';
+        healthBtn.addEventListener('click', () => switchPage('health'));
+      }
+    }
+
+    function healthScoreColor(v) {
+      return v >= 80 ? 'var(--ok)' : v >= 60 ? 'var(--review)' : 'var(--reject)';
+    }
+
+    function healthOverallLabel(overall) {
+      if (overall >= 85) return 'Strong';
+      if (overall >= 70) return 'Good';
+      if (overall >= 50) return 'Fair';
+      return 'Needs work';
     }
 
     function meaningPickerHtml(prefix) {
@@ -278,7 +307,7 @@
 
     function syllableChip(kind, value) {
       const picked = STATE.rootDraft[kind] === value;
-      const mono = value || '—';
+      const mono = value || '-';
       const hint = value ? pieceHint(value) : '';
       const glyph = value && STATE.rules ? pieceToFonoraSymbols(value, STATE.rules) : '';
       return `<button type="button" class="syl-chip ${value ? '' : 'none'}${picked ? ' picked' : ''}" data-piece="${kind}" data-val="${escapeHtml(value)}">
@@ -290,7 +319,7 @@
       return `
         <div class="collapse-block">
           <button type="button" class="collapse-toggle${isOpen ? ' open' : ''}" id="${prefix}-picker-toggle" aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="${prefix}-picker-panel">
-            <span>Sound picker <span class="sub">— start, vowel, end</span></span>
+            <span>Sound picker <span class="sub">(start, vowel, end)</span></span>
             <span class="chev" aria-hidden="true">▸</span>
           </button>
           <div class="collapse-panel" id="${prefix}-picker-panel"${isOpen ? '' : ' hidden'}>
@@ -347,7 +376,7 @@
         if (valid) {
           pronEl.innerHTML = `<div class="syl-preview"><div class="roman">${escapeHtml(sp)}</div>${pronBlock(sp)}</div>`;
         } else if (typed) {
-          pronEl.innerHTML = `<div class="syl-invalid">“${escapeHtml(typed)}” isn’t a Fonoran syllable. <button type="button" class="linkish" data-open-picker>Open the sound picker</button> — there is no <strong>z</strong> in this language. Similar: <button type="button" class="linkish" data-try-spell="sa">sa</button> (s + a).</div>`;
+          pronEl.innerHTML = `<div class="syl-invalid">“${escapeHtml(typed)}” isn’t a Fonoran syllable. <button type="button" class="linkish" data-open-picker>Open the sound picker</button>. There is no <strong>z</strong> in this language. Similar: <button type="button" class="linkish" data-try-spell="sa">sa</button> (s + a).</div>`;
         } else {
           pronEl.innerHTML = '';
         }
@@ -395,20 +424,20 @@
         const script = STATE.rules ? romanToFonoraScript([sp], STATE.rules).phrase : '';
         if (glyphsEl) glyphsEl.textContent = script || '\u00a0';
         if (sayEl) sayEl.textContent = phoneticKeyBold(sp);
-        if (likeEl) likeEl.textContent = englishGuide(sp) || '—';
+        if (likeEl) likeEl.textContent = englishGuide(sp) || '-';
         if (invalidEl) { invalidEl.hidden = true; invalidEl.innerHTML = ''; }
       } else if (typed) {
         if (glyphsEl) glyphsEl.textContent = '\u00a0';
-        if (sayEl) sayEl.textContent = '—';
-        if (likeEl) likeEl.textContent = '—';
+        if (sayEl) sayEl.textContent = '-';
+        if (likeEl) likeEl.textContent = '-';
         if (invalidEl) {
           invalidEl.hidden = false;
-          invalidEl.innerHTML = `“${escapeHtml(typed)}” isn’t a Fonoran syllable — there is no <strong>z</strong> in this language. Similar: <button type="button" class="linkish" data-try-spell="sa">sa</button> (s + a).`;
+          invalidEl.innerHTML = `“${escapeHtml(typed)}” isn’t a Fonoran syllable. There is no <strong>z</strong> in this language. Similar: <button type="button" class="linkish" data-try-spell="sa">sa</button> (s + a).`;
         }
       } else {
         if (glyphsEl) glyphsEl.textContent = '\u00a0';
-        if (sayEl) sayEl.textContent = '—';
-        if (likeEl) likeEl.textContent = '—';
+        if (sayEl) sayEl.textContent = '-';
+        if (likeEl) likeEl.textContent = '-';
         if (invalidEl) { invalidEl.hidden = true; invalidEl.innerHTML = ''; }
       }
 
@@ -597,11 +626,11 @@
               <div class="root-create-right">
                 <div class="split-h">Preview</div>
                 <div class="root-preview-card is-empty" id="new-root-preview-card">
-                  <input type="text" id="new-root-spelling" class="root-preview-roman" placeholder="—" autocomplete="off" spellcheck="false" aria-label="Roman spelling">
+                  <input type="text" id="new-root-spelling" class="root-preview-roman" placeholder="-" autocomplete="off" spellcheck="false" aria-label="Roman spelling">
                   <div class="root-preview-glyphs fonora-script symbol-text" id="new-root-glyphs" aria-hidden="true">&nbsp;</div>
                   <div class="pron-block root-preview-pron">
-                    <div class="pron-line">Say: <strong id="new-root-say">—</strong></div>
-                    <div class="pron-english" id="new-root-like-wrap">Sounds like: <span id="new-root-like">—</span></div>
+                    <div class="pron-line">Say: <strong id="new-root-say">-</strong></div>
+                    <div class="pron-english" id="new-root-like-wrap">Sounds like: <span id="new-root-like">-</span></div>
                   </div>
                 </div>
                 <div class="syl-invalid" id="new-root-invalid" hidden></div>
@@ -680,7 +709,7 @@
             <div class="tip"><strong>Tip:</strong> ${ROOT_TIP}</div>` : renderRootNamePanel(s))}
         </div>
         <h3 class="section-h">Words built from ${escapeHtml(s.spelling)} <span style="color:var(--muted);font-weight:400">(${derived.length})</span></h3>
-        <p class="sans" style="font-size:0.84rem;color:var(--muted);margin:0 0 0.6rem">${escapeHtml(s.spelling)} leads these words — they grow from this root.</p>
+        <p class="sans" style="font-size:0.84rem;color:var(--muted);margin:0 0 0.6rem">${escapeHtml(s.spelling)} leads these words. They grow from this root.</p>
         ${derived.length ? derived.map(row).join('') : `<p class="empty" style="padding:0.5rem">None yet.${s.meaning ? ' Build one below.' : ''}</p>`}
         <h3 class="section-h">Other words that use ${escapeHtml(s.spelling)} <span style="color:var(--muted);font-weight:400">(${contains.length})</span></h3>
         ${contains.length ? contains.map(row).join('') : '<p class="empty" style="padding:0.5rem">None.</p>'}
@@ -688,7 +717,7 @@
           <h3>Build a new word from ${escapeHtml(s.spelling)}</h3>
           <p class="sans" style="font-size:0.84rem;color:var(--muted);margin:0">${escapeHtml(s.spelling)} stays first. Add roots or approved words below.</p>
           <div class="pick" id="rb-pick"></div>
-          <p class="composer-spell" id="rb-spell">—</p>
+          <p class="composer-spell" id="rb-spell">-</p>
           <div id="rb-pron"></div>
           <div id="rb-match"></div>
           <button type="button" class="hear-min" id="rb-hear" style="margin:0.5rem 0" disabled aria-label="Listen to this word">▶ Listen</button>
@@ -760,7 +789,7 @@
     function renderRootNamePanel(s) {
       return `
         <div class="edit-panel" style="text-align:left;margin-top:0.85rem">
-          <p class="sans" style="font-size:0.86rem;color:var(--muted);margin:0 0 0.65rem">Name this root here. <strong>${escapeHtml(s.spelling)}</strong> is one sound — not a compound like ${escapeHtml(s.spelling + s.spelling)}.</p>
+          <p class="sans" style="font-size:0.86rem;color:var(--muted);margin:0 0 0.65rem">Name this root here. <strong>${escapeHtml(s.spelling)}</strong> is one sound, not a compound like ${escapeHtml(s.spelling + s.spelling)}.</p>
           <label class="fld" for="root-name-meaning">Root meaning</label>
           ${meaningPickerHtml('root-name')}
           <input type="text" id="root-name-meaning" placeholder="e.g. self, bond, motion…" autocomplete="off">
@@ -892,7 +921,7 @@
         if (meaningChanged && named.length) {
           box.innerHTML += `<div class="impact" style="margin-top:0.5rem">
             <strong>Meaning change:</strong> these ${named.length} word${named.length === 1 ? '' : 's'} were named with the old meaning:
-            <ul>${named.map(c => `<li><span class="mono">${escapeHtml(c.spelling)}</span> — ${escapeHtml(c.meaning)} ${badge(c.state)}</li>`).join('')}</ul>
+            <ul>${named.map(c => `<li><span class="mono">${escapeHtml(c.spelling)}</span> · ${escapeHtml(c.meaning)} ${badge(c.state)}</li>`).join('')}</ul>
             <label><input type="checkbox" id="root-ed-clear"${STATE.clearAffected ? ' checked' : ''}> Send these back to “needs review” so I re-check them</label>
             <p class="impact-note">${STATE.clearAffected ? 'Their meanings stay; you just confirm each again. Nothing is deleted.' : 'Leave unchecked to keep their names exactly as they are.'}</p>
           </div>`;
@@ -903,7 +932,7 @@
       if (meaningChanged && named.length) {
         box.innerHTML = `<div class="impact">
           <strong>Preview impact:</strong> these ${named.length} word${named.length === 1 ? '' : 's'} were named with the old meaning:
-          <ul>${named.map(c => `<li><span class="mono">${escapeHtml(c.spelling)}</span> — ${escapeHtml(c.meaning)} ${badge(c.state)}</li>`).join('')}</ul>
+          <ul>${named.map(c => `<li><span class="mono">${escapeHtml(c.spelling)}</span> · ${escapeHtml(c.meaning)} ${badge(c.state)}</li>`).join('')}</ul>
           <label><input type="checkbox" id="root-ed-clear"${STATE.clearAffected ? ' checked' : ''}> Send these back to “needs review” so I re-check them</label>
           <p class="impact-note">${STATE.clearAffected ? 'Their meanings stay; you just confirm each again. Nothing is deleted.' : 'Leave unchecked to keep their names exactly as they are.'}</p>
         </div>`;
@@ -929,7 +958,7 @@
         renderRootBuilder(root);
       }));
       const spelling = picks.length ? resolveComposerSpelling(picks) : '';
-      $('rb-spell').textContent = spelling || '—';
+      $('rb-spell').textContent = spelling || '-';
       const flat = composerFlatSpellings(picks);
       $('rb-pron').innerHTML = picks.length >= 2 ? pronBlock(flat) : '';
       const hearBtn = $('rb-hear');
@@ -968,7 +997,7 @@
         : '<span class="sans" style="color:var(--muted);font-size:0.84rem">Tap roots or approved words below…</span>';
       $('wc-pick').querySelectorAll('.tok').forEach(t => t.addEventListener('click', () => { STATE.wordComposer.splice(Number(t.dataset.idx), 1); renderWordComposer(); }));
       const spelling = picks.length ? resolveComposerSpelling(picks) : '';
-      $('wc-spell').textContent = spelling || '—';
+      $('wc-spell').textContent = spelling || '-';
       $('wc-pron').innerHTML = picks.length >= 2 ? pronBlock(composerFlatSpellings(picks)) : '';
       if (picks.length >= 2 && ! $('wc-meaning').value.trim()) {
         const sug = picks.map(compDisplayLabel).join(' + ');
@@ -1025,12 +1054,338 @@
       });
     }
 
-    async function renderExplorerMermaid(mermaidSource, graphNodes) {
-      if (!window.mermaid || !mermaidSource) return;
+    async function renderExplorerMermaidIn(rootEl, mermaidSource, graphNodes) {
+      if (!window.mermaid || !mermaidSource || !rootEl) return;
       window.mermaid.initialize({ startOnLoad: false, theme: 'neutral', securityLevel: 'loose' });
-      await window.mermaid.run({ nodes: $('sheet-body').querySelectorAll('.mermaid') });
-      const wrap = $('sheet-body').querySelector('.mermaid-wrap');
+      await window.mermaid.run({ nodes: rootEl.querySelectorAll('.mermaid') });
+      const wrap = rootEl.querySelector('.mermaid-wrap');
       bindMermaidGraphClicks(wrap?.querySelector('svg'), graphNodes);
+    }
+
+    function labItemDda(type, ref) {
+      if (type === 'root') {
+        return STATE.lab.sounds.find(s => s.spelling === ref)?.dda ?? null;
+      }
+      return STATE.lab.compounds.find(c => c.id === ref)?.dda ?? null;
+    }
+
+    function ddaNotation(dda) {
+      if (!dda?.D && !dda?.M && !dda?.A) return null;
+      return `⟨ ${dda.D ?? '?'} · ${dda.M ?? '?'} · ${dda.A ?? '?'} ⟩`;
+    }
+
+    function buildCompositionBarHtml(f) {
+      const parts = (f.components ?? []).map(c => {
+        if (c.type === 'root') return c.ref;
+        const w = STATE.lab.compounds.find(x => x.id === c.ref);
+        return w?.spelling ?? c.ref;
+      });
+      if (parts.length < 2) return '';
+      const pieces = parts.map((p, i) =>
+        `${i > 0 ? '<span class="showcase-compose__op">+</span>' : ''}<span class="showcase-compose__piece">${escapeHtml(p)}</span>`
+      ).join('');
+      return `<div class="showcase-compose" aria-label="Word composition">
+        ${pieces}
+        <span class="showcase-compose__op">=</span>
+        <span class="showcase-compose__result">${escapeHtml(f.spelling)}</span>
+        ${f.meaning ? `<span class="showcase-compose__meaning">${escapeHtml(f.meaning)}</span>` : ''}
+      </div>`;
+    }
+
+    function buildDdaPanelHtml(wordDda, components) {
+      if (!wordDda?.D && !wordDda?.M && !wordDda?.A) {
+        return `<div class="showcase-dda showcase-dda--empty">
+          <h4>Semantic coordinates (DDA)</h4>
+          <p class="sans showcase-dda__empty">Coordinates are inferred automatically as you build: depth, mode, and aspect for every root and compound.</p>
+        </div>`;
+      }
+      const axes = [
+        { key: 'Depth', val: wordDda.D },
+        { key: 'Mode', val: wordDda.M },
+        { key: 'Aspect', val: wordDda.A },
+      ];
+      const axisHtml = axes.map(a => `
+        <div class="showcase-dda__axis">
+          <span class="showcase-dda__axis-key">${a.key}</span>
+          <span class="showcase-dda__axis-val">${escapeHtml(a.val ?? '?')}</span>
+        </div>`).join('');
+      const blendRows = (components ?? []).map(c => {
+        const sp = c.type === 'root' ? c.ref : (STATE.lab.compounds.find(x => x.id === c.ref)?.spelling ?? c.ref);
+        const m = c.type === 'root' ? soundMeaning(c.ref) : (STATE.lab.compounds.find(x => x.id === c.ref)?.meaning ?? '?');
+        const dda = labItemDda(c.type === 'root' ? 'root' : 'word', c.ref);
+        const note = ddaNotation(dda);
+        if (!note) return '';
+        return `<div class="showcase-dda__blend-row">
+          <span class="mono">${escapeHtml(sp)}</span>
+          <span class="showcase-dda__blend-note">${escapeHtml(note)}</span>
+          <span class="showcase-dda__blend-meaning">${escapeHtml(m)}</span>
+        </div>`;
+      }).filter(Boolean).join('');
+      const conf = wordDda.confidence != null ? `${Math.round(wordDda.confidence * 100)}% confidence` : '';
+      const composition = wordDda.coordinates?.composition?.length
+        ? `blend: ${wordDda.coordinates.composition.join(' → ')}`
+        : '';
+      const status = wordDda.status
+        ? `<span class="showcase-dda__pill">${escapeHtml(wordDda.status)}</span>`
+        : '';
+      return `<div class="showcase-dda">
+        <h4>Semantic coordinates (DDA)</h4>
+        <p class="showcase-dda__notation">${escapeHtml(ddaNotation(wordDda))}</p>
+        <div class="showcase-dda__axes">${axisHtml}</div>
+        ${blendRows ? `<div class="showcase-dda__blend"><p class="showcase-dda__blend-label">Blended from roots</p>${blendRows}</div>` : ''}
+        <p class="showcase-dda__meta">${status}${conf ? `${status ? ' ' : ''}${escapeHtml(conf)}` : ''}${composition ? ` · ${escapeHtml(composition)}` : ''}</p>
+      </div>`;
+    }
+
+    function buildUsedInChipsHtml(usedIn) {
+      if (!usedIn?.length) return '';
+      const chips = usedIn.slice(0, 6).map(u => `
+        <button type="button" class="showcase-used-chip" data-explore-word="${escapeHtml(u.id)}">
+          <span class="mono">${escapeHtml(u.spelling)}</span>
+          <span>${escapeHtml(u.meaning || 'unnamed')}</span>
+        </button>`).join('');
+      const more = usedIn.length > 6 ? `<span class="showcase-used-more">+${usedIn.length - 6} more</span>` : '';
+      return `<div class="explorer-section showcase-used">
+        <h4>Feeds into</h4>
+        <p class="sans graph-hint">Words that stack this piece: recursive composition in action.</p>
+        <div class="showcase-used-chips">${chips}${more}</div>
+      </div>`;
+    }
+
+    function buildBuiltFromList(components) {
+      return (components ?? []).length
+        ? components.map(c => {
+          const w = c.type === 'word' ? STATE.lab.compounds.find(x => x.id === c.ref) : null;
+          const sp = c.type === 'root' ? c.ref : (w?.spelling ?? c.ref);
+          const m = c.type === 'root' ? soundMeaning(c.ref) : (w?.meaning ?? '?');
+          return `<li>${typeBadge(c.type)} <span class="mono">${escapeHtml(sp)}</span> · ${escapeHtml(m)}</li>`;
+        }).join('')
+        : '<li class="sans" style="color:var(--muted)">Atomic root, not built from other pieces.</li>';
+    }
+
+    function buildShowcaseHtml(data) {
+      const f = data.focus;
+      const word = STATE.lab?.compounds?.find(c => c.id === LANDER_SHOWCASE_WORD_ID);
+      const builtFrom = buildBuiltFromList(f.components);
+      const treeText = f.derivation?.direct?.length
+        ? formatTreeNodes(f.derivation.direct, 0)
+        : `${f.spelling} = ${f.meaning || 'unnamed'}`;
+      const speakParts = f.components?.length ? composerFlatSpellings(f.components) : [f.spelling];
+
+      const html = `
+        <div class="showcase-hero">
+          ${pronBlock(speakParts)}
+          <div class="showcase-hero__word">
+            <p class="review-word">${escapeHtml(f.spelling)}</p>
+            <p class="review-meaning">${f.meaning ? escapeHtml(f.meaning) : '<span style="color:var(--draft);font-style:italic">unnamed</span>'}</p>
+            <button type="button" class="hear-min showcase-hero__hear" id="lander-showcase-hear" aria-label="Listen to ${escapeHtml(f.spelling)}">▶ Listen</button>
+          </div>
+        </div>
+        ${buildCompositionBarHtml(f)}
+        <div class="showcase-panels">
+          <div class="showcase-panel showcase-panel--structure">
+            <div class="explorer-section"><h4>Built from</h4><ul class="explorer-list">${builtFrom}</ul></div>
+            <div class="explorer-section"><h4>Derivation tree</h4><div class="explorer-tree">${escapeHtml(treeText)}</div></div>
+          </div>
+          <div class="showcase-panel showcase-panel--dda">
+            ${buildDdaPanelHtml(word?.dda, f.components)}
+          </div>
+        </div>
+        ${buildUsedInChipsHtml(data.used_in)}
+        ${data.mermaid ? `<div class="explorer-section showcase-graph"><h4>Family graph</h4><p class="sans graph-hint">Tap a node to explore that root or word.</p><div class="mermaid-wrap"><pre class="mermaid">${escapeHtml(data.mermaid)}</pre></div></div>` : ''}`;
+
+      return { html, speakParts };
+    }
+
+    function buildExplorerHtml(data, explorerKind, { preview = false, compact = false } = {}) {
+      const f = data.focus;
+      const kindLabel = explorerKind === 'root' ? 'Primitive root' : (preview ? 'Draft word (preview)' : 'Approved word');
+      const builtFrom = buildBuiltFromList(f.components);
+
+      const treeText = f.derivation?.direct?.length
+        ? formatTreeNodes(f.derivation.direct, 0)
+        : `${f.spelling} = ${f.meaning || 'unnamed'}`;
+
+      const speakParts = explorerKind === 'root'
+        ? [f.spelling]
+        : (f.components?.length ? composerFlatSpellings(f.components) : [f.spelling]);
+
+      let html = `
+        <div class="explorer-hero">
+          ${pronBlock(speakParts)}
+          <p class="review-word">${escapeHtml(f.spelling)}</p>
+          <p class="review-meaning">${f.meaning ? escapeHtml(f.meaning) : '<span style="color:var(--draft);font-style:italic">unnamed</span>'}</p>
+          <p>${typeBadge(explorerKind === 'root' ? 'root' : 'word')} ${badge(f.state || 'draft')} · <span class="sans" style="font-size:0.84rem;color:var(--muted)">${kindLabel}</span></p>
+          ${preview ? '<p class="sans" style="font-size:0.82rem;color:var(--muted);margin:0.35rem 0 0">Preview: save the word to explore downstream links. Tap nodes in the graph to jump to saved roots and words.</p>' : ''}
+        </div>
+        <div class="explorer-section"><h4>Built from</h4><ul class="explorer-list">${builtFrom}</ul></div>
+        <div class="explorer-section"><h4>Derivation tree</h4><div class="explorer-tree">${escapeHtml(treeText)}</div></div>
+        ${data.mermaid ? `<div class="explorer-section"><h4>Family graph</h4><p class="sans graph-hint">Tap a node to explore that root or word.</p><div class="mermaid-wrap"><pre class="mermaid">${escapeHtml(data.mermaid)}</pre></div></div>` : ''}`;
+
+      if (!compact) {
+        const usedIn = data.used_in?.length
+          ? data.used_in.map(u => `<li><span class="mono">${escapeHtml(u.spelling)}</span> · ${escapeHtml(u.meaning || 'unnamed')} ${badge(u.state)}</li>`).join('')
+          : '<li class="sans" style="color:var(--muted)">Nothing built from this yet.</li>';
+        const related = data.related?.length
+          ? data.related.map(r => `<li><span class="mono">${escapeHtml(r.spelling)}</span> · ${escapeHtml(r.meaning || 'unnamed')}</li>`).join('')
+          : '<li class="sans" style="color:var(--muted)">No sibling words share the same components.</li>';
+        html += `
+          <div class="explorer-section"><h4>Used in</h4><ul class="explorer-list">${usedIn}</ul></div>
+          <div class="explorer-section"><h4>Related words</h4><ul class="explorer-list">${related}</ul></div>
+          <div class="actions" style="justify-content:center;margin-top:0.75rem"><button type="button" class="hear-min" id="ch-hear">▶ Listen</button></div>`;
+      }
+
+      return { html, speakParts };
+    }
+
+    async function fetchShowcaseGraph() {
+      const word = STATE.lab?.compounds?.find(c => c.id === LANDER_SHOWCASE_WORD_ID);
+      if (word) {
+        return api(`/api/fonoran/lab/graph/word/${encodeURIComponent(word.id)}`);
+      }
+      return api('/api/fonoran/lab/graph/preview', {
+        method: 'POST',
+        body: JSON.stringify({
+          spelling: 'kaso',
+          meaning: 'love',
+          components: [{ type: 'root', ref: 'ka' }, { type: 'root', ref: 'so' }],
+        }),
+      });
+    }
+
+    function openShowcaseExplorer() {
+      const word = STATE.lab?.compounds?.find(c => c.id === LANDER_SHOWCASE_WORD_ID);
+      if (word) {
+        openExplorer('word', word.id);
+        return;
+      }
+      openExplorer('word', 'preview-kaso', {
+        preview: true,
+        spelling: 'kaso',
+        meaning: 'love',
+        components: [
+          { type: 'root', ref: 'ka', spelling: 'ka' },
+          { type: 'root', ref: 'so', spelling: 'so' },
+        ],
+      });
+    }
+
+    async function renderLanderShowcase() {
+      const el = $('lander-showcase');
+      if (!el || STATE.page !== 'home' || !STATE.lab) return;
+      const token = ++landerShowcaseToken;
+      try {
+        const data = await fetchShowcaseGraph();
+        if (token !== landerShowcaseToken) return;
+        const { html, speakParts } = buildShowcaseHtml(data);
+        el.innerHTML = html;
+        $('lander-showcase-hear')?.addEventListener('click', () => speakNeural(speakParts));
+        el.querySelectorAll('.showcase-used-chip[data-explore-word]').forEach((btn) => {
+          btn.addEventListener('click', () => openExplorer('word', btn.dataset.exploreWord));
+        });
+        await renderExplorerMermaidIn(el, data.mermaid, data.graph_nodes);
+      } catch {
+        if (token !== landerShowcaseToken) return;
+        el.innerHTML = '<p class="sans fonoran-showcase__error">Could not load the example word. Start the dev server with <code>npm start</code>.</p>';
+      }
+    }
+
+    const HEALTH_METHOD = [
+      {
+        key: 'learnability',
+        title: 'Learnability',
+        prose: 'Whether the sound inventory is discriminable for learners working from internal phonology, not English cognates. Penalises look-alike roots and serious ambiguity warnings.',
+        formula: '100 − (8 × high-severity warnings) − (3 × look-alike root pairs)',
+      },
+      {
+        key: 'pronounceability',
+        title: 'Pronounceability',
+        prose: 'How speakable the root syllables are out loud. Long compounds, consonant pile-ups, and awkward clusters reduce the average across your inventory.',
+        formula: 'mean pronounceability score across all roots',
+      },
+      {
+        key: 'memorability',
+        title: 'Memorability',
+        prose: 'Orthographic and phonetic distinctiveness. Can roots be told apart at a glance? Rhyming clusters and near-homophones make recall harder.',
+        formula: '100 − (15 × rhyming clusters) − (5 × similar roots)',
+      },
+      {
+        key: 'parseability',
+        title: 'Parseability',
+        prose: 'Morphological transparency: what share of compounds segment back into their parts uniquely? Critical for agglutinative and root-stacking designs.',
+        formula: '(uniquely parsable compounds ÷ total compounds) × 100',
+      },
+    ];
+
+    function buildLanderHealthHtml(h) {
+      const core = ['learnability', 'pronounceability', 'memorability', 'parseability'];
+      const overall = Math.round(core.reduce((a, k) => a + h.scores[k], 0) / core.length);
+      const color = healthScoreColor;
+      const scoreCards = h.dimensions.map(d => `
+        <div class="score lander-health__score">
+          <div class="top"><span class="name">${escapeHtml(d.label)}</span><span class="val" style="color:${color(d.score)}">${d.score}<span style="font-size:0.7rem;color:var(--muted)">/100</span></span></div>
+          <div class="bar"><span style="width:${d.score}%;background:${color(d.score)}"></span></div>
+          <p class="explain">${escapeHtml(d.explain)}</p>
+        </div>`).join('');
+      const methodCards = HEALTH_METHOD.map(m => {
+        const live = h.scores[m.key];
+        return `<article class="lander-health__method-card">
+          <div class="lander-health__method-head">
+            <h4>${escapeHtml(m.title)}</h4>
+            <span class="lander-health__method-live" style="color:${color(live)}">${live}/100</span>
+          </div>
+          <p>${escapeHtml(m.prose)}</p>
+          <p class="lander-health__formula">${escapeHtml(m.formula)}</p>
+        </article>`;
+      }).join('');
+      const metrics = h.metrics.map(m => `
+        <div class="lander-health__metric">
+          <span class="lander-health__metric-val">${escapeHtml(String(m.value))}${m.suffix ?? ''}</span>
+          <span class="lander-health__metric-label">${escapeHtml(m.key === 'compoundLength' ? 'Avg compound length' : 'Algorithmic feel')}</span>
+          <p class="lander-health__metric-note">${escapeHtml(m.explain)}</p>
+        </div>`).join('');
+      const warnNote = h.warning_summary.total
+        ? `${h.warning_summary.total} ambiguity warning${h.warning_summary.total === 1 ? '' : 's'} flagged (${h.warning_summary.high} serious)`
+        : 'No ambiguity warnings in the current vocabulary';
+
+      return `
+        <div class="lander-health__summary">
+          <div class="lander-health__overall">
+            <div class="lander-health__score-big" style="color:${color(overall)}">${overall}<span class="lander-health__score-of"> / 100</span></div>
+            <p class="lander-health__label">${healthOverallLabel(overall)}</p>
+            <p class="lander-health__warn-note">${escapeHtml(warnNote)}</p>
+          </div>
+          <div class="lander-health__scores">${scoreCards}</div>
+        </div>
+        <div class="lander-health__method">
+          <h3>How scores are calculated</h3>
+          <p class="lander-health__method-lead">Each dimension is recomputed from your live lab bucket whenever you open Health. Scores are heuristic design guides. They measure structural ergonomics, not linguistic "correctness."</p>
+          <div class="lander-health__method-grid">${methodCards}</div>
+          <div class="lander-health__metrics">${metrics}</div>
+          <p class="lander-health__footnote">Warnings include look-alike sounds, prefix overlap, rhyming clusters, segmentation ambiguity, and pronunciation difficulty. Semantic coordinates (DDA) are analysed separately and surface through the explorer and health detail view.</p>
+        </div>
+        <div class="lander-health__actions">
+          <button type="button" class="btn btn-primary" id="lander-health-open">View full health report</button>
+        </div>`;
+    }
+
+    async function renderLanderHealth() {
+      const el = $('lander-health');
+      if (!el || STATE.page !== 'home' || !STATE.lab) return;
+      const token = ++landerHealthToken;
+      try {
+        const h = await api('/api/fonoran/lab/health');
+        if (token !== landerHealthToken) return;
+        el.innerHTML = buildLanderHealthHtml(h);
+        $('lander-health-open')?.addEventListener('click', () => switchPage('health'));
+      } catch {
+        if (token !== landerHealthToken) return;
+        el.innerHTML = '<p class="sans lander-health__error">Could not load health metrics. Start the dev server with <code>npm start</code>.</p>';
+      }
+    }
+
+    async function renderExplorerMermaid(mermaidSource, graphNodes) {
+      await renderExplorerMermaidIn($('sheet-body'), mermaidSource, graphNodes);
     }
 
     function renderWords() {
@@ -1054,7 +1409,7 @@
       const c = list[STATE.wordCursor];
       const partsMeaning = c.part_details.map(p => escapeHtml(p.meaning || p.legacy_label || '?')).join(' + ');
       const savedNote = STATE.justSaved === c.spelling
-        ? `<div class="saved-banner">✓ Saved <strong>${escapeHtml(c.spelling)}</strong> — you're still on this word. Find it anytime in Dictionary.</div>` : '';
+        ? `<div class="saved-banner">✓ Saved <strong>${escapeHtml(c.spelling)}</strong>. You're still on this word. Find it anytime in Dictionary.</div>` : '';
       $('word-review').innerHTML = `
         <div class="review">
           ${neighborStrip(list, STATE.wordCursor)}
@@ -1086,11 +1441,11 @@
         <div class="edit-panel">
           <div id="ed-live-pron"></div>
           <button type="button" class="hear-min" id="ed-hear" style="margin:0.5rem 0 0" aria-label="Listen to this recipe">▶ Listen</button>
-          <label class="fld" for="ed-meaning">Meaning — keep it, or rename the word</label>
+          <label class="fld" for="ed-meaning">Meaning: keep it, or rename the word</label>
           ${meaningPickerHtml('ed')}
           <input type="text" id="ed-meaning" value="${escapeHtml(c.meaning ?? '')}" placeholder="${escapeHtml(c.suggested_meaning || 'e.g. river, friend…')}">
           <div id="ed-dupe"></div>
-          <label class="fld">Recipe — which sounds build it (tap to remove)</label>
+          <label class="fld">Recipe: which sounds build it (tap to remove)</label>
           <div class="pick" id="ed-recipe-pick"></div>
           <div class="recipe-preview" id="ed-recipe-preview"></div>
           <input type="search" id="ed-recipe-filter" placeholder="Find a sound by meaning… e.g. bond, motion">
@@ -1150,7 +1505,7 @@
         : '<span class="sans" style="color:var(--muted);font-size:0.84rem">Add at least 2 components…</span>';
       const gloss = comps.map(compDisplayLabel).map(escapeHtml).join(' + ');
       $('ed-recipe-preview').innerHTML = `
-        <span class="mono" style="font-size:1.2rem;font-weight:700;color:var(--word)">${spelling || '—'}</span>
+        <span class="mono" style="font-size:1.2rem;font-weight:700;color:var(--word)">${spelling || '-'}</span>
         ${comps.length ? `<span class="sans" style="font-size:0.86rem">${gloss}</span>` : ''}`;
       const live = $('ed-live-pron');
       if (live) live.innerHTML = comps.length ? pronBlock(composerFlatSpellings(comps)) : '<p class="sans" style="color:var(--muted);font-size:0.84rem">Add components to preview script &amp; pronunciation.</p>';
@@ -1242,9 +1597,9 @@
       const meaning = item.meaning?.trim() || '(unnamed)';
       const partsHint = kind === 'compound'
         ? `Built from ${item.parts.map(escapeHtml).join(' + ')}`
-        : 'A base root — not a compound';
+        : 'A base root, not a compound';
       const claimNote = item.generator_hint && !item.meaning?.trim()
-        ? ' · generator suggestion — save below to name it'
+        ? ' · generator suggestion; save below to name it'
         : item.generator_hint ? ' · generator suggestion' : '';
       const id = kind === 'sound' ? item.spelling : item.id;
       return `
@@ -1297,49 +1652,9 @@
         } else {
           data = await api(`/api/fonoran/lab/graph/${kind}/${encodeURIComponent(id)}`);
         }
-        const f = data.focus;
         const explorerKind = preview?.preview ? 'word' : kind;
-        const kindLabel = explorerKind === 'root' ? 'Primitive root' : (preview?.preview ? 'Draft word (preview)' : 'Approved word');
-        const builtFrom = (f.components ?? []).length
-          ? f.components.map(c => {
-            const w = c.type === 'word' ? STATE.lab.compounds.find(x => x.id === c.ref) : null;
-            const sp = c.type === 'root' ? c.ref : (w?.spelling ?? c.ref);
-            const m = c.type === 'root' ? soundMeaning(c.ref) : (w?.meaning ?? '?');
-            return `<li>${typeBadge(c.type)} <span class="mono">${escapeHtml(sp)}</span> — ${escapeHtml(m)}</li>`;
-          }).join('')
-          : '<li class="sans" style="color:var(--muted)">Atomic root — not built from other pieces.</li>';
-
-        const treeText = f.derivation?.direct?.length
-          ? formatTreeNodes(f.derivation.direct, 0)
-          : `${f.spelling} = ${f.meaning || 'unnamed'}`;
-
-        const usedIn = data.used_in?.length
-          ? data.used_in.map(u => `<li><span class="mono">${escapeHtml(u.spelling)}</span> — ${escapeHtml(u.meaning || 'unnamed')} ${badge(u.state)}</li>`).join('')
-          : '<li class="sans" style="color:var(--muted)">Nothing built from this yet.</li>';
-
-        const related = data.related?.length
-          ? data.related.map(r => `<li><span class="mono">${escapeHtml(r.spelling)}</span> — ${escapeHtml(r.meaning || 'unnamed')}</li>`).join('')
-          : '<li class="sans" style="color:var(--muted)">No sibling words share the same components.</li>';
-
-        const speakParts = explorerKind === 'root'
-          ? [f.spelling]
-          : (f.components?.length ? composerFlatSpellings(f.components) : [f.spelling]);
-
-        $('sheet-body').innerHTML = `
-          <div class="explorer-hero">
-            ${pronBlock(speakParts)}
-            <p class="review-word">${escapeHtml(f.spelling)}</p>
-            <p class="review-meaning">${f.meaning ? escapeHtml(f.meaning) : '<span style="color:var(--draft);font-style:italic">unnamed</span>'}</p>
-            <p>${typeBadge(explorerKind === 'root' ? 'root' : 'word')} ${badge(f.state || 'draft')} · <span class="sans" style="font-size:0.84rem;color:var(--muted)">${kindLabel}</span></p>
-            ${preview?.preview ? '<p class="sans" style="font-size:0.82rem;color:var(--muted);margin:0.35rem 0 0">Preview — save the word to explore downstream links. Tap nodes in the graph to jump to saved roots and words.</p>' : ''}
-          </div>
-          <div class="explorer-section"><h4>Built from</h4><ul class="explorer-list">${builtFrom}</ul></div>
-          <div class="explorer-section"><h4>Derivation tree</h4><div class="explorer-tree">${escapeHtml(treeText)}</div></div>
-          ${data.mermaid ? `<div class="explorer-section"><h4>Family graph</h4><p class="sans graph-hint">Tap a node to explore that root or word.</p><div class="mermaid-wrap"><pre class="mermaid">${escapeHtml(data.mermaid)}</pre></div></div>` : ''}
-          <div class="explorer-section"><h4>Used in</h4><ul class="explorer-list">${usedIn}</ul></div>
-          <div class="explorer-section"><h4>Related words</h4><ul class="explorer-list">${related}</ul></div>
-          <div class="actions" style="justify-content:center;margin-top:0.75rem"><button type="button" class="hear-min" id="ch-hear">▶ Listen</button></div>`;
-
+        const { html, speakParts } = buildExplorerHtml(data, explorerKind, { preview: !!preview?.preview });
+        $('sheet-body').innerHTML = html;
         $('ch-hear')?.addEventListener('click', () => speakNeural(speakParts));
         await renderExplorerMermaid(data.mermaid, data.graph_nodes);
         $('sheet').classList.add('open');
@@ -1404,8 +1719,8 @@
       try { h = await api('/api/fonoran/lab/health'); } catch { $('health-body').innerHTML = '<p class="empty">Could not load health.</p>'; return; }
       const core = ['learnability', 'pronounceability', 'memorability', 'parseability'];
       const overall = Math.round(core.reduce((a, k) => a + h.scores[k], 0) / core.length);
-      const label = overall >= 85 ? 'Strong' : overall >= 70 ? 'Good' : overall >= 50 ? 'Fair' : 'Needs work';
-      const color = (v) => v >= 80 ? 'var(--ok)' : v >= 60 ? 'var(--review)' : 'var(--reject)';
+      const label = healthOverallLabel(overall);
+      const color = healthScoreColor;
       const dupes = duplicateMeanings();
       const order = { high: 0, medium: 1, low: 2 };
       const warns = [...h.warnings].sort((a, b) => (order[a.severity] ?? 3) - (order[b.severity] ?? 3));
@@ -1421,7 +1736,7 @@
             <div class="bar"><span style="width:${d.score}%;background:${color(d.score)}"></span></div>
             <p class="explain">${escapeHtml(d.explain)}</p></div>`).join('')}
           <h3 class="section-h">Duplicate meanings</h3>
-          ${dupes.length ? dupes.map(d => `<div class="warn-row sev-medium"><span class="wlabel">${d.words.length}×</span><strong>${escapeHtml(d.label)}</strong> — ${d.words.map(w => `<span class="mono">${escapeHtml(w)}</span>`).join(', ')}</div>`).join('') : '<p class="empty" style="padding:0.75rem">Every meaning is used once.</p>'}
+          ${dupes.length ? dupes.map(d => `<div class="warn-row sev-medium"><span class="wlabel">${d.words.length}×</span><strong>${escapeHtml(d.label)}</strong>: ${d.words.map(w => `<span class="mono">${escapeHtml(w)}</span>`).join(', ')}</div>`).join('') : '<p class="empty" style="padding:0.75rem">Every meaning is used once.</p>'}
           <h3 class="section-h">Ambiguity &amp; repair warnings (${h.warning_summary.total}, ${h.warning_summary.high} serious)</h3>
           ${warns.length ? warns.slice(0, 30).map(w => `<div class="warn-row sev-${w.severity}"><span class="wlabel">${escapeHtml(w.label)}</span>${escapeHtml(w.message)}</div>`).join('') : '<p class="empty">No warnings.</p>'}
           ${h.dda ? `<p class="sans" style="font-size:0.84rem;color:var(--muted);margin-top:0.75rem">DDA: ${h.dda.pending} pending · ${h.dda.stale} stale · ${h.dda.confirmed} confirmed</p>` : ''}
@@ -1533,7 +1848,7 @@
     $('sheet-close').addEventListener('click', closeSheet);
     $('sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); });
     $('adv-reset-review').addEventListener('click', async () => {
-      if (!confirm('Move every root and word back to needs review? Meanings stay — you re-approve from scratch.')) return;
+      if (!confirm('Move every root and word back to needs review? Meanings stay; you re-approve from scratch.')) return;
       const r = await api('/api/fonoran/lab/reset-review', { method: 'POST', body: '{}' });
       toast(`Reset ${r.sounds_reset} roots and ${r.compounds_reset} words`);
       await load();
@@ -1543,7 +1858,7 @@
       await api('/api/fonoran/lab/seed', { method: 'POST', body: '{}' });
       STATE.lexicon = null;
       await ensureLexicon();
-      toast('Lab reset — start from scratch');
+      toast('Lab reset. Start from scratch');
       await load();
     });
 
@@ -1584,7 +1899,7 @@
           return;
         }
         el.innerHTML = r.ambiguous
-          ? `<p class="warn-row">Ambiguous — ${r.count} valid parses:</p><ul>${r.segmentations.map(s => `<li>${escapeHtml(s.join(' + '))}</li>`).join('')}</ul>`
+          ? `<p class="warn-row">Ambiguous: ${r.count} valid parses:</p><ul>${r.segmentations.map(s => `<li>${escapeHtml(s.join(' + '))}</li>`).join('')}</ul>`
           : `<p><span class="badge badge-approved">Unique</span> ${escapeHtml(r.segmentations[0].join(' + '))}</p>`;
       } catch (e) { toast(e.message); }
     });
