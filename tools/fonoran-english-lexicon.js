@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const LEXICON_PATH = join(ROOT, 'data/fonoran-english-lexicon.json');
+const ROOTS_PATH = join(ROOT, 'data/fonoran-english-roots.json');
 const GEN31_PATH = join(ROOT, 'data/fonoran-gen3-1-roots.json');
 const CONCEPTS_PATH = join(ROOT, 'data/fonoran-stress-test-concepts.json');
 
@@ -37,6 +38,15 @@ export async function buildEnglishLexicon() {
       source,
     });
   };
+
+  try {
+    const rootsFile = JSON.parse(await readFile(ROOTS_PATH, 'utf8'));
+    for (const item of rootsFile.words ?? []) {
+      add(item.word, item.gloss, item.category, 'roots');
+    }
+  } catch {
+    // roots file built via npm run fonoran:roots
+  }
 
   const gen31 = JSON.parse(await readFile(GEN31_PATH, 'utf8'));
   for (const item of gen31.inventory ?? []) {

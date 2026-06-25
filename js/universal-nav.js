@@ -30,6 +30,7 @@ const FONORAN_TABS = [
   { id: 'home', label: 'Home' },
   { id: 'roots', label: 'Root Creator' },
   { id: 'create', label: 'Word Creator' },
+  { id: 'matcher', label: 'Word Matcher' },
   { id: 'dictionary', label: 'Dictionary' },
   { id: 'review', label: 'Review' },
 ];
@@ -55,6 +56,7 @@ const FONORAN_TITLES = {
   home: 'About Fonoran',
   roots: 'Root Creator',
   create: 'Word Creator',
+  matcher: 'Word Matcher',
   review: 'Review',
   dictionary: 'Dictionary',
   health: 'Health',

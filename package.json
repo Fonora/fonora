@@ -36,7 +36,9 @@
     "fonoran:stress-test": "node tools/fonoran-stress-test.js",
     "fonoran:explore": "node -e \"console.log('Open http://localhost:' + (process.env.PORT||8000) + '/fonoran/')\"",
     "fonoran:import": "node scripts/fonoran-import-json.js",
-    "fonoran:export": "node scripts/fonoran-export-json.js"
+    "fonoran:export": "node scripts/fonoran-export-json.js",
+    "fonoran:roots": "node tools/fonoran-english-roots-build.js",
+    "fonoran:lexicon": "node -e \"import('./tools/fonoran-english-lexicon.js').then(m => m.writeEnglishLexicon().then(l => console.log('Lexicon:', l.word_count, 'words')))\""
   },
   "dependencies": {
     "@echogarden/espeak-ng-emscripten": "^0.3.5",

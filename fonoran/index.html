@@ -86,6 +86,10 @@
                 <strong>Word Creator</strong>
                 <span>Stack roots into words</span>
               </button>
+              <button type="button" class="fonoran-tool-card" data-goto-page="matcher">
+                <strong>Word Matcher</strong>
+                <span>Pair Fonoran syllables to English roots</span>
+              </button>
               <button type="button" class="fonoran-tool-card" data-goto-page="dictionary">
                 <strong>Dictionary</strong>
                 <span>Browse and explore derivations</span>
@@ -153,6 +157,46 @@
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section id="page-matcher" class="page fonoran-split-page fonoran-match-page">
+        <div class="fonoran-split-shell" data-split-shell>
+          <div class="fonoran-split-chrome">
+            <p class="fonoran-split-chrome__intro sans">Match open Fonoran syllables to English root words and assign meanings to your lab.</p>
+            <div class="fonoran-match-equation" id="wm-equation">
+              <div class="fonoran-match-eq__term" id="wm-pick-fonoran">
+                <span class="fonoran-match-eq__value sans">…</span>
+              </div>
+              <span class="fonoran-match-eq__op" aria-hidden="true">+</span>
+              <div class="fonoran-match-eq__term" id="wm-pick-english">
+                <span class="fonoran-match-eq__value sans">…</span>
+              </div>
+              <span class="fonoran-match-eq__op" aria-hidden="true">=</span>
+              <input type="text" id="wm-meaning" class="fonoran-match-eq__meaning" placeholder="meaning" data-write-input autocomplete="off" aria-label="Meaning">
+              <div class="fonoran-match-eq__actions">
+                <button type="button" class="btn btn-primary" id="wm-assign" disabled data-write>Accept</button>
+                <button type="button" class="btn" id="wm-clear-sel" data-write>Clear</button>
+              </div>
+            </div>
+            <p id="wm-stats" class="sans fonoran-match-stats"></p>
+          </div>
+        </div>
+        <div class="fonoran-match-grid">
+          <aside class="fonoran-match-column" aria-label="Fonoran roots">
+            <div class="fonoran-match-column__head">
+              <h4 class="picker-h">Fonoran roots</h4>
+              <input type="search" id="wm-filter" class="search-bar fonoran-match-column__filter" placeholder="Filter sounds… e.g. b, sh, ee" autocomplete="off" aria-label="Filter Fonoran sounds">
+            </div>
+            <div class="fonoran-match-list" id="wm-fonoran"></div>
+          </aside>
+          <aside class="fonoran-match-column" aria-label="English roots">
+            <div class="fonoran-match-column__head">
+              <h4 class="picker-h">English roots</h4>
+              <input type="search" id="wm-english-filter" class="search-bar fonoran-match-column__filter" placeholder="Search English words…" autocomplete="off" aria-label="Search English words">
+            </div>
+            <div class="fonoran-match-list" id="wm-english"></div>
+          </aside>
         </div>
       </section>
 
