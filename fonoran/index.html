@@ -71,7 +71,7 @@
 
           <section class="fonoran-lander__showcase content-section" aria-labelledby="showcase-heading">
             <h2 id="showcase-heading">See the tooling in action</h2>
-            <p class="section-lead">Every word is traced from roots through derivation trees, semantic coordinates (DDA), and interactive family graphs with pronunciation in the Fonora script.</p>
+            <p class="section-lead">Every word is traced from roots through word trees, semantic coordinates (DDA), and interactive exploration with pronunciation in the Fonora script.</p>
             <div id="lander-showcase" class="fonoran-showcase" aria-live="polite">
               <p class="fonoran-showcase__loading">Loading example word…</p>
             </div>
@@ -172,12 +172,9 @@
           </aside>
           <div class="fonoran-split-workspace" id="word-create">
             <div class="composer-hero">
-              <div class="pick" id="wc-pick"></div>
-              <p class="composer-spell" id="wc-spell">-</p>
-              <div id="wc-pron"></div>
+              <div id="wc-preview"></div>
               <div id="wc-match"></div>
               <div class="composer-hero__actions">
-                <button type="button" class="hear-min" id="wc-hear" disabled aria-label="Listen to this word">▶ Listen</button>
                 <button type="button" class="btn" id="wc-explore" disabled>Explore preview</button>
               </div>
             </div>
@@ -260,7 +257,7 @@
       <section id="page-dictionary" class="page fonoran-split-page">
         <div class="fonoran-split-shell" data-split-shell>
           <div class="fonoran-split-chrome">
-            <p class="fonoran-split-chrome__intro sans">Browse the vocabulary and explore derivation trees.</p>
+            <p class="fonoran-split-chrome__intro sans">Browse the vocabulary and explore word trees.</p>
             <input type="search" id="dict-search" class="search-bar" placeholder="Search Fonoran or English…" autocomplete="off">
             <div class="toolbar" id="dict-filters">
               <button type="button" class="chip active" data-filter="all">All</button>
@@ -278,7 +275,7 @@
           </aside>
           <div class="fonoran-split-workspace" id="dict-detail" aria-live="polite">
             <div class="fonoran-split-empty">
-              <p>Select a word or root on the left to preview pronunciation, derivation, and related words. Open the family graph or DDA coordinates from there.</p>
+              <p>Select a word or root on the left to preview it, then open the Word Tree or DDA from the card.</p>
             </div>
           </div>
         </div>

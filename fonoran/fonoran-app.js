@@ -236,11 +236,17 @@
       if (isValidSyllable(sp)) speakNeural(sp);
     }
 
-    function pronBlock(parts) {
+    function wordPreviewPron(parts) {
       const list = Array.isArray(parts) ? parts : [parts];
-      const script = STATE.rules ? romanToFonoraScript(list, STATE.rules).phrase : '';
-      const sayLine = list.length > 1 ? compoundPhoneticKey(list) : phoneticKeyBold(list[0]);
-      const englishLine = list.length > 1 ? compoundEnglishGuide(list) : englishGuide(list[0]);
+      return {
+        script: STATE.rules ? romanToFonoraScript(list, STATE.rules).phrase : '',
+        sayLine: list.length > 1 ? compoundPhoneticKey(list) : phoneticKeyBold(list[0]),
+        englishLine: list.length > 1 ? compoundEnglishGuide(list) : englishGuide(list[0]),
+      };
+    }
+
+    function pronBlock(parts) {
+      const { script, sayLine, englishLine } = wordPreviewPron(parts);
       return `${script ? `<div class="fonora-script symbol-text">${escapeHtml(script)}</div>` : ''}
         <div class="pron-block">
           <div class="pron-line">Say: <strong>${escapeHtml(sayLine)}</strong></div>
@@ -439,7 +445,12 @@
       populateLexCategories(cat);
       populateLexWords(word, cat.value);
       cat.addEventListener('change', () => populateLexWords(word, cat.value));
-      word.addEventListener('change', () => { if (word.value) inp.value = word.value; });
+      word.addEventListener('change', () => {
+        if (word.value) {
+          inp.value = word.value;
+          inp.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+      });
     }
 
     function soundPieceMatches(kind, value, query) {
@@ -705,22 +716,41 @@
       if (!STATE.lab) return;
       ensureSplitStickyObserver();
       const picks = STATE.wordComposer;
-      $('wc-pick').innerHTML = picks.length
-        ? picks.map((c, i) => `<span class="tok" data-idx="${i}" data-write>${typeBadge(c.type)} <span class="mono">${escapeHtml(c.spelling || c.ref)}</span> = ${escapeHtml(compDisplayLabel(c))} ×</span>`).join('')
-        : '<span class="sans" style="color:var(--muted);font-size:0.84rem">Tap roots or approved words on the left…</span>';
-      $('wc-pick').querySelectorAll('.tok').forEach(t => t.addEventListener('click', () => { STATE.wordComposer.splice(Number(t.dataset.idx), 1); renderWordComposer(); }));
+      const meaning = $('wc-meaning')?.value.trim() || '';
+      const previewEl = $('wc-preview');
+      if (previewEl) {
+        if (!picks.length) {
+          previewEl.innerHTML = '<div class="word-preview word-preview--empty"><p class="sans">Tap roots or approved words on the left…</p></div>';
+        } else {
+          const focus = focusFromComposer(picks, meaning);
+          previewEl.innerHTML = buildWordPreviewHtml(focus, {
+            kind: 'word',
+            speakParts: composerCanListen(picks) ? composerFlatSpellings(picks) : [],
+            showBadges: false,
+            builtFromRemovable: true,
+            hearId: 'wc-hear',
+            showHear: composerCanListen(picks),
+          });
+          previewEl.querySelectorAll('[data-remove-idx]').forEach((piece) => {
+            piece.addEventListener('click', () => {
+              STATE.wordComposer.splice(Number(piece.dataset.removeIdx), 1);
+              renderWordComposer();
+            });
+          });
+        }
+      }
       const spelling = picks.length ? resolveComposerSpelling(picks) : '';
-      $('wc-spell').textContent = spelling || '-';
-      const flat = composerFlatSpellings(picks);
-      $('wc-pron').innerHTML = composerCanListen(picks) ? pronBlock(flat) : '';
-      if (picks.length >= 2 && ! $('wc-meaning').value.trim()) {
+      if (picks.length >= 2 && !meaning) {
         const sug = picks.map(compDisplayLabel).join(' + ');
         $('wc-meaning').placeholder = sug;
       }
       const match = renderSpellingMatch('wc-match', spelling);
       const hearBtn = $('wc-hear');
-      hearBtn.disabled = !composerCanListen(picks);
-      hearBtn.onclick = () => speakNeural(flat);
+      if (hearBtn) {
+        const flat = composerFlatSpellings(picks);
+        hearBtn.disabled = !composerCanListen(picks);
+        hearBtn.onclick = () => speakNeural(flat);
+      }
       const exploreBtn = $('wc-explore');
       if (exploreBtn) {
         exploreBtn.disabled = picks.length < 2;
@@ -1037,21 +1067,122 @@
       return `⟨ ${dda.D ?? '?'} · ${dda.M ?? '?'} · ${dda.A ?? '?'} ⟩`;
     }
 
-    function buildCompositionBarHtml(f) {
-      const parts = (f.components ?? []).map(c => {
-        if (c.type === 'root') return c.ref;
-        const w = STATE.lab.compounds.find(x => x.id === c.ref);
-        return w?.spelling ?? c.ref;
-      });
-      if (parts.length < 2) return '';
-      const pieces = parts.map((p, i) =>
-        `${i > 0 ? '<span class="showcase-compose__op">+</span>' : ''}<span class="showcase-compose__piece">${escapeHtml(p)}</span>`
-      ).join('');
-      return `<div class="showcase-compose" aria-label="Word composition">
-        ${pieces}
-        <span class="showcase-compose__op">=</span>
-        <span class="showcase-compose__result">${escapeHtml(f.spelling)}</span>
-        ${f.meaning ? `<span class="showcase-compose__meaning">${escapeHtml(f.meaning)}</span>` : ''}
+    function componentMeta(c) {
+      const w = c.type === 'word' ? STATE.lab.compounds.find(x => x.id === c.ref) : null;
+      return {
+        spelling: c.type === 'root' ? c.ref : (w?.spelling ?? c.ref),
+        meaning: c.type === 'root' ? soundMeaning(c.ref) : (w?.meaning ?? '?'),
+      };
+    }
+
+    function buildBuiltFromComposeHtml(f, { removable = false } = {}) {
+      const components = f.components ?? [];
+      if (!components.length) return '';
+      return components.map((c, i) => {
+        const { spelling, meaning } = componentMeta(c);
+        const op = i > 0 ? '<span class="word-compose__op">+</span>' : '';
+        const removeAttrs = removable
+          ? ` class="word-compose__piece word-compose__piece--removable" data-remove-idx="${i}" data-write title="Remove ${escapeHtml(spelling)}"`
+          : ' class="word-compose__piece"';
+        return `${op}<div${removeAttrs}>
+          <span class="word-compose__piece-head">${typeBadge(c.type)} <span class="mono">${escapeHtml(spelling)}</span></span>
+          <span class="word-compose__piece-meaning">${escapeHtml(meaning)}</span>
+          ${removable ? '<span class="word-compose__remove" aria-hidden="true">×</span>' : ''}
+        </div>`;
+      }).join('');
+    }
+
+    function buildBuiltFromSectionHtml(f, { removable = false, wrapSection = true } = {}) {
+      const components = f.components ?? [];
+      const compose = buildBuiltFromComposeHtml(f, { removable });
+      if (!components.length) {
+        const empty = '<p class="word-preview__footnote sans">Primitive root — not built from other pieces.</p>';
+        return wrapSection ? empty : empty;
+      }
+      const body = `<div class="word-compose" aria-label="Word composition">${compose}</div>`;
+      return wrapSection
+        ? `<div class="explorer-section explorer-section--tight"><h4>Built from</h4>${body}</div>`
+        : body;
+    }
+
+    function wordPreviewSpeakParts(focus, kind = 'word') {
+      return kind === 'root'
+        ? [focus.spelling]
+        : (focus.components?.length ? composerFlatSpellings(focus.components) : [focus.spelling]);
+    }
+
+    function focusFromReviewItem(c) {
+      return {
+        spelling: c.spelling,
+        meaning: c.meaning,
+        state: c.state,
+        components: c.reviewKind === 'sound' ? [] : (c.components ?? []),
+      };
+    }
+
+    function focusFromComposer(picks, meaning = null) {
+      return {
+        spelling: picks.length ? resolveComposerSpelling(picks) : '',
+        meaning: meaning || null,
+        state: 'draft',
+        components: picks.map(c => ({ type: c.type, ref: c.ref })),
+      };
+    }
+
+    function buildWordPreviewHtml(focus, {
+      kind = 'word',
+      speakParts = null,
+      previewNote = '',
+      metaExtra = '',
+      hearId = '',
+      showBadges = true,
+      showBuiltFrom = true,
+      builtFromRemovable = false,
+      unnamedStyle = 'default',
+      showHear = true,
+      footerHtml = '',
+    } = {}) {
+      const parts = speakParts == null ? wordPreviewSpeakParts(focus, kind) : speakParts;
+      const hasSpelling = Boolean(focus.spelling);
+      const showPron = hasSpelling && parts.length > 0;
+      const pron = showPron ? wordPreviewPron(parts) : null;
+      const meaningHtml = focus.meaning
+        ? escapeHtml(focus.meaning)
+        : (unnamedStyle === 'review'
+          ? 'not named yet'
+          : '<span style="color:var(--draft);font-style:italic">unnamed</span>');
+      const meaningClass = focus.meaning ? '' : 'unnamed';
+      const badgeKind = kind === 'root' ? 'root' : 'word';
+      const builtFromHtml = showBuiltFrom ? buildBuiltFromSectionHtml(focus, { removable: builtFromRemovable }) : '';
+
+      const showToolbar = showBadges || metaExtra || (showHear && hasSpelling);
+      const toolbarClass = showToolbar && !showBadges && !metaExtra ? ' word-preview__toolbar--end' : '';
+
+      return `<div class="word-preview">
+        <div class="word-preview__card">
+          ${showToolbar ? `<div class="word-preview__toolbar${toolbarClass}">
+            ${showBadges ? `<div class="word-preview__badges" aria-label="Word status">
+              ${typeBadge(badgeKind)} ${badge(focus.state || 'draft')}${metaExtra ? ` ${metaExtra}` : ''}
+            </div>` : (metaExtra ? `<div class="word-preview__badges">${metaExtra}</div>` : '')}
+            ${showHear && hasSpelling ? `<button type="button" class="hear-min word-preview__hear"${hearId ? ` id="${hearId}"` : ''} aria-label="Listen to ${escapeHtml(focus.spelling)}">▶ Listen</button>` : ''}
+          </div>` : ''}
+          <div class="word-preview__hero">
+            ${pron?.script ? `<div class="word-preview__script fonora-script symbol-text">${escapeHtml(pron.script)}</div>` : ''}
+            <div class="word-preview__identity">
+              ${hasSpelling ? `<p class="word-preview__headline">
+                <span class="review-word">${escapeHtml(focus.spelling)}</span>
+                <span class="word-preview__dot" aria-hidden="true">·</span>
+                <span class="review-meaning ${meaningClass}">${meaningHtml}</span>
+              </p>` : ''}
+              ${pron ? `<p class="word-preview__pron">
+                <span class="word-preview__say">Say: <strong>${escapeHtml(pron.sayLine)}</strong></span>${pron.englishLine ? `<span class="word-preview__like">Sounds like ${escapeHtml(pron.englishLine)}</span>` : ''}
+              </p>` : ''}
+            </div>
+          </div>
+          ${previewNote ? `<p class="sans word-preview__note">${previewNote}</p>` : ''}
+          ${builtFromHtml}
+          ${footerHtml}
+        </div>
       </div>`;
     }
 
@@ -1115,48 +1246,38 @@
       </div>`;
     }
 
-    function buildBuiltFromList(components) {
-      return (components ?? []).length
-        ? components.map(c => {
-          const w = c.type === 'word' ? STATE.lab.compounds.find(x => x.id === c.ref) : null;
-          const sp = c.type === 'root' ? c.ref : (w?.spelling ?? c.ref);
-          const m = c.type === 'root' ? soundMeaning(c.ref) : (w?.meaning ?? '?');
-          return `<li>${typeBadge(c.type)} <span class="mono">${escapeHtml(sp)}</span> · ${escapeHtml(m)}</li>`;
-        }).join('')
-        : '<li class="sans" style="color:var(--muted)">Atomic root, not built from other pieces.</li>';
+    function buildWordTreeSectionHtml(mermaid, { variant = 'default' } = {}) {
+      if (!mermaid) return '';
+      const klass = variant === 'showcase' ? 'explorer-section showcase-graph' : 'explorer-section';
+      return `<div class="${klass}">
+        <h4>Word Tree</h4>
+        <p class="sans graph-hint">Tap a node to explore that root or word.</p>
+        <div class="mermaid-wrap"><pre class="mermaid">${escapeHtml(mermaid)}</pre></div>
+      </div>`;
+    }
+
+    function buildExplorerActionsHtml({ graph = false, dda = true, hasMermaid = false } = {}) {
+      if (!graph && !dda) return '';
+      return `<div class="explorer-actions">
+        ${graph ? `<button type="button" class="btn" data-open-graph ${hasMermaid ? '' : 'disabled'}>Word Tree</button>` : ''}
+        ${dda ? `<button type="button" class="btn" data-open-dda>Semantic coordinates (DDA)</button>` : ''}
+      </div>`;
     }
 
     function buildShowcaseHtml(data) {
       const f = data.focus;
       const word = STATE.lab?.compounds?.find(c => c.id === LANDER_SHOWCASE_WORD_ID);
-      const builtFrom = buildBuiltFromList(f.components);
-      const treeText = f.derivation?.direct?.length
-        ? formatTreeNodes(f.derivation.direct, 0)
-        : `${f.spelling} = ${f.meaning || 'unnamed'}`;
-      const speakParts = f.components?.length ? composerFlatSpellings(f.components) : [f.spelling];
+      const speakParts = wordPreviewSpeakParts(f, 'word');
 
       const html = `
-        <div class="showcase-hero">
-          <div class="showcase-hero__meta">
-            ${typeBadge('word')} ${badge(f.state || 'draft')}
-            <span class="showcase-hero__kind">Approved word</span>
-          </div>
-          ${pronBlock(speakParts)}
-          <div class="showcase-hero__word">
-            <p class="review-word">${escapeHtml(f.spelling)}</p>
-            <p class="review-meaning">${f.meaning ? escapeHtml(f.meaning) : '<span style="color:var(--draft);font-style:italic">unnamed</span>'}</p>
-            <button type="button" class="hear-min showcase-hero__hear" id="lander-showcase-hear" aria-label="Listen to ${escapeHtml(f.spelling)}">▶ Listen</button>
-          </div>
-        </div>
-        ${buildCompositionBarHtml(f)}
-        <div class="showcase-panels">
-          <div class="showcase-panel showcase-panel--structure">
-            <div class="explorer-section"><h4>Built from</h4><ul class="explorer-list">${builtFrom}</ul></div>
-            <div class="explorer-section"><h4>Derivation tree</h4><div class="explorer-tree">${escapeHtml(treeText)}</div></div>
-          </div>
-        </div>
+        ${buildWordPreviewHtml(f, {
+          kind: 'word',
+          speakParts,
+          metaExtra: '<span class="word-preview__kind">Approved word</span>',
+          hearId: 'lander-showcase-hear',
+        })}
         ${buildUsedInChipsHtml(data.used_in)}
-        ${data.mermaid ? `<div class="explorer-section showcase-graph"><h4>Family graph</h4><p class="sans graph-hint">Tap a node to explore that root or word.</p><div class="mermaid-wrap"><pre class="mermaid">${escapeHtml(data.mermaid)}</pre></div></div>` : ''}
+        ${buildWordTreeSectionHtml(data.mermaid, { variant: 'showcase' })}
         <div class="showcase-dda-section">
           ${buildDdaPanelHtml(word?.dda, f.components)}
         </div>`;
@@ -1164,57 +1285,43 @@
       return { html, speakParts };
     }
 
-    function buildExplorerHtml(data, explorerKind, { preview = false, compact = false, includeGraph = true, modalActions = false } = {}) {
+    function buildExplorerHtml(data, explorerKind, {
+      preview = false,
+      includeGraph = true,
+      layout = 'default',
+      modalActions = false,
+    } = {}) {
       const f = data.focus;
-      const builtFrom = buildBuiltFromList(f.components);
+      const speakParts = wordPreviewSpeakParts(f, explorerKind === 'root' ? 'root' : 'word');
+      const isDictionary = layout === 'dictionary';
+      const showInlineGraph = includeGraph && !isDictionary;
 
-      const treeText = f.derivation?.direct?.length
-        ? formatTreeNodes(f.derivation.direct, 0)
-        : `${f.spelling} = ${f.meaning || 'unnamed'}`;
-
-      const speakParts = explorerKind === 'root'
-        ? [f.spelling]
-        : (f.components?.length ? composerFlatSpellings(f.components) : [f.spelling]);
-
-      const graphSection = includeGraph && data.mermaid
-        ? `<div class="explorer-section"><h4>Family graph</h4><p class="sans graph-hint">Tap a node to explore that root or word.</p><div class="mermaid-wrap"><pre class="mermaid">${escapeHtml(data.mermaid)}</pre></div></div>`
-        : '';
-      const actionButtons = modalActions
-        ? `<div class="explorer-actions">
-            <button type="button" class="btn" data-open-graph ${data.mermaid ? '' : 'disabled'}>Family graph</button>
-            <button type="button" class="btn" data-open-dda>Semantic coordinates (DDA)</button>
-          </div>`
+      const actionButtons = (isDictionary || modalActions)
+        ? buildExplorerActionsHtml({
+          graph: isDictionary || !showInlineGraph,
+          dda: true,
+          hasMermaid: Boolean(data.mermaid),
+        })
         : '';
 
-      let html = `
-        <div class="explorer-hero">
-          <div class="explorer-hero__flags" aria-label="Word status">
-            ${typeBadge(explorerKind === 'root' ? 'root' : 'word')} ${badge(f.state || 'draft')}
-          </div>
-          ${pronBlock(speakParts)}
-          <div class="explorer-hero__word">
-            <p class="review-word">${escapeHtml(f.spelling)}</p>
-            <p class="review-meaning">${f.meaning ? escapeHtml(f.meaning) : '<span style="color:var(--draft);font-style:italic">unnamed</span>'}</p>
-            <button type="button" class="hear-min explorer-hear-btn" aria-label="Listen to pronunciation">▶ Listen</button>
-          </div>
-          ${preview ? '<p class="sans explorer-hero__note">Preview: save the word to explore downstream links. Tap nodes in the graph to jump to saved roots and words.</p>' : ''}
-        </div>
-        <div class="explorer-section"><h4>Built from</h4><ul class="explorer-list">${builtFrom}</ul></div>
-        <div class="explorer-section"><h4>Derivation tree</h4><div class="explorer-tree">${escapeHtml(treeText)}</div></div>
-        ${graphSection}
-        ${actionButtons}`;
+      const previewHtml = buildWordPreviewHtml(f, {
+        kind: explorerKind === 'root' ? 'root' : 'word',
+        speakParts,
+        previewNote: preview ? 'Preview: save the word to explore downstream links. Tap nodes in the graph to jump to saved roots and words.' : '',
+        footerHtml: isDictionary ? actionButtons : '',
+      });
 
-      if (!compact) {
-        const usedIn = data.used_in?.length
-          ? data.used_in.map(u => `<li><span class="mono">${escapeHtml(u.spelling)}</span> · ${escapeHtml(u.meaning || 'unnamed')} ${badge(u.state)}</li>`).join('')
-          : '<li class="sans" style="color:var(--muted)">Nothing built from this yet.</li>';
-        const related = data.related?.length
-          ? data.related.map(r => `<li><span class="mono">${escapeHtml(r.spelling)}</span> · ${escapeHtml(r.meaning || 'unnamed')}</li>`).join('')
-          : '<li class="sans" style="color:var(--muted)">No sibling words share the same components.</li>';
-        html += `
-          <div class="explorer-section"><h4>Used in</h4><ul class="explorer-list">${usedIn}</ul></div>
-          <div class="explorer-section"><h4>Related words</h4><ul class="explorer-list">${related}</ul></div>`;
-      }
+      const graphSection = showInlineGraph
+        ? buildWordTreeSectionHtml(data.mermaid, { variant: 'default' })
+        : '';
+
+      const trailingActions = !isDictionary ? actionButtons : '';
+
+      const body = `${previewHtml}${graphSection}${trailingActions}`;
+
+      const html = isDictionary
+        ? `<div class="dict-detail-stack">${body}</div>`
+        : body;
 
       return { html, speakParts };
     }
@@ -1398,12 +1505,9 @@
       const c = list[STATE.wordCursor];
       const isSound = c.reviewKind === 'sound';
       const kindLabel = isSound ? 'Root' : 'Word';
+      const focus = focusFromReviewItem(c);
       const savedNote = STATE.justSaved === c.spelling
         ? `<div class="saved-banner">✓ Saved <strong>${escapeHtml(c.spelling)}</strong>. You're still on this ${isSound ? 'root' : 'word'}. Find it anytime in Dictionary.</div>` : '';
-      const pronParts = isSound ? [c.spelling] : c.parts;
-      const partsLine = isSound
-        ? `<p class="review-parts">${typeBadge('root')} Primitive syllable</p>`
-        : `<p class="review-parts">${c.part_details.map(p => `${typeBadge(p.type || 'root')} ${escapeHtml(p.spelling)} = ${escapeHtml(p.meaning || p.legacy_label || '?')}`).join(' · ')}</p>`;
       const feelPrompt = c.meaning
         ? `Does this ${isSound ? 'root' : 'word'} feel right?`
         : `This ${isSound ? 'root' : 'word'} needs a meaning.`;
@@ -1421,12 +1525,14 @@
         <div class="review">
           ${neighborStrip(list, STATE.wordCursor)}
           <div class="position">${kindLabel} ${STATE.wordCursor + 1} of ${total} · ${open} need review · ${badge(isSound ? 'base' : 'compound')} ${badge(c.state)}</div>
-          ${pronBlock(pronParts)}
-          <p class="review-word">${escapeHtml(c.spelling)}</p>
-          <p class="review-meaning ${c.meaning ? '' : 'unnamed'}">${c.meaning ? escapeHtml(c.meaning) : 'not named yet'}</p>
-          ${partsLine}
+          ${buildWordPreviewHtml(focus, {
+            kind: isSound ? 'root' : 'word',
+            speakParts: isSound ? [c.spelling] : c.parts,
+            showBadges: false,
+            unnamedStyle: 'review',
+            hearId: 'hear',
+          })}
           <button type="button" class="btn" id="explore-item" style="margin-top:0.5rem">Explore family tree</button>
-          <button type="button" class="hear-min" id="hear" aria-label="Listen to pronunciation">▶ Listen</button>
           ${savedNote}
           ${editPanel}${feelPanel}
           ${cardNav(STATE.wordCursor, total, 'word')}
@@ -1649,20 +1755,27 @@
     function spellingMatchHtml(match) {
       if (!match) return '';
       const { kind, item } = match;
-      const typeLabel = kind === 'sound' ? 'root' : 'word';
-      const meaning = item.meaning?.trim() || '(unnamed)';
-      const partsHint = kind === 'compound'
-        ? `Built from ${item.parts.map(escapeHtml).join(' + ')}`
-        : 'A base root, not a compound';
+      const focus = {
+        spelling: item.spelling,
+        meaning: item.meaning,
+        state: item.state,
+        components: kind === 'compound' ? (item.components ?? []) : [],
+      };
       const claimNote = item.generator_hint && !item.meaning?.trim()
-        ? ' · generator suggestion; save below to name it'
-        : item.generator_hint ? ' · generator suggestion' : '';
+        ? 'Generator suggestion — save below to name it.'
+        : item.generator_hint ? 'Generator suggestion.' : '';
       const id = kind === 'sound' ? item.spelling : item.id;
       return `
         <div class="word-match">
-          <div>Already a ${typeLabel}: <strong class="mono">${escapeHtml(item.spelling)}</strong> ${badge(kind === 'sound' ? 'base' : 'compound')} ${badge(item.state)}</div>
-          <div class="wm-meaning">${escapeHtml(meaning)}</div>
-          <div class="wm-meta">${partsHint}${claimNote} · <button type="button" class="linkish" data-view-match="${kind}" data-match-id="${escapeHtml(id)}">Details</button></div>
+          <p class="word-match__label">Already in your lab</p>
+          ${buildWordPreviewHtml(focus, {
+            kind: kind === 'sound' ? 'root' : 'word',
+            showBadges: true,
+            showBuiltFrom: kind === 'compound' && focus.components.length > 0,
+            showHear: false,
+          })}
+          ${claimNote ? `<p class="word-match__note">${escapeHtml(claimNote)}</p>` : ''}
+          <div class="wm-meta"><button type="button" class="linkish" data-view-match="${kind}" data-match-id="${escapeHtml(id)}">Open details</button></div>
         </div>`;
     }
 
@@ -1707,20 +1820,27 @@
       return api(`/api/fonoran/lab/graph/${kind}/${encodeURIComponent(id)}`);
     }
 
-    async function mountExplorer(containerEl, kind, id, preview = null, { onNavigate, includeGraph = true, modalActions = false } = {}) {
+    async function mountExplorer(containerEl, kind, id, preview = null, {
+      onNavigate,
+      includeGraph = true,
+      layout = 'default',
+      modalActions = false,
+    } = {}) {
       const data = await fetchExplorerData(kind, id, preview);
       const explorerKind = preview?.preview ? 'word' : kind;
+      const showInlineGraph = includeGraph && layout !== 'dictionary';
       const { html, speakParts } = buildExplorerHtml(data, explorerKind, {
         preview: !!preview?.preview,
         includeGraph,
+        layout,
         modalActions,
       });
       containerEl.innerHTML = html;
-      containerEl.querySelector('.explorer-hear-btn')?.addEventListener('click', () => speakNeural(speakParts));
-      if (includeGraph) {
+      containerEl.querySelector('.word-preview__hear')?.addEventListener('click', () => speakNeural(speakParts));
+      if (showInlineGraph) {
         await renderExplorerMermaidIn(containerEl, data.mermaid, data.graph_nodes, onNavigate);
       }
-      if (modalActions) {
+      if (modalActions || layout === 'dictionary') {
         containerEl.querySelector('[data-open-graph]')?.addEventListener('click', () => {
           openFamilyGraphSheet(data, onNavigate);
         });
@@ -1737,13 +1857,14 @@
       const body = $('sheet-body');
       body.innerHTML = `
         <div class="explorer-section showcase-graph">
-          <h4>Family graph · <span class="mono">${escapeHtml(f.spelling)}</span></h4>
+          <h4>Word Tree · <span class="mono">${escapeHtml(f.spelling)}</span></h4>
           <p class="sans graph-hint">Tap a node to explore that root or word.</p>
           <div class="mermaid-wrap"><pre class="mermaid">${escapeHtml(data.mermaid)}</pre></div>
         </div>`;
-      $('sheet').classList.add('open');
+      openSheet();
       await renderExplorerMermaidIn(body, data.mermaid, data.graph_nodes, (navKind, ref) => {
-        closeSheet();
+        const keepScroll = Boolean(onNavigate);
+        closeSheet({ restoreScroll: !keepScroll });
         if (onNavigate) onNavigate(navKind, ref);
         else openExplorer(navKind, ref);
       });
@@ -1752,30 +1873,39 @@
     function openDdaSheet(data, explorerKind, ref) {
       const dda = labItemDda(explorerKind, ref);
       $('sheet-body').innerHTML = buildDdaPanelHtml(dda, data.focus.components);
-      $('sheet').classList.add('open');
+      openSheet();
     }
 
     async function openExplorer(kind, id, preview = null) {
       try {
         await mountExplorer($('sheet-body'), kind, id, preview);
-        $('sheet').classList.add('open');
+        openSheet();
       } catch (e) { toast(e.message); }
     }
 
-    function formatTreeNodes(nodes, depth) {
-      const pad = '  '.repeat(depth);
-      return (nodes ?? []).map(n => {
-        const badge = n.type === 'root' ? 'ROOT' : 'WORD';
-        const line = `${pad}${n.spelling} = ${n.meaning || '?'} (${badge})`;
-        const kids = n.children?.length ? `\n${formatTreeNodes(n.children, depth + 1)}` : '';
-        return line + kids;
-      }).join('\n');
+    let sheetScrollY = 0;
+
+    function openSheet() {
+      if ($('sheet').classList.contains('open')) return;
+      sheetScrollY = window.scrollY;
+      $('sheet').classList.add('open');
+      document.documentElement.classList.add('sheet-open');
+      document.body.classList.add('sheet-open');
+      document.body.style.top = `-${sheetScrollY}px`;
+    }
+
+    function closeSheet({ restoreScroll = true } = {}) {
+      if (!$('sheet').classList.contains('open')) return;
+      $('sheet').classList.remove('open');
+      document.documentElement.classList.remove('sheet-open');
+      document.body.classList.remove('sheet-open');
+      document.body.style.top = '';
+      if (restoreScroll) window.scrollTo(0, sheetScrollY);
     }
 
     function openChain(kind, id) {
       openExplorer(kind === 'sound' ? 'root' : 'word', kind === 'sound' ? id : id);
     }
-    function closeSheet() { $('sheet').classList.remove('open'); }
 
     /* ---------- DICTIONARY ---------- */
     function dictEntries() {
@@ -1802,7 +1932,7 @@
     }
 
     function dictDetailEmptyHtml() {
-      return `<div class="fonoran-split-empty"><p>Select a word or root on the left to preview pronunciation, derivation, and related words. Open the family graph or DDA coordinates from there.</p></div>`;
+      return `<div class="fonoran-split-empty"><p>Select a word or root on the left to preview it, then open the Word Tree or DDA from the card.</p></div>`;
     }
 
     function showDictDetailEmpty() {
@@ -1818,12 +1948,13 @@
       panel.innerHTML = '<p class="fonoran-split-loading">Loading…</p>';
       try {
         await mountExplorer(panel, dictExplorerKind(entryKind), id, null, {
+          layout: 'dictionary',
           includeGraph: false,
           modalActions: true,
           onNavigate: (navKind, ref) => {
             const kind = navKind === 'root' ? 'sound' : 'compound';
             STATE.dictSelection = { kind, id: ref };
-            renderDictionaryList();
+            renderDictionaryList({ scrollToSelection: true });
             loadDictionaryDetail(kind, ref);
           },
         });
@@ -1879,12 +2010,43 @@
         </button>`;
     }
 
-    function renderDictionaryList() {
+    function dictListScrollInset() {
+      const raw = getComputedStyle(document.documentElement).getPropertyValue('--fonoran-split-chrome-offset').trim();
+      const chrome = parseFloat(raw) || 144;
+      return chrome + 16;
+    }
+
+    function scrollDictSelectionIntoView() {
+      const sel = STATE.dictSelection;
+      if (!sel || STATE.page !== 'dictionary') return;
+      const list = $('dict-list');
+      if (!list) return;
+      const esc = (s) => (window.CSS?.escape ? CSS.escape(s) : String(s).replace(/["\\]/g, '\\$&'));
+      const btn = list.querySelector(`.dict-item[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"]`);
+      if (!btn) return;
+
+      const inset = dictListScrollInset();
+      const rect = btn.getBoundingClientRect();
+      const viewBottom = window.innerHeight - 20;
+      if (rect.top >= inset && rect.bottom <= viewBottom) return;
+
+      window.scrollTo({
+        top: Math.max(0, window.scrollY + rect.top - inset),
+        behavior: 'smooth',
+      });
+    }
+
+    function renderDictionaryList({ scrollToSelection = false } = {}) {
       const list = dictEntries();
       $('dict-list').innerHTML = list.length ? list.map(dictItemHtml).join('') : '<p class="empty">Nothing matches.</p>';
       $('dict-list').querySelectorAll('.dict-item').forEach(b => b.addEventListener('click', () => {
         selectDictionaryEntry(b.dataset.kind, b.dataset.id);
       }));
+      if (scrollToSelection) {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(scrollDictSelectionIntoView);
+        });
+      }
     }
 
     function syncSplitStickyOffsets() {
@@ -2057,6 +2219,7 @@
     $('adv-dictionary').addEventListener('click', () => { rememberMainPage(); switchPage('dictionary'); });
     $('adv-health').addEventListener('click', () => { rememberMainPage(); switchPage('health'); });
     $('wc-filter').addEventListener('input', e => { STATE.wordComposerFilter = e.target.value; renderWordComposer(); });
+    $('wc-meaning')?.addEventListener('input', () => renderWordComposer());
     $('wm-filter')?.addEventListener('input', e => { STATE.matcherFilter = e.target.value; renderWordMatcher(); });
     $('wm-english-filter')?.addEventListener('input', e => { STATE.matcherEnglishFilter = e.target.value; renderWordMatcher(); });
     $('wm-meaning')?.addEventListener('input', () => {
