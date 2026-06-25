@@ -85,8 +85,9 @@
     .all-done h2 { font-family:-apple-system,sans-serif; }
 
     /* root picker cells (word creator) */
-    .root-cell { display:flex; flex-direction:column; gap:0.2rem; text-align:left; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:0.75rem 0.85rem; cursor:pointer; font:inherit; transition:border-color 0.15s; }
+    .root-cell { display:flex; flex-direction:column; gap:0.2rem; text-align:left; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:0.75rem 0.85rem; cursor:pointer; font:inherit; transition:border-color 0.15s, background 0.15s; }
     .root-cell:hover { border-color:var(--accent); }
+    .root-cell.is-selected { border-color:var(--accent); background:var(--accent-soft); }
     .root-cell .sp { font-family:ui-monospace,monospace; font-size:1.2rem; font-weight:700; color:var(--word); }
     .root-cell .root-glyphs { font-size:1.35rem; line-height:1.2; color:var(--text); margin:0.05rem 0 0.1rem; }
     .root-cell .mn { font-family:-apple-system,sans-serif; font-size:0.85rem; }
@@ -275,6 +276,159 @@
       top:var(--fonoran-split-chrome-offset, 9rem);
       z-index:10;
       align-self:start;
+    }
+    /* word matcher — shell cannot be sticky inside overflow:hidden; keep visual styles */
+    #page-matcher .fonoran-split-shell {
+      position:static;
+    }
+    #page-matcher .fonoran-split-shell::before {
+      display:none;
+    }
+    #page-matcher .fonoran-split-chrome {
+      padding-top:0.65rem;
+    }
+    /* word matcher */
+    #page-matcher.fonoran-match-page.active {
+      display:flex;
+      flex-direction:column;
+      height:calc(100svh - var(--fonoran-header-offset, 4.5rem) - var(--layout-main-pt, 1.75rem) - var(--layout-main-pb, 2.5rem));
+      max-height:calc(100svh - var(--fonoran-header-offset, 4.5rem) - var(--layout-main-pt, 1.75rem) - var(--layout-main-pb, 2.5rem));
+      overflow:hidden;
+      box-sizing:border-box;
+    }
+    .fonoran-match-stats { margin:0.5rem 0 0; font-size:0.8rem; color:var(--muted); line-height:1.4; }
+    .fonoran-match-equation {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:0.5rem 0.65rem;
+      padding:0.75rem 0.9rem;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+    }
+    .fonoran-match-eq__term {
+      min-width:4.5rem;
+      padding:0.4rem 0.65rem;
+      background:var(--bg);
+      border:1px dashed var(--border);
+      border-radius:8px;
+      text-align:center;
+    }
+    .fonoran-match-eq__term.is-filled { border-style:solid; border-color:var(--accent); background:var(--accent-soft); }
+    .fonoran-match-eq__value { font-size:0.92rem; color:var(--muted); line-height:1.3; }
+    .fonoran-match-eq__term.is-filled .fonoran-match-eq__value { color:var(--text); }
+    .fonoran-match-eq__value .mono { font-family:ui-monospace,monospace; font-weight:700; font-size:1.05rem; color:var(--word); }
+    .fonoran-match-eq__placeholder { font-size:0.82rem; color:var(--muted); font-weight:500; }
+    .fonoran-match-eq__op {
+      font-family:ui-monospace,monospace;
+      font-size:1.1rem;
+      font-weight:700;
+      color:var(--muted);
+      line-height:1;
+    }
+    .fonoran-match-eq__meaning {
+      flex:1 1 8rem;
+      min-width:6rem;
+      max-width:14rem;
+      padding:0.45rem 0.6rem;
+      border:1px solid var(--border);
+      border-radius:8px;
+      font-size:0.9rem;
+    }
+    .fonoran-match-eq__actions {
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.4rem;
+      margin-left:auto;
+    }
+    .fonoran-match-eq__actions .btn { margin:0; }
+    .fonoran-match-grid {
+      flex:1 1 0;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      grid-template-rows:minmax(0, 1fr);
+      gap:1rem;
+      align-items:stretch;
+      min-height:0;
+      margin-top:0.75rem;
+      overflow:hidden;
+    }
+    .fonoran-match-column {
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+      height:100%;
+      max-height:100%;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:0.75rem;
+      overflow:hidden;
+    }
+    .fonoran-match-column__head {
+      flex-shrink:0;
+    }
+    .fonoran-match-column .picker-h { margin:0 0 0.5rem !important; }
+    .fonoran-match-column__filter {
+      margin:0 0 0.55rem;
+      font-size:0.88rem;
+    }
+    .fonoran-match-list {
+      flex:1 1 0;
+      min-height:0;
+      overflow-x:hidden;
+      overflow-y:auto;
+      overscroll-behavior:contain;
+      -webkit-overflow-scrolling:touch;
+      display:flex;
+      flex-direction:column;
+      gap:0.35rem;
+    }
+    .fonoran-match-list .root-cell {
+      text-align:left;
+      content-visibility:auto;
+      contain-intrinsic-size:auto 3.5rem;
+      flex-shrink:0;
+    }
+    .root-cell__dismiss { display:none; }
+    .matcher-restore { display:none; }
+    .fonoran-match-list .root-cell.is-named .mn { color:var(--text); font-style:normal; font-weight:600; }
+    .fonoran-match-list .root-cell.is-dismissed { opacity:0.45; }
+    .fonoran-match-list .root-cell.eng-cell .matcher-cat {
+      font-family:-apple-system,sans-serif;
+      font-size:0.65rem;
+      font-weight:600;
+      text-transform:uppercase;
+      letter-spacing:0.04em;
+      color:var(--muted);
+      margin-top:0.15rem;
+    }
+    .fonoran-match-list .root-cell.eng-cell .mn.gloss { font-size:0.78rem; font-weight:400; color:var(--muted); font-style:normal; }
+    .matcher-restore {
+      flex-shrink:0;
+      align-self:flex-start;
+      font-family:-apple-system,sans-serif;
+      font-size:0.72rem;
+      padding:0.35rem 0.5rem;
+      border:1px solid var(--border);
+      border-radius:6px;
+      background:var(--bg);
+      color:var(--accent);
+      cursor:pointer;
+    }
+    .matcher-restore:hover { background:var(--accent-soft); border-color:var(--accent); }
+    @media (max-width:768px){
+      #page-matcher.fonoran-match-page.active {
+        height:auto;
+        max-height:none;
+        overflow:visible;
+      }
+      .fonoran-match-equation { flex-direction:column; align-items:stretch; }
+      .fonoran-match-eq__actions { margin-left:0; width:100%; }
+      .fonoran-match-eq__meaning { max-width:none; }
+      .fonoran-match-grid { grid-template-columns:1fr; flex:none; overflow:visible; }
+      .fonoran-match-column { min-height:240px; max-height:50vh; height:auto; }
     }
     .roots-sound-picker .syl-builder { margin:0; }
     .roots-sound-picker .syl-row:last-child { margin-bottom:0; }

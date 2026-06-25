@@ -1,0 +1,2002 @@
+{
+  "version": "1.0",
+  "description": "Curated English words suitable as Fonoran root meanings.",
+  "generated_at": "2026-06-25T07:28:39.533Z",
+  "word_count": 395,
+  "categories": [
+    "body",
+    "cavity",
+    "emanation",
+    "index",
+    "interface",
+    "junction",
+    "motion",
+    "nature",
+    "number",
+    "object",
+    "origin",
+    "perception",
+    "shape",
+    "society",
+    "space",
+    "stream",
+    "time"
+  ],
+  "words": [
+    {
+      "word": "act",
+      "gloss": "to do; perform",
+      "category": "index"
+    },
+    {
+      "word": "actor",
+      "gloss": "one who acts",
+      "category": "index"
+    },
+    {
+      "word": "after",
+      "gloss": "after",
+      "category": "time"
+    },
+    {
+      "word": "age",
+      "gloss": "long span of time",
+      "category": "time"
+    },
+    {
+      "word": "agent",
+      "gloss": "activated locus",
+      "category": "index"
+    },
+    {
+      "word": "air",
+      "gloss": "breathable atmosphere",
+      "category": "nature"
+    },
+    {
+      "word": "all",
+      "gloss": "all",
+      "category": "number"
+    },
+    {
+      "word": "angle",
+      "gloss": "angle",
+      "category": "shape"
+    },
+    {
+      "word": "animal",
+      "gloss": "living moving being",
+      "category": "nature"
+    },
+    {
+      "word": "arm",
+      "gloss": "upper limb",
+      "category": "body"
+    },
+    {
+      "word": "back",
+      "gloss": "rear face",
+      "category": "space"
+    },
+    {
+      "word": "bad",
+      "gloss": "negative value",
+      "category": "society"
+    },
+    {
+      "word": "bag",
+      "gloss": "bag",
+      "category": "object"
+    },
+    {
+      "word": "beat",
+      "gloss": "regular rhythm",
+      "category": "stream"
+    },
+    {
+      "word": "bed",
+      "gloss": "bed",
+      "category": "object"
+    },
+    {
+      "word": "before",
+      "gloss": "before",
+      "category": "time"
+    },
+    {
+      "word": "begin",
+      "gloss": "starting point",
+      "category": "time"
+    },
+    {
+      "word": "bend",
+      "gloss": "curve from straight",
+      "category": "motion"
+    },
+    {
+      "word": "big",
+      "gloss": "large size",
+      "category": "shape"
+    },
+    {
+      "word": "bird",
+      "gloss": "flying animal",
+      "category": "nature"
+    },
+    {
+      "word": "birth",
+      "gloss": "coming into being",
+      "category": "origin"
+    },
+    {
+      "word": "block",
+      "gloss": "solid rectangular form",
+      "category": "shape"
+    },
+    {
+      "word": "blood",
+      "gloss": "blood",
+      "category": "body"
+    },
+    {
+      "word": "body",
+      "gloss": "physical whole",
+      "category": "body"
+    },
+    {
+      "word": "bond",
+      "gloss": "structural connection",
+      "category": "junction"
+    },
+    {
+      "word": "bone",
+      "gloss": "bone",
+      "category": "body"
+    },
+    {
+      "word": "bottom",
+      "gloss": "lower face",
+      "category": "space"
+    },
+    {
+      "word": "bound",
+      "gloss": "limit",
+      "category": "interface"
+    },
+    {
+      "word": "bowl",
+      "gloss": "concave container",
+      "category": "cavity"
+    },
+    {
+      "word": "box",
+      "gloss": "box",
+      "category": "object"
+    },
+    {
+      "word": "break",
+      "gloss": "separate into parts",
+      "category": "origin"
+    },
+    {
+      "word": "breath",
+      "gloss": "continuous origin",
+      "category": "origin"
+    },
+    {
+      "word": "bridge",
+      "gloss": "spanning connection",
+      "category": "junction"
+    },
+    {
+      "word": "bright",
+      "gloss": "strong light",
+      "category": "perception"
+    },
+    {
+      "word": "brightness",
+      "gloss": "brightness",
+      "category": "perception"
+    },
+    {
+      "word": "build",
+      "gloss": "assemble into form",
+      "category": "origin"
+    },
+    {
+      "word": "catch",
+      "gloss": "receive in motion",
+      "category": "motion"
+    },
+    {
+      "word": "cause",
+      "gloss": "what brings about",
+      "category": "index"
+    },
+    {
+      "word": "cave",
+      "gloss": "hollow in earth",
+      "category": "cavity"
+    },
+    {
+      "word": "center",
+      "gloss": "center",
+      "category": "space"
+    },
+    {
+      "word": "chair",
+      "gloss": "seat furniture",
+      "category": "object"
+    },
+    {
+      "word": "change",
+      "gloss": "state transformation at junction",
+      "category": "junction"
+    },
+    {
+      "word": "chief",
+      "gloss": "leading agent",
+      "category": "society"
+    },
+    {
+      "word": "choice",
+      "gloss": "selection among options",
+      "category": "index"
+    },
+    {
+      "word": "climb",
+      "gloss": "ascend by effort",
+      "category": "motion"
+    },
+    {
+      "word": "close",
+      "gloss": "shut; not open",
+      "category": "interface"
+    },
+    {
+      "word": "cloth",
+      "gloss": "woven material",
+      "category": "object"
+    },
+    {
+      "word": "cloud",
+      "gloss": "airborne vapor mass",
+      "category": "nature"
+    },
+    {
+      "word": "cold",
+      "gloss": "low heat sense",
+      "category": "perception"
+    },
+    {
+      "word": "collective",
+      "gloss": "many-as-one field",
+      "category": "emanation"
+    },
+    {
+      "word": "color",
+      "gloss": "color",
+      "category": "perception"
+    },
+    {
+      "word": "come",
+      "gloss": "travel toward",
+      "category": "motion"
+    },
+    {
+      "word": "conflict",
+      "gloss": "conflict",
+      "category": "society"
+    },
+    {
+      "word": "container",
+      "gloss": "held interior",
+      "category": "junction"
+    },
+    {
+      "word": "corner",
+      "gloss": "corner",
+      "category": "shape"
+    },
+    {
+      "word": "crawl",
+      "gloss": "move low and slow",
+      "category": "motion"
+    },
+    {
+      "word": "create",
+      "gloss": "bring from nothing",
+      "category": "origin"
+    },
+    {
+      "word": "cross",
+      "gloss": "intersection point",
+      "category": "junction"
+    },
+    {
+      "word": "crossing",
+      "gloss": "crossing",
+      "category": "shape"
+    },
+    {
+      "word": "cup",
+      "gloss": "cup",
+      "category": "object"
+    },
+    {
+      "word": "current",
+      "gloss": "directed flow",
+      "category": "stream"
+    },
+    {
+      "word": "curve",
+      "gloss": "curve",
+      "category": "shape"
+    },
+    {
+      "word": "cutting",
+      "gloss": "cutting",
+      "category": "object"
+    },
+    {
+      "word": "cycle",
+      "gloss": "return path",
+      "category": "origin"
+    },
+    {
+      "word": "dark",
+      "gloss": "absence of light",
+      "category": "perception"
+    },
+    {
+      "word": "dawn",
+      "gloss": "dawn",
+      "category": "time"
+    },
+    {
+      "word": "day",
+      "gloss": "light cycle unit",
+      "category": "time"
+    },
+    {
+      "word": "death",
+      "gloss": "ceasing to be",
+      "category": "origin"
+    },
+    {
+      "word": "debt",
+      "gloss": "owed obligation",
+      "category": "society"
+    },
+    {
+      "word": "decay",
+      "gloss": "break down over time",
+      "category": "origin"
+    },
+    {
+      "word": "deed",
+      "gloss": "an action done",
+      "category": "index"
+    },
+    {
+      "word": "deep",
+      "gloss": "far inward",
+      "category": "space"
+    },
+    {
+      "word": "destroy",
+      "gloss": "reduce to ruin",
+      "category": "origin"
+    },
+    {
+      "word": "die",
+      "gloss": "lose life",
+      "category": "origin"
+    },
+    {
+      "word": "dimness",
+      "gloss": "dimness",
+      "category": "perception"
+    },
+    {
+      "word": "direction",
+      "gloss": "direction",
+      "category": "space"
+    },
+    {
+      "word": "do",
+      "gloss": "perform; carry out",
+      "category": "index"
+    },
+    {
+      "word": "door",
+      "gloss": "passage through boundary",
+      "category": "interface"
+    },
+    {
+      "word": "down",
+      "gloss": "down",
+      "category": "space"
+    },
+    {
+      "word": "drain",
+      "gloss": "outward flow",
+      "category": "stream"
+    },
+    {
+      "word": "drink",
+      "gloss": "swallowed liquid",
+      "category": "object"
+    },
+    {
+      "word": "drip",
+      "gloss": "slow falling drops",
+      "category": "stream"
+    },
+    {
+      "word": "dry",
+      "gloss": "lacking liquid",
+      "category": "nature"
+    },
+    {
+      "word": "dryness",
+      "gloss": "dryness",
+      "category": "nature"
+    },
+    {
+      "word": "duration",
+      "gloss": "duration",
+      "category": "time"
+    },
+    {
+      "word": "dusk",
+      "gloss": "dusk",
+      "category": "time"
+    },
+    {
+      "word": "ear",
+      "gloss": "ear",
+      "category": "body"
+    },
+    {
+      "word": "early",
+      "gloss": "before expected time",
+      "category": "time"
+    },
+    {
+      "word": "earth",
+      "gloss": "ground substance",
+      "category": "nature"
+    },
+    {
+      "word": "east",
+      "gloss": "east",
+      "category": "space"
+    },
+    {
+      "word": "eat",
+      "gloss": "take in food",
+      "category": "body"
+    },
+    {
+      "word": "echo",
+      "gloss": "returned sound",
+      "category": "emanation"
+    },
+    {
+      "word": "edge",
+      "gloss": "edge",
+      "category": "shape"
+    },
+    {
+      "word": "effect",
+      "gloss": "what follows from cause",
+      "category": "index"
+    },
+    {
+      "word": "eight",
+      "gloss": "eight",
+      "category": "number"
+    },
+    {
+      "word": "elder",
+      "gloss": "elder",
+      "category": "society"
+    },
+    {
+      "word": "empty",
+      "gloss": "completely unfilled",
+      "category": "cavity"
+    },
+    {
+      "word": "end",
+      "gloss": "finishing point",
+      "category": "time"
+    },
+    {
+      "word": "entering",
+      "gloss": "entering",
+      "category": "motion"
+    },
+    {
+      "word": "envelope",
+      "gloss": "wrapping containment at boundary",
+      "category": "interface"
+    },
+    {
+      "word": "era",
+      "gloss": "era",
+      "category": "time"
+    },
+    {
+      "word": "eye",
+      "gloss": "seeing organ",
+      "category": "body"
+    },
+    {
+      "word": "face",
+      "gloss": "outer surface",
+      "category": "interface"
+    },
+    {
+      "word": "fall",
+      "gloss": "descend by gravity",
+      "category": "motion"
+    },
+    {
+      "word": "falling",
+      "gloss": "falling",
+      "category": "motion"
+    },
+    {
+      "word": "false",
+      "gloss": "not matching reality",
+      "category": "index"
+    },
+    {
+      "word": "family",
+      "gloss": "family",
+      "category": "society"
+    },
+    {
+      "word": "far",
+      "gloss": "distal field",
+      "category": "emanation"
+    },
+    {
+      "word": "fear",
+      "gloss": "anticipation of harm",
+      "category": "society"
+    },
+    {
+      "word": "feel",
+      "gloss": "sense inwardly",
+      "category": "perception"
+    },
+    {
+      "word": "feeling",
+      "gloss": "feeling",
+      "category": "perception"
+    },
+    {
+      "word": "few",
+      "gloss": "few",
+      "category": "number"
+    },
+    {
+      "word": "field",
+      "gloss": "extended presence",
+      "category": "emanation"
+    },
+    {
+      "word": "find",
+      "gloss": "discover by search",
+      "category": "index"
+    },
+    {
+      "word": "fire",
+      "gloss": "burning heat",
+      "category": "nature"
+    },
+    {
+      "word": "fire-pit",
+      "gloss": "contained fire place",
+      "category": "object"
+    },
+    {
+      "word": "fish",
+      "gloss": "water animal",
+      "category": "nature"
+    },
+    {
+      "word": "five",
+      "gloss": "five",
+      "category": "number"
+    },
+    {
+      "word": "flash",
+      "gloss": "brief emission",
+      "category": "emanation"
+    },
+    {
+      "word": "flat",
+      "gloss": "level surface",
+      "category": "shape"
+    },
+    {
+      "word": "flatness",
+      "gloss": "flatness",
+      "category": "shape"
+    },
+    {
+      "word": "flesh",
+      "gloss": "soft body tissue",
+      "category": "body"
+    },
+    {
+      "word": "flight",
+      "gloss": "flight",
+      "category": "motion"
+    },
+    {
+      "word": "flow",
+      "gloss": "unbounded change",
+      "category": "emanation"
+    },
+    {
+      "word": "fly",
+      "gloss": "move through air",
+      "category": "motion"
+    },
+    {
+      "word": "foe",
+      "gloss": "opposed agent",
+      "category": "society"
+    },
+    {
+      "word": "folk",
+      "gloss": "a people group",
+      "category": "society"
+    },
+    {
+      "word": "food",
+      "gloss": "eaten substance",
+      "category": "object"
+    },
+    {
+      "word": "foot",
+      "gloss": "foot",
+      "category": "body"
+    },
+    {
+      "word": "forget",
+      "gloss": "lose knowledge",
+      "category": "index"
+    },
+    {
+      "word": "form",
+      "gloss": "articulated shape",
+      "category": "junction"
+    },
+    {
+      "word": "four",
+      "gloss": "four",
+      "category": "number"
+    },
+    {
+      "word": "friend",
+      "gloss": "bonded companion",
+      "category": "society"
+    },
+    {
+      "word": "front",
+      "gloss": "forward face",
+      "category": "space"
+    },
+    {
+      "word": "full",
+      "gloss": "full",
+      "category": "number"
+    },
+    {
+      "word": "future",
+      "gloss": "future",
+      "category": "time"
+    },
+    {
+      "word": "gate",
+      "gloss": "gate",
+      "category": "space"
+    },
+    {
+      "word": "gift",
+      "gloss": "given without trade",
+      "category": "society"
+    },
+    {
+      "word": "give",
+      "gloss": "transfer to another",
+      "category": "society"
+    },
+    {
+      "word": "glow",
+      "gloss": "steady light",
+      "category": "emanation"
+    },
+    {
+      "word": "go",
+      "gloss": "travel away",
+      "category": "motion"
+    },
+    {
+      "word": "good",
+      "gloss": "positive value",
+      "category": "society"
+    },
+    {
+      "word": "governance",
+      "gloss": "governance",
+      "category": "society"
+    },
+    {
+      "word": "grass",
+      "gloss": "ground cover plant",
+      "category": "nature"
+    },
+    {
+      "word": "group",
+      "gloss": "collective cavity",
+      "category": "junction"
+    },
+    {
+      "word": "grow",
+      "gloss": "increase in size",
+      "category": "origin"
+    },
+    {
+      "word": "growth",
+      "gloss": "growth",
+      "category": "nature"
+    },
+    {
+      "word": "hair",
+      "gloss": "threadlike growth",
+      "category": "body"
+    },
+    {
+      "word": "half",
+      "gloss": "half",
+      "category": "number"
+    },
+    {
+      "word": "hand",
+      "gloss": "grasping limb",
+      "category": "body"
+    },
+    {
+      "word": "hard",
+      "gloss": "resistant to force",
+      "category": "object"
+    },
+    {
+      "word": "hate",
+      "gloss": "deep aversion",
+      "category": "society"
+    },
+    {
+      "word": "head",
+      "gloss": "head",
+      "category": "body"
+    },
+    {
+      "word": "hear",
+      "gloss": "perceive by sound",
+      "category": "perception"
+    },
+    {
+      "word": "hearing",
+      "gloss": "hearing",
+      "category": "perception"
+    },
+    {
+      "word": "heart",
+      "gloss": "central organ",
+      "category": "body"
+    },
+    {
+      "word": "heat-sense",
+      "gloss": "heat-sense",
+      "category": "perception"
+    },
+    {
+      "word": "heavy",
+      "gloss": "great weight",
+      "category": "object"
+    },
+    {
+      "word": "here",
+      "gloss": "indexical locus",
+      "category": "index"
+    },
+    {
+      "word": "hide",
+      "gloss": "conceal from view",
+      "category": "emanation"
+    },
+    {
+      "word": "high",
+      "gloss": "elevated position",
+      "category": "space"
+    },
+    {
+      "word": "hit",
+      "gloss": "strike with force",
+      "category": "motion"
+    },
+    {
+      "word": "hold",
+      "gloss": "contain within",
+      "category": "cavity"
+    },
+    {
+      "word": "hole",
+      "gloss": "opening into void",
+      "category": "cavity"
+    },
+    {
+      "word": "hollow",
+      "gloss": "empty inside",
+      "category": "cavity"
+    },
+    {
+      "word": "home",
+      "gloss": "dwelling place",
+      "category": "object"
+    },
+    {
+      "word": "hope",
+      "gloss": "anticipation of good",
+      "category": "society"
+    },
+    {
+      "word": "hot",
+      "gloss": "high heat sense",
+      "category": "perception"
+    },
+    {
+      "word": "hour",
+      "gloss": "hour",
+      "category": "time"
+    },
+    {
+      "word": "ice",
+      "gloss": "ice",
+      "category": "nature"
+    },
+    {
+      "word": "identity",
+      "gloss": "discrete self-same",
+      "category": "index"
+    },
+    {
+      "word": "ink",
+      "gloss": "ink",
+      "category": "object"
+    },
+    {
+      "word": "inside",
+      "gloss": "inside",
+      "category": "space"
+    },
+    {
+      "word": "join",
+      "gloss": "bring together",
+      "category": "junction"
+    },
+    {
+      "word": "jumping",
+      "gloss": "jumping",
+      "category": "motion"
+    },
+    {
+      "word": "key",
+      "gloss": "key",
+      "category": "object"
+    },
+    {
+      "word": "kin",
+      "gloss": "family relation",
+      "category": "society"
+    },
+    {
+      "word": "knot",
+      "gloss": "tied junction",
+      "category": "junction"
+    },
+    {
+      "word": "know",
+      "gloss": "hold as certain",
+      "category": "index"
+    },
+    {
+      "word": "known",
+      "gloss": "indexed certainty",
+      "category": "index"
+    },
+    {
+      "word": "lamp",
+      "gloss": "lamp",
+      "category": "object"
+    },
+    {
+      "word": "late",
+      "gloss": "after expected time",
+      "category": "time"
+    },
+    {
+      "word": "lattice",
+      "gloss": "organized cavity",
+      "category": "junction"
+    },
+    {
+      "word": "law",
+      "gloss": "binding rule",
+      "category": "society"
+    },
+    {
+      "word": "leadership",
+      "gloss": "leadership",
+      "category": "society"
+    },
+    {
+      "word": "leaf",
+      "gloss": "plant flat part",
+      "category": "nature"
+    },
+    {
+      "word": "learn",
+      "gloss": "gain knowledge",
+      "category": "index"
+    },
+    {
+      "word": "leaving",
+      "gloss": "leaving",
+      "category": "motion"
+    },
+    {
+      "word": "left",
+      "gloss": "left",
+      "category": "space"
+    },
+    {
+      "word": "leg",
+      "gloss": "lower limb",
+      "category": "body"
+    },
+    {
+      "word": "light",
+      "gloss": "visible emission",
+      "category": "emanation"
+    },
+    {
+      "word": "light-weight",
+      "gloss": "little weight",
+      "category": "object"
+    },
+    {
+      "word": "limb",
+      "gloss": "limb",
+      "category": "body"
+    },
+    {
+      "word": "limit",
+      "gloss": "outer bound",
+      "category": "interface"
+    },
+    {
+      "word": "line",
+      "gloss": "line",
+      "category": "shape"
+    },
+    {
+      "word": "link",
+      "gloss": "joined connection",
+      "category": "junction"
+    },
+    {
+      "word": "lip",
+      "gloss": "edge of opening",
+      "category": "interface"
+    },
+    {
+      "word": "listen",
+      "gloss": "attend to sound",
+      "category": "perception"
+    },
+    {
+      "word": "live",
+      "gloss": "having life",
+      "category": "nature"
+    },
+    {
+      "word": "lock",
+      "gloss": "lock",
+      "category": "object"
+    },
+    {
+      "word": "locus",
+      "gloss": "a located point",
+      "category": "index"
+    },
+    {
+      "word": "long",
+      "gloss": "extended length",
+      "category": "shape"
+    },
+    {
+      "word": "loop",
+      "gloss": "closed curve",
+      "category": "shape"
+    },
+    {
+      "word": "lose",
+      "gloss": "no longer have",
+      "category": "index"
+    },
+    {
+      "word": "loud",
+      "gloss": "strong sound",
+      "category": "perception"
+    },
+    {
+      "word": "love",
+      "gloss": "deep bond feeling",
+      "category": "society"
+    },
+    {
+      "word": "low",
+      "gloss": "depressed position",
+      "category": "space"
+    },
+    {
+      "word": "lung",
+      "gloss": "breathing organ",
+      "category": "body"
+    },
+    {
+      "word": "make",
+      "gloss": "bring into form",
+      "category": "origin"
+    },
+    {
+      "word": "many",
+      "gloss": "many",
+      "category": "number"
+    },
+    {
+      "word": "mark",
+      "gloss": "intentional sign",
+      "category": "index"
+    },
+    {
+      "word": "mat",
+      "gloss": "mat",
+      "category": "object"
+    },
+    {
+      "word": "material",
+      "gloss": "stuff-at-boundary",
+      "category": "interface"
+    },
+    {
+      "word": "mesh",
+      "gloss": "interconnected net",
+      "category": "junction"
+    },
+    {
+      "word": "metal",
+      "gloss": "hard refined material",
+      "category": "object"
+    },
+    {
+      "word": "middle",
+      "gloss": "central region",
+      "category": "space"
+    },
+    {
+      "word": "mist",
+      "gloss": "mist",
+      "category": "nature"
+    },
+    {
+      "word": "moment",
+      "gloss": "moment",
+      "category": "time"
+    },
+    {
+      "word": "moon",
+      "gloss": "night light body",
+      "category": "nature"
+    },
+    {
+      "word": "motion",
+      "gloss": "undergoing passage",
+      "category": "index"
+    },
+    {
+      "word": "mouth",
+      "gloss": "opening; speech organ",
+      "category": "interface"
+    },
+    {
+      "word": "move",
+      "gloss": "change position",
+      "category": "motion"
+    },
+    {
+      "word": "movement",
+      "gloss": "movement",
+      "category": "motion"
+    },
+    {
+      "word": "mud",
+      "gloss": "mud",
+      "category": "nature"
+    },
+    {
+      "word": "muscle",
+      "gloss": "muscle",
+      "category": "body"
+    },
+    {
+      "word": "name",
+      "gloss": "identifier label",
+      "category": "emanation"
+    },
+    {
+      "word": "narrow",
+      "gloss": "tight extent",
+      "category": "space"
+    },
+    {
+      "word": "narrowness",
+      "gloss": "narrowness",
+      "category": "space"
+    },
+    {
+      "word": "near",
+      "gloss": "proximal index",
+      "category": "index"
+    },
+    {
+      "word": "need",
+      "gloss": "require for survival",
+      "category": "index"
+    },
+    {
+      "word": "net",
+      "gloss": "net",
+      "category": "object"
+    },
+    {
+      "word": "new",
+      "gloss": "recently arisen",
+      "category": "origin"
+    },
+    {
+      "word": "night",
+      "gloss": "dark cycle unit",
+      "category": "time"
+    },
+    {
+      "word": "nine",
+      "gloss": "nine",
+      "category": "number"
+    },
+    {
+      "word": "none",
+      "gloss": "none",
+      "category": "number"
+    },
+    {
+      "word": "north",
+      "gloss": "north",
+      "category": "space"
+    },
+    {
+      "word": "nose",
+      "gloss": "nose",
+      "category": "body"
+    },
+    {
+      "word": "now",
+      "gloss": "now",
+      "category": "time"
+    },
+    {
+      "word": "old",
+      "gloss": "long existing",
+      "category": "time"
+    },
+    {
+      "word": "one",
+      "gloss": "one",
+      "category": "number"
+    },
+    {
+      "word": "open",
+      "gloss": "not closed",
+      "category": "interface"
+    },
+    {
+      "word": "outside",
+      "gloss": "outside",
+      "category": "space"
+    },
+    {
+      "word": "pain",
+      "gloss": "hurt sensation",
+      "category": "perception"
+    },
+    {
+      "word": "pair",
+      "gloss": "pair",
+      "category": "number"
+    },
+    {
+      "word": "pan",
+      "gloss": "pan",
+      "category": "object"
+    },
+    {
+      "word": "paper",
+      "gloss": "paper",
+      "category": "object"
+    },
+    {
+      "word": "passing",
+      "gloss": "passing",
+      "category": "motion"
+    },
+    {
+      "word": "past",
+      "gloss": "past",
+      "category": "time"
+    },
+    {
+      "word": "path",
+      "gloss": "directed passage through space",
+      "category": "index"
+    },
+    {
+      "word": "peace",
+      "gloss": "absence of conflict",
+      "category": "society"
+    },
+    {
+      "word": "pen",
+      "gloss": "pen",
+      "category": "object"
+    },
+    {
+      "word": "perception",
+      "gloss": "perception",
+      "category": "perception"
+    },
+    {
+      "word": "pit",
+      "gloss": "depressed cavity",
+      "category": "cavity"
+    },
+    {
+      "word": "place",
+      "gloss": "located spot",
+      "category": "space"
+    },
+    {
+      "word": "plant",
+      "gloss": "plant",
+      "category": "nature"
+    },
+    {
+      "word": "pocket",
+      "gloss": "small held space",
+      "category": "cavity"
+    },
+    {
+      "word": "point",
+      "gloss": "point",
+      "category": "shape"
+    },
+    {
+      "word": "pool",
+      "gloss": "held liquid body",
+      "category": "cavity"
+    },
+    {
+      "word": "pot",
+      "gloss": "pot",
+      "category": "object"
+    },
+    {
+      "word": "pour",
+      "gloss": "release in stream",
+      "category": "stream"
+    },
+    {
+      "word": "probe",
+      "gloss": "directed extension from a point",
+      "category": "index"
+    },
+    {
+      "word": "pull",
+      "gloss": "apply force toward",
+      "category": "motion"
+    },
+    {
+      "word": "pulling",
+      "gloss": "pulling",
+      "category": "motion"
+    },
+    {
+      "word": "pulse",
+      "gloss": "rhythmic activation",
+      "category": "emanation"
+    },
+    {
+      "word": "push",
+      "gloss": "apply force away",
+      "category": "motion"
+    },
+    {
+      "word": "pushing",
+      "gloss": "pushing",
+      "category": "motion"
+    },
+    {
+      "word": "quiet",
+      "gloss": "weak sound",
+      "category": "perception"
+    },
+    {
+      "word": "rain",
+      "gloss": "falling water",
+      "category": "nature"
+    },
+    {
+      "word": "reach",
+      "gloss": "extension toward",
+      "category": "emanation"
+    },
+    {
+      "word": "region",
+      "gloss": "region",
+      "category": "space"
+    },
+    {
+      "word": "right",
+      "gloss": "right",
+      "category": "space"
+    },
+    {
+      "word": "rim",
+      "gloss": "outer edge ring",
+      "category": "interface"
+    },
+    {
+      "word": "ring",
+      "gloss": "circular band",
+      "category": "shape"
+    },
+    {
+      "word": "rise",
+      "gloss": "ascend upward",
+      "category": "motion"
+    },
+    {
+      "word": "rising",
+      "gloss": "rising",
+      "category": "motion"
+    },
+    {
+      "word": "ritual",
+      "gloss": "ritual",
+      "category": "society"
+    },
+    {
+      "word": "river",
+      "gloss": "large flowing water",
+      "category": "stream"
+    },
+    {
+      "word": "road",
+      "gloss": "travel way",
+      "category": "junction"
+    },
+    {
+      "word": "roll",
+      "gloss": "rotate by contact",
+      "category": "motion"
+    },
+    {
+      "word": "room",
+      "gloss": "enclosed space",
+      "category": "cavity"
+    },
+    {
+      "word": "root",
+      "gloss": "plant anchor",
+      "category": "nature"
+    },
+    {
+      "word": "rope",
+      "gloss": "rope",
+      "category": "object"
+    },
+    {
+      "word": "rotation",
+      "gloss": "rotation",
+      "category": "motion"
+    },
+    {
+      "word": "round",
+      "gloss": "circular form",
+      "category": "shape"
+    },
+    {
+      "word": "roundness",
+      "gloss": "roundness",
+      "category": "shape"
+    },
+    {
+      "word": "rule",
+      "gloss": "governing pattern",
+      "category": "society"
+    },
+    {
+      "word": "running",
+      "gloss": "running",
+      "category": "motion"
+    },
+    {
+      "word": "same",
+      "gloss": "unchanged identity",
+      "category": "index"
+    },
+    {
+      "word": "sand",
+      "gloss": "sand",
+      "category": "nature"
+    },
+    {
+      "word": "sea",
+      "gloss": "sea",
+      "category": "nature"
+    },
+    {
+      "word": "season",
+      "gloss": "season",
+      "category": "time"
+    },
+    {
+      "word": "see",
+      "gloss": "perceive by sight",
+      "category": "perception"
+    },
+    {
+      "word": "seed",
+      "gloss": "plant origin",
+      "category": "nature"
+    },
+    {
+      "word": "self",
+      "gloss": "oneself; identity",
+      "category": "index"
+    },
+    {
+      "word": "seven",
+      "gloss": "seven",
+      "category": "number"
+    },
+    {
+      "word": "shadow",
+      "gloss": "absence of light",
+      "category": "emanation"
+    },
+    {
+      "word": "shake",
+      "gloss": "rapid oscillation",
+      "category": "motion"
+    },
+    {
+      "word": "shape",
+      "gloss": "outer configuration",
+      "category": "shape"
+    },
+    {
+      "word": "shell",
+      "gloss": "hard outer layer",
+      "category": "interface"
+    },
+    {
+      "word": "shelter",
+      "gloss": "protective structure",
+      "category": "object"
+    },
+    {
+      "word": "short",
+      "gloss": "limited length",
+      "category": "shape"
+    },
+    {
+      "word": "show",
+      "gloss": "reveal to view",
+      "category": "emanation"
+    },
+    {
+      "word": "side",
+      "gloss": "lateral face",
+      "category": "space"
+    },
+    {
+      "word": "sight",
+      "gloss": "sight",
+      "category": "perception"
+    },
+    {
+      "word": "sign",
+      "gloss": "indicator; symbol",
+      "category": "emanation"
+    },
+    {
+      "word": "signal",
+      "gloss": "discrete emission",
+      "category": "emanation"
+    },
+    {
+      "word": "six",
+      "gloss": "six",
+      "category": "number"
+    },
+    {
+      "word": "skin",
+      "gloss": "skin",
+      "category": "body"
+    },
+    {
+      "word": "sky",
+      "gloss": "overhead expanse",
+      "category": "nature"
+    },
+    {
+      "word": "sleep",
+      "gloss": "resting unconsciousness",
+      "category": "body"
+    },
+    {
+      "word": "sliding",
+      "gloss": "sliding",
+      "category": "motion"
+    },
+    {
+      "word": "small",
+      "gloss": "little size",
+      "category": "shape"
+    },
+    {
+      "word": "smell",
+      "gloss": "smell",
+      "category": "perception"
+    },
+    {
+      "word": "snow",
+      "gloss": "frozen precipitation",
+      "category": "nature"
+    },
+    {
+      "word": "soft",
+      "gloss": "yielding to force",
+      "category": "object"
+    },
+    {
+      "word": "some",
+      "gloss": "some",
+      "category": "number"
+    },
+    {
+      "word": "soon",
+      "gloss": "near in time",
+      "category": "time"
+    },
+    {
+      "word": "sound",
+      "gloss": "sound",
+      "category": "perception"
+    },
+    {
+      "word": "source",
+      "gloss": "generative point",
+      "category": "origin"
+    },
+    {
+      "word": "south",
+      "gloss": "south",
+      "category": "space"
+    },
+    {
+      "word": "space",
+      "gloss": "extent between things",
+      "category": "space"
+    },
+    {
+      "word": "speak",
+      "gloss": "produce speech",
+      "category": "emanation"
+    },
+    {
+      "word": "sphere",
+      "gloss": "sphere",
+      "category": "shape"
+    },
+    {
+      "word": "spin",
+      "gloss": "rotate around axis",
+      "category": "motion"
+    },
+    {
+      "word": "spinning",
+      "gloss": "spinning",
+      "category": "motion"
+    },
+    {
+      "word": "spiral",
+      "gloss": "coiling curve",
+      "category": "shape"
+    },
+    {
+      "word": "split",
+      "gloss": "separate apart",
+      "category": "junction"
+    },
+    {
+      "word": "star",
+      "gloss": "distant light point",
+      "category": "nature"
+    },
+    {
+      "word": "static",
+      "gloss": "without change",
+      "category": "junction"
+    },
+    {
+      "word": "stillness",
+      "gloss": "stillness",
+      "category": "motion"
+    },
+    {
+      "word": "stone",
+      "gloss": "stone",
+      "category": "nature"
+    },
+    {
+      "word": "stopping",
+      "gloss": "stopping",
+      "category": "motion"
+    },
+    {
+      "word": "storm",
+      "gloss": "violent weather",
+      "category": "nature"
+    },
+    {
+      "word": "stream",
+      "gloss": "moving current",
+      "category": "stream"
+    },
+    {
+      "word": "stretch",
+      "gloss": "extend length",
+      "category": "motion"
+    },
+    {
+      "word": "sun",
+      "gloss": "daylight source",
+      "category": "nature"
+    },
+    {
+      "word": "surface",
+      "gloss": "contact plane",
+      "category": "interface"
+    },
+    {
+      "word": "swim",
+      "gloss": "move through water",
+      "category": "motion"
+    },
+    {
+      "word": "swimming",
+      "gloss": "swimming",
+      "category": "motion"
+    },
+    {
+      "word": "table",
+      "gloss": "flat work surface",
+      "category": "object"
+    },
+    {
+      "word": "take",
+      "gloss": "receive from another",
+      "category": "society"
+    },
+    {
+      "word": "talk",
+      "gloss": "talk",
+      "category": "society"
+    },
+    {
+      "word": "taste",
+      "gloss": "taste",
+      "category": "perception"
+    },
+    {
+      "word": "ten",
+      "gloss": "ten",
+      "category": "number"
+    },
+    {
+      "word": "then",
+      "gloss": "that moment",
+      "category": "time"
+    },
+    {
+      "word": "there",
+      "gloss": "that place",
+      "category": "index"
+    },
+    {
+      "word": "think",
+      "gloss": "mental processing",
+      "category": "index"
+    },
+    {
+      "word": "three",
+      "gloss": "three",
+      "category": "number"
+    },
+    {
+      "word": "threshold",
+      "gloss": "liminal crossing",
+      "category": "interface"
+    },
+    {
+      "word": "throw",
+      "gloss": "propel outward",
+      "category": "motion"
+    },
+    {
+      "word": "tie",
+      "gloss": "fastened bond",
+      "category": "junction"
+    },
+    {
+      "word": "time",
+      "gloss": "duration and sequence",
+      "category": "time"
+    },
+    {
+      "word": "tool",
+      "gloss": "used implement",
+      "category": "object"
+    },
+    {
+      "word": "tooth",
+      "gloss": "tooth",
+      "category": "body"
+    },
+    {
+      "word": "top",
+      "gloss": "upper face",
+      "category": "space"
+    },
+    {
+      "word": "touch",
+      "gloss": "touch",
+      "category": "perception"
+    },
+    {
+      "word": "trace",
+      "gloss": "leftover mark",
+      "category": "emanation"
+    },
+    {
+      "word": "trade",
+      "gloss": "exchange of goods",
+      "category": "society"
+    },
+    {
+      "word": "tree",
+      "gloss": "woody plant",
+      "category": "nature"
+    },
+    {
+      "word": "true",
+      "gloss": "matching reality",
+      "category": "index"
+    },
+    {
+      "word": "trust",
+      "gloss": "reliance on another",
+      "category": "society"
+    },
+    {
+      "word": "tube",
+      "gloss": "tube",
+      "category": "shape"
+    },
+    {
+      "word": "turn",
+      "gloss": "change direction",
+      "category": "motion"
+    },
+    {
+      "word": "two",
+      "gloss": "two",
+      "category": "number"
+    },
+    {
+      "word": "unknown",
+      "gloss": "opaque origin",
+      "category": "origin"
+    },
+    {
+      "word": "up",
+      "gloss": "up",
+      "category": "space"
+    },
+    {
+      "word": "value",
+      "gloss": "value",
+      "category": "society"
+    },
+    {
+      "word": "vessel",
+      "gloss": "vessel",
+      "category": "object"
+    },
+    {
+      "word": "voice",
+      "gloss": "produced sound",
+      "category": "emanation"
+    },
+    {
+      "word": "void",
+      "gloss": "inner absence",
+      "category": "origin"
+    },
+    {
+      "word": "volume",
+      "gloss": "volume",
+      "category": "shape"
+    },
+    {
+      "word": "wait",
+      "gloss": "pause in time",
+      "category": "time"
+    },
+    {
+      "word": "wake",
+      "gloss": "end sleep",
+      "category": "body"
+    },
+    {
+      "word": "walking",
+      "gloss": "walking",
+      "category": "motion"
+    },
+    {
+      "word": "wall",
+      "gloss": "vertical boundary",
+      "category": "interface"
+    },
+    {
+      "word": "want",
+      "gloss": "desire to have",
+      "category": "index"
+    },
+    {
+      "word": "war",
+      "gloss": "organized conflict",
+      "category": "society"
+    },
+    {
+      "word": "warm",
+      "gloss": "moderate heat sense",
+      "category": "perception"
+    },
+    {
+      "word": "water",
+      "gloss": "liquid substance",
+      "category": "nature"
+    },
+    {
+      "word": "wave",
+      "gloss": "propagating flux",
+      "category": "emanation"
+    },
+    {
+      "word": "weapon",
+      "gloss": "harm implement",
+      "category": "object"
+    },
+    {
+      "word": "weave",
+      "gloss": "interlaced change",
+      "category": "junction"
+    },
+    {
+      "word": "week",
+      "gloss": "week",
+      "category": "time"
+    },
+    {
+      "word": "west",
+      "gloss": "west",
+      "category": "space"
+    },
+    {
+      "word": "wet",
+      "gloss": "covered with liquid",
+      "category": "nature"
+    },
+    {
+      "word": "when-ness",
+      "gloss": "when-ness",
+      "category": "time"
+    },
+    {
+      "word": "wide",
+      "gloss": "broad extent",
+      "category": "space"
+    },
+    {
+      "word": "width",
+      "gloss": "width",
+      "category": "space"
+    },
+    {
+      "word": "will",
+      "gloss": "originary activation",
+      "category": "origin"
+    },
+    {
+      "word": "wind",
+      "gloss": "moving air",
+      "category": "stream"
+    },
+    {
+      "word": "womb",
+      "gloss": "generative cavity",
+      "category": "cavity"
+    },
+    {
+      "word": "wood",
+      "gloss": "tree material",
+      "category": "object"
+    },
+    {
+      "word": "word",
+      "gloss": "spoken unit",
+      "category": "emanation"
+    },
+    {
+      "word": "year",
+      "gloss": "year",
+      "category": "time"
+    },
+    {
+      "word": "zero",
+      "gloss": "zero",
+      "category": "number"
+    }
+  ]
+}

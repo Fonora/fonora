@@ -1,4 +1,4 @@
-    import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, parseSyllable, buildSyllable, isValidSyllable, pieceHint, ONSET_GROUPS, VOWEL_DISPLAY, CODA_DISPLAY } from '../tools/fonoran-pronunciation.js';
+    import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, parseSyllable, buildSyllable, isValidSyllable, pieceHint, ONSET_GROUPS, VOWEL_DISPLAY, CODA_DISPLAY, enumerateOpenSyllables } from '../tools/fonoran-pronunciation.js';
     import { romanToFonoraScript, pieceToFonoraSymbols } from '../tools/fonoran-fonora-bridge.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech } from '../js/fonora-tts.js';
@@ -10,8 +10,9 @@
       email: null,
       loginUrl: '/auth/google?returnTo=/fonoran/',
     };
-    const WRITE_PAGES = new Set(['roots', 'create', 'review', 'advanced']);
-    const SPLIT_WRITE_PAGES = new Set(['roots', 'create']);
+    const WRITE_PAGES = new Set(['roots', 'create', 'matcher', 'review', 'advanced']);
+    const SPLIT_WRITE_PAGES = new Set(['roots', 'create', 'matcher']);
+    const MATCHER_DISMISSED_KEY = 'fonoran:matcher:dismissed';
 
     function canWrite() {
       return !AUTH.required || AUTH.authenticated;
@@ -163,6 +164,13 @@
       showDebugDda: false,
       rootDraft: { onset: '', vowel: '', coda: '' },
       lexicon: null,
+      matcherFilter: '',
+      matcherEnglishFilter: '',
+      matcherShowDismissed: false,
+      matcherDismissed: new Set(),
+      matcherSelectedFonoran: null,
+      matcherSelectedEnglish: null,
+      matcherCatalog: null,
       toolReturnPage: 'roots',
       healthOpen: false,
     };
@@ -354,6 +362,7 @@
         renderLanderHealth();
       }
       else if (STATE.page === 'create') renderWordComposer();
+      else if (STATE.page === 'matcher') renderWordMatcher();
       else if (STATE.page === 'review') renderWords();
       else if (STATE.page === 'roots') renderRoots();
       else if (STATE.page === 'dictionary') renderDictionary();
@@ -756,6 +765,219 @@
         $('wc-words').innerHTML = '';
       }
       requestAnimationFrame(syncSplitStickyOffsets);
+    }
+
+    /* ---------- WORD MATCHER ---------- */
+    function loadMatcherDismissed() {
+      try {
+        const raw = localStorage.getItem(MATCHER_DISMISSED_KEY);
+        const list = raw ? JSON.parse(raw) : [];
+        STATE.matcherDismissed = new Set(Array.isArray(list) ? list : []);
+      } catch {
+        STATE.matcherDismissed = new Set();
+      }
+    }
+
+    function saveMatcherDismissed() {
+      localStorage.setItem(MATCHER_DISMISSED_KEY, JSON.stringify([...STATE.matcherDismissed]));
+    }
+
+    function ensureMatcherCatalog() {
+      if (!STATE.matcherCatalog) STATE.matcherCatalog = enumerateOpenSyllables();
+      return STATE.matcherCatalog;
+    }
+
+    function labSoundForSpelling(spelling) {
+      return STATE.lab?.sounds?.find(s => s.spelling === spelling && s.state !== 'rejected');
+    }
+
+    function matcherFonoranMatchesFilter(entry, query) {
+      const q = (query ?? '').trim().toLowerCase();
+      if (!q) return true;
+      if (entry.spelling.includes(q)) return true;
+      if (soundPieceMatches('onset', entry.onset, q)) return true;
+      if (soundPieceMatches('vowel', entry.vowel, q)) return true;
+      return false;
+    }
+
+    function matcherEnglishWords() {
+      if (!STATE.lexicon) return [];
+      const words = STATE.lexicon.words.filter(w => w.source === 'roots');
+      const q = (STATE.matcherEnglishFilter ?? '').trim().toLowerCase();
+      if (!q) return words;
+      const tokens = q.split(/[\s-]+/).filter(Boolean);
+      return words.filter(w => {
+        const hay = `${w.word} ${w.gloss ?? ''} ${w.category ?? ''}`.toLowerCase();
+        return hay.includes(q) || tokens.every(t => hay.includes(t));
+      });
+    }
+
+    function matcherCellBodyHtml(spelling, meaning) {
+      const glyphs = rootScriptPhrase(spelling);
+      return `
+          <span class="sp">${escapeHtml(spelling)}</span>
+          ${glyphs ? `<span class="root-glyphs symbol-text">${escapeHtml(glyphs)}</span>` : ''}
+          <span class="mn ${meaning ? '' : 'unnamed'}">${escapeHtml(meaning || 'unnamed')}</span>`;
+    }
+
+    function syncMatcherMatchBar() {
+      const fonPick = $('wm-pick-fonoran');
+      const engPick = $('wm-pick-english');
+      const meaningInp = $('wm-meaning');
+      const assignBtn = $('wm-assign');
+
+      if (fonPick) {
+        const sp = STATE.matcherSelectedFonoran;
+        const valEl = fonPick.querySelector('.fonoran-match-eq__value');
+        fonPick.classList.toggle('is-filled', Boolean(sp));
+        if (valEl) {
+          valEl.innerHTML = sp
+            ? `<span class="mono">${escapeHtml(sp)}</span>`
+            : '<span class="fonoran-match-eq__placeholder">Fonoran</span>';
+        }
+      }
+      if (engPick) {
+        const eng = STATE.matcherSelectedEnglish;
+        const valEl = engPick.querySelector('.fonoran-match-eq__value');
+        engPick.classList.toggle('is-filled', Boolean(eng));
+        if (valEl) {
+          valEl.innerHTML = eng
+            ? `<strong>${escapeHtml(eng.word)}</strong>`
+            : '<span class="fonoran-match-eq__placeholder">English</span>';
+        }
+      }
+      if (meaningInp && document.activeElement !== meaningInp) {
+        if (STATE.matcherSelectedEnglish && !meaningInp.dataset.userEdited) {
+          const lab = STATE.matcherSelectedFonoran ? labSoundForSpelling(STATE.matcherSelectedFonoran) : null;
+          meaningInp.value = lab?.meaning?.trim() || STATE.matcherSelectedEnglish.word;
+        } else if (!STATE.matcherSelectedEnglish && !STATE.matcherSelectedFonoran) {
+          meaningInp.value = '';
+          delete meaningInp.dataset.userEdited;
+        }
+      }
+      const hearBtn = $('wm-hear');
+      if (hearBtn) hearBtn.disabled = !STATE.matcherSelectedFonoran;
+      const meaning = meaningInp?.value.trim() ?? '';
+      setWriteButton(assignBtn, !STATE.matcherSelectedFonoran || !STATE.matcherSelectedEnglish || !meaning);    }
+
+    function dismissMatcherSyllable(spelling) {
+      const lab = labSoundForSpelling(spelling);
+      if (lab?.meaning?.trim()) {
+        if (!confirm(`"${spelling}" is named in your lab (${lab.meaning}). Dismiss from matcher only?`)) return;
+      }
+      STATE.matcherDismissed.add(spelling);
+      saveMatcherDismissed();
+      if (STATE.matcherSelectedFonoran === spelling) STATE.matcherSelectedFonoran = null;
+      renderWordMatcher();
+    }
+
+    function restoreMatcherSyllable(spelling) {
+      STATE.matcherDismissed.delete(spelling);
+      saveMatcherDismissed();
+      renderWordMatcher();
+    }
+
+    async function assignMatcherPair() {
+      const spelling = STATE.matcherSelectedFonoran;
+      const meaning = $('wm-meaning')?.value.trim();
+      if (!spelling || !STATE.matcherSelectedEnglish || !meaning) return;
+      try {
+        const exists = labSoundForSpelling(spelling);
+        if (exists) {
+          await api(`/api/fonoran/lab/sounds/${encodeURIComponent(spelling)}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ meaning }),
+          });
+        } else {
+          await api('/api/fonoran/lab/sounds', {
+            method: 'POST',
+            body: JSON.stringify({ spelling, meaning }),
+          });
+        }
+        toast(`Assigned ${spelling} = ${meaning}`);
+        const meaningInp = $('wm-meaning');
+        if (meaningInp) delete meaningInp.dataset.userEdited;
+        await load({ skipRender: true });
+        renderWordMatcher();
+      } catch (e) { toast(e.message); }
+    }
+
+    function renderWordMatcher() {
+      if (!STATE.lab || !$('wm-fonoran')) return;
+      ensureMatcherCatalog();
+      loadMatcherDismissed();
+      const catalog = STATE.matcherCatalog;
+      const fonEl = $('wm-fonoran');
+      const engEl = $('wm-english');
+      if (!fonEl || !engEl) return;
+
+      const visibleFon = catalog.filter(entry => {
+        const dismissed = STATE.matcherDismissed.has(entry.spelling);
+        if (dismissed && !STATE.matcherShowDismissed) return false;
+        return matcherFonoranMatchesFilter(entry, STATE.matcherFilter);
+      });
+
+      fonEl.innerHTML = visibleFon.length
+        ? visibleFon.map(entry => {
+          const lab = labSoundForSpelling(entry.spelling);
+          const meaning = lab?.meaning ?? null;
+          const dismissed = STATE.matcherDismissed.has(entry.spelling);
+          const selected = STATE.matcherSelectedFonoran === entry.spelling;
+          return `<button type="button" class="root-cell${selected ? ' is-selected' : ''}${meaning ? ' is-named' : ''}${dismissed ? ' is-dismissed' : ''}" data-wm-fonoran="${escapeHtml(entry.spelling)}">${matcherCellBodyHtml(entry.spelling, meaning)}</button>`;
+        }).join('')
+        : '<p class="empty sans" style="margin:0">No syllables match this filter.</p>';
+
+      const engWords = matcherEnglishWords();
+      engEl.innerHTML = engWords.length
+        ? engWords.map(w => {
+          const selected = STATE.matcherSelectedEnglish?.word === w.word;
+          return `<button type="button" class="root-cell eng-cell${selected ? ' is-selected' : ''}" data-wm-english="${escapeHtml(w.word)}">
+            <span class="sp">${escapeHtml(w.word)}</span>
+            <span class="mn gloss">${escapeHtml(w.gloss || w.word)}</span>
+            <span class="matcher-cat">${escapeHtml(w.category || '')}</span>
+          </button>`;
+        }).join('')
+        : '<p class="empty sans" style="margin:0">No English roots match.</p>';
+
+      const namedCount = catalog.filter(e => labSoundForSpelling(e.spelling)?.meaning?.trim()).length;
+      const statsEl = $('wm-stats');
+      if (statsEl) {
+        statsEl.textContent = `${visibleFon.length} Fonoran · ${engWords.length} English roots · ${namedCount} named in lab`;
+      }
+
+      fonEl.querySelectorAll('[data-wm-fonoran]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          STATE.matcherSelectedFonoran = btn.dataset.wmFonoran;
+          speakNeural(STATE.matcherSelectedFonoran);
+          const lab = labSoundForSpelling(STATE.matcherSelectedFonoran);
+          const meaningInp = $('wm-meaning');
+          if (meaningInp) {
+            delete meaningInp.dataset.userEdited;
+            if (STATE.matcherSelectedEnglish) {
+              meaningInp.value = lab?.meaning?.trim() || STATE.matcherSelectedEnglish.word;
+            } else if (lab?.meaning) {
+              meaningInp.value = lab.meaning;
+            }
+          }
+          renderWordMatcher();
+        });
+      });
+      engEl.querySelectorAll('[data-wm-english]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const word = btn.dataset.wmEnglish;
+          const entry = STATE.lexicon?.words?.find(w => w.word === word);
+          STATE.matcherSelectedEnglish = entry ?? { word, gloss: word, category: '' };
+          const meaningInp = $('wm-meaning');
+          if (meaningInp && document.activeElement !== meaningInp) {
+            delete meaningInp.dataset.userEdited;
+            const lab = STATE.matcherSelectedFonoran ? labSoundForSpelling(STATE.matcherSelectedFonoran) : null;
+            meaningInp.value = lab?.meaning?.trim() || word;
+          }
+          renderWordMatcher();
+        });
+      });
+
+      syncMatcherMatchBar();
     }
 
     function openExplorerPreview(composer, spelling) {
@@ -1777,8 +1999,8 @@
     }
 
     /* ---------- nav ---------- */
-    const MAIN_PAGES = new Set(['roots', 'create', 'review', 'dictionary']);
-    const ALL_PAGES = new Set(['home', 'roots', 'create', 'review', 'dictionary', 'health', 'advanced']);
+    const MAIN_PAGES = new Set(['roots', 'create', 'matcher', 'review', 'dictionary']);
+    const ALL_PAGES = new Set(['home', 'roots', 'create', 'matcher', 'review', 'dictionary', 'health', 'advanced']);
     function scrollPageTop() {
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
@@ -1835,6 +2057,20 @@
     $('adv-dictionary').addEventListener('click', () => { rememberMainPage(); switchPage('dictionary'); });
     $('adv-health').addEventListener('click', () => { rememberMainPage(); switchPage('health'); });
     $('wc-filter').addEventListener('input', e => { STATE.wordComposerFilter = e.target.value; renderWordComposer(); });
+    $('wm-filter')?.addEventListener('input', e => { STATE.matcherFilter = e.target.value; renderWordMatcher(); });
+    $('wm-english-filter')?.addEventListener('input', e => { STATE.matcherEnglishFilter = e.target.value; renderWordMatcher(); });
+    $('wm-meaning')?.addEventListener('input', () => {
+      $('wm-meaning').dataset.userEdited = '1';
+      syncMatcherMatchBar();
+    });
+    $('wm-assign')?.addEventListener('click', () => assignMatcherPair());
+    $('wm-clear-sel')?.addEventListener('click', () => {
+      STATE.matcherSelectedFonoran = null;
+      STATE.matcherSelectedEnglish = null;
+      const meaningInp = $('wm-meaning');
+      if (meaningInp) { meaningInp.value = ''; delete meaningInp.dataset.userEdited; }
+      renderWordMatcher();
+    });
     $('wc-filters')?.addEventListener('click', e => {
       const chip = e.target.closest('[data-wc-filter]');
       if (!chip) return;

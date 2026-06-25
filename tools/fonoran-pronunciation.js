@@ -191,3 +191,45 @@ export function isValidSyllable(text) {
 export function pieceHint(piece) {
   return HINT[piece] ?? piece;
 }
+
+/** Onsets in Root Creator picker order (empty = vowel-only). */
+export function pickerOnsets() {
+  return ['', ...ONSET_GROUPS.flatMap(g => g.items)];
+}
+
+/** Enumerate open syllables: vowel-only and onset+vowel (no coda). */
+export function enumerateOpenSyllables() {
+  const out = [];
+  for (const onset of pickerOnsets()) {
+    for (const vowel of VOWEL_DISPLAY) {
+      const spelling = buildSyllable(onset, vowel, '');
+      if (!isValidSyllable(spelling)) continue;
+      const parsed = parseSyllable(spelling);
+      if (parsed?.coda) continue;
+      out.push({ spelling, onset, vowel, coda: '' });
+    }
+  }
+  return out;
+}
+
+/** Full sound-picker inventory including optional codas. */
+export function enumerateAllSyllables() {
+  const codas = ['', ...CODA_DISPLAY];
+  const out = [];
+  for (const onset of pickerOnsets()) {
+    for (const vowel of VOWEL_DISPLAY) {
+      for (const coda of codas) {
+        const spelling = buildSyllable(onset, vowel, coda);
+        if (!isValidSyllable(spelling)) continue;
+        const parsed = parseSyllable(spelling);
+        out.push({
+          spelling,
+          onset: parsed.onset ?? onset,
+          vowel: parsed.vowel ?? vowel,
+          coda: parsed.coda ?? coda,
+        });
+      }
+    }
+  }
+  return out;
+}

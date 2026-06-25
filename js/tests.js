@@ -28,7 +28,7 @@ import { buildPhonemeKeyLexicon } from './fonora-speak-lexicon.js';
 import { ipaToEspeakSynthesisInput, segmentIpa } from './ipa-espeak-format.js';
 import { ipaToPiperPhonemeIds, canMapIpaToPiper, getPiperVoiceForLang, getSamplePlaybackPlan, PIPER_VOICE_BY_LANG } from './piper-audio.js';
 import { buildMermaidGraph } from '../tools/fonoran-graph.js';
-import { parseSyllable, isValidSyllable, buildSyllable } from '../tools/fonoran-pronunciation.js';
+import { parseSyllable, isValidSyllable, buildSyllable, enumerateOpenSyllables, enumerateAllSyllables } from '../tools/fonoran-pronunciation.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -113,6 +113,16 @@ const pronunciationResult = test('fonoran pronunciation parses vowel-only and fu
   assert(parseSyllable('dha').onset === 'dh' && parseSyllable('dha').vowel === 'a');
   assert(buildSyllable('', 'ow', '') === 'ow');
   assert(!isValidSyllable(''));
+});
+
+const syllableCatalogResult = test('fonoran syllable catalogs match sound picker counts', () => {
+  const open = enumerateOpenSyllables();
+  assert(open.length === 336, `expected 336 open syllables, got ${open.length}`);
+  assert(open.some(s => s.spelling === 'a' && !s.onset));
+  assert(open.some(s => s.spelling === 'ba' && s.onset === 'b'));
+  assert(open.some(s => s.spelling === 'sha' && s.onset === 'sh'));
+  assert(!open.some(s => s.spelling === 'bat'));
+  assert(enumerateAllSyllables().length === 7728);
 });
 
 const ipaFormatResult = test('ipaToEspeakSynthesisInput segments stress and underscores', () => {
@@ -321,6 +331,7 @@ const allFailed = [
   ...(derivedResult.ok ? [] : [derivedResult]),
   ...(graphResult.ok ? [] : [graphResult]),
   ...(pronunciationResult.ok ? [] : [pronunciationResult]),
+  ...(syllableCatalogResult.ok ? [] : [syllableCatalogResult]),
   ...(piperGResult.ok ? [] : [piperGResult]),
   ...(piperLengthResult.ok ? [] : [piperLengthResult]),
   ...(sampleVoiceResult.ok ? [] : [sampleVoiceResult]),
@@ -340,6 +351,7 @@ const allPassed =
   + (derivedResult.ok ? 1 : 0)
   + (graphResult.ok ? 1 : 0)
   + (pronunciationResult.ok ? 1 : 0)
+  + (syllableCatalogResult.ok ? 1 : 0)
   + (ipaFormatResult.ok ? 1 : 0)
   + (piperGResult.ok ? 1 : 0)
   + (piperLengthResult.ok ? 1 : 0)
@@ -350,7 +362,7 @@ const allPassed =
   + (flapResult.ok ? 1 : 0)
   + (perroResult.ok ? 1 : 0)
   + (voiceResult.ok ? 1 : 0);
-const allTotal = total + corpusResults.length + 15;
+const allTotal = total + corpusResults.length + 16;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);
