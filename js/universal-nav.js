@@ -115,12 +115,16 @@ function platformTabHref(context, tabId) {
   return context === 'language' ? './' : 'fonoran/';
 }
 
-function renderLanguageAuthTools() {
-  if (!fonoranAuthState?.required || !fonoranAuthState.authenticated) return '';
-  const email = escapeAttr(fonoranAuthState.email ?? 'Signed in');
-  return `
+function renderGlobalAuthTools() {
+  if (!fonoranAuthState?.required) return '';
+  if (fonoranAuthState.authenticated) {
+    const email = escapeAttr(fonoranAuthState.email ?? 'Signed in');
+    return `
         <span class="fonoran-auth-user" title="${email}">${escapeHtml(fonoranAuthState.email ?? 'Signed in')}</span>
         <button type="button" class="app-header__sign-out-btn" id="fonoran-sign-out">Sign out</button>`;
+  }
+  const loginUrl = escapeAttr(fonoranAuthState.loginUrl);
+  return `<a href="${loginUrl}" class="app-header__global-link">Sign in</a>`;
 }
 
 function renderPlatformTabs(context) {
@@ -143,18 +147,13 @@ function renderPlatformTabs(context) {
 }
 
 function renderRow1(context) {
-  const authSlot =
-    context === 'language'
-      ? `<nav class="app-header__global" aria-label="Account" data-nav-auth></nav>`
-      : '';
-
   return `
     <div class="app-header__tabstrip">
       <div class="app-header__row app-header__row--platform">
         <div class="app-header__start">
           <nav class="platform-tabs" role="tablist" aria-label="Fonora sections">${renderPlatformTabs(context)}</nav>
         </div>
-        ${authSlot}
+        <nav class="app-header__global" aria-label="Account" data-nav-auth>${renderGlobalAuthTools()}</nav>
       </div>
     </div>`;
 }
@@ -328,7 +327,7 @@ function patchStaticNav(root) {
 
   const authSlot = root.querySelector('[data-nav-auth]');
   if (authSlot) {
-    authSlot.innerHTML = state.context === 'language' ? renderLanguageAuthTools() : '';
+    authSlot.innerHTML = renderGlobalAuthTools();
   }
 
   syncBootAttributes();
@@ -544,7 +543,11 @@ export function setFonoranAuth(auth) {
     email: auth.email ?? null,
     loginUrl: auth.loginUrl ?? '/auth/google?returnTo=/fonoran/',
   };
-  if (state.context === 'language') {
+  const root = document.getElementById(state.mountId);
+  if (root?.dataset.navShell === 'static') {
+    patchStaticNav(root);
+    bindNavListeners();
+  } else {
     render();
   }
 }
