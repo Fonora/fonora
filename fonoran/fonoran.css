@@ -50,9 +50,12 @@
     .neighbor .nw { display:block; font-family:ui-monospace,monospace; font-weight:700; color:var(--word); font-size:0.9rem; }
     .neighbor .nm { display:block; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .saved-banner { background:var(--accent-soft); border:1px solid #b7d4c4; border-radius:8px; padding:0.55rem 0.75rem; margin:0.75rem 0 0; font-family:-apple-system,sans-serif; font-size:0.86rem; color:var(--accent); }
-    .word-match { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 0.8rem; margin:0.65rem 0 0; font-family:-apple-system,sans-serif; font-size:0.86rem; text-align:left; }
-    .word-match .wm-meaning { font-weight:600; margin-top:0.3rem; color:var(--text); }
-    .word-match .wm-meta { color:var(--muted); font-size:0.8rem; margin-top:0.35rem; line-height:1.45; }
+    .word-match { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.75rem 0.85rem; margin:0.65rem 0 0; font-family:-apple-system,sans-serif; font-size:0.86rem; text-align:left; }
+    .word-match__label { margin:0 0 0.5rem; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); }
+    .word-match__note { margin:0.5rem 0 0; font-size:0.8rem; color:var(--muted); line-height:1.45; }
+    .word-match .word-preview__identity { text-align:left; }
+    .word-match .explorer-section { margin:0.5rem 0 0; }
+    .word-match .wm-meta { color:var(--muted); font-size:0.8rem; margin-top:0.65rem; line-height:1.45; }
     .review-meaning { font-family:-apple-system,sans-serif; font-size:1.5rem; font-weight:600; margin:0.5rem 0 0; }
     .review-meaning.unnamed { color:var(--draft); font-style:italic; font-weight:500; font-size:1.1rem; }
     .review-parts { font-family:-apple-system,sans-serif; font-size:1rem; color:var(--muted); margin:0.5rem 0 0; }
@@ -274,6 +277,28 @@
       top:var(--fonoran-split-chrome-offset, 9rem);
       z-index:10;
       align-self:start;
+      max-height:calc(100svh - var(--fonoran-split-chrome-offset, 9rem) - 1.25rem);
+      overflow-y:auto;
+      padding:1rem 1.1rem;
+    }
+    .dict-detail-stack {
+      display:flex;
+      flex-direction:column;
+    }
+    .dict-detail-stack .word-preview { margin-bottom:0; }
+    .word-preview__card .explorer-actions {
+      margin:0.65rem 0 0;
+      padding-top:0.65rem;
+      border-top:1px solid var(--border);
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.45rem;
+    }
+    .word-preview__card .explorer-actions .btn {
+      flex:1 1 8rem;
+      justify-content:center;
+      padding:0.42rem 0.7rem;
+      font-size:0.84rem;
     }
     /* word matcher — shell cannot be sticky inside overflow:hidden; keep visual styles */
     #page-matcher .fonoran-split-shell {
@@ -503,6 +528,10 @@
     }
     .dict-item:hover { border-color:var(--accent); }
     .dict-item.is-selected { border-color:var(--accent); background:var(--accent-soft); }
+    #page-dictionary .dict-item {
+      scroll-margin-top:calc(var(--fonoran-split-chrome-offset, 9rem) + 1rem);
+      scroll-margin-bottom:1.25rem;
+    }
     .dict-item__content {
       flex:1;
       min-width:0;
@@ -549,21 +578,135 @@
     .debug-panel { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.75rem; font-size:0.75rem; overflow:auto; max-height:240px; margin-top:0.5rem; }
     .explorer-section { margin:1rem 0; text-align:left; }
     .explorer-section h4 { font-family:-apple-system,sans-serif; font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin:0 0 0.4rem; }
-    .explorer-hero { text-align:center; margin-bottom:0.75rem; }
-    .explorer-hero__flags {
+    .word-preview { margin-bottom:0.65rem; }
+    .word-preview--empty { padding:0.5rem 0; color:var(--muted); }
+    .word-preview--empty p { margin:0; font-size:0.84rem; }
+    .word-preview__card {
+      position:relative;
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:8px;
+      padding:0.75rem 0.85rem;
+    }
+    .word-preview__toolbar {
       display:flex;
       flex-wrap:wrap;
-      justify-content:flex-end;
       align-items:center;
-      gap:0.35rem;
-      margin:0 0 0.65rem;
+      justify-content:space-between;
+      gap:0.45rem 0.65rem;
+      margin:0 0 0.55rem;
+    }
+    .word-preview__toolbar--end { justify-content:flex-end; }
+    .word-preview__badges {
+      display:flex;
+      flex-wrap:wrap;
+      gap:0.3rem;
+      align-items:center;
       font-family:-apple-system,sans-serif;
     }
-    .explorer-hero__word { display:flex; flex-direction:column; align-items:center; gap:0.45rem; margin:0.35rem 0 0.25rem; }
-    .explorer-hero__word .review-word { margin:0; }
-    .explorer-hero__word .review-meaning { margin:0; }
-    .explorer-hero__word .explorer-hear-btn { margin:0.1rem 0 0; }
-    .explorer-hero__note { font-size:0.82rem; color:var(--muted); margin:0.5rem auto 0; max-width:28rem; line-height:1.45; }
+    .word-preview__kind { font-size:0.76rem; color:var(--muted); }
+    .word-preview__hero {
+      display:flex;
+      flex-direction:column;
+      align-items:stretch;
+      gap:0.45rem;
+    }
+    .word-preview__script {
+      font-size:1.85rem;
+      line-height:1.15;
+      margin:0;
+      color:var(--text);
+      text-align:center;
+      overflow-wrap:anywhere;
+    }
+    .word-preview__identity { min-width:0; text-align:left; }
+    .word-preview__headline {
+      display:flex;
+      flex-wrap:wrap;
+      align-items:baseline;
+      gap:0.35rem 0.4rem;
+      margin:0;
+      line-height:1.2;
+    }
+    .word-preview__headline .review-word {
+      font-family:ui-monospace,Menlo,monospace;
+      font-size:1.25rem;
+      font-weight:700;
+      color:var(--word);
+      margin:0;
+    }
+    .word-preview__headline .review-meaning {
+      font-family:-apple-system,sans-serif;
+      font-size:1.1rem;
+      font-weight:600;
+      margin:0;
+    }
+    .word-preview__headline .review-meaning.unnamed {
+      font-size:0.98rem;
+      font-weight:500;
+    }
+    .word-preview__dot { color:var(--muted); font-weight:400; }
+    .word-preview__pron {
+      margin:0.25rem 0 0;
+      font-family:-apple-system,sans-serif;
+      font-size:0.8rem;
+      color:var(--muted);
+      line-height:1.4;
+    }
+    .word-preview__say strong {
+      color:var(--text);
+      font-family:ui-monospace,monospace;
+      font-weight:600;
+      letter-spacing:0.02em;
+    }
+    .word-preview__like { font-style:italic; }
+    .word-preview__like::before { content:' · '; font-style:normal; }
+    .word-preview__toolbar .word-preview__hear { margin:0; flex-shrink:0; }
+    .word-preview__footnote {
+      margin:0.55rem 0 0;
+      font-size:0.8rem;
+      color:var(--muted);
+      line-height:1.4;
+      text-align:left;
+    }
+    .word-preview__note {
+      font-size:0.82rem;
+      color:var(--muted);
+      margin:0.5rem 0 0;
+      line-height:1.45;
+      text-align:left;
+    }
+    .word-preview .explorer-section { margin:0.65rem 0 0; }
+    .explorer-section--tight { margin:0.6rem 0 0; }
+    .explorer-section--tight h4 { margin:0 0 0.3rem; font-size:0.72rem; }
+    .review .word-preview__identity,
+    .review .word-preview__pron,
+    .review .word-preview__footnote,
+    .review .word-preview__note { text-align:center; }
+    .review .word-preview__headline { justify-content:center; }
+    .review .word-preview .word-compose { justify-content:center; }
+    .composer-hero .word-preview__identity,
+    .composer-hero .word-preview__pron,
+    .composer-hero .word-preview__footnote { text-align:center; }
+    .composer-hero .word-preview__headline { justify-content:center; }
+    .composer-hero .word-preview .word-compose { justify-content:center; }
+    .fonoran-showcase .word-preview { margin-bottom:0.75rem; }
+    .fonoran-showcase .word-preview__script { font-size:2rem; }
+    .fonoran-showcase .word-preview__headline .review-word { font-size:1.35rem; }
+    .fonoran-showcase .word-preview__headline .review-meaning { font-size:1.15rem; }
+    .fonoran-showcase .word-preview .explorer-section:first-of-type,
+    .fonoran-showcase .explorer-section:first-of-type { margin-top:0; }
+    .fonoran-split-workspace .word-preview .explorer-section,
+    .fonoran-split-workspace .word-preview__footnote { text-align:left; }
+    .fonoran-split-workspace .word-preview .word-compose { justify-content:flex-start; }
+    .fonoran-split-workspace .explorer-actions { margin:0.55rem 0 0; gap:0.45rem; }
+    .fonoran-split-workspace .explorer-actions .btn { padding:0.4rem 0.7rem; font-size:0.84rem; }
+    .sheet .word-preview .explorer-section,
+    .sheet .word-preview__footnote { text-align:left; }
+    .word-match .word-preview { margin-bottom:0; }
+    .word-match .word-preview__card { background:transparent; border:none; padding:0; }
+    .word-match .word-preview__toolbar { margin-bottom:0.45rem; }
+    .word-match .word-preview__badges { justify-content:flex-start; }
     .explorer-actions { display:flex; flex-wrap:wrap; gap:0.5rem; margin:0.85rem 0 0.25rem; }
     .explorer-tree { font-family:ui-monospace,Menlo,monospace; font-size:0.82rem; white-space:pre-wrap; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.65rem 0.75rem; }
     .explorer-list { list-style:none; padding:0; margin:0; }
@@ -595,26 +738,18 @@
       box-shadow:0 16px 48px rgba(0,0,0,.14);
     }
     .sheet.open { visibility:visible; pointer-events:auto; opacity:1; transform:translate(-50%,-50%) scale(1); }
+    html.sheet-open,
+    body.sheet-open { overflow:hidden; }
+    body.sheet-open {
+      position:fixed;
+      width:100%;
+      left:0;
+      right:0;
+    }
+    .sheet.open { overscroll-behavior:contain; -webkit-overflow-scrolling:touch; }
 
     /* --- Fonoran lander (shared intro/section typography in app.css) --- */
     .fonoran-showcase { padding:1.25rem 1.35rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--layout-card-radius); }
-    .fonoran-showcase .explorer-section:first-of-type { margin-top:0; }
-    .showcase-hero { position:relative; text-align:center; margin-bottom:0.75rem; }
-    .showcase-hero__meta {
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      align-items:center;
-      gap:0.35rem 0.5rem;
-      margin:0 0 0.65rem;
-      text-align:right;
-      font-family:-apple-system,sans-serif;
-    }
-    .showcase-hero__kind { font-size:0.78rem; color:var(--muted); }
-    .showcase-hero__word { display:flex; flex-direction:column; align-items:center; gap:0.45rem; margin:0.35rem 0 0.5rem; }
-    .showcase-hero__word .review-word { margin:0; }
-    .showcase-hero__word .review-meaning { margin:0; }
-    .showcase-hero__hear { margin:0.15rem 0 0; }
     .fonoran-showcase__toolbar { display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:center; align-items:center; margin-top:1.25rem; }
     .showcase-graph { text-align:center; }
     .showcase-graph .graph-hint { text-align:center; }
@@ -622,11 +757,16 @@
     .showcase-graph .mermaid-wrap svg { display:block; margin:0 auto; max-width:100%; height:auto; }
     .fonoran-showcase__loading,
     .fonoran-showcase__error { margin:0; font-size:0.9rem; color:var(--muted); text-align:center; }
-    .showcase-compose { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:0.35rem 0.5rem; margin:0 0 1.1rem; padding:0.65rem 0.85rem; background:var(--bg); border:1px solid var(--border); border-radius:8px; font-family:-apple-system,sans-serif; }
-    .showcase-compose__piece { font-family:ui-monospace,Menlo,monospace; font-size:0.95rem; font-weight:600; color:var(--word); background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:0.2rem 0.55rem; }
-    .showcase-compose__op { color:var(--muted); font-size:0.9rem; }
-    .showcase-compose__result { font-family:ui-monospace,Menlo,monospace; font-size:1rem; font-weight:700; color:var(--accent); background:var(--accent-soft); border:1px solid #b7d4c4; border-radius:6px; padding:0.25rem 0.6rem; }
-    .showcase-compose__meaning { font-size:0.88rem; color:var(--muted); font-style:italic; }
+    .word-compose { display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:flex-start; gap:0.4rem 0.5rem; margin:0; padding:0.5rem 0.6rem; background:var(--surface); border:1px solid var(--border); border-radius:6px; font-family:-apple-system,sans-serif; }
+    .word-compose__piece { display:flex; flex-direction:column; align-items:center; gap:0.12rem; min-width:3.5rem; padding:0.28rem 0.45rem; background:var(--bg); border:1px solid var(--border); border-radius:5px; text-align:center; }
+    .word-compose__piece-head { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:0.3rem; }
+    .word-compose__piece-head .mono { font-size:0.88rem; font-weight:600; color:var(--word); }
+    .word-compose__piece-meaning { font-size:0.76rem; color:var(--muted); font-style:italic; line-height:1.25; }
+    .word-compose__op { align-self:center; color:var(--muted); font-size:0.85rem; font-weight:600; }
+    .word-compose__piece--removable { cursor:pointer; position:relative; }
+    .word-compose__piece--removable:hover { border-color:var(--accent); background:var(--accent-soft); }
+    .word-compose__remove { position:absolute; top:0.15rem; right:0.2rem; font-size:0.9rem; line-height:1; color:var(--muted); }
+    .word-compose-empty { margin:0; font-size:0.86rem; color:var(--muted); line-height:1.45; }
     .showcase-panels { margin-bottom:0.25rem; }
     .showcase-panel { min-width:0; }
     .showcase-panel .explorer-section { margin:0 0 0.85rem; }
