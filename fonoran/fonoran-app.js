@@ -141,7 +141,7 @@
     const STATE = {
       lab: null, page: 'home', rules: null,
       wordCursor: 0,
-      exploreSel: null, rootBuild: [], rootBuildFilter: '', rootEditing: false, rootsFilter: '',
+      rootsFilter: '',
       editing: false, editMeaning: '', clearAffected: false,
       justSaved: null,
       recipe: null, recipeFilter: '',
@@ -150,8 +150,6 @@
       showUnapprovedWords: false,
       showDebugDda: false,
       rootDraft: { onset: '', vowel: '', coda: '' },
-      rootPickerOpen: false,
-      rootEditPickerOpen: false,
       lexicon: null,
       toolReturnPage: 'roots',
       healthOpen: false,
@@ -417,27 +415,48 @@
       word.addEventListener('change', () => { if (word.value) inp.value = word.value; });
     }
 
-    const ROOT_TIP = 'A root is a building block. Its meaning flows into every word that uses it.';
-
-    function rootSearchText(s) {
-      const spell = s.spelling;
-      const phon = phoneticKeyBold(spell);
-      return `${spell} ${s.meaning ?? ''} ${s.legacy_label ?? ''} ${phon} ${phon.replace(/-/g, ' ')} ${toSpeakable(spell)} ${s.say_bold ?? ''} ${englishGuide(spell)}`.toLowerCase();
-    }
-
-    function filterRoots(sounds, query) {
+    function soundPieceMatches(kind, value, query) {
       const q = (query ?? '').trim().toLowerCase();
-      if (!q) return sounds;
-      return sounds.filter(s => rootSearchText(s).includes(q));
+      if (!q) return true;
+      const hint = value ? pieceHint(value) : '';
+      const hay = `${kind} ${value || '-'} ${hint} none`.toLowerCase();
+      const tokens = q.split(/[\s-]+/).filter(Boolean);
+      return hay.includes(q) || tokens.every(t => hay.includes(t));
     }
 
-    function sortRoots(sounds) {
-      return sounds.filter(s => s.state !== 'rejected').sort((a, b) => {
-        const aNamed = a.meaning ? 1 : 0;
-        const bNamed = b.meaning ? 1 : 0;
-        if (aNamed !== bNamed) return aNamed - bNamed;
-        return (a.meaning || a.spelling).localeCompare(b.meaning || b.spelling);
-      });
+    function renderFilteredSyllableBuilderMarkup(prefix = 'root', query = '') {
+      const show = (kind, val) => soundPieceMatches(kind, val, query);
+      const onsetChips = [
+        ...(show('onset', '') ? [syllableChip('onset', '')] : []),
+        ...ONSET_GROUPS.flatMap(g => g.items.filter(v => show('onset', v)).map(v => syllableChip('onset', v))),
+      ];
+      const onsetGrid = onsetChips.length ? `<div class="syl-chips">${onsetChips.join('')}</div>` : '';
+      const vowels = VOWEL_DISPLAY.filter(v => show('vowel', v)).map(v => syllableChip('vowel', v)).join('');
+      const codas = [
+        ...(show('coda', '') ? [syllableChip('coda', '')] : []),
+        ...CODA_DISPLAY.filter(v => show('coda', v)).map(v => syllableChip('coda', v)),
+      ].join('');
+      const hasOnset = onsetGrid.length > 0;
+      const hasVowel = vowels.length > 0;
+      const hasCoda = codas.length > 0;
+      if (!hasOnset && !hasVowel && !hasCoda) {
+        return `<div class="syl-builder" id="${prefix}-syl-builder"><p class="empty" style="margin:0">No sounds match.</p></div>`;
+      }
+      return `
+        <div class="syl-builder" id="${prefix}-syl-builder">
+          ${hasOnset ? `<div class="syl-row">
+            <div class="syl-label">Start <span style="font-weight:400;text-transform:none">(consonant, optional)</span></div>
+            ${onsetGrid}
+          </div>` : ''}
+          ${hasVowel ? `<div class="syl-row">
+            <div class="syl-label">Vowel <em>required</em></div>
+            <div class="syl-chips">${vowels}</div>
+          </div>` : ''}
+          ${hasCoda ? `<div class="syl-row">
+            <div class="syl-label">End <span style="font-weight:400;text-transform:none">(consonant, optional)</span></div>
+            <div class="syl-chips">${codas}</div>
+          </div>` : ''}
+        </div>`;
     }
 
     function userWords() {
@@ -462,93 +481,15 @@
       const mono = value || '-';
       const hint = value ? pieceHint(value) : '';
       const glyph = value && STATE.rules ? pieceToFonoraSymbols(value, STATE.rules) : '';
-      return `<button type="button" class="syl-chip ${value ? '' : 'none'}${picked ? ' picked' : ''}" data-piece="${kind}" data-val="${escapeHtml(value)}" data-write>
+      if (!value) {
+        return `<button type="button" class="syl-chip none${picked ? ' picked' : ''}" data-piece="${kind}" data-val="" data-write>
+        <span class="syl-glyph syl-glyph--empty symbol-text" aria-hidden="true">&nbsp;</span>
+        <span class="mono">${escapeHtml(mono)}</span>
+        <span class="hint syl-hint--empty" aria-hidden="true">&nbsp;</span></button>`;
+      }
+      return `<button type="button" class="syl-chip${picked ? ' picked' : ''}" data-piece="${kind}" data-val="${escapeHtml(value)}" data-write>
         ${glyph ? `<span class="syl-glyph symbol-text">${escapeHtml(glyph)}</span>` : ''}
         <span class="mono">${escapeHtml(mono)}</span>${hint ? `<span class="hint">${escapeHtml(hint)}</span>` : ''}</button>`;
-    }
-
-    function renderSyllableBuilderCollapsible(prefix = 'root', isOpen = STATE.rootPickerOpen) {
-      return `
-        <div class="collapse-block">
-          <button type="button" class="collapse-toggle${isOpen ? ' open' : ''}" id="${prefix}-picker-toggle" aria-expanded="${isOpen ? 'true' : 'false'}" aria-controls="${prefix}-picker-panel">
-            <span>Sound picker <span class="sub">(start, vowel, end)</span></span>
-            <span class="chev" aria-hidden="true">▸</span>
-          </button>
-          <div class="collapse-panel" id="${prefix}-picker-panel"${isOpen ? '' : ' hidden'}>
-            ${renderSyllableBuilderMarkup(prefix)}
-          </div>
-        </div>`;
-    }
-
-    function syncRootPickerCollapse(prefix, isOpen) {
-      const panel = $(`${prefix}-picker-panel`);
-      const btn = $(`${prefix}-picker-toggle`);
-      if (panel) panel.hidden = !isOpen;
-      if (btn) {
-        btn.classList.toggle('open', isOpen);
-        btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      }
-    }
-
-    function renderSyllableBuilderMarkup(prefix = 'root') {
-      const onsetRows = ONSET_GROUPS.map(g => `
-        <div style="margin-top:0.4rem">
-          <span class="sans" style="font-size:0.72rem;color:var(--muted)">${escapeHtml(g.label)}</span>
-          <div class="syl-chips" style="margin-top:0.25rem">${g.items.map(v => syllableChip('onset', v)).join('')}</div>
-        </div>`).join('');
-      return `
-        <div class="syl-builder" id="${prefix}-syl-builder">
-          <div class="syl-row">
-            <div class="syl-label">Start <span style="font-weight:400;text-transform:none">(consonant, optional)</span></div>
-            <div class="syl-chips">${syllableChip('onset', '')}</div>
-            ${onsetRows}
-          </div>
-          <div class="syl-row">
-            <div class="syl-label">Vowel <em>required</em></div>
-            <div class="syl-chips">${VOWEL_DISPLAY.map(v => syllableChip('vowel', v)).join('')}</div>
-          </div>
-          <div class="syl-row">
-            <div class="syl-label">End <span style="font-weight:400;text-transform:none">(consonant, optional)</span></div>
-            <div class="syl-chips">${syllableChip('coda', '')}${CODA_DISPLAY.map(v => syllableChip('coda', v)).join('')}</div>
-          </div>
-        </div>`;
-    }
-
-    function updateRootSpellingPreview({ spellId, pronId, hintId, saveBtnId, hearBtnId, builderId, excludeSpelling }) {
-      const spellInp = $(spellId);
-      const typed = spellInp?.value.trim().toLowerCase() ?? '';
-      const sp = rootDraftSpelling();
-      const valid = isValidSyllable(sp);
-      const exists = valid && STATE.lab?.sounds?.some(s => s.spelling === sp && s.spelling !== excludeSpelling);
-
-      if (spellInp && document.activeElement !== spellInp && valid) spellInp.value = sp;
-
-      const pronEl = $(pronId);
-      if (pronEl) {
-        if (valid) {
-          pronEl.innerHTML = `<div class="syl-preview"><div class="roman">${escapeHtml(sp)}</div>${pronBlock(sp)}</div>`;
-        } else if (typed) {
-          pronEl.innerHTML = `<div class="syl-invalid">“${escapeHtml(typed)}” isn’t a Fonoran syllable. <button type="button" class="linkish" data-open-picker>Open the sound picker</button>. There is no <strong>z</strong> in this language. Similar: <button type="button" class="linkish" data-try-spell="sa">sa</button> (s + a).</div>`;
-        } else {
-          pronEl.innerHTML = '';
-        }
-      }
-
-      const hintEl = hintId ? $(hintId) : null;
-      if (hintEl) {
-        hintEl.innerHTML = exists
-          ? `<div class="syl-invalid">Root <strong>${escapeHtml(sp)}</strong> already exists.</div>`
-          : '';
-      }
-
-      const saveBtn = saveBtnId ? $(saveBtnId) : null;
-      const hearBtn = hearBtnId ? $(hearBtnId) : null;
-      if (saveBtn) setWriteButton(saveBtn, !valid || exists);
-      if (hearBtn) hearBtn.disabled = !valid;
-
-      $(builderId)?.querySelectorAll('.syl-chip[data-piece]').forEach(chip => {
-        chip.classList.toggle('picked', STATE.rootDraft[chip.dataset.piece] === (chip.dataset.val ?? ''));
-      });
     }
 
     function updateRootCreatePreview() {
@@ -584,7 +525,7 @@
         if (likeEl) likeEl.textContent = '-';
         if (invalidEl) {
           invalidEl.hidden = false;
-          invalidEl.innerHTML = `“${escapeHtml(typed)}” isn’t a Fonoran syllable. There is no <strong>z</strong> in this language. Similar: <button type="button" class="linkish" data-try-spell="sa">sa</button> (s + a).`;
+          invalidEl.innerHTML = `“${escapeHtml(typed)}” isn’t a valid Fonoran syllable. Pick sounds from the builder, or try <button type="button" class="linkish" data-try-spell="a">a</button> (vowel only) or <button type="button" class="linkish" data-try-spell="sa">sa</button> (s + a).`;
         }
       } else {
         if (glyphsEl) glyphsEl.textContent = '\u00a0';
@@ -604,55 +545,6 @@
       $('root-syl-builder')?.querySelectorAll('.syl-chip[data-piece]').forEach(chip => {
         chip.classList.toggle('picked', STATE.rootDraft[chip.dataset.piece] === (chip.dataset.val ?? ''));
       });
-    }
-
-    function updateRootEditPreview(origSpelling) {
-      updateRootSpellingPreview({
-        spellId: 'root-ed-spelling',
-        pronId: 'root-ed-pron',
-        hintId: 'root-ed-hint',
-        saveBtnId: 'root-ed-save',
-        hearBtnId: null,
-        builderId: 'root-ed-syl-builder',
-        excludeSpelling: origSpelling,
-      });
-    }
-
-    function wireSyllablePanel({ prefix, spellId, pronId, getPickerOpen, setPickerOpen, onPreview, excludeSpelling }) {
-      $(`${prefix}-picker-toggle`)?.addEventListener('click', () => {
-        setPickerOpen(!getPickerOpen());
-        syncRootPickerCollapse(prefix, getPickerOpen());
-      });
-      $(`${prefix}-syl-builder`)?.querySelectorAll('.syl-chip[data-piece]').forEach(chip => {
-        chip.addEventListener('click', () => {
-          const kind = chip.dataset.piece;
-          const val = chip.dataset.val ?? '';
-          speakPiece(kind, val);
-          STATE.rootDraft[kind] = val;
-          onPreview();
-        });
-      });
-      const spellInp = $(spellId);
-      spellInp?.addEventListener('input', () => {
-        const sp = spellInp.value.trim().toLowerCase();
-        if (!sp) STATE.rootDraft = { onset: '', vowel: '', coda: '' };
-        else if (!syncRootDraftFromSpelling(sp)) STATE.rootDraft = { onset: '', vowel: '', coda: '' };
-        onPreview();
-      });
-      $(pronId)?.addEventListener('click', e => {
-        const openBtn = e.target.closest('[data-open-picker]');
-        if (openBtn) {
-          setPickerOpen(true);
-          syncRootPickerCollapse(prefix, true);
-          return;
-        }
-        const b = e.target.closest('[data-try-spell]');
-        if (!b || !spellInp) return;
-        spellInp.value = b.dataset.trySpell;
-        syncRootDraftFromSpelling(b.dataset.trySpell);
-        onPreview();
-      });
-      syncRootPickerCollapse(prefix, getPickerOpen());
     }
 
     function wireRootCreatePanel() {
@@ -703,442 +595,70 @@
         : '<p class="empty" style="grid-column:1/-1">No match.</p>';
     }
 
-    function rootsGridMarkup(filtered) {
-      return filtered.length ? filtered.map(s => `
-        <button type="button" class="root-cell" data-sp="${escapeHtml(s.spelling)}">${rootCellBodyHtml(s)}
-          <span class="ct">${s.used_in_count} word${s.used_in_count === 1 ? '' : 's'}${s.created_by === 'user' ? ' · yours' : ''} · ${badge(s.state)}</span>
-        </button>`).join('') : '<p class="empty" style="grid-column:1/-1">No roots match that sound.</p>';
+    function renderRootsSoundPicker() {
+      const pickerEl = $('roots-sound-picker');
+      if (!pickerEl) return;
+      pickerEl.innerHTML = renderFilteredSyllableBuilderMarkup('root', STATE.rootsFilter);
+      wireRootCreatePanel();
+      updateRootCreatePreview();
     }
 
-    function rootsCountLabel(filtered, sounds, unnamed) {
-      return `${filtered.length}${filtered.length !== sounds.length ? ` of ${sounds.length}` : ''}${unnamed ? ` · ${unnamed} unnamed` : ''}`;
+    function updateRootsSoundFilter() {
+      renderRootsSoundPicker();
     }
 
-    function wireRootsGrid() {
-      $('roots-body')?.querySelectorAll('.root-cell[data-sp]').forEach(b => b.addEventListener('click', () => {
-        STATE.exploreSel = b.dataset.sp;
-        STATE.rootBuild = [{ type: 'root', ref: b.dataset.sp, spelling: b.dataset.sp }];
-        STATE.rootBuildFilter = '';
-        STATE.rootEditing = false;
-        renderRoots();
-        scrollPageTop();
-        requestAnimationFrame(scrollPageTop);
-      }));
+    function renderRootsCreateHtml() {
+      return `
+        <div class="root-create-panel">
+          <div class="root-preview-card is-empty" id="new-root-preview-card">
+            <input type="text" id="new-root-spelling" class="root-preview-roman" placeholder="-" autocomplete="off" spellcheck="false" aria-label="Roman spelling" data-write-input>
+            <div class="root-preview-glyphs fonora-script symbol-text" id="new-root-glyphs" aria-hidden="true">&nbsp;</div>
+            <div class="pron-block root-preview-pron">
+              <div class="pron-line">Say: <strong id="new-root-say">-</strong></div>
+              <div class="pron-english" id="new-root-like-wrap">Sounds like: <span id="new-root-like">-</span></div>
+            </div>
+          </div>
+          <div class="syl-invalid" id="new-root-invalid" hidden></div>
+          <div id="new-root-hint"></div>
+          <button type="button" class="hear-min" id="new-root-hear" disabled aria-label="Listen to this syllable">▶ Listen</button>
+          <label class="fld" for="new-root-meaning">Meaning <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+          ${meaningPickerHtml('new-root')}
+          <input type="text" id="new-root-meaning" placeholder="Type or pick from English list…" data-write-input>
+          <div class="actions" style="margin-top:0.7rem">
+            <button type="button" class="btn btn-primary" id="new-root-save" disabled data-write>Add root</button>
+          </div>
+        </div>`;
     }
 
-    function updateRootsFilter() {
-      const sounds = sortRoots(STATE.lab.sounds);
-      const filtered = filterRoots(sounds, STATE.rootsFilter);
-      const unnamed = sounds.filter(s => !s.meaning).length;
-      const countEl = $('roots-count');
-      const gridEl = $('roots-grid');
-      if (countEl) countEl.textContent = rootsCountLabel(filtered, sounds, unnamed);
-      if (gridEl) {
-        gridEl.innerHTML = rootsGridMarkup(filtered);
-        wireRootsGrid();
-      }
-    }
-
-    function compoundAtomicRoots(c) {
-      const walk = (comps) => {
-        const roots = [];
-        for (const comp of comps ?? []) {
-          if (comp.type === 'root') roots.push(comp.ref);
-          else {
-            const w = STATE.lab.compounds.find(x => x.id === comp.ref);
-            const inner = w?.components ?? w?.parts?.map(p => ({ type: 'root', ref: p }));
-            roots.push(...walk(inner));
-          }
-        }
-        return roots;
-      };
-      return walk(c.components ?? c.parts?.map(p => ({ type: 'root', ref: p })));
-    }
-
-    function startsWithRoot(c, spelling) {
-      const first = c.part_details?.[0];
-      return first?.type === 'root' && first.ref === spelling;
+    function wireRootsCreate() {
+      const spellInp = $('new-root-spelling');
+      const meaningInp = $('new-root-meaning');
+      wireRootCreatePanel();
+      wireMeaningPicker('new-root', 'new-root-meaning');
+      updateRootCreatePreview();
+      meaningInp?.addEventListener('keydown', e => { if (e.key === 'Enter') $('new-root-save').click(); });
+      $('new-root-save')?.addEventListener('click', async () => {
+        const spelling = rootDraftSpelling();
+        const meaning = meaningInp.value.trim();
+        if (!isValidSyllable(spelling)) { toast('Pick a valid syllable first.'); return; }
+        try {
+          const res = await api('/api/fonoran/lab/sounds', { method: 'POST', body: JSON.stringify({ spelling, meaning: meaning || undefined }) });
+          toast(`Added root ${res.spelling}`);
+          spellInp.value = ''; meaningInp.value = '';
+          STATE.rootDraft = { onset: '', vowel: '', coda: '' };
+          await load({ skipRender: true });
+          renderRoots();
+        } catch (e) { toast(e.message); }
+      });
     }
 
     function renderRoots() {
-      const el = $('roots-body');
-      if (!STATE.lab || !el) return;
-      if (!STATE.exploreSel) {
-        const sounds = sortRoots(STATE.lab.sounds);
-        const filtered = filterRoots(sounds, STATE.rootsFilter);
-        const unnamed = sounds.filter(s => !s.meaning).length;
-        el.innerHTML = `
-          <div class="composer root-create" style="margin-bottom:1.5rem">
-            <h3 style="margin:0 0 0.35rem">Create a new root</h3>
-            <p class="sans intro">Pick sounds on the left, or type a syllable on the right.</p>
-            <div class="root-create-split">
-              <div class="root-create-left">
-                <div class="split-h">Sound picker</div>
-                ${renderSyllableBuilderMarkup('root')}
-              </div>
-              <div class="root-create-right">
-                <div class="split-h">Preview</div>
-                <div class="root-preview-card is-empty" id="new-root-preview-card">
-                  <input type="text" id="new-root-spelling" class="root-preview-roman" placeholder="-" autocomplete="off" spellcheck="false" aria-label="Roman spelling" data-write-input>
-                  <div class="root-preview-glyphs fonora-script symbol-text" id="new-root-glyphs" aria-hidden="true">&nbsp;</div>
-                  <div class="pron-block root-preview-pron">
-                    <div class="pron-line">Say: <strong id="new-root-say">-</strong></div>
-                    <div class="pron-english" id="new-root-like-wrap">Sounds like: <span id="new-root-like">-</span></div>
-                  </div>
-                </div>
-                <div class="syl-invalid" id="new-root-invalid" hidden></div>
-                <div id="new-root-hint"></div>
-                <button type="button" class="hear-min" id="new-root-hear" disabled aria-label="Listen to this syllable">▶ Listen</button>
-              </div>
-            </div>
-            <label class="fld" for="new-root-meaning">Meaning <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-            ${meaningPickerHtml('new-root')}
-            <input type="text" id="new-root-meaning" placeholder="Type or pick from English list…" data-write-input>
-            <div class="actions" style="margin-top:0.7rem">
-              <button type="button" class="btn btn-primary" id="new-root-save" disabled data-write>Add root</button>
-            </div>
-          </div>
-          <h3 class="section-h">All roots <span id="roots-count" style="color:var(--muted);font-weight:400">(${rootsCountLabel(filtered, sounds, unnamed)})</span></h3>
-          <p class="page-intro" style="margin-bottom:0.85rem">Tap a root to name it, approve its meaning, or build words from it.</p>
-          <input type="search" id="roots-filter" class="search-bar" placeholder="Search by sound… e.g. da, b-oo" value="${escapeHtml(STATE.rootsFilter)}" autocomplete="off">
-          <div class="root-grid" id="roots-grid">${rootsGridMarkup(filtered)}</div>`;
-        const spellInp = $('new-root-spelling');
-        const meaningInp = $('new-root-meaning');
-        wireRootCreatePanel();
-        wireMeaningPicker('new-root', 'new-root-meaning');
-        updateRootCreatePreview();
-        meaningInp.addEventListener('keydown', e => { if (e.key === 'Enter') $('new-root-save').click(); });
-        $('roots-filter')?.addEventListener('input', e => { STATE.rootsFilter = e.target.value; updateRootsFilter(); });
-        wireRootsGrid();
-        $('new-root-save').addEventListener('click', async () => {
-          const spelling = rootDraftSpelling();
-          const meaning = meaningInp.value.trim();
-          if (!isValidSyllable(spelling)) { toast('Pick a valid syllable first.'); return; }
-          try {
-            const res = await api('/api/fonoran/lab/sounds', { method: 'POST', body: JSON.stringify({ spelling, meaning: meaning || undefined }) });
-            toast(`Added root ${res.spelling}`);
-            spellInp.value = ''; meaningInp.value = '';
-            STATE.rootDraft = { onset: '', vowel: '', coda: '' };
-            await load({ skipRender: true });
-            renderRoots();
-            scrollPageTop();
-          } catch (e) { toast(e.message); }
-        });
-        return;
-      }
-      const s = STATE.lab.sounds.find(x => x.spelling === STATE.exploreSel);
-      if (!s) {
-        STATE.exploreSel = null;
-        STATE.rootEditing = false;
-        renderRoots();
-        return;
-      }
-      const active = STATE.lab.compounds.filter(c => c.state !== 'rejected');
-      const derived = active.filter(c => startsWithRoot(c, s.spelling));
-      const contains = active.filter(c => !startsWithRoot(c, s.spelling) && compoundAtomicRoots(c).includes(s.spelling));
-      const row = (c) => {
-        const formula = c.part_details.map(p => p.spelling === s.spelling
-          ? `<span class="here">${escapeHtml(p.meaning || p.spelling)}</span>`
-          : escapeHtml(p.meaning || p.legacy_label || '?')).join(' + ');
-        return `<button type="button" class="deriv" data-id="${escapeHtml(c.id)}">
-          <div><span class="dw">${escapeHtml(c.spelling)}</span><span class="dm ${c.meaning ? '' : 'unnamed'}">${escapeHtml(c.meaning || 'unnamed')}</span></div>
-          <div class="df">${formula}</div></button>`;
-      };
-      el.innerHTML = `
-        <button type="button" class="back-link" id="exp-back">← All roots</button>
-        <div class="root-head">
-          ${pronBlock(s.spelling)}
-          <div class="sp">${escapeHtml(s.spelling)}</div>
-          <p class="mn ${s.meaning ? '' : 'unnamed'}">${escapeHtml(s.meaning || 'not named yet')}</p>
-          ${badge(s.state)}
-          <button type="button" class="btn" id="root-explore" style="margin-top:0.5rem">Explore family tree</button>
-          <button type="button" class="hear-min" id="exp-hear" aria-label="Listen to this root">▶ Listen</button>
-          ${STATE.rootEditing ? renderRootEdit(s) : (s.meaning ? `
-            <div class="feel-actions" style="margin-top:0.85rem">
-              <button type="button" class="fa-approve" id="root-approve"${writeDisabledAttr(!s.meaning)} data-write>✓ Approve</button>
-              <button type="button" class="fa-edit" id="root-edit" data-write>✎ Edit</button>
-              <button type="button" class="fa-reject" id="root-reject" data-write>✕ Reject</button>
-            </div>
-            <div class="tip"><strong>Tip:</strong> ${ROOT_TIP}</div>` : renderRootNamePanel(s))}
-        </div>
-        <h3 class="section-h">Words built from ${escapeHtml(s.spelling)} <span style="color:var(--muted);font-weight:400">(${derived.length})</span></h3>
-        <p class="sans" style="font-size:0.84rem;color:var(--muted);margin:0 0 0.6rem">${escapeHtml(s.spelling)} leads these words. They grow from this root.</p>
-        ${derived.length ? derived.map(row).join('') : `<p class="empty" style="padding:0.5rem">None yet.${s.meaning ? ' Build one below.' : ''}</p>`}
-        <h3 class="section-h">Other words that use ${escapeHtml(s.spelling)} <span style="color:var(--muted);font-weight:400">(${contains.length})</span></h3>
-        ${contains.length ? contains.map(row).join('') : '<p class="empty" style="padding:0.5rem">None.</p>'}
-        ${s.meaning ? `<div class="composer" style="margin-top:1.25rem">
-          <h3>Build a new word from ${escapeHtml(s.spelling)}</h3>
-          <p class="sans" style="font-size:0.84rem;color:var(--muted);margin:0">${escapeHtml(s.spelling)} stays first. Add roots or approved words below.</p>
-          <div class="pick" id="rb-pick"></div>
-          <p class="composer-spell" id="rb-spell">-</p>
-          <div id="rb-pron"></div>
-          <div id="rb-match"></div>
-          <button type="button" class="hear-min" id="rb-hear" style="margin:0.5rem 0" disabled aria-label="Listen to this word">▶ Listen</button>
-          <button type="button" class="btn" id="rb-explore" style="margin:0 0 0.5rem" disabled>Explore preview</button>
-          <label class="fld" for="rb-meaning">Compound word meaning</label>
-          ${meaningPickerHtml('rb')}
-          <input type="text" id="rb-meaning" placeholder="What does this new word mean?" data-write-input>
-          <div class="actions" style="margin-top:0.7rem">
-            <button type="button" class="btn btn-primary" id="rb-save" disabled data-write>Save word</button>
-            <button type="button" class="btn" id="rb-reset" data-write>Reset</button>
-          </div>
-          <input type="search" id="rb-filter" placeholder="Search roots and words by spelling or meaning…" style="margin-top:0.85rem">
-          <h4 class="picker-h">Primitive roots</h4>
-          <div class="sound-grid" id="rb-roots"></div>
-          <h4 class="picker-h">Approved words</h4>
-          <div class="sound-grid" id="rb-words"></div>
-        </div>` : ''}`;
-      $('exp-back').addEventListener('click', () => { STATE.exploreSel = null; STATE.rootEditing = false; renderRoots(); scrollPageTop(); });
-      $('root-explore')?.addEventListener('click', () => openExplorer('root', s.spelling));
-      $('exp-hear').addEventListener('click', () => speakNeural(s.spelling));
-      if (!STATE.rootEditing) {
-        if (s.meaning) {
-          $('root-edit')?.addEventListener('click', () => { STATE.rootEditing = true; renderRoots(); });
-          $('root-approve')?.addEventListener('click', async () => {
-            await api(`/api/fonoran/lab/sounds/${encodeURIComponent(s.spelling)}`, { method: 'PATCH', body: JSON.stringify({ meaning: s.meaning, state: 'approved' }) });
-            toast(`Approved ${s.spelling}`); await load({ skipRender: true }); renderRoots();
-          });
-          $('root-reject')?.addEventListener('click', async () => {
-            await api(`/api/fonoran/lab/state/sound/${encodeURIComponent(s.spelling)}`, { method: 'PATCH', body: JSON.stringify({ state: 'rejected' }) });
-            toast(`Rejected ${s.spelling}`); STATE.exploreSel = null; await load({ skipRender: true }); renderRoots();
-          });
-        } else wireRootName(s);
-      } else wireRootEdit(s);
-      el.querySelectorAll('.deriv[data-id]').forEach(b => b.addEventListener('click', () => openChain('compound', b.dataset.id)));
-      if (s.meaning) {
-        renderRootBuilder(s);
-        wireMeaningPicker('rb', 'rb-meaning');
-        $('rb-filter').addEventListener('input', e => { STATE.rootBuildFilter = e.target.value; renderRootBuilder(s); });
-        $('rb-reset')?.addEventListener('click', () => {
-          STATE.rootBuild = [{ type: 'root', ref: s.spelling, spelling: s.spelling }];
-          STATE.rootBuildFilter = '';
-          $('rb-meaning').value = '';
-          renderRootBuilder(s);
-        });
-        $('rb-save').addEventListener('click', async () => {
-          const meaning = $('rb-meaning').value.trim();
-          if (STATE.rootBuild.length < 2) { toast('Add at least one more component.'); return; }
-          if (!meaning) { toast('Give the word a meaning.'); return; }
-          try {
-            const spelling = resolveComposerSpelling(STATE.rootBuild);
-            await api('/api/fonoran/lab/compounds', {
-              method: 'POST',
-              body: JSON.stringify({
-                components: composerToApi(STATE.rootBuild),
-                meaning,
-                allow_unapproved: STATE.showUnapprovedWords,
-              }),
-            });
-            STATE.rootBuild = [{ type: 'root', ref: s.spelling, spelling: s.spelling }];
-            STATE.rootBuildFilter = '';
-            toast(`Saved ${spelling} → ${meaning}`);
-            await load({ skipRender: true });
-            renderRoots();
-          } catch (e) { toast(e.message); }
-        });
-      }
-    }
-
-    function renderRootNamePanel(s) {
-      return `
-        <div class="edit-panel" style="text-align:left;margin-top:0.85rem">
-          <p class="sans" style="font-size:0.86rem;color:var(--muted);margin:0 0 0.65rem">Name this root here. <strong>${escapeHtml(s.spelling)}</strong> is one sound, not a compound like ${escapeHtml(s.spelling + s.spelling)}.</p>
-          <label class="fld" for="root-name-meaning">Root meaning</label>
-          ${meaningPickerHtml('root-name')}
-          <input type="text" id="root-name-meaning" placeholder="e.g. self, bond, motion…" autocomplete="off" data-write-input>
-          <div class="edit-actions" style="margin-top:0.65rem">
-            <button type="button" class="btn btn-primary" id="root-name-save" data-write>Save meaning</button>
-            <button type="button" class="btn fa-reject" id="root-name-reject" style="border-color:#f0c0c0;color:var(--reject)" data-write>Reject root</button>
-          </div>
-        </div>`;
-    }
-
-    function wireRootName(s) {
-      wireMeaningPicker('root-name', 'root-name-meaning');
-      const inp = $('root-name-meaning');
-      inp?.focus();
-      inp?.addEventListener('keydown', e => { if (e.key === 'Enter') $('root-name-save').click(); });
-      $('root-name-save')?.addEventListener('click', async () => {
-        const meaning = inp.value.trim();
-        if (!meaning) { toast('Type a meaning first.'); return; }
-        try {
-          await api(`/api/fonoran/lab/sounds/${encodeURIComponent(s.spelling)}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ meaning, state: 'approved' }),
-          });
-          toast(`Named ${s.spelling} → ${meaning}`);
-          await load({ skipRender: true });
-          renderRoots();
-        } catch (e) { toast(e.message); }
-      });
-      $('root-name-reject')?.addEventListener('click', async () => {
-        await api(`/api/fonoran/lab/state/sound/${encodeURIComponent(s.spelling)}`, { method: 'PATCH', body: JSON.stringify({ state: 'rejected' }) });
-        toast(`Rejected ${s.spelling}`); STATE.exploreSel = null; await load({ skipRender: true }); renderRoots();
-      });
-    }
-
-    function renderRootEdit(s) {
-      return `
-        <div class="edit-panel" style="text-align:left;margin-top:1rem">
-          <label class="fld" for="root-ed-spelling">Roman spelling</label>
-          <input type="text" id="root-ed-spelling" value="${escapeHtml(s.spelling)}" autocomplete="off" data-write-input>
-          <div id="root-ed-pron"></div>
-          <div id="root-ed-hint"></div>
-          ${renderSyllableBuilderCollapsible('root-ed', STATE.rootEditPickerOpen)}
-          <label class="fld" for="root-ed-meaning">Meaning</label>
-          ${meaningPickerHtml('root-ed')}
-          <input type="text" id="root-ed-meaning" value="${escapeHtml(s.meaning ?? '')}" placeholder="e.g. flow, edge, agent…" data-write-input>
-          <div id="root-ed-dupe"></div>
-          <div class="deps-summary">
-            <span class="words">${s.used_in_count} word${s.used_in_count === 1 ? '' : 's'}</span> use this root${s.used_in_count ? `: ${s.used_in.slice(0, 8).map(c => escapeHtml(c.meaning || c.spelling)).join(', ')}${s.used_in_count > 8 ? '…' : ''}` : '.'}
-            ${s.used_in_count ? `<br><strong>Changing spelling or meaning updates ${s.used_in_count} word${s.used_in_count === 1 ? '' : 's'} that use this root.</strong>` : ''}
-          </div>
-          <div id="root-ed-impact"></div>
-          <div class="edit-actions">
-            <button type="button" class="btn btn-primary" id="root-ed-save" data-write>Save &amp; approve</button>
-            <button type="button" class="btn" id="root-ed-cancel">Cancel</button>
-          </div>
-        </div>`;
-    }
-
-    function wireRootEdit(s) {
-      STATE.editMeaning = s.meaning ?? '';
-      STATE.clearAffected = false;
-      syncRootDraftFromSpelling(s.spelling);
-      wireSyllablePanel({
-        prefix: 'root-ed',
-        spellId: 'root-ed-spelling',
-        pronId: 'root-ed-pron',
-        getPickerOpen: () => STATE.rootEditPickerOpen,
-        setPickerOpen: v => { STATE.rootEditPickerOpen = v; },
-        onPreview: () => updateRootEditPreview(s.spelling),
-      });
-      const inp = $('root-ed-meaning');
-      const spellInp = $('root-ed-spelling');
-      inp.addEventListener('input', () => { STATE.editMeaning = inp.value; renderRootDupe(s); renderRootImpact(s); });
-      spellInp?.addEventListener('input', () => { renderRootImpact(s); updateRootEditPreview(s.spelling); });
-      wireMeaningPicker('root-ed', 'root-ed-meaning');
-      $('root-ed-cancel').addEventListener('click', () => { STATE.rootEditing = false; STATE.rootEditPickerOpen = false; renderRoots(); });
-      $('root-ed-save').addEventListener('click', async () => {
-        const newSpelling = spellInp.value.trim().toLowerCase();
-        const meaning = STATE.editMeaning.trim();
-        if (!isValidSyllable(newSpelling)) { toast('Pick a valid syllable first.'); return; }
-        if (!meaning) { toast('Type a meaning first.'); return; }
-        const meaningChanged = meaning !== (s.meaning ?? '');
-        const spellingChanged = newSpelling !== s.spelling;
-        try {
-          const res = await api(`/api/fonoran/lab/sounds/${encodeURIComponent(s.spelling)}`, {
-            method: 'PATCH',
-            body: JSON.stringify({
-              spelling: spellingChanged ? newSpelling : undefined,
-              meaning,
-              state: meaningChanged && s.meaning ? 'revised' : 'approved',
-              clear_affected_compounds: STATE.clearAffected,
-            }),
-          });
-          const savedSpelling = res.sound?.spelling ?? s.spelling;
-          STATE.rootEditing = false;
-          STATE.rootEditPickerOpen = false;
-          STATE.exploreSel = savedSpelling;
-          STATE.rootBuild = [{ type: 'root', ref: savedSpelling, spelling: savedSpelling }];
-          toast(res.spelling_changed
-            ? `Renamed ${res.old_spelling ?? s.spelling} → ${savedSpelling}`
-            : `Saved ${savedSpelling} → ${meaning}`);
-          await load({ skipRender: true });
-          renderRoots();
-        } catch (e) { toast(e.message); }
-      });
-      updateRootEditPreview(s.spelling);
-      renderRootDupe(s);
-      renderRootImpact(s);
-    }
-
-    function renderRootDupe(s) {
-      const box = $('root-ed-dupe'); if (!box) return;
-      const hits = meaningMatches(STATE.editMeaning, 'sound', s.spelling);
-      box.innerHTML = hits.length ? `<div class="dupe"><strong>⚠ Already in use:</strong> “${escapeHtml(STATE.editMeaning.trim())}” also means <span class="mono">${hits.join('</span>, <span class="mono">')}</span>.</div>` : '';
-    }
-
-    function renderRootImpact(s) {
-      const box = $('root-ed-impact'); if (!box) return;
-      const spellInp = $('root-ed-spelling');
-      const newSpelling = spellInp?.value.trim().toLowerCase() ?? s.spelling;
-      const spellingChanged = newSpelling !== s.spelling;
-      const meaningChanged = (STATE.editMeaning.trim() || '') !== (s.meaning ?? '');
-      const named = s.used_in.filter(c => c.meaning);
-      if (spellingChanged && s.used_in_count) {
-        box.innerHTML = `<div class="impact">
-          <strong>Spelling change:</strong> ${escapeHtml(s.spelling)} → <span class="mono">${escapeHtml(newSpelling)}</span>.
-          ${s.used_in_count} word${s.used_in_count === 1 ? '' : 's'} that use this root will get new spellings too.
-        </div>${meaningChanged && named.length ? '' : ''}`;
-        if (meaningChanged && named.length) {
-          box.innerHTML += `<div class="impact" style="margin-top:0.5rem">
-            <strong>Meaning change:</strong> these ${named.length} word${named.length === 1 ? '' : 's'} were named with the old meaning:
-            <ul>${named.map(c => `<li><span class="mono">${escapeHtml(c.spelling)}</span> · ${escapeHtml(c.meaning)} ${badge(c.state)}</li>`).join('')}</ul>
-            <label><input type="checkbox" id="root-ed-clear"${STATE.clearAffected ? ' checked' : ''}> Send these back to “needs review” so I re-check them</label>
-            <p class="impact-note">${STATE.clearAffected ? 'Their meanings stay; you just confirm each again. Nothing is deleted.' : 'Leave unchecked to keep their names exactly as they are.'}</p>
-          </div>`;
-          $('root-ed-clear')?.addEventListener('change', e => { STATE.clearAffected = e.target.checked; renderRootImpact(s); });
-        }
-        return;
-      }
-      if (meaningChanged && named.length) {
-        box.innerHTML = `<div class="impact">
-          <strong>Preview impact:</strong> these ${named.length} word${named.length === 1 ? '' : 's'} were named with the old meaning:
-          <ul>${named.map(c => `<li><span class="mono">${escapeHtml(c.spelling)}</span> · ${escapeHtml(c.meaning)} ${badge(c.state)}</li>`).join('')}</ul>
-          <label><input type="checkbox" id="root-ed-clear"${STATE.clearAffected ? ' checked' : ''}> Send these back to “needs review” so I re-check them</label>
-          <p class="impact-note">${STATE.clearAffected ? 'Their meanings stay; you just confirm each again. Nothing is deleted.' : 'Leave unchecked to keep their names exactly as they are.'}</p>
-        </div>`;
-        $('root-ed-clear').addEventListener('change', e => { STATE.clearAffected = e.target.checked; renderRootImpact(s); });
-      } else box.innerHTML = '';
-    }
-
-    function renderRootBuilder(root) {
-      if (STATE.rootBuild.length && typeof STATE.rootBuild[0] === 'string') {
-        STATE.rootBuild = STATE.rootBuild.map(p => ({ type: 'root', ref: p, spelling: p }));
-      }
-      const picks = STATE.rootBuild;
-      $('rb-pick').innerHTML = picks.map((c, i) => {
-        const sp = c.spelling || c.ref;
-        const label = compDisplayLabel(c);
-        if (i === 0) {
-          return `<span class="tok" style="opacity:0.85;cursor:default">${typeBadge(c.type)} <span class="mono">${escapeHtml(sp)}</span> = ${escapeHtml(label)}</span>`;
-        }
-        return `<span class="tok" data-idx="${i}" data-write>${typeBadge(c.type)} <span class="mono">${escapeHtml(sp)}</span> = ${escapeHtml(label)} ×</span>`;
-      }).join('');
-      $('rb-pick').querySelectorAll('[data-idx]').forEach(t => t.addEventListener('click', () => {
-        STATE.rootBuild.splice(Number(t.dataset.idx), 1);
-        renderRootBuilder(root);
-      }));
-      const spelling = picks.length ? resolveComposerSpelling(picks) : '';
-      $('rb-spell').textContent = spelling || '-';
-      const flat = composerFlatSpellings(picks);
-      $('rb-pron').innerHTML = composerCanListen(picks) ? pronBlock(flat) : '';
-      const hearBtn = $('rb-hear');
-      if (hearBtn) {
-        hearBtn.disabled = !composerCanListen(picks);
-        hearBtn.onclick = () => speakNeural(flat);
-      }
-      const exploreBtn = $('rb-explore');
-      if (exploreBtn) {
-        exploreBtn.disabled = picks.length < 2;
-        exploreBtn.onclick = () => openExplorerPreview(picks, spelling);
-      }
-      const match = renderSpellingMatch('rb-match', spelling);
-      setWriteButton($('rb-save'), picks.length < 2 || spellingBlocksSave(match));
-      const omitIds = picks.filter(c => c.type === 'word').map(c => c.ref);
-      $('rb-roots').innerHTML = rootPickerWithBadge(pickableRoots(STATE.rootBuildFilter, { omit: [root.spelling] }));
-      $('rb-words').innerHTML = wordPickerMarkup(pickableWords(STATE.rootBuildFilter, { omitIds }));
-      $('rb-roots').querySelectorAll('[data-add-root]').forEach(b => b.addEventListener('click', () => {
-        STATE.rootBuild.push({ type: 'root', ref: b.dataset.addRoot, spelling: b.dataset.addRoot });
-        renderRootBuilder(root);
-      }));
-      $('rb-words').querySelectorAll('[data-add-word]').forEach(b => b.addEventListener('click', () => {
-        const w = STATE.lab.compounds.find(c => c.id === b.dataset.addWord);
-        if (!w) return;
-        STATE.rootBuild.push({ type: 'word', ref: w.id, spelling: w.spelling, meaning: w.meaning });
-        renderRootBuilder(root);
-      }));
+      if (!STATE.lab || !$('roots-workspace')) return;
+      ensureSplitStickyObserver();
+      renderRootsSoundPicker();
+      $('roots-workspace').innerHTML = renderRootsCreateHtml();
+      wireRootsCreate();
+      requestAnimationFrame(syncSplitStickyOffsets);
     }
 
     /* ---------- WORD COMPOSER + REVIEW ---------- */
@@ -1189,7 +709,7 @@
         preview: true,
         spelling,
         components: composer,
-        meaning: $('wc-meaning')?.value.trim() || $('rb-meaning')?.value.trim() || null,
+        meaning: $('wc-meaning')?.value.trim() || null,
       });
     }
 
@@ -1921,16 +1441,12 @@
 
     function renderDictionaryList() {
       const list = dictEntries();
-      const sel = STATE.dictSelection;
-      $('dict-list').innerHTML = list.length ? list.map(e => {
-        const selected = sel && sel.kind === e.kind && sel.id === e.id;
-        return `
-        <button type="button" class="word-item${selected ? ' is-selected' : ''}" data-kind="${e.kind}" data-id="${escapeHtml(e.id)}">
+      $('dict-list').innerHTML = list.length ? list.map(e => `
+        <button type="button" class="word-item" data-kind="${e.kind}" data-id="${escapeHtml(e.id)}">
           <div class="row"><span class="fonoran">${escapeHtml(e.word)}</span><span>${badge(e.type)} ${badge(e.state)}</span></div>
           <div class="row" style="margin-top:0.15rem"><span class="english">${escapeHtml(e.english)}</span></div>
           <div class="hint">${escapeHtml(e.hint)}</div>
-        </button>`;
-      }).join('') : '<p class="empty">Nothing matches.</p>';
+        </button>`).join('') : '<p class="empty">Nothing matches.</p>';
       $('dict-list').querySelectorAll('.word-item').forEach(b => b.addEventListener('click', () => {
         selectDictionaryEntry(b.dataset.kind, b.dataset.id);
       }));
@@ -1979,6 +1495,14 @@
     }
 
     /* ---------- HEALTH + TIMELINE ---------- */
+    async function undoLastChange() {
+      if (!canWrite()) { toast('Sign in required'); return; }
+      const res = await api('/api/fonoran/lab/undo', { method: 'POST', body: '{}' });
+      toast(res.reverted ? `Undid: ${res.label}` : 'Nothing to undo');
+      STATE.editing = false;
+      await load();
+    }
+
     async function renderHealth() {
       let h;
       try { h = await api('/api/fonoran/lab/health'); } catch { $('health-body').innerHTML = '<p class="empty">Could not load health.</p>'; return; }
@@ -1989,6 +1513,7 @@
       const dupes = duplicateMeanings();
       const order = { high: 0, medium: 1, low: 2 };
       const warns = [...h.warnings].sort((a, b) => (order[a.severity] ?? 3) - (order[b.severity] ?? 3));
+      const undoDisabled = !STATE.lab?.can_undo || !canWrite();
       $('health-body').innerHTML = `
         <div class="health-hero">
           <div class="health-score" style="color:${color(overall)}">${overall}<span class="health-of"> / 100</span></div>
@@ -2006,9 +1531,13 @@
           ${warns.length ? warns.slice(0, 30).map(w => `<div class="warn-row sev-${w.severity}"><span class="wlabel">${escapeHtml(w.label)}</span>${escapeHtml(w.message)}</div>`).join('') : '<p class="empty">No warnings.</p>'}
           ${h.dda ? `<p class="sans" style="font-size:0.84rem;color:var(--muted);margin-top:0.75rem">DDA: ${h.dda.pending} pending · ${h.dda.stale} stale · ${h.dda.confirmed} confirmed</p>` : ''}
         </div>
-        <h3 class="section-h">Your progress</h3>
+        <div class="health-progress-header">
+          <h3 class="section-h">Your progress</h3>
+          <button type="button" class="health-undo-btn" id="undo-btn"${undoDisabled ? ' disabled' : ''} data-write>↶ Undo</button>
+        </div>
         <div id="timeline"></div>`;
       $('health-toggle').addEventListener('click', () => { STATE.healthOpen = !STATE.healthOpen; renderHealth(); });
+      $('undo-btn')?.addEventListener('click', () => { undoLastChange(); });
       renderTimeline();
     }
     function duplicateMeanings() {
@@ -2060,7 +1589,7 @@
       scrollPageTop();
       requestAnimationFrame(() => {
         scrollPageTop();
-        if (name === 'dictionary' || name === 'create') {
+        if (name === 'dictionary' || name === 'create' || name === 'roots') {
           syncSplitStickyOffsets();
           requestAnimationFrame(syncSplitStickyOffsets);
         }
@@ -2074,13 +1603,7 @@
     header?.addEventListener('universal-nav:sign-out', () => { signOut(); });
     header?.addEventListener('universal-nav:action', async (event) => {
       const { action } = event.detail;
-      if (action === 'undo') {
-        if (!canWrite()) { toast('Sign in required'); return; }
-        const res = await api('/api/fonoran/lab/undo', { method: 'POST', body: '{}' });
-        toast(res.reverted ? `Undid: ${res.label}` : 'Nothing to undo');
-        STATE.editing = false;
-        await load();
-      } else if (action === 'health') {
+      if (action === 'health') {
         rememberMainPage();
         switchPage('health');
       } else if (action === 'advanced') {
@@ -2090,6 +1613,7 @@
     });
     $('adv-back').addEventListener('click', () => switchPage(STATE.toolReturnPage || 'roots'));
     $('dict-search').addEventListener('input', e => { STATE.dictQuery = e.target.value; renderDictionary(); });
+    $('roots-filter')?.addEventListener('input', e => { STATE.rootsFilter = e.target.value; updateRootsSoundFilter(); });
     $('dict-filters').addEventListener('click', e => { const b = e.target.closest('[data-filter]'); if (!b) return; STATE.dictFilter = b.dataset.filter; $('dict-filters').querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c === b)); renderDictionary(); });
     $('health-back').addEventListener('click', () => switchPage(STATE.toolReturnPage || 'roots'));
     $('adv-dictionary').addEventListener('click', () => { rememberMainPage(); switchPage('dictionary'); });

@@ -188,14 +188,20 @@ body {
   color: #111;
 }
 
+.app-header__global-link--button {
+  font-family: inherit;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
 .fonoran-auth-user {
-  font-size: 0.78rem;
-  color: #6b7280;
+  font-size: 0.82rem;
+  color: #4b5563;
   max-width: 10rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  align-self: center;
 }
 
 .auth-gate {

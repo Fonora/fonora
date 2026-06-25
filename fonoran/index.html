@@ -152,7 +152,20 @@
 
       <section id="page-review" class="page"><div id="word-review"></div></section>
 
-      <section id="page-roots" class="page"><div id="roots-body"></div></section>
+      <section id="page-roots" class="page fonoran-split-page">
+        <div class="fonoran-split-shell" data-split-shell>
+          <div class="fonoran-split-chrome">
+            <p class="fonoran-split-chrome__intro sans">Create primitive syllables and browse every root in the language.</p>
+            <input type="search" id="roots-filter" class="search-bar" placeholder="Search sounds… e.g. b, oo, sh" autocomplete="off">
+          </div>
+        </div>
+        <div class="fonoran-split-grid">
+          <aside class="fonoran-split-picker" aria-label="Sound picker">
+            <div id="roots-sound-picker" class="roots-sound-picker"></div>
+          </aside>
+          <div class="fonoran-split-workspace" id="roots-workspace" aria-live="polite"></div>
+        </div>
+      </section>
 
       <section id="page-dictionary" class="page fonoran-split-page">
         <div class="fonoran-split-shell" data-split-shell>

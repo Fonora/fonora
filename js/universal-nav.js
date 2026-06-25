@@ -98,8 +98,8 @@ function renderFonoranAuthTools() {
   if (!fonoranAuthState?.required || !fonoranAuthState.authenticated) return '';
   const email = escapeAttr(fonoranAuthState.email ?? 'Signed in');
   return `
-        <span class="fonoran-auth-user sans" title="${email}">${escapeHtml(fonoranAuthState.email ?? 'Signed in')}</span>
-        <button type="button" class="icon-btn" id="fonoran-sign-out">Sign out</button>`;
+        <span class="fonoran-auth-user" title="${email}">${escapeHtml(fonoranAuthState.email ?? 'Signed in')}</span>
+        <button type="button" class="app-header__global-link app-header__global-link--button" id="fonoran-sign-out">Sign out</button>`;
 }
 
 function renderRow1(context) {
@@ -127,6 +127,7 @@ function renderRow1(context) {
       <nav class="app-header__global" aria-label="Platform links">
         <a href="${escapeAttr(base)}/#open-problems" class="app-header__global-link" data-script-tab="open-problems">Research</a>
         <a href="${docHref(context, 'docs/platform-overview.md')}" class="app-header__global-link" data-script-tab="docs">Docs</a>
+        ${context === 'fonoran' ? renderFonoranAuthTools() : ''}
       </nav>
     </div>`;
 }
@@ -185,8 +186,6 @@ function renderFonoranRow2(activeTab) {
     <div class="app-header__row app-header__row--tools app-header__row--fonoran">
       <nav class="fonoran-tabs" aria-label="Fonoran tools">${tabs}</nav>
       <div class="app-header__tools">
-        ${renderFonoranAuthTools()}
-        <button type="button" class="icon-btn" id="undo-btn" data-fonoran-action="undo" disabled>↶ Undo</button>
         <button type="button" class="icon-btn" id="health-btn" data-fonoran-action="health">Health</button>
         <button type="button" class="icon-btn" id="advanced-btn" data-fonoran-action="advanced">⚙ Advanced</button>
       </div>
