@@ -477,8 +477,20 @@
         </div>`;
     }
 
+    function userSounds() {
+      return STATE.lab.sounds.filter(s => s.state !== 'rejected');
+    }
+
     function userWords() {
       return STATE.lab.compounds.filter(c => !c.generator_hint && c.state !== 'rejected');
+    }
+
+    /** Roots first, then compounds — matches computeNextStep in the lab API. */
+    function reviewItems() {
+      return [
+        ...userSounds().map(s => ({ ...s, reviewKind: 'sound' })),
+        ...userWords().map(c => ({ ...c, reviewKind: 'compound' })),
+      ];
     }
 
     function rootDraftSpelling() {
@@ -1136,7 +1148,7 @@
 
     function renderWords() {
       if (!STATE.lab) return;
-      const list = userWords();
+      const list = reviewItems();
       const total = list.length;
       const reviewEl = $('word-review');
       if (!total) {
@@ -1144,10 +1156,10 @@
           <div class="all-done">
             <p class="big">🌱</p>
             <h2>Nothing to review yet</h2>
-            <p class="sans" style="color:var(--muted);max-width:28rem;margin:0.5rem auto 1.25rem">Words you save on <strong>Word Creator</strong> show up here one at a time.</p>
-            <button type="button" class="btn btn-primary" id="review-go-create">Create a word</button>
+            <p class="sans" style="color:var(--muted);max-width:28rem;margin:0.5rem auto 1.25rem">Roots you add on <strong>Root Creator</strong> and words you save on <strong>Word Creator</strong> show up here one at a time.</p>
+            <button type="button" class="btn btn-primary" id="review-go-create">Create a root</button>
           </div>`;
-        $('review-go-create')?.addEventListener('click', () => switchPage('create'));
+        $('review-go-create')?.addEventListener('click', () => switchPage('roots'));
         return;
       }
       if (STATE.reviewFocusPending) {
@@ -1162,33 +1174,93 @@
       if (STATE.wordCursor >= total) STATE.wordCursor = total - 1;
       if (STATE.wordCursor < 0) STATE.wordCursor = 0;
       const c = list[STATE.wordCursor];
-      const partsMeaning = c.part_details.map(p => escapeHtml(p.meaning || p.legacy_label || '?')).join(' + ');
+      const isSound = c.reviewKind === 'sound';
+      const kindLabel = isSound ? 'Root' : 'Word';
       const savedNote = STATE.justSaved === c.spelling
-        ? `<div class="saved-banner">✓ Saved <strong>${escapeHtml(c.spelling)}</strong>. You're still on this word. Find it anytime in Dictionary.</div>` : '';
-      $('word-review').innerHTML = `
-        <div class="review">
-          ${neighborStrip(list, STATE.wordCursor)}
-          <div class="position">Word ${STATE.wordCursor + 1} of ${total} · ${open} need review · ${badge(c.state)}</div>
-          ${pronBlock(c.parts)}
-          <p class="review-word">${escapeHtml(c.spelling)}</p>
-          <p class="review-meaning ${c.meaning ? '' : 'unnamed'}">${c.meaning ? escapeHtml(c.meaning) : 'not named yet'}</p>
-          <p class="review-parts">${c.part_details.map(p => `${typeBadge(p.type || 'root')} ${escapeHtml(p.spelling)} = ${escapeHtml(p.meaning || p.legacy_label || '?')}`).join(' · ')}</p>
-          <button type="button" class="btn" id="explore-word" style="margin-top:0.5rem">Explore family tree</button>
-          <button type="button" class="hear-min" id="hear" aria-label="Listen to pronunciation">▶ Listen</button>
-          ${savedNote}
-          ${STATE.editing ? renderWordEdit(c) : `
-            <p class="feel">${c.meaning ? 'Does this word feel right?' : 'This word needs a meaning.'}</p>
+        ? `<div class="saved-banner">✓ Saved <strong>${escapeHtml(c.spelling)}</strong>. You're still on this ${isSound ? 'root' : 'word'}. Find it anytime in Dictionary.</div>` : '';
+      const pronParts = isSound ? [c.spelling] : c.parts;
+      const partsLine = isSound
+        ? `<p class="review-parts">${typeBadge('root')} Primitive syllable</p>`
+        : `<p class="review-parts">${c.part_details.map(p => `${typeBadge(p.type || 'root')} ${escapeHtml(p.spelling)} = ${escapeHtml(p.meaning || p.legacy_label || '?')}`).join(' · ')}</p>`;
+      const feelPrompt = c.meaning
+        ? `Does this ${isSound ? 'root' : 'word'} feel right?`
+        : `This ${isSound ? 'root' : 'word'} needs a meaning.`;
+      const editPanel = STATE.editing
+        ? (isSound ? renderSoundEdit(c) : renderWordEdit(c))
+        : '';
+      const feelPanel = STATE.editing ? '' : `
+            <p class="feel">${feelPrompt}</p>
             <div class="feel-actions">
               <button type="button" class="fa-approve" id="approve"${writeDisabledAttr(!c.meaning)} data-write>✓ Approve</button>
               <button type="button" class="fa-edit" id="edit" data-write>✎ Edit</button>
               <button type="button" class="fa-reject" id="reject" data-write>✕ Reject</button>
-            </div>`}
+            </div>`;
+      $('word-review').innerHTML = `
+        <div class="review">
+          ${neighborStrip(list, STATE.wordCursor)}
+          <div class="position">${kindLabel} ${STATE.wordCursor + 1} of ${total} · ${open} need review · ${badge(isSound ? 'base' : 'compound')} ${badge(c.state)}</div>
+          ${pronBlock(pronParts)}
+          <p class="review-word">${escapeHtml(c.spelling)}</p>
+          <p class="review-meaning ${c.meaning ? '' : 'unnamed'}">${c.meaning ? escapeHtml(c.meaning) : 'not named yet'}</p>
+          ${partsLine}
+          <button type="button" class="btn" id="explore-item" style="margin-top:0.5rem">Explore family tree</button>
+          <button type="button" class="hear-min" id="hear" aria-label="Listen to pronunciation">▶ Listen</button>
+          ${savedNote}
+          ${editPanel}${feelPanel}
           ${cardNav(STATE.wordCursor, total, 'word')}
         </div>`;
       wireCommon(c);
-      $('explore-word')?.addEventListener('click', () => openExplorer('word', c.id));
+      $('explore-item')?.addEventListener('click', () => openExplorer(isSound ? 'root' : 'word', isSound ? c.spelling : c.id));
       wireNeighbors(list, 'wordCursor', renderWords);
-      if (STATE.editing) wireWordEdit(c); else wireFeel(c);
+      if (STATE.editing) {
+        if (isSound) wireSoundEdit(c);
+        else wireWordEdit(c);
+      } else wireFeel(c);
+    }
+
+    function renderSoundEdit(s) {
+      return `
+        <div class="edit-panel">
+          <div id="ed-live-pron">${pronBlock(s.spelling)}</div>
+          <button type="button" class="hear-min" id="ed-hear" style="margin:0.5rem 0 0" aria-label="Listen to this syllable">▶ Listen</button>
+          <label class="fld" for="ed-meaning">Meaning: name this root</label>
+          ${meaningPickerHtml('ed')}
+          <input type="text" id="ed-meaning" value="${escapeHtml(s.meaning ?? '')}" placeholder="e.g. water, motion…" data-write-input>
+          <div id="ed-dupe"></div>
+          <div class="edit-actions">
+            <button type="button" class="btn btn-primary" id="ed-save" data-write>Save &amp; approve</button>
+            <button type="button" class="btn" id="ed-cancel">Cancel</button>
+          </div>
+        </div>`;
+    }
+
+    function wireSoundEdit(s) {
+      STATE.editMeaning = s.meaning ?? '';
+      const inp = $('ed-meaning');
+      inp.addEventListener('input', () => { STATE.editMeaning = inp.value; renderDupe('sound', s.spelling); });
+      wireMeaningPicker('ed', 'ed-meaning');
+      renderDupe('sound', s.spelling);
+      $('ed-cancel').addEventListener('click', () => { STATE.editing = false; renderWords(); });
+      $('ed-hear')?.addEventListener('click', () => speakNeural(s.spelling));
+      $('ed-save').addEventListener('click', async () => {
+        const meaning = STATE.editMeaning.trim();
+        if (!meaning) { toast('Type a meaning first.'); return; }
+        try {
+          const changed = meaning !== (s.meaning ?? '');
+          await api(`/api/fonoran/lab/sounds/${encodeURIComponent(s.spelling)}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ meaning, state: changed && s.meaning ? 'revised' : 'approved' }),
+          });
+          STATE.editing = false;
+          STATE.justSaved = s.spelling;
+          await load({ skipRender: true });
+          const list = reviewItems();
+          const idx = list.findIndex(x => x.spelling === s.spelling && x.reviewKind === 'sound');
+          STATE.wordCursor = idx >= 0 ? idx : STATE.wordCursor;
+          toast(`Saved ${s.spelling}`);
+          renderWords();
+        } catch (e) { toast(e.message); }
+      });
     }
 
     function renderWordEdit(c) {
@@ -1243,8 +1315,8 @@
           STATE.editing = false;
           STATE.justSaved = savedSpelling;
           await load({ skipRender: true });
-          const list = userWords();
-          const idx = list.findIndex(x => x.spelling === savedSpelling);
+          const list = reviewItems();
+          const idx = list.findIndex(x => x.spelling === savedSpelling && x.reviewKind === 'compound');
           STATE.wordCursor = idx >= 0 ? idx : STATE.wordCursor;
           toast(`Saved ${savedSpelling}`);
           renderWords();
@@ -1295,32 +1367,40 @@
       </div>${progressBar()}`;
     }
     function progressBar() {
-      const all = userWords();
+      const all = reviewItems();
       const done = all.filter(i => reviewed(i.state)).length;
       const pct = all.length ? Math.round((done / all.length) * 100) : 0;
-      return `<div class="progress"><span style="width:${pct}%"></span></div><div class="progress-label">${done} of ${all.length} words reviewed (${pct}%)</div>`;
+      return `<div class="progress"><span style="width:${pct}%"></span></div><div class="progress-label">${done} of ${all.length} reviewed (${pct}%)</div>`;
     }
     function wireCommon(item) {
-      $('hear').addEventListener('click', () => speakNeural(item.parts));
+      const speakParts = item.reviewKind === 'sound' ? [item.spelling] : item.parts;
+      $('hear').addEventListener('click', () => speakNeural(speakParts));
       const prev = $('nav-prev'), next = $('nav-next');
       prev?.addEventListener('click', () => { if (STATE.wordCursor > 0) { STATE.wordCursor--; STATE.editing = false; STATE.justSaved = null; renderWords(); } });
-      next?.addEventListener('click', () => { const t = userWords().length; if (STATE.wordCursor < t - 1) { STATE.wordCursor++; STATE.editing = false; STATE.justSaved = null; renderWords(); } });
+      next?.addEventListener('click', () => { const t = reviewItems().length; if (STATE.wordCursor < t - 1) { STATE.wordCursor++; STATE.editing = false; STATE.justSaved = null; renderWords(); } });
     }
     function wireFeel(item) {
       $('edit')?.addEventListener('click', () => { STATE.editing = true; renderWords(); });
+      const isSound = item.reviewKind === 'sound';
       $('approve')?.addEventListener('click', async () => {
-        await api(`/api/fonoran/lab/compounds/${encodeURIComponent(item.id)}`, { method: 'PATCH', body: JSON.stringify({ meaning: item.meaning, state: 'approved' }) });
+        if (isSound) {
+          await api(`/api/fonoran/lab/sounds/${encodeURIComponent(item.spelling)}`, { method: 'PATCH', body: JSON.stringify({ state: 'approved' }) });
+        } else {
+          await api(`/api/fonoran/lab/compounds/${encodeURIComponent(item.id)}`, { method: 'PATCH', body: JSON.stringify({ meaning: item.meaning, state: 'approved' }) });
+        }
         toast(`Approved ${item.spelling}`); await advanceWord();
       });
       $('reject')?.addEventListener('click', async () => {
-        await api(`/api/fonoran/lab/state/compound/${encodeURIComponent(item.id)}`, { method: 'PATCH', body: JSON.stringify({ state: 'rejected' }) });
+        const kind = isSound ? 'sound' : 'compound';
+        const id = isSound ? item.spelling : item.id;
+        await api(`/api/fonoran/lab/state/${kind}/${encodeURIComponent(id)}`, { method: 'PATCH', body: JSON.stringify({ state: 'rejected' }) });
         toast(`Rejected ${item.spelling}`); await advanceWord();
       });
     }
     async function advanceWord() {
       const before = STATE.wordCursor;
       await load({ skipRender: true });
-      const list = userWords();
+      const list = reviewItems();
       let i = before + 1;
       while (i < list.length && !isOpen(list[i].state)) i++;
       if (i < list.length) STATE.wordCursor = i;
