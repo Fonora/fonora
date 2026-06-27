@@ -19,7 +19,7 @@ import { loadConceptInventory, buildConceptAliasIndex } from './fonoran-concepts
 import { expandWord } from './fonoran-semantic-lookup.js';
 import { getLab } from './fonoran-sound-bucket.js';
 import { loadInterpretationRules, interpretToConcept } from './fonoran-interpretation.js';
-import { segmentCompound, pronounceabilityScore } from './fonoran-gen3-readability.js';
+import { segmentCompound, pronounceabilityScore, checkCompoundBoundary } from './fonoran-gen3-readability.js';
 
 const SKIP = new Set([
   'a', 'an', 'the', 'of', 'to', 'in', 'on', 'at', 'for', 'and', 'or', 'with', 'by', 'from',
@@ -171,6 +171,13 @@ export async function suggestComponents(text, ctx) {
 function scoreOption(ids, ctx) {
   const roots = ids.map(id => ctx.rootById.get(id)?.root).filter(Boolean);
   if (roots.length !== ids.length) return null;
+  const boundary = checkCompoundBoundary(roots);
+  if (!boundary.valid) {
+    if (ctx.debug) {
+      for (const v of boundary.violations) console.warn('[word-gen]', v.reason);
+    }
+    return null;
+  }
   const spelling = roots.join('');
   const segs = segmentCompound(spelling, ctx.rootInventory);
   const unique = segs.length === 1;

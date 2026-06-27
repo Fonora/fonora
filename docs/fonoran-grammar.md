@@ -411,6 +411,31 @@ graph TD
 
 Compounding rules for the translator: prefer the **shortest transparent path** through approved concepts; omit concepts implied by human experience unless emphasis or disambiguation is needed (**semantic economy**); reject opaque shortcuts that break the tree (*implementation Under Development*).
 
+### Compound Boundary Constraint
+
+> **A valid compound may not join two morphemes when the final consonant of the left morpheme is identical to the initial consonant of the right morpheme. Fonoran does not collapse, lengthen, or silently alter boundary sounds. If such a boundary would occur, the compound candidate is invalid and must be regenerated or assigned different roots.**
+
+This rule preserves Fonoran's core promise: **what you hear = what you write = what you look up**. If a spoken compound sounded like "bemam" a listener would naturally write "bemam", but the dictionary would store "bemmam". That gap violates spelling stability.
+
+| Left | Right | Boundary | Valid? | Reason |
+| --- | --- | --- | --- | --- |
+| bem | mam | m + m | **No** | identical consonants |
+| kal | lum | l + l | **No** | identical consonants |
+| bem | lam | m + l | Yes | different consonants |
+| ben | mam | n + m | Yes | different consonants |
+| ka | so | a + s | Yes | vowel–consonant boundary |
+| so | a | o + a | Yes | vowel–vowel boundary |
+
+**This is a generation constraint, not a pronunciation rule.** Fonoran never collapses, lengthens, or silently alters boundary sounds. The constraint prevents generating compounds that would require hidden spelling or pronunciation exceptions.
+
+Multi-part compounds must satisfy the constraint at **every boundary**, not just the first one.
+
+The constraint is enforced at:
+- **Build time** (`npm run fonoran:build`) — curated compounds that violate it are dropped with a clear reason.
+- **Word generator** (`fonoran-word-generator.js`) — boundary-invalid candidates are excluded from ranked options.
+- **Word composer UI** — saving is blocked and the violation is shown inline.
+- **API** (`POST /api/fonoran/lab/compounds`) — the server rejects the request with a descriptive error.
+
 ### Semantic economy
 
 Fonoran compounds should contain only the concepts necessary to distinguish their intended meaning. Concepts that are naturally implied by human experience should be omitted unless the speaker wishes to emphasize or disambiguate them.

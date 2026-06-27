@@ -21,7 +21,7 @@ import { fileURLToPath } from 'node:url';
 import { generateRootCandidates } from './fonoran-root-candidates.js';
 import { writeBucketRaw } from './fonoran-store.js';
 import { emptyDda, migrateBucket, normalizeCompoundRecord, normalizeSoundRecord } from './fonoran-derivation.js';
-import { analyzeAmbiguity, auditScores, segmentCompound } from './fonoran-gen3-readability.js';
+import { analyzeAmbiguity, auditScores, segmentCompound, checkCompoundBoundary } from './fonoran-gen3-readability.js';
 import { aliasesForConcept, loadLocalization } from './fonoran-concepts.js';
 import { parseSyllable } from './fonoran-pronunciation.js';
 
@@ -106,6 +106,15 @@ function resolveCompounds(compoundDefs, rootById, rootSpellings) {
       dropped.push({
         concept: def.concept,
         reason: `ambiguous segmentation (${segs.length}: ${segs.map(s => s.join('+')).join(' | ')})`,
+      });
+      continue;
+    }
+
+    const boundary = checkCompoundBoundary(parts.map(p => p.root));
+    if (!boundary.valid) {
+      dropped.push({
+        concept: def.concept,
+        reason: boundary.violations.map(v => v.reason).join('; '),
       });
       continue;
     }

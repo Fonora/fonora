@@ -1,7 +1,7 @@
 {
   "version": "1.0-root-workflow",
   "status": "proposal",
-  "generated_at": "2026-06-27T23:08:41.021Z",
+  "generated_at": "2026-06-27T23:32:47.823Z",
   "philosophy": {
     "premise": "Words come first. The semantic network evolves after roots are approved.",
     "workflow": "Generate candidates → human review → canonical roots → compounds later",
@@ -28,7 +28,7 @@
       "priority": 1000,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -53,7 +53,7 @@
       "priority": 999,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -78,7 +78,7 @@
       "priority": 998,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -103,7 +103,7 @@
       "priority": 997,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -128,7 +128,7 @@
       "priority": 996,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -153,7 +153,7 @@
       "priority": 995,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -178,7 +178,7 @@
       "priority": 994,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -203,7 +203,7 @@
       "priority": 993,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -228,7 +228,7 @@
       "priority": 992,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -253,7 +253,7 @@
       "priority": 991,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -278,7 +278,7 @@
       "priority": 990,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -303,7 +303,7 @@
       "priority": 989,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -328,7 +328,7 @@
       "priority": 988,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -353,7 +353,7 @@
       "priority": 987,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -378,7 +378,7 @@
       "priority": 986,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -403,7 +403,7 @@
       "priority": 985,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -428,7 +428,7 @@
       "priority": 984,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -453,7 +453,7 @@
       "priority": 983,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -478,7 +478,7 @@
       "priority": 982,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -503,7 +503,7 @@
       "priority": 981,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -528,7 +528,7 @@
       "priority": 980,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -553,7 +553,7 @@
       "priority": 979,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -578,7 +578,7 @@
       "priority": 978,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -603,7 +603,7 @@
       "priority": 977,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -628,7 +628,7 @@
       "priority": 976,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -653,7 +653,7 @@
       "priority": 975,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -678,7 +678,7 @@
       "priority": 974,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -703,7 +703,7 @@
       "priority": 973,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -728,7 +728,7 @@
       "priority": 972,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -753,7 +753,7 @@
       "priority": 971,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -778,7 +778,7 @@
       "priority": 970,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -803,7 +803,7 @@
       "priority": 969,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -828,7 +828,7 @@
       "priority": 968,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -853,7 +853,7 @@
       "priority": 967,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -878,7 +878,7 @@
       "priority": 966,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -903,7 +903,7 @@
       "priority": 965,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -928,7 +928,7 @@
       "priority": 964,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -953,7 +953,7 @@
       "priority": 963,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -978,7 +978,7 @@
       "priority": 962,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1003,7 +1003,7 @@
       "priority": 961,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1028,7 +1028,7 @@
       "priority": 960,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1053,7 +1053,7 @@
       "priority": 959,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1078,7 +1078,7 @@
       "priority": 958,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1103,7 +1103,7 @@
       "priority": 957,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1128,7 +1128,7 @@
       "priority": 956,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1153,7 +1153,7 @@
       "priority": 955,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1178,7 +1178,7 @@
       "priority": 954,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1203,7 +1203,7 @@
       "priority": 953,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1228,7 +1228,7 @@
       "priority": 952,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1253,7 +1253,7 @@
       "priority": 951,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1278,7 +1278,7 @@
       "priority": 950,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1303,7 +1303,7 @@
       "priority": 949,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1328,7 +1328,7 @@
       "priority": 948,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1353,7 +1353,7 @@
       "priority": 947,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1378,7 +1378,7 @@
       "priority": 946,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1403,7 +1403,7 @@
       "priority": 945,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1428,7 +1428,7 @@
       "priority": 944,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1453,7 +1453,7 @@
       "priority": 943,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1478,7 +1478,7 @@
       "priority": 942,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1503,7 +1503,7 @@
       "priority": 941,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1528,7 +1528,7 @@
       "priority": 940,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1553,7 +1553,7 @@
       "priority": 939,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1578,7 +1578,7 @@
       "priority": 938,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1603,7 +1603,7 @@
       "priority": 937,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1628,7 +1628,7 @@
       "priority": 936,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1653,7 +1653,7 @@
       "priority": 935,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1678,7 +1678,7 @@
       "priority": 934,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1703,7 +1703,7 @@
       "priority": 933,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1728,7 +1728,7 @@
       "priority": 932,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1753,7 +1753,7 @@
       "priority": 931,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1778,7 +1778,7 @@
       "priority": 930,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1803,7 +1803,7 @@
       "priority": 929,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1828,7 +1828,7 @@
       "priority": 928,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1853,7 +1853,7 @@
       "priority": 927,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1878,7 +1878,7 @@
       "priority": 926,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1903,7 +1903,7 @@
       "priority": 925,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1928,7 +1928,7 @@
       "priority": 924,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1953,7 +1953,7 @@
       "priority": 923,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -1978,7 +1978,7 @@
       "priority": 922,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2003,7 +2003,7 @@
       "priority": 921,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2028,7 +2028,7 @@
       "priority": 920,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2053,7 +2053,7 @@
       "priority": 919,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2078,7 +2078,7 @@
       "priority": 918,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2103,7 +2103,7 @@
       "priority": 917,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2128,7 +2128,7 @@
       "priority": 916,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2153,7 +2153,7 @@
       "priority": 915,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2178,7 +2178,7 @@
       "priority": 914,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2203,7 +2203,7 @@
       "priority": 913,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2228,7 +2228,7 @@
       "priority": 912,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2253,7 +2253,7 @@
       "priority": 911,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2278,7 +2278,7 @@
       "priority": 910,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2303,7 +2303,7 @@
       "priority": 909,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2328,7 +2328,7 @@
       "priority": 908,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2353,7 +2353,7 @@
       "priority": 907,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2378,7 +2378,7 @@
       "priority": 906,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2403,7 +2403,7 @@
       "priority": 905,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2428,7 +2428,7 @@
       "priority": 904,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2453,7 +2453,7 @@
       "priority": 903,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2478,7 +2478,7 @@
       "priority": 902,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2503,7 +2503,7 @@
       "priority": 901,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2528,7 +2528,7 @@
       "priority": 900,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2553,7 +2553,7 @@
       "priority": 899,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2578,7 +2578,7 @@
       "priority": 898,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2603,7 +2603,7 @@
       "priority": 897,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2628,7 +2628,7 @@
       "priority": 896,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2653,7 +2653,7 @@
       "priority": 895,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2678,7 +2678,7 @@
       "priority": 894,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2703,7 +2703,7 @@
       "priority": 893,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2728,7 +2728,7 @@
       "priority": 892,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2753,7 +2753,7 @@
       "priority": 891,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2778,7 +2778,7 @@
       "priority": 890,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2803,7 +2803,7 @@
       "priority": 889,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2828,7 +2828,7 @@
       "priority": 888,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2853,7 +2853,7 @@
       "priority": 887,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2878,7 +2878,7 @@
       "priority": 886,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2903,7 +2903,7 @@
       "priority": 885,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2928,7 +2928,7 @@
       "priority": 884,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2953,7 +2953,7 @@
       "priority": 883,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-27T23:08:40.543Z",
+        "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null

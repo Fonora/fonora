@@ -200,6 +200,8 @@
 
     /* health */
     .health-hero { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:1.5rem; text-align:center; }
+    .health-hero__metrics { margin:1rem 0 0.25rem; text-align:left; }
+    .health-metric-methods { margin:0.75rem 0 1.25rem; }
     .health-score { font-family:var(--font-mono); font-size:3rem; font-weight:700; line-height:1; }
     .health-of { font-size:1.1rem; color:var(--muted); }
     .health-label { font-family:var(--font-serif); font-size:1.1rem; font-weight:600; margin:0.4rem 0 0; }
@@ -1202,6 +1204,9 @@
     .lander-health__method-card p + p { margin-top:0.45rem; }
     .lander-health__formula { font-family:var(--font-mono); font-size:0.72rem; color:var(--muted); background:var(--bg); border-radius:4px; padding:0.35rem 0.45rem; }
     .lander-health__metrics { display:grid; grid-template-columns:repeat(auto-fit,minmax(9rem,1fr)); gap:0.65rem; margin-bottom:0.85rem; }
+    .lander-health__metrics--summary { margin:0.85rem 0 0; }
+    .lander-health__method-subhead { margin:0.5rem 0 0.65rem; font-family:var(--font-serif); font-size:0.88rem; font-weight:600; color:var(--text); }
+    .lander-health__method-grid--secondary { margin-bottom:0.85rem; }
     .lander-health__metric { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0.65rem 0.75rem; text-align:center; }
     .lander-health__metric-val { display:block; font-family:var(--font-mono); font-size:1.35rem; font-weight:700; color:var(--word); }
     .lander-health__metric-label { display:block; font-family:var(--font-serif); font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin-top:0.15rem; }

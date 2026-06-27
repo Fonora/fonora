@@ -32,6 +32,7 @@ import { translateEnglish, resetTranslatorCache } from '../tools/fonoran-transla
 import { loadLanguageRulesFromMarkdown } from './load-language-rules.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { parseSyllable, isValidSyllable, buildSyllable, enumerateOpenSyllables, enumerateAllSyllables } from '../tools/fonoran-pronunciation.js';
+import { checkCompoundBoundary } from '../tools/fonoran-gen3-readability.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -371,6 +372,74 @@ async function runCorpusIpaTests() {
 
 const corpusResults = await runCorpusIpaTests();
 
+const boundaryResult = test('checkCompoundBoundary rejects identical consonant collision', () => {
+  // C + same C → invalid
+  const bemMam = checkCompoundBoundary(['bem', 'mam']);
+  assert(!bemMam.valid, 'bem+mam should be invalid (m+m)');
+  assert(bemMam.violations.length === 1);
+  assert(bemMam.violations[0].phoneme === 'm');
+  assert(bemMam.violations[0].left === 'bem');
+  assert(bemMam.violations[0].right === 'mam');
+
+  const kalLum = checkCompoundBoundary(['kal', 'lum']);
+  assert(!kalLum.valid, 'kal+lum should be invalid (l+l)');
+  assert(kalLum.violations[0].phoneme === 'l');
+});
+
+const boundaryPassResult = test('checkCompoundBoundary passes valid boundaries', () => {
+  // C + different C → valid
+  const bemLam = checkCompoundBoundary(['bem', 'lam']);
+  assert(bemLam.valid, 'bem+lam should be valid (m+l)');
+  assert(bemLam.violations.length === 0);
+
+  const benMam = checkCompoundBoundary(['ben', 'mam']);
+  assert(benMam.valid, 'ben+mam should be valid (n+m)');
+
+  // C + V → valid
+  const kalA = checkCompoundBoundary(['kal', 'a']);
+  assert(kalA.valid, 'kal+a should be valid (l+vowel)');
+
+  // V + C → valid
+  const kaSo = checkCompoundBoundary(['ka', 'so']);
+  assert(kaSo.valid, 'ka+so should be valid (vowel+s)');
+
+  // Single part → always valid (no boundary to check)
+  const single = checkCompoundBoundary(['bem']);
+  assert(single.valid, 'single part should have no violations');
+});
+
+const boundaryMultiResult = test('checkCompoundBoundary checks every boundary in multi-part compounds', () => {
+  // All clean → valid
+  const allClean = checkCompoundBoundary(['ben', 'mam', 'lak']);
+  assert(allClean.valid, 'ben+mam+lak should be valid');
+
+  // First boundary clean, second boundary bad → invalid
+  const lastBad = checkCompoundBoundary(['ben', 'mak', 'kal']);
+  assert(!lastBad.valid, 'ben+mak+kal should be invalid (k+k at boundary 2)');
+  assert(lastBad.violations.length === 1);
+  assert(lastBad.violations[0].position === 1);
+
+  // Both boundaries bad → two violations
+  const bothBad = checkCompoundBoundary(['bem', 'mak', 'kal']);
+  assert(!bothBad.valid, 'bem+mak+kal should be invalid at both boundaries');
+  assert(bothBad.violations.length === 2);
+});
+
+const boundaryDigraphResult = test('checkCompoundBoundary handles digraph boundaries', () => {
+  // sh + sh → invalid
+  const shSh = checkCompoundBoundary(['besh', 'shak']);
+  assert(!shSh.valid, 'besh+shak should be invalid (sh+sh)');
+  assert(shSh.violations[0].phoneme === 'sh');
+
+  // sh + k → valid
+  const shK = checkCompoundBoundary(['besh', 'kal']);
+  assert(shK.valid, 'besh+kal should be valid (sh+k)');
+
+  // ng + n → valid (different phonemes)
+  const ngN = checkCompoundBoundary(['beng', 'nal']);
+  assert(ngN.valid, 'beng+nal should be valid (ng+n)');
+});
+
 const allFailed = [
   ...failed,
   ...corpusResults.filter((r) => !r.ok),
@@ -391,6 +460,10 @@ const allFailed = [
   ...(fonoranTranslatorResult.ok ? [] : [fonoranTranslatorResult]),
   ...(ipaFormatResult.ok ? [] : [ipaFormatResult]),
   ...(voiceResult.ok ? [] : [voiceResult]),
+  ...(boundaryResult.ok ? [] : [boundaryResult]),
+  ...(boundaryPassResult.ok ? [] : [boundaryPassResult]),
+  ...(boundaryMultiResult.ok ? [] : [boundaryMultiResult]),
+  ...(boundaryDigraphResult.ok ? [] : [boundaryDigraphResult]),
 ];
 const allPassed =
   passed
@@ -411,8 +484,12 @@ const allPassed =
   + (flapResult.ok ? 1 : 0)
   + (perroResult.ok ? 1 : 0)
   + (fonoranTranslatorResult.ok ? 1 : 0)
-  + (voiceResult.ok ? 1 : 0);
-const allTotal = total + corpusResults.length + 17;
+  + (voiceResult.ok ? 1 : 0)
+  + (boundaryResult.ok ? 1 : 0)
+  + (boundaryPassResult.ok ? 1 : 0)
+  + (boundaryMultiResult.ok ? 1 : 0)
+  + (boundaryDigraphResult.ok ? 1 : 0);
+const allTotal = total + corpusResults.length + 21;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

@@ -5,7 +5,7 @@
 import { readBucketRaw, writeBucketRaw } from './fonoran-store.js';
 import { sayAs, sayAsBold, describeParts, compoundSayAs, parseSyllable } from './fonoran-pronunciation.js';
 import { writeEnglishLexicon } from './fonoran-english-lexicon.js';
-import { analyzeAmbiguity, auditScores, segmentCompound } from './fonoran-gen3-readability.js';
+import { analyzeAmbiguity, auditScores, segmentCompound, checkCompoundBoundary } from './fonoran-gen3-readability.js';
 import {
   normalizeComponents,
   normalizeCompoundRecord,
@@ -638,6 +638,11 @@ export async function addCompound(input) {
   validateComponents(components, bucket, {
     allowUnapprovedWords: Boolean(input.allow_unapproved),
   });
+  const parts = resolvePartSpellings(components, bucket, { flatOnly: true });
+  const boundary = checkCompoundBoundary(parts);
+  if (!boundary.valid) {
+    throw new Error(boundary.violations.map(v => v.reason).join('; '));
+  }
   const spelling = resolveSpelling(components, bucket);
   const existing = bucket.compounds.find(c => c.spelling === spelling);
   if (existing) {
@@ -710,7 +715,7 @@ const SCORE_EXPLAIN = {
   memorability: 'How easy words are to remember, rhyming clusters and look-alike roots make this harder.',
   parseability: 'How reliably a word splits back into its parts, lower when one word can be read two ways.',
   compoundLength: 'Average characters per compound word. Shorter is usually friendlier.',
-  algorithmicFeel: 'How much the spellings were machine-adjusted rather than chosen. Lower feels more human.',
+  algorithmicFeel: 'Share of roots whose spellings were adjusted by coordinate-grid repair during generation. Lower feels more human-chosen; 0% means no repaired roots in the current inventory.',
 };
 
 const WARNING_LABELS = {
@@ -735,7 +740,7 @@ export async function getHealth() {
       coordinates: s.dda?.coordinates
         ? { A: s.dda.A, manner: s.dda.M, D: s.dda.D }
         : {},
-      repair_steps: s.dda?.status === 'failed' ? 1 : 0,
+      repair_steps: s.repair_steps ?? 0,
     }));
 
   const derivations = bucket.compounds

@@ -303,6 +303,80 @@ export function auditScores(inventory, derivations, warnings) {
   };
 }
 
+// ---------------------------------------------------------------------------
+// Compound Boundary Constraint
+// ---------------------------------------------------------------------------
+
+// Phoneme tables for boundary analysis. Sorted longest-first so digraphs
+// match before their constituent single characters.
+const _CBC_CODAS = [
+  'ch', 'sh', 'ng', 'kh', 'gh', 'th', 'dh',
+  'p', 't', 'k', 'h', 'm', 'n', 's', 'd', 'b', 'g', 'v', 'z', 'l', 'r', 'x',
+].sort((a, b) => b.length - a.length);
+
+const _CBC_ONSETS = [
+  'gh', 'kh', 'ng', 'sh', 'ch', 'th', 'dh', 'ñ',
+  'x', 'p', 't', 'b', 'd', 'j', 'g', 'h', 'f', 's', 'v', 'z', 'm', 'n', 'w', 'l', 'r', 'y', 'k',
+].sort((a, b) => b.length - a.length);
+
+const _CBC_VOWELS = [
+  'eye', 'ee', 'ae', 'oh', 'ow', 'oy', 'ay', 'a', 'e', 'i', 'o', 'u',
+].sort((a, b) => b.length - a.length);
+
+/** Extract the trailing phoneme of a roman-alphabet Fonoran string. */
+function _trailingPhoneme(str) {
+  const s = str.toLowerCase();
+  for (const c of _CBC_CODAS) {
+    if (s.endsWith(c)) return { phoneme: c, isConsonant: true, isVowel: false };
+  }
+  for (const v of _CBC_VOWELS) {
+    if (s.endsWith(v)) return { phoneme: v, isConsonant: false, isVowel: true };
+  }
+  return { phoneme: s.slice(-1), isConsonant: false, isVowel: false };
+}
+
+/** Extract the leading phoneme of a roman-alphabet Fonoran string. */
+function _leadingPhoneme(str) {
+  const s = str.toLowerCase();
+  for (const o of _CBC_ONSETS) {
+    if (s.startsWith(o)) return { phoneme: o, isConsonant: true, isVowel: false };
+  }
+  for (const v of _CBC_VOWELS) {
+    if (s.startsWith(v)) return { phoneme: v, isConsonant: false, isVowel: true };
+  }
+  return { phoneme: s[0] ?? '', isConsonant: false, isVowel: false };
+}
+
+/**
+ * Check the Compound Boundary Constraint for an ordered array of morpheme
+ * spellings. A compound is invalid when the trailing phoneme of a left
+ * morpheme is the same consonant as the leading phoneme of the right
+ * morpheme (e.g. bem + mam → m+m collision).
+ *
+ * @param {string[]} parts  Ordered morpheme spellings, e.g. ['bem', 'mam']
+ * @returns {{ valid: boolean, violations: Array<{left, right, phoneme, position, reason}> }}
+ */
+export function checkCompoundBoundary(parts) {
+  const violations = [];
+  for (let i = 0; i < parts.length - 1; i++) {
+    const left = parts[i];
+    const right = parts[i + 1];
+    if (!left || !right) continue;
+    const trailing = _trailingPhoneme(left);
+    const leading = _leadingPhoneme(right);
+    if (trailing.isConsonant && leading.isConsonant && trailing.phoneme === leading.phoneme) {
+      violations.push({
+        left,
+        right,
+        phoneme: trailing.phoneme,
+        position: i,
+        reason: `Rejected: identical consonant boundary ${trailing.phoneme} + ${leading.phoneme} between "${left}" and "${right}"`,
+      });
+    }
+  }
+  return { valid: violations.length === 0, violations };
+}
+
 export function generateAuditMarkdown({ inventory, derivations, warnings, scores, generatedAt }) {
   const lines = [];
   lines.push('# Fonoran Gen 3: Human Readability Audit');

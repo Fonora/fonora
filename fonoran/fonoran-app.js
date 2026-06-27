@@ -1,4 +1,5 @@
     import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, parseSyllable, buildSyllable, isValidSyllable, pieceHint, ONSET_GROUPS, VOWEL_DISPLAY, CODA_DISPLAY, enumerateOpenSyllables, romanToIpa } from '../tools/fonoran-pronunciation.js';
+    import { checkCompoundBoundary } from '../tools/fonoran-gen3-readability.js';
     import { romanToFonoraScript, pieceToFonoraSymbols } from '../tools/fonoran-fonora-bridge.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech } from '../js/fonora-tts.js';
@@ -40,11 +41,26 @@
       el.disabled = writeDisabled(off);
     }
 
+    function renderBoundaryViolation(boxId, picks) {
+      const box = $(boxId);
+      if (!box) return false;
+      const parts = composerFlatSpellings(picks);
+      if (parts.length < 2) { box.innerHTML = ''; return false; }
+      const result = checkCompoundBoundary(parts);
+      if (result.valid) { box.innerHTML = ''; return false; }
+      const msgs = result.violations.map(v =>
+        `<span class="wc-boundary__violation">${escapeHtml(v.reason)}</span>`
+      ).join('');
+      box.innerHTML = `<div class="wc-boundary wc-boundary--error" role="alert">${msgs}</div>`;
+      return true;
+    }
+
     function syncWordComposerControls() {
       const picks = STATE.wordComposer;
       const spelling = picks.length ? resolveComposerSpelling(picks) : '';
       const match = renderSpellingMatch('wc-match', spelling, { compact: true });
-      setWriteButton($('wc-save'), picks.length < 2 || spellingBlocksSave(match));
+      const boundaryBlocked = renderBoundaryViolation('wc-boundary', picks);
+      setWriteButton($('wc-save'), picks.length < 2 || spellingBlocksSave(match) || boundaryBlocked);
     }
 
     function applyWriteAccessUI() {
@@ -447,11 +463,6 @@
         el.dataset.landerWired = '1';
         el.addEventListener('click', () => switchPage(el.dataset.gotoPage));
       });
-      const exploreBtn = $('lander-showcase-explore');
-      if (exploreBtn && !exploreBtn.dataset.landerWired) {
-        exploreBtn.dataset.landerWired = '1';
-        exploreBtn.addEventListener('click', openShowcaseExplorer);
-      }
       const healthBtn = $('lander-health-open');
       if (healthBtn && !healthBtn.dataset.landerWired) {
         healthBtn.dataset.landerWired = '1';
@@ -468,6 +479,48 @@
       if (overall >= 70) return 'Good';
       if (overall >= 50) return 'Fair';
       return 'Needs work';
+    }
+
+    const HEALTH_SECONDARY_METRICS = [
+      {
+        key: 'compoundLength',
+        title: 'Avg compound length',
+        formula: 'mean character count across all non-rejected compound spellings',
+      },
+      {
+        key: 'algorithmicFeel',
+        title: 'Algorithmic feel',
+        formula: '(roots with grid repair steps > 0 ÷ total roots) × 100',
+      },
+    ];
+
+    function healthMetricTitle(key) {
+      return HEALTH_SECONDARY_METRICS.find(m => m.key === key)?.title ?? key;
+    }
+
+    function buildHealthMetricsHtml(metrics) {
+      return (metrics ?? []).map(m => `
+        <div class="lander-health__metric">
+          <span class="lander-health__metric-val">${escapeHtml(String(m.value))}${m.suffix ?? ''}</span>
+          <span class="lander-health__metric-label">${escapeHtml(healthMetricTitle(m.key))}</span>
+          <p class="lander-health__metric-note">${escapeHtml(m.explain ?? '')}</p>
+        </div>`).join('');
+    }
+
+    function buildHealthMetricMethodHtml(metrics, scores, colorFn) {
+      return HEALTH_SECONDARY_METRICS.map(def => {
+        const live = metrics?.find(m => m.key === def.key);
+        const value = live?.value ?? scores?.[def.key] ?? '—';
+        const suffix = live?.suffix ?? (def.key === 'algorithmicFeel' ? '%' : '');
+        return `<article class="lander-health__method-card">
+          <div class="lander-health__method-head">
+            <h4>${escapeHtml(def.title)}</h4>
+            <span class="lander-health__method-live">${escapeHtml(String(value))}${suffix}</span>
+          </div>
+          <p>${escapeHtml(live?.explain ?? '')}</p>
+          <p class="lander-health__formula">${escapeHtml(def.formula)}</p>
+        </article>`;
+      }).join('');
     }
 
     function meaningPickerHtml(prefix) {
@@ -1155,9 +1208,10 @@
       });
     }
 
-    function buildMermaidPanZoomHtml(mermaidSource) {
+    function buildMermaidPanZoomHtml(mermaidSource, { wheelZoom = true } = {}) {
       if (!mermaidSource) return '';
-      return `<div class="mermaid-pan-zoom">
+      const wheelAttr = wheelZoom ? '' : ' data-wheel-zoom="false"';
+      return `<div class="mermaid-pan-zoom"${wheelAttr}>
         <div class="mermaid-pan-zoom__toolbar sans" aria-label="Graph zoom controls">
           <button type="button" class="btn mermaid-pan-zoom__btn" data-mermaid-zoom-out aria-label="Zoom out">−</button>
           <button type="button" class="btn mermaid-pan-zoom__btn" data-mermaid-zoom-reset aria-label="Reset view">Fit</button>
@@ -1383,11 +1437,13 @@
         fitAll();
       });
 
-      viewport.addEventListener('wheel', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        zoomBy(e.deltaY > 0 ? 0.9 : 1.1, e.clientX, e.clientY);
-      }, { passive: false, capture: true });
+      if (panZoomEl.dataset.wheelZoom !== 'false') {
+        viewport.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          zoomBy(e.deltaY > 0 ? 0.9 : 1.1, e.clientX, e.clientY);
+        }, { passive: false, capture: true });
+      }
 
       let dragging = false;
       let dragStartX = 0;
@@ -1662,12 +1718,15 @@
 
     function buildWordTreeSectionHtml(mermaid, { variant = 'default' } = {}) {
       if (!mermaid) return '';
-      const klass = variant === 'showcase' ? 'explorer-section showcase-graph' : 'explorer-section';
-      const hint = 'Drag to pan · scroll or use +/− to zoom · tap a node to explore.';
+      const isShowcase = variant === 'showcase';
+      const klass = isShowcase ? 'explorer-section showcase-graph' : 'explorer-section';
+      const hint = isShowcase
+        ? 'Drag to pan · tap a node to explore.'
+        : 'Drag to pan · scroll or use +/− to zoom · tap a node to explore.';
       return `<div class="${klass}">
         <h4>Word Tree</h4>
         <p class="sans graph-hint">${hint}</p>
-        ${buildMermaidPanZoomHtml(mermaid)}
+        ${buildMermaidPanZoomHtml(mermaid, { wheelZoom: !isShowcase })}
       </div>`;
     }
 
@@ -1756,23 +1815,6 @@
       });
     }
 
-    function openShowcaseExplorer() {
-      const word = landerShowcaseWord;
-      if (word) {
-        openExplorer('word', word.id);
-        return;
-      }
-      openExplorer('word', 'preview-shakafa', {
-        preview: true,
-        spelling: 'shakafa',
-        meaning: 'war',
-        components: [
-          { type: 'word', ref: 'cmp-shaka', spelling: 'shaka' },
-          { type: 'root', ref: 'fa', spelling: 'fa' },
-        ],
-      });
-    }
-
     async function renderLanderShowcase() {
       const el = $('lander-showcase');
       if (!el || STATE.page !== 'home' || !STATE.lab) return;
@@ -1842,12 +1884,8 @@
           <p class="lander-health__formula">${escapeHtml(m.formula)}</p>
         </article>`;
       }).join('');
-      const metrics = h.metrics.map(m => `
-        <div class="lander-health__metric">
-          <span class="lander-health__metric-val">${escapeHtml(String(m.value))}${m.suffix ?? ''}</span>
-          <span class="lander-health__metric-label">${escapeHtml(m.key === 'compoundLength' ? 'Avg compound length' : 'Algorithmic feel')}</span>
-          <p class="lander-health__metric-note">${escapeHtml(m.explain)}</p>
-        </div>`).join('');
+      const metrics = buildHealthMetricsHtml(h.metrics);
+      const metricMethods = buildHealthMetricMethodHtml(h.metrics, h.scores, color);
       const warnNote = h.warning_summary.total
         ? `${h.warning_summary.total} ambiguity warning${h.warning_summary.total === 1 ? '' : 's'} flagged (${h.warning_summary.high} serious)`
         : 'No ambiguity warnings in the current vocabulary';
@@ -1858,6 +1896,7 @@
             <div class="lander-health__score-big" style="color:${color(overall)}">${overall}<span class="lander-health__score-of"> / 100</span></div>
             <p class="lander-health__label">${healthOverallLabel(overall)}</p>
             <p class="lander-health__warn-note">${escapeHtml(warnNote)}</p>
+            <div class="lander-health__metrics lander-health__metrics--summary">${metrics}</div>
           </div>
           <div class="lander-health__scores">${scoreCards}</div>
         </div>
@@ -1866,6 +1905,8 @@
           <p class="lander-health__method-lead">Each dimension is recomputed from your live lab bucket whenever you open Health. Scores are heuristic design guides. They measure structural ergonomics, not linguistic "correctness."</p>
           <div class="lander-health__method-grid">${methodCards}</div>
           <div class="lander-health__metrics">${metrics}</div>
+          <h4 class="lander-health__method-subhead">Secondary metrics</h4>
+          <div class="lander-health__method-grid lander-health__method-grid--secondary">${metricMethods}</div>
           <p class="lander-health__footnote">Warnings include look-alike sounds, prefix overlap, rhyming clusters, segmentation ambiguity, and pronunciation difficulty. Semantic coordinates (DDA) are analysed separately and surface through the explorer and health detail view.</p>
         </div>
         <div class="lander-health__actions">
@@ -3665,6 +3706,7 @@
         <div class="health-hero">
           <div class="health-score" style="color:${color(overall)}">${overall}<span class="health-of"> / 100</span></div>
           <p class="health-label">${label}</p>
+          <div class="lander-health__metrics health-hero__metrics">${buildHealthMetricsHtml(h.metrics)}</div>
           <button type="button" class="btn health-toggle" id="health-toggle">${STATE.healthOpen ? 'Hide details' : 'View details →'}</button>
         </div>
         <div id="health-details" ${STATE.healthOpen ? '' : 'hidden'}>
@@ -3672,6 +3714,9 @@
             <div class="top"><span class="name">${escapeHtml(d.label)}</span><span class="val" style="color:${color(d.score)}">${d.score}<span style="font-size:0.7rem;color:var(--muted)">/100</span></span></div>
             <div class="bar"><span style="width:${d.score}%;background:${color(d.score)}"></span></div>
             <p class="explain">${escapeHtml(d.explain)}</p></div>`).join('')}
+          <h3 class="section-h">Compound &amp; generation metrics</h3>
+          <div class="lander-health__metrics">${buildHealthMetricsHtml(h.metrics)}</div>
+          <div class="lander-health__method-grid lander-health__method-grid--secondary health-metric-methods">${buildHealthMetricMethodHtml(h.metrics, h.scores, color)}</div>
           <h3 class="section-h">Duplicate meanings</h3>
           ${dupes.length ? dupes.map(d => `<div class="warn-row sev-medium"><span class="wlabel">${d.words.length}×</span><strong>${escapeHtml(d.label)}</strong>: ${d.words.map(w => `<span class="mono">${escapeHtml(w)}</span>`).join(', ')}</div>`).join('') : '<p class="empty" style="padding:0.75rem">Every meaning is used once.</p>'}
           <h3 class="section-h">Ambiguity &amp; repair warnings (${h.warning_summary.total}, ${h.warning_summary.high} serious)</h3>

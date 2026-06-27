@@ -1,6 +1,6 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-06-27T23:08:40.543Z",
+  "updated_at": "2026-06-27T23:32:47.346Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
   "root_count": 118,
   "roots": [
@@ -11,7 +11,7 @@
       "concept": "a sentient being; someone",
       "domain": "being",
       "reason": "High-leverage root: a sentient being. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "self",
@@ -20,7 +20,7 @@
       "concept": "oneself; me or mine",
       "domain": "being",
       "reason": "High-leverage root: oneself. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "collective",
@@ -29,7 +29,7 @@
       "concept": "many treated as one",
       "domain": "being",
       "reason": "Fundamental being concept: many treated as one. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "body",
@@ -38,7 +38,7 @@
       "concept": "the physical form of a being",
       "domain": "being",
       "reason": "Fundamental being concept: the physical form of a being. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "life",
@@ -47,7 +47,7 @@
       "concept": "the state of being alive",
       "domain": "being",
       "reason": "High-leverage root: the state of being alive. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "death",
@@ -56,7 +56,7 @@
       "concept": "the end of life",
       "domain": "being",
       "reason": "Fundamental being concept: the end of life. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "birth",
@@ -65,7 +65,7 @@
       "concept": "the beginning of an individual life",
       "domain": "being",
       "reason": "Fundamental being concept: the beginning of an individual life. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "breath",
@@ -74,7 +74,7 @@
       "concept": "the air stream of living",
       "domain": "being",
       "reason": "Fundamental being concept: the air stream of living. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "move",
@@ -83,7 +83,7 @@
       "concept": "change position in space; all locomotion inherits from this",
       "domain": "action",
       "reason": "High-leverage root: change position in space. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "give",
@@ -92,7 +92,7 @@
       "concept": "transfer something to another",
       "domain": "action",
       "reason": "High-leverage root: transfer something to another. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "take",
@@ -101,7 +101,7 @@
       "concept": "receive something from another",
       "domain": "action",
       "reason": "High-leverage root: receive something from another. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "hold",
@@ -110,7 +110,7 @@
       "concept": "retain in grasp or keeping",
       "domain": "action",
       "reason": "Fundamental action concept: retain in grasp or keeping. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "use",
@@ -119,7 +119,7 @@
       "concept": "employ a thing for a purpose",
       "domain": "action",
       "reason": "Fundamental action concept: employ a thing for a purpose. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "help",
@@ -128,7 +128,7 @@
       "concept": "act so another can do or have",
       "domain": "action",
       "reason": "Fundamental action concept: act so another can do or have. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "make",
@@ -137,7 +137,7 @@
       "concept": "bring something into being",
       "domain": "action",
       "reason": "Fundamental action concept: bring something into being. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "do",
@@ -146,7 +146,7 @@
       "concept": "perform an action; act",
       "domain": "action",
       "reason": "Fundamental action concept: perform an action. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "speak",
@@ -155,7 +155,7 @@
       "concept": "talk; use the voice with words",
       "domain": "action",
       "reason": "High-leverage root: talk. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "see",
@@ -164,7 +164,7 @@
       "concept": "perceive with the eyes",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the eyes. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "hear",
@@ -173,7 +173,7 @@
       "concept": "perceive with the ears",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the ears. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "touch",
@@ -182,7 +182,7 @@
       "concept": "feel by contact with skin",
       "domain": "action",
       "reason": "Fundamental action concept: feel by contact with skin. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "smell",
@@ -191,7 +191,7 @@
       "concept": "perceive with the nose",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the nose. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "taste",
@@ -200,7 +200,7 @@
       "concept": "perceive with the mouth",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the mouth. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "know",
@@ -209,7 +209,7 @@
       "concept": "understand; hold as true",
       "domain": "action",
       "reason": "High-leverage root: understand. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "think",
@@ -218,7 +218,7 @@
       "concept": "use the mind",
       "domain": "action",
       "reason": "Fundamental action concept: use the mind. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "feel",
@@ -227,7 +227,7 @@
       "concept": "experience inner sensation",
       "domain": "action",
       "reason": "Fundamental action concept: experience inner sensation. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "want",
@@ -236,7 +236,7 @@
       "concept": "desire; wish for",
       "domain": "action",
       "reason": "Fundamental action concept: desire. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "eat",
@@ -245,7 +245,7 @@
       "concept": "consume food",
       "domain": "action",
       "reason": "Fundamental action concept: consume food. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "sleep",
@@ -254,7 +254,7 @@
       "concept": "rest in unconsciousness",
       "domain": "action",
       "reason": "Fundamental action concept: rest in unconsciousness. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "thing",
@@ -263,7 +263,7 @@
       "concept": "any entity; the primary noun dimension — book, meal, vehicle, lamp inherit from thing + X",
       "domain": "ontology",
       "reason": "High-leverage root: any entity. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "substance",
@@ -272,7 +272,7 @@
       "concept": "physical stuff; matter",
       "domain": "ontology",
       "reason": "Fundamental ontology concept: physical stuff. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "form",
@@ -281,7 +281,7 @@
       "concept": "shape or look of something",
       "domain": "ontology",
       "reason": "Fundamental ontology concept: shape or look of something. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "change",
@@ -290,7 +290,7 @@
       "concept": "become different; grow, age, damage, improve inherit from this",
       "domain": "ontology",
       "reason": "High-leverage root: become different. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "empty",
@@ -299,7 +299,7 @@
       "concept": "contains nothing; nothing inside",
       "domain": "ontology",
       "reason": "High-leverage root: contains nothing. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "water",
@@ -308,7 +308,7 @@
       "concept": "liquid water to drink or touch",
       "domain": "element",
       "reason": "High-leverage root: liquid water to drink or touch. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "fire",
@@ -317,7 +317,7 @@
       "concept": "flame; hot bright burning",
       "domain": "element",
       "reason": "Fundamental element concept: flame. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "earth",
@@ -326,7 +326,7 @@
       "concept": "ground; dirt underfoot",
       "domain": "element",
       "reason": "Fundamental element concept: ground. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "air",
@@ -335,7 +335,7 @@
       "concept": "what we breathe; invisible atmosphere",
       "domain": "element",
       "reason": "Fundamental element concept: what we breathe. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "light",
@@ -344,7 +344,7 @@
       "concept": "brightness you can see by",
       "domain": "element",
       "reason": "Fundamental element concept: brightness you can see by. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "dark",
@@ -353,7 +353,7 @@
       "concept": "absence of light",
       "domain": "element",
       "reason": "Fundamental element concept: absence of light. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "hot",
@@ -362,7 +362,7 @@
       "concept": "high temperature; burns",
       "domain": "element",
       "reason": "Fundamental element concept: high temperature. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "cold",
@@ -371,7 +371,7 @@
       "concept": "low temperature; shiver",
       "domain": "element",
       "reason": "Fundamental element concept: low temperature. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "stone",
@@ -380,7 +380,7 @@
       "concept": "hard rock",
       "domain": "element",
       "reason": "Fundamental element concept: hard rock. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "plant",
@@ -389,7 +389,7 @@
       "concept": "living vegetation",
       "domain": "element",
       "reason": "Fundamental element concept: living vegetation. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "animal",
@@ -398,7 +398,7 @@
       "concept": "living creature that is not a person",
       "domain": "element",
       "reason": "Fundamental element concept: living creature that is not a person. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "inside",
@@ -407,7 +407,7 @@
       "concept": "within an interior",
       "domain": "space",
       "reason": "Fundamental space concept: within an interior. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "outside",
@@ -416,7 +416,7 @@
       "concept": "beyond a boundary; exterior",
       "domain": "space",
       "reason": "Fundamental space concept: beyond a boundary. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "here",
@@ -425,7 +425,7 @@
       "concept": "at this place",
       "domain": "space",
       "reason": "Fundamental space concept: at this place. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "there",
@@ -434,7 +434,7 @@
       "concept": "at that place",
       "domain": "space",
       "reason": "Fundamental space concept: at that place. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "near",
@@ -443,7 +443,7 @@
       "concept": "close in space",
       "domain": "space",
       "reason": "Fundamental space concept: close in space. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "far",
@@ -452,7 +452,7 @@
       "concept": "distant in space",
       "domain": "space",
       "reason": "Fundamental space concept: distant in space. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "up",
@@ -461,7 +461,7 @@
       "concept": "higher position",
       "domain": "space",
       "reason": "Fundamental space concept: higher position. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "down",
@@ -470,7 +470,7 @@
       "concept": "lower position",
       "domain": "space",
       "reason": "Fundamental space concept: lower position. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "path",
@@ -479,7 +479,7 @@
       "concept": "a way leading through space",
       "domain": "space",
       "reason": "Fundamental space concept: a way leading through space. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "place",
@@ -488,7 +488,7 @@
       "concept": "a location; somewhere",
       "domain": "space",
       "reason": "Fundamental space concept: a location. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "surface",
@@ -497,7 +497,7 @@
       "concept": "outer face; what you touch on the outside",
       "domain": "space",
       "reason": "Fundamental space concept: outer face. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "bound",
@@ -506,7 +506,7 @@
       "concept": "edge; where something stops",
       "domain": "space",
       "reason": "Fundamental space concept: edge. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "center",
@@ -515,7 +515,7 @@
       "concept": "middle point",
       "domain": "space",
       "reason": "Fundamental space concept: middle point. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "before",
@@ -524,7 +524,7 @@
       "concept": "earlier in time; yesterday inherits from this",
       "domain": "time",
       "reason": "High-leverage root: earlier in time. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "after",
@@ -533,7 +533,7 @@
       "concept": "later in time; tomorrow inherits from this",
       "domain": "time",
       "reason": "High-leverage root: later in time. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "now",
@@ -542,7 +542,7 @@
       "concept": "this moment",
       "domain": "time",
       "reason": "Fundamental time concept: this moment. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "time",
@@ -551,7 +551,7 @@
       "concept": "duration; while things happen",
       "domain": "time",
       "reason": "Fundamental time concept: duration. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "one",
@@ -560,7 +560,7 @@
       "concept": "a single unit",
       "domain": "quantity",
       "reason": "Fundamental quantity concept: a single unit. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "many",
@@ -569,7 +569,7 @@
       "concept": "large quantity; plurality",
       "domain": "quantity",
       "reason": "Fundamental quantity concept: large quantity. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "all",
@@ -578,7 +578,7 @@
       "concept": "every one without exception",
       "domain": "quantity",
       "reason": "Fundamental quantity concept: every one without exception. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "some",
@@ -587,7 +587,7 @@
       "concept": "an indefinite portion",
       "domain": "quantity",
       "reason": "Fundamental quantity concept: an indefinite portion. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "more",
@@ -596,7 +596,7 @@
       "concept": "greater amount",
       "domain": "quantity",
       "reason": "Fundamental quantity concept: greater amount. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "less",
@@ -605,7 +605,7 @@
       "concept": "smaller amount",
       "domain": "quantity",
       "reason": "Fundamental quantity concept: smaller amount. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "fast",
@@ -614,7 +614,7 @@
       "concept": "quick; high speed",
       "domain": "quantity",
       "reason": "Fundamental quantity concept: quick. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "love",
@@ -623,7 +623,7 @@
       "concept": "deep affection; care",
       "domain": "emotion",
       "reason": "Fundamental emotion concept: deep affection. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "fear",
@@ -632,7 +632,7 @@
       "concept": "apprehension of harm",
       "domain": "emotion",
       "reason": "Fundamental emotion concept: apprehension of harm. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "joy",
@@ -641,7 +641,7 @@
       "concept": "happiness; delight",
       "domain": "emotion",
       "reason": "Fundamental emotion concept: happiness. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "pain",
@@ -650,7 +650,7 @@
       "concept": "hurt; suffering",
       "domain": "emotion",
       "reason": "Fundamental emotion concept: hurt. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "sad",
@@ -659,7 +659,7 @@
       "concept": "sorrow; unhappiness",
       "domain": "emotion",
       "reason": "Fundamental emotion concept: sorrow. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "good",
@@ -668,7 +668,7 @@
       "concept": "desirable; works well",
       "domain": "evaluation",
       "reason": "Fundamental evaluation concept: desirable. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "bad",
@@ -677,7 +677,7 @@
       "concept": "undesirable; harmful",
       "domain": "evaluation",
       "reason": "Fundamental evaluation concept: undesirable. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "true",
@@ -686,7 +686,7 @@
       "concept": "corresponds to reality",
       "domain": "evaluation",
       "reason": "Fundamental evaluation concept: corresponds to reality. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "false",
@@ -695,7 +695,7 @@
       "concept": "does not correspond to reality",
       "domain": "evaluation",
       "reason": "Fundamental evaluation concept: does not correspond to reality. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "equal",
@@ -704,7 +704,7 @@
       "concept": "same amount; fair match; balance and exchange inherit from this",
       "domain": "evaluation",
       "reason": "High-leverage root: same amount. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "bond",
@@ -713,7 +713,7 @@
       "concept": "connection that holds together",
       "domain": "relationships",
       "reason": "High-leverage root: connection that holds together. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "conflict",
@@ -722,7 +722,7 @@
       "concept": "opposition; clash; fight",
       "domain": "relationships",
       "reason": "High-leverage root: opposition. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "same",
@@ -731,7 +731,7 @@
       "concept": "not different; matching",
       "domain": "relationships",
       "reason": "Fundamental relationships concept: not different. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "different",
@@ -740,7 +740,7 @@
       "concept": "not the same",
       "domain": "relationships",
       "reason": "Fundamental relationships concept: not the same. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "part",
@@ -749,7 +749,7 @@
       "concept": "a piece of a larger whole",
       "domain": "relationships",
       "reason": "Fundamental relationships concept: a piece of a larger whole. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "whole",
@@ -758,7 +758,7 @@
       "concept": "all parts together",
       "domain": "relationships",
       "reason": "Fundamental relationships concept: all parts together. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "mark",
@@ -767,7 +767,7 @@
       "concept": "a visible sign, drawing, or trace",
       "domain": "process",
       "reason": "Fundamental process concept: a visible sign, drawing, or trace. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "source",
@@ -776,7 +776,7 @@
       "concept": "where something begins",
       "domain": "process",
       "reason": "Fundamental process concept: where something begins. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "container",
@@ -785,7 +785,7 @@
       "concept": "something that holds other things",
       "domain": "process",
       "reason": "Fundamental process concept: something that holds other things. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "flow",
@@ -794,7 +794,7 @@
       "concept": "continuous passage without stopping",
       "domain": "process",
       "reason": "Fundamental process concept: continuous passage without stopping. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "pulse",
@@ -803,7 +803,7 @@
       "concept": "rhythmic recurrence",
       "domain": "process",
       "reason": "Fundamental process concept: rhythmic recurrence. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "still",
@@ -812,7 +812,7 @@
       "concept": "without motion; staying",
       "domain": "process",
       "reason": "Fundamental process concept: without motion. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "will",
@@ -821,7 +821,7 @@
       "concept": "intent; directed purpose",
       "domain": "process",
       "reason": "Fundamental process concept: intent. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "strong",
@@ -830,7 +830,7 @@
       "concept": "great force; hard to break; power and leadership inherit from this",
       "domain": "process",
       "reason": "High-leverage root: great force. Appears frequently inside compounds.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "reach",
@@ -839,7 +839,7 @@
       "concept": "extension through space",
       "domain": "process",
       "reason": "Fundamental process concept: extension through space. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "wave",
@@ -848,7 +848,7 @@
       "concept": "disturbance that travels outward",
       "domain": "process",
       "reason": "Fundamental process concept: disturbance that travels outward. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "food",
@@ -857,7 +857,7 @@
       "concept": "what is eaten to sustain life",
       "domain": "life",
       "reason": "Fundamental life concept: what is eaten to sustain life. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "hand",
@@ -866,7 +866,7 @@
       "concept": "the grasping part of the body",
       "domain": "body",
       "reason": "Fundamental body concept: the grasping part of the body. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "eye",
@@ -875,7 +875,7 @@
       "concept": "the seeing part of the body",
       "domain": "body",
       "reason": "Fundamental body concept: the seeing part of the body. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "skin",
@@ -884,7 +884,7 @@
       "concept": "the outer covering of the body",
       "domain": "body",
       "reason": "Fundamental body concept: the outer covering of the body. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "bone",
@@ -893,7 +893,7 @@
       "concept": "the rigid inner frame of the body",
       "domain": "body",
       "reason": "Fundamental body concept: the rigid inner frame of the body. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "big",
@@ -902,7 +902,7 @@
       "concept": "large size; not small",
       "domain": "quality",
       "reason": "Fundamental quality concept: large size. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "small",
@@ -911,7 +911,7 @@
       "concept": "little size; not big",
       "domain": "quality",
       "reason": "Fundamental quality concept: little size. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "head",
@@ -920,7 +920,7 @@
       "concept": "upper body part; seat of mind",
       "domain": "body",
       "reason": "Fundamental body concept: upper body part. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "heart",
@@ -929,7 +929,7 @@
       "concept": "central organ; seat of emotion",
       "domain": "body",
       "reason": "Fundamental body concept: central organ. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "mouth",
@@ -938,7 +938,7 @@
       "concept": "oral opening; speech organ",
       "domain": "body",
       "reason": "Fundamental body concept: oral opening. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "grow",
@@ -947,7 +947,7 @@
       "concept": "increase in size; develop",
       "domain": "process",
       "reason": "Fundamental process concept: increase in size. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "need",
@@ -956,7 +956,7 @@
       "concept": "require; lack necessitating fulfillment",
       "domain": "cognition",
       "reason": "Fundamental cognition concept: require. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "cause",
@@ -965,7 +965,7 @@
       "concept": "what brings about an effect",
       "domain": "relation",
       "reason": "Fundamental relation concept: what brings about an effect. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "learn",
@@ -974,7 +974,7 @@
       "concept": "acquire knowledge or skill",
       "domain": "cognition",
       "reason": "Fundamental cognition concept: acquire knowledge or skill. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "teach",
@@ -983,7 +983,7 @@
       "concept": "impart knowledge or skill",
       "domain": "cognition",
       "reason": "Fundamental cognition concept: impart knowledge or skill. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "remember",
@@ -992,7 +992,7 @@
       "concept": "retain in mind; recall past",
       "domain": "cognition",
       "reason": "Fundamental cognition concept: retain in mind. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "known",
@@ -1001,7 +1001,7 @@
       "concept": "established certainty; indexed truth",
       "domain": "cognition",
       "reason": "Fundamental cognition concept: established certainty. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "unknown",
@@ -1010,7 +1010,7 @@
       "concept": "not established; opaque",
       "domain": "cognition",
       "reason": "Fundamental cognition concept: not established. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "name",
@@ -1019,7 +1019,7 @@
       "concept": "identifier for an entity",
       "domain": "communication",
       "reason": "Fundamental communication concept: identifier for an entity. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "signal",
@@ -1028,7 +1028,7 @@
       "concept": "discrete emission; communicative packet",
       "domain": "communication",
       "reason": "Fundamental communication concept: discrete emission. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "seed",
@@ -1037,7 +1037,7 @@
       "concept": "origin of new life; generative kernel",
       "domain": "life",
       "reason": "Fundamental life concept: origin of new life. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "cycle",
@@ -1046,7 +1046,7 @@
       "concept": "return path; repeating sequence",
       "domain": "process",
       "reason": "Fundamental process concept: return path. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "void",
@@ -1055,7 +1055,7 @@
       "concept": "absence; empty interior",
       "domain": "ontology",
       "reason": "Fundamental ontology concept: absence. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     },
     {
       "id": "agent",
@@ -1064,7 +1064,7 @@
       "concept": "activated locus; one who acts",
       "domain": "agency",
       "reason": "Fundamental agency concept: activated locus. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-27T23:08:40.543Z"
+      "approved_at": "2026-06-27T23:32:47.346Z"
     }
   ]
 }
