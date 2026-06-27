@@ -11,7 +11,8 @@ import { loadConceptInventory } from './fonoran-concepts.js';
 import { addSound, patchSound } from './fonoran-sound-bucket.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SEMANTIC_PATH = join(ROOT, 'data/fonoran-semantic-primitives.json');
+// Converged single source of truth for concepts (99 core + extended dimensions).
+const SEMANTIC_PATH = join(ROOT, 'data/fonoran-concept-inventory.json');
 const CANDIDATES_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
 const CANONICAL_PATH = join(ROOT, 'data/fonoran-approved-roots.json');
 

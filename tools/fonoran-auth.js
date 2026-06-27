@@ -196,6 +196,7 @@ export function isWriteAuthRequired(pathname, method) {
   if (m === 'GET' || m === 'HEAD' || m === 'OPTIONS') return false;
   if (m === 'POST' && pathname === '/api/fonoran/lab/graph/preview') return false;
   if (m === 'POST' && pathname === '/api/fonoran/translate') return false;
+  if (m === 'POST' && pathname === '/api/fonoran/word-generator') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
 }
 

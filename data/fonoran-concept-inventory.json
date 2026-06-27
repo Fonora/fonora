@@ -1,0 +1,770 @@
+{
+  "version": "1.0-converged",
+  "status": "canonical",
+  "description": "Single converged Fonoran concept inventory: 99 core semantic primitives + curated extended dimensions. Source of truth for root-candidates and the unified build.",
+  "source": "merge of data/fonoran-semantic-primitives.json (core) + data/fonoran-primitive-roots-config.json (extended)",
+  "primitive_count": 118,
+  "core_count": 99,
+  "extended_count": 19,
+  "primitives": [
+    {
+      "id": "person",
+      "gloss": "a sentient being; someone",
+      "domain": "being",
+      "tier": "core"
+    },
+    {
+      "id": "self",
+      "gloss": "oneself; me or mine",
+      "domain": "being",
+      "tier": "core"
+    },
+    {
+      "id": "collective",
+      "gloss": "many treated as one",
+      "domain": "being",
+      "tier": "core"
+    },
+    {
+      "id": "body",
+      "gloss": "the physical form of a being",
+      "domain": "being",
+      "tier": "core"
+    },
+    {
+      "id": "life",
+      "gloss": "the state of being alive",
+      "domain": "being",
+      "tier": "core"
+    },
+    {
+      "id": "death",
+      "gloss": "the end of life",
+      "domain": "being",
+      "tier": "core"
+    },
+    {
+      "id": "birth",
+      "gloss": "the beginning of an individual life",
+      "domain": "being",
+      "tier": "core"
+    },
+    {
+      "id": "breath",
+      "gloss": "the air stream of living",
+      "domain": "being",
+      "tier": "core"
+    },
+    {
+      "id": "move",
+      "gloss": "change position in space; all locomotion inherits from this",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "give",
+      "gloss": "transfer something to another",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "take",
+      "gloss": "receive something from another",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "hold",
+      "gloss": "retain in grasp or keeping",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "use",
+      "gloss": "employ a thing for a purpose",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "help",
+      "gloss": "act so another can do or have",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "make",
+      "gloss": "bring something into being",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "do",
+      "gloss": "perform an action; act",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "speak",
+      "gloss": "talk; use the voice with words",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "see",
+      "gloss": "perceive with the eyes",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "hear",
+      "gloss": "perceive with the ears",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "touch",
+      "gloss": "feel by contact with skin",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "smell",
+      "gloss": "perceive with the nose",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "taste",
+      "gloss": "perceive with the mouth",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "know",
+      "gloss": "understand; hold as true",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "think",
+      "gloss": "use the mind",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "feel",
+      "gloss": "experience inner sensation",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "want",
+      "gloss": "desire; wish for",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "eat",
+      "gloss": "consume food",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "sleep",
+      "gloss": "rest in unconsciousness",
+      "domain": "action",
+      "tier": "core"
+    },
+    {
+      "id": "thing",
+      "gloss": "any entity; the primary noun dimension — book, meal, vehicle, lamp inherit from thing + X",
+      "domain": "ontology",
+      "tier": "core"
+    },
+    {
+      "id": "substance",
+      "gloss": "physical stuff; matter",
+      "domain": "ontology",
+      "tier": "core"
+    },
+    {
+      "id": "form",
+      "gloss": "shape or look of something",
+      "domain": "ontology",
+      "tier": "core"
+    },
+    {
+      "id": "change",
+      "gloss": "become different; grow, age, damage, improve inherit from this",
+      "domain": "ontology",
+      "tier": "core"
+    },
+    {
+      "id": "empty",
+      "gloss": "contains nothing; nothing inside",
+      "domain": "ontology",
+      "tier": "core"
+    },
+    {
+      "id": "water",
+      "gloss": "liquid water to drink or touch",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "fire",
+      "gloss": "flame; hot bright burning",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "earth",
+      "gloss": "ground; dirt underfoot",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "air",
+      "gloss": "what we breathe; invisible atmosphere",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "light",
+      "gloss": "brightness you can see by",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "dark",
+      "gloss": "absence of light",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "hot",
+      "gloss": "high temperature; burns",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "cold",
+      "gloss": "low temperature; shiver",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "stone",
+      "gloss": "hard rock",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "plant",
+      "gloss": "living vegetation",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "animal",
+      "gloss": "living creature that is not a person",
+      "domain": "element",
+      "tier": "core"
+    },
+    {
+      "id": "inside",
+      "gloss": "within an interior",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "outside",
+      "gloss": "beyond a boundary; exterior",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "here",
+      "gloss": "at this place",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "there",
+      "gloss": "at that place",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "near",
+      "gloss": "close in space",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "far",
+      "gloss": "distant in space",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "up",
+      "gloss": "higher position",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "down",
+      "gloss": "lower position",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "path",
+      "gloss": "a way leading through space",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "place",
+      "gloss": "a location; somewhere",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "surface",
+      "gloss": "outer face; what you touch on the outside",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "bound",
+      "gloss": "edge; where something stops",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "center",
+      "gloss": "middle point",
+      "domain": "space",
+      "tier": "core"
+    },
+    {
+      "id": "before",
+      "gloss": "earlier in time; yesterday inherits from this",
+      "domain": "time",
+      "tier": "core"
+    },
+    {
+      "id": "after",
+      "gloss": "later in time; tomorrow inherits from this",
+      "domain": "time",
+      "tier": "core"
+    },
+    {
+      "id": "now",
+      "gloss": "this moment",
+      "domain": "time",
+      "tier": "core"
+    },
+    {
+      "id": "time",
+      "gloss": "duration; while things happen",
+      "domain": "time",
+      "tier": "core"
+    },
+    {
+      "id": "one",
+      "gloss": "a single unit",
+      "domain": "quantity",
+      "tier": "core"
+    },
+    {
+      "id": "many",
+      "gloss": "large quantity; plurality",
+      "domain": "quantity",
+      "tier": "core"
+    },
+    {
+      "id": "all",
+      "gloss": "every one without exception",
+      "domain": "quantity",
+      "tier": "core"
+    },
+    {
+      "id": "some",
+      "gloss": "an indefinite portion",
+      "domain": "quantity",
+      "tier": "core"
+    },
+    {
+      "id": "more",
+      "gloss": "greater amount",
+      "domain": "quantity",
+      "tier": "core"
+    },
+    {
+      "id": "less",
+      "gloss": "smaller amount",
+      "domain": "quantity",
+      "tier": "core"
+    },
+    {
+      "id": "fast",
+      "gloss": "quick; high speed",
+      "domain": "quantity",
+      "tier": "core"
+    },
+    {
+      "id": "love",
+      "gloss": "deep affection; care",
+      "domain": "emotion",
+      "tier": "core"
+    },
+    {
+      "id": "fear",
+      "gloss": "apprehension of harm",
+      "domain": "emotion",
+      "tier": "core"
+    },
+    {
+      "id": "joy",
+      "gloss": "happiness; delight",
+      "domain": "emotion",
+      "tier": "core"
+    },
+    {
+      "id": "pain",
+      "gloss": "hurt; suffering",
+      "domain": "emotion",
+      "tier": "core"
+    },
+    {
+      "id": "sad",
+      "gloss": "sorrow; unhappiness",
+      "domain": "emotion",
+      "tier": "core"
+    },
+    {
+      "id": "good",
+      "gloss": "desirable; works well",
+      "domain": "evaluation",
+      "tier": "core"
+    },
+    {
+      "id": "bad",
+      "gloss": "undesirable; harmful",
+      "domain": "evaluation",
+      "tier": "core"
+    },
+    {
+      "id": "true",
+      "gloss": "corresponds to reality",
+      "domain": "evaluation",
+      "tier": "core"
+    },
+    {
+      "id": "false",
+      "gloss": "does not correspond to reality",
+      "domain": "evaluation",
+      "tier": "core"
+    },
+    {
+      "id": "equal",
+      "gloss": "same amount; fair match; balance and exchange inherit from this",
+      "domain": "evaluation",
+      "tier": "core"
+    },
+    {
+      "id": "bond",
+      "gloss": "connection that holds together",
+      "domain": "relationships",
+      "tier": "core"
+    },
+    {
+      "id": "conflict",
+      "gloss": "opposition; clash; fight",
+      "domain": "relationships",
+      "tier": "core"
+    },
+    {
+      "id": "same",
+      "gloss": "not different; matching",
+      "domain": "relationships",
+      "tier": "core"
+    },
+    {
+      "id": "different",
+      "gloss": "not the same",
+      "domain": "relationships",
+      "tier": "core"
+    },
+    {
+      "id": "part",
+      "gloss": "a piece of a larger whole",
+      "domain": "relationships",
+      "tier": "core"
+    },
+    {
+      "id": "whole",
+      "gloss": "all parts together",
+      "domain": "relationships",
+      "tier": "core"
+    },
+    {
+      "id": "mark",
+      "gloss": "a visible sign, drawing, or trace",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "source",
+      "gloss": "where something begins",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "container",
+      "gloss": "something that holds other things",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "flow",
+      "gloss": "continuous passage without stopping",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "pulse",
+      "gloss": "rhythmic recurrence",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "still",
+      "gloss": "without motion; staying",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "will",
+      "gloss": "intent; directed purpose",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "strong",
+      "gloss": "great force; hard to break; power and leadership inherit from this",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "reach",
+      "gloss": "extension through space",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "wave",
+      "gloss": "disturbance that travels outward",
+      "domain": "process",
+      "tier": "core"
+    },
+    {
+      "id": "food",
+      "gloss": "what is eaten to sustain life",
+      "domain": "life",
+      "tier": "core"
+    },
+    {
+      "id": "hand",
+      "gloss": "the grasping part of the body",
+      "domain": "body",
+      "tier": "core"
+    },
+    {
+      "id": "eye",
+      "gloss": "the seeing part of the body",
+      "domain": "body",
+      "tier": "core"
+    },
+    {
+      "id": "skin",
+      "gloss": "the outer covering of the body",
+      "domain": "body",
+      "tier": "core"
+    },
+    {
+      "id": "bone",
+      "gloss": "the rigid inner frame of the body",
+      "domain": "body",
+      "tier": "core"
+    },
+    {
+      "id": "big",
+      "gloss": "large size; not small",
+      "domain": "quality",
+      "tier": "extended"
+    },
+    {
+      "id": "small",
+      "gloss": "little size; not big",
+      "domain": "quality",
+      "tier": "extended"
+    },
+    {
+      "id": "head",
+      "gloss": "upper body part; seat of mind",
+      "domain": "body",
+      "tier": "extended"
+    },
+    {
+      "id": "heart",
+      "gloss": "central organ; seat of emotion",
+      "domain": "body",
+      "tier": "extended"
+    },
+    {
+      "id": "mouth",
+      "gloss": "oral opening; speech organ",
+      "domain": "body",
+      "tier": "extended"
+    },
+    {
+      "id": "grow",
+      "gloss": "increase in size; develop",
+      "domain": "process",
+      "tier": "extended"
+    },
+    {
+      "id": "need",
+      "gloss": "require; lack necessitating fulfillment",
+      "domain": "cognition",
+      "tier": "extended"
+    },
+    {
+      "id": "cause",
+      "gloss": "what brings about an effect",
+      "domain": "relation",
+      "tier": "extended"
+    },
+    {
+      "id": "learn",
+      "gloss": "acquire knowledge or skill",
+      "domain": "cognition",
+      "tier": "extended"
+    },
+    {
+      "id": "teach",
+      "gloss": "impart knowledge or skill",
+      "domain": "cognition",
+      "tier": "extended"
+    },
+    {
+      "id": "remember",
+      "gloss": "retain in mind; recall past",
+      "domain": "cognition",
+      "tier": "extended"
+    },
+    {
+      "id": "known",
+      "gloss": "established certainty; indexed truth",
+      "domain": "cognition",
+      "tier": "extended"
+    },
+    {
+      "id": "unknown",
+      "gloss": "not established; opaque",
+      "domain": "cognition",
+      "tier": "extended"
+    },
+    {
+      "id": "name",
+      "gloss": "identifier for an entity",
+      "domain": "communication",
+      "tier": "extended"
+    },
+    {
+      "id": "signal",
+      "gloss": "discrete emission; communicative packet",
+      "domain": "communication",
+      "tier": "extended"
+    },
+    {
+      "id": "seed",
+      "gloss": "origin of new life; generative kernel",
+      "domain": "life",
+      "tier": "extended"
+    },
+    {
+      "id": "cycle",
+      "gloss": "return path; repeating sequence",
+      "domain": "process",
+      "tier": "extended"
+    },
+    {
+      "id": "void",
+      "gloss": "absence; empty interior",
+      "domain": "ontology",
+      "tier": "extended"
+    },
+    {
+      "id": "agent",
+      "gloss": "activated locus; one who acts",
+      "domain": "agency",
+      "tier": "extended"
+    }
+  ],
+  "productive_dimensions": {
+    "thing": [
+      "book",
+      "meal",
+      "vehicle",
+      "lamp",
+      "document",
+      "tool"
+    ],
+    "change": [
+      "grow",
+      "age",
+      "damage",
+      "improve",
+      "transform"
+    ],
+    "move": [
+      "run",
+      "swim",
+      "fly",
+      "crawl",
+      "vehicle"
+    ],
+    "equal": [
+      "balance",
+      "fairness",
+      "exchange",
+      "symmetry",
+      "money"
+    ],
+    "strong": [
+      "force",
+      "leader",
+      "government",
+      "weapon",
+      "healthy"
+    ],
+    "bond": [
+      "family",
+      "friend",
+      "law",
+      "religion"
+    ],
+    "conflict": [
+      "war",
+      "fight",
+      "debate",
+      "problem",
+      "enemy"
+    ]
+  }
+}

@@ -39,16 +39,20 @@
     "fonoran:export": "node scripts/fonoran-export-json.js",
     "fonoran:roots": "node tools/fonoran-english-roots-build.js",
     "fonoran:lexicon": "node -e \"import('./tools/fonoran-english-lexicon.js').then(m => m.writeEnglishLexicon().then(l => console.log('Lexicon:', l.word_count, 'words')))\"",
-    "fonoran:primitive-roots": "node tools/fonoran-primitive-roots.js && node tools/fonoran-primitive-roots-import.js",
-    "fonoran:primitive-roots:gen": "node tools/fonoran-primitive-roots.js",
-    "fonoran:primitive-roots:import": "node tools/fonoran-primitive-roots-import.js",
-    "fonoran:root-candidates": "node tools/fonoran-root-candidates.js"
+    "fonoran:reset": "node tools/fonoran-reset.js",
+    "fonoran:build": "node tools/fonoran-build.js",
+    "fonoran:build:approved": "node tools/fonoran-build.js --approve-all",
+    "fonoran:root-candidates": "node tools/fonoran-root-candidates.js",
+    "fonoran:primitive-roots": "node -e \"console.error('DEPRECATED: use npm run fonoran:build (converged pipeline). See docs/fonoran-root-workflow.md')\" && exit 1",
+    "fonoran:primitive-roots:gen": "node -e \"console.error('DEPRECATED: use npm run fonoran:build')\" && exit 1",
+    "fonoran:primitive-roots:import": "node -e \"console.error('DEPRECATED: use npm run fonoran:build')\" && exit 1"
   },
   "dependencies": {
     "@echogarden/espeak-ng-emscripten": "^0.3.5",
     "espeak-ng": "^1.0.2",
     "onnxruntime-web": "1.20.1",
     "pg": "^8.22.0",
-    "piper-tts-web": "^1.1.2"
+    "piper-tts-web": "^1.1.2",
+    "wordpos": "^2.1.0"
   }
 }

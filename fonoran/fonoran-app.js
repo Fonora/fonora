@@ -146,8 +146,18 @@
       requestAnimationFrame(syncSplitStickyOffsets);
     }
 
-    const LANDER_SHOWCASE_WORD_ID = 'cmp-shakafa';
+    let landerShowcaseWord = null;
     let landerShowcaseToken = 0;
+
+    function pickLanderShowcaseWord() {
+      const pool = (STATE.lab?.compounds ?? []).filter((c) => {
+        if (c.state === 'rejected') return false;
+        const partCount = c.components?.length ?? c.parts?.length ?? 0;
+        return partCount >= 2;
+      });
+      if (!pool.length) return null;
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
     let landerHealthToken = 0;
 
     const STATE = {
@@ -177,6 +187,11 @@
       translatorInput: '',
       translatorResult: null,
       translatorBusy: false,
+      wgInput: '',
+      wgComponents: null,
+      wgResult: null,
+      wgSelected: null,
+      wgBusy: false,
       translatorPlaying: false,
       translatorCancel: false,
       rootCandidates: null,
@@ -381,7 +396,7 @@
     }
 
     function renderActivePage() {
-      const labOptional = new Set(['home', 'grammar', 'translator', 'concepts']);
+      const labOptional = new Set(['home', 'grammar', 'translator', 'wordgen', 'concepts']);
       if (!labOptional.has(STATE.page) && !STATE.lab) return;
       if (STATE.page === 'home') {
         wireLander();
@@ -389,13 +404,14 @@
         renderLanderHealth();
       }
       else if (STATE.page === 'create') renderWordComposer();
-      else if (STATE.page === 'matcher') renderWordMatcher();
+      else if (STATE.page === 'matcher') void renderWordMatcher();
       else if (STATE.page === 'review') renderUnifiedReview();
       else if (STATE.page === 'concepts') renderConceptEditor();
       else if (STATE.page === 'roots') renderRoots();
       else if (STATE.page === 'dictionary') renderDictionary();
       else if (STATE.page === 'grammar') renderGrammar();
       else if (STATE.page === 'translator') renderTranslator();
+      else if (STATE.page === 'wordgen') renderWordGen();
       else if (STATE.page === 'health') renderHealth();
       else if (STATE.page === 'advanced') renderAdvanced();
       applyWriteAccessUI();
@@ -1013,9 +1029,9 @@
       } catch (e) { toast(e.message); }
     }
 
-    function renderWordMatcher() {
+    async function renderWordMatcher() {
       if (!STATE.lab || !$('wm-fonoran')) return;
-      ensureLexicon();
+      await ensureLexicon();
       loadMatcherDismissed();
       const fonEl = $('wm-fonoran');
       const engEl = $('wm-english');
@@ -1639,9 +1655,8 @@
       </div>`;
     }
 
-    function buildShowcaseHtml(data) {
+    function buildShowcaseHtml(data, word = landerShowcaseWord) {
       const f = data.focus;
-      const word = STATE.lab?.compounds?.find(c => c.id === LANDER_SHOWCASE_WORD_ID);
       const speakParts = wordPreviewSpeakParts(f, 'word');
 
       const html = `
@@ -1701,8 +1716,7 @@
       return { html, speakParts };
     }
 
-    async function fetchShowcaseGraph() {
-      const word = STATE.lab?.compounds?.find(c => c.id === LANDER_SHOWCASE_WORD_ID);
+    async function fetchShowcaseGraph(word) {
       if (word) {
         return api(`/api/fonoran/lab/graph/word/${encodeURIComponent(word.id)}`);
       }
@@ -1717,7 +1731,7 @@
     }
 
     function openShowcaseExplorer() {
-      const word = STATE.lab?.compounds?.find(c => c.id === LANDER_SHOWCASE_WORD_ID);
+      const word = landerShowcaseWord;
       if (word) {
         openExplorer('word', word.id);
         return;
@@ -1737,10 +1751,11 @@
       const el = $('lander-showcase');
       if (!el || STATE.page !== 'home' || !STATE.lab) return;
       const token = ++landerShowcaseToken;
+      landerShowcaseWord = pickLanderShowcaseWord();
       try {
-        const data = await fetchShowcaseGraph();
+        const data = await fetchShowcaseGraph(landerShowcaseWord);
         if (token !== landerShowcaseToken) return;
-        const { html, speakParts } = buildShowcaseHtml(data);
+        const { html, speakParts } = buildShowcaseHtml(data, landerShowcaseWord);
         el.innerHTML = html;
         $('lander-showcase-hear')?.addEventListener('click', () => speakNeural(speakParts));
         el.querySelectorAll('.showcase-used-chip[data-explore-word]').forEach((btn) => {
@@ -2395,6 +2410,7 @@
             body: JSON.stringify({ action: 'approve' }),
           });
           STATE.rootCandidates = null;
+          STATE.lexicon = null;
           await advanceRoot();
           toast(`Approved ${c.spelling} → ${c.id}`);
         } catch (err) { toast(err.message); }
@@ -2406,6 +2422,7 @@
             body: JSON.stringify({ action: 'reject' }),
           });
           STATE.rootCandidates = null;
+          STATE.lexicon = null;
           await advanceRoot();
           toast(`Rejected ${c.id}`);
         } catch (err) { toast(err.message); }
@@ -2892,12 +2909,14 @@
 
     /* ---------- DICTIONARY ---------- */
     function dictEntries() {
-      const base = STATE.lab.sounds.map(s => ({ kind: 'sound', id: s.spelling, word: s.spelling, english: s.meaning || '(unnamed)', type: 'base', state: s.state, hint: s.say_bold }));
+      const base = STATE.lab.sounds.map(s => ({ kind: 'sound', id: s.spelling, word: s.spelling, english: s.meaning || '(unnamed)', gloss: s.gloss || '', aliases: (s.aliases ?? []).join(' '), type: 'base', state: s.state, hint: s.say_bold }));
       const comp = STATE.lab.compounds.map(c => ({
         kind: 'compound',
         id: c.id,
         word: c.spelling,
         english: c.meaning || '(unnamed)',
+        gloss: c.gloss || '',
+        aliases: (c.aliases ?? []).join(' '),
         type: 'compound',
         state: c.state,
         hint: (c.part_details ?? []).map(p => p.spelling).join(' + ') || (c.parts ?? []).join(' + '),
@@ -2907,7 +2926,7 @@
       if (f === 'base' || f === 'compound') list = list.filter(e => e.type === f);
       else if (['needs_review', 'approved', 'rejected'].includes(f)) list = list.filter(e => e.state === f);
       const q = STATE.dictQuery.trim().toLowerCase();
-      if (q) list = list.filter(e => `${e.word} ${e.english} ${e.hint}`.toLowerCase().includes(q));
+      if (q) list = list.filter(e => `${e.word} ${e.english} ${e.gloss} ${e.aliases} ${e.hint}`.toLowerCase().includes(q));
       return list.sort((a, b) => a.word.localeCompare(b.word));
     }
     function dictExplorerKind(entryKind) {
@@ -3036,11 +3055,13 @@
       }
     }
 
+    function pageEl(pageName = STATE.page) {
+      const normalized = pageName === 'root-review' ? 'review' : pageName;
+      return normalized === 'review' ? $('page-review') : (normalized ? $(`page-${normalized}`) : null);
+    }
+
     function activeSplitPageEl(pageName = STATE.page) {
-      const fromAttr = document.documentElement.getAttribute('data-fonora-page');
-      const resolved = fromAttr === 'root-review' ? 'review' : (fromAttr || pageName);
-      const normalized = resolved === 'root-review' ? 'review' : resolved;
-      const el = normalized === 'review' ? $('page-review') : (normalized ? $(`page-${normalized}`) : null);
+      const el = pageEl(pageName);
       if (el?.classList.contains('fonoran-split-page')) return el;
       return document.querySelector('.fonoran-split-page.active');
     }
@@ -3323,6 +3344,209 @@
       else void renderTranslatorOutput(null);
     }
 
+    /* ---------- WORD GENERATOR ---------- */
+    let wgToken = 0;
+
+    function renderWordGen() {
+      ensureSplitStickyObserver();
+      syncSplitStickyOffsets();
+      const input = $('wg-input');
+      if (input && input.value !== (STATE.wgInput ?? '')) input.value = STATE.wgInput ?? '';
+      const dl = $('wg-concept-list');
+      if (dl) {
+        dl.innerHTML = conceptList()
+          .map(c => `<option value="${escapeHtml(c.id)}">${escapeHtml(c.concept)}</option>`)
+          .join('');
+      }
+      renderWgList();
+      renderWgComponents();
+      renderWgDetail();
+      requestAnimationFrame(syncSplitStickyOffsets);
+    }
+
+    function wgListItem(o, i, selected) {
+      const glyphs = STATE.rules ? romanToFonoraScript(o.roots, STATE.rules).phrase : '';
+      const parseTag = o.unique
+        ? '<span class="wg-tag wg-tag--ok">unique</span>'
+        : `<span class="wg-tag wg-tag--warn">${o.segmentations.length} parses</span>`;
+      return `
+        <button type="button" class="dict-item${selected ? ' is-selected' : ''}" data-wg-idx="${i}">
+          <span class="dict-item__content">
+            ${glyphs ? `<span class="dict-item__glyphs symbol-text">${escapeHtml(glyphs)}</span>` : ''}
+            <span class="mn mono">${escapeHtml(o.spelling)}</span>
+            <span class="sp">${escapeHtml(o.breakdown)}</span>
+          </span>
+          <span class="dict-item__badges">${parseTag} <span class="badge">${o.root_count} roots</span></span>
+        </button>`;
+    }
+
+    function renderWgList() {
+      const host = $('wg-list');
+      if (!host) return;
+      if (STATE.wgBusy) {
+        host.innerHTML = '<p class="fonoran-split-loading">Generating…</p>';
+        return;
+      }
+      const opts = STATE.wgResult?.options ?? [];
+      if (!opts.length) {
+        host.innerHTML = '<p class="empty sans" style="margin:0.5rem 0">No options yet — enter a concept and press Generate.</p>';
+        return;
+      }
+      const sel = STATE.wgSelected ?? 0;
+      host.innerHTML = opts.map((o, i) => wgListItem(o, i, i === sel)).join('');
+    }
+
+    function wgDetailEmptyHtml() {
+      return '<div class="fonoran-split-empty"><p>Generated words appear on the left. Select one to preview and add it to your vocabulary.</p></div>';
+    }
+
+    function renderWgDetail() {
+      const host = $('wg-editor-detail');
+      if (!host) return;
+      if (STATE.wgBusy) {
+        host.innerHTML = '<p class="fonoran-split-loading">Generating…</p>';
+        return;
+      }
+      const res = STATE.wgResult;
+      const opts = res?.options ?? [];
+      const unresolved = (res?.unresolved ?? []).length
+        ? `<p class="wg-unresolved sans">Couldn't map: <strong>${res.unresolved.map(escapeHtml).join(', ')}</strong>. Add those parts manually below.</p>`
+        : '';
+      if (!opts.length) {
+        host.innerHTML = unresolved + (res
+          ? '<p class="empty sans">No buildable words yet — add at least two components.</p>'
+          : wgDetailEmptyHtml());
+        return;
+      }
+      const idx = STATE.wgSelected ?? 0;
+      const o = opts[idx];
+      if (!o) {
+        host.innerHTML = unresolved + wgDetailEmptyHtml();
+        return;
+      }
+      const glyphs = STATE.rules ? romanToFonoraScript(o.roots, STATE.rules).phrase : '';
+      const parseTag = o.unique
+        ? '<span class="wg-tag wg-tag--ok">unique parse</span>'
+        : `<span class="wg-tag wg-tag--warn">${o.segmentations.length} parses</span>`;
+      host.innerHTML = `${unresolved}
+        <div class="wg-detail">
+          <div class="wg-detail__hero">
+            ${glyphs ? `<div class="wg-detail__glyphs symbol-text">${escapeHtml(glyphs)}</div>` : ''}
+            <div class="wg-detail__spelling mono">${escapeHtml(o.spelling)}</div>
+            <div class="wg-detail__breakdown sans">${escapeHtml(o.breakdown)} · ${escapeHtml(o.roots_breakdown)}</div>
+          </div>
+          <div class="wg-detail__meta sans">
+            <span>${o.root_count} roots</span>
+            <span>${o.length} chars</span>
+            <span>say ${o.pronounceability}</span>
+            ${parseTag}
+          </div>
+          <div class="actions wg-detail__actions">
+            <button type="button" class="btn btn-primary" data-wg-use="${idx}">Use word</button>
+          </div>
+        </div>`;
+    }
+
+    function renderWgComponents() {
+      const host = $('wg-component-chips');
+      if (!host) return;
+      const comps = STATE.wgComponents ?? [];
+      if (!comps.length) {
+        host.innerHTML = '<span class="wg-hint sans">No components yet — generate from a phrase or add concepts below.</span>';
+        return;
+      }
+      host.innerHTML = comps.map((c, i) => `
+        <span class="wg-chip" title="${escapeHtml(c.gloss ?? '')}">
+          <span class="wg-chip__id">${escapeHtml(c.id)}</span>
+          <span class="wg-chip__root">${escapeHtml(c.root)}</span>
+          <button type="button" class="wg-chip__x" data-wg-remove="${i}" aria-label="Remove ${escapeHtml(c.id)}">×</button>
+        </span>`).join('');
+    }
+
+    async function runWordGen({ useComponents = false } = {}) {
+      const input = $('wg-input');
+      const text = (input?.value ?? STATE.wgInput ?? '').trim();
+      STATE.wgInput = input?.value ?? text;
+      if (!text && !useComponents) {
+        STATE.wgResult = null;
+        STATE.wgSelected = null;
+        renderWgList();
+        renderWgDetail();
+        return;
+      }
+      const token = ++wgToken;
+      STATE.wgBusy = true;
+      renderWgList();
+      renderWgDetail();
+      try {
+        const body = { text };
+        if (useComponents && (STATE.wgComponents ?? []).length) {
+          body.components = STATE.wgComponents.map(c => c.id);
+        }
+        const result = await api('/api/fonoran/word-generator', { method: 'POST', body: JSON.stringify(body) });
+        if (token !== wgToken) return;
+        STATE.wgResult = result;
+        if (!useComponents) {
+          STATE.wgComponents = (result.components ?? []).map(c => ({ id: c.id, root: c.root, gloss: c.gloss }));
+        }
+        const opts = result.options ?? [];
+        const prev = STATE.wgSelected;
+        STATE.wgSelected = opts.length
+          ? (prev != null && opts[prev] ? prev : 0)
+          : null;
+        STATE.wgBusy = false;
+        renderWgList();
+        renderWgComponents();
+        renderWgDetail();
+      } catch (e) {
+        if (token !== wgToken) return;
+        STATE.wgBusy = false;
+        const detail = $('wg-editor-detail');
+        if (detail) detail.innerHTML = `<p class="empty sans" style="color:var(--danger,#c0392b)">${escapeHtml(e.message)}</p>`;
+        renderWgList();
+      }
+    }
+
+    function wgRecompose() {
+      if ((STATE.wgComponents ?? []).length >= 1) void runWordGen({ useComponents: true });
+      else {
+        STATE.wgResult = null;
+        STATE.wgSelected = null;
+        renderWgList();
+        renderWgDetail();
+      }
+    }
+
+    function wgAddConcept(raw) {
+      const id = String(raw ?? '').trim().toLowerCase();
+      if (!id) return;
+      const c = conceptList().find(x => x.id === id)
+        ?? conceptList().find(x => x.concept?.toLowerCase() === id);
+      if (!c) { toast(`Unknown concept: ${id}`); return; }
+      STATE.wgComponents = STATE.wgComponents ?? [];
+      if (STATE.wgComponents.some(x => x.id === c.id)) { toast(`${c.id} already added`); return; }
+      STATE.wgComponents.push({ id: c.id, root: c.spelling, gloss: c.concept });
+      renderWgComponents();
+      wgRecompose();
+    }
+
+    async function wgUseWord(i) {
+      const o = STATE.wgResult?.options?.[i];
+      if (!o) return;
+      const meaning = (STATE.wgInput ?? '').trim() || o.breakdown;
+      try {
+        const components = o.components.map(c => ({ type: 'root', ref: c.root }));
+        await api('/api/fonoran/lab/compounds', {
+          method: 'POST',
+          body: JSON.stringify({ components, meaning, state: 'needs_review', allow_unapproved: true }),
+        });
+        toast(`Added "${o.spelling}" — ${meaning} (needs review)`);
+        await load();
+      } catch (e) {
+        toast(e.message);
+      }
+    }
+
     /* ---------- GRAMMAR SPEC ---------- */
     const GRAMMAR_DOC_PATH = '../docs/fonoran-grammar.md';
     let grammarLoadToken = 0;
@@ -3460,8 +3684,8 @@
     }
 
     /* ---------- nav ---------- */
-    const MAIN_PAGES = new Set(['roots', 'create', 'matcher', 'review', 'dictionary', 'translator']);
-    const ALL_PAGES = new Set(['home', 'root-review', 'roots', 'create', 'matcher', 'review', 'dictionary', 'grammar', 'translator', 'health', 'advanced', 'concepts']);
+    const MAIN_PAGES = new Set(['roots', 'create', 'matcher', 'review', 'dictionary', 'translator', 'wordgen']);
+    const ALL_PAGES = new Set(['home', 'root-review', 'roots', 'create', 'matcher', 'review', 'dictionary', 'grammar', 'translator', 'wordgen', 'health', 'advanced', 'concepts']);
     function scrollPageTop() {
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
@@ -3477,10 +3701,11 @@
       } else if (name === 'review' && STATE.page !== 'review') {
         STATE.reviewFocusPending = true;
       }
+      if (name === 'matcher') STATE.lexicon = null;
       STATE.page = name;
       setActiveTab(name);
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      activeSplitPageEl(name)?.classList.add('active');
+      pageEl(name)?.classList.add('active');
       if (name === 'home') {
         if (window.location.hash) history.replaceState(null, '', window.location.pathname);
       } else if (ALL_PAGES.has(name) || name === 'review') {
@@ -3494,7 +3719,7 @@
       scrollPageTop();
       requestAnimationFrame(() => {
         scrollPageTop();
-        if (name === 'dictionary' || name === 'create' || name === 'roots' || name === 'grammar' || name === 'concepts' || name === 'review') {
+        if (name === 'dictionary' || name === 'create' || name === 'roots' || name === 'grammar' || name === 'concepts' || name === 'review' || name === 'wordgen') {
           syncSplitStickyOffsets();
           requestAnimationFrame(syncSplitStickyOffsets);
         }
@@ -3602,9 +3827,9 @@
       isOpen: () => $('sheet')?.classList.contains('open'),
     });
     $('adv-import-vocabulary').addEventListener('click', async () => {
-      if (!confirm('Load ~280 experimental roots and compounds from the primitive-roots generator? This replaces all current lab vocabulary.')) return;
-      const r = await api('/api/fonoran/lab/import-vocabulary', { method: 'POST', body: '{}' });
-      toast(`Imported ${r.sounds} roots and ${r.compounds} compounds`);
+      if (!confirm('Generate the converged vocabulary (roots + curated compounds), locking any approved spellings? This replaces all current lab vocabulary; everything new comes in as needs-review.')) return;
+      const r = await api('/api/fonoran/lab/build', { method: 'POST', body: '{}' });
+      toast(`Generated ${r.roots} roots and ${r.compounds} words`);
       await load();
       rememberMainPage();
       switchPage('dictionary');
@@ -3691,6 +3916,52 @@
         STATE.translatorInput = text;
         void runTranslator();
       });
+    });
+
+    $('wg-input')?.addEventListener('input', (e) => { STATE.wgInput = e.target.value; });
+    $('wg-input')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); void runWordGen(); }
+    });
+    $('wg-run')?.addEventListener('click', () => { void runWordGen(); });
+    document.querySelectorAll('[data-wg-example]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.wgExample ?? '';
+        const input = $('wg-input');
+        if (input) input.value = text;
+        STATE.wgInput = text;
+        void runWordGen();
+      });
+    });
+    const wgAddFromInput = () => {
+      const input = $('wg-add');
+      wgAddConcept(input?.value);
+      if (input) input.value = '';
+    };
+    $('wg-add-btn')?.addEventListener('click', wgAddFromInput);
+    $('wg-add')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); wgAddFromInput(); }
+    });
+    $('wg-component-chips')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-wg-remove]');
+      if (!btn) return;
+      const idx = Number(btn.dataset.wgRemove);
+      if (Number.isInteger(idx) && STATE.wgComponents) {
+        STATE.wgComponents.splice(idx, 1);
+        renderWgComponents();
+        wgRecompose();
+      }
+    });
+    $('wg-list')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-wg-idx]');
+      if (!btn) return;
+      STATE.wgSelected = Number(btn.dataset.wgIdx);
+      renderWgList();
+      renderWgDetail();
+    });
+    $('wg-editor-detail')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-wg-use]');
+      if (!btn) return;
+      void wgUseWord(Number(btn.dataset.wgUse));
     });
 
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';

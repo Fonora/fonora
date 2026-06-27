@@ -207,14 +207,23 @@ export function assignRoots(concepts, syllablePool, config, { lockedRoots = {} }
   const onsetCounts = new Map();
   const assignments = [];
 
+  // Reserve every locked spelling up front so non-locked concepts (which may be
+  // processed earlier in the list) can never collide with an approved root.
+  const lockedForms = new Set();
+  for (const concept of concepts) {
+    const locked = lockedRoots[concept.id];
+    if (!locked || lockedForms.has(locked)) continue;
+    lockedForms.add(locked);
+    usedRoots.push(locked);
+    const rhyme = rhymeKey(locked);
+    rhymeCounts.set(rhyme, (rhymeCounts.get(rhyme) ?? 0) + 1);
+    const { onset } = splitRoot(locked);
+    if (onset) onsetCounts.set(onset, (onsetCounts.get(onset) ?? 0) + 1);
+  }
+
   for (const concept of concepts) {
     const locked = lockedRoots[concept.id];
     if (locked) {
-      usedRoots.push(locked);
-      const rhyme = rhymeKey(locked);
-      rhymeCounts.set(rhyme, (rhymeCounts.get(rhyme) ?? 0) + 1);
-      const { ending, onset } = splitRoot(locked);
-      if (onset) onsetCounts.set(onset, (onsetCounts.get(onset) ?? 0) + 1);
       assignments.push({
         id: concept.id,
         gloss: concept.gloss,

@@ -1,16 +1,16 @@
 {
   "version": "1.0-root-workflow",
   "status": "proposal",
-  "generated_at": "2026-06-26T05:17:28.797Z",
+  "generated_at": "2026-06-27T22:05:01.212Z",
   "philosophy": {
     "premise": "Words come first. The semantic network evolves after roots are approved.",
     "workflow": "Generate candidates → human review → canonical roots → compounds later",
-    "source_concepts": "data/fonoran-semantic-primitives.json"
+    "source_concepts": "data/fonoran-concept-inventory.json"
   },
   "summary": {
-    "total": 99,
-    "pending": 81,
-    "approved": 18,
+    "total": 118,
+    "pending": 0,
+    "approved": 118,
     "rejected": 0
   },
   "candidates": [
@@ -28,9 +28,9 @@
       "priority": 1000,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:20:40.581Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
-        "edited_at": "2026-06-26T05:20:38.475Z",
+        "edited_at": null,
         "note": null
       },
       "generation": {
@@ -53,7 +53,7 @@
       "priority": 999,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:20:44.430Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -76,11 +76,11 @@
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "priority": 998,
-      "status": "pending",
+      "status": "approved",
       "review": {
-        "approved_at": null,
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
-        "edited_at": "2026-06-26T07:33:42.929Z",
+        "edited_at": null,
         "note": null
       },
       "generation": {
@@ -103,7 +103,7 @@
       "priority": 997,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:22:10.749Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -128,7 +128,7 @@
       "priority": 996,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:22:18.381Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -141,8 +141,8 @@
     },
     {
       "id": "death",
-      "spelling": "le",
-      "ipa": "/lɛ/",
+      "spelling": "la",
+      "ipa": "/lʌ/",
       "concept": "the end of life",
       "domain": "being",
       "reason": "Fundamental being concept: the end of life. Cannot be naturally reduced into simpler Fonoran roots.",
@@ -151,23 +151,23 @@
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "priority": 995,
-      "status": "pending",
+      "status": "approved",
       "review": {
-        "approved_at": null,
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
       },
       "generation": {
-        "phonetic_cost": 7,
+        "phonetic_cost": 6,
         "template": "CV",
-        "tier": "preferred-cv"
+        "tier": "preferred-cv-a"
       }
     },
     {
       "id": "birth",
-      "spelling": "ma",
-      "ipa": "/mʌ/",
+      "spelling": "me",
+      "ipa": "/mɛ/",
       "concept": "the beginning of an individual life",
       "domain": "being",
       "reason": "Fundamental being concept: the beginning of an individual life. Cannot be naturally reduced into simpler Fonoran roots.",
@@ -176,17 +176,17 @@
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "priority": 994,
-      "status": "pending",
+      "status": "approved",
       "review": {
-        "approved_at": null,
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
       },
       "generation": {
-        "phonetic_cost": 7,
+        "phonetic_cost": 8,
         "template": "CV",
-        "tier": "preferred-cv-a"
+        "tier": "preferred-cv"
       }
     },
     {
@@ -201,9 +201,9 @@
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "priority": 993,
-      "status": "pending",
+      "status": "approved",
       "review": {
-        "approved_at": null,
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -228,7 +228,7 @@
       "priority": 992,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:22:48.400Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -253,7 +253,7 @@
       "priority": 991,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:22:55.914Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -278,7 +278,7 @@
       "priority": 990,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:22:58.196Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -301,9 +301,9 @@
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "priority": 989,
-      "status": "pending",
+      "status": "approved",
       "review": {
-        "approved_at": null,
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -328,7 +328,7 @@
       "priority": 988,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:08.750Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -341,33 +341,33 @@
     },
     {
       "id": "help",
-      "spelling": "nu",
-      "ipa": "/nʊ/",
+      "spelling": "lu",
+      "ipa": "/lʊ/",
       "concept": "act so another can do or have",
       "domain": "action",
       "reason": "Fundamental action concept: act so another can do or have. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 3,
-      "pronunciation_ease_label": "moderate",
+      "pronunciation_ease": 4,
+      "pronunciation_ease_label": "easy",
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "priority": 987,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:17.564Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
       },
       "generation": {
-        "phonetic_cost": 12,
+        "phonetic_cost": 10,
         "template": "CV",
         "tier": "preferred-cv"
       }
     },
     {
       "id": "make",
-      "spelling": "to",
-      "ipa": "/tɑ/",
+      "spelling": "no",
+      "ipa": "/nɑ/",
       "concept": "bring something into being",
       "domain": "action",
       "reason": "Fundamental action concept: bring something into being. Cannot be naturally reduced into simpler Fonoran roots.",
@@ -378,13 +378,13 @@
       "priority": 986,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:20.115Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
       },
       "generation": {
-        "phonetic_cost": 13,
+        "phonetic_cost": 11,
         "template": "CV",
         "tier": "preferred-cv"
       }
@@ -403,7 +403,7 @@
       "priority": 985,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:21.396Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -428,7 +428,7 @@
       "priority": 984,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:24.863Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -441,8 +441,8 @@
     },
     {
       "id": "see",
-      "spelling": "si",
-      "ipa": "/sɪ/",
+      "spelling": "to",
+      "ipa": "/tɑ/",
       "concept": "perceive with the eyes",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the eyes. Cannot be naturally reduced into simpler Fonoran roots.",
@@ -453,7 +453,32 @@
       "priority": 983,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:26.563Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 13,
+        "template": "CV",
+        "tier": "preferred-cv"
+      }
+    },
+    {
+      "id": "hear",
+      "spelling": "si",
+      "ipa": "/sɪ/",
+      "concept": "perceive with the ears",
+      "domain": "action",
+      "reason": "Fundamental action concept: perceive with the ears. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 982,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -465,20 +490,20 @@
       }
     },
     {
-      "id": "hear",
+      "id": "touch",
       "spelling": "wa",
       "ipa": "/wʌ/",
-      "concept": "perceive with the ears",
+      "concept": "feel by contact with skin",
       "domain": "action",
-      "reason": "Fundamental action concept: perceive with the ears. Cannot be naturally reduced into simpler Fonoran roots.",
+      "reason": "Fundamental action concept: feel by contact with skin. Cannot be naturally reduced into simpler Fonoran roots.",
       "pronunciation_ease": 3,
       "pronunciation_ease_label": "moderate",
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
-      "priority": 982,
+      "priority": 981,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:27.929Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -490,34 +515,9 @@
       }
     },
     {
-      "id": "touch",
-      "spelling": "ho",
-      "ipa": "/hɑ/",
-      "concept": "feel by contact with skin",
-      "domain": "action",
-      "reason": "Fundamental action concept: feel by contact with skin. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 3,
-      "pronunciation_ease_label": "moderate",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 981,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 23,
-        "template": "CV",
-        "tier": "secondary-cv"
-      }
-    },
-    {
       "id": "smell",
-      "spelling": "ye",
-      "ipa": "/jɛ/",
+      "spelling": "mu",
+      "ipa": "/mʊ/",
       "concept": "perceive with the nose",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the nose. Cannot be naturally reduced into simpler Fonoran roots.",
@@ -528,7 +528,32 @@
       "priority": 980,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:34.431Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 11,
+        "template": "CV",
+        "tier": "preferred-cv"
+      }
+    },
+    {
+      "id": "taste",
+      "spelling": "ye",
+      "ipa": "/jɛ/",
+      "concept": "perceive with the mouth",
+      "domain": "action",
+      "reason": "Fundamental action concept: perceive with the mouth. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 979,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -540,20 +565,45 @@
       }
     },
     {
-      "id": "taste",
-      "spelling": "pu",
-      "ipa": "/pʊ/",
-      "concept": "perceive with the mouth",
+      "id": "know",
+      "spelling": "hi",
+      "ipa": "/hɪ/",
+      "concept": "understand; hold as true",
       "domain": "action",
-      "reason": "Fundamental action concept: perceive with the mouth. Cannot be naturally reduced into simpler Fonoran roots.",
+      "reason": "High-leverage root: understand. Appears frequently inside compounds.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 978,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 22,
+        "template": "CV",
+        "tier": "secondary-cv"
+      }
+    },
+    {
+      "id": "think",
+      "spelling": "pa",
+      "ipa": "/pʌ/",
+      "concept": "use the mind",
+      "domain": "action",
+      "reason": "Fundamental action concept: use the mind. Cannot be naturally reduced into simpler Fonoran roots.",
       "pronunciation_ease": 1,
       "pronunciation_ease_label": "difficult",
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
-      "priority": 979,
+      "priority": 977,
       "status": "approved",
       "review": {
-        "approved_at": "2026-06-26T05:23:36.130Z",
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -565,59 +615,9 @@
       }
     },
     {
-      "id": "know",
-      "spelling": "ja",
-      "ipa": "/dʒʌ/",
-      "concept": "understand; hold as true",
-      "domain": "action",
-      "reason": "High-leverage root: understand. Appears frequently inside compounds.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 978,
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-06-26T05:23:38.081Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 38,
-        "template": "CV",
-        "tier": "tertiary-cv"
-      }
-    },
-    {
-      "id": "think",
-      "spelling": "mo",
-      "ipa": "/mɑ/",
-      "concept": "use the mind",
-      "domain": "action",
-      "reason": "Fundamental action concept: use the mind. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 4,
-      "pronunciation_ease_label": "easy",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 977,
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-06-26T05:23:39.431Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 10,
-        "template": "CV",
-        "tier": "preferred-cv"
-      }
-    },
-    {
       "id": "feel",
-      "spelling": "li",
-      "ipa": "/lɪ/",
+      "spelling": "ko",
+      "ipa": "/kɑ/",
       "concept": "experience inner sensation",
       "domain": "action",
       "reason": "Fundamental action concept: experience inner sensation. Cannot be naturally reduced into simpler Fonoran roots.",
@@ -626,9 +626,9 @@
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "priority": 976,
-      "status": "pending",
+      "status": "approved",
       "review": {
-        "approved_at": null,
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -641,1819 +641,19 @@
     },
     {
       "id": "want",
-      "spelling": "ben",
-      "ipa": "/bɛn/",
+      "spelling": "chu",
+      "ipa": "/tʃʊ/",
       "concept": "desire; wish for",
       "domain": "action",
       "reason": "Fundamental action concept: desire. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "priority": 975,
-      "status": "pending",
+      "status": "approved",
       "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 50.6,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "eat",
-      "spelling": "dam",
-      "ipa": "/dʌm/",
-      "concept": "consume food",
-      "domain": "action",
-      "reason": "Fundamental action concept: consume food. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 974,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 51.3,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "sleep",
-      "spelling": "fat",
-      "ipa": "/fʌt/",
-      "concept": "rest in unconsciousness",
-      "domain": "action",
-      "reason": "Fundamental action concept: rest in unconsciousness. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 973,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 52.6,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "thing",
-      "spelling": "fek",
-      "ipa": "/fɛk/",
-      "concept": "any entity; the primary noun dimension — book, meal, vehicle, lamp inherit from thing + X",
-      "domain": "ontology",
-      "reason": "High-leverage root: any entity. Appears frequently inside compounds.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 972,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 53.3,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "substance",
-      "spelling": "gas",
-      "ipa": "/gʌs/",
-      "concept": "physical stuff; matter",
-      "domain": "ontology",
-      "reason": "Fundamental ontology concept: physical stuff. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 971,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 54,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "form",
-      "spelling": "gel",
-      "ipa": "/gɛl/",
-      "concept": "shape or look of something",
-      "domain": "ontology",
-      "reason": "Fundamental ontology concept: shape or look of something. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 970,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 54.7,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "change",
-      "spelling": "kan",
-      "ipa": "/kʌn/",
-      "concept": "become different; grow, age, damage, improve inherit from this",
-      "domain": "ontology",
-      "reason": "High-leverage root: become different. Appears frequently inside compounds.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 969,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 54.8,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "empty",
-      "spelling": "kem",
-      "ipa": "/kɛm/",
-      "concept": "contains nothing; nothing inside",
-      "domain": "ontology",
-      "reason": "High-leverage root: contains nothing. Appears frequently inside compounds.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 968,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 55.5,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "water",
-      "spelling": "met",
-      "ipa": "/mɛt/",
-      "concept": "liquid water to drink or touch",
-      "domain": "element",
-      "reason": "High-leverage root: liquid water to drink or touch. Appears frequently inside compounds.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 967,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 58,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "fire",
-      "spelling": "nes",
-      "ipa": "/nɛs/",
-      "concept": "flame; hot bright burning",
-      "domain": "element",
-      "reason": "Fundamental element concept: flame. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 966,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 59.4,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "earth",
-      "spelling": "sak",
-      "ipa": "/sʌk/",
-      "concept": "ground; dirt underfoot",
-      "domain": "element",
-      "reason": "Fundamental element concept: ground. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 965,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 59.9,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "air",
-      "spelling": "sel",
-      "ipa": "/sɛl/",
-      "concept": "what we breathe; invisible atmosphere",
-      "domain": "element",
-      "reason": "Fundamental element concept: what we breathe. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 964,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 60.7,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "light",
-      "spelling": "ten",
-      "ipa": "/tɛn/",
-      "concept": "brightness you can see by",
-      "domain": "element",
-      "reason": "Fundamental element concept: brightness you can see by. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 963,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 61.4,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "dark",
-      "spelling": "dal",
-      "ipa": "/dʌl/",
-      "concept": "absence of light",
-      "domain": "element",
-      "reason": "Fundamental element concept: absence of light. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 962,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 51.7,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "hot",
-      "spelling": "bem",
-      "ipa": "/bɛm/",
-      "concept": "high temperature; burns",
-      "domain": "element",
-      "reason": "Fundamental element concept: high temperature. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 961,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 50.7,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "cold",
-      "spelling": "fas",
-      "ipa": "/fʌs/",
-      "concept": "low temperature; shiver",
-      "domain": "element",
-      "reason": "Fundamental element concept: low temperature. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 960,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 52.8,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "stone",
-      "spelling": "gat",
-      "ipa": "/gʌt/",
-      "concept": "hard rock",
-      "domain": "element",
-      "reason": "Fundamental element concept: hard rock. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 959,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 53.8,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "plant",
-      "spelling": "gek",
-      "ipa": "/gɛk/",
-      "concept": "living vegetation",
-      "domain": "element",
-      "reason": "Fundamental element concept: living vegetation. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 958,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 54.5,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "animal",
-      "spelling": "kak",
-      "ipa": "/kʌk/",
-      "concept": "living creature that is not a person",
-      "domain": "element",
-      "reason": "Fundamental element concept: living creature that is not a person. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 957,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 55.1,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "inside",
-      "spelling": "ket",
-      "ipa": "/kɛt/",
-      "concept": "within an interior",
-      "domain": "space",
-      "reason": "Fundamental space concept: within an interior. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 956,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 55.6,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "outside",
-      "spelling": "lan",
-      "ipa": "/lʌn/",
-      "concept": "beyond a boundary; exterior",
-      "domain": "space",
-      "reason": "Fundamental space concept: beyond a boundary. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 955,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 56,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "here",
-      "spelling": "fem",
-      "ipa": "/fɛm/",
-      "concept": "at this place",
-      "domain": "space",
-      "reason": "Fundamental space concept: at this place. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 954,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 53.1,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "there",
-      "spelling": "mes",
-      "ipa": "/mɛs/",
-      "concept": "at that place",
-      "domain": "space",
-      "reason": "Fundamental space concept: at that place. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 953,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 58.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "near",
-      "spelling": "nal",
-      "ipa": "/nʌl/",
-      "concept": "close in space",
-      "domain": "space",
-      "reason": "Fundamental space concept: close in space. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 952,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 58.9,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "far",
-      "spelling": "sam",
-      "ipa": "/sʌm/",
-      "concept": "distant in space",
-      "domain": "space",
-      "reason": "Fundamental space concept: distant in space. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 951,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 59.7,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "up",
-      "spelling": "nen",
-      "ipa": "/nɛn/",
-      "concept": "higher position",
-      "domain": "space",
-      "reason": "Fundamental space concept: higher position. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 950,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 59,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "down",
-      "spelling": "set",
-      "ipa": "/sɛt/",
-      "concept": "lower position",
-      "domain": "space",
-      "reason": "Fundamental space concept: lower position. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 949,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 60.4,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "path",
-      "spelling": "tek",
-      "ipa": "/tɛk/",
-      "concept": "a way leading through space",
-      "domain": "space",
-      "reason": "Fundamental space concept: a way leading through space. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 948,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 61.7,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "place",
-      "spelling": "tas",
-      "ipa": "/tʌs/",
-      "concept": "a location; somewhere",
-      "domain": "space",
-      "reason": "Fundamental space concept: a location. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 947,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 61.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "surface",
-      "spelling": "bel",
-      "ipa": "/bɛl/",
-      "concept": "outer face; what you touch on the outside",
-      "domain": "space",
-      "reason": "Fundamental space concept: outer face. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 946,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 51.1,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "bound",
-      "spelling": "dan",
-      "ipa": "/dʌn/",
-      "concept": "edge; where something stops",
-      "domain": "space",
-      "reason": "Fundamental space concept: edge. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 945,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 51.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "center",
-      "spelling": "fal",
-      "ipa": "/fʌl/",
-      "concept": "middle point",
-      "domain": "space",
-      "reason": "Fundamental space concept: middle point. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "priority": 944,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 52.9,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "before",
-      "spelling": "gam",
-      "ipa": "/gʌm/",
-      "concept": "earlier in time; yesterday inherits from this",
-      "domain": "time",
-      "reason": "High-leverage root: earlier in time. Appears frequently inside compounds.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 943,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 53.7,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "after",
-      "spelling": "kes",
-      "ipa": "/kɛs/",
-      "concept": "later in time; tomorrow inherits from this",
-      "domain": "time",
-      "reason": "High-leverage root: later in time. Appears frequently inside compounds.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 942,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 55.8,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "now",
-      "spelling": "lat",
-      "ipa": "/lʌt/",
-      "concept": "this moment",
-      "domain": "time",
-      "reason": "Fundamental time concept: this moment. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 941,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 56.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "time",
-      "spelling": "nak",
-      "ipa": "/nʌk/",
-      "concept": "duration; while things happen",
-      "domain": "time",
-      "reason": "Fundamental time concept: duration. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 940,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 58.7,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "one",
-      "spelling": "gen",
-      "ipa": "/gɛn/",
-      "concept": "a single unit",
-      "domain": "quantity",
-      "reason": "Fundamental quantity concept: a single unit. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 939,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 54.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "many",
-      "spelling": "kal",
-      "ipa": "/kʌl/",
-      "concept": "large quantity; plurality",
-      "domain": "quantity",
-      "reason": "Fundamental quantity concept: large quantity. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 938,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 55.3,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "all",
-      "spelling": "mem",
-      "ipa": "/mɛm/",
-      "concept": "every one without exception",
-      "domain": "quantity",
-      "reason": "Fundamental quantity concept: every one without exception. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 937,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 57.9,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "some",
-      "spelling": "net",
-      "ipa": "/nɛt/",
-      "concept": "an indefinite portion",
-      "domain": "quantity",
-      "reason": "Fundamental quantity concept: an indefinite portion. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 936,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 59.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "more",
-      "spelling": "sas",
-      "ipa": "/sʌs/",
-      "concept": "greater amount",
-      "domain": "quantity",
-      "reason": "Fundamental quantity concept: greater amount. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 935,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 60,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "less",
-      "spelling": "sek",
-      "ipa": "/sɛk/",
-      "concept": "smaller amount",
-      "domain": "quantity",
-      "reason": "Fundamental quantity concept: smaller amount. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 934,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 60.5,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "fast",
-      "spelling": "tel",
-      "ipa": "/tɛl/",
-      "concept": "quick; high speed",
-      "domain": "quantity",
-      "reason": "Fundamental quantity concept: quick. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 933,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 61.9,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "love",
-      "spelling": "tam",
-      "ipa": "/tʌm/",
-      "concept": "deep affection; care",
-      "domain": "emotion",
-      "reason": "Fundamental emotion concept: deep affection. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 932,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 60.9,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "fear",
-      "spelling": "fes",
-      "ipa": "/fɛs/",
-      "concept": "apprehension of harm",
-      "domain": "emotion",
-      "reason": "Fundamental emotion concept: apprehension of harm. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 931,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 53.4,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "joy",
-      "spelling": "san",
-      "ipa": "/sʌn/",
-      "concept": "happiness; delight",
-      "domain": "emotion",
-      "reason": "Fundamental emotion concept: happiness. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 930,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 59.6,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "pain",
-      "spelling": "daba",
-      "ipa": "/daba/",
-      "concept": "hurt; suffering",
-      "domain": "emotion",
-      "reason": "Fundamental emotion concept: hurt. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 929,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 72.7,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "sad",
-      "spelling": "dafe",
-      "ipa": "/dafe/",
-      "concept": "sorrow; unhappiness",
-      "domain": "emotion",
-      "reason": "Fundamental emotion concept: sorrow. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 928,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 74,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "good",
-      "spelling": "tat",
-      "ipa": "/tʌt/",
-      "concept": "desirable; works well",
-      "domain": "evaluation",
-      "reason": "Fundamental evaluation concept: desirable. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 927,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 61,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "bad",
-      "spelling": "lak",
-      "ipa": "/lʌk/",
-      "concept": "undesirable; harmful",
-      "domain": "evaluation",
-      "reason": "Fundamental evaluation concept: undesirable. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 926,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 56.3,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "true",
-      "spelling": "nem",
-      "ipa": "/nɛm/",
-      "concept": "corresponds to reality",
-      "domain": "evaluation",
-      "reason": "Fundamental evaluation concept: corresponds to reality. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 925,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 59.1,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "false",
-      "spelling": "mel",
-      "ipa": "/mɛl/",
-      "concept": "does not correspond to reality",
-      "domain": "evaluation",
-      "reason": "Fundamental evaluation concept: does not correspond to reality. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 924,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 58.3,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "equal",
-      "spelling": "fada",
-      "ipa": "/fada/",
-      "concept": "same amount; fair match; balance and exchange inherit from this",
-      "domain": "evaluation",
-      "reason": "High-leverage root: same amount. Appears frequently inside compounds.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 923,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 75.7,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "bond",
-      "spelling": "fabe",
-      "ipa": "/fabe/",
-      "concept": "connection that holds together",
-      "domain": "relationships",
-      "reason": "High-leverage root: connection that holds together. Appears frequently inside compounds.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 922,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 76.4,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "conflict",
-      "spelling": "tes",
-      "ipa": "/tɛs/",
-      "concept": "opposition; clash; fight",
-      "domain": "relationships",
-      "reason": "High-leverage root: opposition. Appears frequently inside compounds.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 921,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 61.8,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "same",
-      "spelling": "sen",
-      "ipa": "/sɛn/",
-      "concept": "not different; matching",
-      "domain": "relationships",
-      "reason": "Fundamental relationships concept: not different. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 920,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 60.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "different",
-      "spelling": "nat",
-      "ipa": "/nʌt/",
-      "concept": "not the same",
-      "domain": "relationships",
-      "reason": "Fundamental relationships concept: not the same. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 919,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 58.6,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "part",
-      "spelling": "dak",
-      "ipa": "/dʌk/",
-      "concept": "a piece of a larger whole",
-      "domain": "relationships",
-      "reason": "Fundamental relationships concept: a piece of a larger whole. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 918,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 51.5,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "whole",
-      "spelling": "gafa",
-      "ipa": "/gafa/",
-      "concept": "all parts together",
-      "domain": "relationships",
-      "reason": "Fundamental relationships concept: all parts together. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "priority": 917,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 78.7,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "mark",
-      "spelling": "gade",
-      "ipa": "/gade/",
-      "concept": "a visible sign, drawing, or trace",
-      "domain": "process",
-      "reason": "Fundamental process concept: a visible sign, drawing, or trace. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 916,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 79.4,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "source",
-      "spelling": "fan",
-      "ipa": "/fʌn/",
-      "concept": "where something begins",
-      "domain": "process",
-      "reason": "Fundamental process concept: where something begins. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 915,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 52.4,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "container",
-      "spelling": "bek",
-      "ipa": "/bɛk/",
-      "concept": "something that holds other things",
-      "domain": "process",
-      "reason": "Fundamental process concept: something that holds other things. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 914,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 50.9,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "flow",
-      "spelling": "kas",
-      "ipa": "/kʌs/",
-      "concept": "continuous passage without stopping",
-      "domain": "process",
-      "reason": "Fundamental process concept: continuous passage without stopping. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 913,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 55.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "pulse",
-      "spelling": "get",
-      "ipa": "/gɛt/",
-      "concept": "rhythmic recurrence",
-      "domain": "process",
-      "reason": "Fundamental process concept: rhythmic recurrence. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 912,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 54.4,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "still",
-      "spelling": "gal",
-      "ipa": "/gʌl/",
-      "concept": "without motion; staying",
-      "domain": "process",
-      "reason": "Fundamental process concept: without motion. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 911,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 54.1,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "will",
-      "spelling": "kaga",
-      "ipa": "/kaga/",
-      "concept": "intent; directed purpose",
-      "domain": "process",
-      "reason": "Fundamental process concept: intent. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 910,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 81.7,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "strong",
-      "spelling": "kame",
-      "ipa": "/kame/",
-      "concept": "great force; hard to break; power and leadership inherit from this",
-      "domain": "process",
-      "reason": "High-leverage root: great force. Appears frequently inside compounds.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "priority": 909,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 83.3,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "reach",
-      "spelling": "ru",
-      "ipa": "/rʊ/",
-      "concept": "extension through space",
-      "domain": "process",
-      "reason": "Fundamental process concept: extension through space. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 908,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 39,
-        "template": "CV",
-        "tier": "tertiary-cv"
-      }
-    },
-    {
-      "id": "wave",
-      "spelling": "lam",
-      "ipa": "/lʌm/",
-      "concept": "disturbance that travels outward",
-      "domain": "process",
-      "reason": "Fundamental process concept: disturbance that travels outward. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 907,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 56.1,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "food",
-      "spelling": "kel",
-      "ipa": "/kɛl/",
-      "concept": "what is eaten to sustain life",
-      "domain": "life",
-      "reason": "Fundamental life concept: what is eaten to sustain life. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 906,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 55.9,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "hand",
-      "spelling": "fet",
-      "ipa": "/fɛt/",
-      "concept": "the grasping part of the body",
-      "domain": "body",
-      "reason": "Fundamental body concept: the grasping part of the body. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 905,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 53.2,
-        "template": "CVC",
-        "tier": "cvc"
-      }
-    },
-    {
-      "id": "eye",
-      "spelling": "sage",
-      "ipa": "/sage/",
-      "concept": "the seeing part of the body",
-      "domain": "body",
-      "reason": "Fundamental body concept: the seeing part of the body. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 904,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 93.5,
-        "template": "CV-CV",
-        "tier": "disyllabic"
-      }
-    },
-    {
-      "id": "skin",
-      "spelling": "chu",
-      "ipa": "/tʃʊ/",
-      "concept": "the outer covering of the body",
-      "domain": "body",
-      "reason": "Fundamental body concept: the outer covering of the body. Cannot be naturally reduced into simpler Fonoran roots.",
-      "pronunciation_ease": 1,
-      "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 903,
-      "status": "pending",
-      "review": {
-        "approved_at": null,
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
@@ -2465,26 +665,2301 @@
       }
     },
     {
-      "id": "bone",
-      "spelling": "sala",
-      "ipa": "/sala/",
-      "concept": "the rigid inner frame of the body",
-      "domain": "body",
-      "reason": "Fundamental body concept: the rigid inner frame of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "id": "eat",
+      "spelling": "she",
+      "ipa": "/ʃɛ/",
+      "concept": "consume food",
+      "domain": "action",
+      "reason": "Fundamental action concept: consume food. Cannot be naturally reduced into simpler Fonoran roots.",
       "pronunciation_ease": 1,
       "pronunciation_ease_label": "difficult",
-      "semantic_usefulness": 2,
-      "semantic_usefulness_label": "low",
-      "priority": 902,
-      "status": "pending",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 974,
+      "status": "approved",
       "review": {
-        "approved_at": null,
+        "approved_at": "2026-06-27T22:04:59.886Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
       },
       "generation": {
-        "phonetic_cost": 93.1,
+        "phonetic_cost": 37,
+        "template": "CV",
+        "tier": "tertiary-cv"
+      }
+    },
+    {
+      "id": "sleep",
+      "spelling": "ja",
+      "ipa": "/dʒʌ/",
+      "concept": "rest in unconsciousness",
+      "domain": "action",
+      "reason": "Fundamental action concept: rest in unconsciousness. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 973,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 38,
+        "template": "CV",
+        "tier": "tertiary-cv"
+      }
+    },
+    {
+      "id": "thing",
+      "spelling": "fo",
+      "ipa": "/fɑ/",
+      "concept": "any entity; the primary noun dimension — book, meal, vehicle, lamp inherit from thing + X",
+      "domain": "ontology",
+      "reason": "High-leverage root: any entity. Appears frequently inside compounds.",
+      "pronunciation_ease": 4,
+      "pronunciation_ease_label": "easy",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 972,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 6,
+        "template": "CV",
+        "tier": "preferred-cv"
+      }
+    },
+    {
+      "id": "substance",
+      "spelling": "wi",
+      "ipa": "/wɪ/",
+      "concept": "physical stuff; matter",
+      "domain": "ontology",
+      "reason": "Fundamental ontology concept: physical stuff. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 971,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 23,
+        "template": "CV",
+        "tier": "secondary-cv"
+      }
+    },
+    {
+      "id": "form",
+      "spelling": "ben",
+      "ipa": "/bɛn/",
+      "concept": "shape or look of something",
+      "domain": "ontology",
+      "reason": "Fundamental ontology concept: shape or look of something. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 970,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 50.6,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "change",
+      "spelling": "dam",
+      "ipa": "/dʌm/",
+      "concept": "become different; grow, age, damage, improve inherit from this",
+      "domain": "ontology",
+      "reason": "High-leverage root: become different. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 969,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 51.3,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "empty",
+      "spelling": "fat",
+      "ipa": "/fʌt/",
+      "concept": "contains nothing; nothing inside",
+      "domain": "ontology",
+      "reason": "High-leverage root: contains nothing. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 968,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 52.6,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "water",
+      "spelling": "fek",
+      "ipa": "/fɛk/",
+      "concept": "liquid water to drink or touch",
+      "domain": "element",
+      "reason": "High-leverage root: liquid water to drink or touch. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 967,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 53.3,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "fire",
+      "spelling": "gas",
+      "ipa": "/gʌs/",
+      "concept": "flame; hot bright burning",
+      "domain": "element",
+      "reason": "Fundamental element concept: flame. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 966,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 54,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "earth",
+      "spelling": "gel",
+      "ipa": "/gɛl/",
+      "concept": "ground; dirt underfoot",
+      "domain": "element",
+      "reason": "Fundamental element concept: ground. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 965,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 54.7,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "air",
+      "spelling": "kan",
+      "ipa": "/kʌn/",
+      "concept": "what we breathe; invisible atmosphere",
+      "domain": "element",
+      "reason": "Fundamental element concept: what we breathe. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 964,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 54.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "light",
+      "spelling": "kem",
+      "ipa": "/kɛm/",
+      "concept": "brightness you can see by",
+      "domain": "element",
+      "reason": "Fundamental element concept: brightness you can see by. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 963,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 55.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "dark",
+      "spelling": "let",
+      "ipa": "/lɛt/",
+      "concept": "absence of light",
+      "domain": "element",
+      "reason": "Fundamental element concept: absence of light. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 962,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 56.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "hot",
+      "spelling": "mak",
+      "ipa": "/mʌk/",
+      "concept": "high temperature; burns",
+      "domain": "element",
+      "reason": "Fundamental element concept: high temperature. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 961,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 57.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "cold",
+      "spelling": "nes",
+      "ipa": "/nɛs/",
+      "concept": "low temperature; shiver",
+      "domain": "element",
+      "reason": "Fundamental element concept: low temperature. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 960,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 59.4,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "stone",
+      "spelling": "sal",
+      "ipa": "/sʌl/",
+      "concept": "hard rock",
+      "domain": "element",
+      "reason": "Fundamental element concept: hard rock. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 959,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 60.1,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "plant",
+      "spelling": "sen",
+      "ipa": "/sɛn/",
+      "concept": "living vegetation",
+      "domain": "element",
+      "reason": "Fundamental element concept: living vegetation. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 958,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 60.2,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "animal",
+      "spelling": "tem",
+      "ipa": "/tɛm/",
+      "concept": "living creature that is not a person",
+      "domain": "element",
+      "reason": "Fundamental element concept: living creature that is not a person. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 957,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 61.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "inside",
+      "spelling": "bet",
+      "ipa": "/bɛt/",
+      "concept": "within an interior",
+      "domain": "space",
+      "reason": "Fundamental space concept: within an interior. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 956,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 50.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "outside",
+      "spelling": "dak",
+      "ipa": "/dʌk/",
+      "concept": "beyond a boundary; exterior",
+      "domain": "space",
+      "reason": "Fundamental space concept: beyond a boundary. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 955,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 51.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "here",
+      "spelling": "fas",
+      "ipa": "/fʌs/",
+      "concept": "at this place",
+      "domain": "space",
+      "reason": "Fundamental space concept: at this place. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 954,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 52.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "there",
+      "spelling": "fel",
+      "ipa": "/fɛl/",
+      "concept": "at that place",
+      "domain": "space",
+      "reason": "Fundamental space concept: at that place. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 953,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 53.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "near",
+      "spelling": "gan",
+      "ipa": "/gʌn/",
+      "concept": "close in space",
+      "domain": "space",
+      "reason": "Fundamental space concept: close in space. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 952,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 53.6,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "far",
+      "spelling": "gek",
+      "ipa": "/gɛk/",
+      "concept": "distant in space",
+      "domain": "space",
+      "reason": "Fundamental space concept: distant in space. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 951,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 54.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "up",
+      "spelling": "kat",
+      "ipa": "/kʌt/",
+      "concept": "higher position",
+      "domain": "space",
+      "reason": "Fundamental space concept: higher position. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 950,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 55,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "down",
+      "spelling": "kes",
+      "ipa": "/kɛs/",
+      "concept": "lower position",
+      "domain": "space",
+      "reason": "Fundamental space concept: lower position. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 949,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 55.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "path",
+      "spelling": "mam",
+      "ipa": "/mʌm/",
+      "concept": "a way leading through space",
+      "domain": "space",
+      "reason": "Fundamental space concept: a way leading through space. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 948,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 57.3,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "place",
+      "spelling": "nal",
+      "ipa": "/nʌl/",
+      "concept": "a location; somewhere",
+      "domain": "space",
+      "reason": "Fundamental space concept: a location. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 947,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 58.9,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "surface",
+      "spelling": "len",
+      "ipa": "/lɛn/",
+      "concept": "outer face; what you touch on the outside",
+      "domain": "space",
+      "reason": "Fundamental space concept: outer face. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 946,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 56.6,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "bound",
+      "spelling": "nem",
+      "ipa": "/nɛm/",
+      "concept": "edge; where something stops",
+      "domain": "space",
+      "reason": "Fundamental space concept: edge. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 945,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 59.1,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "center",
+      "spelling": "sat",
+      "ipa": "/sʌt/",
+      "concept": "middle point",
+      "domain": "space",
+      "reason": "Fundamental space concept: middle point. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 944,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 59.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "before",
+      "spelling": "sek",
+      "ipa": "/sɛk/",
+      "concept": "earlier in time; yesterday inherits from this",
+      "domain": "time",
+      "reason": "High-leverage root: earlier in time. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 943,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 60.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "after",
+      "spelling": "tes",
+      "ipa": "/tɛs/",
+      "concept": "later in time; tomorrow inherits from this",
+      "domain": "time",
+      "reason": "High-leverage root: later in time. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 942,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 61.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "now",
+      "spelling": "tal",
+      "ipa": "/tʌl/",
+      "concept": "this moment",
+      "domain": "time",
+      "reason": "Fundamental time concept: this moment. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 941,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 61.3,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "time",
+      "spelling": "bel",
+      "ipa": "/bɛl/",
+      "concept": "duration; while things happen",
+      "domain": "time",
+      "reason": "Fundamental time concept: duration. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 940,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 51.1,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "one",
+      "spelling": "dan",
+      "ipa": "/dʌn/",
+      "concept": "a single unit",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: a single unit. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 939,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 51.2,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "many",
+      "spelling": "fam",
+      "ipa": "/fʌm/",
+      "concept": "large quantity; plurality",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: large quantity. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 938,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 52.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "all",
+      "spelling": "get",
+      "ipa": "/gɛt/",
+      "concept": "every one without exception",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: every one without exception. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 937,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 54.4,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "some",
+      "spelling": "kak",
+      "ipa": "/kʌk/",
+      "concept": "an indefinite portion",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: an indefinite portion. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 936,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 55.1,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "more",
+      "spelling": "mas",
+      "ipa": "/mʌs/",
+      "concept": "greater amount",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: greater amount. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 935,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 57.6,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "less",
+      "spelling": "fen",
+      "ipa": "/fɛn/",
+      "concept": "smaller amount",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: smaller amount. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 934,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 53,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "fast",
+      "spelling": "gam",
+      "ipa": "/gʌm/",
+      "concept": "quick; high speed",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: quick. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 933,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 53.7,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "love",
+      "spelling": "kel",
+      "ipa": "/kɛl/",
+      "concept": "deep affection; care",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: deep affection. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 932,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 55.9,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "fear",
+      "spelling": "lek",
+      "ipa": "/lɛk/",
+      "concept": "apprehension of harm",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: apprehension of harm. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "priority": 931,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 56.9,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "joy",
+      "spelling": "net",
+      "ipa": "/nɛt/",
+      "concept": "happiness; delight",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: happiness. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 930,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 59.2,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "pain",
+      "spelling": "sas",
+      "ipa": "/sʌs/",
+      "concept": "hurt; suffering",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: hurt. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 929,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 60,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "sad",
+      "spelling": "nan",
+      "ipa": "/nʌn/",
+      "concept": "sorrow; unhappiness",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: sorrow. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 928,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 58.4,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "good",
+      "spelling": "sem",
+      "ipa": "/sɛm/",
+      "concept": "desirable; works well",
+      "domain": "evaluation",
+      "reason": "Fundamental evaluation concept: desirable. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 927,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 60.3,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "bad",
+      "spelling": "tat",
+      "ipa": "/tʌt/",
+      "concept": "undesirable; harmful",
+      "domain": "evaluation",
+      "reason": "Fundamental evaluation concept: undesirable. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 926,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 61,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "true",
+      "spelling": "tek",
+      "ipa": "/tɛk/",
+      "concept": "corresponds to reality",
+      "domain": "evaluation",
+      "reason": "Fundamental evaluation concept: corresponds to reality. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 925,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 61.7,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "false",
+      "spelling": "les",
+      "ipa": "/lɛs/",
+      "concept": "does not correspond to reality",
+      "domain": "evaluation",
+      "reason": "Fundamental evaluation concept: does not correspond to reality. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 924,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 57,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "equal",
+      "spelling": "mal",
+      "ipa": "/mʌl/",
+      "concept": "same amount; fair match; balance and exchange inherit from this",
+      "domain": "evaluation",
+      "reason": "High-leverage root: same amount. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 923,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 57.7,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "bond",
+      "spelling": "nak",
+      "ipa": "/nʌk/",
+      "concept": "connection that holds together",
+      "domain": "relationships",
+      "reason": "High-leverage root: connection that holds together. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 922,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 58.7,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "conflict",
+      "spelling": "ten",
+      "ipa": "/tɛn/",
+      "concept": "opposition; clash; fight",
+      "domain": "relationships",
+      "reason": "High-leverage root: opposition. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 921,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 61.4,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "same",
+      "spelling": "nel",
+      "ipa": "/nɛl/",
+      "concept": "not different; matching",
+      "domain": "relationships",
+      "reason": "Fundamental relationships concept: not different. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 920,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 59.5,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "different",
+      "spelling": "sam",
+      "ipa": "/sʌm/",
+      "concept": "not the same",
+      "domain": "relationships",
+      "reason": "Fundamental relationships concept: not the same. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 919,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 59.7,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "part",
+      "spelling": "ses",
+      "ipa": "/sɛs/",
+      "concept": "a piece of a larger whole",
+      "domain": "relationships",
+      "reason": "Fundamental relationships concept: a piece of a larger whole. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 918,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 60.6,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "whole",
+      "spelling": "dat",
+      "ipa": "/dʌt/",
+      "concept": "all parts together",
+      "domain": "relationships",
+      "reason": "Fundamental relationships concept: all parts together. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 917,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 51.4,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "mark",
+      "spelling": "daba",
+      "ipa": "/daba/",
+      "concept": "a visible sign, drawing, or trace",
+      "domain": "process",
+      "reason": "Fundamental process concept: a visible sign, drawing, or trace. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 916,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 72.7,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "source",
+      "spelling": "dafe",
+      "ipa": "/dafe/",
+      "concept": "where something begins",
+      "domain": "process",
+      "reason": "Fundamental process concept: where something begins. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 915,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 74,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "container",
+      "spelling": "tas",
+      "ipa": "/tʌs/",
+      "concept": "something that holds other things",
+      "domain": "process",
+      "reason": "Fundamental process concept: something that holds other things. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 914,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 61.2,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "flow",
+      "spelling": "bem",
+      "ipa": "/bɛm/",
+      "concept": "continuous passage without stopping",
+      "domain": "process",
+      "reason": "Fundamental process concept: continuous passage without stopping. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 913,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 50.7,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "pulse",
+      "spelling": "ket",
+      "ipa": "/kɛt/",
+      "concept": "rhythmic recurrence",
+      "domain": "process",
+      "reason": "Fundamental process concept: rhythmic recurrence. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 912,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 55.6,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "still",
+      "spelling": "kal",
+      "ipa": "/kʌl/",
+      "concept": "without motion; staying",
+      "domain": "process",
+      "reason": "Fundamental process concept: without motion. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 911,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 55.3,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "will",
+      "spelling": "gak",
+      "ipa": "/gʌk/",
+      "concept": "intent; directed purpose",
+      "domain": "process",
+      "reason": "Fundamental process concept: intent. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 910,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 53.9,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "strong",
+      "spelling": "fan",
+      "ipa": "/fʌn/",
+      "concept": "great force; hard to break; power and leadership inherit from this",
+      "domain": "process",
+      "reason": "High-leverage root: great force. Appears frequently inside compounds.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "priority": 909,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 52.4,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "reach",
+      "spelling": "fada",
+      "ipa": "/fada/",
+      "concept": "extension through space",
+      "domain": "process",
+      "reason": "Fundamental process concept: extension through space. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 908,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 75.7,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "wave",
+      "spelling": "fabe",
+      "ipa": "/fabe/",
+      "concept": "disturbance that travels outward",
+      "domain": "process",
+      "reason": "Fundamental process concept: disturbance that travels outward. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 907,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 76.4,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "food",
+      "spelling": "gafa",
+      "ipa": "/gafa/",
+      "concept": "what is eaten to sustain life",
+      "domain": "life",
+      "reason": "Fundamental life concept: what is eaten to sustain life. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 906,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 78.7,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "hand",
+      "spelling": "gade",
+      "ipa": "/gade/",
+      "concept": "the grasping part of the body",
+      "domain": "body",
+      "reason": "Fundamental body concept: the grasping part of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 905,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 79.4,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "eye",
+      "spelling": "ges",
+      "ipa": "/gɛs/",
+      "concept": "the seeing part of the body",
+      "domain": "body",
+      "reason": "Fundamental body concept: the seeing part of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 904,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 54.6,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "skin",
+      "spelling": "ru",
+      "ipa": "/rʊ/",
+      "concept": "the outer covering of the body",
+      "domain": "body",
+      "reason": "Fundamental body concept: the outer covering of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 903,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 39,
+        "template": "CV",
+        "tier": "tertiary-cv"
+      }
+    },
+    {
+      "id": "bone",
+      "spelling": "fet",
+      "ipa": "/fɛt/",
+      "concept": "the rigid inner frame of the body",
+      "domain": "body",
+      "reason": "Fundamental body concept: the rigid inner frame of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 902,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 53.2,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "big",
+      "spelling": "man",
+      "ipa": "/mʌn/",
+      "concept": "large size; not small",
+      "domain": "quality",
+      "reason": "Fundamental quality concept: large size. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "priority": 901,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 57.2,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "small",
+      "spelling": "lel",
+      "ipa": "/lɛl/",
+      "concept": "little size; not big",
+      "domain": "quality",
+      "reason": "Fundamental quality concept: little size. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 900,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 57.1,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "head",
+      "spelling": "kaga",
+      "ipa": "/kaga/",
+      "concept": "upper body part; seat of mind",
+      "domain": "body",
+      "reason": "Fundamental body concept: upper body part. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 899,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 81.7,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "heart",
+      "spelling": "kame",
+      "ipa": "/kame/",
+      "concept": "central organ; seat of emotion",
+      "domain": "body",
+      "reason": "Fundamental body concept: central organ. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 898,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 83.3,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "mouth",
+      "spelling": "sak",
+      "ipa": "/sʌk/",
+      "concept": "oral opening; speech organ",
+      "domain": "body",
+      "reason": "Fundamental body concept: oral opening. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 897,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 59.9,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "grow",
+      "spelling": "tam",
+      "ipa": "/tʌm/",
+      "concept": "increase in size; develop",
+      "domain": "process",
+      "reason": "Fundamental process concept: increase in size. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 896,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 60.9,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "need",
+      "spelling": "nek",
+      "ipa": "/nɛk/",
+      "concept": "require; lack necessitating fulfillment",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: require. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 895,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 59.3,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "cause",
+      "spelling": "nas",
+      "ipa": "/nʌs/",
+      "concept": "what brings about an effect",
+      "domain": "relation",
+      "reason": "Fundamental relation concept: what brings about an effect. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 894,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 58.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "learn",
+      "spelling": "dal",
+      "ipa": "/dʌl/",
+      "concept": "acquire knowledge or skill",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: acquire knowledge or skill. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 893,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 51.7,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "teach",
+      "spelling": "ken",
+      "ipa": "/kɛn/",
+      "concept": "impart knowledge or skill",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: impart knowledge or skill. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 892,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 55.4,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "remember",
+      "spelling": "gem",
+      "ipa": "/gɛm/",
+      "concept": "retain in mind; recall past",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: retain in mind. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 891,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 54.3,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "known",
+      "spelling": "mage",
+      "ipa": "/mage/",
+      "concept": "established certainty; indexed truth",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: established certainty. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 890,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 88.1,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "unknown",
+      "spelling": "gat",
+      "ipa": "/gʌt/",
+      "concept": "not established; opaque",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: not established. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 889,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 53.8,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "name",
+      "spelling": "mata",
+      "ipa": "/mata/",
+      "concept": "identifier for an entity",
+      "domain": "communication",
+      "reason": "Fundamental communication concept: identifier for an entity. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 888,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 88.6,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "signal",
+      "spelling": "tel",
+      "ipa": "/tɛl/",
+      "concept": "discrete emission; communicative packet",
+      "domain": "communication",
+      "reason": "Fundamental communication concept: discrete emission. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 887,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 61.9,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "seed",
+      "spelling": "set",
+      "ipa": "/sɛt/",
+      "concept": "origin of new life; generative kernel",
+      "domain": "life",
+      "reason": "Fundamental life concept: origin of new life. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 886,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 60.4,
+        "template": "CVC",
+        "tier": "cvc"
+      }
+    },
+    {
+      "id": "cycle",
+      "spelling": "sane",
+      "ipa": "/sane/",
+      "concept": "return path; repeating sequence",
+      "domain": "process",
+      "reason": "Fundamental process concept: return path. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 885,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 94.7,
+        "template": "CV-CV",
+        "tier": "disyllabic"
+      }
+    },
+    {
+      "id": "void",
+      "spelling": "ju",
+      "ipa": "/dʒʊ/",
+      "concept": "absence; empty interior",
+      "domain": "ontology",
+      "reason": "Fundamental ontology concept: absence. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 884,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 38,
+        "template": "CV",
+        "tier": "tertiary-cv"
+      }
+    },
+    {
+      "id": "agent",
+      "spelling": "kasa",
+      "ipa": "/kasa/",
+      "concept": "activated locus; one who acts",
+      "domain": "agency",
+      "reason": "Fundamental agency concept: activated locus. Cannot be naturally reduced into simpler Fonoran roots.",
+      "pronunciation_ease": 1,
+      "pronunciation_ease_label": "difficult",
+      "semantic_usefulness": 2,
+      "semantic_usefulness_label": "low",
+      "priority": 883,
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-06-27T22:04:59.886Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 82.9,
         "template": "CV-CV",
         "tier": "disyllabic"
       }

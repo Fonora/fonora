@@ -40,6 +40,7 @@
           </button>
           <div class="nav-dropdown-menu" id="fonoran-nav-more-menu" role="menu" hidden>
             <p class="nav-dropdown-label" role="presentation">Vocabulary</p>
+            <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="wordgen" role="menuitem">Word Generator</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="roots" role="menuitem">Root Creator</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="create" role="menuitem">Word Creator</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="matcher" role="menuitem">Word Matcher</button>
@@ -202,8 +203,52 @@
               </div>
             </div>
 
-            <div id="tr-output" class="translator-output content-card" aria-live="polite">
-              <p class="translator-output__empty sans">Type English above to see Fonoran script and pronunciation.</p>
+          <div id="tr-output" class="translator-output content-card" aria-live="polite">
+            <p class="translator-output__empty sans">Type English above to see Fonoran script and pronunciation.</p>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section id="page-wordgen" class="page fonoran-split-page">
+        <div class="fonoran-split-shell" data-split-shell>
+          <div class="fonoran-split-chrome">
+            <div class="wg-beta-banner sans">
+              <span class="wg-beta-badge">Beta</span>
+              Word Generator is under active development. Component suggestions improve as more aliases and concepts are added. Words not resolved appear as unresolved tokens — add them manually below.
+            </div>
+            <p class="fonoran-split-chrome__intro sans">Type a concept to suggest root components, compose candidate compounds, and rank them by how cleanly they break down. Tweak the parts on the right, then add the word you like.</p>
+            <label class="fld" for="wg-input">English concept</label>
+            <div class="wg-chrome-row">
+              <input type="text" id="wg-input" placeholder="e.g. time traveler" autocomplete="off" spellcheck="true">
+              <button type="button" class="btn btn-primary" id="wg-run">Generate</button>
+            </div>
+            <div class="wg-examples sans">
+              <span class="wg-examples__label">Try:</span>
+              <button type="button" class="chip" data-wg-example="time traveler">time traveler</button>
+              <button type="button" class="chip" data-wg-example="fire mountain">fire mountain</button>
+              <button type="button" class="chip" data-wg-example="story teller">story teller</button>
+            </div>
+          </div>
+        </div>
+        <div class="fonoran-split-grid">
+          <aside class="fonoran-split-picker" aria-label="Generated words">
+            <div class="fonoran-split-picker__body" id="wg-list"></div>
+          </aside>
+          <div class="fonoran-split-workspace wg-editor" id="wg-editor" aria-live="polite">
+            <div id="wg-editor-detail">
+              <div class="fonoran-split-empty">
+                <p>Enter a concept above and press Generate. Generated words appear on the left — select one to preview and add it.</p>
+              </div>
+            </div>
+            <div class="wg-editor-section">
+              <label class="fld">Components <span class="sans wg-hint">— roots to combine, in order</span></label>
+              <div id="wg-component-chips" class="wg-chips"></div>
+              <div class="wg-add-row">
+                <input type="text" id="wg-add" list="wg-concept-list" placeholder="add a concept (e.g. far)" autocomplete="off">
+                <datalist id="wg-concept-list"></datalist>
+                <button type="button" class="btn" id="wg-add-btn">Add</button>
+              </div>
             </div>
           </div>
         </div>
@@ -439,7 +484,7 @@
           <div class="actions">
             <button type="button" class="btn" id="adv-dictionary">Full dictionary</button>
             <button type="button" class="btn" id="adv-health">Language health</button>
-            <button type="button" class="btn" id="adv-import-vocabulary" data-write>Import generated vocabulary (~280 words)</button>
+            <button type="button" class="btn" id="adv-import-vocabulary" data-write>Generate converged vocabulary (roots + words, for review)</button>
             <button type="button" class="btn" id="adv-reset-review" data-write>Reset all review states (keep meanings)</button>
             <button type="button" class="btn danger" id="adv-reseed" data-write>Reset lab (blank slate)</button>
           </div>

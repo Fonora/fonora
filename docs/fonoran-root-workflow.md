@@ -14,17 +14,41 @@ The previous workflow tried to freeze the entire semantic hierarchy before assig
 
 ## Workflow
 
+There is now **one converged pipeline**. `npm run fonoran:build` regenerates roots
+(locking everything you have approved), builds curated compounds from those roots,
+validates that every compound parses uniquely, and imports roots + compounds into
+the lab so Concept Editor, Dictionary and Health all read one consistent inventory.
+
 ```text
-Generate ~100 candidates → Root Review → Canonical roots → Compounds (later)
+fonoran:build → roots (approved locked) → compounds (unique-parse checked) → lab + health
 ```
 
 | Step | What happens |
 | --- | --- |
-| 1. Generate | `npm run fonoran:root-candidates` assigns spellings + IPA to ~99 concepts |
-| 2. Review | Open **Root Review** at `/fonoran/#root-review` |
+| 1. Build | `npm run fonoran:build` assigns spellings + IPA to the concept inventory, **locking approved spellings**, builds compounds, imports to lab |
+| 2. Review | Open **Root Review / Concept Editor** at `/fonoran/#root-review` |
 | 3. Decide | Approve, reject, edit spelling/meaning/pronunciation, or regenerate |
-| 4. Canonical | Approved roots → `data/fonoran-approved-roots.json` + lab dictionary |
-| 5. Compounds | Only after ~100 roots stabilize — build words from canonical roots |
+| 4. Rebuild | Re-run `fonoran:build`; approved roots stay locked, the rest re-optimize |
+| 5. Health | Live scores at `/fonoran/` → Health (Parseability comes from the curated compounds) |
+
+> `npm run fonoran:root-candidates` still exists to refresh candidates **without**
+> touching the lab; `fonoran:build` calls it internally and then composes + imports.
+
+### Converging the two old generators
+
+`fonoran:root-candidates` (human-review roots) and the retired `fonoran:primitive-roots`
+(bulk lab seed) used **incompatible concept vocabularies**, so they produced different
+spellings for the same ideas and only ~20% of the old compounds resolved. They are now
+merged into a single source:
+
+- **Concepts:** `data/fonoran-concept-inventory.json` — 99 core primitives + 19 curated
+  extended dimensions (size, body parts, cognition verbs) pulled from the old 200-set
+  where they did not conflict.
+- **Compounds:** `data/fonoran-compounds.json` — curated transparent compounds authored
+  in that one vocabulary, prefer two roots, dropped automatically if they ever parse
+  ambiguously.
+- **Approved feel preserved:** every approved spelling is locked before assignment, so
+  the language keeps the sound you signed off on.
 
 ## Unified concepts
 
@@ -63,10 +87,12 @@ Sound assignment optimizes for:
 
 | File | Role |
 | --- | --- |
-| [`data/fonoran-semantic-primitives.json`](../data/fonoran-semantic-primitives.json) | Concept inventory (no phonetics) |
+| [`data/fonoran-concept-inventory.json`](../data/fonoran-concept-inventory.json) | **Converged** concept inventory: 99 core + 19 extended (no phonetics) |
+| [`data/fonoran-compounds.json`](../data/fonoran-compounds.json) | Curated transparent compound definitions |
 | [`data/fonoran-root-candidates.json`](../data/fonoran-root-candidates.json) | Proposed roots awaiting review |
-| [`data/fonoran-approved-roots.json`](../data/fonoran-approved-roots.json) | Human-approved canonical roots |
-| [`tools/fonoran-root-candidates.js`](../tools/fonoran-root-candidates.js) | Generator |
+| [`data/fonoran-semantic-primitives.json`](../data/fonoran-semantic-primitives.json) | Original 99 primitives (reference; core of the inventory) |
+| [`tools/fonoran-build.js`](../tools/fonoran-build.js) | **Unified build** (roots → compounds → lab → health) |
+| [`tools/fonoran-root-candidates.js`](../tools/fonoran-root-candidates.js) | Root generator (called by the build) |
 | [`tools/fonoran-root-store.js`](../tools/fonoran-root-store.js) | Review API persistence |
 
 ## API
@@ -93,8 +119,42 @@ The semantic foundation docs remain useful **reference material** for compound d
 ## Commands
 
 ```bash
-npm run fonoran:root-candidates   # generate / refresh candidates
+npm run fonoran:reset             # blank slate: clears lab + review queue + canonical roots
+npm run fonoran:build             # generate everything for MANUAL review (nothing approved)
+npm run fonoran:build:approved    # generate everything PRE-APPROVED across all layers (testing)
+npm run fonoran:build -- --approve-all   # equivalent flag form
+npm run fonoran:root-candidates   # refresh candidates only (no lab import)
 npm start                         # open /fonoran/#root-review
 ```
+
+### Typical loops
+
+```bash
+# Manual review loop (your main workflow)
+npm run fonoran:reset && npm run fonoran:build   # 118 roots + 46 words, all "needs review"
+#   → open /fonoran/#root-review and approve/reject/edit by hand
+
+# Quick full-language test (skip review)
+npm run fonoran:reset && npm run fonoran:build:approved   # everything approved everywhere
+
+# Deprecated (now error out, kept only as pointers):
+#   npm run fonoran:primitive-roots
+#   npm run fonoran:primitive-roots:gen
+#   npm run fonoran:primitive-roots:import
+```
+
+---
+
+## Open-source credits
+
+The language generation and Word Generator tooling relies on the following open-source resources:
+
+| Tool | Source | Used for |
+|---|---|---|
+| **WordNet** | Princeton University (George A. Miller, Christiane Fellbaum et al.) · [wordnet.princeton.edu](https://wordnet.princeton.edu) · [License](https://wordnet.princeton.edu/license-and-commercial-use) | Semantic lexical database: synonym synsets, hypernym (is-a) chains used by the Word Generator to map English input to Fonoran concept primitives |
+| **wordpos** | [npmjs.com/package/wordpos](https://www.npmjs.com/package/wordpos) · MIT License | Node.js interface to the WordNet database |
+| **fonoran-semantic-lookup.js** | Internal (`tools/`) | Thin wrapper over wordpos with local caching (`data/fonoran-semantic-cache.json`) and a curated hypernym bridge table mapping WordNet categories to Fonoran concept IDs |
+
+WordNet license summary: free for research and non-commercial use with attribution. See the full license before any commercial redistribution.
 
 *Related: [fonoran-grammar.md](fonoran-grammar.md) · [fonoran-semantic-foundation.md](fonoran-semantic-foundation.md) (reference)*

@@ -22,7 +22,8 @@ import {
 } from './fonoran-sound-bucket.js';
 import { loadEnglishLexicon } from './fonoran-english-lexicon.js';
 import { translateEnglish } from './fonoran-translator.js';
-import { importPrimitiveRootsVocabulary } from './fonoran-primitive-roots-import.js';
+import { buildFonoran } from './fonoran-build.js';
+import { generateWords } from './fonoran-word-generator.js';
 import {
   getRootCandidates,
   getRootCandidate,
@@ -104,6 +105,11 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const lab = await getLab();
       return done(200, await translateEnglish(body.text ?? '', { lab }));
     }
+    if (pathname === '/api/fonoran/word-generator' && method === 'POST') {
+      const body = await readJsonBody(req);
+      const lab = await getLab();
+      return done(200, await generateWords(body.text ?? '', { components: body.components ?? null, lab }));
+    }
     if (pathname === '/api/fonoran/lab/health' && method === 'GET') {
       return done(200, await getHealth());
     }
@@ -131,8 +137,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/lab/seed' && method === 'POST') {
       return done(200, await seedBucket());
     }
-    if (pathname === '/api/fonoran/lab/import-vocabulary' && method === 'POST') {
-      return done(200, await importPrimitiveRootsVocabulary());
+    if ((pathname === '/api/fonoran/lab/build' || pathname === '/api/fonoran/lab/import-vocabulary') && method === 'POST') {
+      const body = await readJsonBody(req);
+      return done(200, await buildFonoran({ approveAll: Boolean(body.approve_all) }));
     }
     if (pathname === '/api/fonoran/lab/reset-review' && method === 'POST') {
       return done(200, await resetReviewStates());

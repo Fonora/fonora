@@ -11,7 +11,7 @@ import { romanToIpa } from './fonoran-pronunciation.js';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CANDIDATES_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
 const APPROVED_PATH = join(ROOT, 'data/fonoran-approved-roots.json');
-const SEMANTIC_PATH = join(ROOT, 'data/fonoran-semantic-primitives.json');
+const SEMANTIC_PATH = join(ROOT, 'data/fonoran-concept-inventory.json');
 
 const STOP = new Set([
   'a', 'an', 'the', 'of', 'to', 'in', 'on', 'at', 'for', 'and', 'or', 'is', 'are', 'be', 'with',
@@ -32,7 +32,7 @@ const EXTRA_ALIASES = {
   life: ['alive', 'living', 'live'],
   death: ['dead', 'die', 'dying'],
   birth: ['born', 'birth'],
-  move: ['motion', 'moving', 'go', 'going', 'went'],
+  move: ['motion', 'moving', 'go', 'going', 'went', 'travel', 'traveling', 'journey'],
   give: ['gift', 'giving'],
   take: ['taking', 'receive'],
   hold: ['holding', 'keep', 'keeping'],
@@ -40,7 +40,7 @@ const EXTRA_ALIASES = {
   help: ['helping', 'aid', 'assist'],
   make: ['making', 'create', 'creating'],
   do: ['doing', 'act', 'action'],
-  speak: ['say', 'saying', 'said', 'talk', 'talking', 'speech', 'language'],
+  speak: ['say', 'saying', 'said', 'talk', 'talking', 'speech', 'language', 'tell', 'telling', 'told', 'narrate', 'narrating', 'narration', 'story', 'stories', 'recount', 'recounting'],
   see: ['seeing', 'sight', 'look', 'looking'],
   hear: ['hearing', 'listen', 'listening'],
   touch: ['touching', 'feel'],
@@ -215,18 +215,40 @@ export function buildConceptAliasIndex(concepts, lab = null) {
     index.set(key, entry);
   };
 
+  const baseFor = (c) => ({
+    english: c.id,
+    concept_id: c.id,
+    gloss: c.concept,
+    fonoran: c.spelling,
+    kind: 'primitive',
+    parts: [c.spelling],
+    source: 'concept',
+    domain: c.domain,
+  });
+
+  // Strong aliases (concept id + curated/stored synonyms) claim keys first so an
+  // incidental gloss word (e.g. "time" inside before's gloss) can never shadow the
+  // real concept (time).
+  const strongAliases = (c) => {
+    const out = [c.id, c.id.replace(/_/g, ' ')];
+    const stored = c.stored_aliases;
+    if (Array.isArray(stored) && stored.length) out.push(...stored.map(a => String(a).toLowerCase()));
+    else out.push(...(EXTRA_ALIASES[c.id] ?? []).map(a => a.toLowerCase()));
+    return out;
+  };
+  // Weak aliases derived from the gloss text: only fill gaps left by strong ones.
+  const weakAliases = (c) => {
+    const lead = String(c.concept ?? '').split(';')[0].trim().toLowerCase();
+    return [lead, ...glossTokens(c.concept)];
+  };
+
   for (const c of concepts) {
-    const base = {
-      english: c.id,
-      concept_id: c.id,
-      gloss: c.concept,
-      fonoran: c.spelling,
-      kind: 'primitive',
-      parts: [c.spelling],
-      source: 'concept',
-      domain: c.domain,
-    };
-    for (const alias of c.aliases) register(alias, { ...base, matched_alias: alias });
+    const base = baseFor(c);
+    for (const alias of strongAliases(c)) register(alias, { ...base, matched_alias: alias });
+  }
+  for (const c of concepts) {
+    const base = baseFor(c);
+    for (const alias of weakAliases(c)) register(alias, { ...base, matched_alias: alias });
   }
 
   for (const sound of lab?.sounds ?? []) {

@@ -19,7 +19,8 @@ import {
 } from './fonoran-root-sound-assign.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SEMANTIC_PATH = join(ROOT, 'data/fonoran-semantic-primitives.json');
+// Converged source of truth: 99 core primitives + curated extended dimensions.
+const SEMANTIC_PATH = join(ROOT, 'data/fonoran-concept-inventory.json');
 const PHONETICS_PATH = join(ROOT, 'data/fonoran-primitive-roots-config.json');
 const OUTPUT_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
 
@@ -143,7 +144,7 @@ export async function generateRootCandidates({ preserveReview = true } = {}) {
     philosophy: {
       premise: 'Words come first. The semantic network evolves after roots are approved.',
       workflow: 'Generate candidates → human review → canonical roots → compounds later',
-      source_concepts: 'data/fonoran-semantic-primitives.json',
+      source_concepts: 'data/fonoran-concept-inventory.json',
     },
     summary,
     candidates,

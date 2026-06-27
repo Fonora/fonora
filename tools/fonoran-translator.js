@@ -28,11 +28,7 @@ import {
 const GRAMMAR_SKELETON = 'Subject · Time · Event · Path · Object · Modifiers';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const VOCAB_PATH = join(ROOT, 'data/fonoran-primitive-roots.json');
 const PARTICLES_PATH = join(ROOT, 'data/fonoran-grammar-particles.json');
-
-/** @type {Map<string, object> | null} */
-let vocabularyIndex = null;
 
 const SKIP = new Set([
   'a', 'an', 'the', 'to', 'at', 'in', 'on', 'of', 'for', 'with', 'by', 'from', 'into', 'about',
@@ -149,33 +145,15 @@ function pronunciationForParts(parts) {
   };
 }
 
-async function loadVocabularyFile() {
-  if (vocabularyIndex) return vocabularyIndex;
-  const raw = JSON.parse(await readFile(VOCAB_PATH, 'utf8'));
-  const index = new Map();
-  for (const item of raw.vocabulary ?? []) {
-    const key = String(item.english ?? '').trim().toLowerCase();
-    if (!key) continue;
-    index.set(key, {
-      english: key,
-      gloss: item.gloss ?? '',
-      fonoran: item.fonoran,
-      kind: item.kind ?? 'primitive',
-      composition_readable: item.composition_readable ?? null,
-      composition_roots: item.composition_roots ?? null,
-      source: 'vocabulary',
-    });
-  }
-  vocabularyIndex = index;
-  return index;
-}
-
 async function loadTranslationIndex(lab) {
-  const index = await loadVocabularyFile();
+  // Converged source of truth: the concept inventory (root-candidates) + the live lab.
+  // The retired data/fonoran-primitive-roots.json is intentionally NOT consulted, so the
+  // Translator can only produce words that actually exist in the Dictionary / Concept Editor.
+  const index = new Map();
   const inventory = await loadConceptInventory();
   const conceptIndex = buildConceptAliasIndex(inventory.concepts, null);
   for (const [key, entry] of conceptIndex) {
-    if (!index.has(key)) index.set(key, entry);
+    index.set(key, entry);
   }
   for (const sound of lab?.sounds ?? []) {
     const meaning = String(sound.meaning ?? sound.legacy_label ?? '').trim().toLowerCase();
@@ -565,6 +543,5 @@ export async function loadGrammarParticlesMeta() {
 
 /** Reset cached vocabulary (tests). */
 export function resetTranslatorCache() {
-  vocabularyIndex = null;
   resetInterpretationCache();
 }

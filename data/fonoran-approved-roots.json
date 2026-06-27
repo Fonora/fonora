@@ -1,8 +1,8 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-06-26T05:23:39.442Z",
+  "updated_at": "2026-06-27T22:04:59.886Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
-  "root_count": 18,
+  "root_count": 118,
   "roots": [
     {
       "id": "person",
@@ -11,7 +11,7 @@
       "concept": "a sentient being; someone",
       "domain": "being",
       "reason": "High-leverage root: a sentient being. Appears frequently inside compounds.",
-      "approved_at": "2026-06-26T05:20:40.581Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "self",
@@ -20,7 +20,16 @@
       "concept": "oneself; me or mine",
       "domain": "being",
       "reason": "High-leverage root: oneself. Appears frequently inside compounds.",
-      "approved_at": "2026-06-26T05:20:44.430Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "collective",
+      "spelling": "fi",
+      "ipa": "/fɪ/",
+      "concept": "many treated as one",
+      "domain": "being",
+      "reason": "Fundamental being concept: many treated as one. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "body",
@@ -29,7 +38,7 @@
       "concept": "the physical form of a being",
       "domain": "being",
       "reason": "Fundamental being concept: the physical form of a being. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:22:10.749Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "life",
@@ -38,7 +47,34 @@
       "concept": "the state of being alive",
       "domain": "being",
       "reason": "High-leverage root: the state of being alive. Appears frequently inside compounds.",
-      "approved_at": "2026-06-26T05:22:18.381Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "death",
+      "spelling": "la",
+      "ipa": "/lʌ/",
+      "concept": "the end of life",
+      "domain": "being",
+      "reason": "Fundamental being concept: the end of life. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "birth",
+      "spelling": "me",
+      "ipa": "/mɛ/",
+      "concept": "the beginning of an individual life",
+      "domain": "being",
+      "reason": "Fundamental being concept: the beginning of an individual life. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "breath",
+      "spelling": "ni",
+      "ipa": "/nɪ/",
+      "concept": "the air stream of living",
+      "domain": "being",
+      "reason": "Fundamental being concept: the air stream of living. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "move",
@@ -47,7 +83,7 @@
       "concept": "change position in space; all locomotion inherits from this",
       "domain": "action",
       "reason": "High-leverage root: change position in space. Appears frequently inside compounds.",
-      "approved_at": "2026-06-26T05:22:48.400Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "give",
@@ -56,7 +92,7 @@
       "concept": "transfer something to another",
       "domain": "action",
       "reason": "High-leverage root: transfer something to another. Appears frequently inside compounds.",
-      "approved_at": "2026-06-26T05:22:55.914Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "take",
@@ -65,7 +101,16 @@
       "concept": "receive something from another",
       "domain": "action",
       "reason": "High-leverage root: receive something from another. Appears frequently inside compounds.",
-      "approved_at": "2026-06-26T05:22:58.196Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "hold",
+      "spelling": "we",
+      "ipa": "/wɛ/",
+      "concept": "retain in grasp or keeping",
+      "domain": "action",
+      "reason": "Fundamental action concept: retain in grasp or keeping. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "use",
@@ -74,25 +119,25 @@
       "concept": "employ a thing for a purpose",
       "domain": "action",
       "reason": "Fundamental action concept: employ a thing for a purpose. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:08.750Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "help",
-      "spelling": "nu",
-      "ipa": "/nʊ/",
+      "spelling": "lu",
+      "ipa": "/lʊ/",
       "concept": "act so another can do or have",
       "domain": "action",
       "reason": "Fundamental action concept: act so another can do or have. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:17.564Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "make",
-      "spelling": "to",
-      "ipa": "/tɑ/",
+      "spelling": "no",
+      "ipa": "/nɑ/",
       "concept": "bring something into being",
       "domain": "action",
       "reason": "Fundamental action concept: bring something into being. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:20.115Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "do",
@@ -101,7 +146,7 @@
       "concept": "perform an action; act",
       "domain": "action",
       "reason": "Fundamental action concept: perform an action. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:21.396Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "speak",
@@ -110,61 +155,916 @@
       "concept": "talk; use the voice with words",
       "domain": "action",
       "reason": "High-leverage root: talk. Appears frequently inside compounds.",
-      "approved_at": "2026-06-26T05:23:24.863Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "see",
-      "spelling": "si",
-      "ipa": "/sɪ/",
+      "spelling": "to",
+      "ipa": "/tɑ/",
       "concept": "perceive with the eyes",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the eyes. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:26.563Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "hear",
-      "spelling": "wa",
-      "ipa": "/wʌ/",
+      "spelling": "si",
+      "ipa": "/sɪ/",
       "concept": "perceive with the ears",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the ears. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:27.929Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "touch",
+      "spelling": "wa",
+      "ipa": "/wʌ/",
+      "concept": "feel by contact with skin",
+      "domain": "action",
+      "reason": "Fundamental action concept: feel by contact with skin. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "smell",
-      "spelling": "ye",
-      "ipa": "/jɛ/",
+      "spelling": "mu",
+      "ipa": "/mʊ/",
       "concept": "perceive with the nose",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the nose. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:34.431Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "taste",
-      "spelling": "pu",
-      "ipa": "/pʊ/",
+      "spelling": "ye",
+      "ipa": "/jɛ/",
       "concept": "perceive with the mouth",
       "domain": "action",
       "reason": "Fundamental action concept: perceive with the mouth. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:36.130Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "know",
-      "spelling": "ja",
-      "ipa": "/dʒʌ/",
+      "spelling": "hi",
+      "ipa": "/hɪ/",
       "concept": "understand; hold as true",
       "domain": "action",
       "reason": "High-leverage root: understand. Appears frequently inside compounds.",
-      "approved_at": "2026-06-26T05:23:38.081Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
     },
     {
       "id": "think",
-      "spelling": "mo",
-      "ipa": "/mɑ/",
+      "spelling": "pa",
+      "ipa": "/pʌ/",
       "concept": "use the mind",
       "domain": "action",
       "reason": "Fundamental action concept: use the mind. Cannot be naturally reduced into simpler Fonoran roots.",
-      "approved_at": "2026-06-26T05:23:39.431Z"
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "feel",
+      "spelling": "ko",
+      "ipa": "/kɑ/",
+      "concept": "experience inner sensation",
+      "domain": "action",
+      "reason": "Fundamental action concept: experience inner sensation. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "want",
+      "spelling": "chu",
+      "ipa": "/tʃʊ/",
+      "concept": "desire; wish for",
+      "domain": "action",
+      "reason": "Fundamental action concept: desire. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "eat",
+      "spelling": "she",
+      "ipa": "/ʃɛ/",
+      "concept": "consume food",
+      "domain": "action",
+      "reason": "Fundamental action concept: consume food. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "sleep",
+      "spelling": "ja",
+      "ipa": "/dʒʌ/",
+      "concept": "rest in unconsciousness",
+      "domain": "action",
+      "reason": "Fundamental action concept: rest in unconsciousness. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "thing",
+      "spelling": "fo",
+      "ipa": "/fɑ/",
+      "concept": "any entity; the primary noun dimension — book, meal, vehicle, lamp inherit from thing + X",
+      "domain": "ontology",
+      "reason": "High-leverage root: any entity. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "substance",
+      "spelling": "wi",
+      "ipa": "/wɪ/",
+      "concept": "physical stuff; matter",
+      "domain": "ontology",
+      "reason": "Fundamental ontology concept: physical stuff. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "form",
+      "spelling": "ben",
+      "ipa": "/bɛn/",
+      "concept": "shape or look of something",
+      "domain": "ontology",
+      "reason": "Fundamental ontology concept: shape or look of something. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "change",
+      "spelling": "dam",
+      "ipa": "/dʌm/",
+      "concept": "become different; grow, age, damage, improve inherit from this",
+      "domain": "ontology",
+      "reason": "High-leverage root: become different. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "empty",
+      "spelling": "fat",
+      "ipa": "/fʌt/",
+      "concept": "contains nothing; nothing inside",
+      "domain": "ontology",
+      "reason": "High-leverage root: contains nothing. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "water",
+      "spelling": "fek",
+      "ipa": "/fɛk/",
+      "concept": "liquid water to drink or touch",
+      "domain": "element",
+      "reason": "High-leverage root: liquid water to drink or touch. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "fire",
+      "spelling": "gas",
+      "ipa": "/gʌs/",
+      "concept": "flame; hot bright burning",
+      "domain": "element",
+      "reason": "Fundamental element concept: flame. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "earth",
+      "spelling": "gel",
+      "ipa": "/gɛl/",
+      "concept": "ground; dirt underfoot",
+      "domain": "element",
+      "reason": "Fundamental element concept: ground. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "air",
+      "spelling": "kan",
+      "ipa": "/kʌn/",
+      "concept": "what we breathe; invisible atmosphere",
+      "domain": "element",
+      "reason": "Fundamental element concept: what we breathe. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "light",
+      "spelling": "kem",
+      "ipa": "/kɛm/",
+      "concept": "brightness you can see by",
+      "domain": "element",
+      "reason": "Fundamental element concept: brightness you can see by. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "dark",
+      "spelling": "let",
+      "ipa": "/lɛt/",
+      "concept": "absence of light",
+      "domain": "element",
+      "reason": "Fundamental element concept: absence of light. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "hot",
+      "spelling": "mak",
+      "ipa": "/mʌk/",
+      "concept": "high temperature; burns",
+      "domain": "element",
+      "reason": "Fundamental element concept: high temperature. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "cold",
+      "spelling": "nes",
+      "ipa": "/nɛs/",
+      "concept": "low temperature; shiver",
+      "domain": "element",
+      "reason": "Fundamental element concept: low temperature. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "stone",
+      "spelling": "sal",
+      "ipa": "/sʌl/",
+      "concept": "hard rock",
+      "domain": "element",
+      "reason": "Fundamental element concept: hard rock. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "plant",
+      "spelling": "sen",
+      "ipa": "/sɛn/",
+      "concept": "living vegetation",
+      "domain": "element",
+      "reason": "Fundamental element concept: living vegetation. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "animal",
+      "spelling": "tem",
+      "ipa": "/tɛm/",
+      "concept": "living creature that is not a person",
+      "domain": "element",
+      "reason": "Fundamental element concept: living creature that is not a person. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "inside",
+      "spelling": "bet",
+      "ipa": "/bɛt/",
+      "concept": "within an interior",
+      "domain": "space",
+      "reason": "Fundamental space concept: within an interior. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "outside",
+      "spelling": "dak",
+      "ipa": "/dʌk/",
+      "concept": "beyond a boundary; exterior",
+      "domain": "space",
+      "reason": "Fundamental space concept: beyond a boundary. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "here",
+      "spelling": "fas",
+      "ipa": "/fʌs/",
+      "concept": "at this place",
+      "domain": "space",
+      "reason": "Fundamental space concept: at this place. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "there",
+      "spelling": "fel",
+      "ipa": "/fɛl/",
+      "concept": "at that place",
+      "domain": "space",
+      "reason": "Fundamental space concept: at that place. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "near",
+      "spelling": "gan",
+      "ipa": "/gʌn/",
+      "concept": "close in space",
+      "domain": "space",
+      "reason": "Fundamental space concept: close in space. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "far",
+      "spelling": "gek",
+      "ipa": "/gɛk/",
+      "concept": "distant in space",
+      "domain": "space",
+      "reason": "Fundamental space concept: distant in space. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "up",
+      "spelling": "kat",
+      "ipa": "/kʌt/",
+      "concept": "higher position",
+      "domain": "space",
+      "reason": "Fundamental space concept: higher position. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "down",
+      "spelling": "kes",
+      "ipa": "/kɛs/",
+      "concept": "lower position",
+      "domain": "space",
+      "reason": "Fundamental space concept: lower position. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "path",
+      "spelling": "mam",
+      "ipa": "/mʌm/",
+      "concept": "a way leading through space",
+      "domain": "space",
+      "reason": "Fundamental space concept: a way leading through space. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "place",
+      "spelling": "nal",
+      "ipa": "/nʌl/",
+      "concept": "a location; somewhere",
+      "domain": "space",
+      "reason": "Fundamental space concept: a location. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "surface",
+      "spelling": "len",
+      "ipa": "/lɛn/",
+      "concept": "outer face; what you touch on the outside",
+      "domain": "space",
+      "reason": "Fundamental space concept: outer face. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "bound",
+      "spelling": "nem",
+      "ipa": "/nɛm/",
+      "concept": "edge; where something stops",
+      "domain": "space",
+      "reason": "Fundamental space concept: edge. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "center",
+      "spelling": "sat",
+      "ipa": "/sʌt/",
+      "concept": "middle point",
+      "domain": "space",
+      "reason": "Fundamental space concept: middle point. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "before",
+      "spelling": "sek",
+      "ipa": "/sɛk/",
+      "concept": "earlier in time; yesterday inherits from this",
+      "domain": "time",
+      "reason": "High-leverage root: earlier in time. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "after",
+      "spelling": "tes",
+      "ipa": "/tɛs/",
+      "concept": "later in time; tomorrow inherits from this",
+      "domain": "time",
+      "reason": "High-leverage root: later in time. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "now",
+      "spelling": "tal",
+      "ipa": "/tʌl/",
+      "concept": "this moment",
+      "domain": "time",
+      "reason": "Fundamental time concept: this moment. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "time",
+      "spelling": "bel",
+      "ipa": "/bɛl/",
+      "concept": "duration; while things happen",
+      "domain": "time",
+      "reason": "Fundamental time concept: duration. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "one",
+      "spelling": "dan",
+      "ipa": "/dʌn/",
+      "concept": "a single unit",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: a single unit. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "many",
+      "spelling": "fam",
+      "ipa": "/fʌm/",
+      "concept": "large quantity; plurality",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: large quantity. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "all",
+      "spelling": "get",
+      "ipa": "/gɛt/",
+      "concept": "every one without exception",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: every one without exception. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "some",
+      "spelling": "kak",
+      "ipa": "/kʌk/",
+      "concept": "an indefinite portion",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: an indefinite portion. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "more",
+      "spelling": "mas",
+      "ipa": "/mʌs/",
+      "concept": "greater amount",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: greater amount. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "less",
+      "spelling": "fen",
+      "ipa": "/fɛn/",
+      "concept": "smaller amount",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: smaller amount. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "fast",
+      "spelling": "gam",
+      "ipa": "/gʌm/",
+      "concept": "quick; high speed",
+      "domain": "quantity",
+      "reason": "Fundamental quantity concept: quick. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "love",
+      "spelling": "kel",
+      "ipa": "/kɛl/",
+      "concept": "deep affection; care",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: deep affection. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "fear",
+      "spelling": "lek",
+      "ipa": "/lɛk/",
+      "concept": "apprehension of harm",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: apprehension of harm. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "joy",
+      "spelling": "net",
+      "ipa": "/nɛt/",
+      "concept": "happiness; delight",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: happiness. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "pain",
+      "spelling": "sas",
+      "ipa": "/sʌs/",
+      "concept": "hurt; suffering",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: hurt. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "sad",
+      "spelling": "nan",
+      "ipa": "/nʌn/",
+      "concept": "sorrow; unhappiness",
+      "domain": "emotion",
+      "reason": "Fundamental emotion concept: sorrow. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "good",
+      "spelling": "sem",
+      "ipa": "/sɛm/",
+      "concept": "desirable; works well",
+      "domain": "evaluation",
+      "reason": "Fundamental evaluation concept: desirable. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "bad",
+      "spelling": "tat",
+      "ipa": "/tʌt/",
+      "concept": "undesirable; harmful",
+      "domain": "evaluation",
+      "reason": "Fundamental evaluation concept: undesirable. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "true",
+      "spelling": "tek",
+      "ipa": "/tɛk/",
+      "concept": "corresponds to reality",
+      "domain": "evaluation",
+      "reason": "Fundamental evaluation concept: corresponds to reality. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "false",
+      "spelling": "les",
+      "ipa": "/lɛs/",
+      "concept": "does not correspond to reality",
+      "domain": "evaluation",
+      "reason": "Fundamental evaluation concept: does not correspond to reality. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "equal",
+      "spelling": "mal",
+      "ipa": "/mʌl/",
+      "concept": "same amount; fair match; balance and exchange inherit from this",
+      "domain": "evaluation",
+      "reason": "High-leverage root: same amount. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "bond",
+      "spelling": "nak",
+      "ipa": "/nʌk/",
+      "concept": "connection that holds together",
+      "domain": "relationships",
+      "reason": "High-leverage root: connection that holds together. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "conflict",
+      "spelling": "ten",
+      "ipa": "/tɛn/",
+      "concept": "opposition; clash; fight",
+      "domain": "relationships",
+      "reason": "High-leverage root: opposition. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "same",
+      "spelling": "nel",
+      "ipa": "/nɛl/",
+      "concept": "not different; matching",
+      "domain": "relationships",
+      "reason": "Fundamental relationships concept: not different. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "different",
+      "spelling": "sam",
+      "ipa": "/sʌm/",
+      "concept": "not the same",
+      "domain": "relationships",
+      "reason": "Fundamental relationships concept: not the same. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "part",
+      "spelling": "ses",
+      "ipa": "/sɛs/",
+      "concept": "a piece of a larger whole",
+      "domain": "relationships",
+      "reason": "Fundamental relationships concept: a piece of a larger whole. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "whole",
+      "spelling": "dat",
+      "ipa": "/dʌt/",
+      "concept": "all parts together",
+      "domain": "relationships",
+      "reason": "Fundamental relationships concept: all parts together. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "mark",
+      "spelling": "daba",
+      "ipa": "/daba/",
+      "concept": "a visible sign, drawing, or trace",
+      "domain": "process",
+      "reason": "Fundamental process concept: a visible sign, drawing, or trace. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "source",
+      "spelling": "dafe",
+      "ipa": "/dafe/",
+      "concept": "where something begins",
+      "domain": "process",
+      "reason": "Fundamental process concept: where something begins. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "container",
+      "spelling": "tas",
+      "ipa": "/tʌs/",
+      "concept": "something that holds other things",
+      "domain": "process",
+      "reason": "Fundamental process concept: something that holds other things. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "flow",
+      "spelling": "bem",
+      "ipa": "/bɛm/",
+      "concept": "continuous passage without stopping",
+      "domain": "process",
+      "reason": "Fundamental process concept: continuous passage without stopping. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "pulse",
+      "spelling": "ket",
+      "ipa": "/kɛt/",
+      "concept": "rhythmic recurrence",
+      "domain": "process",
+      "reason": "Fundamental process concept: rhythmic recurrence. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "still",
+      "spelling": "kal",
+      "ipa": "/kʌl/",
+      "concept": "without motion; staying",
+      "domain": "process",
+      "reason": "Fundamental process concept: without motion. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "will",
+      "spelling": "gak",
+      "ipa": "/gʌk/",
+      "concept": "intent; directed purpose",
+      "domain": "process",
+      "reason": "Fundamental process concept: intent. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "strong",
+      "spelling": "fan",
+      "ipa": "/fʌn/",
+      "concept": "great force; hard to break; power and leadership inherit from this",
+      "domain": "process",
+      "reason": "High-leverage root: great force. Appears frequently inside compounds.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "reach",
+      "spelling": "fada",
+      "ipa": "/fada/",
+      "concept": "extension through space",
+      "domain": "process",
+      "reason": "Fundamental process concept: extension through space. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "wave",
+      "spelling": "fabe",
+      "ipa": "/fabe/",
+      "concept": "disturbance that travels outward",
+      "domain": "process",
+      "reason": "Fundamental process concept: disturbance that travels outward. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "food",
+      "spelling": "gafa",
+      "ipa": "/gafa/",
+      "concept": "what is eaten to sustain life",
+      "domain": "life",
+      "reason": "Fundamental life concept: what is eaten to sustain life. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "hand",
+      "spelling": "gade",
+      "ipa": "/gade/",
+      "concept": "the grasping part of the body",
+      "domain": "body",
+      "reason": "Fundamental body concept: the grasping part of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "eye",
+      "spelling": "ges",
+      "ipa": "/gɛs/",
+      "concept": "the seeing part of the body",
+      "domain": "body",
+      "reason": "Fundamental body concept: the seeing part of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "skin",
+      "spelling": "ru",
+      "ipa": "/rʊ/",
+      "concept": "the outer covering of the body",
+      "domain": "body",
+      "reason": "Fundamental body concept: the outer covering of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "bone",
+      "spelling": "fet",
+      "ipa": "/fɛt/",
+      "concept": "the rigid inner frame of the body",
+      "domain": "body",
+      "reason": "Fundamental body concept: the rigid inner frame of the body. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "big",
+      "spelling": "man",
+      "ipa": "/mʌn/",
+      "concept": "large size; not small",
+      "domain": "quality",
+      "reason": "Fundamental quality concept: large size. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "small",
+      "spelling": "lel",
+      "ipa": "/lɛl/",
+      "concept": "little size; not big",
+      "domain": "quality",
+      "reason": "Fundamental quality concept: little size. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "head",
+      "spelling": "kaga",
+      "ipa": "/kaga/",
+      "concept": "upper body part; seat of mind",
+      "domain": "body",
+      "reason": "Fundamental body concept: upper body part. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "heart",
+      "spelling": "kame",
+      "ipa": "/kame/",
+      "concept": "central organ; seat of emotion",
+      "domain": "body",
+      "reason": "Fundamental body concept: central organ. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "mouth",
+      "spelling": "sak",
+      "ipa": "/sʌk/",
+      "concept": "oral opening; speech organ",
+      "domain": "body",
+      "reason": "Fundamental body concept: oral opening. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "grow",
+      "spelling": "tam",
+      "ipa": "/tʌm/",
+      "concept": "increase in size; develop",
+      "domain": "process",
+      "reason": "Fundamental process concept: increase in size. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "need",
+      "spelling": "nek",
+      "ipa": "/nɛk/",
+      "concept": "require; lack necessitating fulfillment",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: require. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "cause",
+      "spelling": "nas",
+      "ipa": "/nʌs/",
+      "concept": "what brings about an effect",
+      "domain": "relation",
+      "reason": "Fundamental relation concept: what brings about an effect. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "learn",
+      "spelling": "dal",
+      "ipa": "/dʌl/",
+      "concept": "acquire knowledge or skill",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: acquire knowledge or skill. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "teach",
+      "spelling": "ken",
+      "ipa": "/kɛn/",
+      "concept": "impart knowledge or skill",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: impart knowledge or skill. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "remember",
+      "spelling": "gem",
+      "ipa": "/gɛm/",
+      "concept": "retain in mind; recall past",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: retain in mind. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "known",
+      "spelling": "mage",
+      "ipa": "/mage/",
+      "concept": "established certainty; indexed truth",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: established certainty. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "unknown",
+      "spelling": "gat",
+      "ipa": "/gʌt/",
+      "concept": "not established; opaque",
+      "domain": "cognition",
+      "reason": "Fundamental cognition concept: not established. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "name",
+      "spelling": "mata",
+      "ipa": "/mata/",
+      "concept": "identifier for an entity",
+      "domain": "communication",
+      "reason": "Fundamental communication concept: identifier for an entity. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "signal",
+      "spelling": "tel",
+      "ipa": "/tɛl/",
+      "concept": "discrete emission; communicative packet",
+      "domain": "communication",
+      "reason": "Fundamental communication concept: discrete emission. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "seed",
+      "spelling": "set",
+      "ipa": "/sɛt/",
+      "concept": "origin of new life; generative kernel",
+      "domain": "life",
+      "reason": "Fundamental life concept: origin of new life. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "cycle",
+      "spelling": "sane",
+      "ipa": "/sane/",
+      "concept": "return path; repeating sequence",
+      "domain": "process",
+      "reason": "Fundamental process concept: return path. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "void",
+      "spelling": "ju",
+      "ipa": "/dʒʊ/",
+      "concept": "absence; empty interior",
+      "domain": "ontology",
+      "reason": "Fundamental ontology concept: absence. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
+    },
+    {
+      "id": "agent",
+      "spelling": "kasa",
+      "ipa": "/kasa/",
+      "concept": "activated locus; one who acts",
+      "domain": "agency",
+      "reason": "Fundamental agency concept: activated locus. Cannot be naturally reduced into simpler Fonoran roots.",
+      "approved_at": "2026-06-27T22:04:59.886Z"
     }
   ]
 }

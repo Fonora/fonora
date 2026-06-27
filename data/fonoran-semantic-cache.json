@@ -1,0 +1,213 @@
+{
+  "mountain": {
+    "synonyms": [
+      "mount",
+      "batch",
+      "deal",
+      "flock",
+      "good deal",
+      "great deal",
+      "hatful",
+      "heap",
+      "lot",
+      "mass",
+      "mess",
+      "mickle",
+      "mint",
+      "muckle",
+      "passel",
+      "peck",
+      "pile",
+      "plenty",
+      "pot",
+      "quite a little",
+      "raft",
+      "sight",
+      "slew",
+      "spate",
+      "stack",
+      "tidy sum",
+      "wad"
+    ],
+    "hypernym_concepts": [
+      "earth",
+      "up"
+    ]
+  },
+  "travel": {
+    "synonyms": [
+      "traveling",
+      "travelling",
+      "change of location",
+      "locomotion",
+      "go",
+      "move",
+      "locomote",
+      "journey",
+      "trip",
+      "jaunt",
+      "move around"
+    ],
+    "hypernym_concepts": [
+      "move",
+      "far"
+    ]
+  },
+  "healer": {
+    "synonyms": [
+      "therapist"
+    ],
+    "hypernym_concepts": []
+  },
+  "warrior": {
+    "synonyms": [],
+    "hypernym_concepts": [
+      "person"
+    ]
+  },
+  "story": {
+    "synonyms": [
+      "narrative",
+      "narration",
+      "tale",
+      "floor",
+      "level",
+      "storey",
+      "history",
+      "account",
+      "chronicle",
+      "report",
+      "news report",
+      "write up",
+      "fib",
+      "tarradiddle",
+      "taradiddle"
+    ],
+    "hypernym_concepts": [
+      "thing"
+    ]
+  },
+  "storm": {
+    "synonyms": [
+      "violent storm",
+      "tempest",
+      "ramp",
+      "rage",
+      "force",
+      "surprise"
+    ],
+    "hypernym_concepts": [
+      "do"
+    ]
+  },
+  "river": {
+    "synonyms": [],
+    "hypernym_concepts": [
+      "water",
+      "move"
+    ]
+  },
+  "crossing": {
+    "synonyms": [
+      "ford",
+      "intersection",
+      "crossroad",
+      "crossway",
+      "carrefour",
+      "crosswalk",
+      "crossover",
+      "hybridization",
+      "hybridisation",
+      "crossbreeding",
+      "cross",
+      "interbreeding",
+      "hybridizing"
+    ],
+    "hypernym_concepts": [
+      "move",
+      "far"
+    ]
+  },
+  "wise": {
+    "synonyms": [
+      "stephen samuel wise",
+      "isaac mayer wise",
+      "judicious",
+      "heady",
+      "knowing",
+      "wise(p)",
+      "wise to(p)",
+      "fresh",
+      "impertinent",
+      "impudent",
+      "overbold",
+      "smart",
+      "saucy",
+      "sassy"
+    ],
+    "hypernym_concepts": []
+  },
+  "scholar": {
+    "synonyms": [
+      "scholarly person",
+      "bookman",
+      "student",
+      "learner",
+      "assimilator"
+    ],
+    "hypernym_concepts": [
+      "person"
+    ]
+  },
+  "ocean": {
+    "synonyms": [
+      "sea"
+    ],
+    "hypernym_concepts": []
+  },
+  "voyage": {
+    "synonyms": [
+      "ocean trip",
+      "sail",
+      "navigate"
+    ],
+    "hypernym_concepts": [
+      "move",
+      "far"
+    ]
+  },
+  "shaker": {
+    "synonyms": [
+      "mover and shaker"
+    ],
+    "hypernym_concepts": [
+      "person",
+      "hold"
+    ]
+  },
+  "night": {
+    "synonyms": [
+      "nighttime",
+      "dark",
+      "nox"
+    ],
+    "hypernym_concepts": []
+  },
+  "hunter": {
+    "synonyms": [
+      "huntsman",
+      "orion",
+      "hunting watch"
+    ],
+    "hypernym_concepts": []
+  },
+  "music": {
+    "synonyms": [
+      "euphony",
+      "medicine"
+    ],
+    "hypernym_concepts": [
+      "do"
+    ]
+  }
+}
