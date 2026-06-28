@@ -169,7 +169,7 @@
             <div class="grammar-toolbar__text">
               <p class="grammar-toolbar__tag">English → Fonoran</p>
               <h1 class="grammar-toolbar__title">Meaning compiler</h1>
-              <p class="grammar-toolbar__lead sans">Compiles English into Fonoran concepts, not word-for-word substitution. Unknown concepts appear in <span class="translator-unresolved-sample">red</span>.</p>
+              <p class="grammar-toolbar__lead sans">Compiles English into Fonoran concepts, not word-for-word substitution. Direct matches use normal text; interpreted mappings are <span class="translator-resolved--interpreted">yellow</span>, WordNet matches <span class="translator-resolved--semantic">orange</span>, guessed compounds <span class="translator-resolved--guessed">dashed orange</span>; unknown words stay <span class="translator-unresolved-sample">red</span>.</p>
             </div>
             <a class="btn grammar-toolbar__source" href="#grammar">Grammar rules</a>
           </header>
@@ -200,10 +200,10 @@
                   <!-- When more source locales ship: add <select id="tr-source-lang" class="translator-panel__lang-select"> and hide .translator-panel__lang-text -->
                 </label>
               </div>
-              <textarea id="tr-input" class="translator-input" rows="6" placeholder="e.g. Law&#10;I love my family&#10;The tribe is at war" autocomplete="off" spellcheck="true" aria-labelledby="tr-source-lang-label"></textarea>
+              <textarea id="tr-input" class="translator-input" rows="6" placeholder="e.g. All men are created equal&#10;The air feels cool&#10;The tribe is at war" autocomplete="off" spellcheck="true" aria-labelledby="tr-source-lang-label"></textarea>
               <div class="translator-examples sans">
                 <span class="translator-examples__label">Try:</span>
-                <button type="button" class="chip" data-tr-example="Law">Law</button>
+                <button type="button" class="chip" data-tr-example="All men are created equal">All men are created equal</button>
                 <button type="button" class="chip" data-tr-example="I love my family">I love my family</button>
                 <button type="button" class="chip" data-tr-example="The tribe is at war">The tribe is at war</button>
               </div>

@@ -13,7 +13,9 @@
         "man",
         "woman",
         "men",
-        "women"
+        "women",
+        "healer",
+        "healers"
       ]
     },
     "self": {
@@ -28,11 +30,15 @@
     "collective": {
       "label": "collective",
       "aliases": [
+        "all",
         "group",
         "groups",
         "community",
         "together",
-        "team"
+        "team",
+        "total",
+        "tribe",
+        "tribes"
       ]
     },
     "body": {
@@ -120,7 +126,8 @@
       "aliases": [
         "making",
         "create",
-        "creating"
+        "creating",
+        "created"
       ]
     },
     "do": {
@@ -150,7 +157,10 @@
         "story",
         "stories",
         "recount",
-        "recounting"
+        "recounting",
+        "sing",
+        "singing",
+        "sings"
       ]
     },
     "see": {
@@ -173,8 +183,15 @@
     "touch": {
       "label": "touch",
       "aliases": [
-        "touching",
-        "feel"
+        "touching"
+      ]
+    },
+    "feel": {
+      "label": "feel",
+      "aliases": [
+        "feeling",
+        "feels",
+        "felt"
       ]
     },
     "know": {
@@ -273,7 +290,11 @@
         "ground",
         "dirt",
         "soil",
-        "land"
+        "land",
+        "mountain",
+        "mountains",
+        "hill",
+        "hills"
       ]
     },
     "air": {
@@ -333,7 +354,9 @@
       "label": "animal",
       "aliases": [
         "creature",
-        "beast"
+        "beast",
+        "bird",
+        "birds"
       ]
     },
     "inside": {
@@ -404,7 +427,9 @@
       "aliases": [
         "location",
         "spot",
-        "somewhere"
+        "somewhere",
+        "city",
+        "town"
       ]
     },
     "before": {
@@ -539,7 +564,10 @@
       "aliases": [
         "well",
         "better",
-        "best"
+        "best",
+        "grateful",
+        "gratitude",
+        "thankful"
       ]
     },
     "bad": {
@@ -595,7 +623,9 @@
         "fight",
         "fighting",
         "clash",
-        "enemy"
+        "enemy",
+        "war",
+        "wars"
       ]
     },
     "same": {

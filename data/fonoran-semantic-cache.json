@@ -219,5 +219,446 @@
       "climbing iron"
     ],
     "hypernym_concepts": []
+  },
+  "traveler": {
+    "synonyms": [
+      "traveller"
+    ],
+    "hypernym_concepts": [
+      "person"
+    ]
+  },
+  "brother": {
+    "synonyms": [
+      "blood brother",
+      "buddy",
+      "chum",
+      "crony",
+      "pal",
+      "sidekick",
+      "comrade"
+    ],
+    "hypernym_concepts": []
+  },
+  "law": {
+    "synonyms": [
+      "jurisprudence",
+      "natural law",
+      "law of nature",
+      "legal philosophy",
+      "practice of law",
+      "police",
+      "police force",
+      "constabulary"
+    ],
+    "hypernym_concepts": []
+  },
+  "m": {
+    "synonyms": [
+      "meter",
+      "metre",
+      "molarity",
+      "molar concentration",
+      "thousand",
+      "one thousand",
+      "k",
+      "chiliad",
+      "g",
+      "grand",
+      "thou",
+      "yard",
+      "megabyte",
+      "mb",
+      "mebibyte",
+      "mib"
+    ],
+    "hypernym_concepts": []
+  },
+  "w": {
+    "synonyms": [
+      "tungsten",
+      "wolfram",
+      "west",
+      "due west",
+      "westward",
+      "watt",
+      "double-u"
+    ],
+    "hypernym_concepts": []
+  },
+  "with": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "king": {
+    "synonyms": [
+      "male monarch",
+      "rex",
+      "queen",
+      "world-beater",
+      "baron",
+      "big businessman",
+      "business leader",
+      "magnate",
+      "mogul",
+      "power",
+      "top executive",
+      "tycoon",
+      "billie jean king",
+      "billie jean moffitt king",
+      "b. b. king",
+      "riley b king",
+      "martin luther king",
+      "martin luther king jr."
+    ],
+    "hypernym_concepts": []
+  },
+  "the": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "mo": {
+    "synonyms": [
+      "moment",
+      "minute",
+      "second",
+      "bit",
+      "molybdenum",
+      "missouri",
+      "show me state",
+      "mo."
+    ],
+    "hypernym_concepts": []
+  },
+  "moov": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "our_tribe": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "wi": {
+    "synonyms": [
+      "wisconsin",
+      "badger state",
+      "wis.",
+      "wisc."
+    ],
+    "hypernym_concepts": []
+  },
+  "powerful": {
+    "synonyms": [
+      "knock-down(a)",
+      "potent",
+      "brawny",
+      "hefty",
+      "muscular",
+      "sinewy",
+      "herculean"
+    ],
+    "hypernym_concepts": []
+  },
+  "our": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "created": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "q": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "powerful_mountain_king": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "mountain_king": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "morning": {
+    "synonyms": [
+      "morn",
+      "morning time",
+      "forenoon",
+      "good morning",
+      "dawn",
+      "dawning",
+      "aurora",
+      "first light",
+      "daybreak",
+      "break of day",
+      "break of the day",
+      "dayspring",
+      "sunrise",
+      "sunup",
+      "cockcrow"
+    ],
+    "hypernym_concepts": []
+  },
+  "i": {
+    "synonyms": [
+      "iodine",
+      "iodin",
+      "one",
+      "ace",
+      "single",
+      "unity",
+      "ane"
+    ],
+    "hypernym_concepts": []
+  },
+  "and": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "rise": {
+    "synonyms": [
+      "ascent",
+      "ascension",
+      "ascending",
+      "acclivity",
+      "raise",
+      "climb",
+      "upgrade",
+      "rising",
+      "wage hike",
+      "hike",
+      "wage increase",
+      "salary increase",
+      "rising slope",
+      "lift",
+      "emanation",
+      "procession",
+      "boost",
+      "cost increase",
+      "advance",
+      "arise",
+      "move up",
+      "go up",
+      "come up",
+      "uprise",
+      "get up",
+      "stand up",
+      "rear",
+      "surface",
+      "rise up",
+      "originate",
+      "develop",
+      "spring up",
+      "grow",
+      "ascend",
+      "wax",
+      "mount",
+      "heighten",
+      "turn out",
+      "jump",
+      "climb up",
+      "rebel",
+      "prove",
+      "resurrect"
+    ],
+    "hypernym_concepts": [
+      "move",
+      "far"
+    ]
+  },
+  "birds": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "sing": {
+    "synonyms": [
+      "whistle",
+      "spill the beans",
+      "let the cat out of the bag",
+      "talk",
+      "tattle",
+      "blab",
+      "peach",
+      "babble",
+      "babble out",
+      "blab out"
+    ],
+    "hypernym_concepts": []
+  },
+  "slowly": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "wakes": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "coffee": {
+    "synonyms": [
+      "java",
+      "coffee tree",
+      "coffee bean",
+      "coffee berry",
+      "chocolate",
+      "deep brown",
+      "umber",
+      "burnt umber"
+    ],
+    "hypernym_concepts": []
+  },
+  "work": {
+    "synonyms": [
+      "piece of work",
+      "employment",
+      "study",
+      "workplace",
+      "oeuvre",
+      "body of work",
+      "do work",
+      "act",
+      "function",
+      "operate",
+      "go",
+      "run",
+      "work on",
+      "process",
+      "exercise",
+      "work out",
+      "make",
+      "bring",
+      "play",
+      "wreak",
+      "make for",
+      "put to work",
+      "cultivate",
+      "crop",
+      "influence",
+      "act upon",
+      "shape",
+      "form",
+      "mold",
+      "mould",
+      "forge",
+      "knead",
+      "exploit",
+      "solve",
+      "figure out",
+      "puzzle out",
+      "lick",
+      "ferment",
+      "sour",
+      "turn"
+    ],
+    "hypernym_concepts": [
+      "do"
+    ]
+  },
+  "ahead": {
+    "synonyms": [
+      "ahead(p)",
+      "in the lead",
+      "leading"
+    ],
+    "hypernym_concepts": []
+  },
+  "grateful": {
+    "synonyms": [
+      "thankful"
+    ],
+    "hypernym_concepts": []
+  },
+  "brotherhood": {
+    "synonyms": [
+      "fraternity",
+      "sodality",
+      "union",
+      "labor union",
+      "trade union",
+      "trades union"
+    ],
+    "hypernym_concepts": []
+  },
+  "born_free_and_equal_in_dignity_and_rights_they_are_endowed_with_reason_and_conscience_and_should_act_towards_one_another_in_spirit_of_brotherhood": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "mamny": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "pe": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "every_morning": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "rights": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "born_free_and_equal_in_dignity_and_rights": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "endowed": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "reason": {
+    "synonyms": [
+      "ground",
+      "understanding",
+      "intellect",
+      "rationality",
+      "reasonableness",
+      "cause",
+      "grounds",
+      "reason out",
+      "conclude",
+      "argue"
+    ],
+    "hypernym_concepts": []
+  },
+  "conscience": {
+    "synonyms": [
+      "scruples",
+      "moral sense",
+      "sense of right and wrong"
+    ],
+    "hypernym_concepts": []
+  },
+  "should": {
+    "synonyms": [],
+    "hypernym_concepts": []
+  },
+  "spirit": {
+    "synonyms": [
+      "tone",
+      "feel",
+      "feeling",
+      "flavor",
+      "flavour",
+      "look",
+      "smell",
+      "disembodied spirit",
+      "emotional state",
+      "intent",
+      "purport",
+      "liveliness",
+      "life",
+      "sprightliness",
+      "heart",
+      "spirit up",
+      "inspirit"
+    ],
+    "hypernym_concepts": [
+      "feel"
+    ]
+  },
+  "when": {
+    "synonyms": [],
+    "hypernym_concepts": []
   }
 }

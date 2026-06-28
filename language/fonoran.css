@@ -1605,6 +1605,22 @@
     .translator-page { max-width:72rem; margin:0 auto; padding:0 1rem 2rem; min-width:0; width:100%; }
     .translator-page > .grammar-toolbar { padding-top:0.35rem; padding-bottom:1rem; }
     .translator-unresolved-sample { color:var(--danger, #c0392b); font-weight:600; }
+    .translator-resolved--interpreted { color:#b8860b; font-weight:600; }
+    .translator-resolved--semantic { color:#c2700a; font-weight:600; }
+    .translator-resolved--guessed {
+      color:#c2700a;
+      font-weight:600;
+      text-decoration:underline;
+      text-decoration-style:dashed;
+      text-underline-offset:0.15em;
+    }
+    .translator-token__wordgen-link {
+      font-size:0.74rem;
+      margin-left:0.25rem;
+      color:var(--accent, #5a7a9a);
+      text-decoration:none;
+    }
+    .translator-token__wordgen-link:hover { text-decoration:underline; }
     .translator-playback-bar {
       display:flex;
       flex-wrap:wrap;
@@ -1813,6 +1829,14 @@
     .translator-token--unresolved .translator-token__fonoran {
       color:var(--danger, #c0392b);
       font-weight:600;
+    }
+    .translator-token--interpreted .translator-token__fonoran { color:#b8860b; }
+    .translator-token--semantic .translator-token__fonoran { color:#c2700a; }
+    .translator-token--guessed .translator-token__fonoran {
+      color:#c2700a;
+      text-decoration:underline;
+      text-decoration-style:dashed;
+      text-underline-offset:0.15em;
     }
     .translator-token__gloss { font-size:0.8rem; color:var(--muted); font-style:italic; }
     .translator-token__interp {

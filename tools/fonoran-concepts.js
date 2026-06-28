@@ -214,7 +214,10 @@ export function mergeLabIntoConcepts(concepts, lab, locData = {}) {
     const staticSpelling = c.spelling;
     const spelling = ls.spelling;
     const gloss = ls.meaning?.trim() || c.concept;
-    const storedAliases = ls.aliases?.length ? ls.aliases : c.stored_aliases;
+    const localeAliases = locData[c.id]?.aliases;
+    const storedAliases = localeAliases?.length
+      ? localeAliases
+      : (ls.aliases?.length ? ls.aliases : c.stored_aliases);
 
     return {
       ...c,

@@ -68,7 +68,7 @@
       "id": "collective",
       "spelling": "fi",
       "ipa": "/fɪ/",
-      "concept": "many treated as one",
+      "concept": "collective",
       "domain": "being",
       "reason": "Fundamental being concept: many treated as one. Cannot be naturally reduced into simpler Fonoran roots.",
       "pronunciation_ease": 4,
@@ -80,7 +80,7 @@
       "review": {
         "approved_at": "2026-06-27T23:32:47.346Z",
         "rejected_at": null,
-        "edited_at": null,
+        "edited_at": "2026-06-28T23:26:30.656Z",
         "note": null
       },
       "generation": {

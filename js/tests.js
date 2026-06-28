@@ -302,15 +302,73 @@ const fonoranTranslatorResult = await (async () => {
       sounds: [],
       compounds: [{
         spelling: 'kembemkat',
-        meaning: 'sunrise',
-        aliases: ['morning', 'dawn'],
+        meaning: 'morning',
+        aliases: ['morning', 'dawn', 'every morning'],
         parts: ['kembem', 'kat'],
         state: 'approved',
       }],
     };
     const everyMorning = await translateEnglish('Every morning', { lab: morningLab });
     assert(everyMorning.unresolved.length === 0, `every morning unresolved: ${everyMorning.unresolved.join(', ')}`);
-    assert(everyMorning.tokens.some(t => t.english === 'morning' && t.fonoran === 'kembemkat'), `morning alias: ${JSON.stringify(everyMorning.tokens)}`);
+    assert(
+      everyMorning.tokens.some(t => t.role === 'time' && t.fonoran === 'kembemkat'),
+      `morning time slot: ${JSON.stringify(everyMorning.tokens)}`,
+    );
+
+    const jumpedKind = jumped.tokens.find(t => t.english === 'jumped');
+    assert(jumpedKind?.resolution_kind === 'interpreted', `jumped resolution_kind: ${jumpedKind?.resolution_kind}`);
+
+    const atWar = await translateEnglish('the tribe is at war');
+    assert(atWar.unresolved.length === 0, `at war unresolved: ${atWar.unresolved.join(', ')}`);
+    assert(atWar.tokens.some(t => t.english === 'at war' && t.resolution_kind === 'interpreted'), `at war idiom: ${JSON.stringify(atWar.tokens)}`);
+
+    const mountain = await translateEnglish('mountain');
+    assert(mountain.tokens[0]?.resolved, 'mountain should resolve');
+    assert(['direct', 'semantic'].includes(mountain.tokens[0]?.resolution_kind), `mountain tier: ${mountain.tokens[0]?.resolution_kind}`);
+
+    const timeTravelerLab = {
+      sounds: [],
+      compounds: [{
+        spelling: 'sekba',
+        meaning: 'time traveler',
+        aliases: ['time traveler', 'time traveller'],
+        parts: ['sek', 'ba'],
+        concept_id: 'person',
+        state: 'approved',
+      }],
+    };
+    const timeTraveler = await translateEnglish('time traveler', { lab: timeTravelerLab });
+    assert(timeTraveler.unresolved.length === 0, `time traveler unresolved: ${timeTraveler.unresolved.join(', ')}`);
+    assert(timeTraveler.tokens.some(t => t.fonoran === 'sekba'), `time traveler phrase: ${JSON.stringify(timeTraveler.tokens)}`);
+
+    const createdEqual = await translateEnglish('all men are created equal');
+    assert(createdEqual.unresolved.length === 0, `created equal unresolved: ${createdEqual.unresolved.join(', ')}`);
+    assert(createdEqual.tokens.some(t => t.english === 'created' && t.fonoran === 'no'), `created -> make: ${JSON.stringify(createdEqual.tokens)}`);
+    assert(createdEqual.tokens.some(t => t.english === 'equal'), 'equal slot present');
+    assert(!createdEqual.surface.roman.includes(' ta '), `passive present should omit ta: ${createdEqual.surface.roman}`);
+
+    const ourTribeWar = await translateEnglish('our tribe is at war with a powerful mountain king');
+    assert(ourTribeWar.tokens.some(t => t.role === 'subject' && t.resolved && t.english.includes('tribe')), `tribe subject: ${JSON.stringify(ourTribeWar.tokens)}`);
+    assert(ourTribeWar.tokens.some(t => t.english === 'at war' && t.resolved), 'at war idiom');
+    assert(ourTribeWar.tokens.some(t => t.role === 'object' && t.english.includes('mountain')), `object NP: ${JSON.stringify(ourTribeWar.tokens)}`);
+    assert(!ourTribeWar.tokens.some(t => t.english === 'with'), 'with should not appear as token');
+
+    const airFeels = await translateEnglish('the air feels cool');
+    assert(airFeels.tokens.some(t => t.english === 'air' && t.role === 'subject'), `air subject: ${JSON.stringify(airFeels.tokens)}`);
+    assert(airFeels.tokens.some(t => t.english === 'feels' && t.fonoran === 'ko'), `feel -> ko: ${JSON.stringify(airFeels.tokens)}`);
+    assert(airFeels.tokens.some(t => t.english.includes('cool')), 'cool modifier present');
+
+    const morningWalk = await translateEnglish('every morning I take a walk');
+    assert(morningWalk.tokens.some(t => t.english === 'every morning'), 'time adverbial slot');
+    assert(morningWalk.tokens.some(t => t.english.toLowerCase() === 'i' && t.fonoran === 'mi'), `I -> mi: ${JSON.stringify(morningWalk.tokens)}`);
+
+    const paragraph = await translateEnglish(
+      'Every morning I take a walk. The air feels cool. Birds sing and the city wakes up slowly.',
+    );
+    assert(paragraph.mode === 'discourse', `paragraph mode: ${paragraph.mode}`);
+    assert(paragraph.tokens.some(t => t.fonoran === 'mi'), 'paragraph has mi');
+    assert(paragraph.tokens.some(t => t.english === 'feels' && t.fonoran === 'ko'), `paragraph feel: ${JSON.stringify(paragraph.tokens)}`);
+    assert(!paragraph.tokens.some(t => t.english === 'every' && t.role === 'subject'), 'every should not be subject');
 
     return { name: testName, ok: true };
   } catch (e) {

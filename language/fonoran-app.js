@@ -3027,7 +3027,7 @@
           </select>
           <input type="text" id="ce-domain-custom" class="concept-editor__domain-custom" placeholder="new domain" value="${isKnownDomain ? '' : escapeHtml(d.domain)}"${isKnownDomain ? ' hidden' : ''} data-write-input>
           <label class="fld" for="ce-aliases">English word bank</label>
-          <p class="concept-editor__hint sans">One word or phrase per line. Saved to the English localization layer and used by the translator for fuzzy matching.</p>
+          <p class="concept-editor__hint sans">One word or phrase per line. Saved to the English localization layer and used by the translator for alias matching.</p>
           <textarea id="ce-aliases" rows="3" data-write-input>${escapeHtml(d.aliases)}</textarea>
           <div class="concept-editor__preview" hidden>
             <span class="concept-editor__preview-label sans">Effective matches after save</span>
@@ -3519,19 +3519,80 @@
       cancelSpeech();
     }
 
+    function translatorResolutionKind(token) {
+      if (!token?.resolved) return 'unknown';
+      return token.resolution_kind ?? (token.interpreted ? 'interpreted' : 'direct');
+    }
+
+    function translatorResolutionClass(kind) {
+      if (kind === 'unknown') return 'translator-unresolved-sample';
+      if (kind === 'interpreted') return 'translator-resolved--interpreted';
+      if (kind === 'semantic') return 'translator-resolved--semantic';
+      if (kind === 'guessed') return 'translator-resolved--guessed';
+      return '';
+    }
+
+    function translatorTokenClass(token) {
+      const kind = translatorResolutionKind(token);
+      if (kind === 'unknown') return ' translator-token--unresolved';
+      if (kind === 'interpreted') return ' translator-token--interpreted';
+      if (kind === 'semantic') return ' translator-token--semantic';
+      if (kind === 'guessed') return ' translator-token--guessed';
+      return '';
+    }
+
+    function translatorWordGenHref(english) {
+      const text = String(english ?? '').trim();
+      if (!text) return '#wordgen';
+      return `#wordgen?text=${encodeURIComponent(text)}`;
+    }
+
+    function parseHashPage() {
+      const raw = window.location.hash.replace(/^#/, '');
+      return raw.split('?')[0] || 'home';
+    }
+
+    function parseHashQuery() {
+      const raw = window.location.hash.replace(/^#/, '');
+      const qIdx = raw.indexOf('?');
+      if (qIdx === -1) return new URLSearchParams();
+      return new URLSearchParams(raw.slice(qIdx + 1));
+    }
+
+    function openWordGenWithText(text) {
+      const value = String(text ?? '').trim();
+      STATE.wgInput = value;
+      const next = value
+        ? `#wordgen?text=${encodeURIComponent(value)}`
+        : '#wordgen';
+      if (`${window.location.hash}` !== next) {
+        history.replaceState(null, '', `${window.location.pathname}${next}`);
+      }
+      switchPage('wordgen');
+      const input = $('wg-input');
+      if (input) input.value = value;
+      if (value) void runWordGen();
+    }
+
     function translatorTokenHtml(token, index) {
+      const kind = translatorResolutionKind(token);
+      const resClass = translatorResolutionClass(kind);
       const fonoran = token.resolved
-        ? escapeHtml(token.fonoran)
+        ? `<span class="${resClass}">${escapeHtml(token.fonoran)}</span>`
         : `<span class="translator-unresolved-sample">${escapeHtml(token.english)}</span>`;
       const gloss = token.gloss ? `<span class="translator-token__gloss">${escapeHtml(token.gloss)}</span>` : '';
-      const interp = token.interpreted
+      const showInterp = token.interpreted || (kind !== 'direct' && kind !== 'unknown');
+      const interp = showInterp
         ? `<span class="translator-token__interp">${escapeHtml(token.interpreted_from ?? token.english)} → ${escapeHtml(token.concept_id ?? token.lookup ?? '')}${token.interpret_reason ? ` (${escapeHtml(token.interpret_reason)})` : ''}</span>`
         : '';
-      return `<li class="translator-token${token.resolved ? '' : ' translator-token--unresolved'}" data-tr-word="${index}">
+      const wordGenLink = (kind === 'unknown' || kind === 'guessed')
+        ? `<a class="translator-token__wordgen-link sans" href="${escapeHtml(translatorWordGenHref(token.english))}" data-open-wordgen="${escapeHtml(token.english)}">Open in Word Generator</a>`
+        : '';
+      return `<li class="translator-token${translatorTokenClass(token)}" data-tr-word="${index}">
         <span class="translator-token__role">${escapeHtml(token.role)}</span>
         <span class="translator-token__english">${escapeHtml(token.english)}</span>
         <span class="translator-token__arrow" aria-hidden="true">→</span>
-        <span class="translator-token__fonoran">${fonoran}</span>
+        <span class="translator-token__fonoran">${fonoran}${wordGenLink}</span>
         ${gloss}
         ${interp}
       </li>`;
@@ -3556,8 +3617,14 @@
         : '';
 
       const romanHtml = result.tokens.map(t => {
-        if (t.resolved) return escapeHtml(t.fonoran);
-        return `<span class="translator-unresolved-sample">${escapeHtml(t.english)}</span>`;
+        if (!t.resolved) {
+          return `<span class="translator-unresolved-sample">${escapeHtml(t.english)}</span>`;
+        }
+        const kind = translatorResolutionKind(t);
+        const cls = translatorResolutionClass(kind);
+        return cls
+          ? `<span class="${cls}">${escapeHtml(t.fonoran)}</span>`
+          : escapeHtml(t.fonoran);
       }).join(' ');
 
       const pron = result.surface?.pronunciation;
@@ -3582,7 +3649,14 @@
           ${pronHtml}
         </div>
         <ul class="translator-token-list">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>
-        ${result.unresolved?.length ? `<p class="sans translator-output__note" style="font-size:0.84rem;color:var(--muted);margin:0.75rem 0 0">Unresolved concepts reveal where the language still needs to grow.</p>` : ''}`;
+        ${result.unresolved?.length ? `<p class="sans translator-output__note" style="font-size:0.84rem;color:var(--muted);margin:0.75rem 0 0">Unresolved concepts reveal where the language still needs to grow. Use Word Generator to invent and save new words.</p>` : ''}`;
+
+      out.querySelectorAll('[data-open-wordgen]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          openWordGenWithText(link.dataset.openWordgen ?? '');
+        });
+      });
 
       syncTranslatorPlaybackUi(result);
     }
@@ -3640,6 +3714,11 @@
     function renderWordGen() {
       ensureSplitStickyObserver();
       syncSplitStickyOffsets();
+      const hashQuery = parseHashQuery();
+      const queryText = hashQuery.get('text') ?? new URLSearchParams(window.location.search).get('text');
+      if (queryText && queryText !== STATE.wgInput) {
+        STATE.wgInput = queryText;
+      }
       const input = $('wg-input');
       if (input && input.value !== (STATE.wgInput ?? '')) input.value = STATE.wgInput ?? '';
       const dl = $('wg-concept-list');
@@ -4367,13 +4446,16 @@
       handleAuthUrlErrors();
       updateAuthGate();
       window.addEventListener('hashchange', () => {
-        const hashPage = window.location.hash.replace(/^#/, '');
+        const hashPage = parseHashPage();
         let page = hashPage && ALL_PAGES.has(hashPage) ? hashPage : 'home';
         if (hashPage === 'root-review') {
           STATE.rootReviewFocusPending = true;
           page = 'review';
         }
+        const hashText = parseHashQuery().get('text');
+        if (page === 'wordgen' && hashText) STATE.wgInput = hashText;
         if (page !== STATE.page) switchPage(page);
+        else if (page === 'wordgen' && hashText) renderWordGen();
       });
       wireLander();
       window.addEventListener('resize', syncSplitStickyOffsets);

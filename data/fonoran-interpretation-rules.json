@@ -40,7 +40,12 @@
     "speech": {
       "concept_id": "speak",
       "reason": "speech verb",
-      "words": ["tell", "told", "telling", "tells", "shout", "shouted", "shouting", "whisper", "whispered", "whispering"]
+      "words": ["tell", "told", "telling", "tells", "shout", "shouted", "shouting", "whisper", "whispered", "whispering", "sing", "sings", "singing"]
+    },
+    "awakening": {
+      "concept_id": "change",
+      "reason": "become active",
+      "words": ["wake", "wakes", "woke", "waking"]
     },
     "perception_see": {
       "concept_id": "see",
@@ -108,6 +113,46 @@
       "id": "verb_spatial_np",
       "description": "VERB + spatial prep + (article) + NP → event + path + landmark",
       "spatial_preps": ["over", "above", "under", "below", "across", "through", "into", "inside", "outside", "toward", "towards", "to", "up", "down"]
+    },
+    {
+      "id": "subject_be_adj",
+      "description": "SUBJECT + be + ADJ → subject + modifier"
+    },
+    {
+      "id": "subject_verb_to_np",
+      "description": "SUBJECT + VERB + to + NP → subject + event + object"
     }
-  ]
+  ],
+  "idioms": {
+    "at war": {
+      "slot": "event",
+      "concept_id": "conflict",
+      "reason": "idiom: at war"
+    },
+    "wake up": {
+      "slot": "event",
+      "concept_id": "change",
+      "reason": "idiom: wake up"
+    },
+    "wakes up": {
+      "slot": "event",
+      "concept_id": "change",
+      "reason": "idiom: wake up"
+    },
+    "woke up": {
+      "slot": "event",
+      "concept_id": "change",
+      "reason": "idiom: wake up"
+    },
+    "waking up": {
+      "slot": "event",
+      "concept_id": "change",
+      "reason": "idiom: wake up"
+    },
+    "in danger": {
+      "slot": "modifier",
+      "concept_id": "bad",
+      "reason": "idiom: in danger"
+    }
+  }
 }

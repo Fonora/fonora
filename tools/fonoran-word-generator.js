@@ -15,98 +15,18 @@
  */
 
 import { fileURLToPath } from 'node:url';
-import { buildConceptAliasIndex, loadRuntimeConceptInventory, buildRootById } from './fonoran-concepts.js';
-import { expandWord } from './fonoran-semantic-lookup.js';
-import { getLab } from './fonoran-sound-bucket.js';
-import { loadInterpretationRules, interpretToConcept } from './fonoran-interpretation.js';
+import {
+  buildResolveContext,
+  resolveConceptId,
+  expandTokenToConcept,
+  tokenizeEnglish,
+} from './fonoran-english-resolve.js';
 import { segmentCompound, pronounceabilityScore, checkCompoundBoundary } from './fonoran-gen3-readability.js';
-import { REUSABLE_WORD_STATES } from './fonoran-derivation.js';
 
 const SKIP = new Set([
   'a', 'an', 'the', 'of', 'to', 'in', 'on', 'at', 'for', 'and', 'or', 'with', 'by', 'from',
   'into', 'as', 'is', 'are', 'be', 'who', 'that', 'which', 'this', 'these', 'those', 'one',
 ]);
-
-function tokenize(text) {
-  return String(text ?? '')
-    .trim()
-    .match(/[A-Za-z']+/g)
-    ?.map(t => t.toLowerCase().replace(/^'+|'+$/g, ''))
-    .filter(Boolean) ?? [];
-}
-
-function lemmatize(word) {
-  const w = String(word ?? '').toLowerCase();
-  if (w.endsWith('ies') && w.length > 4) return `${w.slice(0, -3)}y`;
-  if (w.endsWith('ing') && w.length > 5) return w.slice(0, -3);
-  if (w.endsWith('ed') && w.length > 4) return w.slice(0, -2);
-  if (w.endsWith('s') && w.length > 3 && !w.endsWith('ss')) return w.slice(0, -1);
-  return w;
-}
-
-/** Agentive forms: traveler → travel (+ person), creator → create (+ person). */
-function agentiveBase(word) {
-  const w = String(word ?? '').toLowerCase();
-  if (w.endsWith('er') && w.length > 4) return [w.slice(0, -2), `${w.slice(0, -2)}e`];
-  if (w.endsWith('or') && w.length > 4) return [w.slice(0, -2), `${w.slice(0, -2)}e`];
-  if (w.endsWith('ist') && w.length > 5) return [w.slice(0, -3)];
-  return null;
-}
-
-async function buildContext(lab) {
-  const liveLab = lab ?? await getLab();
-  const inventory = await loadRuntimeConceptInventory({ lab: liveLab });
-  const rules = await loadInterpretationRules().catch(() => null);
-  const aliasIndex = buildConceptAliasIndex(inventory.concepts, liveLab, {}, { labFirst: true });
-  const rootById = buildRootById(inventory.concepts, liveLab);
-
-  const rootInventory = (liveLab.sounds ?? [])
-    .filter(s => s.state !== 'rejected' && s.spelling)
-    .map(s => ({ root: s.spelling, id: s.concept_id ?? s.spelling }));
-
-  const compoundByConceptId = new Map();
-  const parseInventory = [...rootInventory];
-  for (const c of liveLab.compounds ?? []) {
-    if (!REUSABLE_WORD_STATES.includes(c.state) || !c.concept_id || !c.spelling) continue;
-    compoundByConceptId.set(c.concept_id, {
-      id: c.id,
-      spelling: c.spelling,
-      gloss: c.meaning ?? c.gloss ?? c.concept_id,
-    });
-    parseInventory.push({ root: c.spelling, id: c.concept_id });
-  }
-
-  return {
-    inventory,
-    aliasIndex,
-    rootById,
-    rootInventory,
-    parseInventory,
-    compoundByConceptId,
-    rules,
-  };
-}
-
-function resolveToken(token, ctx) {
-  const tries = [token, lemmatize(token)];
-  for (const key of tries) {
-    const hit = ctx.aliasIndex.get(key);
-    if (hit?.concept_id) return { concept_id: hit.concept_id, agentive: false };
-  }
-  const interp = interpretToConcept(token, 'concept', ctx.rules)
-    ?? interpretToConcept(lemmatize(token), 'concept', ctx.rules);
-  if (interp?.concept_id && ctx.rootById.has(interp.concept_id)) {
-    return { concept_id: interp.concept_id, agentive: false };
-  }
-  const bases = agentiveBase(token);
-  if (bases) {
-    for (const base of bases) {
-      const hit = ctx.aliasIndex.get(base) ?? ctx.aliasIndex.get(lemmatize(base));
-      if (hit?.concept_id) return { concept_id: hit.concept_id, agentive: true };
-    }
-  }
-  return null;
-}
 
 /** Build a component spec — prefer an approved compound word when available. */
 export function componentSpecForConcept(id, ctx, { preferWord = true } = {}) {
@@ -148,7 +68,7 @@ function normalizeInputComponent(raw, ctx) {
  * Suggest an ordered component list from the English phrase.
  */
 export async function suggestComponents(text, ctx) {
-  const tokens = tokenize(text).filter(t => !SKIP.has(t));
+  const tokens = tokenizeEnglish(text).filter(t => !SKIP.has(t));
   const components = [];
   const seen = new Set();
   const tokenMap = [];
@@ -164,9 +84,9 @@ export async function suggestComponents(text, ctx) {
   };
 
   for (const token of tokens) {
-    const res = resolveToken(token, ctx);
+    const res = resolveConceptId(token, ctx);
     if (res) {
-      push(res.concept_id, token);
+      push(res.concept_id, token, res.via);
       if (res.agentive) sawAgentive = true;
       tokenMap.push({ token, concept_id: res.concept_id, resolved: true });
     } else {
@@ -176,28 +96,10 @@ export async function suggestComponents(text, ctx) {
 
   for (const entry of tokenMap) {
     if (entry.resolved) continue;
-    const { synonyms, hypernym_concepts } = await expandWord(entry.token);
-
-    if (hypernym_concepts.length) {
-      for (const cid of hypernym_concepts) {
-        if (push(cid, entry.token, `hypernym:${cid}`)) {
-          entry.resolved = true;
-          entry.concept_id = cid;
-          break;
-        }
-      }
-    }
-    if (entry.resolved) continue;
-
-    for (const syn of synonyms) {
-      const key = syn.replace(/\s+/g, '_');
-      const hit = ctx.aliasIndex.get(syn) ?? ctx.aliasIndex.get(key) ?? ctx.aliasIndex.get(lemmatize(syn));
-      if (hit?.concept_id) {
-        entry.resolved = true;
-        entry.concept_id = hit.concept_id;
-        push(hit.concept_id, entry.token, `synonym:${syn}`);
-        break;
-      }
+    const expanded = await expandTokenToConcept(entry.token, ctx);
+    if (expanded && push(expanded.concept_id, entry.token, expanded.via)) {
+      entry.resolved = true;
+      entry.concept_id = expanded.concept_id;
     }
   }
 
@@ -302,7 +204,7 @@ export function composeOptions(componentIds, ctx, { limit = 5, specs = null } = 
 }
 
 export async function generateWords(text, { components = null, lab = null, limit = 5 } = {}) {
-  const ctx = await buildContext(lab);
+  const ctx = await buildResolveContext(lab);
   let chosen;
   let tokens = [];
   let unresolved = [];
@@ -352,3 +254,5 @@ if (isMain) {
     process.exit(1);
   });
 }
+
+export { buildResolveContext as buildContext };

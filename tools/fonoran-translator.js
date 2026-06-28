@@ -13,17 +13,33 @@ import {
   englishGuide,
   compoundEnglishGuide,
 } from './fonoran-pronunciation.js';
-import { buildConceptAliasIndex, loadRuntimeConceptInventory } from './fonoran-concepts.js';
 import {
   loadInterpretationRules,
-  interpretToConcept,
   matchVerbSpatialLandmark,
-  landmarkPhrase,
+  matchSubjectBeAdj,
+  matchBeConstruction,
+  matchSubjectVerbToNp,
+  matchIdiomPhrase,
   peelFutureIntent,
   irregularPastLemma,
   isIrregularPastForm,
   resetInterpretationCache,
+  nominalPhraseFromTokens,
+  parseTrailingPhrase,
+  matchLeadingTimeAdverbial,
+  matchSubjectLinkingPredicate,
+  splitIntoClauses,
+  mergePhrasalTokens,
 } from './fonoran-interpretation.js';
+import {
+  buildResolveContext,
+  resolveEnglishToken,
+  tokenizeEnglish,
+  lemmatizeEnglish,
+  IRREGULAR,
+  CONJUNCTIONS,
+} from './fonoran-english-resolve.js';
+import { getPosHint } from './fonoran-semantic-lookup.js';
 
 const GRAMMAR_SKELETON = 'Subject · Time · Event · Path · Object · Modifiers';
 
@@ -33,11 +49,25 @@ const PARTICLES_PATH = join(ROOT, 'data/fonoran-grammar-particles.json');
 const SKIP = new Set([
   'a', 'an', 'the', 'to', 'at', 'in', 'on', 'of', 'for', 'with', 'by', 'from', 'into', 'about',
   'my', 'your', 'his', 'her', 'its', 'our', 'their', 'mine', 'yours', 'this', 'that', 'these', 'those',
+  ...CONJUNCTIONS,
 ]);
 
 const PRONOUNS = {
   i: 'mi',
   me: 'mi',
+};
+
+/** Subject pronouns → nearest concept id for resolution. */
+const PRONOUN_CONCEPTS = {
+  you: 'different',
+  we: 'collective',
+  us: 'collective',
+  they: 'collective',
+  them: 'collective',
+  he: 'person',
+  him: 'person',
+  she: 'person',
+  it: 'thing',
 };
 
 const PRONOUN_WORDS = new Set([
@@ -61,67 +91,11 @@ const TENSE_AUX = {
   had: 'past',
 };
 
-const IRREGULAR = {
-  fought: 'war',
-  fight: 'war',
-  fighting: 'war',
-  fights: 'war',
-  loved: 'love',
-  loves: 'love',
-  loving: 'love',
-  went: 'move',
-  go: 'move',
-  goes: 'move',
-  going: 'move',
-  gone: 'move',
-  said: 'speak',
-  say: 'speak',
-  says: 'speak',
-  saying: 'speak',
-  knew: 'know',
-  knows: 'know',
-  knowing: 'know',
-  children: 'child',
-  men: 'person',
-  man: 'person',
-  women: 'person',
-  woman: 'person',
-  people: 'person',
-};
-
 const PARTICLE_PLACEHOLDERS = {
   pronoun_i: 'mi',
   tense_past: 'ta',
   tense_future: 'na',
 };
-
-function tokenizeEnglish(text) {
-  return String(text ?? '')
-    .trim()
-    .match(/[A-Za-z']+/g)
-    ?.map(t => t.toLowerCase().replace(/^'+|'+$/g, ''))
-    .filter(Boolean) ?? [];
-}
-
-function lemmatize(word) {
-  const w = String(word ?? '').toLowerCase();
-  if (IRREGULAR[w]) return IRREGULAR[w];
-  if (w.endsWith('ies') && w.length > 4) return `${w.slice(0, -3)}y`;
-  if (w.endsWith('ied') && w.length > 4) return `${w.slice(0, -3)}y`;
-  if (w.endsWith('ing') && w.length > 5) {
-    const base = w.slice(0, -3);
-    if (base.endsWith(base.at(-1)) && !base.endsWith('ing')) return base.slice(0, -1);
-    return base;
-  }
-  if (w.endsWith('ed') && w.length > 4) {
-    if (w.endsWith('ted') || w.endsWith('ded')) return w.slice(0, -2);
-    const base = w.slice(0, -2);
-    if (base.length >= 2 && base.at(-1) === base.at(-2)) return base.slice(0, -1);
-    return base;
-  }
-  if (w.endsWith('s') && w.length > 3 && !w.endsWith('ss')) return w.slice(0, -1);
-  return w;
-}
 
 function isPastForm(word, rules) {
   const w = String(word ?? '').toLowerCase();
@@ -131,77 +105,11 @@ function isPastForm(word, rules) {
   return Boolean(IRREGULAR[w] && /ed$/.test(w));
 }
 
-function partsForEntry(entry) {
-  if (entry.parts?.length) return entry.parts;
-  if (entry.composition_roots?.length) return entry.composition_roots;
-  return [entry.fonoran];
-}
-
 function pronunciationForParts(parts) {
   if (!parts?.length) return { sayLine: '', englishLine: '' };
   return {
     sayLine: parts.length > 1 ? compoundPhoneticKey(parts) : phoneticKeyBold(parts[0]),
     englishLine: parts.length > 1 ? compoundEnglishGuide(parts) : englishGuide(parts[0]),
-  };
-}
-
-async function loadTranslationIndex(lab) {
-  const inventory = await loadRuntimeConceptInventory({ lab });
-  const index = buildConceptAliasIndex(inventory.concepts, lab, {}, { labFirst: true });
-
-  for (const compound of lab?.compounds ?? []) {
-    const meaning = String(compound.meaning ?? '').trim().toLowerCase();
-    if (!meaning || !compound.spelling) continue;
-    const entry = {
-      english: meaning,
-      gloss: compound.meaning ?? '',
-      fonoran: compound.spelling,
-      kind: 'compound',
-      composition_readable: compound.composition_readable ?? compound.generator_hint ?? null,
-      composition_roots: compound.parts ?? null,
-      parts: compound.parts ?? [compound.spelling],
-      source: 'lab',
-      state: compound.state,
-    };
-    index.set(meaning, entry);
-    for (const alias of compound.aliases ?? []) {
-      const key = String(alias).trim().toLowerCase();
-      if (!key || index.has(key)) continue;
-      index.set(key, { ...entry, matched_alias: key });
-    }
-  }
-  return index;
-}
-
-function lookupConcept(index, englishWord, rules) {
-  const raw = String(englishWord ?? '').trim().toLowerCase();
-  if (!raw) return null;
-
-  const pastLemma = irregularPastLemma(raw, rules);
-  const tryKeys = [raw, pastLemma, lemmatize(raw), IRREGULAR[raw]].filter(Boolean);
-  for (const key of tryKeys) {
-    const hit = index.get(key);
-    if (hit) {
-      const parts = partsForEntry(hit);
-      return {
-        ...hit,
-        parts,
-        resolved: true,
-        lookup: key,
-        past_lemma: pastLemma && key === pastLemma ? pastLemma : null,
-        pronunciation: pronunciationForParts(parts),
-      };
-    }
-  }
-  return {
-    english: raw,
-    fonoran: null,
-    parts: [],
-    resolved: false,
-    gloss: null,
-    kind: 'unknown',
-    source: null,
-    pronunciation: { sayLine: '', englishLine: '' },
   };
 }
 
@@ -217,6 +125,9 @@ function particleToken(role, placeholder, english) {
     source: 'grammar',
     gloss: english,
     interpreted: false,
+    resolution_kind: 'direct',
+    confidence: 'high',
+    guessed: false,
     pronunciation: pronunciationForParts(parts),
   };
 }
@@ -232,88 +143,95 @@ function unresolvedToken(english, role) {
     source: null,
     gloss: null,
     interpreted: false,
+    resolution_kind: 'unknown',
+    confidence: 'low',
+    guessed: false,
     pronunciation: { sayLine: '', englishLine: '' },
   };
 }
 
-/**
- * Resolve English to Fonoran: direct alias → interpretation hint → class rule.
- */
-function interpretConceptToken(index, english, role, rules, hints = {}) {
-  const surface = String(english ?? '').trim();
-  const lookupWord = role === 'object' ? landmarkPhrase(surface) : surface.toLowerCase();
-
-  let hit = lookupConcept(index, lookupWord, rules);
-  if (hit.resolved) {
-    const pastLemma = irregularPastLemma(surface, rules);
-    const interpreted = Boolean(pastLemma && hit.past_lemma);
-    return {
-      ...hit,
-      role,
-      english: surface,
-      concept_id: hit.concept_id ?? hit.english,
-      interpreted,
-      ...(interpreted ? {
-        interpreted_from: surface,
-        interpret_reason: 'irregular past',
-      } : {}),
-    };
-  }
-
-  if (hints.concept_hint) {
-    hit = lookupConcept(index, hints.concept_hint, rules);
-    if (hit.resolved) {
-      return {
-        ...hit,
-        role,
-        english: surface,
-        concept_id: hit.concept_id ?? hit.english,
-        interpreted: true,
-        interpreted_from: surface,
-        interpret_reason: hints.interpret_reason ?? 'spatial path',
-      };
+function applyIdiomToSlots(idiomMatch, slots, rules) {
+  const { spec, before, after } = idiomMatch;
+  const beforeWords = before.filter(w => !TENSE_AUX[w?.toLowerCase()]);
+  if (beforeWords.length && !slots.subject.length) {
+    const subjectPhrase = nominalPhraseFromTokens(beforeWords, { skip: SKIP });
+    if (subjectPhrase) {
+      slots.subject.push({ english: subjectPhrase, role: 'subject' });
     }
   }
+  const slotKey = spec.slot ?? 'event';
+  const entry = {
+    english: idiomMatch.phrase,
+    role: slotKey,
+    concept_hint: spec.concept_id,
+    interpret_reason: spec.reason ?? `idiom: ${idiomMatch.phrase}`,
+  };
+  if (slotKey === 'event') slots.event.push(entry);
+  else if (slotKey === 'modifier') slots.modifiers.push(entry);
+  else if (slotKey === 'object') slots.object.push(entry);
+  else if (slotKey === 'path') slots.path.push(entry);
 
-  const interp = interpretToConcept(surface, role, rules);
-  if (interp) {
-    hit = lookupConcept(index, interp.concept_id, rules);
-    if (hit.resolved) {
-      return {
-        ...hit,
-        role,
-        english: surface,
-        concept_id: hit.concept_id ?? interp.concept_id,
-        interpreted: true,
-        interpreted_from: surface,
-        interpret_reason: interp.reason,
-        interpret_class: interp.class,
-      };
-    }
+  const trailing = parseTrailingPhrase(after, { skip: SKIP });
+  slots.object.push(...trailing.object);
+  slots.modifiers.push(...trailing.modifiers);
+}
+
+function emptySlots() {
+  return {
+    subject: [],
+    time: [],
+    event: [],
+    path: [],
+    object: [],
+    modifiers: [],
+  };
+}
+
+function appendSlots(target, source) {
+  for (const key of ['subject', 'time', 'event', 'path', 'object', 'modifiers']) {
+    target[key].push(...source[key]);
   }
+}
 
-  return { ...hit, role, english: surface, interpreted: false };
+/** Split paragraph into sentences on . ! ? or newlines. */
+export function splitSentences(text) {
+  return String(text ?? '')
+    .split(/(?<=[.!?])\s+|\n+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+function applyBeConstruction(beHit, slots) {
+  if (!slots.subject.length) {
+    slots.subject.push({ english: beHit.subject, role: 'subject' });
+  }
+  if (beHit.event) slots.event.push(beHit.event);
+  slots.modifiers.push(...beHit.modifiers);
+  const beTense = TENSE_AUX[beHit.be];
+  if (beTense === 'past' && !slots.time.length) {
+    slots.time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
+  } else if (beTense === 'future' && !slots.time.length) {
+    slots.time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
+  }
+}
+
+/** Tokens for phrase patterns: keep be-forms, drop only articles. */
+function patternScanTokens(tokens, start = 0) {
+  const out = [];
+  for (let k = start; k < tokens.length; k += 1) {
+    const t = tokens[k];
+    if (t === 'a' || t === 'an' || t === 'the') continue;
+    out.push(t);
+  }
+  return out;
 }
 
 /**
- * Compile English tokens into grammar slots with phrase-aware interpretation.
- * @param {string[]} tokens
+ * Compile one clause's tokens into grammar slots.
+ * @param {string[]} rawTokens
  * @param {object} rules
  */
-function compileSemanticSlots(tokens, rules) {
-  if (tokens.length <= 1) {
-    return {
-      mode: 'word',
-      subject: [],
-      time: [],
-      event: tokens.length ? [{ english: tokens[0], role: 'event' }] : [],
-      path: [],
-      object: [],
-      modifiers: [],
-    };
-  }
-
-  let i = 0;
+async function compileClause(rawTokens, rules) {
   const subject = [];
   const time = [];
   const event = [];
@@ -321,20 +239,66 @@ function compileSemanticSlots(tokens, rules) {
   const object = [];
   const modifiers = [];
 
-  if (PRONOUN_WORDS.has(tokens[0])) {
-    if (PRONOUNS[tokens[0]]) {
-      subject.push({ english: tokens[0], role: 'subject', particle: PRONOUNS[tokens[0]] });
+  let tokens = [...rawTokens];
+
+  const timeHit = matchLeadingTimeAdverbial(tokens);
+  if (timeHit) {
+    time.push({ english: timeHit.english, role: 'time' });
+    tokens = tokens.slice(timeHit.consumed);
+  }
+
+  if (tokens.length && PRONOUN_WORDS.has(tokens[0]?.toLowerCase())) {
+    const p = tokens[0].toLowerCase();
+    if (PRONOUNS[p]) {
+      subject.push({ english: tokens[0], role: 'subject', particle: PRONOUNS[p] });
     } else {
-      subject.push({ english: tokens[0], role: 'subject' });
+      const conceptHint = PRONOUN_CONCEPTS[p];
+      subject.push({
+        english: tokens[0],
+        role: 'subject',
+        ...(conceptHint ? { concept_hint: conceptHint, interpret_reason: 'pronoun' } : {}),
+      });
     }
-    i = 1;
+    tokens = tokens.slice(1);
+  }
+
+  if (tokens.length <= 1) {
+    if (tokens.length === 1) {
+      event.push({ english: tokens[0], role: 'event' });
+    }
+    return { subject, time, event, path, object, modifiers };
+  }
+
+  const idiomScan = patternScanTokens(tokens, 0);
+  let scanAuxTense = null;
+  for (const t of idiomScan) {
+    if (TENSE_AUX[t]) scanAuxTense = TENSE_AUX[t];
+  }
+
+  const earlyIdiom = matchIdiomPhrase(idiomScan, rules);
+  if (earlyIdiom) {
+    const slots = { subject, time, event, path, object, modifiers };
+    const tense = scanAuxTense ?? 'present';
+    if (tense === 'past') {
+      time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
+    } else if (tense === 'future') {
+      time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
+    }
+    applyIdiomToSlots(earlyIdiom, slots, rules);
+    return slots;
+  }
+
+  const patternTokens = [...idiomScan];
+  const beHit = matchBeConstruction(patternTokens, rules);
+  if (beHit) {
+    const slots = { subject, time, event, path, object, modifiers };
+    applyBeConstruction(beHit, slots);
+    return slots;
   }
 
   const content = [];
   let auxTense = null;
-  while (i < tokens.length) {
-    const t = tokens[i];
-    i += 1;
+  for (const t of tokens) {
     if (SKIP.has(t)) continue;
     if (TENSE_AUX[t]) {
       auxTense = TENSE_AUX[t];
@@ -350,7 +314,9 @@ function compileSemanticSlots(tokens, rules) {
   if (futurePeel) {
     tense = 'future';
     working = [...futurePeel.before, ...futurePeel.after];
-  } else if (auxTense === 'past' || working.some(w => isPastForm(w, rules))) {
+  } else if (auxTense === 'past') {
+    tense = 'past';
+  } else if (working.some(w => isPastForm(w, rules))) {
     tense = 'past';
   } else {
     tense = 'present';
@@ -362,6 +328,18 @@ function compileSemanticSlots(tokens, rules) {
     time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
   }
 
+  const slots = { subject, time, event, path, object, modifiers };
+
+  const linking = matchSubjectLinkingPredicate(working, rules);
+  if (linking) {
+    if (!subject.length) {
+      subject.push({ english: linking.subject, role: 'subject' });
+    }
+    event.push(linking.event);
+    modifiers.push(linking.modifier);
+    return slots;
+  }
+
   if (!subject.length && working.length >= 4) {
     const phraseAfterSubject = matchVerbSpatialLandmark(working.slice(1), rules);
     if (phraseAfterSubject) {
@@ -369,21 +347,50 @@ function compileSemanticSlots(tokens, rules) {
       event.push(phraseAfterSubject.event);
       path.push(phraseAfterSubject.path);
       object.push(phraseAfterSubject.object);
-      return { mode: 'sentence', subject, time, event, path, object, modifiers };
+      return slots;
     }
+  }
+
+  const beAdj = matchSubjectBeAdj(patternTokens, rules);
+  if (beAdj) {
+    if (!subject.length) subject.push(beAdj.subject);
+    modifiers.push(beAdj.modifier);
+    return slots;
+  }
+
+  const verbTo = matchSubjectVerbToNp(working, rules);
+  if (verbTo) {
+    if (!subject.length) subject.push(verbTo.subject);
+    event.push(verbTo.event);
+    object.push(verbTo.object);
+    return slots;
   }
 
   const phrase = matchVerbSpatialLandmark(working, rules);
   if (phrase) {
+    if (!subject.length && working.length > 3) {
+      const subjParts = working.slice(0, working.indexOf(phrase.event.english)).filter(w => !SKIP.has(w));
+      if (subjParts.length) {
+        subject.push({ english: subjParts.join(' '), role: 'subject' });
+      }
+    }
     event.push(phrase.event);
     path.push(phrase.path);
     object.push(phrase.object);
-    return { mode: 'sentence', subject, time, event, path, object, modifiers };
+    return slots;
   }
 
   if (!subject.length && working.length >= 2) {
+    const firstPos = await getPosHint(working[0]);
+    const secondPos = await getPosHint(working[1]);
+    if (firstPos === 'verb' && secondPos !== 'verb') {
+      event.push({ english: working[0], role: 'event' });
+      object.push({ english: working[1], role: 'object' });
+      for (const extra of working.slice(2)) modifiers.push({ english: extra, role: 'modifier' });
+      return slots;
+    }
     subject.push({ english: working[0], role: 'subject' });
-    working.shift();
+    working = working.slice(1);
   }
 
   if (working.length >= 2) {
@@ -394,33 +401,91 @@ function compileSemanticSlots(tokens, rules) {
     event.push({ english: working[0], role: 'event' });
   }
 
-  return { mode: 'sentence', subject, time, event, path, object, modifiers };
+  return slots;
 }
 
-function slotsToTokens(index, slots, rules) {
+/**
+ * Compile English tokens into grammar slots with phrase-aware interpretation.
+ * @param {string[]} tokens
+ * @param {object} rules
+ */
+async function compileSemanticSlots(tokens, rules) {
+  if (tokens.length <= 1) {
+    return {
+      mode: 'word',
+      subject: [],
+      time: [],
+      event: tokens.length ? [{ english: tokens[0], role: 'concept' }] : [],
+      path: [],
+      object: [],
+      modifiers: [],
+    };
+  }
+
+  const merged = mergePhrasalTokens(tokens);
+  const clauses = splitIntoClauses(merged, { pronounWords: PRONOUN_WORDS });
+
+  if (clauses.length === 1) {
+    const slotData = await compileClause(clauses[0], rules);
+    return { mode: 'sentence', ...slotData };
+  }
+
+  const combined = emptySlots();
+  let carriedSubject = null;
+  for (const clause of clauses) {
+    const slotData = await compileClause(clause, rules);
+    if (slotData.subject.length) {
+      carriedSubject = slotData.subject;
+    } else if (carriedSubject?.length) {
+      slotData.subject.push(...carriedSubject.map(s => ({ ...s })));
+    }
+    appendSlots(combined, slotData);
+  }
+  return { mode: 'discourse', ...combined };
+}
+
+async function resolveSlot(ctx, slot, role) {
+  const surface = String(slot.english ?? '').trim();
+  const lower = surface.toLowerCase();
+  if (PRONOUNS[lower]) {
+    return particleToken(role, PRONOUNS[lower], surface);
+  }
+
+  const hints = {};
+  if (slot.concept_hint) {
+    hints.concept_hint = slot.concept_hint;
+    hints.interpret_reason = slot.interpret_reason;
+  }
+  return resolveEnglishToken(slot.english, ctx, {
+    role,
+    hints,
+    allowSemantic: true,
+    allowGuess: true,
+    surfaceEnglish: slot.english,
+  });
+}
+
+async function slotsToTokens(ctx, slots) {
   if (slots.mode === 'word') {
     const english = slots.event[0]?.english;
-    return english ? [interpretConceptToken(index, english, 'concept', rules)] : [];
+    return english
+      ? [await resolveEnglishToken(english, ctx, { role: 'concept', allowSemantic: true, allowGuess: true })]
+      : [];
   }
 
   const out = [];
   for (const slot of slots.subject) {
     if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
-    else out.push(interpretConceptToken(index, slot.english, 'subject', rules));
+    else out.push(await resolveSlot(ctx, slot, 'subject'));
   }
   for (const slot of slots.time) {
     if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
-    else out.push(unresolvedToken(slot.english, 'time'));
+    else out.push(await resolveSlot(ctx, slot, 'time'));
   }
-  for (const slot of slots.event) out.push(interpretConceptToken(index, slot.english, 'event', rules));
-  for (const slot of slots.path) {
-    out.push(interpretConceptToken(index, slot.english, 'path', rules, {
-      concept_hint: slot.concept_hint,
-      interpret_reason: slot.interpret_reason,
-    }));
-  }
-  for (const slot of slots.object) out.push(interpretConceptToken(index, slot.english, 'object', rules));
-  for (const slot of slots.modifiers) out.push(interpretConceptToken(index, slot.english, 'modifier', rules));
+  for (const slot of slots.event) out.push(await resolveSlot(ctx, slot, 'event'));
+  for (const slot of slots.path) out.push(await resolveSlot(ctx, slot, 'path'));
+  for (const slot of slots.object) out.push(await resolveSlot(ctx, slot, 'object'));
+  for (const slot of slots.modifiers) out.push(await resolveSlot(ctx, slot, 'modifier'));
   return out;
 }
 
@@ -464,11 +529,51 @@ export async function translateEnglish(text, options = {}) {
     };
   }
 
-  const baseIndex = await loadTranslationIndex(options.lab);
-  const rules = await loadInterpretationRules();
-  const englishTokens = tokenizeEnglish(input);
-  const semantic = compileSemanticSlots(englishTokens, rules);
-  const tokens = slotsToTokens(baseIndex, semantic, rules);
+  const ctx = await buildResolveContext(options.lab);
+  const rules = ctx.rules ?? await loadInterpretationRules();
+  ctx.rules = rules;
+
+  const sentences = splitSentences(input);
+  if (sentences.length > 1) {
+    const allTokens = [];
+    const mergedSlots = emptySlots();
+    for (const sent of sentences) {
+      const englishTokens = mergePhrasalTokens(tokenizeEnglish(sent));
+      const semantic = await compileSemanticSlots(englishTokens, rules);
+      appendSlots(mergedSlots, semantic);
+      allTokens.push(...await slotsToTokens(ctx, semantic));
+    }
+    const tokens = allTokens;
+    const surface = buildSurface(tokens);
+    const unresolved = tokens.filter(t => !t.resolved).map(t => t.english);
+    const interpretations = tokens
+      .filter(t => t.interpreted)
+      .map(t => ({
+        english: t.interpreted_from ?? t.english,
+        concept_id: t.concept_id ?? t.english,
+        fonoran: t.fonoran,
+        reason: t.interpret_reason ?? '',
+        role: t.role,
+        resolution_kind: t.resolution_kind,
+      }));
+
+    return {
+      input,
+      mode: 'discourse',
+      tokens,
+      surface,
+      semantic: {
+        skeleton: GRAMMAR_SKELETON,
+        slots: mergedSlots,
+      },
+      interpretations,
+      unresolved,
+    };
+  }
+
+  const englishTokens = mergePhrasalTokens(tokenizeEnglish(sentences[0] ?? input));
+  const semantic = await compileSemanticSlots(englishTokens, rules);
+  const tokens = await slotsToTokens(ctx, semantic);
   const surface = buildSurface(tokens);
   const unresolved = tokens.filter(t => !t.resolved).map(t => t.english);
   const interpretations = tokens
@@ -479,6 +584,7 @@ export async function translateEnglish(text, options = {}) {
       fonoran: t.fonoran,
       reason: t.interpret_reason ?? '',
       role: t.role,
+      resolution_kind: t.resolution_kind,
     }));
 
   return {
@@ -514,3 +620,5 @@ export async function loadGrammarParticlesMeta() {
 export function resetTranslatorCache() {
   resetInterpretationCache();
 }
+
+export { tokenizeEnglish, lemmatizeEnglish };

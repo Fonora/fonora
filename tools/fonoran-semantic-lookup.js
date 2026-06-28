@@ -48,6 +48,8 @@ const HYPERNYM_BRIDGE = new Map([
   // Weather / atmosphere
   ['atmospheric_phenomenon', ['air', 'flow']],
   ['weather',           ['air']],
+  ['storm',             ['air', 'flow']],
+  ['storminess',        ['air', 'bad']],
 
   // Living things
   ['person',            ['person']],
@@ -207,6 +209,31 @@ export async function expandWord(word) {
     return result;
   } catch {
     return { synonyms: [], hypernym_concepts: [] };
+  }
+}
+
+/**
+ * Rough POS hint for frame-parser slot disambiguation (noun vs verb).
+ * @returns {Promise<'noun'|'verb'|'adj'|null>}
+ */
+export async function getPosHint(word) {
+  const wp = getWp();
+  if (!wp) return null;
+  const key = norm(word).replace(/\s+/g, '_');
+  try {
+    const [nouns, verbs, adjs] = await Promise.all([
+      wp.lookupNoun(key).catch(() => []),
+      wp.lookupVerb(key).catch(() => []),
+      wp.lookupAdjective(key).catch(() => []),
+    ]);
+    if (verbs.length && nouns.length === 0) return 'verb';
+    if (nouns.length && verbs.length === 0) return 'noun';
+    if (adjs.length && nouns.length === 0 && verbs.length === 0) return 'adj';
+    if (verbs.length > nouns.length) return 'verb';
+    if (nouns.length > verbs.length) return 'noun';
+    return null;
+  } catch {
+    return null;
   }
 }
 
