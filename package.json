@@ -37,6 +37,8 @@
     "fonoran:explore": "node -e \"console.log('Open http://localhost:' + (process.env.PORT||8000) + '/fonoran/')\"",
     "fonoran:import": "node scripts/fonoran-import-json.js",
     "fonoran:export": "node scripts/fonoran-export-json.js",
+    "fonoran:snapshot:export": "node scripts/fonoran-snapshot-export.js",
+    "fonoran:snapshot:import": "node scripts/fonoran-snapshot-import.js",
     "fonoran:roots": "node tools/fonoran-english-roots-build.js",
     "fonoran:lexicon": "node -e \"import('./tools/fonoran-english-lexicon.js').then(m => m.writeEnglishLexicon().then(l => console.log('Lexicon:', l.word_count, 'words')))\"",
     "fonoran:reset": "node tools/fonoran-reset.js",
@@ -52,6 +54,8 @@
   },
   "dependencies": {
     "@echogarden/espeak-ng-emscripten": "^0.3.5",
+    "adm-zip": "^0.5.17",
+    "archiver": "^8.0.0",
     "espeak-ng": "^1.0.2",
     "onnxruntime-web": "1.20.1",
     "pg": "^8.22.0",

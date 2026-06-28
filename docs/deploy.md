@@ -76,32 +76,64 @@ Use for uptime monitors.
 
 No secrets are required for the **public script app** alone. When all three OAuth vars are set (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`), Fonoran **write** routes require a signed-in `@fonora.org` Google account. Copy [`.env.example`](../.env.example) for local testing.
 
-## PostgreSQL (Fonoran lab data)
+## PostgreSQL (Fonoran storage)
 
-Live Fonoran vocabulary (roots, compounds, review state) can be stored in **PostgreSQL** instead of `data/fonoran-sound-bucket.json`.
+All runtime Fonoran state lives in **PostgreSQL** when `DATABASE_URL` is set:
+
+- Lab bucket (roots, words, review state, history)
+- Concept inventory, root candidates, approved roots
+- English word banks (`localizations/en.json`)
+- Build inputs (compound recipes, phonetics config)
+
+Git-tracked JSON under `data/` is the **seed** format. On first boot with an empty database, the server seeds from those files automatically.
 
 ### Heroku Postgres
 
 ```bash
 heroku addons:create heroku-postgresql:essential-0
 heroku config:get DATABASE_URL
+heroku config:set FONORAN_SKIP_JSON_MIRROR=1
 ```
 
-On first boot with an empty database, the server **imports** local `data/fonoran-sound-bucket.json` if present, your JSON file is **not deleted**.
+Set `FONORAN_SKIP_JSON_MIRROR=1` on Heroku so the dyno filesystem is not relied on for persistence.
 
-### Manual import / export
+On first boot with an empty database, the server **seeds** from git JSON if present. Your seed files are **not deleted**.
+
+### Snapshots (backup & disaster recovery)
+
+Full-state backups use the same JSON layout as seed files, bundled in a zip with `manifest.json`.
+
+**Advanced UI** (More → Advanced → Backup & sync):
+
+- **Download snapshot** — zip of all runtime + build-input docs
+- **Import snapshot** — replace all state (requires typing `RESTORE`)
+
+**CLI:**
 
 ```bash
-# Import local JSON → PostgreSQL (requires DATABASE_URL)
-npm run fonoran:import
+# Export to timestamped zip (default: backups/fonoran-YYYY-MM-DD.zip)
+npm run fonoran:snapshot:export
 
-# Export PostgreSQL → JSON backup
-npm run fonoran:export
+# Export Postgres → local seed paths (for git commit)
+npm run fonoran:snapshot:export -- --to=data/
+
+# Import zip → Postgres
+npm run fonoran:snapshot:import -- backups/fonoran-2026-06-28.zip
+
+# Import local seed paths → Postgres (local bootstrap)
+npm run fonoran:snapshot:import -- --from=data/
+```
+
+Legacy lab-only commands (still supported):
+
+```bash
+npm run fonoran:import   # lab bucket JSON → PostgreSQL only
+npm run fonoran:export   # lab bucket PostgreSQL → JSON only
 ```
 
 ### Local development
 
-Without `DATABASE_URL`, storage falls back to JSON at `data/fonoran-sound-bucket.json` (gitignored). Reference generator JSON (Gen 3 configs, canonical registry) remains file-based.
+Without `DATABASE_URL`, storage falls back to JSON files under `data/`. Use snapshot export/import to sync between JSON mode and a local Postgres instance.
 
 See [platform-overview.md](platform-overview.md) for the data architecture overview.
 
@@ -131,9 +163,10 @@ Because WASM assets are large (~90 MB in `vendor/` after install), a Node static
 - [ ] Google Workspace + OAuth credentials configured ([fonoran-auth-and-release.md](fonoran-auth-and-release.md))
 - [ ] `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`, `ALLOWED_DOMAIN` set on Heroku
 - [ ] Write API requires `@fonora.org` session; unsigned users can browse dictionary only
-- [ ] `DATABASE_URL` set; live bucket imported or seeded once
+- [ ] `DATABASE_URL` set; `FONORAN_SKIP_JSON_MIRROR=1` on Heroku
+- [ ] Live state seeded from git JSON on first deploy
 - [ ] Contributor Google Form linked from `/fonoran/` lander
-- [ ] Backup: `npm run fonoran:export` after significant changes
+- [ ] Periodic backup: Advanced → Download snapshot, or `npm run fonoran:snapshot:export`
 
 ## CI
 

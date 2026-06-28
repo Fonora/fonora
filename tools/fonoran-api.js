@@ -1,5 +1,5 @@
 /**
- * Fonoran language API: file-backed lab store.
+ * Fonoran language API: Postgres-backed store with JSON seed/snapshot interchange.
  */
 
 import {
@@ -43,8 +43,17 @@ import {
 import {
   getSessionUser,
   isWriteAuthRequired,
+  isAdminUser,
+  isSnapshotAdminRequired,
+  adminRequiredResponse,
   unauthorizedResponse,
 } from './fonoran-auth.js';
+import {
+  createSnapshotZipStream,
+  getSnapshotStatus,
+  importSnapshotZip,
+  previewSnapshotZip,
+} from './fonoran-snapshot.js';
 
 export function jsonResponse(res, status, body) {
   const payload = JSON.stringify(body);
@@ -63,6 +72,22 @@ export async function readJsonBody(req) {
   return JSON.parse(raw);
 }
 
+async function readRawBody(req) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  return Buffer.concat(chunks);
+}
+
+function snapshotZipFromBody(body, rawBuffer) {
+  if (body?.zip_base64) {
+    return Buffer.from(body.zip_base64, 'base64');
+  }
+  if (rawBuffer?.length && !rawBuffer.toString('utf8').trimStart().startsWith('{')) {
+    return rawBuffer;
+  }
+  return null;
+}
+
 export async function handleFonoranApi(req, res, pathname, method) {
   const done = (status, body) => {
     jsonResponse(res, status, body);
@@ -72,7 +97,61 @@ export async function handleFonoranApi(req, res, pathname, method) {
     unauthorizedResponse(res);
     return true;
   }
+  if (isSnapshotAdminRequired(pathname, method) && !isAdminUser(req)) {
+    adminRequiredResponse(res);
+    return true;
+  }
   try {
+    if (pathname === '/api/fonoran/snapshot/status' && method === 'GET') {
+      return done(200, await getSnapshotStatus());
+    }
+    if (pathname === '/api/fonoran/snapshot/export' && method === 'GET') {
+      const stamp = new Date().toISOString().slice(0, 10);
+      res.writeHead(200, {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="fonoran-snapshot-${stamp}.zip"`,
+        'Cache-Control': 'no-store',
+      });
+      const archive = await createSnapshotZipStream();
+      archive.on('error', (err) => {
+        if (!res.headersSent) {
+          jsonResponse(res, 500, { error: err.message ?? 'Export failed' });
+        } else {
+          res.destroy(err);
+        }
+      });
+      archive.pipe(res);
+      return true;
+    }
+    if (pathname === '/api/fonoran/snapshot/preview' && method === 'POST') {
+      const raw = await readRawBody(req);
+      let body = {};
+      try {
+        body = raw.length ? JSON.parse(raw.toString('utf8')) : {};
+      } catch {
+        body = {};
+      }
+      const zip = snapshotZipFromBody(body, raw);
+      if (!zip?.length) return done(400, { error: 'Provide zip_base64 or raw zip body' });
+      return done(200, previewSnapshotZip(zip));
+    }
+    if (pathname === '/api/fonoran/snapshot/import' && method === 'POST') {
+      const raw = await readRawBody(req);
+      let body = {};
+      try {
+        body = raw.length ? JSON.parse(raw.toString('utf8')) : {};
+      } catch {
+        body = {};
+      }
+      if (body.confirm !== 'RESTORE') {
+        return done(400, { error: 'Type RESTORE in confirm field to replace all Fonoran state' });
+      }
+      const zip = snapshotZipFromBody(body, raw);
+      if (!zip?.length) return done(400, { error: 'Provide zip_base64 or raw zip body' });
+      const preview = previewSnapshotZip(zip);
+      const result = await importSnapshotZip(zip);
+      return done(200, { imported: true, preview: preview.summary, ...result });
+    }
     if (pathname === '/api/fonoran/lab' && method === 'GET') {
       return done(200, await getLab());
     }

@@ -1,14 +1,31 @@
 /**
- * Fonoran lab storage: PostgreSQL when configured, JSON file fallback.
- * Local JSON is never deleted; it remains the portable backup format.
+ * Fonoran storage: PostgreSQL when configured, JSON file fallback.
+ * Lab bucket + editorial documents share the same dual-mode pattern.
+ * JSON files are the portable seed/backup interchange format.
  */
 
-import { readFile, writeFile, access } from 'node:fs/promises';
-import { join, dirname } from 'node:path';
+import { readFile, writeFile, access, mkdir } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const BUCKET_PATH = join(ROOT, 'data/fonoran-sound-bucket.json');
+
+/** Editorial document keys → seed paths relative to repo root. */
+export const EDITORIAL_DOCS = {
+  concept_inventory: 'data/fonoran-concept-inventory.json',
+  root_candidates: 'data/fonoran-root-candidates.json',
+  approved_roots: 'data/fonoran-approved-roots.json',
+  localization_en: 'data/localizations/en.json',
+  compounds: 'data/fonoran-compounds.json',
+  phonetics_config: 'data/fonoran-primitive-roots-config.json',
+};
+
+/** Snapshot bundle file paths (includes lab bucket). */
+export const SNAPSHOT_PATHS = [
+  'data/fonoran-sound-bucket.json',
+  ...Object.values(EDITORIAL_DOCS),
+];
 
 const SCHEMA_VERSION = 1;
 
@@ -29,6 +46,12 @@ CREATE TABLE IF NOT EXISTS fonoran_lab_bucket (
   compounds JSONB NOT NULL DEFAULT '[]'::jsonb,
   history JSONB NOT NULL DEFAULT '[]'::jsonb,
   events JSONB NOT NULL DEFAULT '[]'::jsonb
+);
+
+CREATE TABLE IF NOT EXISTS fonoran_editorial_docs (
+  doc_key TEXT PRIMARY KEY,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  body JSONB NOT NULL
 );
 
 INSERT INTO fonoran_lab_meta (id, schema_version)
@@ -81,16 +104,64 @@ function bucketFromRow(row) {
   };
 }
 
-async function readBucketFromJson() {
+export function docSeedPath(key) {
+  const rel = EDITORIAL_DOCS[key];
+  if (!rel) throw new Error(`Unknown editorial doc key: ${key}`);
+  return join(ROOT, rel);
+}
+
+async function fileExists(path) {
   try {
-    return JSON.parse(await readFile(BUCKET_PATH, 'utf8'));
+    await access(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function readJsonFile(path) {
+  try {
+    return JSON.parse(await readFile(path, 'utf8'));
   } catch {
     return null;
   }
 }
 
+async function writeJsonFile(path, data) {
+  await mkdir(dirname(path), { recursive: true });
+  await writeFile(path, JSON.stringify(data, null, 2) + '\n');
+}
+
+function shouldMirrorJson() {
+  return process.env.FONORAN_SKIP_JSON_MIRROR !== '1';
+}
+
+function isDocBodyEmpty(key, body) {
+  if (!body || typeof body !== 'object') return true;
+  switch (key) {
+    case 'concept_inventory':
+      return !(body.primitives?.length);
+    case 'root_candidates':
+      return !(body.candidates?.length);
+    case 'approved_roots':
+      return !(body.roots?.length);
+    case 'localization_en':
+      return !Object.keys(body.entries ?? {}).length;
+    case 'compounds':
+      return !(body.compounds?.length);
+    case 'phonetics_config':
+      return !body.phonetics && !body.version;
+    default:
+      return false;
+  }
+}
+
+async function readBucketFromJson() {
+  return readJsonFile(BUCKET_PATH);
+}
+
 async function writeBucketToJson(bucket) {
-  await writeFile(BUCKET_PATH, JSON.stringify(bucket, null, 2) + '\n');
+  await writeJsonFile(BUCKET_PATH, bucket);
 }
 
 async function readBucketFromPg() {
@@ -137,20 +208,197 @@ async function writeBucketToPg(bucket) {
   }
 }
 
+async function readDocFromPg(key) {
+  await ensurePgSchema();
+  const client = await (await getPool()).connect();
+  try {
+    const { rows } = await client.query(
+      'SELECT doc_key, updated_at, body FROM fonoran_editorial_docs WHERE doc_key = $1',
+      [key],
+    );
+    if (!rows.length) return null;
+    const row = rows[0];
+    return {
+      key: row.doc_key,
+      updated_at: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
+      body: row.body,
+    };
+  } finally {
+    client.release();
+  }
+}
+
+async function writeDocToPg(key, body) {
+  await ensurePgSchema();
+  const client = await (await getPool()).connect();
+  try {
+    await client.query(
+      `INSERT INTO fonoran_editorial_docs (doc_key, updated_at, body)
+       VALUES ($1, NOW(), $2::jsonb)
+       ON CONFLICT (doc_key) DO UPDATE SET
+         updated_at = NOW(),
+         body = EXCLUDED.body`,
+      [key, JSON.stringify(body)],
+    );
+  } finally {
+    client.release();
+  }
+}
+
+export async function pgDocIsEmpty(key) {
+  if (resolveStorageMode() !== 'postgres') return true;
+  const row = await readDocFromPg(key);
+  if (!row) return true;
+  return isDocBodyEmpty(key, row.body);
+}
+
+/**
+ * Read an editorial document from the active store.
+ * Falls back to seed JSON on disk when Postgres row is missing.
+ * @param {keyof typeof EDITORIAL_DOCS} key
+ */
+export async function readDoc(key) {
+  if (!EDITORIAL_DOCS[key]) throw new Error(`Unknown editorial doc key: ${key}`);
+  if (resolveStorageMode() === 'postgres') {
+    const row = await readDocFromPg(key);
+    if (row && !isDocBodyEmpty(key, row.body)) return row.body;
+    return readJsonFile(docSeedPath(key));
+  }
+  return readJsonFile(docSeedPath(key));
+}
+
+/**
+ * Persist an editorial document to the active store.
+ * @param {keyof typeof EDITORIAL_DOCS} key
+ */
+export async function writeDoc(key, body) {
+  if (!EDITORIAL_DOCS[key]) throw new Error(`Unknown editorial doc key: ${key}`);
+  if (resolveStorageMode() === 'postgres') {
+    await writeDocToPg(key, body);
+    if (shouldMirrorJson()) {
+      await writeJsonFile(docSeedPath(key), body);
+    }
+    return body;
+  }
+  await writeJsonFile(docSeedPath(key), body);
+  return body;
+}
+
+/** Read metadata for all editorial docs (counts + updated_at). */
+export async function readDocStatus() {
+  const status = {};
+  for (const key of Object.keys(EDITORIAL_DOCS)) {
+    if (resolveStorageMode() === 'postgres') {
+      const row = await readDocFromPg(key);
+      if (row) {
+        status[key] = {
+          updated_at: row.updated_at,
+          counts: docCounts(key, row.body),
+        };
+        continue;
+      }
+    }
+    const body = await readJsonFile(docSeedPath(key));
+    status[key] = {
+      updated_at: null,
+      counts: docCounts(key, body),
+      source: 'seed_file',
+    };
+  }
+  return status;
+}
+
+function docCounts(key, body) {
+  if (!body) return {};
+  switch (key) {
+    case 'concept_inventory':
+      return { primitives: body.primitives?.length ?? 0 };
+    case 'root_candidates':
+      return {
+        candidates: body.candidates?.length ?? 0,
+        pending: body.candidates?.filter(c => c.status === 'pending').length ?? 0,
+        approved: body.candidates?.filter(c => c.status === 'approved').length ?? 0,
+      };
+    case 'approved_roots':
+      return { roots: body.roots?.length ?? 0 };
+    case 'localization_en':
+      return { entries: Object.keys(body.entries ?? {}).length };
+    case 'compounds':
+      return { compounds: body.compounds?.length ?? 0 };
+    case 'phonetics_config':
+      return { phonetics: Boolean(body.phonetics) };
+    default:
+      return {};
+  }
+}
+
+/** Assemble all snapshot documents from the active store. */
+export async function readAllSnapshotDocs() {
+  const bucket = await readBucketRaw();
+  if (!bucket) throw new Error('Lab bucket is empty or unreadable');
+
+  const docs = {};
+  for (const key of Object.keys(EDITORIAL_DOCS)) {
+    const body = await readDoc(key);
+    if (!body) throw new Error(`Missing editorial doc: ${key}`);
+    docs[key] = body;
+  }
+
+  return { bucket, docs };
+}
+
+/**
+ * Replace all snapshot documents in the active store.
+ * @param {{ bucket: object, docs: Record<string, object> }} snapshot
+ */
+export async function importAllSnapshotDocs({ bucket, docs }) {
+  await writeBucketRaw(bucket);
+  for (const key of Object.keys(EDITORIAL_DOCS)) {
+    if (!docs[key]) throw new Error(`Snapshot missing doc: ${key}`);
+    await writeDoc(key, docs[key]);
+  }
+  return {
+    sounds: bucket.sounds?.length ?? 0,
+    compounds: bucket.compounds?.length ?? 0,
+    docs: Object.keys(docs).length,
+  };
+}
+
+/** Write snapshot files to seed paths on disk (for git codification). */
+export async function writeSnapshotToSeedPaths(baseDir = ROOT) {
+  const { bucket, docs } = await readAllSnapshotDocs();
+  await writeJsonFile(join(baseDir, 'data/fonoran-sound-bucket.json'), bucket);
+  for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
+    await writeJsonFile(join(baseDir, rel), docs[key]);
+  }
+  return {
+    sounds: bucket.sounds?.length ?? 0,
+    compounds: bucket.compounds?.length ?? 0,
+    files: SNAPSHOT_PATHS.length,
+  };
+}
+
+/** Read snapshot files from seed paths on disk into the active store. */
+export async function readSnapshotFromSeedPaths(baseDir = ROOT) {
+  const bucketPath = join(baseDir, 'data/fonoran-sound-bucket.json');
+  const bucket = await readJsonFile(bucketPath);
+  if (!bucket) throw new Error(`Missing or unreadable ${bucketPath}`);
+
+  const docs = {};
+  for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
+    const body = await readJsonFile(join(baseDir, rel));
+    if (!body) throw new Error(`Missing or unreadable ${rel}`);
+    docs[key] = body;
+  }
+
+  return importAllSnapshotDocs({ bucket, docs });
+}
+
 export async function pgBucketIsEmpty() {
   if (resolveStorageMode() !== 'postgres') return true;
   const bucket = await readBucketFromPg();
   if (!bucket) return true;
   return (bucket.sounds?.length ?? 0) === 0 && (bucket.compounds?.length ?? 0) === 0;
-}
-
-async function jsonFileExists() {
-  try {
-    await access(BUCKET_PATH);
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 /**
@@ -172,7 +420,7 @@ export async function writeBucketRaw(bucket) {
   bucket.updated_at = new Date().toISOString();
   if (resolveStorageMode() === 'postgres') {
     await writeBucketToPg(bucket);
-    if (process.env.FONORAN_SKIP_JSON_MIRROR !== '1') {
+    if (shouldMirrorJson()) {
       await writeBucketToJson(bucket);
     }
     return bucket;
@@ -231,25 +479,59 @@ export async function exportPostgresToJson(jsonPath = BUCKET_PATH) {
 }
 
 /**
- * On server startup: if PostgreSQL is empty and local JSON exists, import it.
+ * On server startup: seed PostgreSQL from git JSON when rows are empty.
  */
-export async function maybeAutoImportOnStartup() {
-  if (resolveStorageMode() !== 'postgres') return { skipped: true, reason: 'json mode' };
-  const empty = await pgBucketIsEmpty();
-  if (!empty) return { skipped: true, reason: 'postgres already has data' };
-  if (!(await jsonFileExists())) return { skipped: true, reason: 'no local json file' };
-
-  const jsonBucket = await readBucketFromJson();
-  if (!jsonBucket) return { skipped: true, reason: 'json unreadable' };
-  if ((jsonBucket.sounds?.length ?? 0) === 0 && (jsonBucket.compounds?.length ?? 0) === 0) {
-    return { skipped: true, reason: 'json bucket empty' };
+export async function maybeAutoSeedOnStartup() {
+  if (resolveStorageMode() !== 'postgres') {
+    return { skipped: true, reason: 'json mode' };
   }
 
-  const result = await importJsonToPostgres(BUCKET_PATH);
-  console.log(
-    `Fonoran: imported local JSON into PostgreSQL (${result.sounds} roots, ${result.compounds} words)`,
-  );
-  return { imported: true, ...result };
+  const results = { lab: null, docs: [] };
+
+  if (await pgBucketIsEmpty()) {
+    if (!(await fileExists(BUCKET_PATH))) {
+      results.lab = { skipped: true, reason: 'no local json file' };
+    } else {
+      const jsonBucket = await readBucketFromJson();
+      if (!jsonBucket || ((jsonBucket.sounds?.length ?? 0) === 0 && (jsonBucket.compounds?.length ?? 0) === 0)) {
+        results.lab = { skipped: true, reason: 'json bucket empty' };
+      } else {
+        results.lab = await importJsonToPostgres(BUCKET_PATH);
+        console.log(
+          `Fonoran: seeded lab from JSON (${results.lab.sounds} roots, ${results.lab.compounds} words)`,
+        );
+      }
+    }
+  } else {
+    results.lab = { skipped: true, reason: 'postgres already has lab data' };
+  }
+
+  for (const key of Object.keys(EDITORIAL_DOCS)) {
+    if (!(await pgDocIsEmpty(key))) {
+      results.docs.push({ key, skipped: true, reason: 'already has data' });
+      continue;
+    }
+    const path = docSeedPath(key);
+    if (!(await fileExists(path))) {
+      results.docs.push({ key, skipped: true, reason: 'no seed file' });
+      continue;
+    }
+    const body = await readJsonFile(path);
+    if (!body || isDocBodyEmpty(key, body)) {
+      results.docs.push({ key, skipped: true, reason: 'seed file empty' });
+      continue;
+    }
+    await writeDocToPg(key, body);
+    results.docs.push({ key, seeded: true });
+    console.log(`Fonoran: seeded editorial doc "${key}" from ${EDITORIAL_DOCS[key]}`);
+  }
+
+  return results;
+}
+
+/** @deprecated Use maybeAutoSeedOnStartup */
+export async function maybeAutoImportOnStartup() {
+  return maybeAutoSeedOnStartup();
 }
 
 export async function closeStore() {

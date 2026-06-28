@@ -459,6 +459,20 @@
             <button type="button" class="btn btn-primary" id="adv-run-dda" data-write>Run DDA</button>
           </div>
           <p id="adv-dda-status" class="sans" style="font-size:0.84rem;color:var(--muted);margin:0.5rem 0 0"></p>
+          <div class="adv-backup-zone">
+            <h3>Backup &amp; sync</h3>
+            <p class="sans adv-backup-zone__lead">Download a full snapshot (lab + concepts + word banks + build inputs) or restore from backup. Snapshots use the same JSON layout as seed files.</p>
+            <p id="adv-storage-status" class="sans" style="font-size:0.84rem;color:var(--muted);margin:0.25rem 0 0.75rem"></p>
+            <div class="actions adv-backup-zone__actions">
+              <a class="btn btn-primary" id="adv-snapshot-download" href="/api/fonoran/snapshot/export" download data-write>Download snapshot</a>
+              <label class="btn" id="adv-snapshot-import-label" data-write>
+                Import snapshot
+                <input type="file" id="adv-snapshot-import" accept=".zip,application/zip" hidden data-write-input>
+              </label>
+            </div>
+            <p class="sans adv-backup-zone__hint">CLI: <code>npm run fonoran:snapshot:export -- --to=data/</code> (sync Postgres → JSON for git) · <code>npm run fonoran:snapshot:import -- --from=data/</code> (JSON → Postgres)</p>
+            <pre id="adv-snapshot-preview" class="debug-panel" hidden></pre>
+          </div>
           <div class="adv-danger-zone">
             <h3>Danger zone</h3>
             <p class="adv-danger-zone__lead sans">These actions have irreversible effects on your lab data. Proceed with caution.</p>
@@ -467,7 +481,7 @@
               <p class="sans adv-danger-zone__hint">CLI: <code>npm run fonoran:reset && npm run fonoran:build</code> (review) or <code>npm run fonoran:reset && npm run fonoran:build:approved</code> (pre-approved).</p>
               <button type="button" class="btn danger" id="adv-reset-review" data-write>Reset all review states (keep meanings)</button>
               <button type="button" class="btn" id="adv-reconcile-inventory" data-write>Reconcile inventory from lab</button>
-              <p class="sans adv-danger-zone__hint">Syncs root-candidates and approved-roots exports from live lab spellings (fixes drift after Review approvals).</p>
+              <p class="sans adv-danger-zone__hint">Legacy repair for drift before unified storage. Prefer snapshot export/import for backups.</p>
               <button type="button" class="btn danger" id="adv-reseed" data-write>Reset lab (blank slate)</button>
               <p class="sans adv-danger-zone__hint">Clears Dictionary, Review queue, and assigned sounds. Concept Editor keeps English definitions only.</p>
             </div>

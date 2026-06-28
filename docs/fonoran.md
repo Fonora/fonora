@@ -81,7 +81,7 @@ npm run fonoran:build    # assign roots + build curated compounds → lab
 | **Words** | Stack roots and/or approved words. Stored in `bucket.compounds`. |
 | **Nesting** | Approved word `kaso` can combine with root `la` → `lakaso`. |
 | **Review states** | `draft` → `needs_review` → `approved` \| `rejected` \| `revised` |
-| **Live vocabulary** | `data/fonoran-sound-bucket.json` (or PostgreSQL when `DATABASE_URL` is set) |
+| **Live vocabulary** | PostgreSQL when `DATABASE_URL` is set; else `data/fonoran-sound-bucket.json` |
 
 Legacy `parts: ["ka","so"]` is accepted; stored as typed `{ type, ref }` components.
 
@@ -115,7 +115,10 @@ concept-inventory → root-candidates → review → fonoran:build → lab
 | `data/fonoran-approved-roots.json` | Canonical approved roots |
 | `data/fonoran-compounds.json` | 46 curated compound recipes |
 | `data/fonoran-primitive-roots-config.json` | Phonetics rules only (onsets, vowels, codas) |
-| `data/fonoran-sound-bucket.json` | Runtime lab: sounds, compounds, history |
+| `data/fonoran-sound-bucket.json` | Runtime lab: sounds, compounds, history (seed + snapshot format) |
+| `data/localizations/en.json` | English word banks per concept |
+
+Runtime state is stored in **PostgreSQL** in production. JSON files are seeds and snapshot interchange format — update git milestones via `npm run fonoran:snapshot:export -- --to=data/`.
 
 ### Commands
 
@@ -124,6 +127,8 @@ npm run fonoran:reset              # blank lab + review queue + canonical roots
 npm run fonoran:build              # full pipeline → lab (needs review)
 npm run fonoran:build:approved     # same, everything pre-approved (testing)
 npm run fonoran:root-candidates    # refresh candidates only (no lab import)
+npm run fonoran:snapshot:export -- --to=data/   # Postgres → seed JSON (commit milestones)
+npm run fonoran:snapshot:import -- --from=data/ # seed JSON → Postgres (local bootstrap)
 ```
 
 Typical loop:
@@ -153,7 +158,7 @@ Reserved particles (never roots): `mi`, `na`, `ta`.
 | `/api/fonoran/lab/run-dda` | POST | Sign-in |
 | `/api/fonoran/lab/build` | POST | Sign-in |
 
-### Root review (file-backed)
+### Root review
 
 | Endpoint | Method | Purpose |
 | --- | --- | --- |
@@ -161,6 +166,15 @@ Reserved particles (never roots): `mi`, `na`, `ta`.
 | `/api/fonoran/roots/candidates/:id` | PATCH | `{ action: approve\|reject\|edit\|reopen, … }` |
 | `/api/fonoran/roots/candidates/:id/regenerate` | POST | New spelling for one concept |
 | `/api/fonoran/roots/canonical` | GET | Approved root export |
+
+### Snapshots
+
+| Endpoint | Method | Auth | Purpose |
+| --- | --- | --- | --- |
+| `/api/fonoran/snapshot/status` | GET | Public | Storage mode and doc counts |
+| `/api/fonoran/snapshot/export` | GET | Admin | Download full-state zip |
+| `/api/fonoran/snapshot/preview` | POST | Sign-in | Preview zip contents before restore |
+| `/api/fonoran/snapshot/import` | POST | Admin | Replace all state (`confirm: RESTORE`) |
 
 ### Other
 

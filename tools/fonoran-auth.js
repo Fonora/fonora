@@ -204,7 +204,32 @@ export function isWriteAuthRequired(pathname, method) {
   if (m === 'POST' && pathname === '/api/fonoran/lab/graph/preview') return false;
   if (m === 'POST' && pathname === '/api/fonoran/translate') return false;
   if (m === 'POST' && pathname === '/api/fonoran/word-generator') return false;
+  if (m === 'POST' && pathname === '/api/fonoran/snapshot/preview') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
+}
+
+/** Snapshot export/import requires admin when ADMIN_EMAILS is set. */
+export function isAdminUser(req) {
+  if (!isAuthEnabled()) return true;
+  const user = getSessionUser(req);
+  if (!user) return false;
+  const allowlist = allowedEmails();
+  if (allowlist) return allowlist.has(user.email.toLowerCase());
+  return true;
+}
+
+export function isSnapshotAdminRequired(pathname, method) {
+  const m = method.toUpperCase();
+  if (pathname === '/api/fonoran/snapshot/status' && m === 'GET') return false;
+  if (pathname === '/api/fonoran/snapshot/preview' && m === 'POST') return false;
+  return pathname.startsWith('/api/fonoran/snapshot/');
+}
+
+export function adminRequiredResponse(res) {
+  jsonResponse(res, 403, {
+    error: 'Admin access required',
+    hint: 'Set ADMIN_EMAILS on the server or sign in with an listed account.',
+  });
 }
 
 export function unauthorizedResponse(res) {

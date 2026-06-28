@@ -15,24 +15,20 @@
  * Run: npm run fonoran:build
  */
 
-import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateRootCandidates } from './fonoran-root-candidates.js';
-import { writeBucketRaw, readBucketRaw } from './fonoran-store.js';
+import { writeBucketRaw, readBucketRaw, readDoc, writeDoc } from './fonoran-store.js';
 import { emptyDda, migrateBucket, normalizeCompoundRecord, normalizeSoundRecord } from './fonoran-derivation.js';
 import { analyzeAmbiguity, auditScores, segmentCompound, checkCompoundBoundary } from './fonoran-gen3-readability.js';
 import { aliasesForConcept, loadLocalization } from './fonoran-concepts.js';
 import { parseSyllable } from './fonoran-pronunciation.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const COMPOUNDS_PATH = join(ROOT, 'data/fonoran-compounds.json');
-const CANDIDATES_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
-const CANONICAL_PATH = join(ROOT, 'data/fonoran-approved-roots.json');
 
 /** Mark every candidate approved in the review layer + canonical export (testing). */
 async function approveReviewLayer(now) {
-  const store = JSON.parse(await readFile(CANDIDATES_PATH, 'utf8'));
+  const store = await readDoc('root_candidates');
   for (const c of store.candidates ?? []) {
     if (c.status === 'rejected') continue;
     c.status = 'approved';
@@ -44,7 +40,7 @@ async function approveReviewLayer(now) {
     approved: store.candidates.filter(c => c.status === 'approved').length,
     rejected: store.candidates.filter(c => c.status === 'rejected').length,
   };
-  await writeFile(CANDIDATES_PATH, JSON.stringify(store, null, 2) + '\n');
+  await writeDoc('root_candidates', store);
 
   const approved = store.candidates.filter(c => c.status === 'approved');
   const canonical = {
@@ -62,7 +58,7 @@ async function approveReviewLayer(now) {
       approved_at: c.review?.approved_at,
     })),
   };
-  await writeFile(CANONICAL_PATH, JSON.stringify(canonical, null, 2) + '\n');
+  await writeDoc('approved_roots', canonical);
 }
 
 function labelFromId(id) {
@@ -194,7 +190,7 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
   const rootSpellings = candidates.map(c => c.spelling);
 
   // 2. Compounds — build + validate unique segmentation.
-  const compoundDoc = JSON.parse(await readFile(COMPOUNDS_PATH, 'utf8'));
+  const compoundDoc = (await readDoc('compounds')) ?? { compounds: [] };
   const { resolved, dropped } = resolveCompounds(compoundDoc.compounds ?? [], rootById, rootSpellings);
 
   // 3. Lab records.

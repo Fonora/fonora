@@ -6,10 +6,10 @@
  * Run: npm run fonoran:root-candidates
  */
 
-import { readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { romanToIpa, parseSyllable } from './fonoran-pronunciation.js';
+import { readDoc, writeDoc } from './fonoran-store.js';
 import {
   assignRoots,
   buildSyllablePool,
@@ -19,9 +19,6 @@ import {
 } from './fonoran-root-sound-assign.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-// Converged source of truth: 99 core primitives + curated extended dimensions.
-const SEMANTIC_PATH = join(ROOT, 'data/fonoran-concept-inventory.json');
-const PHONETICS_PATH = join(ROOT, 'data/fonoran-primitive-roots-config.json');
 const OUTPUT_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
 
 function buildReason(concept, highLeverage) {
@@ -76,8 +73,10 @@ function assignmentToCandidate(assignment, rank, total, highLeverage) {
 }
 
 export async function generateRootCandidates({ preserveReview = true } = {}) {
-  const semantic = JSON.parse(await readFile(SEMANTIC_PATH, 'utf8'));
-  const phoneticsConfig = JSON.parse(await readFile(PHONETICS_PATH, 'utf8'));
+  const semantic = await readDoc('concept_inventory');
+  if (!semantic) throw new Error('Concept inventory not found');
+  const phoneticsConfig = await readDoc('phonetics_config');
+  if (!phoneticsConfig) throw new Error('Phonetics config not found');
 
   const productiveIds = new Set(Object.keys(semantic.productive_dimensions ?? {}));
   const highLeverage = new Set([
@@ -114,7 +113,7 @@ export async function generateRootCandidates({ preserveReview = true } = {}) {
 
   let existing = null;
   try {
-    existing = JSON.parse(await readFile(OUTPUT_PATH, 'utf8'));
+    existing = await readDoc('root_candidates');
   } catch {
     existing = null;
   }
@@ -164,7 +163,7 @@ export async function generateRootCandidates({ preserveReview = true } = {}) {
     candidates,
   };
 
-  await writeFile(OUTPUT_PATH, JSON.stringify(output, null, 2) + '\n');
+  await writeDoc('root_candidates', output);
   return output;
 }
 

@@ -3188,7 +3188,7 @@
 
     /* ---------- DICTIONARY ---------- */
     function dictEntries() {
-      const base = STATE.lab.sounds.map(s => ({ kind: 'sound', id: s.spelling, word: s.spelling, english: s.meaning || '(unnamed)', gloss: s.gloss || '', aliases: (s.aliases ?? []).join(' '), type: 'base', state: s.state, hint: s.say_bold }));
+      const base = STATE.lab.sounds.map(s => ({ kind: 'sound', id: s.spelling, word: s.spelling, english: s.meaning || '(unnamed)', gloss: s.gloss || '', aliases: (s.aliases ?? []).join(' '), concept_id: s.concept_id ?? '', type: 'base', state: s.state, hint: s.say_bold }));
       const comp = STATE.lab.compounds.map(c => ({
         kind: 'compound',
         id: c.id,
@@ -3196,6 +3196,7 @@
         english: c.meaning || '(unnamed)',
         gloss: c.gloss || '',
         aliases: (c.aliases ?? []).join(' '),
+        concept_id: c.concept_id ?? '',
         type: 'compound',
         state: c.state,
         hint: (c.part_details ?? []).map(p => p.spelling).join(' + ') || (c.parts ?? []).join(' + '),
@@ -3206,7 +3207,7 @@
       else if (['needs_review', 'approved', 'rejected'].includes(f)) list = list.filter(e => e.state === f);
       else list = list.filter(e => e.state !== 'rejected');
       const q = STATE.dictQuery.trim().toLowerCase();
-      if (q) list = list.filter(e => `${e.word} ${e.english} ${e.gloss} ${e.aliases} ${e.hint}`.toLowerCase().includes(q));
+      if (q) list = list.filter(e => `${e.word} ${e.english} ${e.gloss} ${e.aliases} ${e.concept_id} ${e.hint}`.toLowerCase().includes(q));
       return list.sort((a, b) => a.word.localeCompare(b.word));
     }
     function dictExplorerKind(entryKind) {
@@ -4316,6 +4317,14 @@
         const h = await fetchHealth();
         const d = h.dda ?? {};
         $('adv-dda-status').textContent = `DDA: ${d.pending ?? 0} pending · ${d.stale ?? 0} stale · ${d.inferred ?? 0} inferred · ${d.confirmed ?? 0} confirmed`;
+        try {
+          const status = await api('/api/fonoran/snapshot/status');
+          const lab = status.lab ?? {};
+          $('adv-storage-status').textContent =
+            `Storage: ${status.storage_mode} · ${lab.sounds ?? 0} roots · ${lab.compounds ?? 0} words · lab updated ${lab.updated_at ? new Date(lab.updated_at).toLocaleString() : '—'}`;
+        } catch {
+          if ($('adv-storage-status')) $('adv-storage-status').textContent = '';
+        }
         if (STATE.showDebugDda && STATE.lab) {
           const debug = {
             sounds: STATE.lab.sounds.map(s => ({ spelling: s.spelling, dda: s.dda })),
@@ -4342,6 +4351,51 @@
     $('adv-debug-dda')?.addEventListener('change', e => {
       STATE.showDebugDda = e.target.checked;
       renderAdvanced();
+    });
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          resolve(String(dataUrl).split(',')[1] ?? '');
+        };
+        reader.onerror = () => reject(reader.error ?? new Error('Could not read file'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    $('adv-snapshot-import')?.addEventListener('change', async (e) => {
+      const file = e.target.files?.[0];
+      e.target.value = '';
+      if (!file) return;
+      try {
+        const zip_base64 = await fileToBase64(file);
+        const preview = await api('/api/fonoran/snapshot/preview', {
+          method: 'POST',
+          body: JSON.stringify({ zip_base64 }),
+        });
+        const summary = preview.summary ?? {};
+        const previewEl = $('adv-snapshot-preview');
+        if (previewEl) {
+          previewEl.textContent = JSON.stringify(preview, null, 2);
+          previewEl.hidden = false;
+        }
+        const ok = confirmDangerAction({
+          title: 'Restore snapshot',
+          message: `Replace all Fonoran state with this backup?\n\n${summary.sounds ?? 0} roots · ${summary.compounds ?? 0} words · ${summary.primitives ?? 0} concepts · ${summary.candidates ?? 0} candidates`,
+          typeToConfirm: 'RESTORE',
+        });
+        if (!ok) return;
+        await api('/api/fonoran/snapshot/import', {
+          method: 'POST',
+          body: JSON.stringify({ confirm: 'RESTORE', zip_base64 }),
+        });
+        STATE.lexicon = null;
+        STATE.rootCandidates = null;
+        toast('Snapshot restored');
+        await load();
+      } catch (err) { toast(err.message); }
     });
 
     $('tr-hear')?.addEventListener('click', () => {

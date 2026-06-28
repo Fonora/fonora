@@ -21,6 +21,9 @@ Thumbs.db
 # Generated test reports
 reports/
 
+# Fonoran snapshot backups (use git-tracked data/ for milestones)
+backups/
+
 # Fonoran runtime data (lab bucket + auto-built lexicon)
 data/fonoran-sound-bucket.json
 data/fonoran-english-lexicon.json

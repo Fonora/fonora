@@ -4,16 +4,8 @@
  * English is one localization stored in data/localizations/en.json — not the canonical meaning.
  */
 
-import { readFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { romanToIpa } from './fonoran-pronunciation.js';
-
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CANDIDATES_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
-const APPROVED_PATH = join(ROOT, 'data/fonoran-approved-roots.json');
-const SEMANTIC_PATH = join(ROOT, 'data/fonoran-concept-inventory.json');
-const LOCALIZATIONS_DIR = join(ROOT, 'data/localizations');
+import { readDoc } from './fonoran-store.js';
 
 const STOP = new Set([
   'a', 'an', 'the', 'of', 'to', 'in', 'on', 'at', 'for', 'and', 'or', 'is', 'are', 'be', 'with',
@@ -30,9 +22,13 @@ const localizationCache = new Map();
  */
 export async function loadLocalization(locale = 'en') {
   if (localizationCache.has(locale)) return localizationCache.get(locale);
+  if (locale !== 'en') {
+    localizationCache.set(locale, {});
+    return {};
+  }
   try {
-    const data = JSON.parse(await readFile(join(LOCALIZATIONS_DIR, `${locale}.json`), 'utf8'));
-    const entries = data.entries ?? {};
+    const data = await readDoc('localization_en');
+    const entries = data?.entries ?? {};
     localizationCache.set(locale, entries);
     return entries;
   } catch {
@@ -110,29 +106,16 @@ export function conceptRecord(candidate, approvedRoot = null, primitive = null, 
 export async function loadConceptInventory(locale = 'en') {
   const locData = await loadLocalization(locale);
 
-  let candidatesFile;
-  try {
-    candidatesFile = JSON.parse(await readFile(CANDIDATES_PATH, 'utf8'));
-  } catch {
+  const candidatesFile = (await readDoc('root_candidates')) ?? { candidates: [] };
+  if (!candidatesFile.candidates?.length && !candidatesFile.version) {
     return { version: '1.0-concepts', concepts: [], concept_count: 0 };
   }
 
-  let approved = { roots: [] };
-  try {
-    approved = JSON.parse(await readFile(APPROVED_PATH, 'utf8'));
-  } catch {
-    approved = { roots: [] };
-  }
-
+  const approved = (await readDoc('approved_roots')) ?? { roots: [] };
   const approvedById = Object.fromEntries((approved.roots ?? []).map(r => [r.id, r]));
 
-  let primitiveById = {};
-  try {
-    const semantic = JSON.parse(await readFile(SEMANTIC_PATH, 'utf8'));
-    primitiveById = Object.fromEntries((semantic.primitives ?? []).map(p => [p.id, p]));
-  } catch {
-    primitiveById = {};
-  }
+  const semantic = (await readDoc('concept_inventory')) ?? { primitives: [] };
+  const primitiveById = Object.fromEntries((semantic.primitives ?? []).map(p => [p.id, p]));
 
   const candidates = candidatesFile.candidates ?? [];
 
@@ -149,7 +132,7 @@ export async function loadConceptInventory(locale = 'en') {
     }, null, p, locData));
     return {
       version: '1.0-concepts',
-      source: SEMANTIC_PATH,
+      source: 'data/fonoran-concept-inventory.json',
       generated_at: candidatesFile.generated_at ?? null,
       concept_count: concepts.length,
       concepts,

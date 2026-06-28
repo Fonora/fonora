@@ -24,6 +24,7 @@ import {
 } from './fonoran-derivation.js';
 import { runDdaBatch, ddaSummary } from './fonoran-dda-infer.js';
 import { buildMermaidGraph, buildPreviewMermaidGraph } from './fonoran-graph.js';
+import { loadLocalization } from './fonoran-concepts.js';
 
 /** Review lifecycle shared by base sounds and compounds. */
 export const REVIEW_STATES = ['draft', 'needs_review', 'approved', 'rejected', 'revised'];
@@ -53,13 +54,21 @@ async function saveBucket(bucket) {
   return writeBucketRaw(bucket);
 }
 
-function enrichSound(s, bucket) {
+function mergeLocaleAliases(record, locData = {}) {
+  const localeAliases = record.concept_id ? (locData[record.concept_id]?.aliases ?? []) : [];
+  if (!localeAliases.length) return record.aliases;
+  const merged = [...new Set([...(record.aliases ?? []), ...localeAliases])];
+  return merged.length ? merged : undefined;
+}
+
+function enrichSound(s, bucket, locData = {}) {
   normalizeSoundRecord(s);
   const usedIn = wordsUsing('root', s.spelling, bucket).map(c => ({
     id: c.id, spelling: c.spelling, meaning: c.meaning, state: effectiveState(c),
   }));
   return {
     ...s,
+    aliases: mergeLocaleAliases(s, locData),
     state: effectiveState(s),
     why: legacyGlossFromHint(s.generator_hint) ?? s.gloss ?? null,
     say_as: sayAs(s.spelling),
@@ -96,13 +105,14 @@ function suggestCompoundMeaning(components, bucket, soundsBySpelling) {
   return labels.join(' + ');
 }
 
-function enrichCompound(c, bucket, soundsBySpelling) {
+function enrichCompound(c, bucket, soundsBySpelling, locData = {}) {
   normalizeCompoundRecord(c, bucket);
   const components = c.components ?? partsToComponents(c.parts);
   const partSpellings = resolvePartSpellings(components, bucket, { flatOnly: true });
   const suggested = suggestCompoundMeaning(components, bucket, soundsBySpelling);
   return {
     ...c,
+    aliases: mergeLocaleAliases(c, locData),
     kind: 'word',
     state: effectiveState(c),
     why: legacyGlossFromHint(c.generator_hint) ?? c.gloss ?? null,
@@ -145,9 +155,10 @@ function countByState(items) {
 
 export async function getLab() {
   const bucket = await loadBucket();
+  const locData = await loadLocalization('en');
   const soundsBySpelling = Object.fromEntries(bucket.sounds.map(s => [s.spelling, s]));
-  const sounds = bucket.sounds.map(s => enrichSound(s, bucket));
-  const compounds = bucket.compounds.map(c => enrichCompound(c, bucket, soundsBySpelling));
+  const sounds = bucket.sounds.map(s => enrichSound(s, bucket, locData));
+  const compounds = bucket.compounds.map(c => enrichCompound(c, bucket, soundsBySpelling, locData));
   const soundStates = countByState(bucket.sounds);
   const compoundStates = countByState(bucket.compounds);
   return {
@@ -395,7 +406,7 @@ function normalizeState(state) {
  * Update a base sound's spelling and/or meaning and/or review state.
  * Renaming updates every compound that uses this root (new spellings derived from parts).
  */
-export async function patchSound(spelling, { new_spelling, meaning, state, concept_id, clear_affected_compounds = false } = {}) {
+export async function patchSound(spelling, { new_spelling, meaning, state, concept_id, aliases, clear_affected_compounds = false } = {}) {
   const bucket = await loadBucket();
   const old = spelling.trim().toLowerCase();
   const s = bucket.sounds.find(x => x.spelling === old);
@@ -453,6 +464,10 @@ export async function patchSound(spelling, { new_spelling, meaning, state, conce
     markRootImpactDdaStale(s.spelling, bucket);
   }
   if (concept_id !== undefined) s.concept_id = concept_id?.trim() || null;
+  if (aliases !== undefined) {
+    const normalized = normalizeCompoundAliases(aliases);
+    s.aliases = normalized.length ? normalized : undefined;
+  }
   if (nextState) s.state = nextState;
   if (spellingChanged) {
     markDdaStale(s);

@@ -1,14 +1,12 @@
 /**
  * CRUD for Fonoran semantic concepts (primitives inventory).
- * Syncs semantic-primitives.json ↔ root-candidates.json ↔ lab when approved.
- * Concept descriptions live in the inventory; English aliases live in data/localizations/en.json.
+ * Syncs concept inventory ↔ root-candidates ↔ lab when approved.
+ * Concept descriptions live in the inventory; English aliases live in localizations.
  */
 
-import { readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { romanToIpa, parseSyllable } from './fonoran-pronunciation.js';
-import { loadConceptInventory, clearLocalizationCache, loadRuntimeConceptInventory } from './fonoran-concepts.js';
+import { loadConceptInventory, clearLocalizationCache, loadRuntimeConceptInventory, loadLocalization } from './fonoran-concepts.js';
+import { readDoc, writeDoc } from './fonoran-store.js';
 import {
   addSound,
   patchSound,
@@ -17,24 +15,6 @@ import {
   effectiveState,
   consolidateConceptSound,
 } from './fonoran-sound-bucket.js';
-
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const SEMANTIC_PATH = join(ROOT, 'data/fonoran-concept-inventory.json');
-const CANDIDATES_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
-const CANONICAL_PATH = join(ROOT, 'data/fonoran-approved-roots.json');
-const EN_LOCALE_PATH = join(ROOT, 'data/localizations/en.json');
-
-async function readJson(path, fallback = null) {
-  try {
-    return JSON.parse(await readFile(path, 'utf8'));
-  } catch {
-    return fallback;
-  }
-}
-
-async function writeJson(path, data) {
-  await writeFile(path, JSON.stringify(data, null, 2) + '\n');
-}
 
 function validateId(id) {
   const key = String(id ?? '').trim().toLowerCase();
@@ -93,22 +73,41 @@ function refreshCandidateSummary(store) {
 
 async function syncApprovedToLab(candidate) {
   const meaning = candidate.concept?.trim() || candidate.id;
+  const locData = await loadLocalization('en');
+  const aliases = locData[candidate.id]?.aliases ?? [];
   try {
     await addSound({ spelling: candidate.spelling, meaning, concept_id: candidate.id });
   } catch (err) {
     if (!String(err.message).includes('already exists')) throw err;
   }
-  await patchSound(candidate.spelling, { meaning, state: 'approved', concept_id: candidate.id });
+  await patchSound(candidate.spelling, {
+    meaning,
+    state: 'approved',
+    concept_id: candidate.id,
+    aliases: aliases.length ? aliases : undefined,
+  });
   await consolidateConceptSound(candidate.id, candidate.spelling, { meaning, state: 'approved' });
 }
 
-/** Write updated aliases for a concept id into the English locale file. */
+/** Persist English word bank onto the linked lab root without changing review state. */
+async function syncConceptAliasesToLab(conceptId) {
+  const locData = await loadLocalization('en');
+  const aliases = locData[conceptId]?.aliases ?? [];
+  const bucket = await loadBucket();
+  const sound = bucket.sounds.find(
+    s => s.concept_id === conceptId && effectiveState(s) !== 'rejected',
+  );
+  if (!sound) return;
+  await patchSound(sound.spelling, { aliases });
+}
+
+/** Write updated aliases for a concept id into the English locale store. */
 async function writeEnLocaleAliases(id, aliases) {
-  const locale = await readJson(EN_LOCALE_PATH, { version: '1.0-localization', locale: 'en', entries: {} });
+  const locale = (await readDoc('localization_en')) ?? { version: '1.0-localization', locale: 'en', entries: {} };
   if (!locale.entries) locale.entries = {};
   if (!locale.entries[id]) locale.entries[id] = { label: id };
   locale.entries[id].aliases = aliases;
-  await writeJson(EN_LOCALE_PATH, locale);
+  await writeDoc('localization_en', locale);
   clearLocalizationCache('en');
 }
 
@@ -129,7 +128,7 @@ async function writeCanonicalFromCandidates(store) {
       approved_at: c.review?.approved_at,
     })),
   };
-  await writeJson(CANONICAL_PATH, canonical);
+  await writeDoc('approved_roots', canonical);
   return canonical;
 }
 
@@ -185,13 +184,13 @@ export async function getConceptForEditor(id) {
 
 export async function patchConcept(id, body) {
   const key = validateId(id);
-  const semantic = await readJson(SEMANTIC_PATH);
+  const semantic = await readDoc('concept_inventory');
   if (!semantic) throw new Error('Semantic primitives file not found');
 
   const { idx: primIdx, primitive } = findPrimitive(semantic, key);
   if (primIdx === -1) throw new Error(`Unknown concept: ${key}`);
 
-  const store = await readJson(CANDIDATES_PATH);
+  const store = await readDoc('root_candidates');
   if (!store) throw new Error('Root candidates file not found. Run npm run fonoran:root-candidates');
 
   const { candidate } = findCandidate(store, key);
@@ -199,6 +198,8 @@ export async function patchConcept(id, body) {
 
   const prevSpelling = candidate.spelling;
   let spellingChanged = false;
+  let aliasesChanged = false;
+  let labMetadataChanged = false;
 
   const rawDescription = bodyDescription(body);
   if (rawDescription != null) {
@@ -206,6 +207,7 @@ export async function patchConcept(id, body) {
     if (!description) throw new Error('Concept phrase is required');
     primitive.description = description;
     candidate.concept = description;
+    labMetadataChanged = true;
   }
 
   if (body.domain != null) {
@@ -218,8 +220,8 @@ export async function patchConcept(id, body) {
   if (body.aliases != null) {
     const normalized = normalizeAliases(body.aliases);
     await writeEnLocaleAliases(key, normalized);
-    // Remove any legacy aliases stored directly on the primitive.
     delete primitive.aliases;
+    aliasesChanged = true;
   }
 
   if (body.spelling != null) {
@@ -231,23 +233,29 @@ export async function patchConcept(id, body) {
     spellingChanged = spelling !== prevSpelling;
     candidate.spelling = spelling;
     candidate.ipa = romanToIpa(spelling);
+    labMetadataChanged = true;
   }
 
   candidate.review = { ...candidate.review, edited_at: new Date().toISOString() };
 
   semantic.primitives[primIdx] = primitive;
-  await writeJson(SEMANTIC_PATH, semantic);
+  await writeDoc('concept_inventory', semantic);
 
   refreshCandidateSummary(store);
-  await writeJson(CANDIDATES_PATH, store);
+  await writeDoc('root_candidates', store);
 
   if (candidate.status === 'approved') {
     if (spellingChanged) {
       await renameLabSound(prevSpelling, candidate.spelling, candidate);
-    } else {
+    } else if (labMetadataChanged) {
       await syncApprovedToLab(candidate);
     }
-    await writeCanonicalFromCandidates(store);
+    if (aliasesChanged) {
+      await syncConceptAliasesToLab(key);
+    }
+    if (spellingChanged || labMetadataChanged) {
+      await writeCanonicalFromCandidates(store);
+    }
   }
 
   return getConceptForEditor(key);
@@ -262,10 +270,10 @@ export async function createConcept(body) {
   if (!description) throw new Error('Concept phrase is required');
   if (!domain) throw new Error('Domain is required');
 
-  const semantic = await readJson(SEMANTIC_PATH, { version: '1.2-semantic-foundation', primitives: [] });
+  const semantic = (await readDoc('concept_inventory')) ?? { version: '1.2-semantic-foundation', primitives: [] };
   if (findPrimitive(semantic, key).primitive) throw new Error(`Concept id already exists: ${key}`);
 
-  const store = await readJson(CANDIDATES_PATH);
+  const store = await readDoc('root_candidates');
   if (!store) throw new Error('Root candidates file not found. Run npm run fonoran:root-candidates');
   if (findCandidate(store, key).candidate) throw new Error(`Root candidate already exists: ${key}`);
 
@@ -296,9 +304,9 @@ export async function createConcept(body) {
   semantic.primitive_count = semantic.primitives.length;
   store.candidates.push(candidate);
 
-  await writeJson(SEMANTIC_PATH, semantic);
+  await writeDoc('concept_inventory', semantic);
   refreshCandidateSummary(store);
-  await writeJson(CANDIDATES_PATH, store);
+  await writeDoc('root_candidates', store);
 
   if (aliases.length) {
     await writeEnLocaleAliases(key, aliases);
@@ -309,8 +317,8 @@ export async function createConcept(body) {
 
 export async function deleteConcept(id) {
   const key = validateId(id);
-  const semantic = await readJson(SEMANTIC_PATH);
-  const store = await readJson(CANDIDATES_PATH);
+  const semantic = await readDoc('concept_inventory');
+  const store = await readDoc('root_candidates');
   if (!semantic || !store) throw new Error('Concept data files not found');
 
   const { idx: primIdx, primitive } = findPrimitive(semantic, key);
@@ -325,9 +333,9 @@ export async function deleteConcept(id) {
   semantic.primitive_count = semantic.primitives.length;
   if (candIdx !== -1) store.candidates.splice(candIdx, 1);
 
-  await writeJson(SEMANTIC_PATH, semantic);
+  await writeDoc('concept_inventory', semantic);
   refreshCandidateSummary(store);
-  await writeJson(CANDIDATES_PATH, store);
+  await writeDoc('root_candidates', store);
 
   return { deleted: key };
 }

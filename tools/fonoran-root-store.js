@@ -1,11 +1,9 @@
 /**
- * File-backed store for Fonoran root candidate review workflow.
+ * Store for Fonoran root candidate review workflow.
  */
 
-import { readFile, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { romanToIpa, parseSyllable } from './fonoran-pronunciation.js';
+import { readDoc, writeDoc } from './fonoran-store.js';
 import {
   buildSyllablePool,
   easeLabel,
@@ -16,23 +14,6 @@ import {
 import { addSound, patchSound, loadBucket, consolidateConceptSound } from './fonoran-sound-bucket.js';
 import { labSoundsByConceptId, labSoundState } from './fonoran-concepts.js';
 import { generateRootCandidates } from './fonoran-root-candidates.js';
-
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const CANDIDATES_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
-const CANONICAL_PATH = join(ROOT, 'data/fonoran-approved-roots.json');
-const PHONETICS_PATH = join(ROOT, 'data/fonoran-primitive-roots-config.json');
-
-async function readJson(path, fallback = null) {
-  try {
-    return JSON.parse(await readFile(path, 'utf8'));
-  } catch {
-    return fallback;
-  }
-}
-
-async function writeJson(path, data) {
-  await writeFile(path, JSON.stringify(data, null, 2) + '\n');
-}
 
 function refreshSummary(store) {
   store.summary = {
@@ -92,12 +73,12 @@ async function writeCanonicalFromApproved(store) {
       approved_at: c.review?.approved_at,
     })),
   };
-  await writeJson(CANONICAL_PATH, canonical);
+  await writeDoc('approved_roots', canonical);
   return canonical;
 }
 
 export async function getRootCandidates({ status = null } = {}) {
-  const store = await readJson(CANDIDATES_PATH);
+  const store = await readDoc('root_candidates');
   if (!store) {
     return { version: '1.0-root-workflow', candidates: [], summary: { total: 0, pending: 0, approved: 0, rejected: 0 } };
   }
@@ -107,22 +88,22 @@ export async function getRootCandidates({ status = null } = {}) {
 }
 
 export async function getCanonicalRoots() {
-  return (await readJson(CANONICAL_PATH)) ?? { version: '1.0-approved-roots', roots: [], root_count: 0 };
+  return (await readDoc('approved_roots')) ?? { version: '1.0-approved-roots', roots: [], root_count: 0 };
 }
 
 export async function getRootCandidate(id) {
-  const store = await readJson(CANDIDATES_PATH);
+  const store = await readDoc('root_candidates');
   if (!store) throw new Error('No root candidates file. Run npm run fonoran:root-candidates');
   return findCandidate(store, id);
 }
 
 export async function regenerateRootCandidate(id) {
-  const store = await readJson(CANDIDATES_PATH);
+  const store = await readDoc('root_candidates');
   if (!store) throw new Error('No root candidates file');
   const candidate = findCandidate(store, id);
   if (candidate.status === 'approved') throw new Error('Cannot regenerate an approved root');
 
-  const phoneticsConfig = await readJson(PHONETICS_PATH);
+  const phoneticsConfig = await readDoc('phonetics_config');
   const pool = buildSyllablePool(phoneticsConfig);
   const taken = usedSpellings(store, { exceptId: id });
   const concept = {
@@ -146,12 +127,12 @@ export async function regenerateRootCandidate(id) {
   candidate.review = { ...candidate.review, edited_at: new Date().toISOString(), note: 'regenerated' };
 
   refreshSummary(store);
-  await writeJson(CANDIDATES_PATH, store);
+  await writeDoc('root_candidates', store);
   return candidate;
 }
 
 export async function patchRootCandidate(id, body) {
-  const store = await readJson(CANDIDATES_PATH);
+  const store = await readDoc('root_candidates');
   if (!store) throw new Error('No root candidates file');
   const candidate = findCandidate(store, id);
   const action = body.action;
@@ -226,7 +207,7 @@ export async function patchRootCandidate(id, body) {
   }
 
   refreshSummary(store);
-  await writeJson(CANDIDATES_PATH, store);
+  await writeDoc('root_candidates', store);
   return candidate;
 }
 
@@ -235,12 +216,12 @@ export async function runRootCandidateGeneration() {
 }
 
 /**
- * Keep the file-backed candidate queue aligned when lab roots are approved/rejected.
+ * Keep the candidate queue aligned when lab roots are approved/rejected.
  * Called from the lab API after sound state changes.
  */
 export async function syncCandidateFromLab({ concept_id, spelling, state }) {
   if (!concept_id?.trim()) return null;
-  const store = await readJson(CANDIDATES_PATH);
+  const store = await readDoc('root_candidates');
   if (!store?.candidates?.length) return null;
 
   const candidate = store.candidates.find(c => c.id === concept_id.trim());
@@ -268,11 +249,11 @@ export async function syncCandidateFromLab({ concept_id, spelling, state }) {
   }
 
   refreshSummary(store);
-  await writeJson(CANDIDATES_PATH, store);
+  await writeDoc('root_candidates', store);
   return candidate;
 }
 
-/** Push all lab sounds with concept_id back into root-candidates + approved-roots exports. */
+/** @deprecated Editorial state is unified in Postgres; kept as one-shot repair. */
 export async function reconcileInventoryFromLab() {
   const bucket = await loadBucket();
   const items = [];
@@ -288,5 +269,5 @@ export async function reconcileInventoryFromLab() {
       items.push({ concept_id: conceptId, spelling: s.spelling, state });
     }
   }
-  return { reconciled: items.length, items };
+  return { reconciled: items.length, items, deprecated: true };
 }
