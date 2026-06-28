@@ -206,6 +206,9 @@
       showUnnamed: false,
       showDebugDda: false,
       rootDraft: { onset: '', vowel: '', coda: '' },
+      rootComposerEditingSpelling: null,
+      rootComposerReturnPage: null,
+      rootComposerPendingFields: null,
       lexicon: null,
       health: null,
       healthKey: null,
@@ -229,13 +232,13 @@
       reviewShowLabWords: true,
       reviewShowGeneratedWords: true,
       reviewNeedsReviewOnly: false,
-      candidateEditing: false,
       reviewSelection: null,
-      reviewEditing: false,
       conceptEditorFilter: '',
       conceptEditorSelected: null,
       conceptEditorIsNew: false,
       conceptEditorDraft: null,
+      conceptEditorPendingId: null,
+      conceptEditorReturnPage: null,
       conceptEditorDomains: [],
     };
     const $ = (id) => document.getElementById(id);
@@ -732,7 +735,8 @@
       const typed = spellInp?.value.trim().toLowerCase() ?? '';
       const sp = rootDraftSpelling();
       const valid = isValidSyllable(sp);
-      const exists = valid && STATE.lab?.sounds?.some(s => s.spelling === sp);
+      const editingSpelling = STATE.rootComposerEditingSpelling;
+      const exists = valid && STATE.lab?.sounds?.some(s => s.spelling === sp && s.spelling !== editingSpelling);
 
       if (spellInp && document.activeElement !== spellInp && valid) spellInp.value = sp;
 
@@ -742,7 +746,6 @@
       const likeEl = $('new-root-like');
       const invalidEl = $('new-root-invalid');
       const hintEl = $('new-root-hint');
-      const saveBtn = $('new-root-save');
       const hearBtn = $('new-root-hear');
 
       card?.classList.toggle('is-valid', valid);
@@ -774,12 +777,32 @@
           ? `<div class="syl-invalid">Root <strong>${escapeHtml(sp)}</strong> already exists.</div>`
           : '';
       }
-      if (saveBtn) setWriteButton(saveBtn, !valid || exists);
       if (hearBtn) hearBtn.disabled = !valid;
 
       $('root-syl-builder')?.querySelectorAll('.syl-chip[data-piece]').forEach(chip => {
         chip.classList.toggle('picked', STATE.rootDraft[chip.dataset.piece] === (chip.dataset.val ?? ''));
       });
+      syncRootComposerControls();
+    }
+
+    function syncRootComposerControls() {
+      const editingSpelling = STATE.rootComposerEditingSpelling;
+      const sp = rootDraftSpelling();
+      const valid = isValidSyllable(sp);
+      const exists = valid && STATE.lab?.sounds?.some(s => s.spelling === sp && s.spelling !== editingSpelling);
+      setWriteButton($('new-root-save'), !valid || exists);
+      const saveBtn = $('new-root-save');
+      if (saveBtn) saveBtn.textContent = editingSpelling ? 'Save changes' : 'Add root';
+      const cancelBtn = $('new-root-cancel');
+      if (cancelBtn) cancelBtn.hidden = !STATE.rootComposerReturnPage;
+      const intro = $('roots-intro');
+      if (intro) {
+        intro.textContent = editingSpelling
+          ? 'Editing an existing root — adjust the syllable or meaning, then save.'
+          : 'Create primitive syllables and browse every root in the language.';
+      }
+      const meaning = $('new-root-meaning')?.value ?? '';
+      renderEditDupe('sound', editingSpelling ?? sp, meaning, 'new-root');
     }
 
     function wireRootCreatePanel() {
@@ -859,8 +882,10 @@
           <label class="fld" for="new-root-meaning">Meaning <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
           ${meaningPickerHtml('new-root')}
           <input type="text" id="new-root-meaning" placeholder="Type or pick from English list…" data-write-input>
+          <div id="new-root-dupe"></div>
           <div class="actions" style="margin-top:0.7rem">
             <button type="button" class="btn btn-primary" id="new-root-save" disabled data-write>Add root</button>
+            <button type="button" class="btn" id="new-root-cancel" hidden data-write>Cancel</button>
           </div>
         </div>`;
     }
@@ -870,29 +895,93 @@
       const meaningInp = $('new-root-meaning');
       wireRootCreatePanel();
       wireMeaningPicker('new-root', 'new-root-meaning');
+
+      if (STATE.rootComposerPendingFields) {
+        if (meaningInp) meaningInp.value = STATE.rootComposerPendingFields.meaning;
+        STATE.rootComposerPendingFields = null;
+      }
+
       updateRootCreatePreview();
+      meaningInp?.addEventListener('input', () => syncRootComposerControls());
       meaningInp?.addEventListener('keydown', e => { if (e.key === 'Enter') $('new-root-save').click(); });
+      $('new-root-cancel')?.addEventListener('click', () => {
+        const returnPage = STATE.rootComposerReturnPage;
+        clearRootComposer();
+        if (returnPage === 'review') switchPage('review');
+      });
       $('new-root-save')?.addEventListener('click', async () => {
         const spelling = rootDraftSpelling();
         const meaning = meaningInp.value.trim();
         if (!isValidSyllable(spelling)) { toast('Pick a valid syllable first.'); return; }
+        const editingSpelling = STATE.rootComposerEditingSpelling;
+        const returnPage = STATE.rootComposerReturnPage;
         try {
-          const res = await api('/api/fonoran/lab/sounds', { method: 'POST', body: JSON.stringify({ spelling, meaning: meaning || undefined }) });
-          toast(`Added root ${res.spelling}`);
-          spellInp.value = ''; meaningInp.value = '';
-          STATE.rootDraft = { onset: '', vowel: '', coda: '' };
+          if (editingSpelling) {
+            const existing = STATE.lab.sounds.find(s => s.spelling === editingSpelling);
+            const spellingChanged = spelling !== editingSpelling;
+            if (spellingChanged) {
+              await api(`/api/fonoran/lab/sounds/${encodeURIComponent(editingSpelling)}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ spelling, meaning: meaning || undefined }),
+              });
+              if (returnPage === 'review') {
+                STATE.reviewSelection = { type: 'sound', ref: spelling };
+              }
+            } else {
+              const changed = meaning !== (existing?.meaning ?? '');
+              await api(`/api/fonoran/lab/sounds/${encodeURIComponent(editingSpelling)}`, {
+                method: 'PATCH',
+                body: JSON.stringify({
+                  meaning: meaning || undefined,
+                  state: changed && existing?.meaning ? 'revised' : undefined,
+                }),
+              });
+            }
+            toast(`Saved ${spelling}`);
+          } else {
+            const res = await api('/api/fonoran/lab/sounds', { method: 'POST', body: JSON.stringify({ spelling, meaning: meaning || undefined }) });
+            toast(`Added root ${res.spelling}`);
+          }
+          clearRootComposer();
           await load({ skipRender: true });
-          renderRoots();
+          if (returnPage === 'review') {
+            switchPage('review');
+          } else {
+            renderRoots();
+          }
         } catch (e) { toast(e.message); }
       });
+    }
+
+    function openRootInCreator(s, { returnPage = null } = {}) {
+      STATE.rootComposerEditingSpelling = s.spelling;
+      STATE.rootComposerReturnPage = returnPage;
+      syncRootDraftFromSpelling(s.spelling);
+      STATE.rootComposerPendingFields = { meaning: s.meaning ?? '' };
+      switchPage('roots');
+    }
+
+    function clearRootComposer({ keepReturnPage = false } = {}) {
+      STATE.rootDraft = { onset: '', vowel: '', coda: '' };
+      if (!keepReturnPage) STATE.rootComposerReturnPage = null;
+      STATE.rootComposerEditingSpelling = null;
+      STATE.rootComposerPendingFields = null;
+      if ($('new-root-spelling')) $('new-root-spelling').value = '';
+      if ($('new-root-meaning')) $('new-root-meaning').value = '';
+      syncRootComposerControls();
     }
 
     function renderRoots() {
       if (!STATE.lab || !$('roots-workspace')) return;
       ensureSplitStickyObserver();
+      const preservedMeaning = $('new-root-meaning')?.value;
       renderRootsSoundPicker();
       $('roots-workspace').innerHTML = renderRootsCreateHtml();
       wireRootsCreate();
+      if (preservedMeaning != null && $('new-root-meaning') && !STATE.rootComposerPendingFields) {
+        $('new-root-meaning').value = preservedMeaning;
+      }
+      syncRootComposerControls();
       requestAnimationFrame(syncSplitStickyOffsets);
     }
 
@@ -1932,6 +2021,20 @@
       return conceptList().find(c => c.id === m || c.concept.toLowerCase() === m) ?? null;
     }
 
+    function resolveConceptIdForLabSound(item) {
+      return conceptForLabItem(item)?.id ?? item.concept_id ?? null;
+    }
+
+    function openConceptInEditor(conceptId, { returnPage = null } = {}) {
+      STATE.conceptEditorReturnPage = returnPage;
+      STATE.conceptEditorIsNew = false;
+      STATE.conceptEditorSelected = conceptId;
+      STATE.conceptEditorPendingId = conceptId;
+      const c = conceptList().find(x => x.id === conceptId);
+      STATE.conceptEditorDraft = c ? conceptEditorDraftFrom(c) : null;
+      switchPage('concepts');
+    }
+
     function reviewItemScriptParts(item, isSound) {
       if (isSound) return [item.spelling];
       return compoundSpeakParts(item);
@@ -2076,8 +2179,6 @@
         btn.addEventListener('click', () => {
           STATE.reviewSelection = { type: btn.dataset.reviewType, ref: btn.dataset.reviewRef };
           STATE.justSaved = null;
-          STATE.reviewEditing = false;
-          STATE.candidateEditing = false;
           renderUnifiedReview();
         });
       });
@@ -2208,7 +2309,6 @@
     }
 
     function reviewExplorerNavigate(navKind, ref) {
-      STATE.reviewEditing = false;
       STATE.reviewSelection = navKind === 'root'
         ? { type: 'sound', ref }
         : { type: 'compound', ref };
@@ -2288,10 +2388,6 @@
     }
 
     function renderLabReviewWorkspace(c) {
-      if (STATE.reviewEditing && c.reviewKind === 'sound') {
-        renderLabReviewEditWorkspace(c);
-        return;
-      }
       const reviewEl = $('word-review');
       if (!reviewEl || !c) return;
       const isSound = c.reviewKind === 'sound';
@@ -2320,26 +2416,6 @@
       wireLabReviewCommon(c);
       wireReviewExplorerButtons(c, isSound, reviewEl);
       wireFeel(c);
-    }
-
-    function renderLabReviewEditWorkspace(c) {
-      const reviewEl = $('word-review');
-      if (!reviewEl || !c) return;
-      reviewEl.innerHTML = `
-        <div class="review root-review word-review review-workspace review-workspace--edit">
-          ${renderSoundEditPanel(c)}
-        </div>`;
-      const onSaved = async () => {
-        STATE.reviewEditing = false;
-        STATE.justSaved = c.spelling;
-        await load({ skipRender: true });
-        renderUnifiedReview();
-      };
-      const onCancel = () => {
-        STATE.reviewEditing = false;
-        renderUnifiedReview();
-      };
-      wireSoundEditPanel(c, { onSaved, onCancel });
     }
 
     /* ---------- shared review wiring ---------- */
@@ -2393,11 +2469,16 @@
     }
     function wireFeel(item) {
       const isSound = item.reviewKind === 'sound';
-      $('edit')?.addEventListener('click', () => {
+      $('edit')?.addEventListener('click', async () => {
         if (!canWrite()) { toast('Sign in required'); return; }
         if (isSound) {
-          STATE.reviewEditing = true;
-          renderUnifiedReview();
+          await ensureLexicon();
+          const conceptId = resolveConceptIdForLabSound(item);
+          if (conceptId) {
+            openConceptInEditor(conceptId, { returnPage: 'review' });
+          } else {
+            openRootInCreator(item, { returnPage: 'review' });
+          }
         } else {
           openWordInCreator(item, { returnPage: 'review' });
         }
@@ -2418,7 +2499,6 @@
       });
     }
     async function advanceReviewItem(current) {
-      STATE.reviewEditing = false;
       await load({ skipRender: true });
       const pool = [
         ...reviewPickableLabSounds().map(s => ({ type: 'sound', ref: s.spelling, open: isOpen(s.state) })),
@@ -2486,10 +2566,6 @@
     }
 
     function renderCandidateReviewWorkspace(c) {
-      if (STATE.candidateEditing) {
-        renderCandidateReviewEditWorkspace(c);
-        return;
-      }
       const el = $('word-review');
       if (!el || !c) return;
 
@@ -2518,52 +2594,10 @@
       wireRootActions(c);
     }
 
-    function renderCandidateReviewEditWorkspace(c) {
-      const el = $('word-review');
-      if (!el || !c) return;
-      el.innerHTML = `
-        <div class="review root-review review-workspace review-workspace--edit">
-          ${buildRootReviewCardHtml(c)}
-          <div class="edit-panel">
-            <label class="fld" for="cand-spelling">Fonoran spelling</label>
-            <input type="text" id="cand-spelling" class="mono" value="${escapeHtml(c.spelling)}" data-write-input autocomplete="off" spellcheck="false">
-            <label class="fld" for="cand-concept">Concept phrase</label>
-            <input type="text" id="cand-concept" value="${escapeHtml(c.concept)}" data-write-input autocomplete="off">
-            <div class="edit-actions">
-              <button type="button" class="btn btn-primary" id="cand-save" data-write>Save</button>
-              <button type="button" class="btn" id="cand-cancel">Cancel</button>
-            </div>
-          </div>
-        </div>`;
-
-      $('cand-cancel')?.addEventListener('click', () => {
-        STATE.candidateEditing = false;
-        renderUnifiedReview();
-      });
-      $('cand-save')?.addEventListener('click', async () => {
-        const spelling = $('cand-spelling')?.value.trim().toLowerCase();
-        const concept = $('cand-concept')?.value.trim();
-        if (!spelling) { toast('Spelling required.'); return; }
-        try {
-          await api(`/api/fonoran/roots/candidates/${encodeURIComponent(c.id)}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ action: 'edit', spelling, concept }),
-          });
-          STATE.rootCandidates = null;
-          STATE.lexicon = null;
-          STATE.candidateEditing = false;
-          toast(`Updated ${c.id}`);
-          await load({ skipRender: true });
-          renderUnifiedReview();
-        } catch (err) { toast(err.message); }
-      });
-    }
-
     function wireRootActions(c) {
       $('root-edit')?.addEventListener('click', () => {
         if (!canWrite()) { toast('Sign in required'); return; }
-        STATE.candidateEditing = true;
-        renderUnifiedReview();
+        openConceptInEditor(c.id, { returnPage: 'review' });
       });
       $('root-regenerate')?.addEventListener('click', async () => {
         if (!canWrite()) { toast('Sign in required'); return; }
@@ -2571,7 +2605,6 @@
           await api(`/api/fonoran/roots/candidates/${encodeURIComponent(c.id)}/regenerate`, { method: 'POST', body: '{}' });
           STATE.rootCandidates = null;
           STATE.lexicon = null;
-          STATE.candidateEditing = false;
           toast(`Regenerated spelling for ${c.id}`);
           await load({ skipRender: true });
           renderUnifiedReview();
@@ -2599,7 +2632,6 @@
           });
           STATE.rootCandidates = null;
           STATE.lexicon = null;
-          STATE.candidateEditing = false;
           await advanceRoot();
           toast(`Approved ${c.spelling} → ${c.id}`);
         } catch (err) { toast(err.message); }
@@ -2612,7 +2644,6 @@
           });
           STATE.rootCandidates = null;
           STATE.lexicon = null;
-          STATE.candidateEditing = false;
           await advanceRoot();
           toast(`Rejected ${c.id}`);
         } catch (err) { toast(err.message); }
@@ -2664,48 +2695,6 @@
       box.innerHTML = hits.length
         ? `<div class="dupe"><strong>Already in use:</strong> “${escapeHtml(editMeaning.trim())}” also means <span class="mono">${hits.join('</span>, <span class="mono">')}</span>.</div>`
         : '';
-    }
-
-    function renderSoundEditPanel(s) {
-      return `
-        <div class="edit-panel">
-          <div id="ed-live-pron">${pronBlock(s.spelling)}</div>
-          <button type="button" class="hear-min" id="ed-hear" style="margin:0.5rem 0 0" aria-label="Listen to this syllable">▶ Listen</button>
-          <label class="fld" for="ed-meaning">Meaning: name this root</label>
-          ${meaningPickerHtml('ed')}
-          <input type="text" id="ed-meaning" value="${escapeHtml(s.meaning ?? '')}" placeholder="e.g. water, motion…" data-write-input>
-          <div id="ed-dupe"></div>
-          <div class="edit-actions">
-            <button type="button" class="btn btn-primary" id="ed-save" data-write>Save</button>
-            <button type="button" class="btn" id="ed-cancel">Cancel</button>
-          </div>
-        </div>`;
-    }
-
-    function wireSoundEditPanel(s, { onSaved, onCancel }) {
-      let editMeaning = s.meaning ?? '';
-      const inp = $('ed-meaning');
-      inp?.addEventListener('input', () => {
-        editMeaning = inp.value;
-        renderEditDupe('sound', s.spelling, editMeaning);
-      });
-      ensureLexicon().then(() => wireMeaningPicker('ed', 'ed-meaning'));
-      renderEditDupe('sound', s.spelling, editMeaning);
-      $('ed-cancel')?.addEventListener('click', () => onCancel?.());
-      $('ed-hear')?.addEventListener('click', () => speakNeural(s.spelling));
-      $('ed-save')?.addEventListener('click', async () => {
-        const meaning = editMeaning.trim();
-        if (!meaning) { toast('Type a meaning first.'); return; }
-        try {
-          const changed = meaning !== (s.meaning ?? '');
-          await api(`/api/fonoran/lab/sounds/${encodeURIComponent(s.spelling)}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ meaning, state: changed && s.meaning ? 'revised' : undefined }),
-          });
-          toast(`Saved ${s.spelling}`);
-          await onSaved?.();
-        } catch (e) { toast(e.message); }
-      });
     }
 
     /* ---------- spelling lookup (word creator) ---------- */
@@ -3035,7 +3024,7 @@
           </div>
           <div class="concept-editor__actions">
             <button type="submit" class="btn btn-primary" data-write>${STATE.conceptEditorIsNew ? 'Create concept' : 'Save changes'}</button>
-            <button type="button" class="btn" id="ce-cancel">Discard changes</button>
+            <button type="button" class="btn" id="ce-cancel">${STATE.conceptEditorReturnPage ? 'Cancel' : 'Discard changes'}</button>
             ${STATE.conceptEditorIsNew ? '' : `<button type="button" class="btn danger" id="ce-delete" data-write>Delete</button>`}
           </div>
         </form>`;
@@ -3066,6 +3055,13 @@
       });
 
       $('ce-cancel')?.addEventListener('click', () => {
+        const returnPage = STATE.conceptEditorReturnPage;
+        if (returnPage === 'review') {
+          STATE.conceptEditorReturnPage = null;
+          STATE.conceptEditorPendingId = null;
+          switchPage('review');
+          return;
+        }
         if (STATE.conceptEditorIsNew) {
           STATE.conceptEditorIsNew = false;
           STATE.conceptEditorDraft = null;
@@ -3107,6 +3103,7 @@
         return;
       }
       const body = { description: concept, domain, spelling, aliases };
+      const returnPage = STATE.conceptEditorReturnPage;
       try {
         if (STATE.conceptEditorIsNew) {
           await api('/api/fonoran/concepts', { method: 'POST', body: JSON.stringify({ id, ...body }) });
@@ -3123,10 +3120,23 @@
         }
         STATE.lexicon = null;
         STATE.rootCandidates = null;
-        await load();
-        const c = conceptList().find(x => x.id === id);
-        STATE.conceptEditorDraft = c ? conceptEditorDraftFrom(c) : conceptEditorEmptyDraft();
-        renderConceptEditor();
+        STATE.conceptEditorReturnPage = null;
+        STATE.conceptEditorPendingId = null;
+        if (returnPage === 'review') {
+          await load({ skipRender: true });
+          const sound = STATE.lab?.sounds?.find(s => s.concept_id === id && s.state !== 'rejected');
+          if (sound) {
+            STATE.reviewSelection = { type: 'sound', ref: sound.spelling };
+          } else {
+            STATE.reviewSelection = { type: 'candidate', ref: id };
+          }
+          switchPage('review');
+        } else {
+          await load();
+          const c = conceptList().find(x => x.id === id);
+          STATE.conceptEditorDraft = c ? conceptEditorDraftFrom(c) : conceptEditorEmptyDraft();
+          renderConceptEditor();
+        }
       } catch (err) { toast(err.message); }
     }
 
@@ -3151,6 +3161,13 @@
       }
 
       if (filterEl && filterEl.value !== STATE.conceptEditorFilter) filterEl.value = STATE.conceptEditorFilter;
+
+      if (STATE.conceptEditorPendingId) {
+        const pending = conceptList().find(c => c.id === STATE.conceptEditorPendingId);
+        STATE.conceptEditorSelected = STATE.conceptEditorPendingId;
+        STATE.conceptEditorDraft = pending ? conceptEditorDraftFrom(pending) : STATE.conceptEditorDraft;
+        STATE.conceptEditorPendingId = null;
+      }
 
       const list = conceptEditorFilteredList();
       listEl.innerHTML = list.length
@@ -4123,7 +4140,6 @@
       } else if (name === 'review' && STATE.page !== 'review') {
         STATE.reviewFocusPending = true;
       }
-      if (name !== 'review') STATE.reviewEditing = false;
       STATE.page = name;
       setActiveTab(name);
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
