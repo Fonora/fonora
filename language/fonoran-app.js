@@ -3405,11 +3405,16 @@
     const TRANSLATOR_SPEED_KEY = 'fonoran:translator:speed';
     const TRANSLATOR_SYLLABLE_MODE_KEY = 'fonoran:translator:syllable-by-syllable';
     const TRANSLATOR_SYLLABLE_MODE_LEGACY_KEY = 'fonoran:translator:word-by-word';
+    const TRANSLATOR_SHOW_PRON_KEY = 'fonoran:translator:show-pronunciation';
+
+    function readTranslatorShowPron() {
+      return localStorage.getItem(TRANSLATOR_SHOW_PRON_KEY) === '1';
+    }
 
     function readTranslatorSpeed() {
       const el = $('tr-speed');
       const raw = el ? parseFloat(el.value) : parseFloat(localStorage.getItem(TRANSLATOR_SPEED_KEY));
-      return Number.isFinite(raw) ? Math.max(0.45, Math.min(1, raw)) : 0.7;
+      return Number.isFinite(raw) ? Math.max(0.45, Math.min(1, raw)) : 1;
     }
 
     function syncTranslatorSpeedLabel() {
@@ -3417,7 +3422,22 @@
       if (val) val.textContent = `${Math.round(readTranslatorSpeed() * 100)}%`;
     }
 
-    function buildTranslatorScriptPhrase(result, { syllableBySyllable = true } = {}) {
+    function translatorCanHear(result) {
+      return Boolean(result?.tokens?.some(t => t.resolved && t.parts?.length));
+    }
+
+    function syncTranslatorPlaybackUi(result) {
+      const playBtn = $('tr-hear');
+      const stopBtn = $('tr-stop');
+      const canHear = translatorCanHear(result);
+      if (playBtn && !STATE.translatorPlaying) {
+        playBtn.disabled = !canHear;
+        playBtn.textContent = '▶ Listen';
+      }
+      if (stopBtn && !STATE.translatorPlaying) stopBtn.disabled = true;
+    }
+
+    function buildTranslatorScriptPhrase(result, { syllableBySyllable = false } = {}) {
       if (!result?.tokens?.length || !STATE.rules) return { phrase: '', unitTokenIndex: [] };
       const chunks = [];
       const unitTokenIndex = [];
@@ -3454,7 +3474,7 @@
       await ensureRules();
       primeAudioContext();
 
-      const syllableBySyllable = $('tr-syllable-by-syllable')?.checked !== false;
+      const syllableBySyllable = $('tr-syllable-by-syllable')?.checked === true;
       const playbackRate = readTranslatorSpeed();
       const wordGapMs = syllableBySyllable ? Math.round(250 + (1 - playbackRate) * 450) : 0;
       const { phrase, unitTokenIndex } = buildTranslatorScriptPhrase(result, { syllableBySyllable });
@@ -3521,7 +3541,8 @@
       const out = $('tr-output');
       if (!out) return;
       if (!result || result.mode === 'empty') {
-        out.innerHTML = '<p class="translator-output__empty sans">Type English above to see Fonoran script and pronunciation.</p>';
+        out.innerHTML = '<p class="translator-output__empty sans">Type English on the left to see Fonoran script and pronunciation.</p>';
+        syncTranslatorPlaybackUi(null);
         return;
       }
 
@@ -3539,44 +3560,31 @@
         return `<span class="translator-unresolved-sample">${escapeHtml(t.english)}</span>`;
       }).join(' ');
 
-      const slots = result.semantic?.slots;
-      const slotRow = (label, items) => {
-        if (!items?.length) return '';
-        const words = items.map(s => s.english).join(', ');
-        return `<span class="translator-slots__slot"><strong>${escapeHtml(label)}</strong> ${escapeHtml(words)}</span>`;
-      };
-      const slotsHtml = result.mode === 'sentence' && slots
-        ? `<div class="translator-slots">
-            <p class="translator-slots__label">Semantic slots · ${escapeHtml(result.semantic.skeleton)}</p>
-            <div class="translator-slots__row">
-              ${slotRow('Subject', slots.subject)}
-              ${slotRow('Time', slots.time)}
-              ${slotRow('Event', slots.event)}
-              ${slotRow('Path', slots.path)}
-              ${slotRow('Object', slots.object)}
-              ${slotRow('Modifiers', slots.modifiers)}
+      const pron = result.surface?.pronunciation;
+      const showPron = readTranslatorShowPron();
+      const pronHtml = pron?.sayLine
+        ? `<div class="translator-output__pron-wrap">
+            <label class="translator-output__pron-toggle sans">
+              <input type="checkbox" id="tr-show-pron"${showPron ? ' checked' : ''}>
+              Pronunciation
+            </label>
+            <div class="pron-block translator-output__pron" id="tr-pron-detail"${showPron ? '' : ' hidden'}>
+              <div class="pron-line">Say: <strong>${escapeHtml(pron.sayLine)}</strong></div>
+              ${pron.englishLine ? `<div class="pron-english">Sounds like: ${escapeHtml(pron.englishLine)}</div>` : ''}
             </div>
           </div>`
         : '';
 
-      const pron = result.surface?.pronunciation;
-      const hearParts = result.tokens.flatMap(t => (t.resolved ? t.parts : []));
-      const canHear = hearParts.length > 0;
-
       out.innerHTML = `
-        ${script ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(script)}</div>` : ''}
-        <p class="translator-output__roman">${romanHtml}</p>
-        ${pron?.sayLine ? `<p class="translator-output__pron">Say: <strong>${escapeHtml(pron.sayLine)}</strong>${pron.englishLine ? `<span class="word-preview__like">Sounds like ${escapeHtml(pron.englishLine)}</span>` : ''}</p>` : ''}
-        ${slotsHtml}
+        <div class="translator-output__surface">
+          ${script ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(script)}</div>` : ''}
+          <p class="translator-output__roman">${romanHtml}</p>
+          ${pronHtml}
+        </div>
         <ul class="translator-token-list">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>
-        ${result.unresolved?.length ? `<p class="sans translator-output__note" style="font-size:0.84rem;color:var(--muted);margin:0.75rem 0 0">Unresolved concepts reveal where the language still needs to grow.</p>` : ''}
-        ${canHear ? `<div class="translator-output__actions">
-          <button type="button" class="btn" id="tr-hear">▶ Listen</button>
-          <button type="button" class="btn" id="tr-stop" disabled>■ Stop</button>
-        </div>` : ''}`;
+        ${result.unresolved?.length ? `<p class="sans translator-output__note" style="font-size:0.84rem;color:var(--muted);margin:0.75rem 0 0">Unresolved concepts reveal where the language still needs to grow.</p>` : ''}`;
 
-      $('tr-hear')?.addEventListener('click', () => speakTranslatorResult(result));
-      $('tr-stop')?.addEventListener('click', () => stopTranslatorSpeech());
+      syncTranslatorPlaybackUi(result);
     }
 
     async function runTranslator() {
@@ -3604,6 +3612,7 @@
         if (token !== translatorToken) return;
         const out = $('tr-output');
         if (out) out.innerHTML = `<p class="translator-output__empty sans" style="color:var(--danger,#c0392b)">${escapeHtml(e.message)}</p>`;
+        syncTranslatorPlaybackUi(null);
       } finally {
         if (token === translatorToken) STATE.translatorBusy = false;
       }
@@ -3620,6 +3629,7 @@
         ?? localStorage.getItem(TRANSLATOR_SYLLABLE_MODE_LEGACY_KEY);
       if (syllableEl && savedSyllableMode != null) syllableEl.checked = savedSyllableMode !== '0';
       syncTranslatorSpeedLabel();
+      syncTranslatorPlaybackUi(STATE.translatorResult);
       if (STATE.translatorResult) void renderTranslatorOutput(STATE.translatorResult);
       else void renderTranslatorOutput(null);
     }
@@ -3685,6 +3695,7 @@
       if (!host) return;
       if (STATE.wgBusy) {
         host.innerHTML = '<p class="fonoran-split-loading">Generating…</p>';
+        renderWgUseFooter(false);
         return;
       }
       const res = STATE.wgResult;
@@ -3696,12 +3707,14 @@
         host.innerHTML = unresolved + (res
           ? '<p class="empty sans">No buildable words yet — add at least two components.</p>'
           : wgDetailEmptyHtml());
+        renderWgUseFooter(false);
         return;
       }
       const idx = STATE.wgSelected ?? 0;
       const o = opts[idx];
       if (!o) {
         host.innerHTML = unresolved + wgDetailEmptyHtml();
+        renderWgUseFooter(false);
         return;
       }
       const glyphs = STATE.rules ? romanToFonoraScript(o.roots, STATE.rules).phrase : '';
@@ -3715,16 +3728,23 @@
             <div class="wg-detail__spelling mono">${escapeHtml(o.spelling)}</div>
             <div class="wg-detail__breakdown sans">${escapeHtml(o.breakdown)} · ${escapeHtml(o.roots_breakdown)}</div>
           </div>
-          <div class="wg-detail__meta sans">
-            <span>${o.root_count} roots</span>
-            <span>${o.length} chars</span>
-            <span>say ${o.pronounceability}</span>
-            ${parseTag}
-          </div>
-          <div class="actions wg-detail__actions">
-            <button type="button" class="btn btn-primary" data-wg-use="${idx}">Use word</button>
+          <div class="wg-detail__meta-row">
+            <div class="wg-detail__meta sans">
+              <span>${o.root_count} roots</span>
+              <span>${o.length} chars</span>
+              <span>say ${o.pronounceability}</span>
+              ${parseTag}
+            </div>
+            <button type="button" class="btn wg-detail__hear" data-wg-hear="${idx}" aria-label="Listen to ${escapeHtml(o.spelling)}">▶ Hear</button>
           </div>
         </div>`;
+      renderWgUseFooter(true);
+    }
+
+    function renderWgUseFooter(visible) {
+      const footer = $('wg-use-footer');
+      if (!footer) return;
+      footer.hidden = !visible;
     }
 
     function renderWgComponents() {
@@ -3794,6 +3814,7 @@
         STATE.wgBusy = false;
         const detail = $('wg-editor-detail');
         if (detail) detail.innerHTML = `<p class="empty sans" style="color:var(--danger,#c0392b)">${escapeHtml(e.message)}</p>`;
+        renderWgUseFooter(false);
         renderWgList();
       }
     }
@@ -4244,6 +4265,11 @@
       renderAdvanced();
     });
 
+    $('tr-hear')?.addEventListener('click', () => {
+      if (STATE.translatorResult) void speakTranslatorResult(STATE.translatorResult);
+    });
+    $('tr-stop')?.addEventListener('click', () => stopTranslatorSpeech());
+
     let translatorDebounce = null;
     $('tr-input')?.addEventListener('input', (e) => {
       STATE.translatorInput = e.target.value;
@@ -4256,6 +4282,12 @@
     });
     $('tr-syllable-by-syllable')?.addEventListener('change', (e) => {
       localStorage.setItem(TRANSLATOR_SYLLABLE_MODE_KEY, e.target.checked ? '1' : '0');
+    });
+    $('tr-output')?.addEventListener('change', (e) => {
+      if (e.target.id !== 'tr-show-pron') return;
+      const detail = $('tr-pron-detail');
+      if (detail) detail.hidden = !e.target.checked;
+      localStorage.setItem(TRANSLATOR_SHOW_PRON_KEY, e.target.checked ? '1' : '0');
     });
     document.querySelectorAll('[data-tr-example]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -4308,9 +4340,15 @@
       renderWgDetail();
     });
     $('wg-editor-detail')?.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-wg-use]');
-      if (!btn) return;
-      void wgUseWord(Number(btn.dataset.wgUse));
+      const hearBtn = e.target.closest('[data-wg-hear]');
+      if (hearBtn) {
+        const o = STATE.wgResult?.options?.[Number(hearBtn.dataset.wgHear)];
+        if (o?.roots?.length) void speakNeural(o.roots);
+        return;
+      }
+    });
+    $('wg-use')?.addEventListener('click', () => {
+      if (STATE.wgSelected != null) void wgUseWord(STATE.wgSelected);
     });
 
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';

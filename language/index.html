@@ -165,42 +165,59 @@
 
       <section id="page-translator" class="page">
         <div class="translator-page content-page">
-          <header class="translator-toolbar">
-            <div class="translator-toolbar__text">
-              <p class="translator-toolbar__tag">Meaning compiler</p>
-              <h1 class="translator-toolbar__title">English → Fonoran</h1>
-              <p class="translator-toolbar__lead sans">Compiles English into Fonoran concepts,not word-for-word substitution. Unknown concepts appear in <span class="translator-unresolved-sample">red</span>.</p>
+          <header class="grammar-toolbar">
+            <div class="grammar-toolbar__text">
+              <p class="grammar-toolbar__tag">English → Fonoran</p>
+              <h1 class="grammar-toolbar__title">Meaning compiler</h1>
+              <p class="grammar-toolbar__lead sans">Compiles English into Fonoran concepts, not word-for-word substitution. Unknown concepts appear in <span class="translator-unresolved-sample">red</span>.</p>
             </div>
-            <a class="btn translator-toolbar__source" href="#grammar">Grammar rules</a>
+            <a class="btn grammar-toolbar__source" href="#grammar">Grammar rules</a>
           </header>
 
+          <div class="translator-playback-bar sans" role="group" aria-label="Translation playback">
+            <div class="translator-playback-bar__actions">
+              <button type="button" class="btn btn--primary" id="tr-hear" disabled aria-label="Listen to Fonoran translation">▶ Listen</button>
+              <button type="button" class="btn" id="tr-stop" disabled aria-label="Stop playback">■ Stop</button>
+            </div>
+            <div class="translator-playback-controls">
+              <label class="translator-playback-speed" for="tr-speed">
+                <span class="translator-playback-speed__label">Speech speed</span>
+                <input type="range" id="tr-speed" min="0.45" max="1" step="0.05" value="1" aria-valuemin="0.45" aria-valuemax="1" aria-valuenow="1">
+                <span id="tr-speed-val" class="translator-playback-speed__val">100%</span>
+              </label>
+              <label class="translator-playback-mode">
+                <input type="checkbox" id="tr-syllable-by-syllable">
+                By syllable
+              </label>
+            </div>
+          </div>
+
           <div class="translator-layout">
-            <div class="translator-input-panel content-card">
-              <label class="fld" for="tr-input">English</label>
-              <textarea id="tr-input" class="translator-input" rows="3" placeholder="e.g. Law&#10;I love my family&#10;The tribe is at war" autocomplete="off" spellcheck="true"></textarea>
+            <div class="translator-panel translator-panel--input content-card">
+              <div class="translator-panel__header">
+                <label class="translator-panel__lang" for="tr-input">
+                  <span class="translator-panel__lang-text" id="tr-source-lang-label">English</span>
+                  <!-- When more source locales ship: add <select id="tr-source-lang" class="translator-panel__lang-select"> and hide .translator-panel__lang-text -->
+                </label>
+              </div>
+              <textarea id="tr-input" class="translator-input" rows="6" placeholder="e.g. Law&#10;I love my family&#10;The tribe is at war" autocomplete="off" spellcheck="true" aria-labelledby="tr-source-lang-label"></textarea>
               <div class="translator-examples sans">
                 <span class="translator-examples__label">Try:</span>
                 <button type="button" class="chip" data-tr-example="Law">Law</button>
                 <button type="button" class="chip" data-tr-example="I love my family">I love my family</button>
                 <button type="button" class="chip" data-tr-example="The tribe is at war">The tribe is at war</button>
               </div>
-              <div class="translator-playback-controls sans">
-                <label class="translator-playback-speed" for="tr-speed">
-                  <span class="translator-playback-speed__label">Speech speed</span>
-                  <input type="range" id="tr-speed" min="0.45" max="1" step="0.05" value="0.7" aria-valuemin="0.45" aria-valuemax="1" aria-valuenow="0.7">
-                  <span id="tr-speed-val" class="translator-playback-speed__val">70%</span>
-                </label>
-                <label class="translator-playback-mode">
-                  <input type="checkbox" id="tr-syllable-by-syllable" checked>
-                  Syllable by syllable
-                </label>
-              </div>
             </div>
 
-          <div id="tr-output" class="translator-output content-card" aria-live="polite">
-            <p class="translator-output__empty sans">Type English above to see Fonoran script and pronunciation.</p>
+            <div class="translator-panel translator-panel--output content-card">
+              <div class="translator-panel__header">
+                <span class="translator-panel__lang" id="tr-output-label">Fonoran</span>
+              </div>
+              <div id="tr-output" class="translator-output" aria-live="polite" aria-labelledby="tr-output-label">
+                <p class="translator-output__empty sans">Type English on the left to see Fonoran script and pronunciation.</p>
+              </div>
+            </div>
           </div>
-        </div>
         </div>
       </section>
 
@@ -243,6 +260,9 @@
                 <datalist id="wg-concept-list"></datalist>
                 <button type="button" class="btn" id="wg-add-btn">Add</button>
               </div>
+            </div>
+            <div class="wg-editor-footer" id="wg-use-footer" hidden>
+              <button type="button" class="btn btn-primary" id="wg-use">Use word</button>
             </div>
           </div>
         </div>
