@@ -294,12 +294,15 @@ Present is **not** a particle. It is the default when no time marker appears.
 
 | Role | Particle | Status |
 | --- | --- | --- |
-| Question | TBD | Under Development |
-| Negation | TBD | Under Development |
+| Negation | no | Proposed |
+| Affirmation | ya | Proposed |
+| Question | wo | Proposed |
 | Possession | TBD | Under Development |
 | Location | TBD | Under Development |
 | Direction | TBD | Under Development |
 | Comparison | TBD | Under Development |
+
+Particles are **reserved**: the root generator never assigns these forms (`ta`, `na`, `no`, `ya`, `wo`, plus the pronoun `mi`) to a lexical concept. Polarity is grammar, not vocabulary — **false** is `no` + **true**, **different** is `no` + **same**. Such antonyms are *not* roots and *not* compounds; they are produced at the particle layer.
 
 Even before the full inventory exists, you can already read sentences by treating each slot as a labeled relationship:
 

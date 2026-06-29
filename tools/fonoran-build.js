@@ -69,6 +69,13 @@ function labelFromId(id) {
 
 /**
  * Resolve and validate the curated compounds against the assigned roots.
+ *
+ * Compounds may reference primitive roots OR other compounds (a component id can
+ * itself be a compound concept). This mirrors the grammar's semantic tree:
+ * sha+ka → shaka (tribe), then shaka+fa → shakafa (war). Nested components are
+ * flattened down to their root sequence for spelling, segmentation and boundary
+ * checks, so the stored compound stays a transparent string of roots.
+ *
  * Returns { resolved, dropped } where resolved compounds parse uniquely.
  */
 function resolveCompounds(compoundDefs, rootById, rootSpellings) {
@@ -78,26 +85,30 @@ function resolveCompounds(compoundDefs, rootById, rootSpellings) {
   const dropped = [];
   const usedSpellings = new Set(rootSpellings);
 
-  for (const def of compoundDefs) {
-    if (conceptIds.has(def.concept)) {
-      dropped.push({ concept: def.concept, reason: 'shadows a primitive root id' });
-      continue;
-    }
-    const parts = (def.composition ?? []).map(id => ({ id, root: rootById[id] ?? null }));
-    const missing = parts.filter(p => !p.root).map(p => p.id);
-    if (missing.length) {
-      dropped.push({ concept: def.concept, reason: `missing components: ${missing.join(', ')}` });
-      continue;
-    }
+  // resolvedById maps a concept id to its flattened root sequence.
+  // Seed it with every primitive root (a root is a one-element sequence).
+  const resolvedById = new Map();
+  for (const [id, root] of Object.entries(rootById)) {
+    resolvedById.set(id, { roots: [root], spelling: root });
+  }
 
-    const spelling = parts.map(p => p.root).join('');
+  const defById = new Map();
+  for (const def of compoundDefs) {
+    if (!conceptIds.has(def.concept)) defById.set(def.concept, def);
+  }
+
+  const validateAndRecord = def => {
+    const comps = def.composition ?? [];
+    const rootSeq = comps.flatMap(id => resolvedById.get(id).roots);
+    const spelling = rootSeq.join('');
+
     if (usedSpellings.has(spelling)) {
       dropped.push({ concept: def.concept, reason: `spelling "${spelling}" collides with an existing root/compound` });
-      continue;
+      return;
     }
 
     const segs = segmentCompound(spelling, segInventory);
-    const intended = parts.map(p => p.root).join('+');
+    const intended = rootSeq.join('+');
     const unique = segs.length === 1;
     const matchesIntent = segs.some(s => s.join('+') === intended);
     if (!unique || !matchesIntent) {
@@ -105,20 +116,55 @@ function resolveCompounds(compoundDefs, rootById, rootSpellings) {
         concept: def.concept,
         reason: `ambiguous segmentation (${segs.length}: ${segs.map(s => s.join('+')).join(' | ')})`,
       });
-      continue;
+      return;
     }
 
-    const boundary = checkCompoundBoundary(parts.map(p => p.root));
+    const boundary = checkCompoundBoundary(rootSeq);
     if (!boundary.valid) {
-      dropped.push({
-        concept: def.concept,
-        reason: boundary.violations.map(v => v.reason).join('; '),
-      });
-      continue;
+      dropped.push({ concept: def.concept, reason: boundary.violations.map(v => v.reason).join('; ') });
+      return;
     }
 
     usedSpellings.add(spelling);
-    resolved.push({ ...def, spelling, parts });
+    resolvedById.set(def.concept, { roots: rootSeq, spelling });
+    resolved.push({ ...def, spelling, rootSeq });
+  };
+
+  let pending = [];
+  for (const def of compoundDefs) {
+    if (conceptIds.has(def.concept)) {
+      dropped.push({ concept: def.concept, reason: 'shadows a primitive root id' });
+      continue;
+    }
+    pending.push(def);
+  }
+
+  // Iterate to a fixed point: resolve any compound whose components are all known.
+  let progress = true;
+  while (progress && pending.length) {
+    progress = false;
+    const stillPending = [];
+    for (const def of pending) {
+      const comps = def.composition ?? [];
+      const unknown = comps.filter(id => !resolvedById.has(id));
+      if (unknown.length === 0) {
+        validateAndRecord(def);
+        progress = true;
+        continue;
+      }
+      // A component we cannot resolve now is only worth waiting on if it is itself
+      // a (not-yet-resolved) compound. Otherwise it is genuinely missing.
+      const waitable = unknown.every(id => defById.has(id));
+      if (waitable) stillPending.push(def);
+      else dropped.push({ concept: def.concept, reason: `missing components: ${unknown.join(', ')}` });
+    }
+    pending = stillPending;
+  }
+
+  // Anything left forms an unresolvable dependency cycle.
+  for (const def of pending) {
+    const unknown = (def.composition ?? []).filter(id => !resolvedById.has(id));
+    dropped.push({ concept: def.concept, reason: `unresolved components (cycle?): ${unknown.join(', ')}` });
   }
 
   return { resolved, dropped };
@@ -223,7 +269,7 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
       const entry = {
         id: `cmp-${def.spelling}`,
         spelling: def.spelling,
-        components: def.parts.map(p => ({ type: 'root', ref: p.root })),
+        components: def.rootSeq.map(ref => ({ type: 'root', ref })),
         meaning: labelFromId(def.concept),
         concept_id: def.concept,
         gloss: def.gloss ?? '',
@@ -240,7 +286,7 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
       if (entry.spelling !== def.spelling) {
         entry.spelling = def.spelling;
         entry.id = `cmp-${def.spelling}`;
-        entry.parts = def.parts.map(p => p.root);
+        entry.parts = def.rootSeq;
         entry.phonetic = { form: def.spelling };
       }
       return entry;

@@ -51,9 +51,9 @@ function isEligible(meta) {
 function buildReason(meta, highLeverage) {
   const lead = (meta.gloss ?? '').split(';')[0].trim();
   if (highLeverage.has(meta.id)) {
-    return `High-leverage root: ${lead}. Appears frequently inside compounds.`;
+    return `${lead} — shows up a lot in compounds, so it needs its own root.`;
   }
-  return `Fundamental ${meta.domain} concept: ${lead}. Cannot be naturally reduced into simpler Fonoran roots.`;
+  return `${lead} — basic everyday idea that deserves its own root.`;
 }
 
 function semanticUsefulness(meta, highLeverage) {
@@ -87,7 +87,7 @@ function semanticOnlyCandidate(meta) {
     ...baseFields(meta),
     spelling: null,
     ipa: null,
-    reason: `Compound candidate: ${lead}. Not eligible for a primitive root until promoted to a primitive.`,
+    reason: `${lead} — probably better as a compound than its own root for now.`,
     pronunciation_ease: null,
     pronunciation_ease_label: null,
     semantic_usefulness: null,

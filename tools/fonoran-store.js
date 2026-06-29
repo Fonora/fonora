@@ -4,6 +4,8 @@
  * JSON files are the portable seed/backup interchange format.
  */
 
+import '../load-env.js';
+
 import { readFile, writeFile, access, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';

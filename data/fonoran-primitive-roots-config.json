@@ -12,26 +12,93 @@
   },
   "collision_profile": "en",
   "reserved_particles": {
-    "note": "Never assign as lexical roots. From grammar placeholders and planned inventory.",
-    "forms": ["mi", "ta", "na"]
+    "note": "Grammar particles, never lexical roots (docs/fonoran-grammar.md Rule 3). mi=pronoun, ta=past, na=future, no=negation, ya=affirmation, wo=question.",
+    "forms": [
+      "mi",
+      "ta",
+      "na",
+      "no",
+      "ya",
+      "wo"
+    ]
   },
   "excluded_syllables": {
     "note": "Awkward or humorous; deferred to later expansion.",
-    "forms": ["pi", "pee", "po", "poo"]
+    "forms": [
+      "pi",
+      "pee",
+      "po",
+      "poo"
+    ]
   },
   "phonetics": {
-    "preferred_onsets": ["b", "d", "f", "g", "k", "l", "m", "n", "s", "t"],
-    "secondary_onsets": ["h", "w", "y"],
-    "tertiary_onsets": ["p", "ch", "sh", "j", "r"],
-    "vowels_by_cost": ["a", "e", "i", "o", "u"],
-    "coda_onsets": ["b", "d", "f", "g", "k", "l", "m", "n", "s", "t"],
+    "preferred_onsets": [
+      "b",
+      "d",
+      "f",
+      "g",
+      "k",
+      "l",
+      "m",
+      "n",
+      "s",
+      "t"
+    ],
+    "secondary_onsets": [
+      "h",
+      "w",
+      "y"
+    ],
+    "tertiary_onsets": [
+      "p",
+      "ch",
+      "sh",
+      "j",
+      "r"
+    ],
+    "vowels_by_cost": [
+      "a",
+      "e",
+      "i",
+      "o",
+      "u"
+    ],
+    "coda_onsets": [
+      "b",
+      "d",
+      "f",
+      "g",
+      "k",
+      "l",
+      "m",
+      "n",
+      "s",
+      "t"
+    ],
     "max_cv_per_rhyme": 4,
     "max_same_onset": 5,
     "max_same_onset_priority": 3
   },
   "excluded_composites": [
-    "tribe", "family", "government", "language", "nation", "religion",
-    "war", "community", "speaker", "memory", "river", "planet", "storm",
-    "home", "city", "house", "book", "sentence", "knowledge", "wisdom"
+    "tribe",
+    "family",
+    "government",
+    "language",
+    "nation",
+    "religion",
+    "war",
+    "community",
+    "speaker",
+    "memory",
+    "river",
+    "planet",
+    "storm",
+    "home",
+    "city",
+    "house",
+    "book",
+    "sentence",
+    "knowledge",
+    "wisdom"
   ]
 }

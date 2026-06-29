@@ -2352,12 +2352,8 @@
 
     function buildRootReviewScoresHtml(c) {
       const g = c.generation ?? {};
-      const chips = [suggestedStatusBadge(c.suggested_status)].filter(Boolean).join('');
-      const chipRow = chips ? `<div class="root-review__chips">${chips}</div>` : '';
-      const note = c.primitive_test_note ? `<div class="root-review__note sans">${escapeHtml(c.primitive_test_note)}</div>` : '';
-
-      if (c.suggested_status === 'compound_candidate' || !c.spelling) {
-        return `${chipRow}${note}<div class="root-review__hint sans">Not eligible for a primitive root until promoted to a primitive. ${compoundRecipeHintHtml(c)}</div>`;
+      if (!c.spelling) {
+        return '<div class="root-review__hint sans">No root sound assigned yet. Run build or edit this concept.</div>';
       }
 
       const cells = [
@@ -2365,16 +2361,15 @@
         rootReviewScoreCell('Compound usefulness', c.semantic_usefulness, 5),
       ];
       if (g.distinctiveness_score != null) cells.push(rootReviewScoreCell('Distinctiveness', g.distinctiveness_score, 100));
-      // English safety: omit bar — collision_warnings below surface homophones, common words, etc.
       if (g.compound_flow_score != null) cells.push(rootReviewScoreCell('Compound flow', g.compound_flow_score, 100));
 
-      return `${chipRow}${note}<div class="root-review__scores">${cells.join('')}</div>${rootReviewWarningsHtml(c)}`;
+      return `<div class="root-review__scores">${cells.join('')}</div>${rootReviewWarningsHtml(c)}`;
     }
 
     function buildCandidateReviewPreviewHtml(c) {
       const focus = {
         spelling: c.spelling ?? '',
-        meaning: c.plain_description || c.concept,
+        meaning: c.concept,
         state: c.status === 'pending' ? 'needs_review' : c.status,
         components: [],
       };
@@ -2383,8 +2378,6 @@
         showHear: true,
         hearId: 'root-hear',
         showBuiltFrom: false,
-        metaExtra: priorityClassBadge(c.priority_class),
-        descriptionHtml: `<div class="word-preview__context sans">${escapeHtml(c.reason)}</div>`,
         footerHtml: buildRootReviewScoresHtml(c),
         unnamedStyle: 'review',
       });
@@ -2525,13 +2518,10 @@
     function reviewRootsPickerMarkup(candidates, sounds) {
       const tiles = [];
       for (const c of candidates) {
-        const isCompoundCand = c.suggested_status === 'compound_candidate' || !c.spelling;
-        const meta = c.status === 'rejected'
-          ? badge('rejected')
-          : (isCompoundCand ? '<span class="review-pick__tag">semantic only</span>' : '');
+        const meta = c.status === 'rejected' ? badge('rejected') : '';
         tiles.push(pickerCellHtml({
           spelling: c.spelling || '—',
-          meaning: pickerMeaningShort(c.plain_description || c.concept),
+          meaning: pickerMeaningShort(c.concept),
           type: 'root',
           meta,
           selected: isReviewSelected('candidate', c.id),
@@ -2971,9 +2961,7 @@
       const el = $('word-review');
       if (!el || !c) return;
 
-      // Compound candidates carry no spelling; they cannot be approved or
-      // regenerated until promoted to a primitive in the concept editor.
-      const eligible = c.suggested_status !== 'compound_candidate' && Boolean(c.spelling);
+      const eligible = Boolean(c.spelling);
       const canApprove = eligible && c.status !== 'approved';
       const canRegenerate = eligible && c.status !== 'approved';
       const canReopen = c.status === 'rejected';
@@ -2984,7 +2972,7 @@
           <div class="review-decision">
             <div class="feel-actions root-review__actions">
               <button type="button" class="fa-approve" id="root-approve" data-write ${canApprove ? '' : 'disabled'}>✓ Approve</button>
-              ${canWrite() ? `<button type="button" class="fa-edit" id="root-edit" data-write>✎ Edit${eligible ? '' : ' / Promote'}</button>` : ''}
+              ${canWrite() ? '<button type="button" class="fa-edit" id="root-edit" data-write>✎ Edit</button>' : ''}
               ${canRegenerate && canWrite() ? '<button type="button" class="btn" id="root-regenerate" data-write>↻ Regenerate</button>' : ''}
               ${canReopen && canWrite() ? '<button type="button" class="btn" id="root-reopen" data-write>Reopen</button>' : ''}
               <button type="button" class="fa-reject" id="root-reject" data-write ${c.status === 'rejected' ? 'disabled' : ''}>✕ Reject</button>
@@ -3286,10 +3274,6 @@
         ipa: c.ipa,
         aliases: conceptEditorWordBankText(c),
         status: c.status,
-        plain_description: c.plain_description ?? '',
-        primitive_test_note: c.primitive_test_note ?? '',
-        suggested_status: c.suggested_status ?? 'primitive',
-        priority_class: c.priority_class ?? 'common',
       };
     }
 
@@ -3503,28 +3487,10 @@
             <button type="button" class="btn" id="ce-hear" disabled>▶ Hear</button>
           </div>
           <p class="concept-editor__invalid syl-invalid" id="ce-spelling-invalid" hidden></p>
-          <label class="fld" for="ce-concept">Definition</label>
+          <label class="fld" for="ce-concept">Gloss</label>
+          <p class="concept-editor__hint sans">Short note for your review — the root is the sound, not this text.</p>
           <input type="text" id="ce-concept" value="${escapeHtml(d.concept)}" data-write-input autocomplete="off">
           <div id="ce-spelling-alerts" class="concept-editor__alerts" aria-live="polite"></div>
-          <label class="fld" for="ce-plain">Plain description</label>
-          <p class="concept-editor__hint sans">Everyday wording shown in review. Avoid academic glosses.</p>
-          <input type="text" id="ce-plain" value="${escapeHtml(d.plain_description ?? '')}" data-write-input autocomplete="off">
-          <div class="concept-editor__field-pair">
-            <div>
-              <label class="fld" for="ce-priority-class">Priority class</label>
-              <select id="ce-priority-class" data-write-input>
-                ${['essential', 'common', 'useful', 'extended', 'questionable'].map(pc => `<option value="${pc}"${(d.priority_class ?? 'common') === pc ? ' selected' : ''}>${pc}</option>`).join('')}
-              </select>
-            </div>
-            <div>
-              <label class="fld" for="ce-suggested-status">Primitive status</label>
-              <select id="ce-suggested-status" data-write-input>
-                ${['primitive', 'compound_candidate', 'unclear'].map(ss => `<option value="${ss}"${(d.suggested_status ?? 'primitive') === ss ? ' selected' : ''}>${ss.replace(/_/g, ' ')}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-          <label class="fld" for="ce-primitive-note">Primitive test note</label>
-          <textarea id="ce-primitive-note" rows="2" data-write-input>${escapeHtml(d.primitive_test_note ?? '')}</textarea>
           <label class="fld" for="ce-domain">Domain</label>
           <select id="ce-domain" data-write-input>
             ${domainOpts}
@@ -3616,26 +3582,16 @@
       const domain = domainSel === '_custom' ? $('ce-domain-custom')?.value.trim().toLowerCase() : domainSel;
       const spelling = $('ce-spelling')?.value.trim().toLowerCase();
       const aliases = $('ce-aliases')?.value ?? '';
-      const suggestedStatus = $('ce-suggested-status')?.value || 'primitive';
-      // Compound candidates carry no spelling; a sound is required only for
-      // primitives and for any newly created concept.
-      const needsSpelling = STATE.conceptEditorIsNew || suggestedStatus !== 'compound_candidate';
-      if (!id || !concept || !domain || (needsSpelling && !spelling)) {
-        toast(needsSpelling
-          ? 'Id, concept phrase, domain, and sound are required.'
-          : 'Id, concept phrase, and domain are required.');
+      if (!id || !concept || !domain || !spelling) {
+        toast('Concept id, gloss, domain, and root sound are required.');
         return;
       }
       const body = {
         description: concept,
         domain,
         aliases,
-        plain_description: $('ce-plain')?.value.trim() ?? '',
-        primitive_test_note: $('ce-primitive-note')?.value.trim() ?? '',
-        suggested_status: suggestedStatus,
-        priority_class: $('ce-priority-class')?.value,
+        spelling,
       };
-      if (spelling) body.spelling = spelling;
       const returnPage = STATE.conceptEditorReturnPage;
       try {
         if (STATE.conceptEditorIsNew) {

@@ -300,12 +300,19 @@ const fonoranTranslatorResult = await (async () => {
 
     const ate = await translateEnglish('the man ate animal');
     assert(ate.unresolved.length === 0, `ate unresolved: ${ate.unresolved.join(', ')}`);
-    assert(ate.surface.roman === 'ba ta she tem', `ate roman: ${ate.surface.roman}`);
+    // eat/animal root spellings are generated artifacts; assert structure
+    // (man + past particle + eat + animal) so the test survives regeneration.
+    const ateEat = ate.tokens.find(t => t.english === 'ate' || t.concept_id === 'eat')?.fonoran;
+    const ateAnimal = ate.tokens.find(t => t.english === 'animal' || t.concept_id === 'animal')?.fonoran;
+    assert(Boolean(ateEat) && Boolean(ateAnimal), `ate tokens: ${JSON.stringify(ate.tokens)}`);
+    assert(ate.surface.roman === `ba ta ${ateEat} ${ateAnimal}`, `ate roman: ${ate.surface.roman}`);
     assert(ate.interpretations.some(i => i.english === 'ate' && i.reason === 'irregular past'), `ate interp: ${JSON.stringify(ate.interpretations)}`);
 
     const futureEat = await translateEnglish('the man will eat animal');
     assert(futureEat.unresolved.length === 0, `futureEat unresolved: ${futureEat.unresolved.join(', ')}`);
-    assert(futureEat.surface.roman === 'ba na she tem', `futureEat roman: ${futureEat.surface.roman}`);
+    const feEat = futureEat.tokens.find(t => t.english === 'eat' || t.concept_id === 'eat')?.fonoran;
+    const feAnimal = futureEat.tokens.find(t => t.english === 'animal' || t.concept_id === 'animal')?.fonoran;
+    assert(futureEat.surface.roman === `ba na ${feEat} ${feAnimal}`, `futureEat roman: ${futureEat.surface.roman}`);
 
     const morningLab = {
       sounds: [],
@@ -352,7 +359,7 @@ const fonoranTranslatorResult = await (async () => {
 
     const createdEqual = await translateEnglish('all men are created equal');
     assert(createdEqual.unresolved.length === 0, `created equal unresolved: ${createdEqual.unresolved.join(', ')}`);
-    assert(createdEqual.tokens.some(t => t.english === 'created' && t.fonoran === 'no'), `created -> make: ${JSON.stringify(createdEqual.tokens)}`);
+    assert(createdEqual.tokens.some(t => t.english === 'created' && t.concept_id === 'make' && Boolean(t.fonoran)), `created -> make: ${JSON.stringify(createdEqual.tokens)}`);
     assert(createdEqual.tokens.some(t => t.english === 'equal'), 'equal slot present');
     assert(!createdEqual.surface.roman.includes(' ta '), `passive present should omit ta: ${createdEqual.surface.roman}`);
 
@@ -364,7 +371,7 @@ const fonoranTranslatorResult = await (async () => {
 
     const airFeels = await translateEnglish('the air feels cool');
     assert(airFeels.tokens.some(t => t.english === 'air' && t.role === 'subject'), `air subject: ${JSON.stringify(airFeels.tokens)}`);
-    assert(airFeels.tokens.some(t => t.english === 'feels' && t.fonoran === 'ko'), `feel -> ko: ${JSON.stringify(airFeels.tokens)}`);
+    assert(airFeels.tokens.some(t => t.english === 'feels' && t.concept_id === 'feel' && Boolean(t.fonoran)), `feel resolves: ${JSON.stringify(airFeels.tokens)}`);
     assert(airFeels.tokens.some(t => t.english.includes('cool')), 'cool modifier present');
 
     const morningWalk = await translateEnglish('every morning I take a walk');
@@ -376,7 +383,7 @@ const fonoranTranslatorResult = await (async () => {
     );
     assert(paragraph.mode === 'discourse', `paragraph mode: ${paragraph.mode}`);
     assert(paragraph.tokens.some(t => t.fonoran === 'mi'), 'paragraph has mi');
-    assert(paragraph.tokens.some(t => t.english === 'feels' && t.fonoran === 'ko'), `paragraph feel: ${JSON.stringify(paragraph.tokens)}`);
+    assert(paragraph.tokens.some(t => t.english === 'feels' && t.concept_id === 'feel'), `paragraph feel: ${JSON.stringify(paragraph.tokens)}`);
     assert(!paragraph.tokens.some(t => t.english === 'every' && t.role === 'subject'), 'every should not be subject');
 
     const udhr = await translateEnglish(
@@ -385,13 +392,14 @@ const fonoranTranslatorResult = await (async () => {
     assert(udhr.mode === 'discourse', `udhr mode: ${udhr.mode}`);
     assert(!udhr.surface.roman.includes(' ta '), `udhr present should omit ta: ${udhr.surface.roman}`);
     assert(!udhr.tokens.some(t => t.english === 'born free and equal in dignity and rights'), 'udhr must not blob predicate');
-    assert(udhr.tokens.some(t => t.english === 'born' && t.fonoran === 'me'), `udhr born -> birth: ${udhr.surface.roman}`);
-    assert(udhr.tokens.some(t => t.english === 'equal' && t.fonoran === 'mal'), 'udhr equal resolved');
-    assert(udhr.tokens.some(t => t.english === 'endowed' && t.fonoran === 'tu'), 'udhr endowed -> give');
-    assert(udhr.tokens.some(t => t.english === 'reason' && t.fonoran === 'pa'), 'udhr reason -> think not earth');
-    assert(udhr.tokens.some(t => t.english === 'one another' && t.fonoran === 'sam'), 'udhr reciprocal idiom');
+    // born now resolves through the birth compound (birth = source + life), not a root.
+    assert(udhr.tokens.some(t => t.english === 'born' && t.concept_id === 'birth' && t.resolved && Boolean(t.fonoran)), `udhr born -> birth: ${udhr.surface.roman}`);
+    assert(udhr.tokens.some(t => t.english === 'equal' && t.concept_id === 'equal' && Boolean(t.fonoran)), 'udhr equal resolved');
+    assert(udhr.tokens.some(t => t.english === 'endowed' && t.concept_id === 'give' && Boolean(t.fonoran)), 'udhr endowed -> give');
+    assert(udhr.tokens.some(t => t.english === 'reason' && t.concept_id === 'think' && Boolean(t.fonoran)), 'udhr reason -> think not earth');
+    assert(udhr.tokens.some(t => t.english === 'one another' && t.resolved && Boolean(t.fonoran)), 'udhr reciprocal idiom resolved');
     assert(!udhr.tokens.some(t => t.english === 'should'), 'udhr modal should omitted');
-    assert(!udhr.tokens.some(t => t.english === 'spirit' && t.fonoran === 'ko'), 'udhr spirit must not map to feel');
+    assert(!udhr.tokens.some(t => t.english === 'spirit' && t.concept_id === 'feel'), 'udhr spirit must not map to feel');
     assert(udhr.unresolved.includes('free') && udhr.unresolved.includes('dignity'), `udhr expected reds: ${udhr.unresolved.join(', ')}`);
 
     return { name: testName, ok: true };

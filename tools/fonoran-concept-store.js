@@ -239,7 +239,9 @@ export async function patchConcept(id, body) {
     const description = String(rawDescription).trim();
     if (!description) throw new Error('Concept phrase is required');
     primitive.description = description;
+    primitive.plain_description = description;
     candidate.concept = description;
+    candidate.plain_description = description;
     labMetadataChanged = true;
   }
 
