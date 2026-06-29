@@ -395,6 +395,54 @@ function openNavDropdown(dropdownId = 'nav-more') {
 /** @type {AbortController | null} */
 let navListenersAbort = null;
 
+/** @type {{ onTab?: (tab: string) => void, onPlatformTab?: (tab: string) => void, onPage?: (page: string) => void, onSignOut?: () => void }} */
+let navSelectHandlers = {};
+
+/**
+ * Register platform/script tab handlers before initUniversalNav().
+ * @param {{ onTab?: (tab: string) => void, onPlatformTab?: (tab: string) => void, onPage?: (page: string) => void, onSignOut?: () => void }} handlers
+ */
+export function setNavSelectHandlers(handlers = {}) {
+  navSelectHandlers = { ...navSelectHandlers, ...handlers };
+}
+
+function dispatchNavEvent(root, type, detail) {
+  root.dispatchEvent(new CustomEvent(type, { detail, bubbles: true }));
+}
+
+function handleScriptTab(root, tab) {
+  closeNavDropdown('nav-more');
+  if (navSelectHandlers.onTab) {
+    navSelectHandlers.onTab(tab);
+    return;
+  }
+  if (typeof window.showTab === 'function') {
+    if (tab === 'docs' && typeof window.openDocViewer === 'function') {
+      window.openDocViewer('docs/platform-overview.md');
+    } else {
+      window.showTab(tab);
+    }
+    return;
+  }
+  dispatchNavEvent(root, 'universal-nav:tab', { tab });
+}
+
+function handlePlatformTab(root, tab) {
+  if (navSelectHandlers.onPlatformTab) {
+    navSelectHandlers.onPlatformTab(tab);
+    return;
+  }
+  if (typeof window.showTab === 'function') {
+    if (tab === 'docs' && typeof window.openDocViewer === 'function') {
+      window.openDocViewer('docs/platform-overview.md');
+    } else {
+      window.showTab(tab);
+    }
+    return;
+  }
+  dispatchNavEvent(root, 'universal-nav:platform-tab', { tab });
+}
+
 function bindNavListeners() {
   navListenersAbort?.abort();
   navListenersAbort = new AbortController();
@@ -410,8 +458,7 @@ function bindNavListeners() {
         event.preventDefault();
         const tab = el.dataset.tab;
         if (!tab) return;
-        closeNavDropdown('nav-more');
-        root.dispatchEvent(new CustomEvent('universal-nav:tab', { detail: { tab }, bubbles: true }));
+        handleScriptTab(root, tab);
       },
       { signal },
     );
@@ -424,7 +471,7 @@ function bindNavListeners() {
         event.preventDefault();
         const tab = el.dataset.platformTab;
         if (!tab) return;
-        root.dispatchEvent(new CustomEvent('universal-nav:platform-tab', { detail: { tab }, bubbles: true }));
+        handlePlatformTab(root, tab);
       },
       { signal },
     );
@@ -438,7 +485,11 @@ function bindNavListeners() {
         const page = el.dataset.fonoranPage;
         if (!page) return;
         closeNavDropdown('fonoran-nav-more');
-        root.dispatchEvent(new CustomEvent('universal-nav:page', { detail: { page }, bubbles: true }));
+        if (navSelectHandlers.onPage) {
+          navSelectHandlers.onPage(page);
+          return;
+        }
+        dispatchNavEvent(root, 'universal-nav:page', { page });
       },
       { signal },
     );
@@ -449,7 +500,11 @@ function bindNavListeners() {
     'click',
     (event) => {
       event.preventDefault();
-      root.dispatchEvent(new CustomEvent('universal-nav:sign-out', { bubbles: true }));
+      if (navSelectHandlers.onSignOut) {
+        navSelectHandlers.onSignOut();
+        return;
+      }
+      dispatchNavEvent(root, 'universal-nav:sign-out', {});
     },
     { signal },
   );

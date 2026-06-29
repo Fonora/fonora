@@ -38,11 +38,19 @@
   }
 }
 
+html {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
   font-family: var(--font-serif);
   font-size: 17px;
   line-height: 1.5;
@@ -175,8 +183,9 @@ html[data-fonora-tab='docs'] [data-tab='docs'].tab-btn,
 html[data-fonora-tab='docs'] [data-platform-tab='docs'].tab-btn,
 html[data-fonora-tab='home'] [data-fonoran-page='home'].tab-btn,
 html[data-fonora-tab='translator'] [data-fonoran-page='translator'].tab-btn,
-html[data-fonoran-tab='dictionary'] [data-fonoran-page='dictionary'].tab-btn,
-html[data-fonoran-tab='grammar'] [data-fonoran-page='grammar'].tab-btn,
+html[data-fonora-tab='dictionary'] [data-fonoran-page='dictionary'].tab-btn,
+html[data-fonora-tab='grammar'] [data-fonoran-page='grammar'].tab-btn,
+html[data-fonora-tab='wordgen'] [data-fonoran-page='wordgen'].tab-btn,
 html[data-fonora-tab='roots'] [data-fonoran-page='roots'].tab-btn,
 html[data-fonora-tab='create'] [data-fonoran-page='create'].tab-btn,
 html[data-fonora-tab='review'] [data-fonoran-page='review'].tab-btn,
@@ -184,7 +193,7 @@ html[data-fonora-tab='concepts'] [data-fonoran-page='concepts'].tab-btn,
 html[data-fonora-tab='health'] [data-fonoran-page='health'].tab-btn,
 html[data-fonora-tab='progress'] [data-fonoran-page='progress'].tab-btn,
 html[data-fonora-tab='advanced'] [data-fonoran-page='advanced'].tab-btn,
-.app-header .tab-btn--active {
+html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
   color: #2d6a4f;
   border-bottom-color: #2d6a4f;
 }
@@ -402,6 +411,7 @@ html[data-fonora-page='advanced'] #page-advanced {
   flex: 1;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
@@ -442,7 +452,7 @@ html[data-fonora-page='advanced'] #page-advanced {
   outline: none;
 }
 
-.tab-btn--active {
+html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
   color: #2d6a4f;
   border-bottom-color: #2d6a4f;
 }
@@ -626,13 +636,13 @@ html[data-fonora-page='advanced'] #page-advanced {
   background: #fafafa;
 }
 
-.nav-dropdown-item.tab-btn--active {
+html[data-fonora-nav] .app-header .nav-dropdown-item.tab-btn--active {
   background: #f0faf4;
   color: #2d6a4f;
 }
 
-.nav-dropdown--open .nav-dropdown-trigger.tab-btn,
-.nav-dropdown--child-active .nav-dropdown-trigger.tab-btn {
+html[data-fonora-nav] .app-header .nav-dropdown--open .nav-dropdown-trigger.tab-btn,
+html[data-fonora-nav] .app-header .nav-dropdown--child-active .nav-dropdown-trigger.tab-btn {
   color: #2d6a4f;
   border-bottom-color: #2d6a4f;
 }
@@ -661,6 +671,9 @@ code {
   width: 100%;
   max-width: var(--layout-max-width);
   margin: 0 auto;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-x: clip;
   padding: var(--layout-main-pt) var(--layout-gutter) var(--layout-main-pb);
 }
 

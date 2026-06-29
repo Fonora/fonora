@@ -33,7 +33,15 @@ import { setupSamples, setupHomeSample, ensureSamplesLoaded } from './samples.js
 import { setupOpenProblems } from './open-problems-ui.js';
 import { setupDocsViewer, onDocsTabActivated } from './docs-viewer-ui.js';
 import { openDocViewer, DEFAULT_DOC_PATH, docViewerHref, isDocsRoute } from './doc-urls.js';
-import { initUniversalNav, setActiveTab, setNavContext, setFonoranAuth, closeNavDropdown, MORE_TAB_IDS } from './universal-nav.js';
+import {
+  initUniversalNav,
+  setActiveTab,
+  setNavContext,
+  setFonoranAuth,
+  setNavSelectHandlers,
+  closeNavDropdown,
+  MORE_TAB_IDS,
+} from './universal-nav.js';
 import { setReaderWordSources } from './fonora-tts.js';
 
 let rules = null;
@@ -750,7 +758,25 @@ function showTab(tabId) {
 window.showTab = showTab;
 window.openDocViewer = openDocViewer;
 
+function handleNavTabSelect(tab) {
+  if (tab === 'docs') {
+    openDocViewer('docs/platform-overview.md');
+    return;
+  }
+  showTab(tab);
+}
+
+setNavSelectHandlers({
+  onTab: handleNavTabSelect,
+  onPlatformTab: handleNavTabSelect,
+});
+
+let shellNavWired = false;
+
 function setupTabs() {
+  if (shellNavWired) return;
+  shellNavWired = true;
+
   document.querySelectorAll('main [data-tab], .home-page [data-tab], .platform-home [data-tab]').forEach((el) => {
     el.addEventListener('click', (event) => {
       if (el.tagName === 'A') event.preventDefault();
@@ -761,29 +787,6 @@ function setupTabs() {
       }
       showTab(el.dataset.tab);
     });
-  });
-
-  const header = document.getElementById('app-header-root');
-  header?.addEventListener('universal-nav:tab', (event) => {
-    const { tab } = event.detail;
-    if (tab === 'docs') {
-      openDocViewer('docs/platform-overview.md');
-      return;
-    }
-    showTab(tab);
-  });
-
-  header?.addEventListener('universal-nav:platform-tab', (event) => {
-    const { tab } = event.detail;
-    if (tab === 'docs') {
-      openDocViewer('docs/platform-overview.md');
-      return;
-    }
-    showTab(tab);
-  });
-
-  header?.addEventListener('universal-nav:sign-out', () => {
-    signOut();
   });
 
   refreshAuth();
@@ -838,6 +841,7 @@ function applyRulesBundle(loaded) {
       banner.hidden = false;
       banner.textContent = `Could not load language-rules.md: ${loaded.loadError || 'unknown error'}. Check that the dev server is running.`;
     }
+    setupTabs();
     return;
   }
 
@@ -931,6 +935,13 @@ function handleAuthUrlErrors() {
 
 function bootstrapShell() {
   const initialTab = getTabFromHash();
+  setNavSelectHandlers({
+    onTab: handleNavTabSelect,
+    onPlatformTab: handleNavTabSelect,
+    onSignOut: () => {
+      signOut();
+    },
+  });
   initUniversalNav({
     context: isPlatformTab(initialTab) ? 'platform' : 'script',
     activeTab: initialTab,
@@ -940,6 +951,7 @@ function bootstrapShell() {
     panel.hidden = !active;
     panel.classList.toggle('tab-panel--active', active);
   });
+  setupTabs();
   ensureAppHeaderOffsetObserver();
 }
 
