@@ -28,5 +28,6 @@ backups/
 data/fonoran-sound-bucket.json
 data/fonoran-english-lexicon.json
 data/fonoran-stress-test-report.json
+data/fonoran-semantic-cache.json
 
 .cursor/
