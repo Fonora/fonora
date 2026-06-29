@@ -1,12 +1,20 @@
 {
+  "version": "2.0-editorial-workflow",
   "status": "proposal",
+  "generated_at": "2026-06-29T22:07:58.275Z",
+  "collision_profile": "en",
+  "philosophy": {
+    "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
+    "workflow": "meaning cleanup → primitive test → priority class → sound generation → distinctiveness + collision + boundary scoring → human approval → compounds",
+    "source_concepts": "data/fonoran-concept-inventory.json"
+  },
   "summary": {
     "total": 100,
     "pending": 0,
     "approved": 100,
-    "rejected": 0
+    "rejected": 0,
+    "compound_candidates": 0
   },
-  "version": "2.0-editorial-workflow",
   "candidates": [
     {
       "id": "person",
@@ -3692,12 +3700,5 @@
       "pronunciation_ease_label": null,
       "semantic_usefulness_label": null
     }
-  ],
-  "philosophy": {
-    "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
-    "workflow": "meaning cleanup → primitive test → priority class → sound generation → distinctiveness + collision + boundary scoring → human approval → compounds",
-    "source_concepts": "data/fonoran-concept-inventory.json"
-  },
-  "generated_at": "2026-06-29T06:23:21.026Z",
-  "collision_profile": "en"
+  ]
 }

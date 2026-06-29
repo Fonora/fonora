@@ -498,6 +498,106 @@
         "place"
       ],
       "gloss": "the place of birth"
+    },
+    {
+      "concept": "open",
+      "composition": ["make", "path"],
+      "gloss": "to make a way through"
+    },
+    {
+      "concept": "sunrise",
+      "composition": ["sun", "up"],
+      "gloss": "sun rising"
+    },
+    {
+      "concept": "sunset",
+      "composition": ["sun", "down"],
+      "gloss": "sun setting"
+    },
+    {
+      "concept": "moonlight",
+      "composition": ["moon", "light"],
+      "gloss": "light from the moon"
+    },
+    {
+      "concept": "morning",
+      "composition": ["light", "before"],
+      "gloss": "early light"
+    },
+    {
+      "concept": "winter",
+      "composition": ["cold", "time"],
+      "gloss": "the cold season"
+    },
+    {
+      "concept": "bridge",
+      "composition": ["path", "water"],
+      "gloss": "a way over water"
+    },
+    {
+      "concept": "beautiful",
+      "composition": ["good", "see"],
+      "gloss": "good to see"
+    },
+    {
+      "concept": "almost",
+      "composition": ["near", "far"],
+      "gloss": "close to but not fully there"
+    },
+    {
+      "concept": "door",
+      "composition": ["path", "bound"],
+      "gloss": "a passage through a boundary"
+    },
+    {
+      "concept": "campfire",
+      "composition": ["fire", "place"],
+      "gloss": "fire at a place"
+    },
+    {
+      "concept": "fish",
+      "composition": ["water", "animal"],
+      "gloss": "a water animal"
+    },
+    {
+      "concept": "blacksmith",
+      "composition": ["metal", "make", "person"],
+      "gloss": "one who works metal"
+    },
+    {
+      "concept": "grandparent",
+      "composition": ["before", "parent"],
+      "gloss": "a parent's parent, an elder"
+    },
+    {
+      "concept": "doctor",
+      "composition": ["heal", "person"],
+      "gloss": "one who heals"
+    },
+    {
+      "concept": "hunter",
+      "composition": ["take", "animal", "person"],
+      "gloss": "one who takes animals"
+    },
+    {
+      "concept": "farmer",
+      "composition": ["make", "plant", "person"],
+      "gloss": "one who makes plants grow"
+    },
+    {
+      "concept": "fisherman",
+      "composition": ["fish", "person"],
+      "gloss": "one who fishes"
+    },
+    {
+      "concept": "knife",
+      "composition": ["metal", "bound"],
+      "gloss": "a metal blade"
+    },
+    {
+      "concept": "red",
+      "composition": ["fire", "see"],
+      "gloss": "the color of fire"
     }
   ]
 }

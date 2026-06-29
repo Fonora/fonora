@@ -118,7 +118,7 @@
         },
         {
           "en": "The red flower grows.",
-          "fon": "nanles pa jecha",
+          "fon": "nanwi pa jecha",
           "note": "review: flower→pa(semantic)"
         },
         {
@@ -176,7 +176,7 @@
         },
         {
           "en": "The rain stopped.",
-          "fon": "natye ta kan"
+          "fon": "yenat ta kan"
         },
         {
           "en": "Winter will come.",
@@ -236,7 +236,7 @@
         },
         {
           "en": "Will it rain?",
-          "fon": "to sa natye"
+          "fon": "to sa yenat"
         }
       ]
     },
@@ -258,7 +258,7 @@
         },
         {
           "en": "Parents protect children.",
-          "fon": "ba fes namba"
+          "fon": "po fes namba"
         },
         {
           "en": "The king trusts the guard.",
@@ -267,15 +267,15 @@
         },
         {
           "en": "The hunter follows the animal.",
-          "fon": "balatet gi tet"
+          "fon": "latetba gi tet"
         },
         {
           "en": "The doctor helps sick people.",
-          "fon": "bakat katba gat yiba"
+          "fon": "kelguba katba gat yiba"
         },
         {
           "en": "The farmer grows food.",
-          "fon": "basas jecha nelto"
+          "fon": "kelsasba jecha nelto"
         },
         {
           "en": "The traveler finds a river.",
@@ -310,28 +310,31 @@
         },
         {
           "en": "The fisherman crossed the river.",
-          "fon": "baye ta gi pakal"
+          "fon": "yetetba ta gi pakal"
         },
         {
           "en": "The blacksmith made a knife.",
-          "fon": "bakelmak ta sak makmek",
+          "fon": "pelkelba ta sak pelmek",
           "note": "review: made→sak(alias_weak)"
         },
         {
           "en": "The grandmother tells stories.",
-          "fon": "badi se se"
+          "fon": "dipo se se"
         },
         {
           "en": "The doorway is open.",
-          "fon": "kalmek kelkal"
+          "fon": "kalmek kelkal",
+          "note": "review: doorway→kalmek(semantic)"
         },
         {
           "en": "The raindrops fall quietly.",
-          "fon": "yenat nat kan"
+          "fon": "[raindrops] nat kan",
+          "note": "gap: raindrops (needs a root)"
         },
         {
           "en": "The birdsong wakes everyone.",
-          "fon": "tetse cha ben ba"
+          "fon": "[birdsong] cha ben ba",
+          "note": "gap: birdsong (needs a root)"
         }
       ]
     },
@@ -345,11 +348,12 @@
         },
         {
           "en": "We stayed inside because it rained.",
-          "fon": "ben ta kan lel natye"
+          "fon": "ben ta kan lel yenat"
         },
         {
           "en": "The child laughed after the dog ran away.",
-          "fon": "namba ta gumet shu tet gi nes"
+          "fon": "namba ta [laughed] shu tet gi nes",
+          "note": "gap: laughed (needs a root)"
         },
         {
           "en": "When the sun rose, we began walking.",
@@ -369,7 +373,7 @@
         },
         {
           "en": "The man who built the house is my friend.",
-          "fon": "ja tatde"
+          "fon": "ja tatyo"
         },
         {
           "en": "If you help me, we will finish today.",
@@ -387,7 +391,7 @@
       "phrases": [
         {
           "en": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
-          "fon": "di ta ben gi pakal ye ta guwi ben ta kel nam nan kel nelto shu ta ben nel ben wi datbeldal dal re shu ta ben gi lelja ben"
+          "fon": "di ta ben gi pakal ye ta guwi ben ta kel nam nan kel nelto shu ta ben nel ben wi datbeldal kalye re shu ta ben gi lelja ben"
         }
       ]
     },
@@ -397,11 +401,11 @@
       "phrases": [
         {
           "en": "I only saw the red bird.",
-          "fon": "mi ta vat wi nanles tet"
+          "fon": "mi ta vat wi nanwi tet"
         },
         {
           "en": "Only I saw the red bird.",
-          "fon": "vat ta mi wi nanles tet"
+          "fon": "vat ta mi wi nanwi tet"
         },
         {
           "en": "I almost fell.",
@@ -448,8 +452,7 @@
         },
         {
           "en": "They can fish.",
-          "fon": "ben nel",
-          "note": "review: fish→nel(semantic)"
+          "fon": "ben yetet"
         },
         {
           "en": "Time flies.",
@@ -475,11 +478,11 @@
         },
         {
           "en": "Why did the old hunter give the child his knife?",
-          "fon": "wo zos ta di balatet ku namba makmek"
+          "fon": "wo zos ta di latetba ku namba pelmek"
         },
         {
           "en": "Time heals all wounds, but memory keeps the pain alive.",
-          "fon": "pu kelgu tak gatdam hudito fes gat fo"
+          "fon": "pu kelguba tak gatdam hudito fes gat fo"
         }
       ]
     }

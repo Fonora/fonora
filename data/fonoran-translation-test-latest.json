@@ -1,19 +1,19 @@
 {
-  "generated_at": "2026-06-29T21:35:47.581Z",
+  "generated_at": "2026-06-29T22:08:34.386Z",
   "corpus_version": "2.0",
   "total_phrases": 100,
-  "clean_phrases": 100,
-  "coverage_pct": 100,
-  "distinct_gaps": 0,
+  "clean_phrases": 97,
+  "coverage_pct": 97,
+  "distinct_gaps": 3,
   "quality": {
     "tokens": {
-      "pass": 355,
-      "soft": 18,
-      "hard": 0
+      "pass": 351,
+      "soft": 19,
+      "hard": 3
     },
-    "pass_phrases": 86,
-    "soft_phrases": 14,
-    "hard_phrases": 0
+    "pass_phrases": 82,
+    "soft_phrases": 15,
+    "hard_phrases": 3
   },
   "levels": [
     {
@@ -68,17 +68,17 @@
       "level": 7,
       "name": "Compound-word stress tests",
       "phrases": 10,
-      "clean": 10,
-      "coverage": 100,
-      "unresolved_words": 0
+      "clean": 8,
+      "coverage": 80,
+      "unresolved_words": 2
     },
     {
       "level": 8,
       "name": "Multi-clause sentences",
       "phrases": 10,
-      "clean": 10,
-      "coverage": 100,
-      "unresolved_words": 0
+      "clean": 9,
+      "coverage": 90,
+      "unresolved_words": 1
     },
     {
       "level": 9,
@@ -105,7 +105,29 @@
       "unresolved_words": 0
     }
   ],
-  "gaps": [],
+  "gaps": [
+    {
+      "word": "raindrops",
+      "count": 1,
+      "samples": [
+        "The raindrops fall quietly."
+      ]
+    },
+    {
+      "word": "birdsong",
+      "count": 1,
+      "samples": [
+        "The birdsong wakes everyone."
+      ]
+    },
+    {
+      "word": "laughed",
+      "count": 1,
+      "samples": [
+        "The child laughed after the dog ran away."
+      ]
+    }
+  ],
   "collapses": [
     {
       "root": "gi",
@@ -273,17 +295,6 @@
       ]
     },
     {
-      "root": "dal",
-      "words": [
-        "over",
-        "rises",
-        "rose"
-      ],
-      "concepts": [
-        "up"
-      ]
-    },
-    {
       "root": "nat",
       "words": [
         "fall",
@@ -335,7 +346,7 @@
         "opens"
       ],
       "concepts": [
-        "to open; to make a way through"
+        "open"
       ]
     },
     {
@@ -424,6 +435,16 @@
       "concepts": []
     },
     {
+      "root": "dal",
+      "words": [
+        "rises",
+        "rose"
+      ],
+      "concepts": [
+        "up"
+      ]
+    },
+    {
       "root": "fen",
       "words": [
         "hot",
@@ -460,7 +481,7 @@
         "doorway"
       ],
       "concepts": [
-        "door; a passage through a boundary"
+        "door"
       ]
     },
     {
@@ -484,16 +505,6 @@
       ]
     },
     {
-      "root": "gumet",
-      "words": [
-        "happy",
-        "laughed"
-      ],
-      "concepts": [
-        "joy"
-      ]
-    },
-    {
       "root": "mel",
       "words": [
         "king",
@@ -510,11 +521,21 @@
         "cold but morning was beautiful"
       ],
       "concepts": [
-        "beautiful; good to see"
+        "beautiful"
       ]
     },
     {
-      "root": "natye",
+      "root": "kalye",
+      "words": [
+        "bridge",
+        "over"
+      ],
+      "concepts": [
+        "bridge"
+      ]
+    },
+    {
+      "root": "yenat",
       "words": [
         "because it rained",
         "rain"
@@ -554,13 +575,13 @@
       ]
     },
     {
-      "root": "tat",
+      "root": "kelguba",
       "words": [
-        "my friend",
-        "trusts"
+        "doctor",
+        "heals"
       ],
       "concepts": [
-        "bond"
+        "doctor"
       ]
     },
     {
@@ -1170,8 +1191,8 @@
         }
       ],
       "gaps": [],
-      "expected": "nanles pa jecha",
-      "matches_golden": false,
+      "expected": "nanwi pa jecha",
+      "matches_golden": true,
       "note": "review: flower→pa(semantic)"
     },
     {
@@ -1454,7 +1475,7 @@
     {
       "level": 4,
       "phrase": "The rain stopped.",
-      "roman": "natye ta kan",
+      "roman": "yenat ta kan",
       "unresolved": [],
       "counts": {
         "direct": 3,
@@ -1471,7 +1492,7 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "natye ta kan",
+      "expected": "yenat ta kan",
       "matches_golden": true
     },
     {
@@ -1769,7 +1790,7 @@
     {
       "level": 5,
       "phrase": "Will it rain?",
-      "roman": "to sa natye",
+      "roman": "to sa yenat",
       "unresolved": [],
       "counts": {
         "direct": 3,
@@ -1786,7 +1807,7 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "to sa natye",
+      "expected": "to sa yenat",
       "matches_golden": true
     },
     {
@@ -1878,8 +1899,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "ba fes namba",
-      "matches_golden": false
+      "expected": "po fes namba",
+      "matches_golden": true
     },
     {
       "level": 6,
@@ -1938,8 +1959,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "balatet gi tet",
-      "matches_golden": false
+      "expected": "latetba gi tet",
+      "matches_golden": true
     },
     {
       "level": 6,
@@ -1961,8 +1982,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "bakat katba gat yiba",
-      "matches_golden": false
+      "expected": "kelguba katba gat yiba",
+      "matches_golden": true
     },
     {
       "level": 6,
@@ -1984,8 +2005,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "basas jecha nelto",
-      "matches_golden": false
+      "expected": "kelsasba jecha nelto",
+      "matches_golden": true
     },
     {
       "level": 6,
@@ -2153,8 +2174,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "baye ta gi pakal",
-      "matches_golden": false
+      "expected": "yetetba ta gi pakal",
+      "matches_golden": true
     },
     {
       "level": 7,
@@ -2183,8 +2204,8 @@
         }
       ],
       "gaps": [],
-      "expected": "bakelmak ta sak makmek",
-      "matches_golden": false,
+      "expected": "pelkelba ta sak pelmek",
+      "matches_golden": true,
       "note": "review: made→sak(alias_weak)"
     },
     {
@@ -2207,8 +2228,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "badi se se",
-      "matches_golden": false
+      "expected": "dipo se se",
+      "matches_golden": true
     },
     {
       "level": 7,
@@ -2216,68 +2237,92 @@
       "roman": "kalmek kelkal",
       "unresolved": [],
       "counts": {
-        "direct": 2,
+        "direct": 1,
         "interpreted": 0,
-        "semantic": 0,
+        "semantic": 1,
         "alias_weak": 0,
         "unknown": 0
       },
       "quality": {
-        "gate": "pass",
-        "pass": 2,
-        "soft": 0,
+        "gate": "soft",
+        "pass": 1,
+        "soft": 1,
         "hard": 0
       },
-      "review": [],
+      "review": [
+        {
+          "english": "doorway",
+          "kind": "semantic",
+          "concept_id": "door",
+          "fonoran": "kalmek"
+        }
+      ],
       "gaps": [],
       "expected": "kalmek kelkal",
-      "matches_golden": true
+      "matches_golden": true,
+      "note": "review: doorway→kalmek(semantic)"
     },
     {
       "level": 7,
       "phrase": "The raindrops fall quietly.",
-      "roman": "yenat nat kan",
-      "unresolved": [],
+      "roman": "[raindrops] nat kan",
+      "unresolved": [
+        "raindrops"
+      ],
       "counts": {
-        "direct": 3,
+        "direct": 2,
         "interpreted": 0,
         "semantic": 0,
         "alias_weak": 0,
-        "unknown": 0
+        "unknown": 1
       },
       "quality": {
-        "gate": "pass",
-        "pass": 3,
+        "gate": "hard",
+        "pass": 2,
         "soft": 0,
-        "hard": 0
+        "hard": 1
       },
       "review": [],
-      "gaps": [],
-      "expected": "yenat nat kan",
-      "matches_golden": true
+      "gaps": [
+        {
+          "english": "raindrops",
+          "kind": "unknown"
+        }
+      ],
+      "expected": "[raindrops] nat kan",
+      "matches_golden": true,
+      "note": "gap: raindrops (needs a root)"
     },
     {
       "level": 7,
       "phrase": "The birdsong wakes everyone.",
-      "roman": "tetse cha ben ba",
-      "unresolved": [],
+      "roman": "[birdsong] cha ben ba",
+      "unresolved": [
+        "birdsong"
+      ],
       "counts": {
-        "direct": 3,
+        "direct": 2,
         "interpreted": 1,
         "semantic": 0,
         "alias_weak": 0,
-        "unknown": 0
+        "unknown": 1
       },
       "quality": {
-        "gate": "pass",
-        "pass": 4,
+        "gate": "hard",
+        "pass": 3,
         "soft": 0,
-        "hard": 0
+        "hard": 1
       },
       "review": [],
-      "gaps": [],
-      "expected": "tetse cha ben ba",
-      "matches_golden": true
+      "gaps": [
+        {
+          "english": "birdsong",
+          "kind": "unknown"
+        }
+      ],
+      "expected": "[birdsong] cha ben ba",
+      "matches_golden": true,
+      "note": "gap: birdsong (needs a root)"
     },
     {
       "level": 8,
@@ -2305,7 +2350,7 @@
     {
       "level": 8,
       "phrase": "We stayed inside because it rained.",
-      "roman": "ben ta kan lel natye",
+      "roman": "ben ta kan lel yenat",
       "unresolved": [],
       "counts": {
         "direct": 3,
@@ -2322,31 +2367,39 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "ben ta kan lel natye",
+      "expected": "ben ta kan lel yenat",
       "matches_golden": true
     },
     {
       "level": 8,
       "phrase": "The child laughed after the dog ran away.",
-      "roman": "namba ta gumet shu tet gi nes",
-      "unresolved": [],
+      "roman": "namba ta [laughed] shu tet gi nes",
+      "unresolved": [
+        "laughed"
+      ],
       "counts": {
-        "direct": 6,
+        "direct": 5,
         "interpreted": 1,
         "semantic": 0,
         "alias_weak": 0,
-        "unknown": 0
+        "unknown": 1
       },
       "quality": {
-        "gate": "pass",
-        "pass": 7,
+        "gate": "hard",
+        "pass": 6,
         "soft": 0,
-        "hard": 0
+        "hard": 1
       },
       "review": [],
-      "gaps": [],
-      "expected": "namba ta gumet shu tet gi nes",
-      "matches_golden": true
+      "gaps": [
+        {
+          "english": "laughed",
+          "kind": "unknown"
+        }
+      ],
+      "expected": "namba ta [laughed] shu tet gi nes",
+      "matches_golden": true,
+      "note": "gap: laughed (needs a root)"
     },
     {
       "level": 8,
@@ -2443,7 +2496,7 @@
     {
       "level": 8,
       "phrase": "The man who built the house is my friend.",
-      "roman": "ja tat",
+      "roman": "ja tatyo",
       "unresolved": [],
       "counts": {
         "direct": 2,
@@ -2460,8 +2513,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "ja tatde",
-      "matches_golden": false
+      "expected": "ja tatyo",
+      "matches_golden": true
     },
     {
       "level": 8,
@@ -2512,11 +2565,11 @@
     {
       "level": 9,
       "phrase": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
-      "roman": "di ta ben gi pakal ye ta guwi ben ta kel nam nan kel nelto shu ta ben nel ben wi datbeldal dal re shu ta ben gi lelja ben",
+      "roman": "di ta ben gi pakal ye ta guwi ben ta kel nam nan kel nelto shu ta ben nel ben wi datbeldal kalye re shu ta ben gi lelja ben",
       "unresolved": [],
       "counts": {
-        "direct": 27,
-        "interpreted": 3,
+        "direct": 28,
+        "interpreted": 2,
         "semantic": 0,
         "alias_weak": 0,
         "unknown": 0
@@ -2529,7 +2582,7 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "di ta ben gi pakal ye ta guwi ben ta kel nam nan kel nelto shu ta ben nel ben wi datbeldal dal re shu ta ben gi lelja ben",
+      "expected": "di ta ben gi pakal ye ta guwi ben ta kel nam nan kel nelto shu ta ben nel ben wi datbeldal kalye re shu ta ben gi lelja ben",
       "matches_golden": true
     },
     {
@@ -2552,8 +2605,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "mi ta vat wi nanles tet",
-      "matches_golden": false
+      "expected": "mi ta vat wi nanwi tet",
+      "matches_golden": true
     },
     {
       "level": 10,
@@ -2575,8 +2628,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "vat ta mi wi nanles tet",
-      "matches_golden": false
+      "expected": "vat ta mi wi nanwi tet",
+      "matches_golden": true
     },
     {
       "level": 10,
@@ -2870,9 +2923,8 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "ben nel",
-      "matches_golden": false,
-      "note": "review: fish→nel(semantic)"
+      "expected": "ben yetet",
+      "matches_golden": true
     },
     {
       "level": 10,
@@ -2986,13 +3038,13 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "wo zos ta di balatet ku namba makmek",
-      "matches_golden": false
+      "expected": "wo zos ta di latetba ku namba pelmek",
+      "matches_golden": true
     },
     {
       "level": 11,
       "phrase": "Time heals all wounds, but memory keeps the pain alive.",
-      "roman": "pu kelgu tak gatdam hudito fes gat fo",
+      "roman": "pu kelguba tak gatdam hudito fes gat fo",
       "unresolved": [],
       "counts": {
         "direct": 8,
@@ -3009,7 +3061,7 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "pu kelgu tak gatdam hudito fes gat fo",
+      "expected": "pu kelguba tak gatdam hudito fes gat fo",
       "matches_golden": true
     }
   ]

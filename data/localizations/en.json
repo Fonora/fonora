@@ -233,7 +233,8 @@
       "aliases": [
         "meal",
         "eat",
-        "mana"
+        "mana",
+        "bread"
       ]
     },
     "form": {
@@ -909,6 +910,94 @@
         "parent",
         "parents"
       ]
+    },
+    "grandparent": {
+      "label": "grandparent",
+      "aliases": [
+        "grandparent",
+        "grandparents",
+        "grandmother",
+        "grandmothers",
+        "grandfather",
+        "grandfathers",
+        "elder"
+      ]
+    },
+    "blacksmith": {
+      "label": "blacksmith",
+      "aliases": ["blacksmith", "blacksmiths"]
+    },
+    "doctor": {
+      "label": "doctor",
+      "aliases": ["doctor", "doctors", "healer", "healers"]
+    },
+    "hunter": {
+      "label": "hunter",
+      "aliases": ["hunter", "hunters"]
+    },
+    "farmer": {
+      "label": "farmer",
+      "aliases": ["farmer", "farmers"]
+    },
+    "fisherman": {
+      "label": "fisherman",
+      "aliases": ["fisherman", "fishermen", "fisher"]
+    },
+    "fish": {
+      "label": "fish",
+      "aliases": ["fish", "fishes"]
+    },
+    "knife": {
+      "label": "knife",
+      "aliases": ["knife", "knives"]
+    },
+    "red": {
+      "label": "red",
+      "aliases": ["red"]
+    },
+    "beautiful": {
+      "label": "beautiful",
+      "aliases": ["beautiful"]
+    },
+    "almost": {
+      "label": "almost",
+      "aliases": ["almost"]
+    },
+    "door": {
+      "label": "door",
+      "aliases": ["door", "doors"]
+    },
+    "campfire": {
+      "label": "campfire",
+      "aliases": ["campfire", "campfires"]
+    },
+    "bridge": {
+      "label": "bridge",
+      "aliases": ["bridge", "bridges"]
+    },
+    "morning": {
+      "label": "morning",
+      "aliases": ["morning", "dawn", "every morning"]
+    },
+    "winter": {
+      "label": "winter",
+      "aliases": ["winter"]
+    },
+    "sunrise": {
+      "label": "sunrise",
+      "aliases": ["sunrise"]
+    },
+    "sunset": {
+      "label": "sunset",
+      "aliases": ["sunset"]
+    },
+    "moonlight": {
+      "label": "moonlight",
+      "aliases": ["moonlight"]
+    },
+    "open": {
+      "label": "open",
+      "aliases": ["open", "opens", "opened"]
     }
   },
   "version": "1.0-localization",
