@@ -191,6 +191,7 @@ html[data-fonora-tab='create'] [data-fonoran-page='create'].tab-btn,
 html[data-fonora-tab='review'] [data-fonoran-page='review'].tab-btn,
 html[data-fonora-tab='concepts'] [data-fonoran-page='concepts'].tab-btn,
 html[data-fonora-tab='health'] [data-fonoran-page='health'].tab-btn,
+html[data-fonora-tab='gaps'] [data-fonoran-page='gaps'].tab-btn,
 html[data-fonora-tab='progress'] [data-fonoran-page='progress'].tab-btn,
 html[data-fonora-tab='advanced'] [data-fonoran-page='advanced'].tab-btn,
 html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
@@ -213,6 +214,7 @@ html[data-fonora-page='dictionary'] #page-dictionary,
 html[data-fonora-page='grammar'] #page-grammar,
 html[data-fonora-page='concepts'] #page-concepts,
 html[data-fonora-page='health'] #page-health,
+html[data-fonora-page='gaps'] #page-gaps,
 html[data-fonora-page='progress'] #page-progress,
 html[data-fonora-page='advanced'] #page-advanced {
   display: block !important;

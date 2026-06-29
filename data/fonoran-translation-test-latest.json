@@ -1,0 +1,1246 @@
+{
+  "generated_at": "2026-06-29T07:16:09.610Z",
+  "corpus_version": "1.0",
+  "total_phrases": 96,
+  "clean_phrases": 96,
+  "coverage_pct": 100,
+  "distinct_gaps": 0,
+  "levels": [
+    {
+      "level": 1,
+      "name": "Basic statements",
+      "phrases": 10,
+      "clean": 10,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 2,
+      "name": "Objects",
+      "phrases": 10,
+      "clean": 10,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 3,
+      "name": "Descriptions",
+      "phrases": 10,
+      "clean": 10,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 4,
+      "name": "Time",
+      "phrases": 10,
+      "clean": 10,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 5,
+      "name": "Questions",
+      "phrases": 10,
+      "clean": 10,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 6,
+      "name": "Relationships",
+      "phrases": 10,
+      "clean": 10,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 7,
+      "name": "Compound-word stress tests",
+      "phrases": 10,
+      "clean": 10,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 8,
+      "name": "Multi-clause sentences",
+      "phrases": 10,
+      "clean": 10,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 9,
+      "name": "Story paragraph",
+      "phrases": 1,
+      "clean": 1,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 10,
+      "name": "Translator torture tests",
+      "phrases": 15,
+      "clean": 15,
+      "coverage": 100,
+      "unresolved_words": 0
+    }
+  ],
+  "gaps": [],
+  "phrases": [
+    {
+      "level": 1,
+      "phrase": "I eat.",
+      "roman": "mi nel",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "You sleep.",
+      "roman": "nek tem",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "The child runs.",
+      "roman": "namba gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "The dog drinks water.",
+      "roman": "tet ye ye",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "The bird flies.",
+      "roman": "tet gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "The sun rises.",
+      "roman": "datbel dal",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "The sun sets.",
+      "roman": "datbel nat",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "Fire is hot.",
+      "roman": "nan nan",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "Water is cold.",
+      "roman": "ye kam",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 1,
+      "phrase": "The tree is tall.",
+      "roman": "sas je",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "I eat bread.",
+      "roman": "mi nel nelto",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "You drink water.",
+      "roman": "nek ye ye",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "We build a house.",
+      "roman": "ben kel ja",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 1,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "The child sees the dog.",
+      "roman": "namba wi tet",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "The woman carries the baby.",
+      "roman": "ba fes ba",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 1,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "The man opens the door.",
+      "roman": "ba kelkal kalmek",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "The cat chases the bird.",
+      "roman": "tet gi tet",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "The teacher speaks.",
+      "roman": "kelhuba se",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "The student listens.",
+      "roman": "lahuba gem",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 2,
+      "phrase": "The wind moves the leaves.",
+      "roman": "bek gi sas",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The large dog runs fast.",
+      "roman": "je tet gi mal",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The small child is happy.",
+      "roman": "namba gumet",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The old tree is strong.",
+      "roman": "sas mel",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The new house is beautiful.",
+      "roman": "ja guwi",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The red flower grows.",
+      "roman": "nanles paba jecha",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0,
+        "guessed": 1
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The river is wide.",
+      "roman": "pakal taktes",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 1,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The mountain is high.",
+      "roman": "redal mal",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The food tastes good.",
+      "roman": "nelto nel gu",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The night is quiet.",
+      "roman": "gespu kan",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 3,
+      "phrase": "The morning is bright.",
+      "roman": "datdi dat",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "I ate yesterday.",
+      "roman": "mi ta nel di",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "I will eat tomorrow.",
+      "roman": "mi na nel shu",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "We built a house.",
+      "roman": "ben ta kel ja",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 1,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "We will build a bridge.",
+      "roman": "ben na kel kalye",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "She came home.",
+      "roman": "ba gi lelja",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "He will return.",
+      "roman": "ba na gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "The rain stopped.",
+      "roman": "natye ta kan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "Winter will come.",
+      "roman": "kampu na gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "They finished the work.",
+      "roman": "ben ta mek mo",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 1,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 4,
+      "phrase": "The child will learn.",
+      "roman": "namba na lahu",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "Where are you?",
+      "roman": "wo zis fem",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "Who are you?",
+      "roman": "wo zas fem",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "What is this?",
+      "roman": "wo vus to",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "Why are you here?",
+      "roman": "wo zos kek",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "When will you return?",
+      "roman": "wo zes na fem gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 5,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "How do you know?",
+      "roman": "wo zus fem hu",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "Is the food ready?",
+      "roman": "nelto kel",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 1,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "Can you help me?",
+      "roman": "nek kat mi",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "Did you see it?",
+      "roman": "fem ta wi to",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 5,
+      "phrase": "Will it rain?",
+      "roman": "to na natye",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "I love my family.",
+      "roman": "mi bem tatba",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "Friends help each other.",
+      "roman": "kat nek",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "The teacher teaches the student.",
+      "roman": "kelhuba kelhuba lahuba",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "Parents protect children.",
+      "roman": "ba fes namba",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "The king trusts the guard.",
+      "roman": "mel tat mo",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 2,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "The hunter follows the animal.",
+      "roman": "balatet gi tet",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "The doctor helps sick people.",
+      "roman": "bakat katba gat yiba",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "The farmer grows food.",
+      "roman": "basas jecha nelto",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "The traveler finds a river.",
+      "roman": "ba wi pakal",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 1,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 6,
+      "phrase": "The group builds together.",
+      "roman": "ben kel ben",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The sunrise is beautiful.",
+      "roman": "datbeldal guwi",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The sunset is peaceful.",
+      "roman": "datbelnat kan",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The moonlight shines on the river.",
+      "roman": "datkamdat dat pakal",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The campfire keeps us warm.",
+      "roman": "nanja fes ben fen",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The fisherman crossed the river.",
+      "roman": "baye ta gi pakal",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The blacksmith made a knife.",
+      "roman": "bakelmak ta sak makmek",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The grandmother tells stories.",
+      "roman": "badi se se",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The doorway is open.",
+      "roman": "kalmek kelkal",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The raindrops fall quietly.",
+      "roman": "yenat nat kan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 7,
+      "phrase": "The birdsong wakes everyone.",
+      "roman": "tetse cha ben ba",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "I ate because I was hungry.",
+      "roman": "mi ta san",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "We stayed inside because it rained.",
+      "roman": "ben ta kan lel natye",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 2,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "The child laughed after the dog ran away.",
+      "roman": "namba ta gumet shu tet gi nes",
+      "unresolved": [],
+      "counts": {
+        "direct": 6,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "When the sun rose, we began walking.",
+      "roman": "wo zes datbel dal ben bel gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 6,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "Although it was cold, they continued.",
+      "roman": "to ta gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "I know that you are here.",
+      "roman": "mi kek",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "She said she would return tomorrow.",
+      "roman": "ba se ba gi shu",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "The man who built the house is my friend.",
+      "roman": "ja tatde",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "If you help me, we will finish today.",
+      "roman": "von na fem kat mi ben mek che",
+      "unresolved": [],
+      "counts": {
+        "direct": 8,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 8,
+      "phrase": "We rested before continuing our journey.",
+      "roman": "ben ta kan di gi gikal",
+      "unresolved": [],
+      "counts": {
+        "direct": 5,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 9,
+      "phrase": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
+      "roman": "di ta ben gi pakal ye ta guwi ben ta kel nam nan kel nelto shu ta ben nel ben wi datbeldal dal re shu ta ben gi lelja ben",
+      "unresolved": [],
+      "counts": {
+        "direct": 27,
+        "semantic": 0,
+        "interpreted": 3,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "I only saw the red bird.",
+      "roman": "mi ta vat wi nanles tet",
+      "unresolved": [],
+      "counts": {
+        "direct": 6,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "Only I saw the red bird.",
+      "roman": "vat ta mi wi nanles tet",
+      "unresolved": [],
+      "counts": {
+        "direct": 6,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "I almost fell.",
+      "roman": "mi yones nat",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "I never said that.",
+      "roman": "mi no se",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "Everyone knows something.",
+      "roman": "tak ba hu tes",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "Nobody knows everything.",
+      "roman": "no ba hu tak to",
+      "unresolved": [],
+      "counts": {
+        "direct": 5,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "The door opened.",
+      "roman": "kalmek ta kelkal",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "I opened the door.",
+      "roman": "mi ta kelkal kalmek",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "The child made the toy.",
+      "roman": "namba ta sak kel",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 1,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "The toy was made by the child.",
+      "roman": "kel ta sak namba",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 1,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "I think he knows that she left.",
+      "roman": "mi ta mas ba hu ba gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 7,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "The old man's young son.",
+      "roman": "di ba gi nense",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "semantic": 2,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "They can fish.",
+      "roman": "ben nel",
+      "unresolved": [],
+      "counts": {
+        "direct": 0,
+        "semantic": 1,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "Time flies.",
+      "roman": "pu gi",
+      "unresolved": [],
+      "counts": {
+        "direct": 1,
+        "semantic": 0,
+        "interpreted": 1,
+        "unknown": 0
+      }
+    },
+    {
+      "level": 10,
+      "phrase": "Light travels fast.",
+      "roman": "ges kal mal",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "semantic": 0,
+        "interpreted": 0,
+        "unknown": 0
+      }
+    }
+  ]
+}

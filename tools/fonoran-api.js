@@ -21,6 +21,8 @@ import {
 import { resetProject } from './fonoran-reset.js';
 import { loadEnglishLexicon } from './fonoran-english-lexicon.js';
 import { translateEnglish } from './fonoran-translator.js';
+import { loadTranslationCorpus, runTranslationGapReport, loadLatestGapReport } from './fonoran-translation-gaps.js';
+import { loadParticles } from './fonoran-particles.js';
 import { buildFonoran } from './fonoran-build.js';
 import { generateWords } from './fonoran-word-generator.js';
 import {
@@ -185,6 +187,21 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const body = await readJsonBody(req);
       const lab = await getLab();
       return done(200, await translateEnglish(body.text ?? '', { lab }));
+    }
+    if (pathname === '/api/fonoran/grammar-particles' && method === 'GET') {
+      return done(200, await loadParticles());
+    }
+    if (pathname === '/api/fonoran/translation-tests' && method === 'GET') {
+      return done(200, await loadTranslationCorpus());
+    }
+    if (pathname === '/api/fonoran/translation-tests/latest' && method === 'GET') {
+      return done(200, await loadLatestGapReport());
+    }
+    if (pathname === '/api/fonoran/translation-tests/run' && method === 'POST') {
+      const body = await readJsonBody(req);
+      const lab = await getLab();
+      const level = body.level != null ? Number(body.level) : null;
+      return done(200, await runTranslationGapReport({ level, lab }));
     }
     if (pathname === '/api/fonoran/word-generator' && method === 'POST') {
       const body = await readJsonBody(req);

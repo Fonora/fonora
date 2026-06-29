@@ -1,0 +1,162 @@
+{
+  "version": "1.0",
+  "description": "English phrase corpus for exercising the Fonoran translator and surfacing gaps in roots/compounds. Re-runnable via scripts/fonoran-translation-gaps.js.",
+  "levels": [
+    {
+      "level": 1,
+      "name": "Basic statements",
+      "phrases": [
+        "I eat.",
+        "You sleep.",
+        "The child runs.",
+        "The dog drinks water.",
+        "The bird flies.",
+        "The sun rises.",
+        "The sun sets.",
+        "Fire is hot.",
+        "Water is cold.",
+        "The tree is tall."
+      ]
+    },
+    {
+      "level": 2,
+      "name": "Objects",
+      "phrases": [
+        "I eat bread.",
+        "You drink water.",
+        "We build a house.",
+        "The child sees the dog.",
+        "The woman carries the baby.",
+        "The man opens the door.",
+        "The cat chases the bird.",
+        "The teacher speaks.",
+        "The student listens.",
+        "The wind moves the leaves."
+      ]
+    },
+    {
+      "level": 3,
+      "name": "Descriptions",
+      "phrases": [
+        "The large dog runs fast.",
+        "The small child is happy.",
+        "The old tree is strong.",
+        "The new house is beautiful.",
+        "The red flower grows.",
+        "The river is wide.",
+        "The mountain is high.",
+        "The food tastes good.",
+        "The night is quiet.",
+        "The morning is bright."
+      ]
+    },
+    {
+      "level": 4,
+      "name": "Time",
+      "phrases": [
+        "I ate yesterday.",
+        "I will eat tomorrow.",
+        "We built a house.",
+        "We will build a bridge.",
+        "She came home.",
+        "He will return.",
+        "The rain stopped.",
+        "Winter will come.",
+        "They finished the work.",
+        "The child will learn."
+      ]
+    },
+    {
+      "level": 5,
+      "name": "Questions",
+      "phrases": [
+        "Where are you?",
+        "Who are you?",
+        "What is this?",
+        "Why are you here?",
+        "When will you return?",
+        "How do you know?",
+        "Is the food ready?",
+        "Can you help me?",
+        "Did you see it?",
+        "Will it rain?"
+      ]
+    },
+    {
+      "level": 6,
+      "name": "Relationships",
+      "phrases": [
+        "I love my family.",
+        "Friends help each other.",
+        "The teacher teaches the student.",
+        "Parents protect children.",
+        "The king trusts the guard.",
+        "The hunter follows the animal.",
+        "The doctor helps sick people.",
+        "The farmer grows food.",
+        "The traveler finds a river.",
+        "The group builds together."
+      ]
+    },
+    {
+      "level": 7,
+      "name": "Compound-word stress tests",
+      "phrases": [
+        "The sunrise is beautiful.",
+        "The sunset is peaceful.",
+        "The moonlight shines on the river.",
+        "The campfire keeps us warm.",
+        "The fisherman crossed the river.",
+        "The blacksmith made a knife.",
+        "The grandmother tells stories.",
+        "The doorway is open.",
+        "The raindrops fall quietly.",
+        "The birdsong wakes everyone."
+      ]
+    },
+    {
+      "level": 8,
+      "name": "Multi-clause sentences",
+      "phrases": [
+        "I ate because I was hungry.",
+        "We stayed inside because it rained.",
+        "The child laughed after the dog ran away.",
+        "When the sun rose, we began walking.",
+        "Although it was cold, they continued.",
+        "I know that you are here.",
+        "She said she would return tomorrow.",
+        "The man who built the house is my friend.",
+        "If you help me, we will finish today.",
+        "We rested before continuing our journey."
+      ]
+    },
+    {
+      "level": 9,
+      "name": "Story paragraph",
+      "phrases": [
+        "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together."
+      ]
+    },
+    {
+      "level": 10,
+      "name": "Translator torture tests",
+      "phrases": [
+        "I only saw the red bird.",
+        "Only I saw the red bird.",
+        "I almost fell.",
+        "I never said that.",
+        "Everyone knows something.",
+        "Nobody knows everything.",
+        "The door opened.",
+        "I opened the door.",
+        "The child made the toy.",
+        "The toy was made by the child.",
+        "I think he knows that she left.",
+        "The old man's young son.",
+        "They can fish.",
+        "Time flies.",
+        "Light travels fast."
+      ]
+    }
+  ]
+}

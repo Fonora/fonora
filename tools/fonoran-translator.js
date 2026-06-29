@@ -42,6 +42,21 @@ import {
   CONJUNCTIONS,
 } from './fonoran-english-resolve.js';
 import { getPosHint } from './fonoran-semantic-lookup.js';
+import { getParticleRuntime, resetParticleCache } from './fonoran-particles.js';
+
+/**
+ * Cached grammar-particle runtime: { index, byId, quantifiers }.
+ * Loaded once per process; reset via resetTranslatorCache().
+ */
+let PARTICLES = null;
+
+/** English negation words removed from the lexical stream and emitted as the `no` particle. */
+const NEGATION_WORDS = new Set(['not', 'never', 'no', 'none', 'cannot']);
+
+function isNegationWord(word) {
+  const w = String(word ?? '').toLowerCase();
+  return NEGATION_WORDS.has(w) || w.endsWith("n't");
+}
 
 const GRAMMAR_SKELETON = 'Subject · Time · Event · Path · Object · Modifiers';
 
@@ -346,8 +361,13 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
 
   const content = [];
   let auxTense = null;
+  let negated = false;
   for (const t of tokens) {
     if (SKIP.has(t)) continue;
+    if (isNegationWord(t)) {
+      negated = true;
+      continue;
+    }
     if (TENSE_AUX[t]) {
       auxTense = TENSE_AUX[t];
       continue;
@@ -374,6 +394,12 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
     time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
   } else if (tense === 'future') {
     time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
+  }
+
+  // Negation is clause-scoped and sits between Time and Event (Subject · Time · no · Event).
+  if (negated) {
+    const negForm = PARTICLES?.byId.get('logic_not')?.form ?? 'no';
+    time.push({ english: 'not', role: 'time', particle: negForm });
   }
 
   const slots = { subject, time, event, path, object, modifiers };
@@ -492,11 +518,45 @@ async function compileSemanticSlots(tokens, rules) {
   return { mode: 'discourse', ...combined };
 }
 
+/**
+ * Expand a quantifier pronoun (e.g. nobody = no + person) into ordered tokens.
+ * Composition happens at the particle/root layer per docs/fonoran-grammar.md.
+ */
+async function expandQuantifier(ctx, parts, role, surface) {
+  const out = [];
+  for (let i = 0; i < parts.length; i += 1) {
+    const piece = parts[i];
+    if (piece === 'neg') {
+      const neg = PARTICLES?.byId.get('logic_not');
+      if (neg?.form) out.push(particleToken(role, neg.form, i === 0 ? surface : 'not'));
+    } else {
+      out.push(await resolveEnglishToken(piece, ctx, {
+        role,
+        allowSemantic: false,
+        allowGuess: false,
+        surfaceEnglish: i === 0 ? surface : piece,
+      }));
+    }
+  }
+  return out.length ? out : null;
+}
+
 async function resolveSlot(ctx, slot, role) {
   const surface = String(slot.english ?? '').trim();
   const lower = surface.toLowerCase();
   if (PRONOUNS[lower]) {
     return particleToken(role, PRONOUNS[lower], surface);
+  }
+
+  // Grammar particles + quantifier pronouns (closed class, single-word slots only).
+  if (PARTICLES && lower && !lower.includes(' ')) {
+    const quant = PARTICLES.quantifiers[lower];
+    if (quant) {
+      const expanded = await expandQuantifier(ctx, quant, role, surface);
+      if (expanded) return expanded;
+    }
+    const particle = PARTICLES.index.get(lower);
+    if (particle?.form) return particleToken(role, particle.form, surface);
   }
 
   const hints = {};
@@ -516,24 +576,45 @@ async function resolveSlot(ctx, slot, role) {
 async function slotsToTokens(ctx, slots) {
   if (slots.mode === 'word') {
     const english = slots.event[0]?.english;
-    return english
-      ? [await resolveEnglishToken(english, ctx, { role: 'concept', allowSemantic: true, allowGuess: true })]
-      : [];
+    if (!english) return [];
+    const lower = String(english).toLowerCase();
+    const particle = PARTICLES && !lower.includes(' ') ? PARTICLES.index.get(lower) : null;
+    if (particle?.form) return [particleToken('concept', particle.form, english)];
+    return [await resolveEnglishToken(english, ctx, { role: 'concept', allowSemantic: true, allowGuess: true })];
   }
 
   const out = [];
+  const push = (resolved) => {
+    if (Array.isArray(resolved)) out.push(...resolved);
+    else out.push(resolved);
+  };
+
+  // A wh-interrogative anywhere in the clause flags a question; emit the clause-initial marker.
+  const allSlots = [
+    ...slots.subject, ...slots.time, ...slots.event,
+    ...slots.path, ...slots.object, ...slots.modifiers,
+  ];
+  const isQuestion = PARTICLES && allSlots.some((s) => {
+    const p = PARTICLES.index.get(String(s.english ?? '').toLowerCase());
+    return p?.group === 'interrogative';
+  });
+  if (isQuestion) {
+    const marker = PARTICLES.byId.get('query_marker');
+    if (marker?.form) out.push(particleToken('interrogative', marker.form, 'question'));
+  }
+
   for (const slot of slots.subject) {
     if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
-    else out.push(await resolveSlot(ctx, slot, 'subject'));
+    else push(await resolveSlot(ctx, slot, 'subject'));
   }
   for (const slot of slots.time) {
     if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
-    else out.push(await resolveSlot(ctx, slot, 'time'));
+    else push(await resolveSlot(ctx, slot, 'time'));
   }
-  for (const slot of slots.event) out.push(await resolveSlot(ctx, slot, 'event'));
-  for (const slot of slots.path) out.push(await resolveSlot(ctx, slot, 'path'));
-  for (const slot of slots.object) out.push(await resolveSlot(ctx, slot, 'object'));
-  for (const slot of slots.modifiers) out.push(await resolveSlot(ctx, slot, 'modifier'));
+  for (const slot of slots.event) push(await resolveSlot(ctx, slot, 'event'));
+  for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'));
+  for (const slot of slots.object) push(await resolveSlot(ctx, slot, 'object'));
+  for (const slot of slots.modifiers) push(await resolveSlot(ctx, slot, 'modifier'));
   return out;
 }
 
@@ -580,6 +661,7 @@ export async function translateEnglish(text, options = {}) {
   const ctx = await buildResolveContext(options.lab);
   const rules = ctx.rules ?? await loadInterpretationRules();
   ctx.rules = rules;
+  if (!PARTICLES) PARTICLES = await getParticleRuntime();
 
   const sentences = splitSentences(input);
   if (sentences.length > 1) {
@@ -667,6 +749,8 @@ export async function loadGrammarParticlesMeta() {
 /** Reset cached vocabulary (tests). */
 export function resetTranslatorCache() {
   resetInterpretationCache();
+  resetParticleCache();
+  PARTICLES = null;
 }
 
 export { tokenizeEnglish, lemmatizeEnglish };

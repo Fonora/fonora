@@ -42,6 +42,7 @@ const FONORAN_MORE_MENU = [
   { id: 'review', label: 'Review' },
   { type: 'label', text: 'Tools' },
   { id: 'health', label: 'Health' },
+  { id: 'gaps', label: 'Translation Test' },
   { id: 'progress', label: 'Lab progress' },
   { id: 'advanced', label: 'Advanced' },
 ];
@@ -75,6 +76,7 @@ const FONORAN_TITLES = {
   dictionary: 'Dictionary',
   grammar: 'Grammar',
   health: 'Health',
+  gaps: 'Translation Test',
   progress: 'Lab progress',
   advanced: 'Advanced',
 };
