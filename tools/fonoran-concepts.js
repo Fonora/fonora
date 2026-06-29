@@ -196,7 +196,6 @@ export function mergeLabIntoConcepts(concepts, lab, locData = {}) {
 
     const staticSpelling = c.spelling;
     const spelling = ls.spelling;
-    const gloss = ls.meaning?.trim() || c.concept;
     const localeAliases = locData[c.id]?.aliases;
     const storedAliases = localeAliases?.length
       ? localeAliases
@@ -204,14 +203,14 @@ export function mergeLabIntoConcepts(concepts, lab, locData = {}) {
 
     return {
       ...c,
-      concept: gloss,
       spelling,
       ipa: romanToIpa(spelling),
       status: statusFromLabState(labSoundState(ls)),
       stored_aliases: storedAliases,
-      aliases: aliasesForConcept({ id: c.id, concept: gloss, aliases: storedAliases }, locData),
+      aliases: aliasesForConcept({ id: c.id, concept: c.concept, aliases: storedAliases }, locData),
       lab_linked: true,
       lab_spelling: spelling,
+      lab_meaning: ls.meaning?.trim() || undefined,
       inventory_spelling: staticSpelling && staticSpelling !== spelling ? staticSpelling : undefined,
     };
   });

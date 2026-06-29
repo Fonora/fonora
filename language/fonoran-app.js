@@ -1,10 +1,10 @@
     import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, parseSyllable, buildSyllable, isValidSyllable, pieceHint, ONSET_GROUPS, VOWEL_DISPLAY, CODA_DISPLAY, romanToIpa } from '../tools/fonoran-pronunciation.js';
-    import { checkCompoundBoundary } from '../tools/fonoran-gen3-readability.js';
+    import { checkCompoundBoundary, segmentCompound, pronounceabilityScore } from '../tools/fonoran-gen3-readability.js';
     import { romanToFonoraScript, pieceToFonoraSymbols } from '../tools/fonoran-fonora-bridge.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech } from '../js/fonora-tts.js';
     import { primeAudioContext } from '../js/espeak-audio.js';
-    import { initUniversalNav, setActiveTab, setFonoranUndoDisabled, setFonoranAuth } from '../js/universal-nav.js';
+    import { initUniversalNav, setActiveTab, setFonoranUndoDisabled, setFonoranAuth, setNavSelectHandlers } from '../js/universal-nav.js';
     import { bindModalDismiss, setModalBackdropOpen } from '../js/modal-dismiss.js';
     import { extractMarkdownHeadings, normalizeGrammarSource, renderMarkdown } from '../js/markdown-render.js';
 
@@ -195,7 +195,12 @@
       reviewFocusPending: false,
       rootsFilter: '',
       justSaved: null,
-      dictFilter: 'all', dictQuery: '', dictSelection: null,
+      dictQuery: '', dictSelection: null,
+      dictShowRoots: true,
+      dictShowWords: true,
+      dictShowNeedsReview: false,
+      dictShowApproved: false,
+      dictShowRejected: false,
       wordComposer: [], wordComposerFilter: '',
       wordComposerEditingId: null,
       wordComposerReturnPage: null,
@@ -227,10 +232,9 @@
       rootCursor: 0,
       rootReviewFocusPending: false,
       reviewFilter: '',
-      reviewShowCandidates: true,
-      reviewShowLabRoots: true,
+      reviewShowRoots: true,
       reviewShowLabWords: true,
-      reviewShowGeneratedWords: true,
+      reviewShowGeneratedWords: false,
       reviewNeedsReviewOnly: false,
       reviewSelection: null,
       conceptEditorFilter: '',
@@ -377,9 +381,7 @@
       return item.spelling ? [item.spelling] : [];
     }
     function composerCanListen(composer) {
-      const picks = composer ?? [];
-      if (!composerFlatSpellings(picks).length) return false;
-      return picks.length >= 2 || (picks.length === 1 && picks[0].type === 'word');
+      return composerFlatSpellings(composer ?? []).length > 0;
     }
     function composerToApi(composer) {
       return (composer ?? []).map(c => ({ type: c.type, ref: c.ref }));
@@ -392,7 +394,12 @@
       return composerFlatSpellings(composer).join('');
     }
     function typeBadge(type) {
-      return `<span class="badge badge-${type === 'root' ? 'base' : 'compound'}">${type === 'root' ? 'ROOT' : 'WORD'}</span>`;
+      return `<span class="badge badge-${type === 'root' ? 'base' : 'compound'}">${type === 'root' ? 'ROOT' : 'COMPOUND'}</span>`;
+    }
+    function previewStateBadge(state) {
+      const st = state || 'draft';
+      if (st === 'needs_review' || st === 'rejected') return badge(st);
+      return '';
     }
     function hasMeaning(item) {
       return Boolean(item?.meaning?.trim());
@@ -432,11 +439,11 @@
     function pickableWords(query, { omitIds = [], showUnnamed = false } = {}) {
       const q = (query ?? '').trim().toLowerCase();
       const skip = new Set(omitIds);
-      const allowed = STATE.showUnapprovedWords
-        ? ['approved', 'revised', 'needs_review', 'draft']
-        : ['approved', 'revised'];
-      return STATE.lab.compounds.filter(c => allowed.includes(c.state) && !skip.has(c.id))
-        .filter(c => !c.generator_hint)
+      let list = userWords().filter(c => !skip.has(c.id));
+      if (STATE.showUnapprovedWords) {
+        list = [...list, ...generatedLabWords().filter(c => !skip.has(c.id))];
+      }
+      return list
         .filter(c => showUnnamed || hasMeaning(c))
         .filter(c => !q || labCompoundSearchHay(c).includes(q))
         .sort((a, b) => (a.meaning || a.spelling).localeCompare(b.meaning || b.spelling));
@@ -450,13 +457,28 @@
           <span class="mn ${c.meaning ? '' : 'unnamed'}">${escapeHtml(c.meaning || 'unnamed')}</span>`;
     }
     function rootPickerWithBadge(sounds) {
-      return sounds.length ? sounds.map(s => `
-        <button type="button" class="root-cell" data-add-root="${escapeHtml(s.spelling)}" data-write>${typeBadge('root')}${rootCellBodyHtml(s)}</button>`).join('')
+      return sounds.length ? sounds.map(s => pickerCellHtml({
+        spelling: s.spelling,
+        meaning: pickerMeaningForSound(s),
+        type: 'root',
+        attrs: { 'data-add-root': s.spelling },
+        write: true,
+      })).join('')
         : '<p class="empty" style="grid-column:1/-1">No match.</p>';
     }
     function wordPickerMarkup(words) {
-      return words.length ? words.map(c => `
-        <button type="button" class="root-cell" data-add-word="${escapeHtml(c.id)}" data-write>${wordCellBodyHtml(c)}</button>`).join('')
+      return words.length ? words.map(c => {
+        const speakParts = c.components?.length ? composerFlatSpellings(c.components) : (c.parts ?? [c.spelling]);
+        const glyphs = STATE.rules ? romanToFonoraScript(speakParts, STATE.rules).phrase : '';
+        return pickerCellHtml({
+          spelling: c.spelling,
+          meaning: pickerMeaningForCompound(c),
+          glyphs,
+          type: 'word',
+          attrs: { 'data-add-word': c.id },
+          write: true,
+        });
+      }).join('')
         : '<p class="empty" style="grid-column:1/-1">No words match.</p>';
     }
 
@@ -596,6 +618,34 @@
 
     function conceptList() {
       return STATE.lexicon?.concepts ?? [];
+    }
+
+    /** First clause of a concept phrase for compact picker display. */
+    function pickerMeaningShort(phrase) {
+      if (!phrase || phrase === '(unnamed)') return 'unnamed';
+      return String(phrase).split(';')[0].trim() || 'unnamed';
+    }
+
+    /** Canonical concept phrase for a lab root (not the lab meaning label). */
+    function pickerMeaningForSound(s) {
+      const concept = conceptForLabItem(s);
+      if (concept?.concept) return pickerMeaningShort(concept.concept);
+      return pickerMeaningShort(s.meaning);
+    }
+
+    /** Display label for a compound in pickers (word gloss, not primitive concept). */
+    function pickerMeaningForCompound(c) {
+      return pickerMeaningShort(c.meaning);
+    }
+
+    /** Full concept phrase for detail/preview panels (not picker shorthand). */
+    function previewDetailMeaning(focus, kind = 'word') {
+      if (kind === 'root' && focus?.spelling) {
+        const sound = STATE.lab?.sounds?.find(s => s.spelling === focus.spelling);
+        const concept = sound ? conceptForLabItem(sound) : null;
+        if (concept?.concept) return concept.concept;
+      }
+      return focus?.meaning ?? '';
     }
 
     function populateLexCategories(selectEl) {
@@ -847,6 +897,47 @@
           <span class="mn ${s.meaning ? '' : 'unnamed'}">${escapeHtml(s.meaning || 'unnamed')}</span>`;
     }
 
+    function pickerGlyphsForSpelling(spelling, { kind = 'root', compoundId = null } = {}) {
+      if (!STATE.rules || !spelling) return '';
+      if (kind === 'root') return romanToFonoraScript([spelling], STATE.rules).phrase;
+      const compound = compoundId ? STATE.lab?.compounds.find(c => c.id === compoundId) : null;
+      const parts = compound ? compoundSpeakParts(compound) : [spelling];
+      return romanToFonoraScript(parts, STATE.rules).phrase;
+    }
+
+    function pickerCellHtml({
+      spelling,
+      meaning,
+      glyphs = null,
+      type = 'root',
+      showTypeBadge = false,
+      meta = '',
+      selected = false,
+      extraClasses = '',
+      attrs = {},
+      write = false,
+    }) {
+      const compoundId = attrs['data-id'] ?? null;
+      const glyphStr = glyphs ?? pickerGlyphsForSpelling(spelling, {
+        kind: type === 'word' ? 'word' : 'root',
+        compoundId,
+      });
+      const displayMeaning = meaning === '(unnamed)' ? 'unnamed' : (meaning || 'unnamed');
+      const unnamed = !meaning || meaning === '(unnamed)' || displayMeaning === 'unnamed';
+      const attrParts = Object.entries(attrs)
+        .filter(([, v]) => v != null && v !== '')
+        .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`);
+      const writeAttr = write ? ' data-write' : '';
+      const classNames = ['root-cell', extraClasses, selected ? 'is-selected' : ''].filter(Boolean).join(' ');
+      return `<button type="button" class="${classNames}" ${attrParts.join(' ')}${writeAttr}>
+        ${showTypeBadge ? typeBadge(type) : ''}
+        <span class="sp">${escapeHtml(spelling)}</span>
+        ${glyphStr ? `<span class="root-glyphs symbol-text" aria-hidden="true">${escapeHtml(glyphStr)}</span>` : ''}
+        <span class="mn${unnamed ? ' unnamed' : ''}">${escapeHtml(displayMeaning)}</span>
+        ${meta ? `<span class="picker-cell__meta">${meta}</span>` : ''}
+      </button>`;
+    }
+
     function rootPickerMarkup(sounds) {
       return sounds.length ? sounds.map(s => `
         <button type="button" class="root-cell" data-add="${escapeHtml(s.spelling)}" data-write>${rootCellBodyHtml(s)}</button>`).join('')
@@ -1036,16 +1127,27 @@
       }
       const live = $(`${prefix}-live-pron`);
       if (live) {
-        live.innerHTML = recipe.length
-          ? editPronPreviewHtml(spelling, speakParts)
-          : '<p class="sans" style="color:var(--muted);font-size:0.84rem">Tap roots or approved words on the left to start building.</p>';
+        if (recipe.length) {
+          const focus = focusFromComposer(recipe, $(`${prefix}-meaning`)?.value.trim());
+          live.innerHTML = buildWordPreviewHtml(focus, {
+            kind: 'word',
+            speakParts,
+            showBadges: false,
+            showBuiltFrom: false,
+            showHear: true,
+            hearId: 'wc-hear',
+            unnamedStyle: 'review',
+          });
+        } else {
+          live.innerHTML = '<p class="sans word-preview__empty">Tap roots or approved words on the left to start building.</p>';
+        }
       }
       const hearBtn = $(`${prefix}-hear`);
       if (hearBtn) {
         const canListen = composerCanListen(recipe);
         hearBtn.disabled = !canListen;
         hearBtn.onclick = () => speakNeural(speakParts);
-        hearBtn.closest('.word-editor__hear-row')?.toggleAttribute('hidden', !canListen);
+        hearBtn.closest('.word-preview__sound-actions')?.toggleAttribute('hidden', !canListen);
       }
       if (prefix === 'wc') syncWordComposerControls();
     }
@@ -1536,7 +1638,7 @@
       const components = f.components ?? [];
       const compose = buildBuiltFromComposeHtml(f, { removable, hideTypeBadge });
       if (!components.length) {
-        const empty = '<p class="word-preview__footnote sans">Primitive root. Not built from other pieces.</p>';
+        const empty = '<div class="root-review__reason sans">Primitive root. Not built from other pieces.</div>';
         return wrapSection ? empty : empty;
       }
       const body = `<div class="word-compose" aria-label="Word composition">${compose}</div>`;
@@ -1569,6 +1671,63 @@
       };
     }
 
+    function previewIpaForFocus(focus) {
+      const sp = (focus.spelling ?? '').trim().toLowerCase();
+      return sp && isValidSyllable(sp) ? romanToIpa(sp) : '';
+    }
+
+    function buildWordPreviewWordmarkHtml(focus, pron) {
+      const hasSpelling = Boolean(focus.spelling);
+      if (!hasSpelling && !pron?.script) return '';
+      return `<div class="word-preview__wordmark">
+        ${hasSpelling ? `<span class="word-preview__spelling sp">${escapeHtml(focus.spelling)}</span>` : ''}
+        ${pron?.script ? `<span class="word-preview__script root-glyphs fonora-script symbol-text" aria-hidden="true">${escapeHtml(pron.script)}</span>` : ''}
+      </div>`;
+    }
+
+    function buildWordPreviewSoundBlockHtml(focus, pron, {
+      showHear = false,
+      hearId = '',
+      meaningHtml = '',
+      meaningClass = '',
+      contextHtml = '',
+    } = {}) {
+      const hasSpelling = Boolean(focus.spelling);
+      const ipa = pron ? previewIpaForFocus(focus) : '';
+      const hearBtn = showHear && hasSpelling
+        ? `<div class="word-preview__sound-actions">
+            <button type="button" class="hear-min word-preview__hear"${hearId ? ` id="${hearId}"` : ''} aria-label="Listen to ${escapeHtml(focus.spelling)}">▶ Listen</button>
+          </div>`
+        : '';
+      const hasPronContent = Boolean(pron && (pron.sayLine || pron.englishLine || ipa));
+      const pronDetails = hasPronContent
+        ? (() => {
+          const metaParts = [];
+          if (ipa) metaParts.push(`<span class="word-preview__ipa mono">${escapeHtml(ipa)}</span>`);
+          if (pron.englishLine) metaParts.push(`<span class="word-preview__like">${escapeHtml(pron.englishLine)}</span>`);
+          const metaLine = metaParts.length
+            ? `<p class="word-preview__pron-meta">${metaParts.join('<span class="word-preview__meta-sep" aria-hidden="true"> | </span>')}</p>`
+            : '';
+          return `<div class="word-preview__pron-details">
+            ${pron.sayLine ? `<strong class="word-preview__phonetic-key">${escapeHtml(pron.sayLine)}</strong>` : ''}
+            ${metaLine}
+          </div>`;
+        })()
+        : '';
+      const meaningBlock = meaningHtml
+        ? `<p class="word-preview__meaning-line"><span class="review-meaning ${meaningClass}">${meaningHtml}</span></p>`
+        : '';
+      if (!pronDetails && !hearBtn && !meaningBlock && !contextHtml) return '';
+      return `<div class="word-preview__sound-block">
+        <div class="word-preview__sound-pron">
+          ${pronDetails}
+          ${meaningBlock}
+          ${contextHtml}
+        </div>
+        ${hearBtn}
+      </div>`;
+    }
+
     function buildWordPreviewHtml(focus, {
       kind = 'word',
       speakParts = null,
@@ -1583,6 +1742,7 @@
       unnamedStyle = 'default',
       showHear = true,
       footerHtml = '',
+      descriptionHtml = '',
     } = {}) {
       const parts = speakParts == null ? wordPreviewSpeakParts(focus, kind) : speakParts;
       const hasSpelling = Boolean(focus.spelling);
@@ -1594,32 +1754,38 @@
           ? 'not named yet'
           : '<span style="color:var(--draft);font-style:italic">unnamed</span>');
       const meaningClass = focus.meaning ? '' : 'unnamed';
-      const badgeKind = kind === 'root' ? 'root' : 'word';
-      const builtFromHtml = showBuiltFrom ? buildBuiltFromSectionHtml(focus, { removable: builtFromRemovable, hideTypeBadge: builtFromHideBadges }) : '';
-      const hearHtml = showHear && hasSpelling
-        ? `<div class="word-preview__hear-row"><button type="button" class="hear-min word-preview__hear"${hearId ? ` id="${hearId}"` : ''} aria-label="Listen to ${escapeHtml(focus.spelling)}">▶ Listen</button>${hearRowExtra}</div>`
-        : (hearRowExtra ? `<div class="word-preview__hear-row">${hearRowExtra}</div>` : '');
-      const showToolbar = showBadges || metaExtra;
+      const components = focus.components ?? [];
+      let inBoxContext = descriptionHtml;
+      if (!inBoxContext && showBuiltFrom && kind === 'root' && !components.length) {
+        inBoxContext = '<div class="word-preview__context sans">Primitive root. Not built from other pieces.</div>';
+      }
+      const builtFromHtml = showBuiltFrom && components.length
+        ? buildBuiltFromSectionHtml(focus, { removable: builtFromRemovable, hideTypeBadge: builtFromHideBadges })
+        : '';
+      const wordmarkHtml = buildWordPreviewWordmarkHtml(focus, pron);
+      const soundBlockHtml = buildWordPreviewSoundBlockHtml(focus, pron, {
+        showHear,
+        hearId,
+        meaningHtml: hasSpelling ? meaningHtml : '',
+        meaningClass,
+        contextHtml: inBoxContext,
+      });
+      const hearHtml = !showHear && hearRowExtra
+        ? `<div class="word-preview__hear-row">${hearRowExtra}</div>`
+        : '';
+      const stateBadgeHtml = showBadges ? previewStateBadge(focus.state || 'draft') : '';
+      const showToolbar = Boolean(stateBadgeHtml || metaExtra);
 
       return `<div class="word-preview">
         <div class="word-preview__card">
           ${showToolbar ? `<div class="word-preview__toolbar">
-            ${showBadges ? `<div class="word-preview__badges" aria-label="Word status">
-              ${typeBadge(badgeKind)} ${badge(focus.state || 'draft')}${metaExtra ? ` ${metaExtra}` : ''}
-            </div>` : (metaExtra ? `<div class="word-preview__badges">${metaExtra}</div>` : '')}
+            ${stateBadgeHtml
+              ? `<div class="word-preview__badges" aria-label="Word status">${stateBadgeHtml}</div>`
+              : (metaExtra ? `<div class="word-preview__badges">${metaExtra}</div>` : '')}
           </div>` : ''}
           <div class="word-preview__hero">
-            ${pron?.script ? `<div class="word-preview__script fonora-script symbol-text">${escapeHtml(pron.script)}</div>` : ''}
-            <div class="word-preview__identity">
-              ${hasSpelling ? `<p class="word-preview__headline">
-                <span class="review-word">${escapeHtml(focus.spelling)}</span>
-                <span class="word-preview__dot" aria-hidden="true">·</span>
-                <span class="review-meaning ${meaningClass}">${meaningHtml}</span>
-              </p>` : ''}
-              ${pron ? `<p class="word-preview__pron">
-                <span class="word-preview__say">Say: <strong>${escapeHtml(pron.sayLine)}</strong></span>${pron.englishLine ? `<span class="word-preview__like">Sounds like ${escapeHtml(pron.englishLine)}</span>` : ''}
-              </p>` : ''}
-            </div>
+            ${wordmarkHtml}
+            ${soundBlockHtml}
           </div>
           ${hearHtml}
           ${previewNote ? `<p class="sans word-preview__note">${previewNote}</p>` : ''}
@@ -1761,35 +1927,53 @@
       modalActions = false,
     } = {}) {
       const f = data.focus;
-      const speakParts = wordPreviewSpeakParts(f, explorerKind === 'root' ? 'root' : 'word');
+      const kind = explorerKind === 'root' ? 'root' : 'word';
+      const displayFocus = { ...f, meaning: previewDetailMeaning(f, kind) };
+      const speakParts = wordPreviewSpeakParts(displayFocus, kind);
       const isDictionary = layout === 'dictionary';
       const showInlineGraph = includeGraph && !isDictionary;
+      let descriptionHtml = '';
+      if (kind === 'root' && f.spelling) {
+        const sound = STATE.lab?.sounds?.find(s => s.spelling === f.spelling);
+        const concept = sound ? conceptForLabItem(sound) : null;
+        if (concept?.reason) {
+          descriptionHtml = `<div class="word-preview__context sans">${escapeHtml(concept.reason)}</div>`;
+        }
+      }
 
       const actionButtons = (isDictionary || modalActions)
         ? buildExplorerActionsHtml({
           graph: isDictionary || !showInlineGraph,
           dda: true,
           hasMermaid: Boolean(data.mermaid),
+          compact: true,
         })
         : '';
 
-      const previewHtml = buildWordPreviewHtml(f, {
-        kind: explorerKind === 'root' ? 'root' : 'word',
+      const previewHtml = buildWordPreviewHtml(displayFocus, {
+        kind,
         speakParts,
         previewNote: preview ? 'Preview: save the word to explore downstream links. Tap nodes in the graph to jump to saved roots and words.' : '',
-        footerHtml: isDictionary ? actionButtons : '',
+        showHear: true,
+        descriptionHtml,
       });
 
       const graphSection = showInlineGraph
         ? buildWordTreeSectionHtml(data.mermaid, { variant: 'default' })
         : '';
 
-      const trailingActions = !isDictionary ? actionButtons : '';
+      const trailingActions = !isDictionary && actionButtons
+        ? `<div class="word-preview-actions">${actionButtons}</div>`
+        : '';
 
-      const body = `${previewHtml}${graphSection}${trailingActions}`;
+      const dictActions = isDictionary && actionButtons
+        ? `<div class="word-preview-actions word-preview-actions--explorer">${actionButtons}</div>`
+        : '';
+
+      const body = `${previewHtml}${graphSection}${trailingActions}${dictActions}`;
 
       const html = isDictionary
-        ? `<div class="dict-detail-stack">${body}</div>`
+        ? `<div class="dict-detail-stack word-preview-panel">${body}</div>`
         : body;
 
       return { html, speakParts };
@@ -2041,29 +2225,100 @@
     }
 
     function buildLabReviewCardHtml(item, { isSound = true } = {}) {
+      return buildLabReviewPreviewHtml(item, { isSound });
+    }
+
+    function reviewParseInventory() {
+      return userSounds().map(s => ({
+        root: s.spelling,
+        id: s.spelling,
+        gloss: s.meaning ?? s.spelling,
+      }));
+    }
+
+    function compoundReviewMetrics(item) {
+      const spelling = (item.spelling ?? '').trim().toLowerCase();
+      if (!spelling) return { parseScore: 1, pronScore: 1 };
+      const segs = segmentCompound(spelling, reviewParseInventory());
+      const parseScore = segs.length === 0 ? 1
+        : segs.length === 1 ? 5
+          : segs.length === 2 ? 3
+            : 2;
+      const pronScore = Math.max(1, Math.min(5, Math.round(pronounceabilityScore(spelling).score / 20)));
+      return { parseScore, pronScore };
+    }
+
+    function buildCompoundReviewScoresHtml(item) {
+      const { parseScore, pronScore } = compoundReviewMetrics(item);
+      return `<div class="root-review__scores">
+          <div class="root-review__score">
+            <span class="root-review__score-label">Parseability</span>
+            ${rootScoreBar(parseScore)}
+          </div>
+          <div class="root-review__score">
+            <span class="root-review__score-label">Pronounceability</span>
+            ${rootScoreBar(pronScore)}
+          </div>
+        </div>`;
+    }
+
+    function buildRootReviewScoresHtml(c) {
+      return `<div class="root-review__scores">
+          <div class="root-review__score">
+            <span class="root-review__score-label">Pronunciation</span>
+            ${rootScoreBar(c.pronunciation_ease)}
+          </div>
+          <div class="root-review__score">
+            <span class="root-review__score-label">Compound usefulness</span>
+            ${rootScoreBar(c.semantic_usefulness)}
+          </div>
+        </div>`;
+    }
+
+    function buildCandidateReviewPreviewHtml(c) {
+      const focus = {
+        spelling: c.spelling,
+        meaning: c.concept,
+        state: c.status === 'pending' ? 'needs_review' : c.status,
+        components: [],
+      };
+      return buildWordPreviewHtml(focus, {
+        kind: 'root',
+        showHear: true,
+        hearId: 'root-hear',
+        showBuiltFrom: false,
+        descriptionHtml: `<div class="word-preview__context sans">${escapeHtml(c.reason)}</div>`,
+        footerHtml: buildRootReviewScoresHtml(c),
+        unnamedStyle: 'review',
+      });
+    }
+
+    function buildLabReviewPreviewHtml(item, { isSound = true } = {}) {
       const concept = conceptForLabItem(item);
-      const conceptText = concept?.concept ?? item.meaning ?? '';
-      const scriptParts = reviewItemScriptParts(item, isSound);
-      const pron = wordPreviewPron(scriptParts);
-      const script = pron.script;
-      const ipaLine = isSound
-        ? (concept?.ipa ?? romanToIpa(item.spelling))
-        : (pron.sayLine ? `Say: ${pron.sayLine}` : romanToIpa(item.spelling));
-      return `<div class="root-review__card">
-        <div class="root-review__meta">
-          ${badge(item.state || 'draft')}
-          ${typeBadge(isSound ? 'root' : 'word')}
-          ${concept?.domain ? `<span class="root-review__domain">${escapeHtml(concept.domain)}</span>` : ''}
-        </div>
-        <div class="root-review__hero">
-          ${script ? `<div class="word-preview__script fonora-script symbol-text root-review__script">${escapeHtml(script)}</div>` : ''}
-          <p class="root-review__spelling review-word">${escapeHtml(item.spelling)}</p>
-          <p class="root-review__ipa mono">${escapeHtml(ipaLine)}</p>
-          <p class="root-review__concept review-meaning${conceptText ? '' : ' unnamed'}">${escapeHtml(conceptText || 'not named yet')}</p>
-        </div>
-        ${concept?.reason ? `<div class="root-review__reason sans">${escapeHtml(concept.reason)}</div>` : ''}
-        ${!isSound && (item.composition_readable || item.generator_hint) ? `<div class="root-review__reason sans root-review__reason--hint">Composition: ${escapeHtml(item.composition_readable || item.generator_hint)}</div>` : ''}
-      </div>`;
+      const focus = {
+        spelling: item.spelling,
+        meaning: concept?.concept ?? item.meaning ?? '',
+        state: item.state,
+        components: isSound ? [] : (item.components ?? []),
+      };
+      let footer = '';
+      let descriptionHtml = '';
+      if (concept?.reason) {
+        descriptionHtml = `<div class="word-preview__context sans">${escapeHtml(concept.reason)}</div>`;
+      }
+      if (!isSound) {
+        footer += buildCompoundReviewScoresHtml(item);
+      }
+      return buildWordPreviewHtml(focus, {
+        kind: isSound ? 'root' : 'word',
+        showHear: true,
+        hearId: 'hear',
+        showBuiltFrom: !isSound && Boolean(focus.components?.length),
+        builtFromHideBadges: true,
+        descriptionHtml,
+        footerHtml: footer,
+        unnamedStyle: 'review',
+      });
     }
 
     function reviewPickableCandidates() {
@@ -2097,10 +2352,10 @@
     function reviewPickableLabCompounds() {
       if (!STATE.lab) return [];
       const q = (STATE.reviewFilter ?? '').trim().toLowerCase();
-      let list = userWords().map(c => ({ ...c, reviewKind: 'compound' }));
+      let list = [...userWords(), ...generatedLabWords()].map(c => ({ ...c, reviewKind: 'compound' }));
       if (STATE.reviewNeedsReviewOnly) list = list.filter(c => isOpen(c.state));
       if (!q) return list;
-      return list.filter(c => `${c.spelling} ${c.meaning ?? ''}`.toLowerCase().includes(q));
+      return list.filter(c => `${c.spelling} ${c.meaning ?? ''} ${c.generator_hint ?? ''}`.toLowerCase().includes(q));
     }
 
     function reviewPickableGeneratedCompounds() {
@@ -2140,37 +2395,47 @@
       return null;
     }
 
-    function candidatePickerMarkup(candidates) {
-      return candidates.length ? candidates.map(c => {
-        const selected = isReviewSelected('candidate', c.id);
-        const glyphs = STATE.rules ? romanToFonoraScript(c.spelling, STATE.rules).phrase : '';
-        return `<button type="button" class="root-cell review-pick${selected ? ' is-selected' : ''}" data-review-type="candidate" data-review-ref="${escapeHtml(c.id)}">
-          ${typeBadge('root')}
-          <span class="sp">${escapeHtml(c.spelling)}</span>
-          ${glyphs ? `<span class="root-glyphs symbol-text">${escapeHtml(glyphs)}</span>` : ''}
-          <span class="mn">${escapeHtml(c.concept.split(';')[0])}</span>
-          <span class="review-pick__meta">${escapeHtml(c.id)} · ${rootStatusBadge(c.status)}</span>
-        </button>`;
-      }).join('') : '<p class="empty" style="grid-column:1/-1">No candidates match.</p>';
-    }
-
-    function reviewLabRootPickerMarkup(sounds) {
-      return sounds.length ? sounds.map(s => {
-        const selected = isReviewSelected('sound', s.spelling);
-        return `<button type="button" class="root-cell review-pick${selected ? ' is-selected' : ''}" data-review-type="sound" data-review-ref="${escapeHtml(s.spelling)}">
-          ${typeBadge('root')}${rootCellBodyHtml(s)}
-          <span class="review-pick__meta">${badge(s.state)}</span>
-        </button>`;
-      }).join('') : '<p class="empty" style="grid-column:1/-1">No roots match.</p>';
+    function reviewRootsPickerMarkup(candidates, sounds) {
+      const tiles = [];
+      for (const c of candidates) {
+        tiles.push(pickerCellHtml({
+          spelling: c.spelling,
+          meaning: pickerMeaningShort(c.concept),
+          type: 'root',
+          selected: isReviewSelected('candidate', c.id),
+          extraClasses: 'review-pick',
+          attrs: { 'data-review-type': 'candidate', 'data-review-ref': c.id },
+        }));
+      }
+      for (const s of sounds) {
+        tiles.push(pickerCellHtml({
+          spelling: s.spelling,
+          meaning: pickerMeaningForSound(s),
+          type: 'root',
+          selected: isReviewSelected('sound', s.spelling),
+          extraClasses: 'review-pick',
+          attrs: { 'data-review-type': 'sound', 'data-review-ref': s.spelling },
+        }));
+      }
+      return tiles.length
+        ? tiles.join('')
+        : '<p class="empty" style="grid-column:1/-1">No roots match.</p>';
     }
 
     function reviewLabWordPickerMarkup(words) {
       return words.length ? words.map(c => {
         const selected = isReviewSelected('compound', c.id);
-        return `<button type="button" class="root-cell review-pick${selected ? ' is-selected' : ''}" data-review-type="compound" data-review-ref="${escapeHtml(c.id)}">
-          ${wordCellBodyHtml(c)}
-          <span class="review-pick__meta">${badge(c.state)}</span>
-        </button>`;
+        const speakParts = c.components?.length ? composerFlatSpellings(c.components) : (c.parts ?? [c.spelling]);
+        const glyphs = STATE.rules ? romanToFonoraScript(speakParts, STATE.rules).phrase : '';
+        return pickerCellHtml({
+          spelling: c.spelling,
+          meaning: pickerMeaningForCompound(c),
+          glyphs,
+          type: 'word',
+          selected,
+          extraClasses: 'review-pick',
+          attrs: { 'data-review-type': 'compound', 'data-review-ref': c.id },
+        });
       }).join('') : '<p class="empty" style="grid-column:1/-1">No words match.</p>';
     }
 
@@ -2200,32 +2465,28 @@
     }
 
     function renderReviewPicker() {
-      const showCandidates = STATE.reviewShowCandidates;
-      const showRoots = STATE.reviewShowLabRoots;
+      const showRoots = STATE.reviewShowRoots;
       const showWords = STATE.reviewShowLabWords;
       const showGenerated = STATE.reviewShowGeneratedWords;
 
       $('rv-filters')?.querySelectorAll('[data-rv-filter]').forEach(chip => {
         const key = chip.dataset.rvFilter;
-        const on = key === 'candidates' ? showCandidates
-          : key === 'roots' ? showRoots
-            : key === 'words' ? showWords
-              : key === 'generated' ? showGenerated
-                : STATE.reviewNeedsReviewOnly;
+        const on = key === 'roots' ? showRoots
+          : key === 'words' ? showWords
+            : key === 'generated' ? showGenerated
+              : STATE.reviewNeedsReviewOnly;
         chip.classList.toggle('active', on);
       });
 
-      $('rv-candidates-h')?.toggleAttribute('hidden', !showCandidates);
-      $('rv-candidates')?.toggleAttribute('hidden', !showCandidates);
       $('rv-roots-h')?.toggleAttribute('hidden', !showRoots);
       $('rv-roots')?.toggleAttribute('hidden', !showRoots);
       $('rv-words-h')?.toggleAttribute('hidden', !showWords);
       $('rv-words')?.toggleAttribute('hidden', !showWords);
       $('rv-generated-h')?.toggleAttribute('hidden', !showGenerated);
       $('rv-generated')?.toggleAttribute('hidden', !showGenerated);
-      $('rv-picker-empty')?.toggleAttribute('hidden', showCandidates || showRoots || showWords || showGenerated);
+      $('rv-picker-empty')?.toggleAttribute('hidden', showRoots || showWords || showGenerated);
 
-      const candidates = showCandidates ? reviewPickableCandidates() : [];
+      const candidates = showRoots ? reviewPickableCandidates() : [];
       const roots = showRoots ? reviewPickableLabSounds() : [];
       const words = showWords ? reviewPickableLabCompounds() : [];
       const generated = showGenerated ? reviewPickableGeneratedCompounds() : [];
@@ -2237,23 +2498,25 @@
       }
       if (STATE.reviewFocusPending) {
         STATE.reviewFocusPending = false;
-        const openRoot = roots.find(s => isOpen(s.state)) ?? reviewPickableLabSounds().find(s => isOpen(s.state));
-        const openWord = words.find(c => isOpen(c.state)) ?? reviewPickableLabCompounds().find(c => isOpen(c.state));
-        const openGenerated = generated.find(c => isOpen(c.state)) ?? reviewPickableGeneratedCompounds().find(c => isOpen(c.state));
-        if (openRoot) STATE.reviewSelection = { type: 'sound', ref: openRoot.spelling };
-        else if (openWord) STATE.reviewSelection = { type: 'compound', ref: openWord.id };
-        else if (openGenerated) STATE.reviewSelection = { type: 'compound', ref: openGenerated.id };
+        const pending = candidates.find(c => c.status === 'pending')
+          ?? reviewPickableCandidates().find(c => c.status === 'pending')
+          ?? candidates[0];
+        if (pending) {
+          STATE.reviewSelection = { type: 'candidate', ref: pending.id };
+        } else {
+          const openRoot = roots.find(s => isOpen(s.state)) ?? reviewPickableLabSounds().find(s => isOpen(s.state));
+          const openWord = words.find(c => isOpen(c.state)) ?? reviewPickableLabCompounds().find(c => isOpen(c.state));
+          const openGenerated = generated.find(c => isOpen(c.state)) ?? reviewPickableGeneratedCompounds().find(c => isOpen(c.state));
+          if (openRoot) STATE.reviewSelection = { type: 'sound', ref: openRoot.spelling };
+          else if (openWord) STATE.reviewSelection = { type: 'compound', ref: openWord.id };
+          else if (openGenerated) STATE.reviewSelection = { type: 'compound', ref: openGenerated.id };
+        }
       }
 
       ensureReviewSelection(candidates, roots, words, generated);
 
-      if (showCandidates) {
-        $('rv-candidates').innerHTML = candidatePickerMarkup(candidates);
-        wireReviewPicker($('rv-candidates'));
-      } else $('rv-candidates').innerHTML = '';
-
       if (showRoots) {
-        $('rv-roots').innerHTML = reviewLabRootPickerMarkup(roots);
+        $('rv-roots').innerHTML = reviewRootsPickerMarkup(candidates, roots);
         wireReviewPicker($('rv-roots'));
       } else $('rv-roots').innerHTML = '';
 
@@ -2263,9 +2526,15 @@
       } else $('rv-words').innerHTML = '';
 
       if (showGenerated) {
-        $('rv-generated').innerHTML = reviewLabWordPickerMarkup(generated);
-        wireReviewPicker($('rv-generated'));
-      } else $('rv-generated').innerHTML = '';
+        const generatedEl = $('rv-generated');
+        if (generatedEl) {
+          generatedEl.innerHTML = reviewLabWordPickerMarkup(generated);
+          wireReviewPicker(generatedEl);
+        }
+      } else {
+        const generatedEl = $('rv-generated');
+        if (generatedEl) generatedEl.innerHTML = '';
+      }
 
       return { candidates, roots, words, generated };
     }
@@ -2279,10 +2548,10 @@
 
       try {
         await ensureRules();
-        if (STATE.reviewShowCandidates) {
+        if (STATE.reviewShowRoots) {
           try { await ensureRootCandidates(); } catch { /* candidates optional */ }
         }
-        if (STATE.lab && (STATE.reviewShowLabRoots || STATE.reviewShowLabWords || STATE.reviewShowGeneratedWords)) {
+        if (STATE.lab && (STATE.reviewShowRoots || STATE.reviewShowLabWords || STATE.reviewShowGeneratedWords)) {
           await ensureLexicon();
         }
       } catch (err) {
@@ -2297,15 +2566,36 @@
       const resolved = resolveReviewSelection();
 
       if (!resolved) {
-        workspace.innerHTML = `<div class="fonoran-split-empty"><p>${candidates.length + roots.length + words.length + generated.length ? 'Select an item on the left.' : 'Nothing to review yet. Run <code>npm run fonoran:reset && npm run fonoran:build</code>, or <code>npm run fonoran:build:approved</code> after a reset.'}</p></div>`;
+        workspace.innerHTML = `<div class="fonoran-split-empty"><p>${candidates.length + roots.length + words.length + generated.length ? 'Select a root or word on the left to review it.' : 'Nothing to review yet. Run <code>npm run fonoran:reset && npm run fonoran:build</code>, or <code>npm run fonoran:build:approved</code> after a reset.'}</p></div>`;
         requestAnimationFrame(syncSplitStickyOffsets);
         return;
       }
 
-      if (resolved.kind === 'candidate') renderCandidateReviewWorkspace(resolved.item);
-      else renderLabReviewWorkspace(resolved.item);
+      try {
+        if (resolved.kind === 'candidate') renderCandidateReviewWorkspace(resolved.item);
+        else renderLabReviewWorkspace(resolved.item);
+      } catch (err) {
+        console.error('Review preview failed:', err);
+        workspace.innerHTML = `<div class="fonoran-split-empty"><p>${escapeHtml(err.message)}</p></div>`;
+        requestAnimationFrame(syncSplitStickyOffsets);
+        return;
+      }
 
-      requestAnimationFrame(syncSplitStickyOffsets);
+      requestAnimationFrame(() => {
+        scrollReviewSelectionIntoView();
+        syncSplitStickyOffsets();
+      });
+    }
+
+    function scrollReviewSelectionIntoView() {
+      const sel = STATE.reviewSelection;
+      if (!sel || STATE.page !== 'review') return;
+      const picker = document.querySelector('#page-review .fonoran-split-picker');
+      if (!picker) return;
+      const esc = (s) => (window.CSS?.escape ? CSS.escape(s) : String(s).replace(/["\\]/g, '\\$&'));
+      const btn = picker.querySelector(`[data-review-type="${esc(sel.type)}"][data-review-ref="${esc(sel.ref)}"]`);
+      if (!btn) return;
+      btn.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
 
     function reviewExplorerNavigate(navKind, ref) {
@@ -2393,19 +2683,11 @@
       const isSound = c.reviewKind === 'sound';
       const savedNote = STATE.justSaved === c.spelling
         ? `<div class="saved-banner">✓ Saved <strong>${escapeHtml(c.spelling)}</strong>. Find it anytime in Dictionary.</div>` : '';
-      const feelPrompt = c.meaning
-        ? `Does this ${isSound ? 'root' : 'word'} feel right?`
-        : `This ${isSound ? 'root' : 'word'} needs a concept.`;
       reviewEl.innerHTML = `
-        <div class="review root-review word-review review-workspace">
-          ${buildLabReviewCardHtml(c, { isSound })}
-          <div class="review-toolbar">
-            <button type="button" class="hear-min" id="hear">▶ Listen</button>
-            ${buildExplorerActionsHtml({ graph: true, dda: true, hasMermaid: true, compact: true })}
-          </div>
+        <div class="review root-review word-review review-workspace word-preview-panel">
+          ${buildLabReviewPreviewHtml(c, { isSound })}
           ${savedNote}
           <div class="review-decision">
-            <p class="feel">${feelPrompt}</p>
             <div class="feel-actions root-review__actions">
               <button type="button" class="fa-approve" id="approve"${writeDisabledAttr(!c.meaning)} data-write>✓ Approve</button>
               ${canWrite() ? '<button type="button" class="fa-edit" id="edit" data-write>✎ Edit</button>' : ''}
@@ -2414,7 +2696,6 @@
           </div>
         </div>`;
       wireLabReviewCommon(c);
-      wireReviewExplorerButtons(c, isSound, reviewEl);
       wireFeel(c);
     }
 
@@ -2537,32 +2818,7 @@
     }
 
     function buildRootReviewCardHtml(c) {
-      const script = STATE.rules ? romanToFonoraScript(c.spelling, STATE.rules).phrase : '';
-      return `<div class="root-review__card">
-        <div class="root-review__hero">
-          ${script ? `<div class="word-preview__script fonora-script symbol-text root-review__script">${escapeHtml(script)}</div>` : ''}
-          <p class="root-review__spelling review-word">${escapeHtml(c.spelling)}</p>
-          <p class="root-review__ipa mono">${escapeHtml(c.ipa)}</p>
-          <p class="root-review__concept review-meaning">${escapeHtml(c.concept)}</p>
-        </div>
-        <div class="root-review__meta">
-          <span class="root-review__domain">${escapeHtml(c.domain)}</span>
-          ${rootStatusBadge(c.status)}
-        </div>
-        <div class="root-review__reason sans">${escapeHtml(c.reason)}</div>
-        <div class="root-review__scores">
-          <div class="root-review__score">
-            <span class="root-review__score-label">Pronunciation</span>
-            <strong>${escapeHtml(c.pronunciation_ease_label)}</strong>
-            ${rootScoreBar(c.pronunciation_ease)}
-          </div>
-          <div class="root-review__score">
-            <span class="root-review__score-label">Compound usefulness</span>
-            <strong>${escapeHtml(c.semantic_usefulness_label)}</strong>
-            ${rootScoreBar(c.semantic_usefulness)}
-          </div>
-        </div>
-      </div>`;
+      return buildCandidateReviewPreviewHtml(c);
     }
 
     function renderCandidateReviewWorkspace(c) {
@@ -2573,13 +2829,9 @@
       const canReopen = c.status === 'rejected';
 
       el.innerHTML = `
-        <div class="review root-review review-workspace">
-          ${buildRootReviewCardHtml(c)}
-          <div class="review-toolbar review-toolbar--solo">
-            <button type="button" class="hear-min" id="root-hear">▶ Listen</button>
-          </div>
+        <div class="review root-review review-workspace word-preview-panel">
+          ${buildCandidateReviewPreviewHtml(c)}
           <div class="review-decision">
-            <p class="feel">Does this root feel right?</p>
             <div class="feel-actions root-review__actions">
               <button type="button" class="fa-approve" id="root-approve" data-write ${c.status === 'approved' ? 'disabled' : ''}>✓ Approve</button>
               ${canWrite() ? '<button type="button" class="fa-edit" id="root-edit" data-write>✎ Edit</button>' : ''}
@@ -2795,7 +3047,7 @@
         modalActions,
       });
       containerEl.innerHTML = html;
-      containerEl.querySelector('.word-preview__hear')?.addEventListener('click', () => speakNeural(speakParts));
+      containerEl.querySelector('.word-preview__hear, .word-preview-actions .hear-min')?.addEventListener('click', () => speakNeural(speakParts));
       if (showInlineGraph) {
         await renderExplorerMermaidIn(containerEl, data.mermaid, data.graph_nodes, onNavigate);
       }
@@ -2988,27 +3240,27 @@
       panel.innerHTML = `
         <form class="concept-editor__form" id="concept-editor-form">
           <div class="concept-editor__form-head">${headHtml}</div>
-          <div class="concept-editor__sound-section">
-            <label class="fld" for="ce-spelling">Fonoran sound</label>
-            <div class="concept-editor__sound-line">
-              <div class="concept-editor__pron-shell is-empty" aria-live="polite">
-                <div class="concept-editor__pron-head">
-                  <div class="concept-editor__script fonora-script symbol-text" id="ce-pron-script" aria-hidden="true">&nbsp;</div>
-                  <span class="concept-editor__pron-divider" aria-hidden="true">|</span>
-                  <div class="concept-editor__say pron-line">Say: <strong id="ce-pron-say">-</strong></div>
-                </div>
-                <div class="concept-editor__like pron-english">Sounds like: <span id="ce-pron-like">-</span></div>
-                <p class="concept-editor__ipa mono" id="ce-ipa-display">-</p>
-              </div>
-              <div class="concept-editor__sound-controls">
-                <input type="text" id="ce-spelling" class="mono" value="${escapeHtml(d.spelling)}" data-write-input autocomplete="off" spellcheck="false">
-                <button type="button" class="btn" id="ce-hear">▶ Hear</button>
-              </div>
+          <div class="concept-editor__pair">
+            <div class="concept-editor__pair-sound">
+              <input type="text" id="ce-spelling" class="mono" value="${escapeHtml(d.spelling)}" data-write-input autocomplete="off" spellcheck="false" aria-label="Fonoran sound">
+            </div>
+            <div class="concept-editor__pair-meaning">
+              <input type="text" id="ce-concept" value="${escapeHtml(d.concept)}" data-write-input autocomplete="off" aria-label="Concept meaning">
             </div>
           </div>
+          <div class="concept-editor__pron-block">
+            <div class="concept-editor__pron-shell is-empty" aria-live="polite">
+              <div class="concept-editor__pron-head">
+                <div class="concept-editor__script fonora-script symbol-text" id="ce-pron-script" aria-hidden="true">&nbsp;</div>
+                <span class="concept-editor__pron-divider" aria-hidden="true">|</span>
+                <div class="concept-editor__say pron-line">Say: <strong id="ce-pron-say">-</strong></div>
+              </div>
+              <div class="concept-editor__like pron-english">Sounds like: <span id="ce-pron-like">-</span></div>
+              <p class="concept-editor__ipa mono" id="ce-ipa-display">-</p>
+            </div>
+            <button type="button" class="btn" id="ce-hear">▶ Hear</button>
+          </div>
           <p class="concept-editor__invalid syl-invalid" id="ce-pron-invalid" hidden></p>
-          <label class="fld" for="ce-concept">Concept phrase</label>
-          <input type="text" id="ce-concept" value="${escapeHtml(d.concept)}" data-write-input autocomplete="off">
           <label class="fld" for="ce-domain">Domain</label>
           <select id="ce-domain" data-write-input>
             ${domainOpts}
@@ -3173,10 +3425,11 @@
       listEl.innerHTML = list.length
         ? list.map(c => {
           const selected = STATE.conceptEditorSelected === c.id && !STATE.conceptEditorIsNew;
-          return `<button type="button" class="dict-item concept-editor__item${selected ? ' is-selected' : ''}" data-ce-id="${escapeHtml(c.id)}">
-            <span class="dict-item__word mono">${c.spelling ? escapeHtml(c.spelling) : '—'}</span>
-            <span class="dict-item__english">${escapeHtml(c.concept.split(';')[0])}</span>
-            <span class="dict-item__meta sans">${escapeHtml(c.domain)} · ${escapeHtml(c.id)}</span>
+          const gloss = c.concept.split(';')[0];
+          const tip = `${c.domain} · ${c.id}`;
+          return `<button type="button" class="dict-item concept-editor__item${selected ? ' is-selected' : ''}" data-ce-id="${escapeHtml(c.id)}" title="${escapeHtml(tip)}">
+            <span class="concept-editor__pair-sound mono">${c.spelling ? escapeHtml(c.spelling) : '—'}</span>
+            <span class="concept-editor__pair-meaning">${escapeHtml(gloss)}</span>
           </button>`;
         }).join('')
         : '<p class="empty sans" style="margin:0">No concepts match.</p>';
@@ -3219,10 +3472,15 @@
         hint: (c.part_details ?? []).map(p => p.spelling).join(' + ') || (c.parts ?? []).join(' + '),
       }));
       let list = [...base, ...comp];
-      const f = STATE.dictFilter;
-      if (f === 'base' || f === 'compound') list = list.filter(e => e.type === f);
-      else if (['needs_review', 'approved', 'rejected'].includes(f)) list = list.filter(e => e.state === f);
-      else list = list.filter(e => e.state !== 'rejected');
+      const statusFilters = [];
+      if (STATE.dictShowNeedsReview) statusFilters.push('needs_review', 'draft');
+      if (STATE.dictShowApproved) statusFilters.push('approved', 'revised');
+      if (STATE.dictShowRejected) statusFilters.push('rejected');
+      if (statusFilters.length) {
+        list = list.filter(e => statusFilters.includes(e.state));
+      } else {
+        list = list.filter(e => e.state !== 'rejected');
+      }
       const q = STATE.dictQuery.trim().toLowerCase();
       if (q) list = list.filter(e => `${e.word} ${e.english} ${e.gloss} ${e.aliases} ${e.concept_id} ${e.hint}`.toLowerCase().includes(q));
       return list.sort((a, b) => a.word.localeCompare(b.word));
@@ -3284,30 +3542,25 @@
       }
     }
 
-    function dictItemGlyphs(entry) {
-      if (!STATE.rules) return '';
-      if (entry.kind === 'sound') return romanToFonoraScript([entry.word], STATE.rules).phrase;
-      const compound = STATE.lab.compounds.find(c => c.id === entry.id);
-      const parts = compound ? compoundSpeakParts(compound) : [entry.word];
-      return romanToFonoraScript(parts, STATE.rules).phrase;
+    function dictPickerMeaning(entry) {
+      if (entry.kind === 'sound') {
+        const sound = STATE.lab?.sounds.find(s => s.spelling === entry.id);
+        if (sound) return pickerMeaningForSound(sound);
+      }
+      return pickerMeaningShort(entry.english === '(unnamed)' ? 'unnamed' : entry.english);
     }
 
     function dictItemHtml(entry) {
-      const glyphs = dictItemGlyphs(entry);
-      const meaning = entry.english === '(unnamed)' ? 'unnamed' : entry.english;
-      const unnamed = meaning === 'unnamed';
       const sel = STATE.dictSelection;
       const selected = sel && sel.kind === entry.kind && sel.id === entry.id;
       const type = entry.kind === 'sound' ? 'root' : 'word';
-      return `
-        <button type="button" class="dict-item${selected ? ' is-selected' : ''}" data-kind="${entry.kind}" data-id="${escapeHtml(entry.id)}">
-          <span class="dict-item__content">
-            <span class="mn${unnamed ? ' unnamed' : ''}">${escapeHtml(meaning)}</span>
-            ${glyphs ? `<span class="dict-item__glyphs root-glyphs symbol-text" aria-hidden="true">${escapeHtml(glyphs)}</span>` : ''}
-            <span class="sp">${escapeHtml(entry.word)}</span>
-          </span>
-          <span class="dict-item__badges">${typeBadge(type)} ${badge(entry.state)}</span>
-        </button>`;
+      return pickerCellHtml({
+        spelling: entry.word,
+        meaning: dictPickerMeaning(entry),
+        type,
+        selected,
+        attrs: { 'data-kind': entry.kind, 'data-id': entry.id },
+      });
     }
 
     function dictListScrollInset() {
@@ -3319,10 +3572,11 @@
     function scrollDictSelectionIntoView() {
       const sel = STATE.dictSelection;
       if (!sel || STATE.page !== 'dictionary') return;
-      const list = $('dict-list');
-      if (!list) return;
       const esc = (s) => (window.CSS?.escape ? CSS.escape(s) : String(s).replace(/["\\]/g, '\\$&'));
-      const btn = list.querySelector(`.dict-item[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"]`);
+      const btn = document.querySelector(
+        `#dict-roots .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"], `
+        + `#dict-words .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"]`,
+      );
       if (!btn) return;
 
       const inset = dictListScrollInset();
@@ -3336,16 +3590,56 @@
       });
     }
 
+    function wireDictionaryPicker(container) {
+      container?.querySelectorAll('.root-cell[data-kind]').forEach(b => {
+        b.addEventListener('click', () => selectDictionaryEntry(b.dataset.kind, b.dataset.id));
+      });
+    }
+
     function renderDictionaryList({ scrollToSelection = false } = {}) {
       const list = dictEntries();
-      $('dict-list').innerHTML = list.length
-        ? list.map(dictItemHtml).join('')
-        : (STATE.lab.sounds.length + STATE.lab.compounds.length === 0
-          ? '<p class="empty">No vocabulary yet. <br/> <code>npm run fonoran:reset <br/> npm run fonoran:build</code></p>'
-          : '<p class="empty">Nothing matches.</p>');
-      $('dict-list').querySelectorAll('.dict-item').forEach(b => b.addEventListener('click', () => {
-        selectDictionaryEntry(b.dataset.kind, b.dataset.id);
-      }));
+      const roots = list.filter(e => e.kind === 'sound');
+      const words = list.filter(e => e.kind === 'compound');
+      const showRoots = STATE.dictShowRoots;
+      const showWords = STATE.dictShowWords;
+      const emptyAll = STATE.lab.sounds.length + STATE.lab.compounds.length === 0;
+      const emptyAllMsg = '<p class="empty" style="grid-column:1/-1">No vocabulary yet. <br/> <code>npm run fonoran:reset <br/> npm run fonoran:build</code></p>';
+      const emptyMatchMsg = '<p class="empty" style="grid-column:1/-1">Nothing matches.</p>';
+
+      $('dict-filters')?.querySelectorAll('[data-dict-filter]').forEach(chip => {
+        const key = chip.dataset.dictFilter;
+        const on = key === 'roots' ? showRoots
+          : key === 'words' ? showWords
+            : key === 'needs_review' ? STATE.dictShowNeedsReview
+              : key === 'approved' ? STATE.dictShowApproved
+                : STATE.dictShowRejected;
+        chip.classList.toggle('active', on);
+      });
+      $('dict-picker-empty')?.toggleAttribute('hidden', showRoots || showWords);
+
+      $('dict-roots-h')?.toggleAttribute('hidden', !showRoots);
+      $('dict-words-h')?.toggleAttribute('hidden', !showWords);
+
+      if (showRoots) {
+        const rootsHtml = emptyAll
+          ? emptyAllMsg
+          : (roots.length ? roots.map(dictItemHtml).join('') : emptyMatchMsg);
+        $('dict-roots').innerHTML = rootsHtml;
+        wireDictionaryPicker($('dict-roots'));
+      } else {
+        $('dict-roots').innerHTML = '';
+      }
+
+      if (showWords) {
+        const wordsHtml = emptyAll
+          ? ''
+          : (words.length ? words.map(dictItemHtml).join('') : emptyMatchMsg);
+        $('dict-words').innerHTML = wordsHtml;
+        wireDictionaryPicker($('dict-words'));
+      } else {
+        $('dict-words').innerHTML = '';
+      }
+
       if (scrollToSelection) {
         requestAnimationFrame(() => {
           requestAnimationFrame(scrollDictSelectionIntoView);
@@ -3412,9 +3706,17 @@
     function renderDictionary() {
       if (!STATE.lab) return;
       ensureSplitStickyObserver();
-      renderDictionaryList();
-      syncDictSelection();
-      requestAnimationFrame(syncSplitStickyOffsets);
+      ensureLexicon()
+        .then(() => {
+          renderDictionaryList();
+          syncDictSelection();
+          requestAnimationFrame(syncSplitStickyOffsets);
+        })
+        .catch(() => {
+          renderDictionaryList();
+          syncDictSelection();
+          requestAnimationFrame(syncSplitStickyOffsets);
+        });
     }
 
     /* ---------- TRANSLATOR ---------- */
@@ -4165,10 +4467,6 @@
     }
 
     const header = document.getElementById('app-header-root');
-    header?.addEventListener('universal-nav:page', (event) => {
-      switchPage(event.detail.page);
-    });
-    header?.addEventListener('universal-nav:sign-out', () => { signOut(); });
     header?.addEventListener('universal-nav:action', async (event) => {
       const { action } = event.detail;
       if (action === 'health') {
@@ -4181,7 +4479,17 @@
     });
     $('dict-search').addEventListener('input', e => { STATE.dictQuery = e.target.value; renderDictionary(); });
     $('roots-filter')?.addEventListener('input', e => { STATE.rootsFilter = e.target.value; updateRootsSoundFilter(); });
-    $('dict-filters').addEventListener('click', e => { const b = e.target.closest('[data-filter]'); if (!b) return; STATE.dictFilter = b.dataset.filter; $('dict-filters').querySelectorAll('.chip').forEach(c => c.classList.toggle('active', c === b)); renderDictionary(); });
+    $('dict-filters')?.addEventListener('click', e => {
+      const chip = e.target.closest('[data-dict-filter]');
+      if (!chip) return;
+      const key = chip.dataset.dictFilter;
+      if (key === 'roots') STATE.dictShowRoots = !STATE.dictShowRoots;
+      else if (key === 'words') STATE.dictShowWords = !STATE.dictShowWords;
+      else if (key === 'needs_review') STATE.dictShowNeedsReview = !STATE.dictShowNeedsReview;
+      else if (key === 'approved') STATE.dictShowApproved = !STATE.dictShowApproved;
+      else if (key === 'rejected') STATE.dictShowRejected = !STATE.dictShowRejected;
+      renderDictionary();
+    });
     $('ce-filter')?.addEventListener('input', e => { STATE.conceptEditorFilter = e.target.value; renderConceptEditor(); });
     $('ce-new')?.addEventListener('click', () => {
       STATE.conceptEditorIsNew = true;
@@ -4195,8 +4503,7 @@
       const chip = e.target.closest('[data-rv-filter]');
       if (!chip) return;
       const key = chip.dataset.rvFilter;
-      if (key === 'candidates') STATE.reviewShowCandidates = !STATE.reviewShowCandidates;
-      else if (key === 'roots') STATE.reviewShowLabRoots = !STATE.reviewShowLabRoots;
+      if (key === 'roots') STATE.reviewShowRoots = !STATE.reviewShowRoots;
       else if (key === 'words') STATE.reviewShowLabWords = !STATE.reviewShowLabWords;
       else if (key === 'generated') STATE.reviewShowGeneratedWords = !STATE.reviewShowGeneratedWords;
       else if (key === 'needs-review') STATE.reviewNeedsReviewOnly = !STATE.reviewNeedsReviewOnly;
@@ -4204,7 +4511,7 @@
     });
     $('wc-meaning')?.addEventListener('input', () => {
       renderEditDupe('compound', STATE.wordComposerEditingId ?? '', $('wc-meaning').value, 'wc');
-      syncWordComposerControls();
+      renderWordEditorRecipe('wc', STATE.wordComposerEditingId, STATE.wordComposer);
     });
     $('wc-filters')?.addEventListener('click', e => {
       const chip = e.target.closest('[data-wc-filter]');
@@ -4504,6 +4811,10 @@
 
     const initialPageRaw = document.documentElement.getAttribute('data-fonora-page') || 'home';
     const initialPage = initialPageRaw === 'root-review' ? 'review' : initialPageRaw;
+    setNavSelectHandlers({
+      onPage: (page) => switchPage(page),
+      onSignOut: () => { signOut(); },
+    });
     initUniversalNav({ context: 'language', activeTab: initialPage });
     document.querySelectorAll('.page').forEach((p) => p.classList.remove('active'));
     $(`page-${initialPage}`)?.classList.add('active');

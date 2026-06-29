@@ -274,7 +274,7 @@
             <p class="fonoran-split-chrome__intro sans" id="wc-intro">Stack roots and approved words on the left, build the recipe, and name the compound.</p>
             <input type="search" id="wc-filter" class="search-bar" placeholder="Search by spelling, meaning, alias, or concept…" autocomplete="off">
             <div class="toolbar" id="wc-filters">
-              <button type="button" class="chip active" data-wc-filter="roots">Root words</button>
+              <button type="button" class="chip active" data-wc-filter="roots">Roots</button>
               <button type="button" class="chip active" data-wc-filter="words">Words</button>
               <button type="button" class="chip" data-wc-filter="unapproved">Unapproved</button>
               <button type="button" class="chip" data-wc-filter="unnamed">Unnamed</button>
@@ -283,19 +283,16 @@
         </div>
         <div class="fonoran-split-grid">
           <aside class="fonoran-split-picker" aria-label="Roots and words">
-            <p class="empty sans" id="wc-picker-empty" hidden style="margin:0.5rem 0">Turn on <strong>Root words</strong> or <strong>Words</strong> above to browse the picker.</p>
-            <h4 class="picker-h" id="wc-roots-h">Root words</h4>
+            <p class="empty sans" id="wc-picker-empty" hidden style="margin:0.5rem 0">Turn on <strong>Roots</strong> or <strong>Words</strong> above to browse the picker.</p>
+            <h4 class="picker-h" id="wc-roots-h">Roots</h4>
             <div class="sound-grid" id="wc-roots"></div>
             <h4 class="picker-h" id="wc-words-h">Words</h4>
             <div class="sound-grid" id="wc-words"></div>
           </aside>
           <div class="fonoran-split-workspace word-editor" id="word-create">
             <div class="edit-panel word-editor__panel">
-              <div class="word-editor__hero">
+              <div class="word-editor__hero word-preview-panel">
                 <div id="wc-live-pron"></div>
-                <div class="word-editor__hear-row">
-                  <button type="button" class="hear-min" id="wc-hear" disabled aria-label="Listen to this recipe">▶ Listen</button>
-                </div>
               </div>
               <input type="text" id="wc-meaning" placeholder="Meaning, e.g. river, friend…" data-write-input aria-label="Meaning">
               <div id="wc-dupe"></div>
@@ -340,13 +337,11 @@
       <section id="page-review" class="page fonoran-split-page">
         <div class="fonoran-split-shell" data-split-shell>
           <div class="fonoran-split-chrome">
-            <p class="fonoran-split-chrome__intro sans">Search roots and words to review. Pending root spellings appear in <strong>Root queue</strong>; approved roots and hand-built words under <strong>Roots</strong> and <strong>Words</strong>. Build imports and Word Generator output appear under <strong>Generated</strong>.</p>
+            <p class="fonoran-split-chrome__intro sans">Pick a root or word on the left, review it on the right, and approve, reject, or edit.</p>
             <input type="search" id="rv-filter" class="search-bar" placeholder="Search by spelling or meaning…" autocomplete="off">
             <div class="toolbar" id="rv-filters">
-              <button type="button" class="chip active" data-rv-filter="candidates">Root queue</button>
               <button type="button" class="chip active" data-rv-filter="roots">Roots</button>
               <button type="button" class="chip active" data-rv-filter="words">Words</button>
-              <button type="button" class="chip active" data-rv-filter="generated">Generated</button>
               <button type="button" class="chip" data-rv-filter="needs-review">Needs review</button>
             </div>
           </div>
@@ -354,14 +349,10 @@
         <div class="fonoran-split-grid">
           <aside class="fonoran-split-picker" aria-label="Items to review">
             <p class="empty sans" id="rv-picker-empty" hidden style="margin:0.5rem 0">Turn on a category above to browse items.</p>
-            <h4 class="picker-h" id="rv-candidates-h">Root queue</h4>
-            <div class="sound-grid" id="rv-candidates"></div>
             <h4 class="picker-h" id="rv-roots-h">Roots</h4>
             <div class="sound-grid" id="rv-roots"></div>
             <h4 class="picker-h" id="rv-words-h">Words</h4>
             <div class="sound-grid" id="rv-words"></div>
-            <h4 class="picker-h" id="rv-generated-h">Generated words</h4>
-            <div class="sound-grid" id="rv-generated"></div>
           </aside>
           <div class="fonoran-split-workspace" id="word-review" aria-live="polite">
             <div class="fonoran-split-empty">
@@ -394,18 +385,21 @@
             <p class="fonoran-split-chrome__intro sans">Browse the vocabulary and explore word trees.</p>
             <input type="search" id="dict-search" class="search-bar" placeholder="Search Fonoran or English…" autocomplete="off">
             <div class="toolbar" id="dict-filters">
-              <button type="button" class="chip active" data-filter="all">All</button>
-              <button type="button" class="chip" data-filter="base">Roots</button>
-              <button type="button" class="chip" data-filter="compound">Words</button>
-              <button type="button" class="chip" data-filter="needs_review">Needs review</button>
-              <button type="button" class="chip" data-filter="approved">Approved</button>
-              <button type="button" class="chip" data-filter="rejected">Rejected</button>
+              <button type="button" class="chip active" data-dict-filter="roots">Roots</button>
+              <button type="button" class="chip active" data-dict-filter="words">Words</button>
+              <button type="button" class="chip" data-dict-filter="needs_review">Needs review</button>
+              <button type="button" class="chip" data-dict-filter="approved">Approved</button>
+              <button type="button" class="chip" data-dict-filter="rejected">Rejected</button>
             </div>
           </div>
         </div>
         <div class="fonoran-split-grid">
           <aside class="fonoran-split-picker" aria-label="Dictionary entries">
-            <div class="fonoran-split-picker__body" id="dict-list"></div>
+            <p class="empty sans" id="dict-picker-empty" hidden style="margin:0.5rem 0">Turn on <strong>Roots</strong> or <strong>Words</strong> above to browse the dictionary.</p>
+            <h4 class="picker-h" id="dict-roots-h">Roots</h4>
+            <div class="sound-grid" id="dict-roots"></div>
+            <h4 class="picker-h" id="dict-words-h">Words</h4>
+            <div class="sound-grid" id="dict-words"></div>
           </aside>
           <div class="fonoran-split-workspace" id="dict-detail" aria-live="polite">
             <div class="fonoran-split-empty">
