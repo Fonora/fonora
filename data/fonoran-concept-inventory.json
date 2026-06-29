@@ -1,901 +1,924 @@
 {
-  "version": "1.0-converged-editorial",
-  "status": "canonical",
-  "description": "Converged Fonoran concept inventory: 97 primitive roots + grammar particles. Derivable concepts live in data/fonoran-compounds.json; polarity/tense/mood are particles, not roots.",
   "source": "merge of data/fonoran-semantic-primitives.json (core) + data/fonoran-primitive-roots-config.json (extended)",
-  "primitive_count": 97,
+  "status": "canonical",
+  "version": "1.0-converged-editorial",
+  "particles": [
+    {
+      "id": "past",
+      "form": "ta",
+      "note": "marks an event in the past; present is unmarked",
+      "role": "tense"
+    },
+    {
+      "id": "future",
+      "form": "na",
+      "note": "marks an event in the future",
+      "role": "tense"
+    },
+    {
+      "id": "negation",
+      "form": "no",
+      "note": "negates the following concept (false = no + true)",
+      "role": "polarity"
+    },
+    {
+      "id": "affirmation",
+      "form": "ya",
+      "note": "affirms / yes",
+      "role": "polarity"
+    },
+    {
+      "id": "question",
+      "form": "wo",
+      "note": "marks a clause as a question",
+      "role": "mood"
+    }
+  ],
   "core_count": 89,
-  "extended_count": 8,
   "primitives": [
     {
       "id": "person",
-      "domain": "being",
       "tier": "core",
+      "domain": "being",
       "description": "a person; someone",
-      "plain_description": "a person; someone",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a person; someone"
     },
     {
       "id": "self",
-      "domain": "being",
       "tier": "core",
+      "domain": "being",
       "description": "oneself; me, myself",
-      "plain_description": "oneself; me, myself",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "oneself; me, myself"
     },
     {
       "id": "collective",
-      "domain": "being",
       "tier": "core",
+      "domain": "being",
       "description": "a group seen as one; togetherness",
-      "plain_description": "a group seen as one; togetherness",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a group seen as one; togetherness"
     },
     {
       "id": "body",
-      "domain": "being",
       "tier": "core",
+      "domain": "being",
       "description": "your body",
-      "plain_description": "your body",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "your body"
     },
     {
       "id": "life",
-      "domain": "being",
       "tier": "core",
+      "domain": "being",
       "description": "being alive",
-      "plain_description": "being alive",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "being alive"
     },
     {
       "id": "move",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to go from one place to another",
-      "plain_description": "to go from one place to another",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to go from one place to another"
     },
     {
       "id": "give",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to give something to someone",
-      "plain_description": "to give something to someone",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to give something to someone"
     },
     {
       "id": "take",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to take something",
-      "plain_description": "to take something",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to take something"
     },
     {
       "id": "hold",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to keep something in your grasp",
-      "plain_description": "to keep something in your grasp",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to keep something in your grasp"
     },
     {
       "id": "use",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to use something",
-      "plain_description": "to use something",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to use something"
     },
     {
       "id": "help",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to help someone",
-      "plain_description": "to help someone",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to help someone"
     },
     {
       "id": "make",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to make something",
-      "plain_description": "to make something",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to make something"
     },
     {
       "id": "do",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to do something",
-      "plain_description": "to do something",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to do something"
     },
     {
       "id": "speak",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to speak; to talk",
-      "plain_description": "to speak; to talk",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to speak; to talk"
     },
     {
       "id": "see",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to see",
-      "plain_description": "to see",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to see"
     },
     {
       "id": "hear",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to hear",
-      "plain_description": "to hear",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to hear"
     },
     {
       "id": "touch",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to touch",
-      "plain_description": "to touch",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to touch"
     },
     {
       "id": "smell",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to smell",
-      "plain_description": "to smell",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to smell"
     },
     {
       "id": "taste",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to taste",
-      "plain_description": "to taste",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to taste"
     },
     {
       "id": "know",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to know something",
-      "plain_description": "to know something",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to know something"
     },
     {
       "id": "think",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to use your mind",
-      "plain_description": "to use your mind",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to use your mind"
     },
     {
       "id": "feel",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to feel something inside",
-      "plain_description": "to feel something inside",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to feel something inside"
     },
     {
       "id": "want",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to wish for something",
-      "plain_description": "to wish for something",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to wish for something"
     },
     {
       "id": "eat",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to eat",
-      "plain_description": "to eat",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to eat"
     },
     {
       "id": "sleep",
-      "domain": "action",
       "tier": "core",
+      "domain": "action",
       "description": "to sleep",
-      "plain_description": "to sleep",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to sleep"
     },
     {
       "id": "thing",
-      "domain": "ontology",
       "tier": "core",
+      "domain": "ontology",
       "description": "any object or item",
-      "plain_description": "any object or item",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "any object or item"
     },
     {
       "id": "substance",
-      "domain": "ontology",
       "tier": "core",
+      "domain": "ontology",
       "description": "stuff things are made of",
-      "plain_description": "stuff things are made of",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "stuff things are made of"
     },
     {
       "id": "form",
-      "domain": "ontology",
       "tier": "core",
+      "domain": "ontology",
       "description": "shape; how something looks",
-      "plain_description": "shape; how something looks",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "shape; how something looks"
     },
     {
       "id": "change",
-      "domain": "ontology",
       "tier": "core",
+      "domain": "ontology",
       "description": "to become different",
-      "plain_description": "to become different",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to become different"
     },
     {
       "id": "empty",
-      "domain": "ontology",
       "tier": "core",
+      "domain": "ontology",
       "description": "having nothing inside",
-      "plain_description": "having nothing inside",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "having nothing inside"
     },
     {
       "id": "water",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "water",
-      "plain_description": "water",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "water"
     },
     {
       "id": "fire",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "fire; a hot burning flame",
-      "plain_description": "fire; a hot burning flame",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "fire; a hot burning flame"
     },
     {
       "id": "earth",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "the ground or soil",
-      "plain_description": "the ground or soil",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "the ground or soil"
     },
     {
       "id": "air",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "the air we breathe",
-      "plain_description": "the air we breathe",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "the air we breathe"
     },
     {
       "id": "light",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "light; what lets you see",
-      "plain_description": "light; what lets you see",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "light; what lets you see"
     },
     {
       "id": "dark",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "darkness; no light",
-      "plain_description": "darkness; no light",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "darkness; no light"
     },
     {
       "id": "hot",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "hot; warm to burning",
-      "plain_description": "hot; warm to burning",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "hot; warm to burning"
     },
     {
       "id": "cold",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "cold; chilly to freezing",
-      "plain_description": "cold; chilly to freezing",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "cold; chilly to freezing"
     },
     {
       "id": "stone",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "a hard rock",
-      "plain_description": "a hard rock",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a hard rock"
     },
     {
       "id": "plant",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "a plant",
-      "plain_description": "a plant",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a plant"
     },
     {
       "id": "animal",
-      "domain": "element",
       "tier": "core",
+      "domain": "element",
       "description": "an animal",
-      "plain_description": "an animal",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "an animal"
     },
     {
       "id": "inside",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "in; within something",
-      "plain_description": "in; within something",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "in; within something"
     },
     {
       "id": "outside",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "out; beyond something's edge",
-      "plain_description": "out; beyond something's edge",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "out; beyond something's edge"
     },
     {
       "id": "here",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "at this place",
-      "plain_description": "at this place",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "at this place"
     },
     {
       "id": "there",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "at that place",
-      "plain_description": "at that place",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "at that place"
     },
     {
       "id": "near",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "close by",
-      "plain_description": "close by",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "close by"
     },
     {
       "id": "far",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "a long way off",
-      "plain_description": "a long way off",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a long way off"
     },
     {
       "id": "up",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "toward a higher place",
-      "plain_description": "toward a higher place",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "toward a higher place"
     },
     {
       "id": "down",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "toward a lower place",
-      "plain_description": "toward a lower place",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "toward a lower place"
     },
     {
       "id": "path",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "a way or route to travel along",
-      "plain_description": "a way or route to travel along",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a way or route to travel along"
     },
     {
       "id": "place",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "a spot or location",
-      "plain_description": "a spot or location",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a spot or location"
     },
     {
       "id": "surface",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "the outer side you touch",
-      "plain_description": "the outer side you touch",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "the outer side you touch"
     },
     {
       "id": "bound",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "an edge; where something ends",
-      "plain_description": "an edge; where something ends",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "an edge; where something ends"
     },
     {
       "id": "center",
-      "domain": "space",
       "tier": "core",
+      "domain": "space",
       "description": "the middle",
-      "plain_description": "the middle",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "the middle"
     },
     {
       "id": "before",
-      "domain": "time",
       "tier": "core",
+      "domain": "time",
       "description": "earlier; in the past",
-      "plain_description": "earlier; in the past",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "earlier; in the past"
     },
     {
       "id": "after",
-      "domain": "time",
       "tier": "core",
+      "domain": "time",
       "description": "later; coming next",
-      "plain_description": "later; coming next",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "later; coming next"
     },
     {
       "id": "now",
-      "domain": "time",
       "tier": "core",
+      "domain": "time",
       "description": "right now; this moment",
-      "plain_description": "right now; this moment",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "right now; this moment"
     },
     {
       "id": "time",
-      "domain": "time",
       "tier": "core",
+      "domain": "time",
       "description": "time; how long things last",
-      "plain_description": "time; how long things last",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "time; how long things last"
     },
     {
       "id": "one",
-      "domain": "quantity",
       "tier": "core",
+      "domain": "quantity",
       "description": "a single one",
-      "plain_description": "a single one",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a single one"
     },
     {
       "id": "many",
-      "domain": "quantity",
       "tier": "core",
+      "domain": "quantity",
       "description": "a lot; lots of them",
-      "plain_description": "a lot; lots of them",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a lot; lots of them"
     },
     {
       "id": "all",
-      "domain": "quantity",
       "tier": "core",
+      "domain": "quantity",
       "description": "every one of them",
-      "plain_description": "every one of them",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "every one of them"
     },
     {
       "id": "some",
-      "domain": "quantity",
       "tier": "core",
+      "domain": "quantity",
       "description": "a few; part of them",
-      "plain_description": "a few; part of them",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a few; part of them"
     },
     {
       "id": "more",
-      "domain": "quantity",
       "tier": "core",
+      "domain": "quantity",
       "description": "a greater amount",
-      "plain_description": "a greater amount",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a greater amount"
     },
     {
       "id": "less",
-      "domain": "quantity",
       "tier": "core",
+      "domain": "quantity",
       "description": "a smaller amount",
-      "plain_description": "a smaller amount",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a smaller amount"
     },
     {
       "id": "fast",
-      "domain": "quantity",
       "tier": "core",
+      "domain": "quantity",
       "description": "quick; moving at high speed",
-      "plain_description": "quick; moving at high speed",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "quick; moving at high speed"
     },
     {
       "id": "love",
-      "domain": "emotion",
       "tier": "core",
+      "domain": "emotion",
       "description": "to deeply care for someone",
-      "plain_description": "to deeply care for someone",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to deeply care for someone"
     },
     {
       "id": "fear",
-      "domain": "emotion",
       "tier": "core",
+      "domain": "emotion",
       "description": "to be afraid",
-      "plain_description": "to be afraid",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to be afraid"
     },
     {
       "id": "pain",
-      "domain": "emotion",
       "tier": "core",
+      "domain": "emotion",
       "description": "hurting; physical or emotional hurt",
-      "plain_description": "hurting; physical or emotional hurt",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "hurting; physical or emotional hurt"
     },
     {
       "id": "good",
-      "domain": "evaluation",
       "tier": "core",
+      "domain": "evaluation",
       "description": "good; works well or is wanted",
-      "plain_description": "good; works well or is wanted",
       "priority_class": "essential",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "good; works well or is wanted"
     },
     {
       "id": "bad",
-      "domain": "evaluation",
       "tier": "core",
+      "domain": "evaluation",
       "description": "bad; harmful or unwanted",
-      "plain_description": "bad; harmful or unwanted",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "bad; harmful or unwanted"
     },
     {
       "id": "true",
-      "domain": "evaluation",
       "tier": "core",
+      "domain": "evaluation",
       "description": "true; matches what's real",
-      "plain_description": "true; matches what's real",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "true; matches what's real"
     },
     {
       "id": "equal",
-      "domain": "evaluation",
       "tier": "core",
+      "domain": "evaluation",
       "description": "the same amount; even and fair",
-      "plain_description": "the same amount; even and fair",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "the same amount; even and fair"
     },
     {
       "id": "bond",
-      "domain": "relationships",
       "tier": "core",
+      "domain": "relationships",
       "description": "a bond; a tie between things",
-      "plain_description": "a bond; a tie between things",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a bond; a tie between things"
     },
     {
       "id": "conflict",
-      "domain": "relationships",
       "tier": "core",
+      "domain": "relationships",
       "description": "a clash or fight between sides",
-      "plain_description": "a clash or fight between sides",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a clash or fight between sides"
     },
     {
       "id": "same",
-      "domain": "relationships",
       "tier": "core",
+      "domain": "relationships",
       "description": "the same; not different",
-      "plain_description": "the same; not different",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "the same; not different"
     },
     {
       "id": "part",
-      "domain": "relationships",
       "tier": "core",
+      "domain": "relationships",
       "description": "a piece of something bigger",
-      "plain_description": "a piece of something bigger",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a piece of something bigger"
     },
     {
       "id": "mark",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "a mark, sign, or drawing",
-      "plain_description": "a mark, sign, or drawing",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a mark, sign, or drawing"
     },
     {
       "id": "source",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "where something comes from",
-      "plain_description": "where something comes from",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "where something comes from"
     },
     {
       "id": "flow",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "to flow",
-      "plain_description": "to flow",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to flow"
     },
     {
       "id": "pulse",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "a beat; a steady throb",
-      "plain_description": "a beat; a steady throb",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a beat; a steady throb"
     },
     {
       "id": "still",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "not moving; staying put",
-      "plain_description": "not moving; staying put",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "not moving; staying put"
     },
     {
       "id": "will",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "the drive or intent to do something",
-      "plain_description": "the drive or intent to do something",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "the drive or intent to do something"
     },
     {
       "id": "strong",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "strong; powerful and hard to break",
-      "plain_description": "strong; powerful and hard to break",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "strong; powerful and hard to break"
     },
     {
       "id": "reach",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "to stretch out toward something",
-      "plain_description": "to stretch out toward something",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to stretch out toward something"
     },
     {
       "id": "wave",
-      "domain": "process",
       "tier": "core",
+      "domain": "process",
       "description": "a wave",
-      "plain_description": "a wave",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a wave"
     },
     {
       "id": "hand",
-      "domain": "body",
       "tier": "core",
+      "domain": "body",
       "description": "your hand",
-      "plain_description": "your hand",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "your hand"
     },
     {
       "id": "eye",
-      "domain": "body",
       "tier": "core",
+      "domain": "body",
       "description": "your eye",
-      "plain_description": "your eye",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "your eye"
     },
     {
       "id": "skin",
-      "domain": "body",
       "tier": "core",
+      "domain": "body",
       "description": "your skin",
-      "plain_description": "your skin",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "your skin"
     },
     {
       "id": "bone",
-      "domain": "body",
       "tier": "core",
+      "domain": "body",
       "description": "a bone",
-      "plain_description": "a bone",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a bone"
     },
     {
       "id": "big",
-      "domain": "quality",
       "tier": "extended",
+      "domain": "quality",
       "description": "big; large in size",
-      "plain_description": "big; large in size",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "big; large in size"
     },
     {
       "id": "small",
-      "domain": "quality",
       "tier": "extended",
+      "domain": "quality",
       "description": "small; little in size",
-      "plain_description": "small; little in size",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "small; little in size"
     },
     {
       "id": "head",
-      "domain": "body",
       "tier": "extended",
+      "domain": "body",
       "description": "your head",
-      "plain_description": "your head",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "your head"
     },
     {
       "id": "heart",
-      "domain": "body",
       "tier": "extended",
+      "domain": "body",
       "description": "your heart",
-      "plain_description": "your heart",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "your heart"
     },
     {
       "id": "mouth",
-      "domain": "body",
       "tier": "extended",
+      "domain": "body",
       "description": "your mouth",
-      "plain_description": "your mouth",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "your mouth"
     },
     {
       "id": "need",
-      "domain": "cognition",
       "tier": "extended",
+      "domain": "cognition",
       "description": "to need something",
-      "plain_description": "to need something",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to need something"
     },
     {
       "id": "cause",
-      "domain": "relation",
       "tier": "extended",
+      "domain": "relation",
       "description": "to make something happen",
-      "plain_description": "to make something happen",
       "priority_class": "useful",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "to make something happen"
     },
     {
       "id": "name",
-      "domain": "communication",
       "tier": "extended",
+      "domain": "communication",
       "description": "a name",
-      "plain_description": "a name",
       "priority_class": "common",
-      "suggested_status": "primitive"
+      "suggested_status": "primitive",
+      "plain_description": "a name"
     }
   ],
+  "description": "Converged Fonoran concept inventory: 97 primitive roots + grammar particles. Derivable concepts live in data/fonoran-compounds.json; polarity/tense/mood are particles, not roots.",
+  "extended_count": 8,
+  "primitive_count": 97,
   "productive_dimensions": {
-    "thing": [
-      "book",
-      "meal",
-      "vehicle",
-      "lamp",
-      "document",
-      "tool"
-    ],
-    "change": [
-      "grow",
-      "age",
-      "damage",
-      "improve",
-      "transform"
+    "bond": [
+      "family",
+      "friend",
+      "law",
+      "religion"
     ],
     "move": [
       "run",
@@ -911,18 +934,27 @@
       "symmetry",
       "money"
     ],
+    "thing": [
+      "book",
+      "meal",
+      "vehicle",
+      "lamp",
+      "document",
+      "tool"
+    ],
+    "change": [
+      "grow",
+      "age",
+      "damage",
+      "improve",
+      "transform"
+    ],
     "strong": [
       "force",
       "leader",
       "government",
       "weapon",
       "healthy"
-    ],
-    "bond": [
-      "family",
-      "friend",
-      "law",
-      "religion"
     ],
     "conflict": [
       "war",
@@ -931,37 +963,5 @@
       "problem",
       "enemy"
     ]
-  },
-  "particles": [
-    {
-      "id": "past",
-      "form": "ta",
-      "role": "tense",
-      "note": "marks an event in the past; present is unmarked"
-    },
-    {
-      "id": "future",
-      "form": "na",
-      "role": "tense",
-      "note": "marks an event in the future"
-    },
-    {
-      "id": "negation",
-      "form": "no",
-      "role": "polarity",
-      "note": "negates the following concept (false = no + true)"
-    },
-    {
-      "id": "affirmation",
-      "form": "ya",
-      "role": "polarity",
-      "note": "affirms / yes"
-    },
-    {
-      "id": "question",
-      "form": "wo",
-      "role": "mood",
-      "note": "marks a clause as a question"
-    }
-  ]
+  }
 }

@@ -1,46 +1,137 @@
 {
-  "version": "1.0-localization",
   "locale": "en",
-  "description": "English labels and word bank for Fonoran concept identifiers. English is one localization — not the semantic authority.",
   "entries": {
-    "person": {
-      "label": "person",
+    "do": {
+      "label": "do",
       "aliases": [
-        "human",
-        "someone",
-        "somebody",
-        "people",
-        "man",
-        "woman",
-        "men",
-        "women",
-        "healer",
-        "healers",
-        "being",
-        "beings"
+        "doing",
+        "act",
+        "action"
       ]
     },
-    "self": {
-      "label": "self",
+    "up": {
+      "label": "up",
       "aliases": [
-        "me",
-        "myself",
-        "mine",
-        "oneself"
+        "above",
+        "higher",
+        "rise",
+        "rises",
+        "rose",
+        "rising"
       ]
     },
-    "collective": {
-      "label": "collective",
+    "air": {
+      "label": "air",
       "aliases": [
-        "all",
-        "group",
-        "groups",
-        "community",
-        "together",
-        "team",
-        "total",
-        "tribe",
-        "tribes"
+        "atmosphere",
+        "breath",
+        "wind"
+      ]
+    },
+    "all": {
+      "label": "all",
+      "aliases": [
+        "every",
+        "everything",
+        "whole"
+      ]
+    },
+    "bad": {
+      "label": "bad",
+      "aliases": [
+        "evil",
+        "harm",
+        "harmful",
+        "worse",
+        "worst"
+      ]
+    },
+    "big": {
+      "label": "big",
+      "aliases": [
+        "big",
+        "large",
+        "size",
+        "tall"
+      ]
+    },
+    "eat": {
+      "label": "eat",
+      "aliases": [
+        "eating",
+        "food"
+      ]
+    },
+    "eye": {
+      "label": "eye",
+      "aliases": [
+        "eyes",
+        "sight"
+      ]
+    },
+    "far": {
+      "label": "far",
+      "aliases": [
+        "distant",
+        "away"
+      ]
+    },
+    "hot": {
+      "label": "hot",
+      "aliases": [
+        "heat",
+        "warm",
+        "warmth"
+      ]
+    },
+    "joy": {
+      "label": "joy",
+      "aliases": [
+        "happy",
+        "happiness",
+        "delight",
+        "glad"
+      ]
+    },
+    "now": {
+      "label": "now",
+      "aliases": [
+        "today",
+        "present"
+      ]
+    },
+    "one": {
+      "label": "one",
+      "aliases": [
+        "single",
+        "unity"
+      ]
+    },
+    "sad": {
+      "label": "sad",
+      "aliases": [
+        "sorrow",
+        "unhappy",
+        "grief"
+      ]
+    },
+    "see": {
+      "label": "see",
+      "aliases": [
+        "seeing",
+        "sight",
+        "look",
+        "looking",
+        "find",
+        "finds",
+        "found"
+      ]
+    },
+    "use": {
+      "label": "use",
+      "aliases": [
+        "using",
+        "employ"
       ]
     },
     "body": {
@@ -48,6 +139,183 @@
       "aliases": [
         "form",
         "physique"
+      ]
+    },
+    "bond": {
+      "label": "bond",
+      "aliases": [
+        "connection",
+        "tie",
+        "link",
+        "family",
+        "friend",
+        "friendship",
+        "trust",
+        "trusts",
+        "trusted"
+      ]
+    },
+    "bone": {
+      "label": "bone",
+      "aliases": [
+        "bones",
+        "skeleton"
+      ]
+    },
+    "cold": {
+      "label": "cold",
+      "aliases": [
+        "cool",
+        "chill"
+      ]
+    },
+    "dark": {
+      "label": "dark",
+      "aliases": [
+        "darkness",
+        "dim"
+      ]
+    },
+    "down": {
+      "label": "down",
+      "aliases": [
+        "below",
+        "lower",
+        "set",
+        "sets",
+        "fall",
+        "falls",
+        "fell"
+      ]
+    },
+    "fast": {
+      "label": "fast",
+      "aliases": [
+        "quick",
+        "quickly",
+        "speed"
+      ]
+    },
+    "fear": {
+      "label": "fear",
+      "aliases": [
+        "afraid",
+        "scared",
+        "dread"
+      ]
+    },
+    "feel": {
+      "label": "feel",
+      "aliases": [
+        "feeling",
+        "feels",
+        "felt"
+      ]
+    },
+    "fire": {
+      "label": "fire",
+      "aliases": [
+        "flame",
+        "burn",
+        "burning"
+      ]
+    },
+    "flow": {
+      "label": "flow",
+      "aliases": [
+        "stream",
+        "river",
+        "flowing"
+      ]
+    },
+    "food": {
+      "label": "food",
+      "aliases": [
+        "meal",
+        "eat",
+        "mana"
+      ]
+    },
+    "form": {
+      "label": "form",
+      "aliases": [
+        "shape",
+        "appearance"
+      ]
+    },
+    "give": {
+      "label": "give",
+      "aliases": [
+        "gift",
+        "giving"
+      ]
+    },
+    "good": {
+      "label": "good",
+      "aliases": [
+        "well",
+        "better",
+        "best",
+        "grateful",
+        "gratitude",
+        "thankful"
+      ]
+    },
+    "hand": {
+      "label": "hand",
+      "aliases": [
+        "hands",
+        "grasp"
+      ]
+    },
+    "hear": {
+      "label": "hear",
+      "aliases": [
+        "hearing",
+        "listen",
+        "listening"
+      ]
+    },
+    "help": {
+      "label": "help",
+      "aliases": [
+        "helping",
+        "aid",
+        "assist"
+      ]
+    },
+    "here": {
+      "label": "here",
+      "aliases": [
+        "nearby"
+      ]
+    },
+    "hold": {
+      "label": "hold",
+      "aliases": [
+        "holding",
+        "keep",
+        "keeping",
+        "carry",
+        "carries",
+        "carried",
+        "protect",
+        "protects"
+      ]
+    },
+    "know": {
+      "label": "know",
+      "aliases": [
+        "knowing",
+        "knowledge"
+      ]
+    },
+    "less": {
+      "label": "less",
+      "aliases": [
+        "fewer",
+        "decrease",
+        "smaller"
       ]
     },
     "life": {
@@ -58,19 +326,51 @@
         "live"
       ]
     },
-    "death": {
-      "label": "death",
+    "love": {
+      "label": "love",
       "aliases": [
-        "dead",
-        "die",
-        "dying"
+        "loving",
+        "affection",
+        "care"
       ]
     },
-    "birth": {
-      "label": "birth",
+    "make": {
+      "label": "make",
       "aliases": [
-        "born",
-        "birth"
+        "making",
+        "create",
+        "creating",
+        "created",
+        "build",
+        "built",
+        "builds",
+        "cook",
+        "cooked",
+        "cooks"
+      ]
+    },
+    "many": {
+      "label": "many",
+      "aliases": [
+        "multiple",
+        "plenty",
+        "several"
+      ]
+    },
+    "mark": {
+      "label": "mark",
+      "aliases": [
+        "sign",
+        "symbol",
+        "write",
+        "writing"
+      ]
+    },
+    "more": {
+      "label": "more",
+      "aliases": [
+        "greater",
+        "increase"
       ]
     },
     "move": {
@@ -83,14 +383,92 @@
         "went",
         "travel",
         "traveling",
-        "journey"
+        "journey",
+        "come",
+        "came",
+        "comes",
+        "follow",
+        "follows",
+        "chase",
+        "chases",
+        "cross",
+        "crossed",
+        "crosses",
+        "return",
+        "returned",
+        "returns",
+        "leave",
+        "left",
+        "continue",
+        "continues",
+        "continued",
+        "continuing",
+        "walk",
+        "walked",
+        "walks"
       ]
     },
-    "give": {
-      "label": "give",
+    "near": {
+      "label": "near",
       "aliases": [
-        "gift",
-        "giving"
+        "close",
+        "nearby"
+      ]
+    },
+    "pain": {
+      "label": "pain",
+      "aliases": [
+        "hurt",
+        "hurting",
+        "ache",
+        "suffering",
+        "sick",
+        "ill"
+      ]
+    },
+    "part": {
+      "label": "part",
+      "aliases": [
+        "piece",
+        "portion",
+        "section"
+      ]
+    },
+    "path": {
+      "label": "path",
+      "aliases": [
+        "road",
+        "way",
+        "route"
+      ]
+    },
+    "same": {
+      "label": "same",
+      "aliases": [
+        "identical",
+        "alike"
+      ]
+    },
+    "self": {
+      "label": "self",
+      "aliases": [
+        "me",
+        "myself",
+        "mine",
+        "oneself"
+      ]
+    },
+    "skin": {
+      "label": "skin",
+      "aliases": [
+        "hide"
+      ]
+    },
+    "some": {
+      "label": "some",
+      "aliases": [
+        "few",
+        "part"
       ]
     },
     "take": {
@@ -100,47 +478,174 @@
         "receive"
       ]
     },
-    "hold": {
-      "label": "hold",
+    "time": {
+      "label": "time",
       "aliases": [
-        "holding",
-        "keep",
-        "keeping"
+        "while",
+        "duration"
       ]
     },
-    "use": {
-      "label": "use",
+    "true": {
+      "label": "true",
       "aliases": [
-        "using",
-        "employ"
+        "truth",
+        "real",
+        "correct"
       ]
     },
-    "help": {
-      "label": "help",
+    "want": {
+      "label": "want",
       "aliases": [
-        "helping",
-        "aid",
-        "assist"
+        "wanting",
+        "wish",
+        "desire",
+        "hungry"
       ]
     },
-    "make": {
-      "label": "make",
+    "wave": {
+      "label": "wave",
       "aliases": [
-        "making",
-        "create",
-        "creating",
-        "created"
+        "ripple",
+        "surge"
       ]
     },
-    "do": {
-      "label": "do",
+    "will": {
+      "label": "will",
       "aliases": [
-        "doing",
-        "act",
-        "acting",
-        "acted",
-        "acts",
-        "action"
+        "intent",
+        "intention",
+        "purpose"
+      ]
+    },
+    "after": {
+      "label": "after",
+      "aliases": [
+        "later",
+        "future",
+        "tomorrow",
+        "next",
+        "then"
+      ]
+    },
+    "birth": {
+      "label": "birth",
+      "aliases": [
+        "born",
+        "birth"
+      ]
+    },
+    "bound": {
+      "label": "bound",
+      "aliases": [
+        "bound",
+        "an edge",
+        "edge",
+        "where",
+        "something",
+        "ends",
+        "finish",
+        "finished",
+        "finishes",
+        "end"
+      ]
+    },
+    "death": {
+      "label": "death",
+      "aliases": [
+        "dead",
+        "die",
+        "dying"
+      ]
+    },
+    "earth": {
+      "label": "earth",
+      "aliases": [
+        "ground",
+        "dirt",
+        "soil",
+        "land",
+        "mountain",
+        "mountains",
+        "hill",
+        "hills"
+      ]
+    },
+    "empty": {
+      "label": "empty",
+      "aliases": [
+        "nothing",
+        "void",
+        "absence"
+      ]
+    },
+    "equal": {
+      "label": "equal",
+      "aliases": [
+        "same",
+        "balance",
+        "fair",
+        "fairness",
+        "match"
+      ]
+    },
+    "false": {
+      "label": "false",
+      "aliases": [
+        "lie",
+        "wrong",
+        "untrue"
+      ]
+    },
+    "light": {
+      "label": "light",
+      "aliases": [
+        "bright",
+        "brightness",
+        "shine",
+        "shines",
+        "shining"
+      ]
+    },
+    "place": {
+      "label": "place",
+      "aliases": [
+        "location",
+        "spot",
+        "somewhere",
+        "city",
+        "town"
+      ]
+    },
+    "plant": {
+      "label": "plant",
+      "aliases": [
+        "vegetation",
+        "tree",
+        "trees",
+        "grass",
+        "leaf",
+        "leaves"
+      ]
+    },
+    "pulse": {
+      "label": "pulse",
+      "aliases": [
+        "beat",
+        "rhythm"
+      ]
+    },
+    "reach": {
+      "label": "reach",
+      "aliases": [
+        "extend",
+        "stretch"
+      ]
+    },
+    "sleep": {
+      "label": "sleep",
+      "aliases": [
+        "sleeping",
+        "rest"
       ]
     },
     "speak": {
@@ -168,42 +673,46 @@
         "sings"
       ]
     },
-    "see": {
-      "label": "see",
+    "still": {
+      "label": "still",
       "aliases": [
-        "seeing",
-        "sight",
-        "look",
-        "looking"
+        "stillness",
+        "stop",
+        "stopped",
+        "stay",
+        "stayed",
+        "stays",
+        "quiet",
+        "quietly",
+        "rest",
+        "rested",
+        "rests",
+        "peaceful",
+        "calm"
       ]
     },
-    "hear": {
-      "label": "hear",
+    "stone": {
+      "label": "stone",
       "aliases": [
-        "hearing",
-        "listen",
-        "listening"
+        "rock",
+        "rocks"
       ]
     },
-    "touch": {
-      "label": "touch",
+    "there": {
+      "label": "there",
       "aliases": [
-        "touching"
+        "yonder"
       ]
     },
-    "feel": {
-      "label": "feel",
+    "thing": {
+      "label": "thing",
       "aliases": [
-        "feeling",
-        "feels",
-        "felt"
-      ]
-    },
-    "know": {
-      "label": "know",
-      "aliases": [
-        "knowing",
-        "knowledge"
+        "object",
+        "entity",
+        "item",
+        "this",
+        "that",
+        "it"
       ]
     },
     "think": {
@@ -213,49 +722,50 @@
         "thought"
       ]
     },
-    "want": {
-      "label": "want",
+    "touch": {
+      "label": "touch",
       "aliases": [
-        "wanting",
-        "wish",
-        "desire"
+        "touching"
       ]
     },
-    "eat": {
-      "label": "eat",
+    "water": {
+      "label": "water",
       "aliases": [
-        "eating",
-        "food"
+        "liquid",
+        "drink"
       ]
     },
-    "sleep": {
-      "label": "sleep",
+    "whole": {
+      "label": "whole",
       "aliases": [
-        "sleeping",
-        "rest"
+        "entire",
+        "complete",
+        "full"
       ]
     },
-    "thing": {
-      "label": "thing",
+    "animal": {
+      "label": "animal",
       "aliases": [
-        "object",
-        "entity",
-        "item"
+        "creature",
+        "beast",
+        "bird",
+        "birds",
+        "dog",
+        "dogs",
+        "cat",
+        "cats"
       ]
     },
-    "substance": {
-      "label": "substance",
+    "before": {
+      "label": "before",
       "aliases": [
-        "matter",
-        "stuff",
-        "material"
-      ]
-    },
-    "form": {
-      "label": "form",
-      "aliases": [
-        "shape",
-        "appearance"
+        "prior",
+        "earlier",
+        "past",
+        "yesterday",
+        "old",
+        "older",
+        "aged"
       ]
     },
     "change": {
@@ -266,104 +776,6 @@
         "become"
       ]
     },
-    "empty": {
-      "label": "empty",
-      "aliases": [
-        "nothing",
-        "void",
-        "absence"
-      ]
-    },
-    "water": {
-      "label": "water",
-      "aliases": [
-        "liquid",
-        "drink"
-      ]
-    },
-    "fire": {
-      "label": "fire",
-      "aliases": [
-        "flame",
-        "burn",
-        "burning"
-      ]
-    },
-    "earth": {
-      "label": "earth",
-      "aliases": [
-        "ground",
-        "dirt",
-        "soil",
-        "land",
-        "mountain",
-        "mountains",
-        "hill",
-        "hills"
-      ]
-    },
-    "air": {
-      "label": "air",
-      "aliases": [
-        "atmosphere",
-        "breath",
-        "wind"
-      ]
-    },
-    "light": {
-      "label": "light",
-      "aliases": [
-        "bright",
-        "brightness"
-      ]
-    },
-    "dark": {
-      "label": "dark",
-      "aliases": [
-        "darkness",
-        "dim"
-      ]
-    },
-    "hot": {
-      "label": "hot",
-      "aliases": [
-        "heat",
-        "warm",
-        "warmth"
-      ]
-    },
-    "cold": {
-      "label": "cold",
-      "aliases": [
-        "cool",
-        "chill"
-      ]
-    },
-    "stone": {
-      "label": "stone",
-      "aliases": [
-        "rock",
-        "rocks"
-      ]
-    },
-    "plant": {
-      "label": "plant",
-      "aliases": [
-        "vegetation",
-        "tree",
-        "trees",
-        "grass"
-      ]
-    },
-    "animal": {
-      "label": "animal",
-      "aliases": [
-        "creature",
-        "beast",
-        "bird",
-        "birds"
-      ]
-    },
     "inside": {
       "label": "inside",
       "aliases": [
@@ -372,254 +784,52 @@
         "inner"
       ]
     },
+    "person": {
+      "label": "person",
+      "aliases": [
+        "human",
+        "someone",
+        "somebody",
+        "people",
+        "man",
+        "woman",
+        "men",
+        "women",
+        "healer",
+        "healers",
+        "she",
+        "he",
+        "parents",
+        "parent"
+      ]
+    },
+    "source": {
+      "label": "source",
+      "aliases": [
+        "origin",
+        "beginning",
+        "start",
+        "begin",
+        "began",
+        "begins",
+        "starts",
+        "started"
+      ]
+    },
+    "strong": {
+      "label": "strong",
+      "aliases": [
+        "strength",
+        "power",
+        "force",
+        "hard"
+      ]
+    },
     "outside": {
       "label": "outside",
       "aliases": [
         "exterior",
         "outer"
-      ]
-    },
-    "here": {
-      "label": "here",
-      "aliases": [
-        "nearby"
-      ]
-    },
-    "there": {
-      "label": "there",
-      "aliases": [
-        "yonder"
-      ]
-    },
-    "near": {
-      "label": "near",
-      "aliases": [
-        "close",
-        "nearby"
-      ]
-    },
-    "far": {
-      "label": "far",
-      "aliases": [
-        "distant",
-        "away"
-      ]
-    },
-    "up": {
-      "label": "up",
-      "aliases": [
-        "above",
-        "higher"
-      ]
-    },
-    "down": {
-      "label": "down",
-      "aliases": [
-        "below",
-        "lower"
-      ]
-    },
-    "path": {
-      "label": "path",
-      "aliases": [
-        "road",
-        "way",
-        "route"
-      ]
-    },
-    "place": {
-      "label": "place",
-      "aliases": [
-        "location",
-        "spot",
-        "somewhere",
-        "city",
-        "town"
-      ]
-    },
-    "before": {
-      "label": "before",
-      "aliases": [
-        "prior",
-        "earlier",
-        "past",
-        "yesterday"
-      ]
-    },
-    "after": {
-      "label": "after",
-      "aliases": [
-        "later",
-        "future",
-        "tomorrow",
-        "next"
-      ]
-    },
-    "now": {
-      "label": "now",
-      "aliases": [
-        "today",
-        "present"
-      ]
-    },
-    "time": {
-      "label": "time",
-      "aliases": [
-        "while",
-        "duration"
-      ]
-    },
-    "one": {
-      "label": "one",
-      "aliases": [
-        "single",
-        "unity"
-      ]
-    },
-    "many": {
-      "label": "many",
-      "aliases": [
-        "multiple",
-        "plenty",
-        "several"
-      ]
-    },
-    "all": {
-      "label": "all",
-      "aliases": [
-        "every",
-        "everything",
-        "whole"
-      ]
-    },
-    "some": {
-      "label": "some",
-      "aliases": [
-        "few",
-        "part"
-      ]
-    },
-    "more": {
-      "label": "more",
-      "aliases": [
-        "greater",
-        "increase"
-      ]
-    },
-    "less": {
-      "label": "less",
-      "aliases": [
-        "fewer",
-        "decrease",
-        "smaller"
-      ]
-    },
-    "fast": {
-      "label": "fast",
-      "aliases": [
-        "quick",
-        "quickly",
-        "speed"
-      ]
-    },
-    "love": {
-      "label": "love",
-      "aliases": [
-        "loving",
-        "affection",
-        "care"
-      ]
-    },
-    "fear": {
-      "label": "fear",
-      "aliases": [
-        "afraid",
-        "scared",
-        "dread"
-      ]
-    },
-    "joy": {
-      "label": "joy",
-      "aliases": [
-        "happy",
-        "happiness",
-        "delight",
-        "glad"
-      ]
-    },
-    "pain": {
-      "label": "pain",
-      "aliases": [
-        "hurt",
-        "hurting",
-        "ache",
-        "suffering"
-      ]
-    },
-    "sad": {
-      "label": "sad",
-      "aliases": [
-        "sorrow",
-        "unhappy",
-        "grief"
-      ]
-    },
-    "good": {
-      "label": "good",
-      "aliases": [
-        "well",
-        "better",
-        "best",
-        "grateful",
-        "gratitude",
-        "thankful"
-      ]
-    },
-    "bad": {
-      "label": "bad",
-      "aliases": [
-        "evil",
-        "harm",
-        "harmful",
-        "worse",
-        "worst"
-      ]
-    },
-    "true": {
-      "label": "true",
-      "aliases": [
-        "truth",
-        "real",
-        "correct"
-      ]
-    },
-    "false": {
-      "label": "false",
-      "aliases": [
-        "lie",
-        "wrong",
-        "untrue"
-      ]
-    },
-    "equal": {
-      "label": "equal",
-      "aliases": [
-        "same",
-        "balance",
-        "fair",
-        "fairness",
-        "match"
-      ]
-    },
-    "bond": {
-      "label": "bond",
-      "aliases": [
-        "connection",
-        "tie",
-        "link",
-        "family",
-        "friend",
-        "friendship"
       ]
     },
     "conflict": {
@@ -633,11 +843,12 @@
         "wars"
       ]
     },
-    "same": {
-      "label": "same",
+    "container": {
+      "label": "container",
       "aliases": [
-        "identical",
-        "alike"
+        "box",
+        "vessel",
+        "hold"
       ]
     },
     "different": {
@@ -648,135 +859,32 @@
         "distinct"
       ]
     },
-    "part": {
-      "label": "part",
+    "substance": {
+      "label": "substance",
       "aliases": [
-        "piece",
-        "portion",
-        "section"
+        "matter",
+        "stuff",
+        "material"
       ]
     },
-    "whole": {
-      "label": "whole",
+    "collective": {
+      "label": "collective",
       "aliases": [
-        "entire",
-        "complete",
-        "full"
-      ]
-    },
-    "mark": {
-      "label": "mark",
-      "aliases": [
-        "sign",
-        "symbol",
-        "write",
-        "writing"
-      ]
-    },
-    "source": {
-      "label": "source",
-      "aliases": [
-        "origin",
-        "beginning",
-        "start"
-      ]
-    },
-    "container": {
-      "label": "container",
-      "aliases": [
-        "box",
-        "vessel",
-        "hold"
-      ]
-    },
-    "flow": {
-      "label": "flow",
-      "aliases": [
-        "stream",
-        "river",
-        "flowing"
-      ]
-    },
-    "pulse": {
-      "label": "pulse",
-      "aliases": [
-        "beat",
-        "rhythm"
-      ]
-    },
-    "still": {
-      "label": "still",
-      "aliases": [
-        "stillness",
-        "stop",
-        "stopped"
-      ]
-    },
-    "will": {
-      "label": "will",
-      "aliases": [
-        "intent",
-        "intention",
-        "purpose"
-      ]
-    },
-    "strong": {
-      "label": "strong",
-      "aliases": [
-        "strength",
-        "power",
-        "force",
-        "hard"
-      ]
-    },
-    "reach": {
-      "label": "reach",
-      "aliases": [
-        "extend",
-        "stretch"
-      ]
-    },
-    "wave": {
-      "label": "wave",
-      "aliases": [
-        "ripple",
-        "surge"
-      ]
-    },
-    "food": {
-      "label": "food",
-      "aliases": [
-        "meal",
-        "eat",
-        "mana"
-      ]
-    },
-    "hand": {
-      "label": "hand",
-      "aliases": [
-        "hands",
-        "grasp"
-      ]
-    },
-    "eye": {
-      "label": "eye",
-      "aliases": [
-        "eyes",
-        "sight"
-      ]
-    },
-    "skin": {
-      "label": "skin",
-      "aliases": [
-        "hide"
-      ]
-    },
-    "bone": {
-      "label": "bone",
-      "aliases": [
-        "bones",
-        "skeleton"
+        "all",
+        "group",
+        "groups",
+        "community",
+        "together",
+        "team",
+        "total",
+        "tribe",
+        "tribes",
+        "we",
+        "us",
+        "everyone"
       ]
     }
-  }
+  },
+  "version": "1.0-localization",
+  "description": "English labels and word bank for Fonoran concept identifiers. English is one localization — not the semantic authority."
 }

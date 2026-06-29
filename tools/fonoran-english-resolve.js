@@ -81,7 +81,12 @@ export function tokenizeEnglish(text) {
   return String(text ?? '')
     .trim()
     .match(/[A-Za-z']+/g)
-    ?.map(t => t.toLowerCase().replace(/^'+|'+$/g, ''))
+    ?.map(t => {
+      // Possession is not lexical in Fonoran: strip the possessive clitic so the
+      // bare noun resolves (man's -> man, children's -> children, dogs'/James' -> dogs/james).
+      const possessive = t.toLowerCase().replace(/'s$/, '');
+      return possessive.replace(/^'+|'+$/g, '');
+    })
     .filter(Boolean) ?? [];
 }
 

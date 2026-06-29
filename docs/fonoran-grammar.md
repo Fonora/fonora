@@ -290,19 +290,44 @@ Present is **not** a particle. It is the default when no time marker appears.
 | Past | ta | Under Development |
 | Future | na | Under Development |
 
-### Other particles (planned)
+### Other particles
+
+The full inventory (forms, roles, English triggers) lives in [../data/fonoran-grammar-particles.json](../data/fonoran-grammar-particles.json). Core grammatical particles:
 
 | Role | Particle | Status |
 | --- | --- | --- |
-| Negation | no | Proposed |
-| Affirmation | ya | Proposed |
-| Question | wo | Proposed |
+| Negation | no | Active |
+| Affirmation | ya | Active |
+| Question (marker) | wo | Active |
+| Conditional (if) | von | Active |
+| Causal (because) | vun | Active |
+| Result (therefore) | zan | Active |
+| Conjunction (and) | ven | Active |
+| Disjunction (or) | vin | Active |
+| Focus (only) | vat | Active |
+| Focus (also) | vet | Active |
+| Focus (even) | vit | Active |
+| Interrogative (what) | vus | Active |
+| Interrogative (who) | zas | Active |
+| Interrogative (when) | zes | Active |
+| Interrogative (where) | zis | Active |
+| Interrogative (why) | zos | Active |
+| Interrogative (how) | zus | Active |
 | Possession | TBD | Under Development |
-| Location | TBD | Under Development |
-| Direction | TBD | Under Development |
 | Comparison | TBD | Under Development |
 
-Particles are **reserved**: the root generator never assigns these forms (`ta`, `na`, `no`, `ya`, `wo`, plus the pronoun `mi`) to a lexical concept. Polarity is grammar, not vocabulary — **false** is `no` + **true**, **different** is `no` + **same**. Such antonyms are *not* roots and *not* compounds; they are produced at the particle layer.
+Particles are **reserved**: the root generator never assigns particle forms to a lexical concept. The reserved set is `mi`, `ta`, `na`, `no`, `ya`, `wo` plus the `v*`/`z*` particle forms enumerated in [../data/fonoran-primitive-roots-config.json](../data/fonoran-primitive-roots-config.json) (`reserved_particles.forms`).
+
+Polarity is grammar, not vocabulary — **false** is `no` + **true**, **different** is `no` + **same**. Such antonyms are *not* roots and *not* compounds; they are produced at the particle layer.
+
+### Particle placement and quantifiers
+
+Particles occupy fixed positions within the sentence skeleton; they never fuse into adjacent spellings.
+
+- **Negation** sits between Time and Event: `Subject · Time · no · Event · …` (e.g. *I never said that* -> `mi no` + event). It is clause-scoped.
+- **Question marker** `wo` is clause-initial; a specific interrogative particle (e.g. `zes` for *when*) fills its slot in addition to the marker.
+- **Focus** particles (`vat`/`vet`/`vit`) attach as modifiers next to the element they focus.
+- **Quantifier pronouns compose** rather than taking their own root: *nobody* = `no` + **person**, *nothing* = `no` + **thing**, *everyone* = **all** + **person**, *everything* = **all** + **thing**, *someone* = **some** + **person**.
 
 Even before the full inventory exists, you can already read sentences by treating each slot as a labeled relationship:
 

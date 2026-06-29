@@ -198,6 +198,8 @@
       dictQuery: '', dictSelection: null,
       dictShowRoots: true,
       dictShowWords: true,
+      dictShowParticles: false,
+      dictParticles: null,
       dictShowNeedsReview: false,
       dictShowApproved: false,
       dictShowRejected: false,
@@ -228,6 +230,9 @@
       wgBusy: false,
       translatorPlaying: false,
       translatorCancel: false,
+      gapsReport: null,
+      gapsLoaded: false,
+      gapsExpanded: {},
       rootCandidates: null,
       rootCursor: 0,
       rootReviewFocusPending: false,
@@ -395,6 +400,7 @@
       return composerFlatSpellings(composer).join('');
     }
     function typeBadge(type) {
+      if (type === 'particle') return '<span class="badge badge-particle">PARTICLE</span>';
       return `<span class="badge badge-${type === 'root' ? 'base' : 'compound'}">${type === 'root' ? 'ROOT' : 'COMPOUND'}</span>`;
     }
     function previewStateBadge(state) {
@@ -515,7 +521,7 @@
     }
 
     function renderActivePage() {
-      const labOptional = new Set(['home', 'grammar', 'translator', 'wordgen', 'concepts']);
+      const labOptional = new Set(['home', 'grammar', 'translator', 'wordgen', 'concepts', 'gaps']);
       if (!labOptional.has(STATE.page) && !STATE.lab) return;
       if (STATE.page === 'home') {
         wireLander();
@@ -531,6 +537,7 @@
       else if (STATE.page === 'translator') renderTranslator();
       else if (STATE.page === 'wordgen') renderWordGen();
       else if (STATE.page === 'health') renderHealth();
+      else if (STATE.page === 'gaps') void renderGaps().catch((err) => console.error('renderGaps failed:', err));
       else if (STATE.page === 'progress') renderProgress();
       else if (STATE.page === 'advanced') renderAdvanced();
       applyWriteAccessUI();
@@ -3718,9 +3725,37 @@
       } else {
         list = list.filter(e => e.state !== 'rejected');
       }
+
+      // Particles are a curated closed class: independent of the lab status filters.
+      const particles = dictParticleEntries();
+      list = [...list, ...particles];
+
       const q = STATE.dictQuery.trim().toLowerCase();
       if (q) list = list.filter(e => `${e.word} ${e.english} ${e.gloss} ${e.aliases} ${e.concept_id} ${e.hint}`.toLowerCase().includes(q));
       return list.sort((a, b) => a.word.localeCompare(b.word));
+    }
+
+    /** Curated grammar particles mapped into dictionary-entry shape. */
+    function dictParticleEntries() {
+      const data = STATE.dictParticles;
+      if (!data?.particles) return [];
+      return data.particles
+        .filter(p => p.form)
+        .map(p => ({
+          kind: 'particle',
+          id: p.id,
+          word: p.form,
+          english: p.gloss || p.id,
+          gloss: p.gloss || '',
+          aliases: (p.triggers ?? []).join(' '),
+          concept_id: p.id,
+          type: 'particle',
+          state: 'active',
+          role: p.role,
+          group: p.group,
+          triggers: p.triggers ?? [],
+          hint: p.role || '',
+        }));
     }
     function dictExplorerKind(entryKind) {
       return entryKind === 'sound' ? 'root' : 'word';
@@ -3735,8 +3770,48 @@
       if (panel) panel.innerHTML = dictDetailEmptyHtml();
     }
 
+    function particleDetailHtml(p) {
+      const triggers = (p.triggers ?? []).filter(Boolean);
+      const triggerHtml = triggers.length
+        ? triggers.map(t => `<code>${escapeHtml(t)}</code>`).join(' ')
+        : '<span class="muted">handled structurally / emitted by the grammar</span>';
+      const examples = {
+        logic_not: 'no + true = false · no + same = different',
+        logic_yes: 'affirmative answer',
+        query_marker: 'clause-initial flag for questions',
+      }[p.id];
+      return `
+        <div class="fonoran-split-workspace-inner particle-detail">
+          <div class="particle-detail__head">
+            ${typeBadge('particle')}
+            <span class="particle-detail__form">${escapeHtml(p.form)}</span>
+          </div>
+          <p class="particle-detail__gloss">${escapeHtml(p.gloss || p.id)}</p>
+          <dl class="particle-detail__meta">
+            <div><dt>Role</dt><dd>${escapeHtml(p.role || '—')}</dd></div>
+            <div><dt>Group</dt><dd>${escapeHtml(p.group || '—')}</dd></div>
+            <div><dt>English triggers</dt><dd>${triggerHtml}</dd></div>
+            ${examples ? `<div><dt>Composition</dt><dd>${escapeHtml(examples)}</dd></div>` : ''}
+          </dl>
+          <p class="particle-detail__note sans">Grammar particle: invariant, never fused into spellings (see <a href="#grammar">grammar</a>).</p>
+        </div>`;
+    }
+
+    function showParticleDetail(id) {
+      const panel = $('dict-detail');
+      if (!panel) return;
+      const p = (STATE.dictParticles?.particles ?? []).find(x => x.id === id);
+      panel.innerHTML = p
+        ? particleDetailHtml(p)
+        : '<div class="fonoran-split-empty"><p>Particle not found.</p></div>';
+    }
+
     let dictDetailToken = 0;
     async function loadDictionaryDetail(entryKind, id) {
+      if (entryKind === 'particle') {
+        showParticleDetail(id);
+        return;
+      }
       const panel = $('dict-detail');
       if (!panel) return;
       const token = ++dictDetailToken;
@@ -3790,11 +3865,13 @@
     function dictItemHtml(entry) {
       const sel = STATE.dictSelection;
       const selected = sel && sel.kind === entry.kind && sel.id === entry.id;
-      const type = entry.kind === 'sound' ? 'root' : 'word';
+      const type = entry.kind === 'sound' ? 'root' : entry.kind === 'particle' ? 'particle' : 'word';
       return pickerCellHtml({
         spelling: entry.word,
         meaning: dictPickerMeaning(entry),
         type,
+        glyphs: entry.kind === 'particle' ? '' : null,
+        showTypeBadge: entry.kind === 'particle',
         selected,
         attrs: { 'data-kind': entry.kind, 'data-id': entry.id },
       });
@@ -3812,7 +3889,8 @@
       const esc = (s) => (window.CSS?.escape ? CSS.escape(s) : String(s).replace(/["\\]/g, '\\$&'));
       const btn = document.querySelector(
         `#dict-roots .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"], `
-        + `#dict-words .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"]`,
+        + `#dict-words .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"], `
+        + `#dict-particles .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"]`,
       );
       if (!btn) return;
 
@@ -3837,8 +3915,10 @@
       const list = dictEntries();
       const roots = list.filter(e => e.kind === 'sound');
       const words = list.filter(e => e.kind === 'compound');
+      const particles = list.filter(e => e.kind === 'particle');
       const showRoots = STATE.dictShowRoots;
       const showWords = STATE.dictShowWords;
+      const showParticles = STATE.dictShowParticles;
       const emptyAll = STATE.lab.sounds.length + STATE.lab.compounds.length === 0;
       const emptyAllMsg = '<p class="empty" style="grid-column:1/-1">No vocabulary yet. <br/> <code>npm run fonoran:reset <br/> npm run fonoran:build</code></p>';
       const emptyMatchMsg = '<p class="empty" style="grid-column:1/-1">Nothing matches.</p>';
@@ -3847,15 +3927,17 @@
         const key = chip.dataset.dictFilter;
         const on = key === 'roots' ? showRoots
           : key === 'words' ? showWords
-            : key === 'needs_review' ? STATE.dictShowNeedsReview
-              : key === 'approved' ? STATE.dictShowApproved
-                : STATE.dictShowRejected;
+            : key === 'particles' ? showParticles
+              : key === 'needs_review' ? STATE.dictShowNeedsReview
+                : key === 'approved' ? STATE.dictShowApproved
+                  : STATE.dictShowRejected;
         chip.classList.toggle('active', on);
       });
-      $('dict-picker-empty')?.toggleAttribute('hidden', showRoots || showWords);
+      $('dict-picker-empty')?.toggleAttribute('hidden', showRoots || showWords || showParticles);
 
       $('dict-roots-h')?.toggleAttribute('hidden', !showRoots);
       $('dict-words-h')?.toggleAttribute('hidden', !showWords);
+      $('dict-particles-h')?.toggleAttribute('hidden', !showParticles);
 
       if (showRoots) {
         const rootsHtml = emptyAll
@@ -3875,6 +3957,13 @@
         wireDictionaryPicker($('dict-words'));
       } else {
         $('dict-words').innerHTML = '';
+      }
+
+      if (showParticles) {
+        $('dict-particles').innerHTML = particles.length ? particles.map(dictItemHtml).join('') : emptyMatchMsg;
+        wireDictionaryPicker($('dict-particles'));
+      } else {
+        $('dict-particles').innerHTML = '';
       }
 
       if (scrollToSelection) {
@@ -3940,10 +4029,19 @@
       }
     }
 
+    async function ensureDictParticles() {
+      if (STATE.dictParticles) return;
+      try {
+        STATE.dictParticles = await api('/api/fonoran/grammar-particles');
+      } catch {
+        STATE.dictParticles = { particles: [] };
+      }
+    }
+
     function renderDictionary() {
       if (!STATE.lab) return;
       ensureSplitStickyObserver();
-      ensureLexicon()
+      Promise.all([ensureLexicon(), ensureDictParticles()])
         .then(() => {
           renderDictionaryList();
           syncDictSelection();
@@ -4626,6 +4724,150 @@
       $('undo-btn')?.addEventListener('click', () => { undoLastChange(); });
       renderTimeline();
     }
+
+    /* ---------- translation gap test ---------- */
+    function gapCoverageColor(pct) {
+      return pct >= 80 ? 'var(--ok)' : pct >= 50 ? 'var(--review)' : 'var(--reject)';
+    }
+
+    function gapsPageHtml({ r, loading }) {
+      const body = loading
+        ? '<div class="gap-running"><span class="gap-spinner"></span> Loading latest results…</div>'
+        : r
+          ? buildGapReportHtml(r)
+          : '<p class="empty">No saved run yet. Generate one with <code>node scripts/fonoran-translation-gaps.js</code>.</p>';
+
+      const stamp = r?.generated_at
+        ? `<div class="gap-controls"><span class="gap-controls__hint sans">Latest run ${new Date(r.generated_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}</span></div>`
+        : '';
+
+      return `
+        <div class="content-page">
+          <section class="content-section content-section--intro">
+            <header class="home-intro-header">
+              <h1>Translation Test</h1>
+              <p class="home-subtitle">The latest full run of the English corpus through the translator. Red words are concepts the language cannot yet express.</p>
+            </header>
+            ${stamp}
+            ${body}
+          </section>
+        </div>`;
+    }
+
+    function wireGapsControls(el) {
+      el.querySelectorAll('[data-gap-level-toggle]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const lvl = Number(btn.dataset.gapLevelToggle);
+          STATE.gapsExpanded[lvl] = !STATE.gapsExpanded[lvl];
+          renderGaps();
+        });
+      });
+    }
+
+    function buildGapPhraseRow(p) {
+      const miss = p.unresolved.length
+        ? `<div class="gap-phrase__missing">missing: ${p.unresolved.map(w => `<span class="gap-chip">${escapeHtml(w)}</span>`).join(' ')}</div>`
+        : '';
+      const status = p.unresolved.length === 0
+        ? '<span class="gap-status gap-status--ok">✓</span>'
+        : `<span class="gap-status gap-status--bad">✗ ${p.unresolved.length}</span>`;
+      return `
+        <div class="gap-phrase${p.unresolved.length ? ' gap-phrase--miss' : ''}">
+          <div class="gap-phrase__head">${status}<span class="gap-phrase__en">${escapeHtml(p.phrase)}</span></div>
+          <div class="gap-phrase__fon mono">${escapeHtml(p.roman || '(empty)')}</div>
+          ${miss}
+        </div>`;
+    }
+
+    function buildGapReportHtml(r) {
+      const summary = `
+        <div class="gap-summary">
+          <div class="gap-stat">
+            <div class="gap-stat__value" style="color:${gapCoverageColor(r.coverage_pct)}">${r.coverage_pct}%</div>
+            <div class="gap-stat__label">Coverage</div>
+          </div>
+          <div class="gap-stat">
+            <div class="gap-stat__value">${r.clean_phrases}/${r.total_phrases}</div>
+            <div class="gap-stat__label">Phrases fully resolved</div>
+          </div>
+          <div class="gap-stat">
+            <div class="gap-stat__value" style="color:var(--reject)">${r.distinct_gaps}</div>
+            <div class="gap-stat__label">Distinct missing concepts</div>
+          </div>
+        </div>`;
+
+      const coverageBars = `
+        <section class="gap-block">
+          <h3 class="section-h">Coverage by level</h3>
+          <div class="gap-levels">
+            ${(r.levels ?? []).map(s => `
+              <div class="gap-level-row">
+                <div class="gap-level-row__name">L${s.level} · ${escapeHtml(s.name)}</div>
+                <div class="gap-level-row__bar"><span style="width:${s.coverage}%;background:${gapCoverageColor(s.coverage)}"></span></div>
+                <div class="gap-level-row__pct">${s.clean}/${s.phrases}</div>
+              </div>`).join('')}
+          </div>
+        </section>`;
+
+      const gapList = `
+        <section class="gap-block">
+          <h3 class="section-h">Missing concepts <span class="gap-count">(by frequency)</span></h3>
+          ${!(r.gaps ?? []).length
+            ? '<p class="empty">No gaps — every phrase fully resolved.</p>'
+            : `<div class="gap-list">${(r.gaps ?? []).map(g => `
+                <div class="gap-item">
+                  <span class="gap-item__count">${g.count}×</span>
+                  <span class="gap-item__word">${escapeHtml(g.word)}</span>
+                  <span class="gap-item__sample">${escapeHtml(g.samples[0] ?? '')}</span>
+                </div>`).join('')}</div>`}
+        </section>`;
+
+      const byLevel = new Map();
+      for (const p of r.phrases ?? []) {
+        if (!byLevel.has(p.level)) byLevel.set(p.level, []);
+        byLevel.get(p.level).push(p);
+      }
+      const phraseGroups = `
+        <section class="gap-block">
+          <h3 class="section-h">Phrase-by-phrase</h3>
+          <div class="gap-groups">
+            ${(r.levels ?? []).map(s => {
+              const expanded = STATE.gapsExpanded[s.level];
+              const phrases = byLevel.get(s.level) ?? [];
+              return `
+                <div class="gap-group">
+                  <button type="button" class="gap-group__head" data-gap-level-toggle="${s.level}" aria-expanded="${expanded ? 'true' : 'false'}">
+                    <span class="gap-group__chevron">${expanded ? '▾' : '▸'}</span>
+                    <span class="gap-group__title">Level ${s.level}: ${escapeHtml(s.name)}</span>
+                    <span class="gap-group__meta" style="color:${gapCoverageColor(s.coverage)}">${s.coverage}%</span>
+                  </button>
+                  ${expanded ? `<div class="gap-group__body">${phrases.map(buildGapPhraseRow).join('')}</div>` : ''}
+                </div>`;
+            }).join('')}
+          </div>
+        </section>`;
+
+      return summary + coverageBars + gapList + phraseGroups;
+    }
+
+    async function renderGaps() {
+      const el = $('gaps-body');
+      if (!el) return;
+
+      // Fetch the saved "latest" full run once, then render from cache.
+      if (!STATE.gapsLoaded) {
+        el.innerHTML = gapsPageHtml({ r: null, loading: true });
+        try {
+          STATE.gapsReport = await api('/api/fonoran/translation-tests/latest');
+        } catch {
+          STATE.gapsReport = null;
+        }
+        STATE.gapsLoaded = true;
+      }
+
+      el.innerHTML = gapsPageHtml({ r: STATE.gapsReport, loading: false });
+      wireGapsControls(el);
+    }
     function duplicateMeanings() {
       const map = new Map();
       const add = (i) => { if (!i.meaning?.trim() || i.state === 'rejected') return; const k = i.meaning.trim().toLowerCase(); if (!map.has(k)) map.set(k, { label: i.meaning.trim(), words: [] }); map.get(k).words.push(i.spelling); };
@@ -4649,7 +4891,7 @@
 
     /* ---------- nav ---------- */
     const MAIN_PAGES = new Set(['roots', 'create', 'review', 'dictionary', 'translator', 'wordgen']);
-    const ALL_PAGES = new Set(['home', 'root-review', 'roots', 'create', 'review', 'dictionary', 'grammar', 'translator', 'wordgen', 'health', 'progress', 'advanced', 'concepts']);
+    const ALL_PAGES = new Set(['home', 'root-review', 'roots', 'create', 'review', 'dictionary', 'grammar', 'translator', 'wordgen', 'health', 'gaps', 'progress', 'advanced', 'concepts']);
 
     function confirmDangerAction({ title, message, typeToConfirm }) {
       if (!confirm(`${title}\n\n${message}\n\nAre you sure you want to continue?`)) return false;
@@ -4682,7 +4924,14 @@
       STATE.page = name;
       setActiveTab(name);
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      pageEl(name)?.classList.add('active');
+      const target = pageEl(name);
+      if (target) target.classList.add('active');
+      else if (name !== 'home') {
+        console.warn(`Fonoran: missing page section for "${name}"`);
+        $('page-home')?.classList.add('active');
+        name = 'home';
+        STATE.page = 'home';
+      }
       if (name === 'home') {
         if (window.location.hash) history.replaceState(null, '', window.location.pathname);
       } else if (ALL_PAGES.has(name) || name === 'review') {
@@ -4722,6 +4971,7 @@
       const key = chip.dataset.dictFilter;
       if (key === 'roots') STATE.dictShowRoots = !STATE.dictShowRoots;
       else if (key === 'words') STATE.dictShowWords = !STATE.dictShowWords;
+      else if (key === 'particles') STATE.dictShowParticles = !STATE.dictShowParticles;
       else if (key === 'needs_review') STATE.dictShowNeedsReview = !STATE.dictShowNeedsReview;
       else if (key === 'approved') STATE.dictShowApproved = !STATE.dictShowApproved;
       else if (key === 'rejected') STATE.dictShowRejected = !STATE.dictShowRejected;
@@ -5053,7 +5303,10 @@
 
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-    const initialPageRaw = document.documentElement.getAttribute('data-fonora-page') || 'home';
+    const hashOnLoad = window.location.hash.replace(/^#/, '').split('?')[0];
+    const initialPageRaw = (hashOnLoad && ALL_PAGES.has(hashOnLoad) ? hashOnLoad : null)
+      || document.documentElement.getAttribute('data-fonora-page')
+      || 'home';
     const initialPage = initialPageRaw === 'root-review' ? 'review' : initialPageRaw;
     setNavSelectHandlers({
       onPage: (page) => switchPage(page),

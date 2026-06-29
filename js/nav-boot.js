@@ -31,6 +31,7 @@
     'dictionary',
     'grammar',
     'health',
+    'gaps',
     'progress',
     'advanced',
   ]);

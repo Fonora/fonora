@@ -48,6 +48,7 @@
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="review" role="menuitem">Review</button>
             <p class="nav-dropdown-label" role="presentation">Tools</p>
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="health" role="menuitem">Health</button>
+            <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="gaps" role="menuitem">Translation Test</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="progress" role="menuitem">Lab progress</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="advanced" role="menuitem">Advanced</button>
           </div>
@@ -388,6 +389,7 @@
             <div class="toolbar" id="dict-filters">
               <button type="button" class="chip active" data-dict-filter="roots">Roots</button>
               <button type="button" class="chip active" data-dict-filter="words">Words</button>
+              <button type="button" class="chip" data-dict-filter="particles">Particles</button>
               <button type="button" class="chip" data-dict-filter="needs_review">Needs review</button>
               <button type="button" class="chip" data-dict-filter="approved">Approved</button>
               <button type="button" class="chip" data-dict-filter="rejected">Rejected</button>
@@ -401,6 +403,8 @@
             <div class="sound-grid" id="dict-roots"></div>
             <h4 class="picker-h" id="dict-words-h">Words</h4>
             <div class="sound-grid" id="dict-words"></div>
+            <h4 class="picker-h" id="dict-particles-h">Particles</h4>
+            <div class="sound-grid" id="dict-particles"></div>
           </aside>
           <div class="fonoran-split-workspace" id="dict-detail" aria-live="polite">
             <div class="fonoran-split-empty">
@@ -438,6 +442,10 @@
 
       <section id="page-health" class="page">
         <div id="health-body"></div>
+      </section>
+
+      <section id="page-gaps" class="page">
+        <div id="gaps-body"></div>
       </section>
 
       <section id="page-progress" class="page">
