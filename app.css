@@ -155,6 +155,7 @@ html[data-fonora-tab='symbols'] #tab-symbols,
 html[data-fonora-tab='breakdown'] #tab-breakdown,
 html[data-fonora-tab='samples'] #tab-samples,
 html[data-fonora-tab='keyboard'] #tab-keyboard,
+html[data-fonora-tab='spelling-practice'] #tab-spelling-practice,
 html[data-fonora-tab='reverse'] #tab-reverse,
 html[data-fonora-tab='quiz'] #tab-quiz,
 html[data-fonora-tab='encoder-testing'] #tab-encoder-testing,
@@ -164,6 +165,12 @@ html[data-fonora-tab='docs'] #tab-docs {
   display: block !important;
 }
 
+html[data-fonora-tab='keyboard'] #tab-keyboard,
+html[data-fonora-tab='spelling-practice'] #tab-spelling-practice {
+  display: flex !important;
+  flex-direction: column;
+}
+
 html[data-fonora-tab='home'] [data-tab='home'].tab-btn,
 html[data-fonora-tab='translator'] [data-tab='translator'].tab-btn,
 html[data-fonora-tab='grid'] [data-tab='grid'].tab-btn,
@@ -171,6 +178,7 @@ html[data-fonora-tab='alphabet'] [data-tab='alphabet'].tab-btn,
 html[data-fonora-tab='breakdown'] [data-tab='breakdown'].tab-btn,
 html[data-fonora-tab='samples'] [data-tab='samples'].tab-btn,
 html[data-fonora-tab='keyboard'] [data-tab='keyboard'].tab-btn,
+html[data-fonora-tab='spelling-practice'] [data-tab='spelling-practice'].tab-btn,
 html[data-fonora-tab='reverse'] [data-tab='reverse'].tab-btn,
 html[data-fonora-tab='quiz'] [data-tab='quiz'].tab-btn,
 html[data-fonora-tab='encoder-testing'] [data-tab='encoder-testing'].tab-btn,
@@ -2470,8 +2478,187 @@ body.app-body--fonoran .btn-primary:hover {
   font-style: italic;
 }
 
-#tab-keyboard {
+#tab-keyboard,
+#tab-spelling-practice {
   overflow: visible;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100dvh - var(--app-header-offset, 7.5rem));
+}
+
+.typing-practice {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-height: 0;
+}
+
+.typing-practice__status {
+  margin: 0 0 0.5rem;
+}
+
+.typing-practice__prompt {
+  padding: 1rem 0.85rem;
+  border: 1px solid var(--layout-border, #e5e7eb);
+  border-radius: 8px;
+  background: #fafafa;
+}
+
+.typing-practice__prompt-row {
+  position: relative;
+  min-height: 2.75rem;
+}
+
+.typing-practice__word-col {
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.typing-practice__verdict-slot {
+  height: 1.5rem;
+  margin-bottom: 0.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.typing-practice__verdict-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.375rem;
+  box-sizing: border-box;
+  padding: 0 0.65rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  font-family: system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  border: 1px solid transparent;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.typing-practice__verdict-badge--ok,
+.typing-practice__verdict-badge--miss {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.typing-practice__verdict-badge--ok {
+  color: #166534;
+  background: #dcfce7;
+  border: 1px solid #86efac;
+}
+
+.typing-practice__verdict-badge--miss {
+  color: #9a3412;
+  background: #ffedd5;
+  border: 1px solid #fdba74;
+}
+
+.typing-practice__prompt--ok {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.typing-practice__prompt--miss {
+  border-color: #fdba74;
+  background: #fff7ed;
+}
+
+.typing-practice__word {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-family: system-ui, sans-serif;
+}
+
+.typing-practice__compare {
+  margin-top: 0;
+  display: none;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.35rem 0.45rem;
+  line-height: 1.45;
+}
+
+.typing-practice__compare.is-visible {
+  display: flex;
+  margin-top: 0.45rem;
+  min-height: 1.5rem;
+}
+
+.typing-practice__compare-glyphs {
+  font-size: 1.45rem;
+  line-height: 1.45;
+  word-break: break-all;
+}
+
+.typing-practice__compare-arrow {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  color: #94a3b8;
+  font-family: system-ui, sans-serif;
+  user-select: none;
+}
+
+.typing-practice__compare-glyphs--yours {
+  color: #9a3412;
+  text-decoration: line-through;
+  text-decoration-color: rgba(154, 52, 18, 0.45);
+}
+
+.typing-practice__compare-glyphs--correct {
+  color: #166534;
+}
+
+.typing-practice__meaning {
+  margin: 0.65rem 0 0;
+  min-height: 1.35rem;
+  font-size: 0.95rem;
+  color: #555;
+  text-align: center;
+}
+
+.typing-practice__meaning:empty::before {
+  content: '\00a0';
+  visibility: hidden;
+}
+
+.typing-practice__tab-hint {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  text-align: center;
+  font-family: system-ui, sans-serif;
+}
+
+.typing-practice__tab-hint kbd {
+  display: inline-block;
+  padding: 0.1rem 0.35rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #f8fafc;
+  font-size: 0.8em;
+  font-family: inherit;
+}
+
+.typing-practice__input {
+  min-height: 0;
+  resize: none;
+}
+
+.typing-practice__keyboard {
+  margin-top: auto;
+  margin-bottom: 0;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
 }
 
 .fonora-keyboard {
@@ -2485,6 +2672,8 @@ body.app-body--fonoran .btn-primary:hover {
   padding: 0.5rem 0 0.75rem;
   -webkit-overflow-scrolling: touch;
   position: relative;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .fonora-keyboard__row {
@@ -2548,6 +2737,25 @@ body.app-body--fonoran .btn-primary:hover {
   z-index: 1;
 }
 
+.fonora-key--alternates::after {
+  content: '⋯';
+  position: absolute;
+  top: 0.12rem;
+  right: 0.2rem;
+  font-size: 0.55rem;
+  line-height: 1;
+  color: #94a3b8;
+  letter-spacing: -0.08em;
+  pointer-events: none;
+}
+
+.fonora-key--holding,
+.fonora-key--holding.fonora-key--pressed {
+  background: linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 100%);
+  border-color: #6366f1;
+  z-index: 2;
+}
+
 .fonora-key--dead {
   opacity: 0.45;
   cursor: default;
@@ -2560,6 +2768,56 @@ body.app-body--fonoran .btn-primary:hover {
 
 .fonora-key--backspace {
   min-width: 4.5rem;
+}
+
+.fonora-key--enter {
+  min-width: 4.5rem;
+}
+
+.fonora-key--enter .fonora-key__label--center {
+  font-size: 0.7rem;
+  text-transform: lowercase;
+}
+
+.fonora-key--return {
+  min-width: 4.25rem;
+}
+
+.fonora-key__symbol--return {
+  font-size: 1.4rem;
+  line-height: 1;
+  font-family: system-ui, sans-serif;
+  color: #333;
+  pointer-events: none;
+}
+
+.fonora-keyboard--practice .fonora-keyboard__row:nth-child(3) {
+  padding-left: 0.4rem;
+}
+
+.fonora-keyboard--practice .fonora-keyboard__row--practice-bottom {
+  display: grid;
+  grid-template-columns: 1fr minmax(4.25rem, 26%);
+  gap: 0.2rem;
+  width: 100%;
+  max-width: 28rem;
+  padding-left: 0;
+}
+
+.fonora-keyboard--practice .fonora-key--backspace-inline {
+  flex: 1.35 1 0;
+  min-width: 2.5rem;
+}
+
+.fonora-keyboard--practice .fonora-key--space {
+  flex: none;
+  min-width: 0;
+  width: 100%;
+}
+
+.fonora-keyboard--practice .fonora-key--return {
+  width: 100%;
+  min-width: 0;
 }
 
 .fonora-key__symbol {
@@ -2645,13 +2903,27 @@ body.app-body--fonoran .btn-primary:hover {
 }
 
 @media (max-width: 640px) {
-  #tab-keyboard.panel {
+  #tab-keyboard.panel,
+  #tab-spelling-practice.panel {
     padding: 1rem 0.65rem;
   }
 
-  #tab-keyboard .symbol-input {
-    min-height: 4.5rem;
+  #tab-keyboard .symbol-input,
+  #tab-spelling-practice .symbol-input {
     padding: 0.65rem;
+  }
+
+  #tab-keyboard .typing-practice__input,
+  #tab-spelling-practice .typing-practice__input {
+    min-height: 2.75rem;
+  }
+
+  .typing-practice__word {
+    font-size: 1.65rem;
+  }
+
+  .typing-practice__compare-glyphs {
+    font-size: 1.2rem;
   }
 
   .fonora-keyboard {
@@ -2710,6 +2982,15 @@ body.app-body--fonoran .btn-primary:hover {
   .fonora-key--backspace {
     flex: 1 1 0;
     min-width: 0;
+  }
+
+  .fonora-key--enter {
+    flex: 1.1 1 0;
+    min-width: 0;
+  }
+
+  .fonora-keyboard--practice .fonora-key--backspace-inline {
+    flex: 1.2 1 0;
   }
 
   .fonora-vowel-popup {

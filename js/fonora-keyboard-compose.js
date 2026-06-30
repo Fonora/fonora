@@ -38,6 +38,8 @@ export function createFonoraKeyboardComposer(rules) {
   let buffer = '';
   /** @type {{ letter: string, symbols: string } | null} */
   let pendingRetro = null;
+  /** Base glyph already printed; next letter may upgrade to a submenu phoneme. */
+  let pendingSubmenuLetter = null;
 
   function isValidPrefix(s) {
     return sounds.some((sound) => sound.startsWith(s));
@@ -55,13 +57,48 @@ export function createFonoraKeyboardComposer(rules) {
     pendingRetro = null;
   }
 
+  function clearPendingSubmenu() {
+    pendingSubmenuLetter = null;
+  }
+
+  function clearAllPending() {
+    clearPendingRetro();
+    clearPendingSubmenu();
+  }
+
+  /** Long-press alternates for a key letter (excludes the base single-letter phoneme). */
+  function getAlternatePhonemes(letter) {
+    if (!letter || letter.length !== 1) return [];
+    // C key always maps to /ch/; ch is not a submenu alternate.
+    if (letter === 'c') return [];
+    const candidates = sounds.filter((sound) => sound.startsWith(letter) && sound !== letter);
+    if (letter === 'n' && phonemeSet.has('ñ') && !candidates.includes('ñ')) {
+      candidates.push('ñ');
+    }
+    return [...new Set(candidates)].sort((a, b) => a.localeCompare(b));
+  }
+
+  function hasSubmenu(letter) {
+    return getAlternatePhonemes(letter).length > 0;
+  }
+
+  /** @param {string} pending @param {string} letter */
+  function resolveSubmenuUpgrade(pending, letter) {
+    const combo = pending + letter;
+    const alts = getAlternatePhonemes(pending);
+    if (pending === 'n' && letter === 'n' && phonemeSet.has('ñ')) return 'ñ';
+    if (alts.includes(combo)) return combo;
+    if (combo === 'ey' && alts.includes('eye')) return 'eye';
+    return null;
+  }
+
   /** @returns {ComposeResult} */
   function appendLetter(letter) {
     if (letter === 'h' && pendingRetro && RETROACTIVE_H_DIGRAPHS[pendingRetro.letter]) {
       const upgraded = RETROACTIVE_H_DIGRAPHS[pendingRetro.letter];
       const fromSymbols = pendingRetro.symbols;
       const toSymbols = symbolsFor(upgraded);
-      pendingRetro = null;
+      clearAllPending();
       return { inserts: [], upgrade: { fromSymbols, toSymbols } };
     }
 
@@ -69,10 +106,29 @@ export function createFonoraKeyboardComposer(rules) {
       pendingRetro = null;
     }
 
+    if (pendingSubmenuLetter) {
+      const upgrade = resolveSubmenuUpgrade(pendingSubmenuLetter, letter);
+      if (upgrade) {
+        const fromSymbols = symbolsFor(pendingSubmenuLetter);
+        clearPendingSubmenu();
+        return {
+          inserts: [],
+          upgrade: { fromSymbols, toSymbols: symbolsFor(upgrade) },
+        };
+      }
+      clearPendingSubmenu();
+    }
+
     if (letter === 'c') {
       const outputs = buffer.length > 0 ? flushBuffer() : [];
       if (phonemeSet.has('ch')) outputs.push(symbolsFor('ch'));
+      clearAllPending();
       return { inserts: outputs };
+    }
+
+    if (buffer.length === 0 && !pendingSubmenuLetter && hasSubmenu(letter)) {
+      pendingSubmenuLetter = letter;
+      return { inserts: [symbolsFor(letter)] };
     }
 
     if (
@@ -84,13 +140,14 @@ export function createFonoraKeyboardComposer(rules) {
       return { inserts: [sym] };
     }
 
-    // Double-tap a popup vowel (e.g. a+a → /a/) unless a longer phoneme uses the pair (e+e → ee).
+    // Double-tap a popup vowel (e.g. a+a → /a/) unless a longer phoneme uses the pair.
     if (
       buffer.length === 1 &&
       buffer === letter &&
       POPUP_PREFIX_LETTERS.has(letter) &&
       keyboardKeySet.has(letter) &&
-      !keyboardKeySet.has(buffer + letter)
+      !keyboardKeySet.has(buffer + letter) &&
+      !hasSubmenu(letter)
     ) {
       const sym = symbolsFor(letter);
       buffer = '';
@@ -126,7 +183,7 @@ export function createFonoraKeyboardComposer(rules) {
 
   /** Insert a complete phoneme key in one step (e.g. from compose popup). */
   function insertPhoneme(phoneme) {
-    clearPendingRetro();
+    clearAllPending();
     const outputs = [];
     if (buffer.length > 0) {
       outputs.push(...flushBuffer());
@@ -139,7 +196,7 @@ export function createFonoraKeyboardComposer(rules) {
 
   /** Commit pending buffer on space/enter boundaries. */
   function flushBuffer() {
-    clearPendingRetro();
+    clearAllPending();
     const outputs = [];
     let remaining = buffer;
     buffer = '';
@@ -176,6 +233,11 @@ export function createFonoraKeyboardComposer(rules) {
       buffer = buffer.slice(0, -1);
       return { handled: true };
     }
+    if (pendingSubmenuLetter) {
+      const removeSymbols = symbolsFor(pendingSubmenuLetter);
+      clearPendingSubmenu();
+      return { handled: true, removeSymbols };
+    }
     if (pendingRetro) {
       const removeSymbols = pendingRetro.symbols;
       pendingRetro = null;
@@ -190,7 +252,7 @@ export function createFonoraKeyboardComposer(rules) {
 
   function clearBuffer() {
     buffer = '';
-    clearPendingRetro();
+    clearAllPending();
   }
 
   /** Phoneme keys that start with the current buffer (for compose picker). */
@@ -203,12 +265,23 @@ export function createFonoraKeyboardComposer(rules) {
     return [...new Set(candidates)].sort((a, b) => a.localeCompare(b));
   }
 
-  /** Insert a chosen phoneme immediately, discarding the compose buffer. */
+  /** @returns {ComposeResult} */
   function commitPhoneme(phoneme) {
     buffer = '';
     clearPendingRetro();
-    if (!phonemeSet.has(phoneme)) return [];
-    return [symbolsFor(phoneme)];
+    if (!phonemeSet.has(phoneme)) return { inserts: [] };
+
+    if (pendingSubmenuLetter && phoneme !== pendingSubmenuLetter) {
+      const fromSymbols = symbolsFor(pendingSubmenuLetter);
+      clearPendingSubmenu();
+      return {
+        inserts: [],
+        upgrade: { fromSymbols, toSymbols: symbolsFor(phoneme) },
+      };
+    }
+
+    clearPendingSubmenu();
+    return { inserts: [symbolsFor(phoneme)] };
   }
 
   return {
@@ -219,6 +292,7 @@ export function createFonoraKeyboardComposer(rules) {
     getBuffer,
     clearBuffer,
     getComposeCandidates,
+    getAlternatePhonemes,
     commitPhoneme,
     sounds,
     soundToSymbols,

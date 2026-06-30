@@ -10,7 +10,15 @@ import {
   findVowelForCell,
   isVowelQuizCell,
 } from './vowel-display.js';
-import { setupFonoraKeyboard, notifyFonoraTabChange } from './fonora-keyboard-ui.js';
+import { notifyFonoraTabChange } from './fonora-keyboard-ui.js';
+import {
+  setupSpellingPractice,
+  onSpellingPracticeTabActivated,
+} from './fonora-spelling-practice.js';
+import {
+  setupKeyboardTesting,
+  onKeyboardTestingTabActivated,
+} from './fonora-keyboard-testing.js';
 import {
   loadLanguageRulesFromString,
   buildKeyboardMap,
@@ -103,15 +111,22 @@ function updateAlphabetBanner(active) {
   }
 }
 
+function getSymbolInsertTarget() {
+  return document.getElementById('symbol-input');
+}
+
 function renderKeyboardSection() {
-  setupFonoraKeyboard(rules);
+  setupKeyboardTesting(rules);
 }
 
 function bindInsertableRow(tr, symbols) {
   tr.tabIndex = 0;
   tr.setAttribute('role', 'button');
   tr.title = `Insert ${symbols}`;
-  const insert = () => insertAtCursor(document.getElementById('symbol-input'), symbols);
+  const insert = () => {
+    const textarea = getSymbolInsertTarget();
+    if (textarea) insertAtCursor(textarea, symbols);
+  };
   tr.addEventListener('click', insert);
   tr.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -214,7 +229,10 @@ function renderSoundGrid() {
         if (ok) {
           td.tabIndex = 0;
           td.setAttribute('role', 'button');
-          td.addEventListener('click', () => insertAtCursor(document.getElementById('symbol-input'), cell.symbols));
+          td.addEventListener('click', () => {
+            const textarea = getSymbolInsertTarget();
+            if (textarea) insertAtCursor(textarea, cell.symbols);
+          });
         }
       }
       tr.appendChild(td);
@@ -739,6 +757,14 @@ function showTab(tabId) {
     }
   }
 
+  if (tabId === 'keyboard') {
+    onKeyboardTestingTabActivated();
+  }
+
+  if (tabId === 'spelling-practice') {
+    onSpellingPracticeTabActivated();
+  }
+
   notifyFonoraTabChange(tabId);
 
   if (tabId === 'docs') {
@@ -843,6 +869,7 @@ function applyRulesBundle(loaded) {
   setupTabs();
   renderHomeHowItWorks();
   renderKeyboardSection();
+  setupSpellingPractice(rules);
   renderSoundGrid();
   renderSupplementalSoundTables();
   setupUtilityButtons();

@@ -102,17 +102,15 @@ export function runKeyboardComposeTests(options) {
 
   t('compose vowel sequences ee, ae, oh, eye, ow, oy, ay', () => {
     const sequences = [
-      ['e', 'e', 'ee'],
-      ['a', 'e', 'ae'],
-      ['o', 'h', 'oh'],
-      ['e', 'y', 'e', 'eye'],
-      ['o', 'w', 'ow'],
-      ['o', 'y', 'oy'],
-      ['a', 'y', 'ay'],
+      [['e', 'e'], 'ee'],
+      [['a', 'e'], 'ae'],
+      [['o', 'h'], 'oh'],
+      [['e', 'y'], 'eye'],
+      [['o', 'w'], 'ow'],
+      [['o', 'y'], 'oy'],
+      [['a', 'y'], 'ay'],
     ];
-    for (const seq of sequences) {
-      const phoneme = seq[seq.length - 1];
-      const letters = seq.slice(0, -1);
+    for (const [letters, phoneme] of sequences) {
       const c = createFonoraKeyboardComposer(rules);
       const out = collectOutputs(c, letters);
       assert(out === c.soundToSymbols[phoneme], `${letters.join('')} → ${phoneme}`);
@@ -174,45 +172,102 @@ export function runKeyboardComposeTests(options) {
     assert(result.removeSymbols === c.soundToSymbols.s);
   });
 
-  t('a + a commits simple a and clears popup buffer', () => {
+  t('a + a prints two simple vowels when a has submenu', () => {
     const c = createFonoraKeyboardComposer(rules);
-    collectOutputs(c, ['a']);
-    assert(c.getBuffer() === 'a');
+    if (c.getAlternatePhonemes('a').length === 0) return;
+    const out = collectOutputs(c, ['a', 'a']);
+    assert(out === c.soundToSymbols.a + c.soundToSymbols.a);
+    assert(c.getBuffer() === '');
+  });
+
+  t('single a prints immediately when a has submenu', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    if (c.getAlternatePhonemes('a').length === 0) return;
     const out = collectOutputs(c, ['a']);
     assert(out === c.soundToSymbols.a);
     assert(c.getBuffer() === '');
   });
 
-  t('e + e still composes ee (not double-tap e)', () => {
+  t('single o prints immediately', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    if (c.getAlternatePhonemes('o').length === 0) return;
+    const out = collectOutputs(c, ['o']);
+    assert(out === c.soundToSymbols.o);
+    assert(c.getBuffer() === '');
+  });
+
+  t('single e prints immediately', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    const out = collectOutputs(c, ['e']);
+    assert(out === c.soundToSymbols.e);
+    assert(c.getBuffer() === '');
+  });
+
+  t('e + e composes ee (fast typing)', () => {
     const c = createFonoraKeyboardComposer(rules);
     const out = collectOutputs(c, ['e', 'e']);
     assert(out === c.soundToSymbols.ee);
     assert(c.getBuffer() === '');
   });
 
-  t('compose candidates for vowel prefix e', () => {
+  t('e + y composes eye', () => {
     const c = createFonoraKeyboardComposer(rules);
-    collectOutputs(c, ['e']);
-    const candidates = c.getComposeCandidates();
-    assert(candidates.includes('e'));
-    assert(candidates.includes('ee'));
-    assert(candidates.includes('eye'));
+    const out = collectOutputs(c, ['e', 'y']);
+    assert(out === c.soundToSymbols.eye);
+    assert(c.getBuffer() === '');
   });
 
-  t('compose candidates for n prefix include ng and ñ', () => {
+  t('alternate phonemes for e exclude base e', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    const alts = c.getAlternatePhonemes('e');
+    assert(!alts.includes('e'));
+    assert(alts.includes('ee'));
+    assert(alts.includes('eye'));
+  });
+
+  t('alternate phonemes for n exclude base n', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    const alts = c.getAlternatePhonemes('n');
+    assert(!alts.includes('n'));
+    assert(alts.includes('ng'));
+    assert(alts.includes('ñ'));
+  });
+
+  t('commitPhoneme upgrades pending submenu letter to chosen phoneme', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    const textarea = { value: '', selectionStart: 0, selectionEnd: 0 };
+    applyComposeToTextarea(textarea, c.appendLetter('e'));
+    applyComposeToTextarea(textarea, c.commitPhoneme('ee'));
+    assert(textarea.value === c.soundToSymbols.ee);
+    assert(c.getBuffer() === '');
+  });
+
+  t('single n prints immediately', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    const out = collectOutputs(c, ['n']);
+    assert(out === c.soundToSymbols.n);
+    assert(c.getBuffer() === '');
+  });
+
+  t('n + n upgrades to ñ', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    const out = collectOutputs(c, ['n', 'n']);
+    assert(out === c.soundToSymbols['ñ']);
+    assert(out !== c.soundToSymbols.n + c.soundToSymbols.n);
+    assert(c.getBuffer() === '');
+  });
+
+  t('n + n + e is ñ then e', () => {
+    const c = createFonoraKeyboardComposer(rules);
+    const out = collectOutputs(c, ['n', 'n', 'e']);
+    assert(out === c.soundToSymbols['ñ'] + c.soundToSymbols.e);
+  });
+
+  t('flush after n does not re-emit n', () => {
     const c = createFonoraKeyboardComposer(rules);
     collectOutputs(c, ['n']);
-    const candidates = c.getComposeCandidates();
-    assert(candidates.includes('n'));
-    assert(candidates.includes('ng'));
-    assert(candidates.includes('ñ'));
-  });
-
-  t('commitPhoneme inserts chosen vowel and clears buffer', () => {
-    const c = createFonoraKeyboardComposer(rules);
-    collectOutputs(c, ['e']);
-    const out = c.commitPhoneme('ee').join('');
-    assert(out === c.soundToSymbols.ee);
+    const out = c.flushBuffer().join('');
+    assert(out === '');
     assert(c.getBuffer() === '');
   });
 

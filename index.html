@@ -69,7 +69,8 @@
             <p class="nav-dropdown-label" role="presentation">Transliteration</p>
             <button type="button" class="tab-btn nav-dropdown-item" data-tab="breakdown" role="menuitem">Breakdown</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-tab="samples" role="menuitem">Samples</button>
-            <button type="button" class="tab-btn nav-dropdown-item" data-tab="keyboard" role="menuitem">Keyboard</button>
+            <button type="button" class="tab-btn nav-dropdown-item" data-tab="keyboard" role="menuitem">Keyboard Testing</button>
+            <button type="button" class="tab-btn nav-dropdown-item" data-tab="spelling-practice" role="menuitem">Spelling Practice</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-tab="reverse" role="menuitem">Reverse Lookup</button>
             <p class="nav-dropdown-label" role="presentation">Script QA</p>
             <button type="button" class="tab-btn nav-dropdown-item" data-tab="symbols" role="menuitem">Symbols</button>
@@ -302,22 +303,75 @@
       </div>
     </section>
 
-    <!-- Keyboard -->
+    <!-- Keyboard Testing -->
     <section class="panel tab-panel" id="tab-keyboard" data-tab-panel="keyboard" hidden>
-      <h2>Fonora Keyboard</h2>
-      <p class="section-desc"></p>
+      <h2>Keyboard Testing</h2>
+      <p class="section-desc">Each prompt lists Fonora phonemes to type (e.g. <strong>p · e · ñ · a</strong>). Type them on the keyboard, then press <kbd>↵</kbd> check. Words are nonsense — only the sounds matter.</p>
 
-      <textarea id="symbol-input" class="symbol-text symbol-input text-input--full" rows="4" placeholder="Type or insert symbols here…"></textarea>
-      <p id="keyboard-compose-hint" class="keyboard-compose-hint" hidden></p>
+      <p id="keyboard-testing-status" class="typing-practice__status section-desc" hidden></p>
 
-      <div id="fonora-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
-      <div id="fonora-keyboard" class="fonora-keyboard" aria-label="Fonora script keyboard"></div>
+      <div class="typing-practice">
+        <div class="typing-practice__prompt">
+          <div class="typing-practice__word-col">
+            <div class="typing-practice__verdict-slot">
+              <span id="keyboard-testing-verdict" class="typing-practice__verdict-badge" aria-live="polite"></span>
+            </div>
+            <p class="typing-practice__word" id="keyboard-testing-prompt-word">—</p>
+            <div id="keyboard-testing-answer-compare" class="typing-practice__compare" aria-hidden="true">
+              <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--yours symbol-text" id="keyboard-testing-user-glyphs"></span>
+              <span class="typing-practice__compare-arrow" aria-hidden="true">→</span>
+              <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--correct symbol-text" id="keyboard-testing-expected-glyphs"></span>
+            </div>
+          </div>
+          <p class="typing-practice__meaning" id="keyboard-testing-prompt-meaning"></p>
+        </div>
+
+        <textarea id="keyboard-testing-input" class="symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
+
+        <p class="typing-practice__tab-hint">Press <kbd>Tab</kbd> for next word</p>
+
+        <div id="keyboard-testing-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
+        <div id="keyboard-testing-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora script keyboard"></div>
+      </div>
+    </section>
+
+    <!-- Spelling Practice -->
+    <section class="panel tab-panel" id="tab-spelling-practice" data-tab-panel="spelling-practice" hidden>
+      <h2>Spelling Practice</h2>
+      <p class="section-desc">Type the roman word in Fonora script, then press <kbd>↵</kbd> check on the keyboard.</p>
+
+      <p id="spelling-practice-status" class="typing-practice__status section-desc" hidden></p>
+
+      <div class="typing-practice">
+        <div class="typing-practice__prompt">
+          <div class="typing-practice__word-col">
+            <div class="typing-practice__verdict-slot">
+              <span id="spelling-verdict" class="typing-practice__verdict-badge" aria-live="polite"></span>
+            </div>
+            <p class="typing-practice__word" id="spelling-prompt-word">—</p>
+            <div id="spelling-answer-compare" class="typing-practice__compare" aria-hidden="true">
+              <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--yours symbol-text" id="spelling-user-glyphs"></span>
+              <span class="typing-practice__compare-arrow" aria-hidden="true">→</span>
+              <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--correct symbol-text" id="spelling-expected-glyphs"></span>
+            </div>
+          </div>
+          <p class="typing-practice__meaning" id="spelling-prompt-meaning"></p>
+        </div>
+
+        <textarea id="spelling-practice-input" class="symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
+
+        <p class="typing-practice__tab-hint">Press <kbd>Tab</kbd> for next word</p>
+
+        <div id="spelling-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
+        <div id="spelling-practice-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora script keyboard"></div>
+      </div>
     </section>
 
     <!-- Sound Grid -->
     <section class="panel tab-panel" id="tab-grid" data-tab-panel="grid" hidden>
       <h2>Sound Grid</h2>
       <p class="section-desc">Five places of articulation × four manners. The vowel indicator <span class="symbol-text">⚬</span> (keyboard 0) is documented under Modifiers and used in the vowel table, not in this grid.</p>
+      <textarea id="symbol-input" class="symbol-text symbol-input" hidden aria-hidden="true" tabindex="-1"></textarea>
       <div class="table-wrap table-wrap--scroll">
         <table class="sound-grid" id="sound-grid">
           <thead id="sound-grid-head"></thead>

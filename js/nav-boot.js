@@ -10,6 +10,7 @@
     'breakdown',
     'samples',
     'keyboard',
+    'spelling-practice',
     'reverse',
     'quiz',
     'encoder-testing',

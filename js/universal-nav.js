@@ -16,7 +16,8 @@ const MORE_MENU = [
   { type: 'label', text: 'Transliteration' },
   { id: 'breakdown', label: 'Breakdown' },
   { id: 'samples', label: 'Samples' },
-  { id: 'keyboard', label: 'Keyboard' },
+  { id: 'keyboard', label: 'Keyboard Testing' },
+  { id: 'spelling-practice', label: 'Spelling Practice' },
   { id: 'reverse', label: 'Reverse Lookup' },
   { type: 'label', text: 'Script QA' },
   { id: 'symbols', label: 'Symbols' },
@@ -53,7 +54,8 @@ const SCRIPT_TITLES = {
   alphabet: 'Alphabet',
   breakdown: 'Breakdown',
   samples: 'Samples',
-  keyboard: 'Keyboard',
+  keyboard: 'Keyboard Testing',
+  'spelling-practice': 'Spelling Practice',
   reverse: 'Reverse Lookup',
   symbols: 'Symbols',
   quiz: 'Quiz',
@@ -300,8 +302,25 @@ function syncBootAttributes() {
   html.removeAttribute('data-fonora-page');
 }
 
+function syncStaticMoreMenu(root) {
+  const menu = root.querySelector('#nav-more-menu');
+  if (!menu) return;
+
+  menu.innerHTML = MORE_MENU.map((item) => {
+    if (item.type === 'label') {
+      return `<p class="nav-dropdown-label" role="presentation">${escapeHtml(item.text)}</p>`;
+    }
+    const active = item.id === state.activeTab;
+    return `<button type="button" class="tab-btn nav-dropdown-item${active ? ' tab-btn--active' : ''}" data-tab="${escapeAttr(item.id)}" role="menuitem"${
+      active ? ' aria-current="page"' : ''
+    }>${escapeHtml(item.label)}</button>`;
+  }).join('');
+}
+
 function patchStaticNav(root) {
   root.className = `app-header app-header--${state.context}`;
+
+  syncStaticMoreMenu(root);
 
   root.querySelectorAll('[data-nav-tab]').forEach((el) => {
     el.classList.toggle('platform-tab--active', el.dataset.navTab === state.context);

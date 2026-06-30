@@ -5,8 +5,7 @@
 
 /** @typedef {{ code: string, label: string, phoneme?: string | null, compose?: string, dead?: boolean, type?: string, wide?: boolean, insertSymbol?: string }} LayoutKey */
 
-/** @type {LayoutKey[][]} */
-export const US_QWERTY_ROWS = [
+const LETTER_ROWS = [
   [
     { code: 'KeyQ', label: 'q', type: 'vowel-indicator' },
     { code: 'KeyW', label: 'w', phoneme: 'w' },
@@ -39,14 +38,44 @@ export const US_QWERTY_ROWS = [
     { code: 'KeyN', label: 'n', phoneme: 'n' },
     { code: 'KeyM', label: 'm', phoneme: 'm' },
   ],
+];
+
+/** @type {LayoutKey[][]} */
+export const US_QWERTY_ROWS = [
+  ...LETTER_ROWS,
   [
     { code: 'Space', label: 'space', type: 'space', wide: true },
-    { code: 'Backspace', label: '⌫', type: 'backspace', wide: false },
+    { code: 'Backspace', label: '⌫', type: 'backspace' },
   ],
 ];
 
+/**
+ * @param {{ layout?: 'default' | 'practice' }} [options]
+ * @returns {LayoutKey[][]}
+ */
+export function getKeyboardRows(options = {}) {
+  const { layout = 'default' } = options;
+
+  if (layout === 'practice') {
+    return [
+      LETTER_ROWS[0],
+      LETTER_ROWS[1],
+      [
+        ...LETTER_ROWS[2],
+        { code: 'Backspace', label: '⌫', type: 'backspace' },
+      ],
+      [
+        { code: 'Space', label: 'space', type: 'space', wide: true },
+        { code: 'Enter', label: 'return', type: 'enter', wide: true },
+      ],
+    ];
+  }
+
+  return US_QWERTY_ROWS.map((row) => [...row]);
+}
+
 const LETTER_BY_CODE = new Map();
-for (const row of US_QWERTY_ROWS) {
+for (const row of LETTER_ROWS) {
   for (const key of row) {
     if (key.type || key.dead) continue;
     if (key.compose) {
@@ -63,7 +92,7 @@ export function romanLetterForCode(code) {
 }
 
 const LETTER_TO_CODE = new Map();
-for (const row of US_QWERTY_ROWS) {
+for (const row of LETTER_ROWS) {
   for (const key of row) {
     if (key.type || key.dead) continue;
     const letter = key.compose ?? (key.phoneme?.length === 1 ? key.phoneme : null);
@@ -90,14 +119,15 @@ export function getVowelIndicatorSymbol(rules) {
 }
 
 /** Build display model: resolve Fonora symbols for each key cap. */
-export function buildFonoraKeyboardModel(rules, soundToSymbols) {
+export function buildFonoraKeyboardModel(rules, soundToSymbols, options = {}) {
   const vowelIndicator = getVowelIndicatorSymbol(rules);
-  return US_QWERTY_ROWS.map((row) =>
+  const rows = getKeyboardRows(options);
+  return rows.map((row) =>
     row.map((key) => {
       if (key.type === 'vowel-indicator') {
         return { ...key, symbols: vowelIndicator, insertSymbol: vowelIndicator };
       }
-      if (key.type === 'space' || key.type === 'backspace') {
+      if (key.type === 'space' || key.type === 'backspace' || key.type === 'enter') {
         return { ...key, symbols: '' };
       }
       if (key.dead) {
