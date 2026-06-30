@@ -10,6 +10,7 @@ import {
   findVowelForCell,
   isVowelQuizCell,
 } from './vowel-display.js';
+import { setupFonoraKeyboard, notifyFonoraTabChange } from './fonora-keyboard-ui.js';
 import {
   loadLanguageRulesFromString,
   buildKeyboardMap,
@@ -103,22 +104,7 @@ function updateAlphabetBanner(active) {
 }
 
 function renderKeyboardSection() {
-  const textarea = document.getElementById('symbol-input');
-  renderSymbolButtons(document.getElementById('symbol-buttons'), textarea);
-  attachKeyboardShortcuts(textarea);
-
-  const mappingBody = document.getElementById('keyboard-mapping-body');
-  mappingBody.innerHTML = '';
-  const rows = [
-    ...rules.places.map((p) => ({ num: p.keyNumber, letter: p.keyLetter, symbol: p.symbol, label: p.label, kind: 'Place' })),
-    ...rules.modifiers.map((m) => ({ num: m.keyNumber, letter: m.keyLetter, symbol: m.symbol, label: m.label, kind: 'Modifier' })),
-  ].sort((a, b) => a.num - b.num);
-
-  for (const row of rows) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${row.num}</td><td>${row.letter}</td><td class="symbol-text">${row.symbol}</td><td>${row.label}</td><td>${row.kind}</td>`;
-    mappingBody.appendChild(tr);
-  }
+  setupFonoraKeyboard(rules);
 }
 
 function bindInsertableRow(tr, symbols) {
@@ -309,10 +295,15 @@ function renderSupplementalSoundTables() {
 
 function setupUtilityButtons() {
   const textarea = document.getElementById('symbol-input');
-  document.getElementById('btn-clear').addEventListener('click', () => {
+  if (!textarea) return;
+  const clearBtn = document.getElementById('btn-clear');
+  const copyBtn = document.getElementById('btn-copy');
+  const normalizeBtn = document.getElementById('btn-normalize');
+  const backspaceBtn = document.getElementById('btn-backspace');
+  clearBtn?.addEventListener('click', () => {
     textarea.value = '';
   });
-  document.getElementById('btn-copy').addEventListener('click', async () => {
+  copyBtn?.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(textarea.value);
     } catch {
@@ -320,10 +311,10 @@ function setupUtilityButtons() {
       document.execCommand('copy');
     }
   });
-  document.getElementById('btn-normalize').addEventListener('click', () => {
+  normalizeBtn?.addEventListener('click', () => {
     textarea.value = normalizeSymbolInput(textarea.value, rules);
   });
-  document.getElementById('btn-backspace').addEventListener('click', () => deleteSymbolBeforeCursor(textarea));
+  backspaceBtn?.addEventListener('click', () => deleteSymbolBeforeCursor(textarea));
 }
 
 function formatIpaResult(result) {
@@ -747,6 +738,8 @@ function showTab(tabId) {
       prefillBreakdownFromWordSources();
     }
   }
+
+  notifyFonoraTabChange(tabId);
 
   if (tabId === 'docs') {
     onDocsTabActivated();

@@ -92,10 +92,10 @@
         </header>
         <div class="home-prose">
           <p>
-            Fonora brings together a universal phonetic script, an experimental constructed language, and tools for building and documenting new languages on a shared phonetic foundation.
+            Fonora brings together a universal phonetic script, an experiment in cross-language meaning construction, and tools for building and documenting new languages on a shared phonetic foundation.
           </p>
           <p>
-            Start with the script to learn how sounds are written, explore Fonoran to see a language built in Fonora, or jump into the language builder to create vocabulary of your own.
+            Start with the script to learn how sounds are written, explore Fonoran to test whether a small shared vocabulary can enable communication across native languages, or jump into the language builder to create vocabulary of your own.
           </p>
         </div>
       </section>
@@ -115,7 +115,7 @@
           <article class="home-layer-card">
             <p class="home-layer-card__tag">Language</p>
             <h3>Fonoran</h3>
-            <p>An experimental constructed language written in Fonora: roots, compounds, semantic coordinates, and a growing dictionary.</p>
+            <p>An experiment in cross-language communication: a small vocabulary of intuitive concepts you combine to construct meaning, written in Fonora.</p>
             <div class="home-layer-card__actions">
               <a href="/language" class="btn btn--primary">Explore Language</a>
             </div>
@@ -304,36 +304,14 @@
 
     <!-- Keyboard -->
     <section class="panel tab-panel" id="tab-keyboard" data-tab-panel="keyboard" hidden>
-      <h2>Keyboard</h2>
-      <p class="section-desc">Type symbols in the area below. Number keys and letter shortcuts insert symbols when focused.</p>
+      <h2>Fonora Keyboard</h2>
+      <p class="section-desc"></p>
 
       <textarea id="symbol-input" class="symbol-text symbol-input text-input--full" rows="4" placeholder="Type or insert symbols here…"></textarea>
+      <p id="keyboard-compose-hint" class="keyboard-compose-hint" hidden></p>
 
-      <div class="button-row">
-        <button type="button" id="btn-clear" class="btn">Clear</button>
-        <button type="button" id="btn-copy" class="btn">Copy</button>
-        <button type="button" id="btn-normalize" class="btn">Normalize spacing</button>
-        <button type="button" id="btn-backspace" class="btn">Backspace</button>
-      </div>
-
-      <div id="symbol-buttons" class="symbol-buttons"></div>
-
-      <h3 class="examples-heading">Keyboard mapping</h3>
-      <p class="section-desc">Number and letter shortcuts loaded from language rules.</p>
-      <div class="table-wrap">
-        <table class="data-table keyboard-mapping-table">
-          <thead>
-            <tr>
-              <th>Number</th>
-              <th>Letter</th>
-              <th>Symbol</th>
-              <th>Label</th>
-              <th>Kind</th>
-            </tr>
-          </thead>
-          <tbody id="keyboard-mapping-body"></tbody>
-        </table>
-      </div>
+      <div id="fonora-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
+      <div id="fonora-keyboard" class="fonora-keyboard" aria-label="Fonora script keyboard"></div>
     </section>
 
     <!-- Sound Grid -->

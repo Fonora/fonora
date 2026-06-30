@@ -14,6 +14,7 @@ import { getVowelEntries } from './vowel-display.js';
 import { loadActiveRulesFixture, applyBundleMaps } from './load-rules-fixture.js';
 import { LANGUAGE_RULES_PATH } from './fonora-config.js';
 import { runTests } from './tests-core.js';
+import { runKeyboardComposeTests } from './fonora-keyboard-compose.test.js';
 import { initEspeak, textToIpa } from './ipa.js';
 import { normalizeIpa } from './ipa-normalize.js';
 import { encodeFromIpa } from './ipa-encode-helper.js';
@@ -447,6 +448,13 @@ const { passed, total, failed } = runTests({
   bundle: loadActiveRulesFixture(),
 });
 
+const keyboardComposeResults = runKeyboardComposeTests({
+  rules: loadActiveRulesFixture().rules,
+});
+const keyboardPassed = keyboardComposeResults.passed;
+const keyboardTotal = keyboardComposeResults.total;
+const keyboardFailed = keyboardComposeResults.failed;
+
 async function runCorpusIpaTests() {
   const bundle = loadActiveRulesFixture();
   applyBundleMaps(bundle);
@@ -633,6 +641,7 @@ const rootWorkflowResult = await (async () => {
 
 const allFailed = [
   ...failed,
+  ...keyboardFailed,
   ...corpusResults.filter((r) => !r.ok),
   ...(rootWorkflowResult.ok ? [] : [rootWorkflowResult]),
   ...(parserResult.ok ? [] : [parserResult]),
@@ -659,6 +668,7 @@ const allFailed = [
 ];
 const allPassed =
   passed
+  + keyboardPassed
   + corpusResults.filter((r) => r.ok).length
   + (parserResult.ok ? 1 : 0)
   + (composeResult.ok ? 1 : 0)
@@ -682,7 +692,7 @@ const allPassed =
   + (boundaryMultiResult.ok ? 1 : 0)
   + (boundaryDigraphResult.ok ? 1 : 0)
   + (rootWorkflowResult.ok ? 1 : 0);
-const allTotal = total + corpusResults.length + 22;
+const allTotal = total + keyboardTotal + corpusResults.length + 22;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);
