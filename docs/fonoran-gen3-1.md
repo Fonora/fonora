@@ -1,6 +1,10 @@
 # Fonoran Gen 3.1: Phonetic Distinctiveness Layer
 
-> **Archive.** Experimental generator, not the active workflow. See [fonoran.md](fonoran.md).
+> **Archive — superseded direction.** Experimental generator, not the active workflow. See [fonoran.md](fonoran.md).
+>
+> Built on the Gen 3 coordinate track, which the [Fonoran Constitution](fonoran-constitution.md)
+> demotes in favor of a human-experience root organization and a communication-first success
+> metric. Retained for reference only.
 
 > **Status:** experimental, extends Gen 3 without changing semantic coordinate theory  
 > **Previous:** [`fonoran-gen3.md`](fonoran-gen3.md) (frozen for comparison)

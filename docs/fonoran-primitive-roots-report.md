@@ -1,6 +1,11 @@
 # Fonoran primitive roots — generation report
 
 > **Status:** experimental · generated 2026-06-27 · **not committed as canonical**
+>
+> **Archive — superseded direction.** This ~200-primitive algorithmic run predates the
+> [Fonoran Constitution](fonoran-constitution.md), which reorients the language around a small,
+> human-experience root set (the tiered model: ~50 communicative core → ~100 extended →
+> unlimited) gated by the campfire test. Kept for reference, not as the production inventory.
 
 Algorithmic assignment of ~200 semantic primitives to phonetically ranked syllables, following [fonoran-grammar.md](fonoran-grammar.md).
 

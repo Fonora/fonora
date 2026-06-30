@@ -1,0 +1,54 @@
+{
+  "version": "1.0-playtests",
+  "philosophy": "Human guess-the-meaning playtests are the authority on understandability. Each round records whether a real root-knower recovered the intended meaning of a Fonoran expression, with how many repair turns it took. The automated understandability score only ranks; these rounds decide which form is preferred. See docs/fonoran-constitution.md.",
+  "rounds": [
+    {
+      "id": "pt-mr10xdk4-sn8xsx",
+      "at": "2026-06-30T19:12:36.580Z",
+      "concept_id": "whole",
+      "shown_spelling": "taktes",
+      "shown_composition": [
+        "tak",
+        "tes"
+      ],
+      "recovered": true,
+      "repair_turns": 0,
+      "guess": "whole",
+      "confusions": [],
+      "core_only": false,
+      "source": "puzzle"
+    },
+    {
+      "id": "pt-mr10xsm7-1h0jmm",
+      "at": "2026-06-30T19:12:56.095Z",
+      "concept_id": "fever",
+      "shown_spelling": "fendam",
+      "shown_composition": [
+        "fen",
+        "dam"
+      ],
+      "recovered": true,
+      "repair_turns": 1,
+      "guess": "fever",
+      "confusions": [],
+      "core_only": false,
+      "source": "puzzle"
+    },
+    {
+      "id": "pt-mr10y2zr-40yoja",
+      "at": "2026-06-30T19:13:09.543Z",
+      "concept_id": "answer",
+      "shown_spelling": "kuhu",
+      "shown_composition": [
+        "ku",
+        "hu"
+      ],
+      "recovered": true,
+      "repair_turns": 1,
+      "guess": "answer",
+      "confusions": [],
+      "core_only": true,
+      "source": "puzzle"
+    }
+  ]
+}

@@ -203,6 +203,8 @@
       dictShowNeedsReview: false,
       dictShowApproved: false,
       dictShowRejected: false,
+      dictCoreOnly: false,
+      conceptTiers: null,
       wordComposer: [], wordComposerFilter: '',
       wordComposerEditingId: null,
       wordComposerReturnPage: null,
@@ -228,6 +230,16 @@
       gapsReport: null,
       gapsLoaded: false,
       gapsExpanded: {},
+      puzzle: {
+        challenge: null,
+        coreOnly: false,
+        repairTurns: 0,
+        revealed: false,
+        busy: false,
+        recorded: false,
+        session: { played: 0, recovered: 0 },
+        summary: null,
+      },
       rootCandidates: null,
       rootCursor: 0,
       rootReviewFocusPending: false,
@@ -527,6 +539,7 @@
       else if (STATE.page === 'dictionary') renderDictionary();
       else if (STATE.page === 'grammar') renderGrammar();
       else if (STATE.page === 'translator') renderTranslator();
+      else if (STATE.page === 'puzzle') renderPuzzle();
       else if (STATE.page === 'health') renderHealth();
       else if (STATE.page === 'gaps') void renderGaps().catch((err) => console.error('renderGaps failed:', err));
       else if (STATE.page === 'progress') renderProgress();
@@ -613,6 +626,48 @@
     async function ensureLexicon() {
       if (!STATE.lexicon) STATE.lexicon = await api('/api/fonoran/lexicon');
       return STATE.lexicon;
+    }
+
+    const LANGUAGE_TIER_LABELS = {
+      communicative_core: 'Communicative core',
+      extended_core: 'Extended core',
+      complete: 'Complete language',
+    };
+    const EXPERIENCE_TIER_LABELS = {
+      survival_body: 'Survival & body', space_motion: 'Space & motion', social: 'Social',
+      emotion: 'Emotion', time: 'Time', thinking: 'Thinking', abstract: 'Abstract',
+    };
+
+    async function ensureConceptTiers() {
+      if (STATE.conceptTiers) return STATE.conceptTiers;
+      const map = new Map();
+      try {
+        const data = await api('/api/fonoran/concepts');
+        for (const c of data.concepts ?? []) {
+          if (!c.id) continue;
+          map.set(c.id, {
+            experience_tier: c.experience_tier ?? null,
+            language_tier: c.language_tier ?? null,
+            campfire_pass: c.campfire_pass ?? null,
+          });
+        }
+      } catch { /* tiers are optional decoration */ }
+      STATE.conceptTiers = map;
+      return map;
+    }
+
+    function tierFor(conceptId) {
+      return STATE.conceptTiers?.get(conceptId) ?? null;
+    }
+
+    function tierBadgeHtml(conceptId) {
+      const t = tierFor(conceptId);
+      if (!t?.language_tier) return '';
+      const cls = t.language_tier === 'communicative_core' ? 'tier-badge--core'
+        : t.language_tier === 'extended_core' ? 'tier-badge--extended' : 'tier-badge--complete';
+      const exp = t.experience_tier ? EXPERIENCE_TIER_LABELS[t.experience_tier] ?? t.experience_tier : '';
+      const fire = t.campfire_pass ? ' · campfire ✓' : '';
+      return `<span class="tier-badge ${cls}" title="${escapeHtml(exp)}${escapeHtml(fire)}">${escapeHtml(LANGUAGE_TIER_LABELS[t.language_tier] ?? t.language_tier)}${exp ? ` · ${escapeHtml(exp)}` : ''}</span>`;
     }
 
     function conceptList() {
@@ -3717,6 +3772,14 @@
         list = list.filter(e => e.state !== 'rejected');
       }
 
+      // Communicative-core view: only the ~50 core roots (the set the experiment measures).
+      if (STATE.dictCoreOnly) {
+        list = list.filter(e => e.kind === 'sound' && tierFor(e.concept_id)?.language_tier === 'communicative_core');
+        const q0 = STATE.dictQuery.trim().toLowerCase();
+        if (q0) list = list.filter(e => `${e.word} ${e.english} ${e.gloss} ${e.aliases} ${e.concept_id} ${e.hint}`.toLowerCase().includes(q0));
+        return list.sort((a, b) => a.word.localeCompare(b.word));
+      }
+
       // Particles are a curated closed class: independent of the lab status filters.
       const particles = dictParticleEntries();
       list = [...list, ...particles];
@@ -3820,10 +3883,44 @@
           },
         });
         if (token !== dictDetailToken) return;
+        const extras = dictDetailExtrasHtml(entryKind, id);
+        if (extras) panel.insertAdjacentHTML('beforeend', extras);
       } catch (e) {
         if (token !== dictDetailToken) return;
         panel.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`;
       }
+    }
+
+    /** Extra dictionary panel: experience tier (roots) + alternate understandable forms (words). */
+    function dictDetailExtrasHtml(entryKind, id) {
+      if (entryKind === 'sound') {
+        const sound = STATE.lab?.sounds?.find(s => s.spelling === id);
+        const badge = sound ? tierBadgeHtml(sound.concept_id) : '';
+        if (!badge) return '';
+        return `<div class="dict-alternates"><p class="dict-alternates__title">Where it sits</p><p>${badge}</p></div>`;
+      }
+      const compound = STATE.lab?.compounds?.find(c => c.id === id);
+      if (!compound) return '';
+      const alts = compound.alternate_forms ?? [];
+      const score = compound.understandability;
+      const scoreLine = score != null
+        ? `<p class="sans dict-alt__readable">Preferred form understandability: ${Math.round(score * 100)}% (advisory — playtests decide). Try it in <a href="#puzzle">Puzzle Conversation</a>.</p>`
+        : '';
+      if (!alts.length && score == null) return '';
+      const items = alts.map(a => {
+        const pct = a.understandability != null ? Math.round(a.understandability * 100) : null;
+        return `<div class="dict-alt">
+            <span class="dict-alt__spelling">${escapeHtml(a.spelling)}</span>
+            <span class="dict-alt__readable">${escapeHtml((a.composition ?? []).join(' + '))}</span>
+            ${pct != null ? `<span class="dict-alt__bar"><span style="width:${pct}%"></span></span><span class="dict-alt__score">${pct}%</span>` : ''}
+            ${a.status ? `<span class="dict-alt__status">${escapeHtml(a.status)}</span>` : ''}
+          </div>`;
+      }).join('');
+      return `<div class="dict-alternates">
+          <p class="dict-alternates__title">Other understandable ways to say this</p>
+          ${scoreLine}
+          ${items || '<p class="sans dict-alt__readable">No alternates recorded yet.</p>'}
+        </div>`;
     }
 
     function selectDictionaryEntry(entryKind, id) {
@@ -3919,9 +4016,10 @@
         const on = key === 'roots' ? showRoots
           : key === 'words' ? showWords
             : key === 'particles' ? showParticles
-              : key === 'needs_review' ? STATE.dictShowNeedsReview
-                : key === 'approved' ? STATE.dictShowApproved
-                  : STATE.dictShowRejected;
+              : key === 'core' ? STATE.dictCoreOnly
+                : key === 'needs_review' ? STATE.dictShowNeedsReview
+                  : key === 'approved' ? STATE.dictShowApproved
+                    : STATE.dictShowRejected;
         chip.classList.toggle('active', on);
       });
       $('dict-picker-empty')?.toggleAttribute('hidden', showRoots || showWords || showParticles);
@@ -4032,7 +4130,7 @@
     function renderDictionary() {
       if (!STATE.lab) return;
       ensureSplitStickyObserver();
-      Promise.all([ensureLexicon(), ensureDictParticles()])
+      Promise.all([ensureLexicon(), ensureDictParticles(), ensureConceptTiers()])
         .then(() => {
           renderDictionaryList();
           syncDictSelection();
@@ -4599,9 +4697,184 @@
       }).join('')}`).join('');
     }
 
+    /* ---------- puzzle conversation ---------- */
+    function puzzleScriptHtml(spelling) {
+      try {
+        if (STATE.rules) {
+          const { phrase } = romanToFonoraScript([spelling], STATE.rules);
+          if (phrase) return `<span class="puzzle-script" aria-hidden="true">${escapeHtml(phrase)}</span>`;
+        }
+      } catch { /* fall through */ }
+      return '';
+    }
+
+    async function loadPuzzleChallenge() {
+      const p = STATE.puzzle;
+      p.busy = true;
+      p.revealed = false;
+      p.recorded = false;
+      p.repairTurns = 0;
+      renderPuzzle();
+      try { await ensureRules(); } catch { /* script preview is optional */ }
+      try {
+        const q = p.coreOnly ? '?core=1' : '';
+        p.challenge = await api(`/api/fonoran/puzzle/challenge${q}`);
+      } catch (e) {
+        p.challenge = null;
+        toast(e.message);
+      } finally {
+        p.busy = false;
+        renderPuzzle();
+      }
+    }
+
+    async function recordPuzzleGuess(recovered, guess) {
+      const p = STATE.puzzle;
+      const c = p.challenge;
+      if (!c || p.recorded) return;
+      p.recorded = true;
+      p.session.played += 1;
+      if (recovered) p.session.recovered += 1;
+      try {
+        await api('/api/fonoran/puzzle/guess', {
+          method: 'POST',
+          body: JSON.stringify({
+            concept_id: c.concept_id,
+            shown_spelling: c.spelling,
+            shown_composition: c.parts,
+            recovered,
+            repair_turns: p.repairTurns,
+            guess: guess ?? null,
+            core_only: c.core_only,
+            source: 'puzzle',
+          }),
+        });
+      } catch (e) {
+        toast(e.message);
+      }
+      try { p.summary = await api('/api/fonoran/playtests/summary'); } catch { /* ignore */ }
+      renderPuzzle();
+    }
+
+    function onPuzzleChoice(choice) {
+      const p = STATE.puzzle;
+      const c = p.challenge;
+      if (!c || p.revealed || p.recorded) return;
+      const correct = String(choice).toLowerCase() === String(c.answer).toLowerCase();
+      if (correct) {
+        p.revealed = true;
+        p.lastGuess = choice;
+        p.lastCorrect = true;
+        void recordPuzzleGuess(true, choice);
+        return;
+      }
+      // First miss → offer a repair turn (literal root breakdown + alternates). Second
+      // miss → reveal the answer and record a non-recovery.
+      if (p.repairTurns < 1) {
+        p.repairTurns += 1;
+        p.repairWrong = choice;
+        renderPuzzle();
+        return;
+      }
+      p.revealed = true;
+      p.lastGuess = choice;
+      p.lastCorrect = false;
+      void recordPuzzleGuess(false, choice);
+    }
+
+    function renderPuzzle() {
+      const host = $('puzzle-body');
+      if (!host) return;
+      const p = STATE.puzzle;
+      const c = p.challenge;
+
+      const session = p.session.played
+        ? `<span class="puzzle-score">Recovered <strong>${p.session.recovered}</strong> / ${p.session.played} this session</span>`
+        : '';
+
+      const summary = p.summary
+        ? `<span class="puzzle-score puzzle-score--muted">All players: ${p.summary.recovered}/${p.summary.total_rounds} rounds recovered${p.summary.overall_recovery_rate != null ? ` (${Math.round(p.summary.overall_recovery_rate * 100)}%)` : ''}</span>`
+        : '';
+
+      let card;
+      if (p.busy && !c) {
+        card = `<p class="sans puzzle-loading">Picking a word…</p>`;
+      } else if (!c) {
+        card = `<div class="puzzle-card"><p class="sans">No words to play yet. Run the converged build, then press <strong>New word</strong>.</p></div>`;
+      } else {
+        const choices = (c.choices ?? []).map(ch => {
+          let cls = 'puzzle-choice';
+          if (p.revealed) {
+            if (String(ch).toLowerCase() === String(c.answer).toLowerCase()) cls += ' puzzle-choice--correct';
+            else if (p.lastGuess && String(ch).toLowerCase() === String(p.lastGuess).toLowerCase()) cls += ' puzzle-choice--wrong';
+          }
+          const dis = (p.revealed || p.recorded) ? ' disabled' : '';
+          return `<button type="button" class="${cls}" data-puzzle-choice="${escapeHtml(ch)}"${dis}>${escapeHtml(ch)}</button>`;
+        }).join('');
+
+        const repair = (p.repairTurns > 0 && !p.revealed)
+          ? `<div class="puzzle-repair">
+               <p class="sans puzzle-repair__lead">Not quite — that was <strong>${escapeHtml(p.repairWrong ?? '')}</strong>. Repair turn: here is the literal breakdown.</p>
+               <p class="puzzle-literal">${(c.literal_parts ?? []).map(lp => `<span class="puzzle-literal__part"><span class="mono">${escapeHtml(lp.spelling)}</span> <span class="sans">${escapeHtml(lp.meaning)}</span></span>`).join('<span class="puzzle-literal__plus">+</span>')}</p>
+               ${(c.alternate_forms ?? []).length ? `<p class="sans puzzle-repair__alts">Other speakers might say: ${(c.alternate_forms).map(a => `<span class="mono">${escapeHtml(a.spelling)}</span> <span class="sans">(${escapeHtml(a.readable)})</span>`).join(', ')}</p>` : ''}
+             </div>`
+          : '';
+
+        const reveal = p.revealed
+          ? `<div class="puzzle-reveal ${p.lastCorrect ? 'puzzle-reveal--ok' : 'puzzle-reveal--miss'}">
+               <p class="sans">${p.lastCorrect ? 'Recovered' : 'Not recovered'} ${p.repairTurns ? `after ${p.repairTurns} repair turn${p.repairTurns === 1 ? '' : 's'}` : 'on the first try'}. It means <strong>${escapeHtml(c.answer)}</strong>.</p>
+               <p class="sans puzzle-reveal__literal">${escapeHtml(c.spelling)} = ${(c.literal_parts ?? []).map(lp => lp.meaning).join(' + ')}.</p>
+               <button type="button" class="btn btn-primary" id="puzzle-next">Next word</button>
+             </div>`
+          : '';
+
+        card = `<div class="puzzle-card">
+            <p class="sans puzzle-card__prompt">A speaker who knows the roots said this. What did they mean?</p>
+            <div class="puzzle-word">
+              <span class="puzzle-word__roman mono">${escapeHtml(c.spelling)}</span>
+              ${puzzleScriptHtml(c.spelling)}
+            </div>
+            <div class="puzzle-choices">${choices}</div>
+            ${repair}
+            ${reveal}
+          </div>`;
+      }
+
+      host.innerHTML = `
+        <header class="grammar-toolbar">
+          <div class="grammar-toolbar__text">
+            <p class="grammar-toolbar__tag">The experiment</p>
+            <h1 class="grammar-toolbar__title">Puzzle Conversation</h1>
+            <p class="grammar-toolbar__lead sans">Could another root-knower recover the meaning? Guess what each Fonoran word means. Miss once and you get a repair turn with the literal roots. Every round is recorded as a real understandability playtest.</p>
+          </div>
+        </header>
+        <div class="puzzle-controls sans">
+          <label class="puzzle-toggle"><input type="checkbox" id="puzzle-core"${p.coreOnly ? ' checked' : ''}> 50-root challenge (communicative core only)</label>
+          <button type="button" class="btn btn-primary" id="puzzle-new">New word</button>
+          ${session}
+          ${summary}
+        </div>
+        ${card}`;
+
+      host.querySelectorAll('[data-puzzle-choice]').forEach(btn => {
+        btn.addEventListener('click', () => onPuzzleChoice(btn.dataset.puzzleChoice));
+      });
+      $('puzzle-new')?.addEventListener('click', () => { void loadPuzzleChallenge(); });
+      $('puzzle-next')?.addEventListener('click', () => { void loadPuzzleChallenge(); });
+      $('puzzle-core')?.addEventListener('change', (e) => {
+        p.coreOnly = e.target.checked;
+        void loadPuzzleChallenge();
+      });
+
+      if (!c && !p.busy && STATE.lab) {
+        // Auto-start the first round when landing on the page.
+        void loadPuzzleChallenge();
+      }
+    }
+
     /* ---------- nav ---------- */
     const MAIN_PAGES = new Set(['roots', 'create', 'review', 'dictionary', 'translator']);
-    const ALL_PAGES = new Set(['home', 'root-review', 'roots', 'create', 'review', 'dictionary', 'grammar', 'translator', 'health', 'gaps', 'progress', 'advanced', 'concepts']);
+    const ALL_PAGES = new Set(['home', 'root-review', 'roots', 'create', 'review', 'dictionary', 'grammar', 'translator', 'puzzle', 'health', 'gaps', 'progress', 'advanced', 'concepts']);
 
     function confirmDangerAction({ title, message, typeToConfirm }) {
       if (!confirm(`${title}\n\n${message}\n\nAre you sure you want to continue?`)) return false;
@@ -4682,6 +4955,7 @@
       if (key === 'roots') STATE.dictShowRoots = !STATE.dictShowRoots;
       else if (key === 'words') STATE.dictShowWords = !STATE.dictShowWords;
       else if (key === 'particles') STATE.dictShowParticles = !STATE.dictShowParticles;
+      else if (key === 'core') STATE.dictCoreOnly = !STATE.dictCoreOnly;
       else if (key === 'needs_review') STATE.dictShowNeedsReview = !STATE.dictShowNeedsReview;
       else if (key === 'approved') STATE.dictShowApproved = !STATE.dictShowApproved;
       else if (key === 'rejected') STATE.dictShowRejected = !STATE.dictShowRejected;

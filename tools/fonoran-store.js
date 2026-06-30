@@ -21,6 +21,7 @@ export const EDITORIAL_DOCS = {
   localization_en: 'data/localizations/en.json',
   compounds: 'data/fonoran-compounds.json',
   phonetics_config: 'data/fonoran-primitive-roots-config.json',
+  playtests: 'data/fonoran-playtests.json',
 };
 
 /** Snapshot bundle file paths (includes lab bucket). */
@@ -181,6 +182,9 @@ function isDocBodyEmpty(key, body) {
       return !(body.compounds?.length);
     case 'phonetics_config':
       return !body.phonetics && !body.version;
+    case 'playtests':
+      // A playtests doc with a version but no rounds yet is still a valid (empty) doc.
+      return !body.version && !(body.rounds?.length);
     default:
       return false;
   }
@@ -366,6 +370,8 @@ function docCounts(key, body) {
       return { compounds: body.compounds?.length ?? 0 };
     case 'phonetics_config':
       return { phonetics: Boolean(body.phonetics) };
+    case 'playtests':
+      return { rounds: body.rounds?.length ?? 0 };
     default:
       return {};
   }
@@ -376,10 +382,17 @@ export async function readAllSnapshotDocs() {
   const bucket = await readBucketRaw();
   if (!bucket) throw new Error('Lab bucket is empty or unreadable');
 
+  // Docs that may be absent in older stores/snapshots; their absence must not break
+  // export or import of the rest of the language state.
+  const OPTIONAL_DOCS = new Set(['playtests']);
+
   const docs = {};
   for (const key of Object.keys(EDITORIAL_DOCS)) {
     const body = await readDoc(key);
-    if (!body) throw new Error(`Missing editorial doc: ${key}`);
+    if (!body) {
+      if (OPTIONAL_DOCS.has(key)) continue;
+      throw new Error(`Missing editorial doc: ${key}`);
+    }
     docs[key] = body;
   }
 
@@ -391,10 +404,16 @@ export async function readAllSnapshotDocs() {
  * @param {{ bucket: object, docs: Record<string, object> }} snapshot
  */
 export async function importAllSnapshotDocs({ bucket, docs }) {
+  // Optional docs (e.g. playtests) added after some snapshots were created — skip them
+  // when an older snapshot does not carry them rather than failing the whole restore.
+  const OPTIONAL_DOCS = new Set(['playtests']);
   clearStoreCache();
   await writeBucketRaw(bucket);
   for (const key of Object.keys(EDITORIAL_DOCS)) {
-    if (!docs[key]) throw new Error(`Snapshot missing doc: ${key}`);
+    if (!docs[key]) {
+      if (OPTIONAL_DOCS.has(key)) continue;
+      throw new Error(`Snapshot missing doc: ${key}`);
+    }
     await writeDoc(key, docs[key]);
   }
   clearStoreCache();

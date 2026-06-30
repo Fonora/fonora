@@ -1,8 +1,15 @@
 # Fonoran language guide
 
-> **Start here** for the experimental Fonoran language and its builder at [`/fonoran/`](../fonoran/).
+> **Start here** for the experimental Fonoran language and its builder at [`/language`](/language).
+>
+> **Why Fonoran exists:** it is an experiment in whether people from different native
+> languages can communicate basic meaning by combining a small shared set of roots. The
+> success metric is whether *another* root-knower can recover the intended meaning — not
+> whether a compound is the most technically correct decomposition. Read the
+> [Fonoran Constitution](fonoran-constitution.md) for the philosophy, the campfire test,
+> and the tiered language model.
 
-**Fonoran** is a constructed language written in the [Fonora phonetic script](platform-overview.md). You assign CV/CVC sounds to semantic concepts, compose roots into compound words, and approve what enters the live vocabulary. Human review is canonical: generators propose, you decide.
+**Fonoran** is a constructed language written in the [Fonora phonetic script](platform-overview.md). You assign CV/CVC sounds to semantic concepts, compose roots into compound words, and approve what enters the live vocabulary. Human review is canonical: generators propose, you decide. Compounds are treated as **meaning-attempts** with a *preferred* form and tracked *alternate understandable* forms, not as single canonical answers.
 
 ## Architecture
 
@@ -134,10 +141,11 @@ Distinctiveness, collision, and boundary scores plus any warnings are surfaced p
 
 | File | Role |
 | --- | --- |
-| `data/fonoran-concept-inventory.json` | 118 semantic concepts + editorial metadata (no phonetics) |
-| `data/fonoran-root-candidates.json` | Proposed spellings + scores + warnings + review status |
-| `data/fonoran-approved-roots.json` | Canonical approved roots |
-| `data/fonoran-compounds.json` | 46 curated compound recipes |
+| `data/fonoran-concept-inventory.json` | Semantic concepts + editorial metadata + experience/language tier + campfire pass (no phonetics) |
+| `data/fonoran-root-candidates.json` | Proposed spellings + scores + warnings + review status + tier metadata |
+| `data/fonoran-approved-roots.json` | Canonical approved roots (with experience/language tier + campfire pass) |
+| `data/fonoran-compounds.json` | Curated compounds as ranked meaning-attempts: a `preferred` form + `alternates[]` with advisory `understandability` (see [constitution](fonoran-constitution.md)) |
+| `data/fonoran-playtests.json` | Guess-the-meaning playtest rounds — the human authority that decides preferred forms |
 | `data/fonoran-primitive-roots-config.json` | Phonetics rules + active `collision_profile` |
 | `data/fonoran-collision-profiles/` | Editorial collision profiles (default `en.json`) |
 | `data/fonoran-sound-bucket.json` | Runtime lab: sounds, compounds, history (seed + snapshot format) |
@@ -231,6 +239,7 @@ The translator's semantic lookup uses **WordNet** (via **wordpos**). See [third-
 
 ## Related
 
+- [fonoran-constitution.md](fonoran-constitution.md) — what Fonoran is for: the communication experiment, the campfire test, the tiered language
 - [fonoran-grammar.md](fonoran-grammar.md) — syntax and composition rules
 - [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — translator design
 - [platform-overview.md](platform-overview.md) — three platform layers

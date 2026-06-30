@@ -1,7 +1,7 @@
 {
   "version": "2.0-editorial-workflow",
   "status": "proposal",
-  "generated_at": "2026-06-29T22:07:58.275Z",
+  "generated_at": "2026-06-30T17:14:46.991Z",
   "collision_profile": "en",
   "philosophy": {
     "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
@@ -9,8 +9,8 @@
     "source_concepts": "data/fonoran-concept-inventory.json"
   },
   "summary": {
-    "total": 100,
-    "pending": 0,
+    "total": 110,
+    "pending": 10,
     "approved": 100,
     "rejected": 0,
     "compound_candidates": 0
@@ -51,7 +51,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "very easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "self",
@@ -88,7 +92,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "very easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "collective",
@@ -125,7 +133,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "body",
@@ -162,7 +174,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "life",
@@ -199,7 +215,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "move",
@@ -236,7 +256,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "give",
@@ -273,7 +297,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "take",
@@ -310,7 +338,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "hold",
@@ -347,7 +379,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "use",
@@ -384,7 +420,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "help",
@@ -421,7 +461,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "make",
@@ -458,7 +502,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "do",
@@ -495,7 +543,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "speak",
@@ -532,7 +584,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "see",
@@ -569,7 +625,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "moderate",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "hear",
@@ -606,7 +666,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "touch",
@@ -643,7 +707,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "smell",
@@ -680,7 +748,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "taste",
@@ -717,7 +789,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "know",
@@ -754,7 +830,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "moderate",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "thinking",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "think",
@@ -791,7 +871,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "thinking",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "feel",
@@ -828,7 +912,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "want",
@@ -865,7 +953,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "eat",
@@ -902,7 +994,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "sleep",
@@ -939,7 +1035,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "thing",
@@ -976,7 +1076,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "moderate",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "substance",
@@ -1013,7 +1117,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "form",
@@ -1050,7 +1158,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "change",
@@ -1087,7 +1199,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "empty",
@@ -1124,7 +1240,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "water",
@@ -1161,7 +1281,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "moderate",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "fire",
@@ -1198,7 +1322,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "earth",
@@ -1235,7 +1363,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "air",
@@ -1272,7 +1404,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "light",
@@ -1309,7 +1445,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "dark",
@@ -1346,7 +1486,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "hot",
@@ -1383,7 +1527,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "cold",
@@ -1420,7 +1568,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "stone",
@@ -1457,7 +1609,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "plant",
@@ -1494,7 +1650,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "animal",
@@ -1531,7 +1691,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "inside",
@@ -1568,7 +1732,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "outside",
@@ -1605,7 +1773,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "here",
@@ -1642,7 +1814,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "there",
@@ -1679,7 +1855,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "near",
@@ -1716,7 +1896,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "moderate",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "far",
@@ -1753,7 +1937,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "up",
@@ -1790,7 +1978,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "down",
@@ -1827,7 +2019,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "path",
@@ -1864,7 +2060,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "place",
@@ -1901,7 +2101,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "surface",
@@ -1938,7 +2142,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "bound",
@@ -1975,7 +2183,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "center",
@@ -2012,7 +2224,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "before",
@@ -2049,7 +2265,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "very easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "after",
@@ -2086,7 +2306,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "now",
@@ -2123,7 +2347,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "time",
@@ -2160,7 +2388,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "time",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "one",
@@ -2197,7 +2429,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "very easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "many",
@@ -2234,7 +2470,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "moderate",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "all",
@@ -2271,7 +2511,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "some",
@@ -2308,7 +2552,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "more",
@@ -2345,7 +2593,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "less",
@@ -2382,7 +2634,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "fast",
@@ -2419,7 +2675,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "love",
@@ -2456,7 +2716,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "fear",
@@ -2493,7 +2757,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "pain",
@@ -2530,7 +2798,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "good",
@@ -2567,7 +2839,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "easy",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "bad",
@@ -2604,7 +2880,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "true",
@@ -2641,7 +2921,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "equal",
@@ -2678,7 +2962,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "bond",
@@ -2715,7 +3003,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "conflict",
@@ -2752,7 +3044,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "same",
@@ -2789,7 +3085,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "part",
@@ -2826,7 +3126,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "mark",
@@ -2863,7 +3167,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "social",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "source",
@@ -2900,7 +3208,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "flow",
@@ -2937,7 +3249,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "space_motion",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "pulse",
@@ -2974,7 +3290,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "still",
@@ -3011,7 +3331,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "will",
@@ -3048,7 +3372,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "thinking",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "strong",
@@ -3085,7 +3413,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "very high"
+      "semantic_usefulness_label": "very high",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "reach",
@@ -3129,7 +3461,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "easy",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "wave",
@@ -3166,7 +3502,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "space_motion",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "hand",
@@ -3203,7 +3543,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "moderate",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "eye",
@@ -3240,7 +3584,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "skin",
@@ -3277,7 +3625,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "bone",
@@ -3314,7 +3666,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "big",
@@ -3351,7 +3707,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "small",
@@ -3388,7 +3748,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "head",
@@ -3425,7 +3789,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "heart",
@@ -3462,7 +3830,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "moderate",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "mouth",
@@ -3499,7 +3871,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "need",
@@ -3536,7 +3912,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "cause",
@@ -3573,7 +3953,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 3,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness_label": "moderate",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "name",
@@ -3610,7 +3994,11 @@
       "primitive_test_note": null,
       "semantic_usefulness": 4,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "high"
+      "semantic_usefulness_label": "high",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "addressee",
@@ -3640,7 +4028,11 @@
       "primitive_test_note": "Distinct from self (speaker locus) and person (generic someone). Mirrors self for second-person deixis.",
       "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness_label": null,
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "metal",
@@ -3669,7 +4061,11 @@
       "pronunciation_ease": null,
       "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness_label": null,
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "parent",
@@ -3698,7 +4094,388 @@
       "pronunciation_ease": null,
       "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness_label": null,
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+    },
+    {
+      "id": "drink",
+      "concept": "to drink",
+      "domain": "action",
+      "plain_description": "to drink",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "essential",
+      "priority_weight": 100,
+      "priority": 99900,
+      "spelling": "wa",
+      "ipa": "/wʌ/",
+      "reason": "to drink — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 21,
+        "template": "CV",
+        "tier": "secondary-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "sky",
+      "concept": "the sky above",
+      "domain": "element",
+      "plain_description": "the sky above",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79899,
+      "spelling": "ju",
+      "ipa": "/dʒʊ/",
+      "reason": "the sky above — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 38,
+        "template": "CV",
+        "tier": "tertiary-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "tree",
+      "concept": "a tree",
+      "domain": "element",
+      "plain_description": "a tree",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79898,
+      "spelling": "we",
+      "ipa": "/wɛ/",
+      "reason": "a tree — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 22,
+        "template": "CV",
+        "tier": "secondary-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "left",
+      "concept": "the left side",
+      "domain": "space",
+      "plain_description": "the left side",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79897,
+      "spelling": "li",
+      "ipa": "/lɪ/",
+      "reason": "the left side — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 4,
+      "pronunciation_ease_label": "easy",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 8,
+        "template": "CV",
+        "tier": "preferred-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 80,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [
+        {
+          "form": "li",
+          "type": "homophone",
+          "category": "homophone",
+          "message": "Strong English homophone (\"lee\")."
+        }
+      ],
+      "boundary_warnings": []
+    },
+    {
+      "id": "right",
+      "concept": "the right side",
+      "domain": "space",
+      "plain_description": "the right side",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79896,
+      "spelling": "ra",
+      "ipa": "/rʌ/",
+      "reason": "the right side — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 39,
+        "template": "CV",
+        "tier": "tertiary-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "happy",
+      "concept": "feeling glad and content",
+      "domain": "emotion",
+      "plain_description": "feeling glad and content",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "essential",
+      "priority_weight": 100,
+      "priority": 99895,
+      "spelling": "bo",
+      "ipa": "/bɑ/",
+      "reason": "feeling glad and content — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 5,
+      "pronunciation_ease_label": "very easy",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 4,
+        "template": "CV",
+        "tier": "preferred-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "angry",
+      "concept": "feeling mad or hostile",
+      "domain": "emotion",
+      "plain_description": "feeling mad or hostile",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79894,
+      "spelling": "ko",
+      "ipa": "/kɑ/",
+      "reason": "feeling mad or hostile — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 4,
+      "pronunciation_ease_label": "easy",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 8,
+        "template": "CV",
+        "tier": "preferred-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "calm",
+      "concept": "feeling settled and at peace",
+      "domain": "emotion",
+      "plain_description": "feeling settled and at peace",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79893,
+      "spelling": "fu",
+      "ipa": "/fʊ/",
+      "reason": "feeling settled and at peace — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 4,
+      "pronunciation_ease_label": "easy",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 7,
+        "template": "CV",
+        "tier": "preferred-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "trust",
+      "concept": "to believe someone is safe and reliable",
+      "domain": "emotion",
+      "plain_description": "to believe someone is safe and reliable",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79892,
+      "spelling": "bes",
+      "ipa": "/bɛs/",
+      "reason": "to believe someone is safe and reliable — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 51,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "hope",
+      "concept": "to wish and expect something good",
+      "domain": "emotion",
+      "plain_description": "to wish and expect something good",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79891,
+      "spelling": "he",
+      "ipa": "/hɛ/",
+      "reason": "to wish and expect something good — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 21,
+        "template": "CV",
+        "tier": "secondary-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     }
   ]
 }

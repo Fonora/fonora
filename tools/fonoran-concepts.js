@@ -104,6 +104,9 @@ export function conceptRecord(candidate, approvedRoot = null, primitive = null, 
     primitive_test_note: primitive?.primitive_test_note ?? candidate.primitive_test_note ?? null,
     suggested_status: primitive?.suggested_status ?? candidate.suggested_status ?? 'primitive',
     priority_class: primitive?.priority_class ?? candidate.priority_class ?? null,
+    experience_tier: primitive?.experience_tier ?? candidate.experience_tier ?? null,
+    language_tier: primitive?.language_tier ?? candidate.language_tier ?? null,
+    campfire_pass: primitive?.campfire_pass ?? candidate.campfire_pass ?? null,
   };
 }
 

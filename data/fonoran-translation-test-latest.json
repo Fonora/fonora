@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-29T22:08:34.386Z",
+  "generated_at": "2026-06-30T17:15:09.459Z",
   "corpus_version": "2.0",
   "total_phrases": 100,
   "clean_phrases": 97,
@@ -1098,7 +1098,7 @@
     {
       "level": 3,
       "phrase": "The small child is happy.",
-      "roman": "namba gumet",
+      "roman": "namba bo",
       "unresolved": [],
       "counts": {
         "direct": 2,
@@ -1115,7 +1115,7 @@
       },
       "review": [],
       "gaps": [],
-      "expected": "namba gumet",
+      "expected": "namba bo",
       "matches_golden": true
     },
     {

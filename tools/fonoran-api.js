@@ -56,6 +56,15 @@ import {
   importSnapshotZip,
   previewSnapshotZip,
 } from './fonoran-snapshot.js';
+import {
+  buildPuzzleChallenge,
+  recordPlaytestRound,
+  summarizePlaytests,
+} from './fonoran-playtests.js';
+import {
+  generateCandidates,
+  loadCandidateContext,
+} from './fonoran-expression-candidates.js';
 
 export function jsonResponse(res, status, body) {
   const payload = JSON.stringify(body);
@@ -203,6 +212,32 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     if (pathname === '/api/fonoran/grammar-particles' && method === 'GET') {
       return done(200, await loadParticles());
+    }
+    if (pathname === '/api/fonoran/puzzle/challenge' && method === 'GET') {
+      const url = new URL(req.url ?? '', 'http://localhost');
+      const coreOnly = ['1', 'true', 'yes'].includes((url.searchParams.get('core') ?? '').toLowerCase());
+      const conceptId = url.searchParams.get('concept');
+      const lab = await getLab();
+      return done(200, await buildPuzzleChallenge({ lab, coreOnly, conceptId: conceptId || null }));
+    }
+    if (pathname === '/api/fonoran/puzzle/guess' && method === 'POST') {
+      const body = await readJsonBody(req);
+      return done(200, await recordPlaytestRound(body));
+    }
+    if (pathname === '/api/fonoran/playtests/summary' && method === 'GET') {
+      return done(200, await summarizePlaytests());
+    }
+    if (pathname === '/api/fonoran/expressions/candidates' && method === 'POST') {
+      const body = await readJsonBody(req);
+      if (!body.concept_id) return done(400, { error: 'concept_id is required' });
+      const ctx = await loadCandidateContext();
+      const candidates = generateCandidates(body.concept_id, {
+        metaFor: ctx.metaFor,
+        collisionCounts: ctx.collisionCounts,
+        knownComposition: ctx.knownByConcept.get(body.concept_id),
+        extraCompositions: Array.isArray(body.extra) ? body.extra : [],
+      });
+      return done(200, { concept_id: body.concept_id, candidates });
     }
     if (pathname === '/api/fonoran/translation-tests' && method === 'GET') {
       return done(200, await loadTranslationCorpus());

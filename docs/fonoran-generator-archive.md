@@ -1,6 +1,6 @@
 # Fonoran generator archive (historical)
 
-> **Archive.** Retired bulk generators. Active workflow: [fonoran.md](fonoran.md).
+> **Archive.** Retired bulk generators. Active workflow: [fonoran.md](fonoran.md); direction set by the [Fonoran Constitution](fonoran-constitution.md).
 
 > **Status:** archival reference only, code and data for Gen 1 and Gen 2 were removed during the lab-first cleanup.
 

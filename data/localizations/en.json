@@ -925,79 +925,213 @@
     },
     "blacksmith": {
       "label": "blacksmith",
-      "aliases": ["blacksmith", "blacksmiths"]
+      "aliases": [
+        "blacksmith",
+        "blacksmiths"
+      ]
     },
     "doctor": {
       "label": "doctor",
-      "aliases": ["doctor", "doctors", "healer", "healers"]
+      "aliases": [
+        "doctor",
+        "doctors",
+        "healer",
+        "healers"
+      ]
     },
     "hunter": {
       "label": "hunter",
-      "aliases": ["hunter", "hunters"]
+      "aliases": [
+        "hunter",
+        "hunters"
+      ]
     },
     "farmer": {
       "label": "farmer",
-      "aliases": ["farmer", "farmers"]
+      "aliases": [
+        "farmer",
+        "farmers"
+      ]
     },
     "fisherman": {
       "label": "fisherman",
-      "aliases": ["fisherman", "fishermen", "fisher"]
+      "aliases": [
+        "fisherman",
+        "fishermen",
+        "fisher"
+      ]
     },
     "fish": {
       "label": "fish",
-      "aliases": ["fish", "fishes"]
+      "aliases": [
+        "fish",
+        "fishes"
+      ]
     },
     "knife": {
       "label": "knife",
-      "aliases": ["knife", "knives"]
+      "aliases": [
+        "knife",
+        "knives"
+      ]
     },
     "red": {
       "label": "red",
-      "aliases": ["red"]
+      "aliases": [
+        "red"
+      ]
     },
     "beautiful": {
       "label": "beautiful",
-      "aliases": ["beautiful"]
+      "aliases": [
+        "beautiful"
+      ]
     },
     "almost": {
       "label": "almost",
-      "aliases": ["almost"]
+      "aliases": [
+        "almost"
+      ]
     },
     "door": {
       "label": "door",
-      "aliases": ["door", "doors"]
+      "aliases": [
+        "door",
+        "doors"
+      ]
     },
     "campfire": {
       "label": "campfire",
-      "aliases": ["campfire", "campfires"]
+      "aliases": [
+        "campfire",
+        "campfires"
+      ]
     },
     "bridge": {
       "label": "bridge",
-      "aliases": ["bridge", "bridges"]
+      "aliases": [
+        "bridge",
+        "bridges"
+      ]
     },
     "morning": {
       "label": "morning",
-      "aliases": ["morning", "dawn", "every morning"]
+      "aliases": [
+        "morning",
+        "dawn",
+        "every morning"
+      ]
     },
     "winter": {
       "label": "winter",
-      "aliases": ["winter"]
+      "aliases": [
+        "winter"
+      ]
     },
     "sunrise": {
       "label": "sunrise",
-      "aliases": ["sunrise"]
+      "aliases": [
+        "sunrise"
+      ]
     },
     "sunset": {
       "label": "sunset",
-      "aliases": ["sunset"]
+      "aliases": [
+        "sunset"
+      ]
     },
     "moonlight": {
       "label": "moonlight",
-      "aliases": ["moonlight"]
+      "aliases": [
+        "moonlight"
+      ]
     },
     "open": {
       "label": "open",
-      "aliases": ["open", "opens", "opened"]
+      "aliases": [
+        "open",
+        "opens",
+        "opened"
+      ]
+    },
+    "happy": {
+      "label": "happy",
+      "aliases": [
+        "glad",
+        "joyful",
+        "content",
+        "cheerful"
+      ]
+    },
+    "angry": {
+      "label": "angry",
+      "aliases": [
+        "mad",
+        "furious",
+        "cross",
+        "enraged"
+      ]
+    },
+    "calm": {
+      "label": "calm",
+      "aliases": [
+        "peaceful",
+        "serene",
+        "relaxed",
+        "settled"
+      ]
+    },
+    "trust": {
+      "label": "trust",
+      "aliases": [
+        "rely",
+        "believe in",
+        "depend on"
+      ]
+    },
+    "hope": {
+      "label": "hope",
+      "aliases": [
+        "hopeful",
+        "wish for",
+        "long for"
+      ]
+    },
+    "drink": {
+      "label": "drink",
+      "aliases": [
+        "drinking",
+        "sip",
+        "swallow"
+      ]
+    },
+    "tree": {
+      "label": "tree",
+      "aliases": [
+        "trees",
+        "wood"
+      ]
+    },
+    "sky": {
+      "label": "sky",
+      "aliases": [
+        "heavens",
+        "overhead"
+      ]
+    },
+    "left": {
+      "label": "left",
+      "aliases": [
+        "left side",
+        "leftward"
+      ]
+    },
+    "right": {
+      "label": "right",
+      "aliases": [
+        "right side",
+        "rightward"
+      ]
     }
   },
   "version": "1.0-localization",

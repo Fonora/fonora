@@ -1,10 +1,24 @@
 # Grammar
 
 > **Status**: Living specification. This is the authoritative reference for humans and the future Fonoran Translator. Sections marked *Under Development* are intentional placeholders, not omissions.
+>
+> **Read [the Fonoran Constitution](fonoran-constitution.md) first.** It states what
+> Fonoran is *for*: an experiment in whether people from different native languages can
+> communicate by combining a small shared set of roots. Compounds are **meaning-attempts**,
+> not canonical answers; the test for any expression is *"if someone only knew the roots,
+> would this probably help them recover the intended meaning?"* This grammar describes the
+> minimal machinery that makes those attempts mutually intelligible.
 
 Fonoran is a language of **concepts**.
 
 Every lexical item represents a semantic concept. Grammar exists only to describe **relationships between concepts**. Complexity should live in semantic composition, not grammatical exceptions.
+
+Roots are organized by **human experience** (survival/body, space/motion, social, emotion,
+time, thinking, abstract) and gated by the **campfire test**: *could two strangers stranded
+with no common language plausibly need this root in their first week?* If yes, it belongs in
+the communicative core; if no, it belongs in the extended or complete vocabulary. See the
+[constitution](fonoran-constitution.md) for the tiered language model (~50 core → ~100
+extended → unlimited).
 
 ### The fundamental experience test
 

@@ -39,6 +39,8 @@
             <span class="nav-dropdown-chevron" aria-hidden="true">▾</span>
           </button>
           <div class="nav-dropdown-menu" id="fonoran-nav-more-menu" role="menu" hidden>
+            <p class="nav-dropdown-label" role="presentation">Experiment</p>
+            <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="puzzle" role="menuitem">Puzzle Conversation</button>
             <p class="nav-dropdown-label" role="presentation">Vocabulary</p>
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="roots" role="menuitem">Root Creator</button>
             <button type="button" class="tab-btn nav-dropdown-item" data-fonoran-page="create" role="menuitem">Word Creator</button>
@@ -342,6 +344,7 @@
               <button type="button" class="chip active" data-dict-filter="roots">Roots</button>
               <button type="button" class="chip active" data-dict-filter="words">Words</button>
               <button type="button" class="chip" data-dict-filter="particles">Particles</button>
+              <button type="button" class="chip" data-dict-filter="core" title="Show only communicative-core roots (the ~50 the experiment measures)">Communicative core</button>
               <button type="button" class="chip" data-dict-filter="needs_review">Needs review</button>
               <button type="button" class="chip" data-dict-filter="approved">Approved</button>
               <button type="button" class="chip" data-dict-filter="rejected">Rejected</button>
@@ -364,6 +367,10 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <section id="page-puzzle" class="page">
+        <div id="puzzle-body" class="content-page"></div>
       </section>
 
       <section id="page-grammar" class="page">

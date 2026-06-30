@@ -11,7 +11,11 @@
       "concept": "a person; someone",
       "domain": "being",
       "reason": "a person — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T05:47:05.441Z"
+      "approved_at": "2026-06-29T05:47:05.441Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "self",
@@ -20,7 +24,11 @@
       "concept": "oneself; me, myself",
       "domain": "being",
       "reason": "oneself — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T05:47:13.744Z"
+      "approved_at": "2026-06-29T05:47:13.744Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "collective",
@@ -29,7 +37,11 @@
       "concept": "a group seen as one; togetherness",
       "domain": "being",
       "reason": "a group seen as one — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:06.009Z"
+      "approved_at": "2026-06-29T06:18:06.009Z",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "body",
@@ -38,7 +50,11 @@
       "concept": "your body",
       "domain": "being",
       "reason": "your body — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:10.026Z"
+      "approved_at": "2026-06-29T06:18:10.026Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "life",
@@ -47,7 +63,11 @@
       "concept": "being alive",
       "domain": "being",
       "reason": "being alive — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:18:13.347Z"
+      "approved_at": "2026-06-29T06:18:13.347Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "move",
@@ -56,7 +76,11 @@
       "concept": "to go from one place to another",
       "domain": "action",
       "reason": "to go from one place to another — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T05:47:36.355Z"
+      "approved_at": "2026-06-29T05:47:36.355Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "give",
@@ -65,7 +89,11 @@
       "concept": "to give something to someone",
       "domain": "action",
       "reason": "to give something to someone — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:18:16.737Z"
+      "approved_at": "2026-06-29T06:18:16.737Z",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "take",
@@ -74,7 +102,11 @@
       "concept": "to take something",
       "domain": "action",
       "reason": "to take something — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:18:25.268Z"
+      "approved_at": "2026-06-29T06:18:25.268Z",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "hold",
@@ -83,7 +115,11 @@
       "concept": "to keep something in your grasp",
       "domain": "action",
       "reason": "to keep something in your grasp — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:37.475Z"
+      "approved_at": "2026-06-29T06:18:37.475Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "use",
@@ -92,7 +128,11 @@
       "concept": "to use something",
       "domain": "action",
       "reason": "to use something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:48.834Z"
+      "approved_at": "2026-06-29T06:18:48.834Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "help",
@@ -101,7 +141,11 @@
       "concept": "to help someone",
       "domain": "action",
       "reason": "to help someone — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:51.765Z"
+      "approved_at": "2026-06-29T06:18:51.765Z",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "make",
@@ -110,7 +154,11 @@
       "concept": "to make something",
       "domain": "action",
       "reason": "to make something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:55.535Z"
+      "approved_at": "2026-06-29T06:18:55.535Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "do",
@@ -119,7 +167,11 @@
       "concept": "to do something",
       "domain": "action",
       "reason": "to do something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:59.403Z"
+      "approved_at": "2026-06-29T06:18:59.403Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "speak",
@@ -128,7 +180,11 @@
       "concept": "to speak; to talk",
       "domain": "action",
       "reason": "to speak — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:19:05.471Z"
+      "approved_at": "2026-06-29T06:19:05.471Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "see",
@@ -137,7 +193,11 @@
       "concept": "to see",
       "domain": "action",
       "reason": "to see — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:08.018Z"
+      "approved_at": "2026-06-29T06:19:08.018Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "hear",
@@ -146,7 +206,11 @@
       "concept": "to hear",
       "domain": "action",
       "reason": "to hear — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:10.898Z"
+      "approved_at": "2026-06-29T06:19:10.898Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "touch",
@@ -155,7 +219,11 @@
       "concept": "to touch",
       "domain": "action",
       "reason": "to touch — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:14.310Z"
+      "approved_at": "2026-06-29T06:19:14.310Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "smell",
@@ -164,7 +232,11 @@
       "concept": "to smell",
       "domain": "action",
       "reason": "to smell — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:18.705Z"
+      "approved_at": "2026-06-29T06:19:18.705Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "taste",
@@ -173,7 +245,11 @@
       "concept": "to taste",
       "domain": "action",
       "reason": "to taste — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:24.175Z"
+      "approved_at": "2026-06-29T06:19:24.175Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "know",
@@ -182,7 +258,11 @@
       "concept": "to know something",
       "domain": "action",
       "reason": "to know something — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:19:27.066Z"
+      "approved_at": "2026-06-29T06:19:27.066Z",
+      "experience_tier": "thinking",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "think",
@@ -191,7 +271,11 @@
       "concept": "to use your mind",
       "domain": "action",
       "reason": "to use your mind — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:29.927Z"
+      "approved_at": "2026-06-29T06:19:29.927Z",
+      "experience_tier": "thinking",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "feel",
@@ -200,7 +284,11 @@
       "concept": "to feel something inside",
       "domain": "action",
       "reason": "to feel something inside — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:33.151Z"
+      "approved_at": "2026-06-29T06:19:33.151Z",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "want",
@@ -209,7 +297,11 @@
       "concept": "to wish for something",
       "domain": "action",
       "reason": "to wish for something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:37.414Z"
+      "approved_at": "2026-06-29T06:19:37.414Z",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "eat",
@@ -218,7 +310,11 @@
       "concept": "to eat",
       "domain": "action",
       "reason": "to eat — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:40.296Z"
+      "approved_at": "2026-06-29T06:19:40.296Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "sleep",
@@ -227,7 +323,11 @@
       "concept": "to sleep",
       "domain": "action",
       "reason": "to sleep — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:45.644Z"
+      "approved_at": "2026-06-29T06:19:45.644Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "thing",
@@ -236,7 +336,11 @@
       "concept": "any object or item",
       "domain": "ontology",
       "reason": "any object or item — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:19:51.042Z"
+      "approved_at": "2026-06-29T06:19:51.042Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "substance",
@@ -245,7 +349,11 @@
       "concept": "stuff things are made of",
       "domain": "ontology",
       "reason": "stuff things are made of — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:57.571Z"
+      "approved_at": "2026-06-29T06:19:57.571Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "form",
@@ -254,7 +362,11 @@
       "concept": "shape; how something looks",
       "domain": "ontology",
       "reason": "shape — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:03.337Z"
+      "approved_at": "2026-06-29T06:20:03.337Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "change",
@@ -263,7 +375,11 @@
       "concept": "to become different",
       "domain": "ontology",
       "reason": "to become different — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:20:06.216Z"
+      "approved_at": "2026-06-29T06:20:06.216Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "empty",
@@ -272,7 +388,11 @@
       "concept": "having nothing inside",
       "domain": "ontology",
       "reason": "having nothing inside — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:20:09.034Z"
+      "approved_at": "2026-06-29T06:20:09.034Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "water",
@@ -281,7 +401,11 @@
       "concept": "water",
       "domain": "element",
       "reason": "water — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:20:11.555Z"
+      "approved_at": "2026-06-29T06:20:11.555Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "fire",
@@ -290,7 +414,11 @@
       "concept": "fire; a hot burning flame",
       "domain": "element",
       "reason": "fire — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:13.892Z"
+      "approved_at": "2026-06-29T06:20:13.892Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "earth",
@@ -299,7 +427,11 @@
       "concept": "the ground or soil",
       "domain": "element",
       "reason": "the ground or soil — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:16.307Z"
+      "approved_at": "2026-06-29T06:20:16.307Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "air",
@@ -308,7 +440,11 @@
       "concept": "the air we breathe",
       "domain": "element",
       "reason": "the air we breathe — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:18.674Z"
+      "approved_at": "2026-06-29T06:20:18.674Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "light",
@@ -317,7 +453,11 @@
       "concept": "light; what lets you see",
       "domain": "element",
       "reason": "light — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:21.013Z"
+      "approved_at": "2026-06-29T06:20:21.013Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "dark",
@@ -326,7 +466,11 @@
       "concept": "darkness; no light",
       "domain": "element",
       "reason": "darkness — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:23.390Z"
+      "approved_at": "2026-06-29T06:20:23.390Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "hot",
@@ -335,7 +479,11 @@
       "concept": "hot; warm to burning",
       "domain": "element",
       "reason": "hot — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:25.790Z"
+      "approved_at": "2026-06-29T06:20:25.790Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "cold",
@@ -344,7 +492,11 @@
       "concept": "cold; chilly to freezing",
       "domain": "element",
       "reason": "cold — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:28.209Z"
+      "approved_at": "2026-06-29T06:20:28.209Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "stone",
@@ -353,7 +505,11 @@
       "concept": "a hard rock",
       "domain": "element",
       "reason": "a hard rock — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:30.624Z"
+      "approved_at": "2026-06-29T06:20:30.624Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "plant",
@@ -362,7 +518,11 @@
       "concept": "a plant",
       "domain": "element",
       "reason": "a plant — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:32.978Z"
+      "approved_at": "2026-06-29T06:20:32.978Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "animal",
@@ -371,7 +531,11 @@
       "concept": "an animal",
       "domain": "element",
       "reason": "an animal — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:35.371Z"
+      "approved_at": "2026-06-29T06:20:35.371Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "inside",
@@ -380,7 +544,11 @@
       "concept": "in; within something",
       "domain": "space",
       "reason": "in — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:37.687Z"
+      "approved_at": "2026-06-29T06:20:37.687Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "outside",
@@ -389,7 +557,11 @@
       "concept": "out; beyond something's edge",
       "domain": "space",
       "reason": "out — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:40.048Z"
+      "approved_at": "2026-06-29T06:20:40.048Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "here",
@@ -398,7 +570,11 @@
       "concept": "at this place",
       "domain": "space",
       "reason": "at this place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:42.443Z"
+      "approved_at": "2026-06-29T06:20:42.443Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "there",
@@ -407,7 +583,11 @@
       "concept": "at that place",
       "domain": "space",
       "reason": "at that place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:44.887Z"
+      "approved_at": "2026-06-29T06:20:44.887Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "near",
@@ -416,7 +596,11 @@
       "concept": "close by",
       "domain": "space",
       "reason": "close by — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:47.336Z"
+      "approved_at": "2026-06-29T06:20:47.336Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "far",
@@ -425,7 +609,11 @@
       "concept": "a long way off",
       "domain": "space",
       "reason": "a long way off — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:49.737Z"
+      "approved_at": "2026-06-29T06:20:49.737Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "up",
@@ -434,7 +622,11 @@
       "concept": "toward a higher place",
       "domain": "space",
       "reason": "toward a higher place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:52.301Z"
+      "approved_at": "2026-06-29T06:20:52.301Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "down",
@@ -443,7 +635,11 @@
       "concept": "toward a lower place",
       "domain": "space",
       "reason": "toward a lower place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:54.893Z"
+      "approved_at": "2026-06-29T06:20:54.893Z",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "path",
@@ -452,7 +648,11 @@
       "concept": "a way or route to travel along",
       "domain": "space",
       "reason": "a way or route to travel along — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:57.325Z"
+      "approved_at": "2026-06-29T06:20:57.325Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "place",
@@ -461,7 +661,11 @@
       "concept": "a spot or location",
       "domain": "space",
       "reason": "a spot or location — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:59.736Z"
+      "approved_at": "2026-06-29T06:20:59.736Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "surface",
@@ -470,7 +674,11 @@
       "concept": "the outer side you touch",
       "domain": "space",
       "reason": "the outer side you touch — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:02.206Z"
+      "approved_at": "2026-06-29T06:21:02.206Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "bound",
@@ -479,7 +687,11 @@
       "concept": "an edge; where something ends",
       "domain": "space",
       "reason": "an edge — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:06.227Z"
+      "approved_at": "2026-06-29T06:21:06.227Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "center",
@@ -488,7 +700,11 @@
       "concept": "the middle",
       "domain": "space",
       "reason": "the middle — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:10.661Z"
+      "approved_at": "2026-06-29T06:21:10.661Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "before",
@@ -497,7 +713,11 @@
       "concept": "earlier; in the past",
       "domain": "time",
       "reason": "earlier — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:21:13.931Z"
+      "approved_at": "2026-06-29T06:21:13.931Z",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "after",
@@ -506,7 +726,11 @@
       "concept": "later; coming next",
       "domain": "time",
       "reason": "later — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:21:16.767Z"
+      "approved_at": "2026-06-29T06:21:16.767Z",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "now",
@@ -515,7 +739,11 @@
       "concept": "right now; this moment",
       "domain": "time",
       "reason": "right now — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:19.832Z"
+      "approved_at": "2026-06-29T06:21:19.832Z",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "time",
@@ -524,7 +752,11 @@
       "concept": "time; how long things last",
       "domain": "time",
       "reason": "time — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:23.344Z"
+      "approved_at": "2026-06-29T06:21:23.344Z",
+      "experience_tier": "time",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "one",
@@ -533,7 +765,11 @@
       "concept": "a single one",
       "domain": "quantity",
       "reason": "a single one — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:26.205Z"
+      "approved_at": "2026-06-29T06:21:26.205Z",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "many",
@@ -542,7 +778,11 @@
       "concept": "a lot; lots of them",
       "domain": "quantity",
       "reason": "a lot — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:29.129Z"
+      "approved_at": "2026-06-29T06:21:29.129Z",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "all",
@@ -551,7 +791,11 @@
       "concept": "every one of them",
       "domain": "quantity",
       "reason": "every one of them — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:32.064Z"
+      "approved_at": "2026-06-29T06:21:32.064Z",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "some",
@@ -560,7 +804,11 @@
       "concept": "a few; part of them",
       "domain": "quantity",
       "reason": "a few — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:34.881Z"
+      "approved_at": "2026-06-29T06:21:34.881Z",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "more",
@@ -569,7 +817,11 @@
       "concept": "a greater amount",
       "domain": "quantity",
       "reason": "a greater amount — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:37.642Z"
+      "approved_at": "2026-06-29T06:21:37.642Z",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "less",
@@ -578,7 +830,11 @@
       "concept": "a smaller amount",
       "domain": "quantity",
       "reason": "a smaller amount — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:40.049Z"
+      "approved_at": "2026-06-29T06:21:40.049Z",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "fast",
@@ -587,7 +843,11 @@
       "concept": "quick; moving at high speed",
       "domain": "quantity",
       "reason": "quick — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:42.632Z"
+      "approved_at": "2026-06-29T06:21:42.632Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "love",
@@ -596,7 +856,11 @@
       "concept": "to deeply care for someone",
       "domain": "emotion",
       "reason": "to deeply care for someone — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:46.039Z"
+      "approved_at": "2026-06-29T06:21:46.039Z",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "fear",
@@ -605,7 +869,11 @@
       "concept": "to be afraid",
       "domain": "emotion",
       "reason": "to be afraid — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:49.225Z"
+      "approved_at": "2026-06-29T06:21:49.225Z",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "pain",
@@ -614,7 +882,11 @@
       "concept": "hurting; physical or emotional hurt",
       "domain": "emotion",
       "reason": "hurting — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:51.717Z"
+      "approved_at": "2026-06-29T06:21:51.717Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "good",
@@ -623,7 +895,11 @@
       "concept": "good; works well or is wanted",
       "domain": "evaluation",
       "reason": "good — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:54.122Z"
+      "approved_at": "2026-06-29T06:21:54.122Z",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "bad",
@@ -632,7 +908,11 @@
       "concept": "bad; harmful or unwanted",
       "domain": "evaluation",
       "reason": "bad — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:56.465Z"
+      "approved_at": "2026-06-29T06:21:56.465Z",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "true",
@@ -641,7 +921,11 @@
       "concept": "true; matches what's real",
       "domain": "evaluation",
       "reason": "true — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:58.818Z"
+      "approved_at": "2026-06-29T06:21:58.818Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "equal",
@@ -650,7 +934,11 @@
       "concept": "the same amount; even and fair",
       "domain": "evaluation",
       "reason": "the same amount — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:22:01.139Z"
+      "approved_at": "2026-06-29T06:22:01.139Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "bond",
@@ -659,7 +947,11 @@
       "concept": "a bond; a tie between things",
       "domain": "relationships",
       "reason": "a bond — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:22:03.494Z"
+      "approved_at": "2026-06-29T06:22:03.494Z",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "conflict",
@@ -668,7 +960,11 @@
       "concept": "a clash or fight between sides",
       "domain": "relationships",
       "reason": "a clash or fight between sides — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:22:05.842Z"
+      "approved_at": "2026-06-29T06:22:05.842Z",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "same",
@@ -677,7 +973,11 @@
       "concept": "the same; not different",
       "domain": "relationships",
       "reason": "the same — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:08.128Z"
+      "approved_at": "2026-06-29T06:22:08.128Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "part",
@@ -686,7 +986,11 @@
       "concept": "a piece of something bigger",
       "domain": "relationships",
       "reason": "a piece of something bigger — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:10.410Z"
+      "approved_at": "2026-06-29T06:22:10.410Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "mark",
@@ -695,7 +999,11 @@
       "concept": "a mark, sign, or drawing",
       "domain": "process",
       "reason": "a mark, sign, or drawing — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:12.748Z"
+      "approved_at": "2026-06-29T06:22:12.748Z",
+      "experience_tier": "social",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "source",
@@ -704,7 +1012,11 @@
       "concept": "where something comes from",
       "domain": "process",
       "reason": "where something comes from — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:15.088Z"
+      "approved_at": "2026-06-29T06:22:15.088Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "flow",
@@ -713,7 +1025,11 @@
       "concept": "to flow",
       "domain": "process",
       "reason": "to flow — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:17.890Z"
+      "approved_at": "2026-06-29T06:22:17.890Z",
+      "experience_tier": "space_motion",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "pulse",
@@ -722,7 +1038,11 @@
       "concept": "a beat; a steady throb",
       "domain": "process",
       "reason": "a beat — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:20.542Z"
+      "approved_at": "2026-06-29T06:22:20.542Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "still",
@@ -731,7 +1051,11 @@
       "concept": "not moving; staying put",
       "domain": "process",
       "reason": "not moving — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:22.885Z"
+      "approved_at": "2026-06-29T06:22:22.885Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "will",
@@ -740,7 +1064,11 @@
       "concept": "the drive or intent to do something",
       "domain": "process",
       "reason": "the drive or intent to do something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:25.183Z"
+      "approved_at": "2026-06-29T06:22:25.183Z",
+      "experience_tier": "thinking",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "strong",
@@ -749,7 +1077,11 @@
       "concept": "strong; powerful and hard to break",
       "domain": "process",
       "reason": "strong — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:22:27.553Z"
+      "approved_at": "2026-06-29T06:22:27.553Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "reach",
@@ -758,7 +1090,11 @@
       "concept": "to stretch out toward something",
       "domain": "process",
       "reason": "to stretch out toward something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:29.900Z"
+      "approved_at": "2026-06-29T06:22:29.900Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "wave",
@@ -767,7 +1103,11 @@
       "concept": "a wave",
       "domain": "process",
       "reason": "a wave — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:32.230Z"
+      "approved_at": "2026-06-29T06:22:32.230Z",
+      "experience_tier": "space_motion",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "hand",
@@ -776,7 +1116,11 @@
       "concept": "your hand",
       "domain": "body",
       "reason": "your hand — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:34.583Z"
+      "approved_at": "2026-06-29T06:22:34.583Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "eye",
@@ -785,7 +1129,11 @@
       "concept": "your eye",
       "domain": "body",
       "reason": "your eye — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:36.901Z"
+      "approved_at": "2026-06-29T06:22:36.901Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "skin",
@@ -794,7 +1142,11 @@
       "concept": "your skin",
       "domain": "body",
       "reason": "your skin — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:39.268Z"
+      "approved_at": "2026-06-29T06:22:39.268Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "bone",
@@ -803,7 +1155,11 @@
       "concept": "a bone",
       "domain": "body",
       "reason": "a bone — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:41.721Z"
+      "approved_at": "2026-06-29T06:22:41.721Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "big",
@@ -812,7 +1168,11 @@
       "concept": "big; large in size",
       "domain": "quality",
       "reason": "big — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:44.206Z"
+      "approved_at": "2026-06-29T06:22:44.206Z",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "small",
@@ -821,7 +1181,11 @@
       "concept": "small; little in size",
       "domain": "quality",
       "reason": "small — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:46.741Z"
+      "approved_at": "2026-06-29T06:22:46.741Z",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "head",
@@ -830,7 +1194,11 @@
       "concept": "your head",
       "domain": "body",
       "reason": "your head — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:49.239Z"
+      "approved_at": "2026-06-29T06:22:49.239Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "heart",
@@ -839,7 +1207,11 @@
       "concept": "your heart",
       "domain": "body",
       "reason": "your heart — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:51.964Z"
+      "approved_at": "2026-06-29T06:22:51.964Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "mouth",
@@ -848,7 +1220,11 @@
       "concept": "your mouth",
       "domain": "body",
       "reason": "your mouth — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:55.246Z"
+      "approved_at": "2026-06-29T06:22:55.246Z",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "need",
@@ -857,7 +1233,11 @@
       "concept": "to need something",
       "domain": "cognition",
       "reason": "to need something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:58.284Z"
+      "approved_at": "2026-06-29T06:22:58.284Z",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "cause",
@@ -866,7 +1246,11 @@
       "concept": "to make something happen",
       "domain": "relation",
       "reason": "to make something happen — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:23:01.503Z"
+      "approved_at": "2026-06-29T06:23:01.503Z",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "name",
@@ -875,7 +1259,11 @@
       "concept": "a name",
       "domain": "communication",
       "reason": "a name — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:23:04.546Z"
+      "approved_at": "2026-06-29T06:23:04.546Z",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "addressee",
@@ -884,7 +1272,11 @@
       "concept": "the entity spoken to; you",
       "domain": "being",
       "reason": "New concept: the person spoken to.",
-      "approved_at": "2026-06-29T21:09:49.678Z"
+      "approved_at": "2026-06-29T21:09:49.678Z",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "metal",
@@ -893,7 +1285,11 @@
       "concept": "a hard shiny material you can shape, like iron",
       "domain": "element",
       "reason": "metal — a basic worked material; needed for tools, weapons, and a smith.",
-      "approved_at": "2026-06-29T21:23:15.573Z"
+      "approved_at": "2026-06-29T21:23:15.573Z",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "parent",
@@ -902,7 +1298,11 @@
       "concept": "a mother or father",
       "domain": "being",
       "reason": "parent — core kinship root for family terms like grandparent.",
-      "approved_at": "2026-06-29T21:23:25.725Z"
+      "approved_at": "2026-06-29T21:23:25.725Z",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     }
   ]
 }

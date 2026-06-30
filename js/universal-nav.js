@@ -34,6 +34,8 @@ const FONORAN_TABS = [
 ];
 
 const FONORAN_MORE_MENU = [
+  { type: 'label', text: 'Experiment' },
+  { id: 'puzzle', label: 'Puzzle Conversation' },
   { type: 'label', text: 'Vocabulary' },
   { id: 'roots', label: 'Root Creator' },
   { id: 'create', label: 'Word Creator' },
@@ -70,6 +72,7 @@ const FONORAN_TITLES = {
   'root-review': 'Root Review',
   concepts: 'Concept Editor',
   translator: 'Translator',
+  puzzle: 'Puzzle Conversation',
   roots: 'Root Creator',
   create: 'Word Creator',
   review: 'Word Review',

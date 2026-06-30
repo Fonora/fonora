@@ -43,7 +43,11 @@
       "description": "a person; someone",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "a person; someone"
+      "plain_description": "a person; someone",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "self",
@@ -52,7 +56,11 @@
       "description": "oneself; me, myself",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "oneself; me, myself"
+      "plain_description": "oneself; me, myself",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "collective",
@@ -61,7 +69,11 @@
       "description": "a group seen as one; togetherness",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a group seen as one; togetherness"
+      "plain_description": "a group seen as one; togetherness",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "body",
@@ -70,7 +82,11 @@
       "description": "your body",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "your body"
+      "plain_description": "your body",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "life",
@@ -79,7 +95,11 @@
       "description": "being alive",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "being alive"
+      "plain_description": "being alive",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "move",
@@ -88,7 +108,11 @@
       "description": "to go from one place to another",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "to go from one place to another"
+      "plain_description": "to go from one place to another",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "give",
@@ -97,7 +121,11 @@
       "description": "to give something to someone",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "to give something to someone"
+      "plain_description": "to give something to someone",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "take",
@@ -106,7 +134,11 @@
       "description": "to take something",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "to take something"
+      "plain_description": "to take something",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "hold",
@@ -115,7 +147,11 @@
       "description": "to keep something in your grasp",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to keep something in your grasp"
+      "plain_description": "to keep something in your grasp",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "use",
@@ -124,7 +160,11 @@
       "description": "to use something",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to use something"
+      "plain_description": "to use something",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "help",
@@ -133,7 +173,11 @@
       "description": "to help someone",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to help someone"
+      "plain_description": "to help someone",
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "make",
@@ -142,7 +186,11 @@
       "description": "to make something",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to make something"
+      "plain_description": "to make something",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "do",
@@ -151,7 +199,11 @@
       "description": "to do something",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "to do something"
+      "plain_description": "to do something",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "speak",
@@ -160,7 +212,11 @@
       "description": "to speak; to talk",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "to speak; to talk"
+      "plain_description": "to speak; to talk",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "see",
@@ -169,7 +225,11 @@
       "description": "to see",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "to see"
+      "plain_description": "to see",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "hear",
@@ -178,7 +238,11 @@
       "description": "to hear",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to hear"
+      "plain_description": "to hear",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "touch",
@@ -187,7 +251,11 @@
       "description": "to touch",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to touch"
+      "plain_description": "to touch",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "smell",
@@ -196,7 +264,11 @@
       "description": "to smell",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "to smell"
+      "plain_description": "to smell",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "taste",
@@ -205,7 +277,11 @@
       "description": "to taste",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "to taste"
+      "plain_description": "to taste",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "know",
@@ -214,7 +290,11 @@
       "description": "to know something",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "to know something"
+      "plain_description": "to know something",
+      "experience_tier": "thinking",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "think",
@@ -223,7 +303,11 @@
       "description": "to use your mind",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to use your mind"
+      "plain_description": "to use your mind",
+      "experience_tier": "thinking",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "feel",
@@ -232,7 +316,11 @@
       "description": "to feel something inside",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to feel something inside"
+      "plain_description": "to feel something inside",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "want",
@@ -241,7 +329,11 @@
       "description": "to wish for something",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to wish for something"
+      "plain_description": "to wish for something",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "eat",
@@ -250,7 +342,11 @@
       "description": "to eat",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to eat"
+      "plain_description": "to eat",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "sleep",
@@ -259,7 +355,11 @@
       "description": "to sleep",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to sleep"
+      "plain_description": "to sleep",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "thing",
@@ -268,7 +368,11 @@
       "description": "any object or item",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "any object or item"
+      "plain_description": "any object or item",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "substance",
@@ -277,7 +381,11 @@
       "description": "stuff things are made of",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "stuff things are made of"
+      "plain_description": "stuff things are made of",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "form",
@@ -286,7 +394,11 @@
       "description": "shape; how something looks",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "shape; how something looks"
+      "plain_description": "shape; how something looks",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "change",
@@ -295,7 +407,11 @@
       "description": "to become different",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "to become different"
+      "plain_description": "to become different",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "empty",
@@ -304,7 +420,11 @@
       "description": "having nothing inside",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "having nothing inside"
+      "plain_description": "having nothing inside",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "water",
@@ -313,7 +433,11 @@
       "description": "water",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "water"
+      "plain_description": "water",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "fire",
@@ -322,7 +446,11 @@
       "description": "fire; a hot burning flame",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "fire; a hot burning flame"
+      "plain_description": "fire; a hot burning flame",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "earth",
@@ -331,7 +459,11 @@
       "description": "the ground or soil",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "the ground or soil"
+      "plain_description": "the ground or soil",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "air",
@@ -340,7 +472,11 @@
       "description": "the air we breathe",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "the air we breathe"
+      "plain_description": "the air we breathe",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "light",
@@ -349,7 +485,11 @@
       "description": "light; what lets you see",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "light; what lets you see"
+      "plain_description": "light; what lets you see",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "dark",
@@ -358,7 +498,11 @@
       "description": "darkness; no light",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "darkness; no light"
+      "plain_description": "darkness; no light",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "hot",
@@ -367,7 +511,11 @@
       "description": "hot; warm to burning",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "hot; warm to burning"
+      "plain_description": "hot; warm to burning",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "cold",
@@ -376,7 +524,11 @@
       "description": "cold; chilly to freezing",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "cold; chilly to freezing"
+      "plain_description": "cold; chilly to freezing",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "stone",
@@ -385,7 +537,11 @@
       "description": "a hard rock",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a hard rock"
+      "plain_description": "a hard rock",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "plant",
@@ -394,7 +550,11 @@
       "description": "a plant",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a plant"
+      "plain_description": "a plant",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "animal",
@@ -403,7 +563,11 @@
       "description": "an animal",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "an animal"
+      "plain_description": "an animal",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "inside",
@@ -412,7 +576,11 @@
       "description": "in; within something",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "in; within something"
+      "plain_description": "in; within something",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "outside",
@@ -421,7 +589,11 @@
       "description": "out; beyond something's edge",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "out; beyond something's edge"
+      "plain_description": "out; beyond something's edge",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "here",
@@ -430,7 +602,11 @@
       "description": "at this place",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "at this place"
+      "plain_description": "at this place",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "there",
@@ -439,7 +615,11 @@
       "description": "at that place",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "at that place"
+      "plain_description": "at that place",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "near",
@@ -448,7 +628,11 @@
       "description": "close by",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "close by"
+      "plain_description": "close by",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "far",
@@ -457,7 +641,11 @@
       "description": "a long way off",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a long way off"
+      "plain_description": "a long way off",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "up",
@@ -466,7 +654,11 @@
       "description": "toward a higher place",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "toward a higher place"
+      "plain_description": "toward a higher place",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "down",
@@ -475,7 +667,11 @@
       "description": "toward a lower place",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "toward a lower place"
+      "plain_description": "toward a lower place",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "path",
@@ -484,7 +680,11 @@
       "description": "a way or route to travel along",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "a way or route to travel along"
+      "plain_description": "a way or route to travel along",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "place",
@@ -493,7 +693,11 @@
       "description": "a spot or location",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a spot or location"
+      "plain_description": "a spot or location",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "surface",
@@ -502,7 +706,11 @@
       "description": "the outer side you touch",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "the outer side you touch"
+      "plain_description": "the outer side you touch",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "bound",
@@ -511,7 +719,11 @@
       "description": "an edge; where something ends",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "an edge; where something ends"
+      "plain_description": "an edge; where something ends",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "center",
@@ -520,7 +732,11 @@
       "description": "the middle",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "the middle"
+      "plain_description": "the middle",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "before",
@@ -529,7 +745,11 @@
       "description": "earlier; in the past",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "earlier; in the past"
+      "plain_description": "earlier; in the past",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "after",
@@ -538,7 +758,11 @@
       "description": "later; coming next",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "later; coming next"
+      "plain_description": "later; coming next",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "now",
@@ -547,7 +771,11 @@
       "description": "right now; this moment",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "right now; this moment"
+      "plain_description": "right now; this moment",
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "time",
@@ -556,7 +784,11 @@
       "description": "time; how long things last",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "time; how long things last"
+      "plain_description": "time; how long things last",
+      "experience_tier": "time",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "one",
@@ -565,7 +797,11 @@
       "description": "a single one",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "a single one"
+      "plain_description": "a single one",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "many",
@@ -574,7 +810,11 @@
       "description": "a lot; lots of them",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a lot; lots of them"
+      "plain_description": "a lot; lots of them",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "all",
@@ -583,7 +823,11 @@
       "description": "every one of them",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "every one of them"
+      "plain_description": "every one of them",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "some",
@@ -592,7 +836,11 @@
       "description": "a few; part of them",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a few; part of them"
+      "plain_description": "a few; part of them",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "more",
@@ -601,7 +849,11 @@
       "description": "a greater amount",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a greater amount"
+      "plain_description": "a greater amount",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "less",
@@ -610,7 +862,11 @@
       "description": "a smaller amount",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a smaller amount"
+      "plain_description": "a smaller amount",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "fast",
@@ -619,7 +875,11 @@
       "description": "quick; moving at high speed",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "quick; moving at high speed"
+      "plain_description": "quick; moving at high speed",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "love",
@@ -628,7 +888,11 @@
       "description": "to deeply care for someone",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to deeply care for someone"
+      "plain_description": "to deeply care for someone",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "fear",
@@ -637,7 +901,11 @@
       "description": "to be afraid",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to be afraid"
+      "plain_description": "to be afraid",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "pain",
@@ -646,7 +914,11 @@
       "description": "hurting; physical or emotional hurt",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "hurting; physical or emotional hurt"
+      "plain_description": "hurting; physical or emotional hurt",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "good",
@@ -655,7 +927,11 @@
       "description": "good; works well or is wanted",
       "priority_class": "essential",
       "suggested_status": "primitive",
-      "plain_description": "good; works well or is wanted"
+      "plain_description": "good; works well or is wanted",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "bad",
@@ -664,7 +940,11 @@
       "description": "bad; harmful or unwanted",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "bad; harmful or unwanted"
+      "plain_description": "bad; harmful or unwanted",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "true",
@@ -673,7 +953,11 @@
       "description": "true; matches what's real",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "true; matches what's real"
+      "plain_description": "true; matches what's real",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "equal",
@@ -682,7 +966,11 @@
       "description": "the same amount; even and fair",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "the same amount; even and fair"
+      "plain_description": "the same amount; even and fair",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "bond",
@@ -691,7 +979,11 @@
       "description": "a bond; a tie between things",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "a bond; a tie between things"
+      "plain_description": "a bond; a tie between things",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "conflict",
@@ -700,7 +992,11 @@
       "description": "a clash or fight between sides",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "a clash or fight between sides"
+      "plain_description": "a clash or fight between sides",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "same",
@@ -709,7 +1005,11 @@
       "description": "the same; not different",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "the same; not different"
+      "plain_description": "the same; not different",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "part",
@@ -718,7 +1018,11 @@
       "description": "a piece of something bigger",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a piece of something bigger"
+      "plain_description": "a piece of something bigger",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "mark",
@@ -727,7 +1031,11 @@
       "description": "a mark, sign, or drawing",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "a mark, sign, or drawing"
+      "plain_description": "a mark, sign, or drawing",
+      "experience_tier": "social",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "source",
@@ -736,7 +1044,11 @@
       "description": "where something comes from",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "where something comes from"
+      "plain_description": "where something comes from",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "flow",
@@ -745,7 +1057,11 @@
       "description": "to flow",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "to flow"
+      "plain_description": "to flow",
+      "experience_tier": "space_motion",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "pulse",
@@ -754,7 +1070,11 @@
       "description": "a beat; a steady throb",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "a beat; a steady throb"
+      "plain_description": "a beat; a steady throb",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "still",
@@ -763,7 +1083,11 @@
       "description": "not moving; staying put",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "not moving; staying put"
+      "plain_description": "not moving; staying put",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "will",
@@ -772,7 +1096,11 @@
       "description": "the drive or intent to do something",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "the drive or intent to do something"
+      "plain_description": "the drive or intent to do something",
+      "experience_tier": "thinking",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "strong",
@@ -781,7 +1109,11 @@
       "description": "strong; powerful and hard to break",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "strong; powerful and hard to break"
+      "plain_description": "strong; powerful and hard to break",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "reach",
@@ -790,7 +1122,11 @@
       "description": "to stretch out toward something",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "to stretch out toward something"
+      "plain_description": "to stretch out toward something",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "wave",
@@ -799,7 +1135,11 @@
       "description": "a wave",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "a wave"
+      "plain_description": "a wave",
+      "experience_tier": "space_motion",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "hand",
@@ -808,7 +1148,11 @@
       "description": "your hand",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "your hand"
+      "plain_description": "your hand",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "eye",
@@ -817,7 +1161,11 @@
       "description": "your eye",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "your eye"
+      "plain_description": "your eye",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "skin",
@@ -826,7 +1174,11 @@
       "description": "your skin",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "your skin"
+      "plain_description": "your skin",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "bone",
@@ -835,7 +1187,11 @@
       "description": "a bone",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "a bone"
+      "plain_description": "a bone",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "big",
@@ -844,7 +1200,11 @@
       "description": "big; large in size",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "big; large in size"
+      "plain_description": "big; large in size",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "small",
@@ -853,7 +1213,11 @@
       "description": "small; little in size",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "small; little in size"
+      "plain_description": "small; little in size",
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "head",
@@ -862,7 +1226,11 @@
       "description": "your head",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "your head"
+      "plain_description": "your head",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "heart",
@@ -871,7 +1239,11 @@
       "description": "your heart",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "your heart"
+      "plain_description": "your heart",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "mouth",
@@ -880,7 +1252,11 @@
       "description": "your mouth",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "your mouth"
+      "plain_description": "your mouth",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "need",
@@ -889,7 +1265,11 @@
       "description": "to need something",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "to need something"
+      "plain_description": "to need something",
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "cause",
@@ -898,7 +1278,11 @@
       "description": "to make something happen",
       "priority_class": "useful",
       "suggested_status": "primitive",
-      "plain_description": "to make something happen"
+      "plain_description": "to make something happen",
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "name",
@@ -907,7 +1291,11 @@
       "description": "a name",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a name"
+      "plain_description": "a name",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "addressee",
@@ -916,7 +1304,11 @@
       "priority_class": "essential",
       "suggested_status": "primitive",
       "plain_description": "the entity spoken to; you",
-      "primitive_test_note": "Distinct from self (speaker locus) and person (generic someone). Mirrors self for second-person deixis."
+      "primitive_test_note": "Distinct from self (speaker locus) and person (generic someone). Mirrors self for second-person deixis.",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "metal",
@@ -924,7 +1316,11 @@
       "description": "a hard shiny material you can shape, like iron",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a hard shiny material you can shape, like iron"
+      "plain_description": "a hard shiny material you can shape, like iron",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "parent",
@@ -932,12 +1328,136 @@
       "description": "a mother or father",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "a mother or father"
+      "plain_description": "a mother or father",
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+    },
+    {
+      "id": "drink",
+      "domain": "action",
+      "description": "to drink",
+      "priority_class": "essential",
+      "suggested_status": "primitive",
+      "plain_description": "to drink",
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "sky",
+      "domain": "element",
+      "description": "the sky above",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "the sky above",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "tree",
+      "domain": "element",
+      "description": "a tree",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "a tree",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "left",
+      "domain": "space",
+      "description": "the left side",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "the left side",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "right",
+      "domain": "space",
+      "description": "the right side",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "the right side",
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "happy",
+      "domain": "emotion",
+      "description": "feeling glad and content",
+      "priority_class": "essential",
+      "suggested_status": "primitive",
+      "plain_description": "feeling glad and content",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "angry",
+      "domain": "emotion",
+      "description": "feeling mad or hostile",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "feeling mad or hostile",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "calm",
+      "domain": "emotion",
+      "description": "feeling settled and at peace",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "feeling settled and at peace",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "trust",
+      "domain": "emotion",
+      "description": "to believe someone is safe and reliable",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "to believe someone is safe and reliable",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "hope",
+      "domain": "emotion",
+      "description": "to wish and expect something good",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "to wish and expect something good",
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     }
   ],
   "description": "Converged Fonoran concept inventory: 97 primitive roots + grammar particles. Derivable concepts live in data/fonoran-compounds.json; polarity/tense/mood are particles, not roots.",
   "extended_count": 8,
-  "primitive_count": 100,
+  "primitive_count": 110,
   "productive_dimensions": {
     "bond": [
       "family",
@@ -988,5 +1508,7 @@
       "problem",
       "enemy"
     ]
-  }
+  },
+  "organized_by": "human_experience",
+  "experience_note": "Roots carry experience_tier + language_tier + campfire_pass. See docs/fonoran-constitution.md."
 }

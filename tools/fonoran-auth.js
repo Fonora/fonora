@@ -205,6 +205,10 @@ export function isWriteAuthRequired(pathname, method) {
   if (m === 'POST' && pathname === '/api/fonoran/translate') return false;
   if (m === 'POST' && pathname === '/api/fonoran/translation-tests/run') return false;
   if (m === 'POST' && pathname === '/api/fonoran/snapshot/preview') return false;
+  // Puzzle Conversation playtests are public: anyone who knows the roots can play and
+  // their guess-the-meaning results are exactly the evidence the language needs.
+  if (m === 'POST' && pathname === '/api/fonoran/puzzle/guess') return false;
+  if (m === 'POST' && pathname === '/api/fonoran/expressions/candidates') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
 }
 

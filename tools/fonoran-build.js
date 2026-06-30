@@ -78,7 +78,26 @@ function labelFromId(id) {
  *
  * Returns { resolved, dropped } where resolved compounds parse uniquely.
  */
-function resolveCompounds(compoundDefs, rootById, rootSpellings) {
+/**
+ * Normalize a compound definition to the legacy flat shape regardless of which schema
+ * the file uses. v2 (communicative) stores `{ preferred: { composition, gloss }, alternates }`;
+ * v1 stored `{ composition, gloss }` directly. We always expose `composition`, `gloss`,
+ * `alternates`, and `understandability`.
+ */
+function normalizeCompoundDef(def) {
+  const composition = def.preferred?.composition ?? def.composition ?? [];
+  const gloss = def.preferred?.gloss ?? def.gloss ?? '';
+  return {
+    concept: def.concept,
+    composition,
+    gloss,
+    alternates: Array.isArray(def.alternates) ? def.alternates : [],
+    understandability: def.understandability ?? null,
+  };
+}
+
+function resolveCompounds(compoundDefsRaw, rootById, rootSpellings) {
+  const compoundDefs = compoundDefsRaw.map(normalizeCompoundDef);
   const conceptIds = new Set(Object.keys(rootById));
   const segInventory = rootSpellings.map(root => ({ root, id: root }));
   const resolved = [];
@@ -96,6 +115,18 @@ function resolveCompounds(compoundDefs, rootById, rootSpellings) {
   for (const def of compoundDefs) {
     if (!conceptIds.has(def.concept)) defById.set(def.concept, def);
   }
+
+  // Best-effort: resolve an alternate composition to a transparent spelling. Returns null
+  // when any component is unresolved or the join breaks the boundary constraint. Alternates
+  // are recognizable input forms for puzzle/repair mode, so they may collide with the
+  // preferred spelling space without being dropped.
+  const resolveAlternate = comp => {
+    if (!Array.isArray(comp) || !comp.length) return null;
+    if (!comp.every(id => resolvedById.has(id))) return null;
+    const seq = comp.flatMap(id => resolvedById.get(id).roots);
+    if (!checkCompoundBoundary(seq).valid) return null;
+    return { composition: comp, parts: seq, spelling: seq.join('') };
+  };
 
   const validateAndRecord = def => {
     const comps = def.composition ?? [];
@@ -127,7 +158,21 @@ function resolveCompounds(compoundDefs, rootById, rootSpellings) {
 
     usedSpellings.add(spelling);
     resolvedById.set(def.concept, { roots: rootSeq, spelling });
-    resolved.push({ ...def, spelling, rootSeq });
+    const alternateForms = (def.alternates ?? [])
+      .map(alt => {
+        const r = resolveAlternate(alt.composition);
+        if (!r || r.spelling === spelling) return null;
+        return {
+          spelling: r.spelling,
+          composition: r.composition,
+          parts: r.parts,
+          understandability: alt.understandability ?? null,
+          status: alt.status ?? 'plausible',
+          source: alt.source ?? 'heuristic',
+        };
+      })
+      .filter(Boolean);
+    resolved.push({ ...def, spelling, rootSeq, alternateForms });
   };
 
   let pending = [];
@@ -280,6 +325,8 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
         created_by: 'generator',
         named_at: now,
         dda: emptyDda(),
+        understandability: def.understandability ?? null,
+        alternate_forms: def.alternateForms ?? [],
       };
       const scratch = { sounds, compounds: [] };
       normalizeCompoundRecord(entry, scratch);

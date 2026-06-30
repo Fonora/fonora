@@ -1,603 +1,1701 @@
 {
-  "version": "1.1-converged",
+  "version": "2.0-communicative",
   "status": "canonical",
-  "description": "Curated transparent Fonoran compounds. Components reference ids in data/fonoran-concept-inventory.json (primitive roots) OR other compounds in this file (nested semantic trees, per docs/fonoran-grammar.md). Prefer the shortest transparent path; semantic economy.",
+  "philosophy": "Compounds are meaning-attempts, not canonical answers. Each concept keeps a preferred form and alternate understandable forms. understandability is an advisory ranking aid; human guess-the-meaning playtests decide the preferred form (docs/fonoran-constitution.md).",
+  "description": "Curated transparent Fonoran compounds with ranked alternates. Components reference ids in data/fonoran-concept-inventory.json (primitive roots) OR other compounds in this file.",
+  "compound_count": 82,
   "compounds": [
     {
       "concept": "death",
-      "composition": [
-        "bound",
-        "life"
+      "preferred": {
+        "composition": [
+          "bound",
+          "life"
+        ],
+        "gloss": "the end of life"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "no",
+            "life"
+          ],
+          "understandability": 0.88,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "end",
+            "life"
+          ],
+          "understandability": 0.88,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "the end of life"
+      "understandability": 0.83,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "birth",
-      "composition": [
-        "source",
-        "life"
+      "preferred": {
+        "composition": [
+          "source",
+          "life"
+        ],
+        "gloss": "the start of life"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "life",
+            "before"
+          ],
+          "understandability": 0.94,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "new",
+            "life"
+          ],
+          "understandability": 0.88,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "the start of life"
+      "understandability": 0.81,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "breath",
-      "composition": [
-        "air",
-        "flow"
-      ],
-      "gloss": "air moving in and out"
+      "preferred": {
+        "composition": [
+          "air",
+          "flow"
+        ],
+        "gloss": "air moving in and out"
+      },
+      "alternates": [],
+      "understandability": 0.86,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "food",
-      "composition": [
-        "eat",
-        "thing"
+      "preferred": {
+        "composition": [
+          "eat",
+          "thing"
+        ],
+        "gloss": "something you eat"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "good",
+            "eat"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "eat",
+            "plant"
+          ],
+          "understandability": 0.96,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "something you eat"
+      "understandability": 0.85,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "joy",
-      "composition": [
-        "good",
-        "feel"
+      "preferred": {
+        "composition": [
+          "good",
+          "feel"
+        ],
+        "gloss": "a good feeling"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "happy",
+            "strong"
+          ],
+          "understandability": 0.87,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a good feeling"
+      "understandability": 0.98,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "sad",
-      "composition": [
-        "bad",
-        "feel"
+      "preferred": {
+        "composition": [
+          "bad",
+          "feel"
+        ],
+        "gloss": "a bad feeling"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "no",
+            "happy"
+          ],
+          "understandability": 0.91,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a bad feeling"
+      "understandability": 0.98,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "teach",
-      "composition": [
-        "make",
-        "know"
-      ],
-      "gloss": "to make someone know"
+      "preferred": {
+        "composition": [
+          "make",
+          "know"
+        ],
+        "gloss": "to make someone know"
+      },
+      "alternates": [],
+      "understandability": 0.91,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "learn",
-      "composition": [
-        "take",
-        "know"
-      ],
-      "gloss": "to take in knowing"
+      "preferred": {
+        "composition": [
+          "take",
+          "know"
+        ],
+        "gloss": "to take in knowing"
+      },
+      "alternates": [],
+      "understandability": 0.97,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "remember",
-      "composition": [
-        "know",
-        "before"
+      "preferred": {
+        "composition": [
+          "know",
+          "before"
+        ],
+        "gloss": "to know from before"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "hold",
+            "know"
+          ],
+          "understandability": 0.93,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "to know from before"
+      "understandability": 0.96,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "signal",
-      "composition": [
-        "give",
-        "mark"
-      ],
-      "gloss": "a given sign"
+      "preferred": {
+        "composition": [
+          "give",
+          "mark"
+        ],
+        "gloss": "a given sign"
+      },
+      "alternates": [],
+      "understandability": 0.87,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "seed",
-      "composition": [
-        "source",
-        "plant"
-      ],
-      "gloss": "the start of a plant"
+      "preferred": {
+        "composition": [
+          "source",
+          "plant"
+        ],
+        "gloss": "the start of a plant"
+      },
+      "alternates": [],
+      "understandability": 0.81,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "cycle",
-      "composition": [
-        "pulse",
-        "time"
-      ],
-      "gloss": "a repeating time"
+      "preferred": {
+        "composition": [
+          "pulse",
+          "time"
+        ],
+        "gloss": "a repeating time"
+      },
+      "alternates": [],
+      "understandability": 0.82,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "void",
-      "composition": [
-        "empty",
-        "all"
-      ],
-      "gloss": "completely empty space"
+      "preferred": {
+        "composition": [
+          "empty",
+          "all"
+        ],
+        "gloss": "completely empty space"
+      },
+      "alternates": [],
+      "understandability": 0.8,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "agent",
-      "composition": [
-        "do",
-        "person"
-      ],
-      "gloss": "one who does"
+      "preferred": {
+        "composition": [
+          "do",
+          "person"
+        ],
+        "gloss": "one who does"
+      },
+      "alternates": [],
+      "understandability": 0.93,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "container",
-      "composition": [
-        "hold",
-        "thing"
-      ],
-      "gloss": "a thing that holds"
+      "preferred": {
+        "composition": [
+          "hold",
+          "thing"
+        ],
+        "gloss": "a thing that holds"
+      },
+      "alternates": [],
+      "understandability": 0.81,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "grow",
-      "composition": [
-        "big",
-        "change"
-      ],
-      "gloss": "to change bigger"
+      "preferred": {
+        "composition": [
+          "big",
+          "change"
+        ],
+        "gloss": "to change bigger"
+      },
+      "alternates": [],
+      "understandability": 0.78,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "whole",
-      "composition": [
-        "all",
-        "part"
-      ],
-      "gloss": "all the parts together"
+      "preferred": {
+        "composition": [
+          "all",
+          "part"
+        ],
+        "gloss": "all the parts together"
+      },
+      "alternates": [],
+      "understandability": 0.78,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "tribe",
-      "composition": [
-        "collective",
-        "person"
-      ],
-      "gloss": "a collective of persons"
+      "preferred": {
+        "composition": [
+          "collective",
+          "person"
+        ],
+        "gloss": "a collective of persons"
+      },
+      "alternates": [],
+      "understandability": 0.99,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "family",
-      "composition": [
-        "bond",
-        "person"
+      "preferred": {
+        "composition": [
+          "bond",
+          "person"
+        ],
+        "gloss": "bonded persons"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "love",
+            "person"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "parent",
+            "collective"
+          ],
+          "understandability": 0.94,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "bonded persons"
+      "understandability": 0.95,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "nation",
-      "composition": [
-        "collective",
-        "place"
-      ],
-      "gloss": "a people bound to a place"
+      "preferred": {
+        "composition": [
+          "collective",
+          "place"
+        ],
+        "gloss": "a people bound to a place"
+      },
+      "alternates": [],
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "people",
-      "composition": [
-        "many",
-        "person"
-      ],
-      "gloss": "many persons"
+      "preferred": {
+        "composition": [
+          "many",
+          "person"
+        ],
+        "gloss": "many persons"
+      },
+      "alternates": [],
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "war",
-      "composition": [
-        "tribe",
-        "conflict"
-      ],
-      "gloss": "conflict between tribes"
+      "preferred": {
+        "composition": [
+          "tribe",
+          "conflict"
+        ],
+        "gloss": "conflict between tribes"
+      },
+      "alternates": [],
+      "understandability": 0.87,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "enemy",
-      "composition": [
-        "conflict",
-        "person"
+      "preferred": {
+        "composition": [
+          "conflict",
+          "person"
+        ],
+        "gloss": "a person in conflict"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "bad",
+            "person"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "fear",
+            "person"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a person in conflict"
+      "understandability": 0.95,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "friend",
-      "composition": [
-        "bond",
-        "near"
+      "preferred": {
+        "composition": [
+          "bond",
+          "near"
+        ],
+        "gloss": "a close bond"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "help",
+            "person"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "good",
+            "person"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "love",
+            "person"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a close bond"
+      "understandability": 0.95,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "leader",
-      "composition": [
-        "head",
-        "person"
+      "preferred": {
+        "composition": [
+          "head",
+          "person"
+        ],
+        "gloss": "the head person"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "speak",
+            "person"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "strong",
+            "person"
+          ],
+          "understandability": 0.88,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "the head person"
+      "understandability": 0.96,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "helper",
-      "composition": [
-        "help",
-        "person"
-      ],
-      "gloss": "a person who helps"
+      "preferred": {
+        "composition": [
+          "help",
+          "person"
+        ],
+        "gloss": "a person who helps"
+      },
+      "alternates": [],
+      "understandability": 0.99,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "teacher",
-      "composition": [
-        "teach",
-        "person"
+      "preferred": {
+        "composition": [
+          "teach",
+          "person"
+        ],
+        "gloss": "one who teaches"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "give",
+            "know",
+            "person"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "one who teaches"
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "student",
-      "composition": [
-        "learn",
-        "person"
-      ],
-      "gloss": "one who learns"
+      "preferred": {
+        "composition": [
+          "learn",
+          "person"
+        ],
+        "gloss": "one who learns"
+      },
+      "alternates": [],
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "child",
-      "composition": [
-        "small",
-        "person"
+      "preferred": {
+        "composition": [
+          "small",
+          "person"
+        ],
+        "gloss": "a small person"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "new",
+            "person"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a small person"
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "giant",
-      "composition": [
-        "big",
-        "body"
-      ],
-      "gloss": "a big body"
+      "preferred": {
+        "composition": [
+          "big",
+          "body"
+        ],
+        "gloss": "a big body"
+      },
+      "alternates": [],
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "knowledge",
-      "composition": [
-        "know",
-        "thing"
-      ],
-      "gloss": "a known thing"
+      "preferred": {
+        "composition": [
+          "know",
+          "thing"
+        ],
+        "gloss": "a known thing"
+      },
+      "alternates": [],
+      "understandability": 0.83,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "memory",
-      "composition": [
-        "remember",
-        "thing"
-      ],
-      "gloss": "a remembered thing"
+      "preferred": {
+        "composition": [
+          "remember",
+          "thing"
+        ],
+        "gloss": "a remembered thing"
+      },
+      "alternates": [],
+      "understandability": 0.78,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "mind",
-      "composition": [
-        "think",
-        "center"
-      ],
-      "gloss": "the center of thought"
+      "preferred": {
+        "composition": [
+          "think",
+          "center"
+        ],
+        "gloss": "the center of thought"
+      },
+      "alternates": [],
+      "understandability": 0.86,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "question",
-      "composition": [
-        "want",
-        "know"
+      "preferred": {
+        "composition": [
+          "want",
+          "know"
+        ],
+        "gloss": "wanting to know"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "speak",
+            "want",
+            "know"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "wanting to know"
+      "understandability": 0.97,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "answer",
-      "composition": [
-        "give",
-        "know"
+      "preferred": {
+        "composition": [
+          "give",
+          "know"
+        ],
+        "gloss": "giving knowing"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "speak",
+            "know"
+          ],
+          "understandability": 0.98,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "giving knowing"
+      "understandability": 0.97,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "wisdom",
-      "composition": [
-        "know",
-        "strong"
-      ],
-      "gloss": "strong knowing"
+      "preferred": {
+        "composition": [
+          "know",
+          "strong"
+        ],
+        "gloss": "strong knowing"
+      },
+      "alternates": [],
+      "understandability": 0.86,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "meaning",
-      "composition": [
-        "signal",
-        "know"
-      ],
-      "gloss": "a knowing signal"
+      "preferred": {
+        "composition": [
+          "signal",
+          "know"
+        ],
+        "gloss": "a knowing signal"
+      },
+      "alternates": [],
+      "understandability": 0.9,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "word",
-      "composition": [
-        "mark",
-        "speak"
-      ],
-      "gloss": "a spoken mark"
+      "preferred": {
+        "composition": [
+          "mark",
+          "speak"
+        ],
+        "gloss": "a spoken mark"
+      },
+      "alternates": [],
+      "understandability": 0.88,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "language",
-      "composition": [
-        "collective",
-        "speak"
-      ],
-      "gloss": "collective speech"
+      "preferred": {
+        "composition": [
+          "collective",
+          "speak"
+        ],
+        "gloss": "collective speech"
+      },
+      "alternates": [],
+      "understandability": 0.99,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "river",
-      "composition": [
-        "flow",
-        "path"
+      "preferred": {
+        "composition": [
+          "flow",
+          "path"
+        ],
+        "gloss": "flow along a passage"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "water",
+            "move"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "water",
+            "far"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "water",
+            "path"
+          ],
+          "understandability": 0.96,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "flow",
+            "water"
+          ],
+          "understandability": 0.91,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "flow along a passage"
+      "understandability": 0.86,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "lake",
-      "composition": [
-        "water",
-        "still"
+      "preferred": {
+        "composition": [
+          "water",
+          "still"
+        ],
+        "gloss": "still water"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "water",
+            "hold"
+          ],
+          "understandability": 0.96,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "water",
+            "place"
+          ],
+          "understandability": 0.93,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "still water"
+      "understandability": 0.88,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "sea",
-      "composition": [
-        "water",
-        "whole"
+      "preferred": {
+        "composition": [
+          "water",
+          "whole"
+        ],
+        "gloss": "the whole of water"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "water",
+            "far"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "water",
+            "all"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "water",
+            "big"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "the whole of water"
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "rain",
-      "composition": [
-        "water",
-        "down"
+      "preferred": {
+        "composition": [
+          "water",
+          "down"
+        ],
+        "gloss": "water falling down"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "sky",
+            "water"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "water",
+            "fall"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "water falling down"
+      "understandability": 1,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "cloud",
-      "composition": [
-        "air",
-        "water"
+      "preferred": {
+        "composition": [
+          "air",
+          "water"
+        ],
+        "gloss": "water held in air"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "sky",
+            "water"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "water",
+            "up"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "water held in air"
+      "understandability": 0.96,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "mountain",
-      "composition": [
-        "earth",
-        "up"
+      "preferred": {
+        "composition": [
+          "earth",
+          "up"
+        ],
+        "gloss": "earth rising up"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "stone",
+            "up"
+          ],
+          "understandability": 0.96,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "earth",
+            "big"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "earth rising up"
+      "understandability": 1,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "island",
-      "composition": [
-        "earth",
-        "water"
+      "preferred": {
+        "composition": [
+          "earth",
+          "water"
+        ],
+        "gloss": "earth within water"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "earth",
+            "inside",
+            "water"
+          ],
+          "understandability": 0.94,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "earth within water"
+      "understandability": 1,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "forest",
-      "composition": [
-        "many",
-        "plant"
+      "preferred": {
+        "composition": [
+          "many",
+          "plant"
+        ],
+        "gloss": "many plants"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "tree",
+            "place"
+          ],
+          "understandability": 0.93,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "many",
+            "tree"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "many plants"
+      "understandability": 0.88,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "sun",
-      "composition": [
-        "light",
-        "source"
+      "preferred": {
+        "composition": [
+          "light",
+          "source"
+        ],
+        "gloss": "the source of light"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "sky",
+            "fire"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "light",
+            "big"
+          ],
+          "understandability": 0.88,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "the source of light"
+      "understandability": 0.81,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "star",
-      "composition": [
-        "light",
-        "far"
+      "preferred": {
+        "composition": [
+          "light",
+          "far"
+        ],
+        "gloss": "distant light"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "sky",
+            "light",
+            "small"
+          ],
+          "understandability": 0.86,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "distant light"
+      "understandability": 0.96,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "moon",
-      "composition": [
-        "light",
-        "cold"
+      "preferred": {
+        "composition": [
+          "light",
+          "cold"
+        ],
+        "gloss": "cold light"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "sky",
+            "light",
+            "night"
+          ],
+          "understandability": 0.86,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "cold light"
+      "understandability": 0.96,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "day",
-      "composition": [
-        "light",
-        "time"
-      ],
-      "gloss": "the time of light"
+      "preferred": {
+        "composition": [
+          "light",
+          "time"
+        ],
+        "gloss": "the time of light"
+      },
+      "alternates": [],
+      "understandability": 0.9,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "night",
-      "composition": [
-        "dark",
-        "time"
-      ],
-      "gloss": "the time of dark"
+      "preferred": {
+        "composition": [
+          "dark",
+          "time"
+        ],
+        "gloss": "the time of dark"
+      },
+      "alternates": [],
+      "understandability": 0.9,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "fever",
-      "composition": [
-        "hot",
-        "body"
+      "preferred": {
+        "composition": [
+          "hot",
+          "body"
+        ],
+        "gloss": "a hot body"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "bad",
+            "hot",
+            "body"
+          ],
+          "understandability": 0.94,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a hot body"
+      "understandability": 1,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "wound",
-      "composition": [
-        "pain",
-        "body"
+      "preferred": {
+        "composition": [
+          "pain",
+          "body"
+        ],
+        "gloss": "a body in pain"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "bad",
+            "skin"
+          ],
+          "understandability": 0.95,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a body in pain"
+      "understandability": 1,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "heal",
-      "composition": [
-        "make",
-        "good"
+      "preferred": {
+        "composition": [
+          "make",
+          "good"
+        ],
+        "gloss": "to make good"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "good",
+            "body"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "help",
+            "body"
+          ],
+          "understandability": 0.99,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "to make good"
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "tool",
-      "composition": [
-        "thing",
-        "use"
+      "preferred": {
+        "composition": [
+          "thing",
+          "use"
+        ],
+        "gloss": "a thing for use"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "hand",
+            "thing"
+          ],
+          "understandability": 0.85,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a thing for use"
+      "understandability": 0.81,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "weapon",
-      "composition": [
-        "thing",
-        "conflict"
-      ],
-      "gloss": "a thing for conflict"
+      "preferred": {
+        "composition": [
+          "thing",
+          "conflict"
+        ],
+        "gloss": "a thing for conflict"
+      },
+      "alternates": [],
+      "understandability": 0.8,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "gift",
-      "composition": [
-        "give",
-        "thing"
+      "preferred": {
+        "composition": [
+          "give",
+          "thing"
+        ],
+        "gloss": "a given thing"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "good",
+            "give"
+          ],
+          "understandability": 0.98,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "a given thing"
+      "understandability": 0.85,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "journey",
-      "composition": [
-        "move",
-        "path"
+      "preferred": {
+        "composition": [
+          "move",
+          "path"
+        ],
+        "gloss": "movement along a path"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "far",
+            "move"
+          ],
+          "understandability": 1,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "walk",
+            "far"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "movement along a path"
+      "understandability": 0.96,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "home",
-      "composition": [
-        "inside",
-        "place"
+      "preferred": {
+        "composition": [
+          "inside",
+          "place"
+        ],
+        "gloss": "an interior place"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "sleep",
+            "place"
+          ],
+          "understandability": 0.93,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "self",
+            "place"
+          ],
+          "understandability": 0.93,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "love",
+            "place"
+          ],
+          "understandability": 0.92,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
       ],
-      "gloss": "an interior place"
+      "understandability": 0.93,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "city",
-      "composition": [
-        "many",
-        "place"
-      ],
-      "gloss": "a place of many"
+      "preferred": {
+        "composition": [
+          "many",
+          "place"
+        ],
+        "gloss": "a place of many"
+      },
+      "alternates": [],
+      "understandability": 0.85,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "birthplace",
-      "composition": [
-        "birth",
-        "place"
-      ],
-      "gloss": "the place of birth"
+      "preferred": {
+        "composition": [
+          "birth",
+          "place"
+        ],
+        "gloss": "the place of birth"
+      },
+      "alternates": [],
+      "understandability": 0.85,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "open",
-      "composition": ["make", "path"],
-      "gloss": "to make a way through"
+      "preferred": {
+        "composition": [
+          "make",
+          "path"
+        ],
+        "gloss": "to make a way through"
+      },
+      "alternates": [],
+      "understandability": 0.89,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "sunrise",
-      "composition": ["sun", "up"],
-      "gloss": "sun rising"
+      "preferred": {
+        "composition": [
+          "sun",
+          "up"
+        ],
+        "gloss": "sun rising"
+      },
+      "alternates": [],
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "sunset",
-      "composition": ["sun", "down"],
-      "gloss": "sun setting"
+      "preferred": {
+        "composition": [
+          "sun",
+          "down"
+        ],
+        "gloss": "sun setting"
+      },
+      "alternates": [],
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "moonlight",
-      "composition": ["moon", "light"],
-      "gloss": "light from the moon"
+      "preferred": {
+        "composition": [
+          "moon",
+          "light"
+        ],
+        "gloss": "light from the moon"
+      },
+      "alternates": [],
+      "understandability": 0.88,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "morning",
-      "composition": ["light", "before"],
-      "gloss": "early light"
+      "preferred": {
+        "composition": [
+          "light",
+          "before"
+        ],
+        "gloss": "early light"
+      },
+      "alternates": [],
+      "understandability": 0.94,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "winter",
-      "composition": ["cold", "time"],
-      "gloss": "the cold season"
+      "preferred": {
+        "composition": [
+          "cold",
+          "time"
+        ],
+        "gloss": "the cold season"
+      },
+      "alternates": [],
+      "understandability": 0.94,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "bridge",
-      "composition": ["path", "water"],
-      "gloss": "a way over water"
+      "preferred": {
+        "composition": [
+          "path",
+          "water"
+        ],
+        "gloss": "a way over water"
+      },
+      "alternates": [],
+      "understandability": 0.96,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "beautiful",
-      "composition": ["good", "see"],
-      "gloss": "good to see"
+      "preferred": {
+        "composition": [
+          "good",
+          "see"
+        ],
+        "gloss": "good to see"
+      },
+      "alternates": [],
+      "understandability": 0.99,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "almost",
-      "composition": ["near", "far"],
-      "gloss": "close to but not fully there"
+      "preferred": {
+        "composition": [
+          "near",
+          "far"
+        ],
+        "gloss": "close to but not fully there"
+      },
+      "alternates": [],
+      "understandability": 1,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "door",
-      "composition": ["path", "bound"],
-      "gloss": "a passage through a boundary"
+      "preferred": {
+        "composition": [
+          "path",
+          "bound"
+        ],
+        "gloss": "a passage through a boundary"
+      },
+      "alternates": [],
+      "understandability": 0.83,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "campfire",
-      "composition": ["fire", "place"],
-      "gloss": "fire at a place"
+      "preferred": {
+        "composition": [
+          "fire",
+          "place"
+        ],
+        "gloss": "fire at a place"
+      },
+      "alternates": [],
+      "understandability": 0.93,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "fish",
-      "composition": ["water", "animal"],
-      "gloss": "a water animal"
+      "preferred": {
+        "composition": [
+          "water",
+          "animal"
+        ],
+        "gloss": "a water animal"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "water",
+            "move",
+            "animal"
+          ],
+          "understandability": 0.94,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
+      ],
+      "understandability": 1,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "blacksmith",
-      "composition": ["metal", "make", "person"],
-      "gloss": "one who works metal"
+      "preferred": {
+        "composition": [
+          "metal",
+          "make",
+          "person"
+        ],
+        "gloss": "one who works metal"
+      },
+      "alternates": [],
+      "understandability": 0.86,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "grandparent",
-      "composition": ["before", "parent"],
-      "gloss": "a parent's parent, an elder"
+      "preferred": {
+        "composition": [
+          "before",
+          "parent"
+        ],
+        "gloss": "a parent's parent, an elder"
+      },
+      "alternates": [],
+      "understandability": 0.93,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "doctor",
-      "composition": ["heal", "person"],
-      "gloss": "one who heals"
+      "preferred": {
+        "composition": [
+          "heal",
+          "person"
+        ],
+        "gloss": "one who heals"
+      },
+      "alternates": [
+        {
+          "composition": [
+            "good",
+            "body",
+            "person"
+          ],
+          "understandability": 0.94,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "help",
+            "body",
+            "person"
+          ],
+          "understandability": 0.94,
+          "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        }
+      ],
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "hunter",
-      "composition": ["take", "animal", "person"],
-      "gloss": "one who takes animals"
+      "preferred": {
+        "composition": [
+          "take",
+          "animal",
+          "person"
+        ],
+        "gloss": "one who takes animals"
+      },
+      "alternates": [],
+      "understandability": 0.94,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "farmer",
-      "composition": ["make", "plant", "person"],
-      "gloss": "one who makes plants grow"
+      "preferred": {
+        "composition": [
+          "make",
+          "plant",
+          "person"
+        ],
+        "gloss": "one who makes plants grow"
+      },
+      "alternates": [],
+      "understandability": 0.86,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "fisherman",
-      "composition": ["fish", "person"],
-      "gloss": "one who fishes"
+      "preferred": {
+        "composition": [
+          "fish",
+          "person"
+        ],
+        "gloss": "one who fishes"
+      },
+      "alternates": [],
+      "understandability": 0.92,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "knife",
-      "composition": ["metal", "bound"],
-      "gloss": "a metal blade"
+      "preferred": {
+        "composition": [
+          "metal",
+          "bound"
+        ],
+        "gloss": "a metal blade"
+      },
+      "alternates": [],
+      "understandability": 0.83,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "red",
-      "composition": ["fire", "see"],
-      "gloss": "the color of fire"
+      "preferred": {
+        "composition": [
+          "fire",
+          "see"
+        ],
+        "gloss": "the color of fire"
+      },
+      "alternates": [],
+      "understandability": 1,
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     }
   ]
 }

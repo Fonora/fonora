@@ -1,6 +1,12 @@
 # Fonoran Gen 3: Grid-Native Language Architecture
 
-> **Archive.** Experimental generator, not the active workflow. See [fonoran.md](fonoran.md).
+> **Archive — superseded direction.** Experimental generator, not the active workflow. See [fonoran.md](fonoran.md).
+>
+> The Gen 3 / DDA coordinate track (abstract, articulation-derived `⟨D,M,A⟩` semantics) is
+> **demoted** under the [Fonoran Constitution](fonoran-constitution.md): roots are now
+> organized by **human experience** and gated by the **campfire test**, and compounds are
+> judged by whether another root-knower can recover the meaning — not by coordinate
+> correctness. Kept for reference and DDA inference; not the production design.
 
 > **Status:** experimental rebase, all prior Fonoran work (Gen 1 inventory, Gen 2 primitives, English-adjacent roots) is **disposable**  
 > **Branch:** `feature/fonoran-language-experiment`  
