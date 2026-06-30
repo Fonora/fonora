@@ -6,7 +6,7 @@ import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { handleAuthRoutes, logAuthStatus } from './tools/fonoran-auth.js';
 import { handleFonoranApi } from './tools/fonoran-api.js';
-import { maybeAutoSeedOnStartup } from './tools/fonoran-store.js';
+import { maybeAutoSeedOnStartup, initStore } from './tools/fonoran-store.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const host = process.env.HOST || '0.0.0.0';
@@ -246,6 +246,7 @@ createServer(async (req, res) => {
   console.log(`Fonora listening on http://${host}:${port}`);
   logAuthStatus();
   try {
+    await initStore();
     await maybeAutoSeedOnStartup();
   } catch (err) {
     console.warn('Fonoran auto-import skipped:', err instanceof Error ? err.message : err);

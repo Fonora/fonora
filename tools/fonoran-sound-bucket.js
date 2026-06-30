@@ -153,8 +153,8 @@ function countByState(items) {
   return counts;
 }
 
-export async function getLab() {
-  const bucket = await loadBucket();
+export async function getLab(preloadedBucket = null) {
+  const bucket = preloadedBucket ?? await loadBucket();
   const locData = await loadLocalization('en');
   const soundsBySpelling = Object.fromEntries(bucket.sounds.map(s => [s.spelling, s]));
   const sounds = bucket.sounds.map(s => enrichSound(s, bucket, locData));
@@ -907,8 +907,8 @@ function computeHealth(bucket) {
   };
 }
 
-export async function getHealth() {
-  const bucket = await loadBucket();
+export async function getHealth(preloadedBucket = null) {
+  const bucket = preloadedBucket ?? await loadBucket();
   const key = bucket.updated_at ?? '';
   if (healthCache?.key === key) return healthCache.value;
   const value = computeHealth(bucket);

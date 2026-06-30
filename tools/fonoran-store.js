@@ -71,6 +71,34 @@ export function resolveStorageMode() {
 }
 
 let pool = null;
+let schemaReady = false;
+/** @type {{ key: string | null, bucket: object } | null} */
+let bucketCache = null;
+/** @type {Map<string, { key: string | null, body: object }>} */
+const docCache = new Map();
+
+export function clearStoreCache() {
+  bucketCache = null;
+  docCache.clear();
+}
+
+async function ensurePgSchemaOnce() {
+  if (schemaReady) return;
+  await ensurePgSchema();
+  schemaReady = true;
+}
+
+/** Initialize Postgres schema and warm the connection pool (call once at server startup). */
+export async function initStore() {
+  if (resolveStorageMode() !== 'postgres' || !process.env.DATABASE_URL) return;
+  await ensurePgSchemaOnce();
+  const client = await (await getPool()).connect();
+  try {
+    await client.query('SELECT 1');
+  } finally {
+    client.release();
+  }
+}
 
 async function getPool() {
   if (pool) return pool;
@@ -167,7 +195,6 @@ async function writeBucketToJson(bucket) {
 }
 
 async function readBucketFromPg() {
-  await ensurePgSchema();
   const client = await (await getPool()).connect();
   try {
     const { rows } = await client.query('SELECT * FROM fonoran_lab_bucket WHERE id = 1');
@@ -179,7 +206,7 @@ async function readBucketFromPg() {
 }
 
 async function writeBucketToPg(bucket) {
-  await ensurePgSchema();
+  await ensurePgSchemaOnce();
   const client = await (await getPool()).connect();
   try {
     await client.query(
@@ -210,8 +237,7 @@ async function writeBucketToPg(bucket) {
   }
 }
 
-async function readDocFromPg(key) {
-  await ensurePgSchema();
+async function fetchDocRowFromPg(key) {
   const client = await (await getPool()).connect();
   try {
     const { rows } = await client.query(
@@ -231,7 +257,7 @@ async function readDocFromPg(key) {
 }
 
 async function writeDocToPg(key, body) {
-  await ensurePgSchema();
+  await ensurePgSchemaOnce();
   const client = await (await getPool()).connect();
   try {
     await client.query(
@@ -249,7 +275,7 @@ async function writeDocToPg(key, body) {
 
 export async function pgDocIsEmpty(key) {
   if (resolveStorageMode() !== 'postgres') return true;
-  const row = await readDocFromPg(key);
+  const row = await fetchDocRowFromPg(key);
   if (!row) return true;
   return isDocBodyEmpty(key, row.body);
 }
@@ -261,12 +287,21 @@ export async function pgDocIsEmpty(key) {
  */
 export async function readDoc(key) {
   if (!EDITORIAL_DOCS[key]) throw new Error(`Unknown editorial doc key: ${key}`);
+  const cached = docCache.get(key);
+  if (cached) return cached.body;
   if (resolveStorageMode() === 'postgres') {
-    const row = await readDocFromPg(key);
-    if (row && !isDocBodyEmpty(key, row.body)) return row.body;
-    return readJsonFile(docSeedPath(key));
+    const row = await fetchDocRowFromPg(key);
+    if (row && !isDocBodyEmpty(key, row.body)) {
+      docCache.set(key, { key: row.updated_at, body: row.body });
+      return row.body;
+    }
+    const fallback = await readJsonFile(docSeedPath(key));
+    if (fallback) docCache.set(key, { key: null, body: fallback });
+    return fallback;
   }
-  return readJsonFile(docSeedPath(key));
+  const body = await readJsonFile(docSeedPath(key));
+  if (body) docCache.set(key, { key: null, body });
+  return body;
 }
 
 /**
@@ -280,9 +315,11 @@ export async function writeDoc(key, body) {
     if (shouldMirrorJson()) {
       await writeJsonFile(docSeedPath(key), body);
     }
+    docCache.delete(key);
     return body;
   }
   await writeJsonFile(docSeedPath(key), body);
+  docCache.delete(key);
   return body;
 }
 
@@ -291,7 +328,7 @@ export async function readDocStatus() {
   const status = {};
   for (const key of Object.keys(EDITORIAL_DOCS)) {
     if (resolveStorageMode() === 'postgres') {
-      const row = await readDocFromPg(key);
+      const row = await fetchDocRowFromPg(key);
       if (row) {
         status[key] = {
           updated_at: row.updated_at,
@@ -354,11 +391,13 @@ export async function readAllSnapshotDocs() {
  * @param {{ bucket: object, docs: Record<string, object> }} snapshot
  */
 export async function importAllSnapshotDocs({ bucket, docs }) {
+  clearStoreCache();
   await writeBucketRaw(bucket);
   for (const key of Object.keys(EDITORIAL_DOCS)) {
     if (!docs[key]) throw new Error(`Snapshot missing doc: ${key}`);
     await writeDoc(key, docs[key]);
   }
+  clearStoreCache();
   return {
     sounds: bucket.sounds?.length ?? 0,
     compounds: bucket.compounds?.length ?? 0,
@@ -408,10 +447,14 @@ export async function pgBucketIsEmpty() {
  * @returns {Promise<object | null>}
  */
 export async function readBucketRaw() {
-  if (resolveStorageMode() === 'postgres') {
-    return readBucketFromPg();
+  if (bucketCache?.bucket) return bucketCache.bucket;
+  const bucket = resolveStorageMode() === 'postgres'
+    ? await readBucketFromPg()
+    : await readBucketFromJson();
+  if (bucket) {
+    bucketCache = { key: bucket.updated_at ?? null, bucket };
   }
-  return readBucketFromJson();
+  return bucket;
 }
 
 /**
@@ -425,9 +468,11 @@ export async function writeBucketRaw(bucket) {
     if (shouldMirrorJson()) {
       await writeBucketToJson(bucket);
     }
+    bucketCache = { key: bucket.updated_at, bucket };
     return bucket;
   }
   await writeBucketToJson(bucket);
+  bucketCache = { key: bucket.updated_at, bucket };
   return bucket;
 }
 
@@ -443,7 +488,7 @@ export async function importJsonToPostgres(jsonPath = BUCKET_PATH) {
   const bucket = JSON.parse(raw);
   await writeBucketToPg(bucket);
 
-  await ensurePgSchema();
+  await ensurePgSchemaOnce();
   const client = await (await getPool()).connect();
   try {
     await client.query(
@@ -541,4 +586,6 @@ export async function closeStore() {
     await pool.end();
     pool = null;
   }
+  schemaReady = false;
+  clearStoreCache();
 }

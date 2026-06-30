@@ -5,6 +5,7 @@
 import {
   getLab,
   getHealth,
+  loadBucket,
   getLabGraph,
   getLabGraphPreview,
   runDda,
@@ -89,6 +90,16 @@ function snapshotZipFromBody(body, rawBuffer) {
   return null;
 }
 
+async function getBootstrap() {
+  const bucket = await loadBucket();
+  const lab = await getLab(bucket);
+  const [health, lexicon] = await Promise.all([
+    getHealth(bucket),
+    loadEnglishLexicon(lab),
+  ]);
+  return { lab, health, lexicon };
+}
+
 export async function handleFonoranApi(req, res, pathname, method) {
   const done = (status, body) => {
     jsonResponse(res, status, body);
@@ -152,6 +163,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const preview = previewSnapshotZip(zip);
       const result = await importSnapshotZip(zip);
       return done(200, { imported: true, preview: preview.summary, ...result });
+    }
+    if (pathname === '/api/fonoran/bootstrap' && method === 'GET') {
+      return done(200, await getBootstrap());
     }
     if (pathname === '/api/fonoran/lab' && method === 'GET') {
       return done(200, await getLab());

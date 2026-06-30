@@ -110,18 +110,23 @@ export function conceptRecord(candidate, approvedRoot = null, primitive = null, 
 export async function loadConceptInventory(locale = 'en') {
   const locData = await loadLocalization(locale);
 
-  const candidatesFile = (await readDoc('root_candidates')) ?? { candidates: [] };
-  if (!candidatesFile.candidates?.length && !candidatesFile.version) {
+  const [candidatesFile, approved, semantic] = await Promise.all([
+    readDoc('root_candidates'),
+    readDoc('approved_roots'),
+    readDoc('concept_inventory'),
+  ]);
+  const candidatesData = candidatesFile ?? { candidates: [] };
+  if (!candidatesData.candidates?.length && !candidatesData.version) {
     return { version: '1.0-concepts', concepts: [], concept_count: 0 };
   }
 
-  const approved = (await readDoc('approved_roots')) ?? { roots: [] };
-  const approvedById = Object.fromEntries((approved.roots ?? []).map(r => [r.id, r]));
+  const approvedData = approved ?? { roots: [] };
+  const approvedById = Object.fromEntries((approvedData.roots ?? []).map(r => [r.id, r]));
 
-  const semantic = (await readDoc('concept_inventory')) ?? { primitives: [] };
-  const primitiveById = Object.fromEntries((semantic.primitives ?? []).map(p => [p.id, p]));
+  const semanticData = semantic ?? { primitives: [] };
+  const primitiveById = Object.fromEntries((semanticData.primitives ?? []).map(p => [p.id, p]));
 
-  const candidates = candidatesFile.candidates ?? [];
+  const candidates = candidatesData.candidates ?? [];
 
   // After a blank-slate reset the review queue is empty, but the semantic
   // inventory still lists concepts — just without assigned sounds yet.
@@ -137,7 +142,7 @@ export async function loadConceptInventory(locale = 'en') {
     return {
       version: '1.0-concepts',
       source: 'data/fonoran-concept-inventory.json',
-      generated_at: candidatesFile.generated_at ?? null,
+      generated_at: candidatesData.generated_at ?? null,
       concept_count: concepts.length,
       concepts,
     };
@@ -148,7 +153,7 @@ export async function loadConceptInventory(locale = 'en') {
   return {
     version: '1.0-concepts',
     source: 'data/fonoran-root-candidates.json',
-    generated_at: candidatesFile.generated_at,
+    generated_at: candidatesData.generated_at,
     concept_count: concepts.length,
     concepts,
   };

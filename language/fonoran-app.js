@@ -499,15 +499,12 @@
         STATE.health = null;
         STATE.healthKey = null;
         STATE.lexicon = null;
-        const [lab, health] = await Promise.all([
-          api('/api/fonoran/lab'),
-          api('/api/fonoran/lab/health').catch(() => null),
-        ]);
-        STATE.lab = lab;
-        await ensureLexicon();
-        if (health) {
-          STATE.health = health;
-          STATE.healthKey = lab.updated_at ?? health.bucket_updated_at ?? null;
+        const bootstrap = await api('/api/fonoran/bootstrap');
+        STATE.lab = bootstrap.lab;
+        STATE.lexicon = bootstrap.lexicon ?? null;
+        if (bootstrap.health) {
+          STATE.health = bootstrap.health;
+          STATE.healthKey = bootstrap.lab?.updated_at ?? bootstrap.health.bucket_updated_at ?? null;
         }
         $('load-error').hidden = true;
         setFonoranUndoDisabled(!STATE.lab.can_undo || !canWrite());
