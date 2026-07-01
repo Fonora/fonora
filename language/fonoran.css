@@ -1194,7 +1194,6 @@
     .explorer-section--tight { margin:0.6rem 0 0; }
     .explorer-section--tight h4 { margin:0 0 0.3rem; font-size:0.72rem; }
     .review .word-preview .word-compose { justify-content:center; }
-    .fonoran-showcase .word-preview { margin-bottom:0.75rem; }
     .fonoran-showcase .word-preview__script { font-size:2rem; }
     .fonoran-showcase .word-preview__spelling { font-size:1.5rem; }
     .fonoran-showcase .word-preview__meaning-line .review-meaning { font-size:1.15rem; }
@@ -1332,7 +1331,9 @@
     }
 
     /* --- Fonoran lander (shared intro/section typography in app.css) --- */
-    .fonoran-showcase { max-width:var(--fonoran-word-card-max-width); margin-inline:auto; padding:1.25rem 1.35rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--layout-card-radius); }
+    .fonoran-showcase { max-width:var(--fonoran-word-card-max-width); margin-inline:auto; padding:0; background:transparent; border:none; border-radius:0; }
+    .fonoran-showcase .word-preview { margin-bottom:0; }
+    .fonoran-showcase .word-preview__card { background:transparent; border:none; padding:0; border-radius:0; }
     .fonoran-showcase__toolbar { display:flex; flex-wrap:wrap; gap:0.75rem; justify-content:center; align-items:center; max-width:var(--fonoran-word-card-max-width); margin:1.25rem auto 0; }
     .showcase-graph { text-align:center; }
     .showcase-graph .graph-hint { text-align:center; }
@@ -1441,7 +1442,10 @@
     .lander-health__actions { display:flex; justify-content:center; margin-top:1rem; }
     .lander-health__actions--in-panel { margin-top:1rem; width:100%; }
     .lander-health__actions--in-panel .btn { width:100%; }
-    .fonoran-compare-card { display:flex; flex-direction:column; gap:0.5rem; }
+    .fonoran-compare-card { display:flex; flex-direction:column; gap:0.5rem; border-radius:12px; box-shadow:var(--shadow-card); transition:transform 0.15s ease, box-shadow 0.15s ease; }
+    @media (prefers-reduced-motion: no-preference) {
+      .fonoran-compare-card:hover { transform:translateY(-1px); box-shadow:var(--shadow-card-hover); }
+    }
     .fonoran-compare-card--script { border-top:3px solid #2563eb; }
     .fonoran-compare-card--language { border-top:3px solid var(--accent); }
     .fonoran-compare-card h3 { margin:0; font-size:1.05rem; }
@@ -1710,6 +1714,11 @@
     .grammar-content .mermaid-pan-zoom foreignObject div {
       font-family:var(--font-mono);
       font-size:0.85rem;
+    }
+    .grammar-content .cluster-label .nodeLabel,
+    .grammar-content .cluster-label foreignObject div {
+      color:#2d6a4f !important;
+      fill:#2d6a4f !important;
     }
     .grammar-content .mermaid-wrap {
       display:flex;

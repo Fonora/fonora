@@ -1,4 +1,5 @@
 import { initMermaidPanZoomIn } from './mermaid-pan-zoom.js';
+import { MERMAID_INIT } from './mermaid-theme.js';
 
 /**
  * Initialize and render Mermaid diagrams inside a container element.
@@ -9,17 +10,7 @@ export async function renderMermaidIn(rootEl) {
   const nodes = rootEl.querySelectorAll('.mermaid');
   if (!nodes.length) return;
 
-  window.mermaid.initialize({
-    startOnLoad: false,
-    theme: 'base',
-    themeVariables: {
-      fontFamily: 'ui-monospace, Menlo, monospace',
-      lineColor: '#a89f95',
-      clusterBkg: '#faf8f5',
-      clusterBorder: '#e8e2da',
-    },
-    securityLevel: 'loose',
-  });
+  window.mermaid.initialize(MERMAID_INIT);
 
   await new Promise((resolve) => requestAnimationFrame(resolve));
   try {
