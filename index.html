@@ -113,27 +113,10 @@
           </div>
         </div>
 
-        <aside class="page-hero-split__visual page-hero-split__visual-panel" aria-label="Projects">
-          <nav class="platform-hero-nav">
-            <div class="platform-hero-nav__item">
-              <p class="platform-hero-nav__tag">Script</p>
-              <p class="platform-hero-nav__title">Fonora Script</p>
-              <p class="platform-hero-nav__desc">A phonetic writing system built from nine core symbols.</p>
-              <button type="button" class="btn btn--primary platform-hero-nav__action" data-tab="home">Explore Script</button>
-            </div>
-            <div class="platform-hero-nav__item">
-              <p class="platform-hero-nav__tag">Language</p>
-              <p class="platform-hero-nav__title">Fonoran</p>
-              <p class="platform-hero-nav__desc">An experimental language for practical communication across native languages.</p>
-              <a href="/language" class="btn btn--primary platform-hero-nav__action">Learn Fonoran</a>
-            </div>
-            <div class="platform-hero-nav__item">
-              <p class="platform-hero-nav__tag">Learn</p>
-              <p class="platform-hero-nav__title">Learn</p>
-              <p class="platform-hero-nav__desc">Practice reading, hearing, and writing Fonora Script.</p>
-              <a href="/learn" class="btn btn--primary platform-hero-nav__action">Start Learning</a>
-            </div>
-          </nav>
+        <aside class="page-hero-split__visual page-hero-split__visual-panel platform-hero-visual" aria-label="Fonora at a glance">
+          <div id="platform-showcase" class="platform-showcase-host" aria-live="polite">
+            <p class="platform-showcase__loading">Loading showcase…</p>
+          </div>
         </aside>
       </section>
 
@@ -440,35 +423,13 @@
         </div>
 
         <aside class="page-hero-split__visual page-hero-split__visual-panel" aria-label="Core symbols">
-          <h3 class="home-how-subheading">Places of Articulation</h3>
-          <div id="home-places" class="home-symbol-grid" role="list" aria-label="Place symbols"></div>
-
-          <h3 class="home-how-subheading">Sound Modifiers</h3>
-          <div id="home-modifiers" class="home-symbol-grid" role="list" aria-label="Modifier symbols"></div>
+          <div id="home-symbol-spotlight-places" class="symbol-spotlight symbol-spotlight--place" data-spotlight-kind="place"></div>
+          <div id="home-symbol-spotlight-modifiers" class="symbol-spotlight symbol-spotlight--manner" data-spotlight-kind="manner"></div>
         </aside>
       </section>
 
-      <section class="home-section home-section--showcase content-section" aria-labelledby="how-heading">
-        <h2 id="how-heading">How It Works</h2>
-
-        <div class="content-section--panel">
-          <div class="home-how-summary">
-            <h3 class="home-how-subheading">From nine symbols to an alphabet</h3>
-            <p>Fonora is built from only <strong>nine core symbols</strong>.</p>
-            <p>Five symbols represent where speech is produced in the mouth and vocal tract.</p>
-            <p>Four symbols modify those locations to create voiced, nasal, fricative, and glide sounds.</p>
-            <p>Together they combine to represent a wide range of human speech while keeping the visual system intentionally small.</p>
-          </div>
-
-          <div class="home-section-actions">
-            <button type="button" class="btn btn--primary" data-tab="grid">See Sound Grid</button>
-            <button type="button" class="btn" data-tab="alphabet">See Full Alphabet</button>
-          </div>
-        </div>
-      </section>
-
       <section class="home-section home-section--sample content-section" aria-labelledby="sample-heading">
-        <h2 id="sample-heading">Fonora Script in Action</h2>
+        <h2 id="sample-heading">Fonora Script in Practice</h2>
 
         <article class="home-sample-preview">
 
