@@ -34,6 +34,9 @@ import { normalizeSymbolInput, decodeToPhonemeKeys } from './decode.js';
 import { translateIpaPhrase } from './ipa-pipeline.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
+import { mountSymbolSpotlight } from './symbol-spotlight.js';
+import { buildPlatformPipelineData, mountPlatformShowcase } from './platform-showcase.js';
+import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
 import { setupTranslatePlayback, setTranslateSymbols } from './fonora-tts-ui.js';
@@ -156,44 +159,45 @@ const HOME_MANNER_ROWS = [
   { id: 'glide', label: 'Glide', note: 'X → Y transition' },
 ];
 
-function renderHomeSymbolCard({ symbol, label, note, kind }) {
-  const glyph = symbol
-    ? `<span class="home-symbol-glyph symbol-text" aria-hidden="true">${escapeHtml(symbol)}</span>`
-    : '<span class="home-symbol-glyph home-symbol-glyph--empty" aria-hidden="true">-<//span>';
-  const noteHtml = note ? `<span class="home-symbol-note">${escapeHtml(note)}</span>` : '';
-  return `
-    <div class="home-symbol-card home-symbol-card--${kind}" role="listitem">
-      ${glyph}
-      <span class="home-symbol-label">${escapeHtml(label)}</span>
-      ${noteHtml}
-    </div>`;
+let platformShowcaseCleanup = null;
+
+function renderPlatformShowcase() {
+  const root = document.getElementById('platform-showcase');
+  if (!root || !rules) return;
+  if (platformShowcaseCleanup) {
+    platformShowcaseCleanup();
+    platformShowcaseCleanup = null;
+  }
+  const toScript = (parts) => romanToFonoraScript(parts, rules).phrase ?? '';
+  const data = buildPlatformPipelineData(rules, toScript);
+  platformShowcaseCleanup = mountPlatformShowcase(root, { data });
 }
 
 function renderHomeHowItWorks() {
-  const placesEl = document.getElementById('home-places');
-  const modifiersEl = document.getElementById('home-modifiers');
-  if (!placesEl || !modifiersEl || !rules) return;
+  const placesRoot = document.getElementById('home-symbol-spotlight-places');
+  const modifiersRoot = document.getElementById('home-symbol-spotlight-modifiers');
+  if (!placesRoot || !modifiersRoot || !rules) return;
 
   const gridPlaces = rules.places.filter((p) => GRID_PLACE_IDS.includes(p.id));
 
-  placesEl.innerHTML = gridPlaces
-    .map((place) =>
-      renderHomeSymbolCard({
-        symbol: place.symbol,
-        label: place.label,
-        kind: 'place',
-      }),
-    )
-    .join('');
+  mountSymbolSpotlight(placesRoot, {
+    heading: 'Places of Articulation',
+    kind: 'place',
+    items: gridPlaces.map((place) => ({
+      symbol: place.symbol,
+      label: place.label,
+    })),
+  });
 
-  modifiersEl.innerHTML = HOME_MANNER_ROWS.map(({ id, label, note }) =>
-    renderHomeSymbolCard({
+  mountSymbolSpotlight(modifiersRoot, {
+    heading: 'Sound Modifiers',
+    kind: 'manner',
+    items: HOME_MANNER_ROWS.map(({ id, label, note }) => ({
       symbol: modifierSymbol(rules.modifiers, id),
       label,
       note,
-      kind: 'manner',
-    }),
-  ).join('');
+    })),
+  });
 }
 
 function renderSoundGrid() {
@@ -974,6 +978,7 @@ function applyRulesBundle(loaded) {
   showFallbackBanner();
   updateAlphabetBanner(loaded.symbolsFromOverrides);
   setupTabs();
+  renderPlatformShowcase();
   renderHomeHowItWorks();
   renderKeyboardSection();
   setupSpellingPractice(rules);
