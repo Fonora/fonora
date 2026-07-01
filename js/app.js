@@ -46,11 +46,16 @@ import {
   initUniversalNav,
   setActiveTab,
   setNavContext,
-  setFonoranAuth,
   setNavSelectHandlers,
   closeNavDropdown,
   MORE_TAB_IDS,
 } from './universal-nav.js';
+import {
+  canAccessTools,
+  refreshAuth,
+  signOut,
+  handleAuthUrlErrors,
+} from './auth-session.js';
 import { setReaderWordSources } from './fonora-tts.js';
 
 let rules = null;
@@ -671,6 +676,8 @@ function isPlatformTab(tabId) {
 }
 
 function setHashForTab(tabId) {
+  if (tabId === 'tools-auth-gate') return;
+
   if (isPlatformTab(tabId)) {
     if (tabId === 'platform') {
       const next = `/${window.location.search}`;
@@ -724,7 +731,33 @@ function ensureAppHeaderOffsetObserver() {
   window.addEventListener('resize', syncAppHeaderOffset);
 }
 
+function isToolsPath() {
+  const path = window.location.pathname.replace(/\/$/, '') || '/';
+  return path === '/tools';
+}
+
+const BUILDER_TOOLS_TAB_IDS = new Set([
+  'tools-home',
+  'keyboard',
+  'reverse',
+  'encoder-testing',
+  'pronunciation-validation',
+  'symbols',
+]);
+
+function isGatedToolsTab(tabId) {
+  return BUILDER_TOOLS_TAB_IDS.has(tabId);
+}
+
+function resolveTabForAuth(tabId) {
+  if (isToolsPath() && !canAccessTools() && (isGatedToolsTab(tabId) || tabId === 'tools-home')) {
+    return 'tools-auth-gate';
+  }
+  return tabId;
+}
+
 function showTab(tabId) {
+  tabId = resolveTabForAuth(tabId);
   const previousTab = document.querySelector('.tab-panel--active')?.dataset.tabPanel;
   const platform = isPlatformTab(tabId);
 
@@ -785,11 +818,6 @@ function handleNavTabSelect(tab) {
   showTab(tab);
 }
 
-setNavSelectHandlers({
-  onTab: handleNavTabSelect,
-  onPlatformTab: handleNavTabSelect,
-});
-
 let shellNavWired = false;
 
 function setupTabs() {
@@ -808,12 +836,13 @@ function setupTabs() {
     });
   });
 
-  refreshAuth();
+  refreshAuth().then(() => {
+    showTab(getTabFromHash());
+  });
   handleAuthUrlErrors();
 
   window.addEventListener('hashchange', () => showTab(getTabFromHash()));
   window.addEventListener('popstate', () => showTab(getTabFromHash()));
-  showTab(getTabFromHash());
 }
 
 /** @type {Record<string, string>}, primary symbols from language-rules.md before overrides */
@@ -914,52 +943,13 @@ function applyRulesBundle(loaded) {
   }
 }
 
-function authReturnPath() {
-  const path = window.location.pathname || '/';
-  const search = window.location.search || '';
-  const hash = window.location.hash || '';
-  return `${path}${search}${hash}` || '/';
-}
-
-async function refreshAuth() {
-  try {
-    const returnTo = authReturnPath();
-    const res = await fetch(`/auth/session?returnTo=${encodeURIComponent(returnTo)}`, { credentials: 'include' });
-    const data = await res.json();
-    setFonoranAuth({
-      required: Boolean(data.authRequired),
-      authenticated: Boolean(data.authenticated),
-      email: data.email ?? null,
-      loginUrl: data.loginUrl ?? '/auth/google',
-    });
-  } catch {
-    setFonoranAuth({ required: false, authenticated: true, email: null });
-  }
-}
-
-async function signOut() {
-  await fetch('/auth/logout', { method: 'POST', credentials: 'include' });
-  await refreshAuth();
-}
-
-function handleAuthUrlErrors() {
-  const params = new URLSearchParams(window.location.search);
-  const err = params.get('auth_error');
-  if (!err) return;
-  params.delete('auth_error');
-  params.delete('email');
-  const next = params.toString();
-  const clean = `${window.location.pathname}${window.location.hash}${next ? `?${next}` : ''}`;
-  history.replaceState(null, '', clean);
-}
-
 function bootstrapShell() {
   const initialTab = getTabFromHash();
   setNavSelectHandlers({
     onTab: handleNavTabSelect,
     onPlatformTab: handleNavTabSelect,
     onSignOut: () => {
-      signOut();
+      signOut().then(() => showTab(getTabFromHash()));
     },
   });
   initUniversalNav({

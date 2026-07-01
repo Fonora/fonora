@@ -188,12 +188,21 @@ function emailAllowed(email) {
  * @param {import('node:http').IncomingMessage} req
  * @returns {{ email: string, name?: string } | null}
  */
-export function getSessionUser(req) {
-  if (!isAuthEnabled()) return { email: 'dev@local', name: 'Dev' };
+export function getAuthenticatedUser(req) {
+  if (!isAuthConfigured()) return null;
   const cookies = parseCookies(req);
   const payload = verifySignedToken(cookies[SESSION_COOKIE]);
   if (!payload?.email || !emailAllowed(payload.email)) return null;
   return { email: payload.email, name: payload.name ?? payload.email };
+}
+
+/**
+ * @param {import('node:http').IncomingMessage} req
+ * @returns {{ email: string, name?: string } | null}
+ */
+export function getSessionUser(req) {
+  if (!isAuthEnabled()) return { email: 'dev@local', name: 'Dev' };
+  return getAuthenticatedUser(req);
 }
 
 /** Preview graph POST does not mutate lab data. */
@@ -292,10 +301,13 @@ export async function handleAuthRoutes(req, res, url, method) {
   const pathname = url.pathname;
 
   if (pathname === '/auth/session' && method === 'GET') {
-    const user = getSessionUser(req);
+    const user = getAuthenticatedUser(req);
     const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
+    const configured = isAuthConfigured();
     jsonResponse(res, 200, {
       authRequired: isAuthEnabled(),
+      authConfigured: configured,
+      toolsGated: configured,
       authenticated: Boolean(user),
       email: user?.email ?? null,
       name: user?.name ?? null,

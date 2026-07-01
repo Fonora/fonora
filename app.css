@@ -147,6 +147,7 @@ html[data-fonora-tab] .tab-panel {
 }
 
 html[data-fonora-tab='platform'] #tab-platform,
+html[data-fonora-tab='tools-auth-gate'] #tab-tools-auth-gate,
 html[data-fonora-tab='home'] #tab-home,
 html[data-fonora-tab='translator'] #tab-translator,
 html[data-fonora-tab='grid'] #tab-grid,
@@ -383,6 +384,10 @@ html[data-fonora-page='advanced'] #page-advanced {
 .auth-gate__sign-in {
   text-decoration: none;
   flex-shrink: 0;
+}
+
+.tools-auth-gate .auth-gate--page {
+  max-width: 36rem;
 }
 
 .fonoran-readonly [data-write] {

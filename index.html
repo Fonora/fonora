@@ -38,6 +38,7 @@
             <a href="/" class="platform-tab" data-nav-tab="platform">Fonora</a>
             <a href="/script" class="platform-tab" data-nav-tab="script">Script</a>
             <a href="/language" class="platform-tab" data-nav-tab="language">Language</a>
+            <a href="/tools" class="platform-tab" data-nav-tab="tools" id="platform-tab-tools" hidden>Tools</a>
           </nav>
         </div>
         <nav class="app-header__global" aria-label="Account" data-nav-auth></nav>
@@ -84,6 +85,20 @@
   </header>
 
   <main class="main-content" id="main-content">
+    <!-- Tools auth gate -->
+    <section class="content-page tab-panel tools-auth-gate" id="tab-tools-auth-gate" data-tab-panel="tools-auth-gate" hidden aria-labelledby="tools-auth-gate-title">
+      <section class="content-section content-section--intro">
+        <header class="home-intro-header">
+          <h1 id="tools-auth-gate-title">Sign in required</h1>
+          <p class="home-subtitle">Builder and QA tools are available to signed-in @fonora.org accounts.</p>
+        </header>
+        <div class="auth-gate auth-gate--page">
+          <p>Sign in with Google to access script debugging tools and language builder utilities.</p>
+          <a href="/auth/google?returnTo=/tools%23tools-home" class="btn btn--primary auth-gate__sign-in" id="tools-auth-gate-sign-in">Sign in with Google</a>
+        </div>
+      </section>
+    </section>
+
     <!-- Platform home -->
     <section class="platform-home content-page tab-panel" id="tab-platform" data-tab-panel="platform" aria-labelledby="platform-title">
       <section class="content-section content-section--intro" aria-labelledby="platform-title">

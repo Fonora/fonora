@@ -101,8 +101,14 @@ let state = {
   mountId: 'app-header-root',
 };
 
-/** @type {{ required: boolean, authenticated: boolean, email: string | null, loginUrl: string } | null} */
+/** @type {{ required: boolean, configured: boolean, toolsGated: boolean, authenticated: boolean, email: string | null, loginUrl: string } | null} */
 let fonoranAuthState = null;
+
+function shouldHideToolsPlatformTab() {
+  if (!fonoranAuthState) return true;
+  if (!fonoranAuthState.toolsGated) return false;
+  return !fonoranAuthState.authenticated;
+}
 
 function escapeAttr(s) {
   return String(s)
@@ -130,11 +136,12 @@ function docHref(context, path) {
 function platformTabHref(_context, tabId) {
   if (tabId === 'platform') return '/';
   if (tabId === 'script') return '/script';
+  if (tabId === 'tools') return '/tools';
   return '/language';
 }
 
 function renderGlobalAuthTools() {
-  if (!fonoranAuthState?.required) return '';
+  if (!fonoranAuthState?.configured) return '';
   if (fonoranAuthState.authenticated) {
     const email = escapeAttr(fonoranAuthState.email ?? 'Signed in');
     return `
@@ -150,9 +157,11 @@ function renderPlatformTabs(context) {
     { id: 'platform', label: 'Fonora' },
     { id: 'script', label: 'Script' },
     { id: 'language', label: 'Language' },
+    { id: 'tools', label: 'Tools' },
   ];
 
   return tabs
+    .filter((tab) => tab.id !== 'tools' || !shouldHideToolsPlatformTab())
     .map((tab) => {
       const active = context === tab.id;
       const href = escapeAttr(platformTabHref(context, tab.id));
@@ -296,6 +305,7 @@ function updateDocumentTitle() {
 function syncBootAttributes() {
   const html = document.documentElement;
   html.setAttribute('data-fonora-nav', state.context);
+  html.setAttribute('data-fonora-tools-nav', shouldHideToolsPlatformTab() ? 'hidden' : 'visible');
   if (state.context === 'language') {
     html.setAttribute('data-fonora-tab', state.activeTab);
     html.setAttribute('data-fonora-page', state.activeTab);
@@ -326,6 +336,18 @@ function patchStaticNav(root) {
   syncStaticMoreMenu(root);
 
   root.querySelectorAll('[data-nav-tab]').forEach((el) => {
+    const hideTools = el.dataset.navTab === 'tools' && shouldHideToolsPlatformTab();
+    if (hideTools) {
+      el.hidden = true;
+      el.setAttribute('aria-hidden', 'true');
+      el.classList.remove('platform-tab--active');
+      el.removeAttribute('aria-current');
+      return;
+    }
+    if (el.dataset.navTab === 'tools') {
+      el.hidden = false;
+      el.removeAttribute('aria-hidden');
+    }
     el.classList.toggle('platform-tab--active', el.dataset.navTab === state.context);
   });
 
@@ -626,11 +648,13 @@ export function setFonoranUndoDisabled(disabled) {
 }
 
 /**
- * @param {{ required: boolean, authenticated: boolean, email?: string | null, loginUrl?: string }} auth
+ * @param {{ required?: boolean, configured?: boolean, toolsGated?: boolean, learnToolsGated?: boolean, authenticated: boolean, email?: string | null, loginUrl?: string }} auth
  */
 export function setFonoranAuth(auth) {
   fonoranAuthState = {
     required: Boolean(auth.required),
+    configured: Boolean(auth.configured),
+    toolsGated: Boolean(auth.toolsGated ?? auth.learnToolsGated),
     authenticated: Boolean(auth.authenticated),
     email: auth.email ?? null,
     loginUrl: auth.loginUrl ?? '/auth/google?returnTo=/language',
