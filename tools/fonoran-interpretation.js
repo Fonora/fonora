@@ -474,7 +474,13 @@ export function matchLeadingTimeAdverbial(tokens) {
   if (LEADING_TIME_WORDS.has(head)) {
     return { english: head, consumed: 1 };
   }
-  if (tokens.length < 2) return null;
+  if (tokens.length === 1) {
+    const parts = head.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2 && TIME_DETERMINERS.has(parts[0]) && TIME_NOUNS.has(parts[1])) {
+      return { english: head, consumed: 1 };
+    }
+    return null;
+  }
   if (!TIME_DETERMINERS.has(head)) return null;
   if (!TIME_NOUNS.has(tokens[1]?.toLowerCase())) return null;
   return {

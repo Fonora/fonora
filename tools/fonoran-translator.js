@@ -590,6 +590,19 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
  * @param {object} rules
  */
 async function compileSemanticSlots(tokens, rules) {
+  const timeHit = matchLeadingTimeAdverbial(tokens);
+  if (timeHit && tokens.length <= timeHit.consumed) {
+    return {
+      mode: 'sentence',
+      subject: [],
+      time: [{ english: timeHit.english, role: 'time' }],
+      event: [],
+      path: [],
+      object: [],
+      modifiers: [],
+    };
+  }
+
   if (tokens.length <= 1) {
     return {
       mode: 'word',
