@@ -28,7 +28,7 @@ export async function runResearchNotesStoreTests() {
   process.env.FONORAN_SKIP_JSON_MIRROR = '1';
   process.env.RESEARCH_NOTES_STORE_PATH = join(dir, 'research-notes-store.json');
 
-  const { saveDraft, publishNote, readPublished, listPublished, maybeAutoSyncResearchNotesOnStartup, publishedNotesFromSeed } = await import(
+  const { saveDraft, publishNote, readPublished, listPublished, syncResearchNotesFromSeed, publishedNotesFromSeed, warmPublishedCache } = await import(
     `./research-notes-store.js?test=${Date.now()}`
   );
 
@@ -79,10 +79,21 @@ export async function runResearchNotesStoreTests() {
     );
 
     results.push(
-      await test('maybeAutoSyncResearchNotesOnStartup skips in json mode', async () => {
-        const result = await maybeAutoSyncResearchNotesOnStartup();
+      await test('syncResearchNotesFromSeed skips in json mode', async () => {
+        const result = await syncResearchNotesFromSeed();
         assert(result.skipped === true);
         assert(result.reason === 'json mode');
+      }),
+    );
+
+    results.push(
+      await test('warmPublishedCache loads published notes into memory', async () => {
+        const warmed = await warmPublishedCache();
+        assert(warmed.count >= 1);
+        const list = await listPublished();
+        assert(list.some((n) => n.slug === 'test-note'));
+        const pub = await readPublished('test-note');
+        assert(pub?.body.includes('Test Note'));
       }),
     );
   } finally {

@@ -2,7 +2,8 @@
  * Research notes API routes.
  */
 
-import { readJsonBody, jsonResponse, jsonErrorResponse } from './fonoran-api.js';
+import { readJsonBody } from './fonoran-api.js';
+import { safeApiError } from '../js/utils.js';
 import { getSessionUser, isAuthEnabled, unauthorizedResponse } from './fonoran-auth.js';
 import {
   createDraft,
@@ -16,6 +17,8 @@ import {
   saveDraft,
 } from './research-notes-store.js';
 
+const PUBLISHED_CACHE_CONTROL = 'public, max-age=300';
+
 function requireWriteUser(req, res) {
   const user = getSessionUser(req);
   if (isAuthEnabled() && !user) {
@@ -27,20 +30,20 @@ function requireWriteUser(req, res) {
 
 export async function handleResearchApi(req, res, pathname, method) {
   const m = (method || 'GET').toUpperCase();
-  const done = (status, body) => {
-    jsonResponse(res, status, body);
+  const done = (status, body, { cacheControl = 'no-store' } = {}) => {
+    const payload = JSON.stringify(body);
+    res.writeHead(status, {
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': cacheControl,
+    });
+    res.end(payload);
     return true;
   };
 
   try {
     if (pathname === '/api/research/notes' && m === 'GET') {
       const notes = await listPublished();
-      res.writeHead(200, {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Cache-Control': 'public, max-age=60',
-      });
-      res.end(JSON.stringify({ notes }));
-      return true;
+      return done(200, { notes }, { cacheControl: PUBLISHED_CACHE_CONTROL });
     }
 
     const mdMatch = pathname.match(/^\/api\/research\/notes\/([^/]+)\.md$/);
@@ -54,7 +57,7 @@ export async function handleResearchApi(req, res, pathname, method) {
       res.writeHead(200, {
         'Content-Type': 'text/markdown; charset=utf-8',
         'Content-Disposition': `attachment; filename="${filename}"`,
-        'Cache-Control': 'no-store',
+        'Cache-Control': PUBLISHED_CACHE_CONTROL,
       });
       res.end(markdown);
       return true;
@@ -65,7 +68,7 @@ export async function handleResearchApi(req, res, pathname, method) {
       const slug = decodeURIComponent(noteMatch[1]);
       const note = await readPublished(slug);
       if (!note) return done(404, { error: 'Not found' });
-      return done(200, note);
+      return done(200, note, { cacheControl: PUBLISHED_CACHE_CONTROL });
     }
 
     if (pathname.startsWith('/api/research/editor')) {
@@ -119,7 +122,7 @@ export async function handleResearchApi(req, res, pathname, method) {
   } catch (err) {
     console.error('Research API error:', err);
     const status = err.status || 500;
-    jsonErrorResponse(res, status, status >= 500 ? 'Internal server error' : 'Request failed');
-    return true;
+    const message = status >= 500 ? 'Internal server error' : safeApiError(err);
+    return done(status, { error: message });
   }
 }

@@ -24,6 +24,16 @@ export const STORE_PATH =
 let schemaReady = false;
 let pool = null;
 
+/** @type {{ notes: object[], warmedAt: string } | null} */
+let publishedIndexCache = null;
+/** @type {Map<string, { metadata: object, body: string, published_at: string|null, updated_at: string }>} */
+const publishedBodyCache = new Map();
+
+export function clearPublishedCache() {
+  publishedIndexCache = null;
+  publishedBodyCache.clear();
+}
+
 async function ensureSchemaOnce() {
   if (schemaReady) return;
   if (resolveStorageMode() === 'postgres' && process.env.DATABASE_URL) {
@@ -209,13 +219,14 @@ async function persistRecord(record) {
       const notes = await fetchAllFromPg();
       await writeAllToJson(notes);
     }
-    return record;
+  } else {
+    const notes = await readAllFromJson();
+    const idx = notes.findIndex((n) => n.slug === record.slug);
+    if (idx >= 0) notes[idx] = record;
+    else notes.push(record);
+    await writeAllToJson(notes);
   }
-  const notes = await readAllFromJson();
-  const idx = notes.findIndex((n) => n.slug === record.slug);
-  if (idx >= 0) notes[idx] = record;
-  else notes.push(record);
-  await writeAllToJson(notes);
+  clearPublishedCache();
   return record;
 }
 
@@ -253,12 +264,12 @@ export function publicMetadata(metadata) {
   };
 }
 
-export async function listPublished() {
+async function loadPublishedIndexFromStore() {
   const all = await readAllMetadataRecords();
   return sortNotes(all.filter((n) => n.workflow === 'published')).map((n) => publicMetadata(n.metadata));
 }
 
-export async function readPublished(slug) {
+async function loadPublishedNoteFromStore(slug) {
   const row = await readForEditor(slug);
   if (!row || row.workflow !== 'published') return null;
   return {
@@ -267,6 +278,64 @@ export async function readPublished(slug) {
     published_at: row.published_at,
     updated_at: row.updated_at,
   };
+}
+
+function cachePublishedNote(note) {
+  if (!note?.metadata?.slug) return;
+  publishedBodyCache.set(note.metadata.slug, note);
+}
+
+/** Load published notes into memory (call once at server startup). */
+export async function warmPublishedCache() {
+  await ensureSchemaOnce();
+  let publishedRows;
+  if (resolveStorageMode() === 'postgres' && process.env.DATABASE_URL) {
+    publishedRows = (await fetchAllFromPg()).filter((n) => n.workflow === 'published');
+  } else {
+    publishedRows = (await readAllFromJson()).filter((n) => n.workflow === 'published');
+  }
+  const sorted = sortNotes(publishedRows);
+  const notes = sorted.map((n) => publicMetadata(n.metadata));
+  publishedIndexCache = { notes, warmedAt: new Date().toISOString() };
+  publishedBodyCache.clear();
+  for (const row of sorted) {
+    cachePublishedNote({
+      metadata: publicMetadata(row.metadata),
+      body: row.body,
+      published_at: row.published_at,
+      updated_at: row.updated_at,
+    });
+  }
+  return { count: notes.length, warmedAt: publishedIndexCache.warmedAt };
+}
+
+export async function listPublished() {
+  if (publishedIndexCache?.notes) {
+    return publishedIndexCache.notes;
+  }
+  return loadPublishedIndexFromStore();
+}
+
+export async function readPublished(slug) {
+  const cleanSlug = String(slug || '').trim();
+  const cached = publishedBodyCache.get(cleanSlug);
+  if (cached) return cached;
+  return loadPublishedNoteFromStore(cleanSlug);
+}
+
+/**
+ * Bootstrap payload for embedding in the research HTML shell.
+ * @param {string} [noteSlug]
+ */
+export async function getResearchBootstrapData(noteSlug) {
+  const notes = publishedIndexCache?.notes ?? (await listPublished());
+  const bootstrap = { notes };
+  const slug = String(noteSlug || '').trim();
+  if (slug) {
+    const note = publishedBodyCache.get(slug) ?? (await readPublished(slug));
+    if (note) bootstrap.note = note;
+  }
+  return bootstrap;
 }
 
 export async function listEditor() {
@@ -410,10 +479,11 @@ export async function deleteDraft(slug) {
       const notes = await fetchAllFromPg();
       await writeAllToJson(notes);
     }
-    return;
+  } else {
+    const notes = await readAllFromJson();
+    await writeAllToJson(notes.filter((n) => n.slug !== slug));
   }
-  const notes = await readAllFromJson();
-  await writeAllToJson(notes.filter((n) => n.slug !== slug));
+  clearPublishedCache();
 }
 
 export async function exportMarkdown(slug) {
@@ -451,10 +521,10 @@ export function publishedNotesFromSeed(notes) {
 }
 
 /**
- * Upsert published research notes from git seed into PostgreSQL on boot.
+ * Upsert published research notes from git seed into PostgreSQL.
  * Git is canonical for published notes; prod-only drafts are untouched.
  */
-export async function maybeAutoSyncResearchNotesOnStartup() {
+export async function syncResearchNotesFromSeed() {
   if (resolveStorageMode() !== 'postgres' || !process.env.DATABASE_URL) {
     return { skipped: true, reason: 'json mode' };
   }
@@ -472,6 +542,20 @@ export async function maybeAutoSyncResearchNotesOnStartup() {
     synced += 1;
   }
 
-  console.log(`Research notes: synced ${synced} published from git seed`);
+  clearPublishedCache();
   return { synced, total: published.length };
+}
+
+/** @deprecated Use syncResearchNotesFromSeed at deploy time instead of web boot. */
+export async function maybeAutoSyncResearchNotesOnStartup() {
+  return syncResearchNotesFromSeed();
+}
+
+export async function closeResearchNotesStore() {
+  if (pool) {
+    await pool.end();
+    pool = null;
+  }
+  schemaReady = false;
+  clearPublishedCache();
 }

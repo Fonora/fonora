@@ -8,7 +8,11 @@ import { handleAuthRoutes, logAuthStatus } from './tools/fonoran-auth.js';
 import { handleFonoranApi } from './tools/fonoran-api.js';
 import { handleResearchApi } from './tools/research-notes-api.js';
 import { maybeAutoSeedOnStartup, initStore } from './tools/fonoran-store.js';
-import { initResearchNotesStore, maybeAutoSyncResearchNotesOnStartup } from './tools/research-notes-store.js';
+import {
+  getResearchBootstrapData,
+  initResearchNotesStore,
+  warmPublishedCache,
+} from './tools/research-notes-store.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const host = process.env.HOST || '0.0.0.0';
@@ -168,6 +172,48 @@ function cacheControl(pathname) {
   return 'public, max-age=3600';
 }
 
+function researchNoteSlugFromPath(pathname) {
+  const match = pathname.match(/^\/research\/notes\/([^/]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
+function injectResearchBootstrap(html, bootstrap) {
+  const json = JSON.stringify(bootstrap).replace(/</g, '\\u003c');
+  const script = `<script type="application/json" id="research-notes-bootstrap">${json}</script>`;
+  return html.replace('</head>', `${script}\n</head>`);
+}
+
+async function serveResearchApp(res, pathname) {
+  const indexPath = join(root, 'research', 'index.html');
+  let body = await readFile(indexPath, 'utf8');
+  try {
+    const slug = researchNoteSlugFromPath(pathname);
+    const bootstrap = await getResearchBootstrapData(slug);
+    body = injectResearchBootstrap(body, bootstrap);
+  } catch (err) {
+    console.warn('Research bootstrap skipped:', err instanceof Error ? err.message : err);
+  }
+  res.writeHead(200, {
+    'Content-Type': 'text/html; charset=utf-8',
+    'Cache-Control': 'no-cache',
+    ...SECURITY_HEADERS,
+  });
+  res.end(body);
+}
+
+async function bootstrapServerData() {
+  try {
+    await initStore();
+    await initResearchNotesStore();
+    await warmPublishedCache();
+    await maybeAutoSeedOnStartup();
+  } catch (err) {
+    console.warn('Fonoran startup init skipped:', err instanceof Error ? err.message : err);
+  }
+}
+
+await bootstrapServerData();
+
 createServer(async (req, res) => {
   try {
     const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
@@ -236,14 +282,7 @@ createServer(async (req, res) => {
     }
 
     if (isResearchAppRoute(url.pathname)) {
-      const indexPath = join(root, 'research', 'index.html');
-      const body = await readFile(indexPath);
-      res.writeHead(200, {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-cache',
-        ...SECURITY_HEADERS,
-      });
-      res.end(body);
+      await serveResearchApp(res, url.pathname);
       return;
     }
 
@@ -302,15 +341,7 @@ createServer(async (req, res) => {
     res.writeHead(404, SECURITY_HEADERS);
     res.end('Not found');
   }
-}).listen(port, host, async () => {
+}).listen(port, host, () => {
   console.log(`Fonora listening on http://${host}:${port}`);
   logAuthStatus();
-  try {
-    await initStore();
-    await initResearchNotesStore();
-    await maybeAutoSyncResearchNotesOnStartup();
-    await maybeAutoSeedOnStartup();
-  } catch (err) {
-    console.warn('Fonoran auto-import skipped:', err instanceof Error ? err.message : err);
-  }
 });
