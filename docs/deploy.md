@@ -139,6 +139,8 @@ Without `DATABASE_URL`, storage falls back to JSON files under `data/`. Use snap
 
 See [platform-overview.md](platform-overview.md) for the data architecture overview.
 
+**Fonoran vocabulary pipeline (optimize → build → Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md).
+
 ### Research notes (PostgreSQL)
 
 Published research notes are **not** read from `docs/research-notes/*.md` at runtime. The live `/research` notebook and Tools → Research Notes editor load from the `research_notes` PostgreSQL table when `DATABASE_URL` is set.

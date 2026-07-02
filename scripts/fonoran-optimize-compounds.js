@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import { readDoc, writeDoc } from '../tools/fonoran-store.js';
 import { loadCandidateContext } from '../tools/fonoran-expression-candidates.js';
 import { buildCompositionResolver } from '../tools/fonoran-composition-resolve.js';
-import { aggregateAllRounds, PROMPT_VERSION } from '../tools/fonoran-llm-aggregate.js';
+import { aggregateAllRounds, mergePromptAggregates, PROMPT_VERSION } from '../tools/fonoran-llm-aggregate.js';
 import {
   deriveAlternatesForCompound,
   loadRootGraph,
@@ -30,6 +30,10 @@ function loadDemoTrees() {
 
 async function main() {
   const useLlm = process.argv.includes('--use-llm');
+  const lengthOnly = process.argv.includes('--length-only');
+  if (useLlm && lengthOnly) {
+    console.warn('Warning: --length-only ignores --use-llm (length gate uses heuristic picks only).');
+  }
   const doc = await readDoc('compounds');
   if (!doc?.compounds) throw new Error('compounds doc missing compounds array');
 
@@ -41,7 +45,7 @@ async function main() {
   ]);
 
   const llmAggregates = useLlm
-    ? aggregateAllRounds(llmDoc?.rounds ?? [], { promptVersion: llmDoc?.prompt_version ?? PROMPT_VERSION })
+    ? mergePromptAggregates(llmDoc?.rounds ?? [])
     : null;
   if (useLlm && !Object.keys(llmAggregates ?? {}).length) {
     console.warn('Warning: --use-llm but no LLM aggregates found. Run npm run fonoran:llm-playtest first.');
@@ -53,7 +57,7 @@ async function main() {
     collisionCounts: candidateCtx.collisionCounts,
     demoTrees,
     llmAggregates,
-  }, { useLlm });
+  }, { useLlm: lengthOnly ? false : useLlm, lengthOnly });
 
   const finalDefs = optimized.map(r => ({
     concept: r.concept,
@@ -92,7 +96,8 @@ async function main() {
 
   await writeDoc('compounds', out);
 
-  console.log(`Optimized ${compounds.length} compounds${useLlm ? ' (LLM consensus)' : ''}.`);
+  const mode = lengthOnly ? 'length-only' : (useLlm ? 'LLM consensus' : 'heuristic');
+  console.log(`Optimized ${compounds.length} compounds (${mode}).`);
   console.log(`  Promoted: ${promotions.length}`);
   for (const p of promotions) {
     console.log(

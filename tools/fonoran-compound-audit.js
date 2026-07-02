@@ -20,7 +20,7 @@ import { splitRoot } from './fonoran-gen3-distinctiveness.js';
 import { checkCompoundBoundary } from './fonoran-gen3-readability.js';
 import { buildCompositionResolver, maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { isPreferredLocked, optimizeCompoundInventory } from './fonoran-preferred-select.js';
-import { pickConsensus } from './fonoran-llm-aggregate.js';
+import { pickConsensus, mergePromptAggregates } from './fonoran-llm-aggregate.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -126,7 +126,7 @@ export async function runCompoundAudit() {
     rankCtx,
   };
 
-  const llmAggregates = llmDoc?.aggregates ?? {};
+  const llmAggregates = mergePromptAggregates(llmDoc?.rounds ?? []);
   const optimizeCtx = {
     rootById: rootGraph.rootById,
     rootSpellings: rootGraph.rootSpellings,

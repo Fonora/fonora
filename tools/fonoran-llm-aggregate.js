@@ -4,8 +4,9 @@
 
 import '../load-env.js';
 
-export const PROMPT_VERSION = '3';
+export const PROMPT_VERSION = '4';
 export const LEGACY_PROMPT_VERSION = '2';
+export const V3_PROMPT_VERSION = '3';
 
 function isIntuitionRound(round) {
   return round?.battery === 'cib-v3' || round?.task === 'A' || round?.task === 'B' || round?.task === 'C';
@@ -16,7 +17,10 @@ export function computeIntuitionWeight(stats) {
   const nat = stats.mean_naturalness ?? 0;
   const pair = stats.pairwise_score ?? 0.5;
   const vag = stats.mean_vagueness ?? 0;
-  return 0.35 * cold + 0.40 * nat + 0.25 * pair - 0.15 * vag;
+  const n = Math.max(stats.n ?? 1, 1);
+  const tooLong = (stats.tags?.too_long ?? 0) / n;
+  const hardPronounce = (stats.tags?.hard_pronounce ?? 0) / n;
+  return 0.45 * cold + 0.30 * nat + 0.25 * pair - 0.15 * vag - 0.12 * tooLong - 0.08 * hardPronounce;
 }
 
 export function compositionKey(comp) {
@@ -132,6 +136,24 @@ export function aggregateAllRounds(rounds, options = {}) {
     return aggregateIntuitionRounds(rounds, options);
   }
   return aggregateRounds(rounds, options);
+}
+
+/**
+ * Merge aggregates across prompt versions — newest version wins per concept.
+ * Keeps v3 data for concepts not yet re-run on v4+.
+ */
+export function mergePromptAggregates(rounds, options = {}) {
+  const versions = options.versions ?? [PROMPT_VERSION, V3_PROMPT_VERSION];
+  const merged = {};
+  for (const version of versions) {
+    const chunk = aggregateIntuitionRounds(rounds, { ...options, promptVersion: version });
+    for (const [conceptId, byKey] of Object.entries(chunk)) {
+      if (merged[conceptId]) continue;
+      merged[conceptId] = byKey;
+    }
+  }
+  if (Object.keys(merged).length) return merged;
+  return aggregateAllRounds(rounds, options);
 }
 
 function parseCompositionKey(key) {

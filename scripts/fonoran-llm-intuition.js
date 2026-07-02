@@ -17,6 +17,7 @@ import { readDoc, writeDoc } from '../tools/fonoran-store.js';
 import { anthropicConfigured, anthropicModel, estimateCallCost } from '../tools/fonoran-llm-client.js';
 import {
   aggregateIntuitionRounds,
+  mergePromptAggregates,
   compositionKey,
   PROMPT_VERSION,
 } from '../tools/fonoran-llm-aggregate.js';
@@ -196,7 +197,7 @@ async function main() {
   }
 
   if (!todo.length) {
-    doc.aggregates = aggregateIntuitionRounds(doc.rounds, { promptVersion: PROMPT_VERSION });
+    doc.aggregates = mergePromptAggregates(doc.rounds);
     doc.prompt_version = PROMPT_VERSION;
     doc.battery = BATTERY_VERSION;
     await writeDoc('llm_evaluations', doc);
@@ -290,7 +291,7 @@ async function main() {
     completed += 1;
 
     if (completed % LOG_EVERY === 0) {
-      doc.aggregates = aggregateIntuitionRounds(doc.rounds, { promptVersion: PROMPT_VERSION });
+      doc.aggregates = mergePromptAggregates(doc.rounds);
       doc.model = anthropicModel();
       doc.prompt_version = PROMPT_VERSION;
       doc.battery = BATTERY_VERSION;
@@ -299,7 +300,7 @@ async function main() {
     }
   }
 
-  doc.aggregates = aggregateIntuitionRounds(doc.rounds, { promptVersion: PROMPT_VERSION });
+  doc.aggregates = mergePromptAggregates(doc.rounds);
   doc.model = anthropicModel();
   doc.prompt_version = PROMPT_VERSION;
   doc.battery = BATTERY_VERSION;

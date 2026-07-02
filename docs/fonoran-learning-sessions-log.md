@@ -104,7 +104,7 @@
 | friend | Promoted 3-root form | `/language#puzzle?concept=friend` |
 | tool | Calibration split (no promotion) | `/language#puzzle?concept=tool` |
 | tribe | Calibration split | `/language#puzzle?concept=tribe` |
-| world | 5-root warning | `/language#puzzle?concept=world` |
+| world | Compressed to earth+all (fenmel); v4 LLM weight 0.56; **human playtest needed** | `/language#puzzle?concept=world` |
 
 **Also re-test Translator sentence** after `food` promotion (`eat+thing`):
 

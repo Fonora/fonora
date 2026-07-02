@@ -133,6 +133,22 @@ function statusFromScore(score) {
   return 'confusing';
 }
 
+/** Shortest valid alternate at or under maxFlat; tie-break by understandability. */
+function pickShortestLengthAlternate(validRanked, maxFlat, currentKey) {
+  const shorter = validRanked.filter(r => {
+    const flat = r.validation.flat_count ?? 99;
+    return flat <= maxFlat && compositionKey(r.composition) !== currentKey;
+  });
+  if (!shorter.length) return null;
+  shorter.sort((a, b) => {
+    const flatA = a.validation.flat_count ?? 99;
+    const flatB = b.validation.flat_count ?? 99;
+    if (flatA !== flatB) return flatA - flatB;
+    return b.understandability - a.understandability;
+  });
+  return shorter[0];
+}
+
 /**
  * Select preferred composition for one concept.
  */
@@ -233,41 +249,70 @@ export function selectPreferred(conceptId, {
   const topKey = compositionKey(top.composition);
   const beatScore = top.understandability >= currentScore + scoreMargin;
   const currentTooLong = currentFlat != null && currentFlat > maxFlat;
-  let shouldPromote = topKey !== currentKey && (beatScore || currentTooLong);
+  const lengthOnly = Boolean(options.lengthOnly);
+  let winner = top;
+  let shouldPromote = false;
   let promoteReason = currentTooLong && !beatScore ? 'flattened length' : 'score';
   let promoteSource = 'heuristic';
 
-  if (useLlm) {
-    shouldPromote = false;
-    promoteReason = 'llm_no_consensus';
-    if (llmConsensus) {
-      const consensusKey = llmCompositionKey(llmConsensus.composition);
-      const consensusRow = validRanked.find(r => compositionKey(r.composition) === consensusKey);
-      if (consensusKey !== currentKey && consensusRow) {
-        shouldPromote = true;
-        promoteReason = 'llm_consensus';
-        promoteSource = 'llm_consensus';
-        Object.assign(top, consensusRow);
+  if (lengthOnly) {
+    if (currentTooLong) {
+      const lengthPick = pickShortestLengthAlternate(validRanked, maxFlat, currentKey);
+      if (lengthPick) {
+        winner = lengthPick;
+        shouldPromote = compositionKey(lengthPick.composition) !== currentKey;
+        promoteReason = 'flattened length';
+        promoteSource = 'heuristic';
       }
     }
-    if (!currentValid && topKey !== currentKey) {
-      shouldPromote = true;
-      promoteReason = 'invalid current';
-      promoteSource = useLlm && llmConsensus ? 'llm_consensus' : 'heuristic';
-    } else if (currentTooLong && topKey !== currentKey) {
+  } else if (currentTooLong) {
+    const lengthPick = pickShortestLengthAlternate(validRanked, maxFlat, currentKey);
+    if (lengthPick && compositionKey(lengthPick.composition) !== currentKey) {
+      winner = lengthPick;
       shouldPromote = true;
       promoteReason = 'flattened length';
-      promoteSource = useLlm && llmConsensus ? 'llm_consensus' : 'heuristic';
+      promoteSource = 'heuristic';
     }
-  } else if (!currentValid && topKey !== currentKey) {
-    shouldPromote = true;
-    promoteReason = 'invalid current';
+  } else {
+    shouldPromote = topKey !== currentKey && beatScore;
+    promoteReason = 'score';
+
+    if (useLlm) {
+      shouldPromote = false;
+      promoteReason = 'llm_no_consensus';
+      if (llmConsensus) {
+        const consensusKey = llmCompositionKey(llmConsensus.composition);
+        const consensusRow = validRanked.find(r => compositionKey(r.composition) === consensusKey);
+        if (consensusKey !== currentKey && consensusRow) {
+          shouldPromote = true;
+          promoteReason = 'llm_consensus';
+          promoteSource = 'llm_consensus';
+          winner = consensusRow;
+        }
+      }
+      if (!currentValid && topKey !== currentKey) {
+        shouldPromote = true;
+        promoteReason = 'invalid current';
+        promoteSource = useLlm && llmConsensus ? 'llm_consensus' : 'heuristic';
+        winner = top;
+      }
+    } else if (!currentValid && topKey !== currentKey) {
+      shouldPromote = true;
+      promoteReason = 'invalid current';
+      winner = top;
+    }
   }
 
+  const winnerKey = compositionKey(winner.composition);
+
   if (!shouldPromote) {
-    const holdReason = useLlm && !llmConsensus && topKey !== currentKey
-      ? 'llm_split'
-      : (topKey === currentKey ? 'already optimal' : 'policy held current');
+    const holdReason = lengthOnly && !currentTooLong
+      ? 'within length limit'
+      : (lengthOnly && currentTooLong ? 'no shorter alternate' : (
+        useLlm && !llmConsensus && topKey !== currentKey
+          ? 'llm_split'
+          : (winnerKey === currentKey ? 'already optimal' : 'policy held current')
+      ));
     return {
       preferred: { composition: current, gloss },
       preferred_source: preferredSource === 'llm_consensus' ? preferredSource : 'heuristic',
@@ -276,13 +321,13 @@ export function selectPreferred(conceptId, {
       flat_count: currentFlat,
       understandability: currentScore,
       demoted: [],
-      top_candidate: top.composition,
-      top_score: top.understandability,
+      top_candidate: winner.composition,
+      top_score: winner.understandability,
       llm_consensus: llmConsensus,
     };
   }
 
-  const demoted = currentKey && topKey !== currentKey
+  const demoted = currentKey && winnerKey !== currentKey
     ? [{
       composition: current,
       understandability: currentScore,
@@ -297,19 +342,19 @@ export function selectPreferred(conceptId, {
     : [];
 
   return {
-    preferred: { composition: top.composition, gloss },
+    preferred: { composition: winner.composition, gloss },
     preferred_source: promoteSource,
     promoted: true,
     reason: promoteReason,
-    flat_count: top.validation.flat_count,
-    understandability: top.understandability,
+    flat_count: winner.validation.flat_count,
+    understandability: winner.understandability,
     demoted,
     from: current,
-    to: top.composition,
+    to: winner.composition,
     from_flat: currentFlat,
-    to_flat: top.validation.flat_count,
+    to_flat: winner.validation.flat_count,
     from_score: currentScore,
-    to_score: top.understandability,
+    to_score: winner.understandability,
     llm_consensus: llmConsensus,
   };
 }

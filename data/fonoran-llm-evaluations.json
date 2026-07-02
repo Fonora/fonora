@@ -1,6 +1,6 @@
 {
   "version": "1.0-llm-playtests",
-  "prompt_version": "3",
+  "prompt_version": "4",
   "model": "claude-sonnet-4-6",
   "rounds": [
     {
@@ -60506,9 +60506,894 @@
       "inferred_meaning": "cold water or water that is cold",
       "recovered": false,
       "confidence": 0.72
+    },
+    {
+      "id": "llm-mr409xl5-cm01dm",
+      "at": "2026-07-02T21:17:41.322Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "all"
+      ],
+      "shown_spelling": "fenmel",
+      "persona": "campfire_stranger",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Both roots are clear — 'fen' (earth) and 'mel' (all) — so 'fenmel' reads naturally as 'all the earth' or 'the whole ground', which feels intuitive even on first hearing.",
+      "inferred_meaning": "all the earth; all the ground; everywhere (on the land)",
+      "recovered": false,
+      "confidence": 0.78
+    },
+    {
+      "id": "llm-mr40a05l-eze1g3",
+      "at": "2026-07-02T21:17:44.649Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "all"
+      ],
+      "shown_spelling": "fenmel",
+      "persona": "campfire_stranger",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Fenmel lands cleanly — 'earth-all' maps intuitively to 'the whole ground' and feels like something you'd say around a fire without needing explanation. The two-root simplicity keeps it campfire-ready.",
+      "inferred_meaning": "all the earth; the whole ground",
+      "composition_recovery": true,
+      "naturalness": 0.85,
+      "vagueness": 0.2
+    },
+    {
+      "id": "llm-mr40a3hq-2mxnkj",
+      "at": "2026-07-02T21:17:48.974Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "all"
+      ],
+      "shown_spelling": "fenmel",
+      "persona": "literal_root_knower",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Fen (earth/ground) + mel (all/every) combines cleanly to mean 'all the earth' or 'the entire ground/land', which is a natural and useful concept. The two-syllable compound is short and pronounceable.",
+      "inferred_meaning": "all the earth; every part of the ground; the whole land",
+      "recovered": false,
+      "confidence": 0.82
+    },
+    {
+      "id": "llm-mr40a5gh-9mm1qc",
+      "at": "2026-07-02T21:17:51.521Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "all"
+      ],
+      "shown_spelling": "fenmel",
+      "persona": "literal_root_knower",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Earth + all is a clean, campfire-sayable two-root compound that straightforwardly conveys 'all the ground/earth.' The pairing is intuitive and unambiguous.",
+      "inferred_meaning": "all the earth; the whole ground",
+      "composition_recovery": true,
+      "naturalness": 0.85,
+      "vagueness": 0.15
+    },
+    {
+      "id": "llm-mr40a802-824ww6",
+      "at": "2026-07-02T21:17:54.818Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "all"
+      ],
+      "shown_spelling": "fenmel",
+      "persona": "skeptical_listener",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [],
+      "reasoning": "Both roots are concrete and unambiguous — 'fen' (earth/ground) and 'mel' (all/every) combine cleanly to suggest totality of land or ground. The pairing feels natural and the meaning is recoverable without much guesswork.",
+      "inferred_meaning": "all the earth; the whole ground; everywhere on land",
+      "recovered": true,
+      "confidence": 0.72
+    },
+    {
+      "id": "llm-mr40ab06-y2z1bo",
+      "at": "2026-07-02T21:17:58.710Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "all"
+      ],
+      "shown_spelling": "fenmel",
+      "persona": "skeptical_listener",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Earth + all is a clean, campfire-sayable two-root compound that maps intuitively to 'the whole ground' — the modifier order is logical and the meaning lands without much guesswork. Slight vagueness remains since 'all' could imply a count of discrete earths rather than totality of a mass, but it's workable.",
+      "inferred_meaning": "all the earth; the whole ground",
+      "composition_recovery": true,
+      "naturalness": 0.72,
+      "vagueness": 0.25
+    },
+    {
+      "id": "llm-mr40aerr-obzb8i",
+      "at": "2026-07-02T21:18:03.591Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "all"
+      ],
+      "shown_spelling": "fenmel",
+      "persona": "cross_lingual",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Fen (earth/ground) + mel (all/every) combina de forma natural para expresar 'toda la tierra' o 'todo el suelo', una composición intuitiva y fácil de pronunciar.",
+      "inferred_meaning": "all the earth; all the ground; everywhere (the whole land)",
+      "recovered": true,
+      "confidence": 0.72
+    },
+    {
+      "id": "llm-mr40ah4s-4vyf98",
+      "at": "2026-07-02T21:18:06.652Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "all"
+      ],
+      "shown_spelling": "fenmel",
+      "persona": "cross_lingual",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "La combinación 'tierra + todo' es directa e intuitiva — en muchas lenguas se dice 'toda la tierra' con exactamente esa estructura. Dos raíces, sin relleno innecesario.",
+      "inferred_meaning": "all the earth; the entire ground",
+      "composition_recovery": true,
+      "naturalness": 0.82,
+      "vagueness": 0.2
+    },
+    {
+      "id": "llm-mr40aknk-df803y",
+      "at": "2026-07-02T21:18:11.216Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "place",
+        "all",
+        "life"
+      ],
+      "shown_spelling": "chemelfo",
+      "persona": "campfire_stranger",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "I can pick out 'che' (place), 'mel' (all), and 'fo' (life) fairly clearly, suggesting something like 'place of all life' — the blend feels natural enough to guess at around a campfire, though the middle segment is a little muddy.",
+      "inferred_meaning": "a place where life exists; a living place; homeland",
+      "recovered": false,
+      "confidence": 0.52
+    },
+    {
+      "id": "llm-mr40aolt-7j9v4w",
+      "at": "2026-07-02T21:18:16.337Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "place",
+        "all",
+        "life"
+      ],
+      "shown_spelling": "chemelfo",
+      "persona": "campfire_stranger",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "unnatural",
+        "too_long"
+      ],
+      "reasoning": "Adding 'life' to reach 'ground/earth' is a conceptual stretch that a campfire stranger wouldn't follow — 'place+all' already gestures at totality, and 'life' muddies rather than clarifies. The root for earth (fen) exists and would do this job alone or as 'fen+mel'.",
+      "inferred_meaning": "every living place; all places of life",
+      "composition_recovery": false,
+      "naturalness": 0.15,
+      "vagueness": 0.85
+    },
+    {
+      "id": "llm-mr40asmv-oobaow",
+      "at": "2026-07-02T21:18:21.559Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "place",
+        "all",
+        "life"
+      ],
+      "shown_spelling": "chemelfo",
+      "persona": "literal_root_knower",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [],
+      "reasoning": "Breaking into roots: 'che' (place) + 'mes' (inside) + 'fo' (life) — but 'mel' (all) could also claim the 'me' portion, making it ambiguous. The most natural parse 'che-mes-fo' gives 'place-inside-life' which is coherent and reasonably clear.",
+      "inferred_meaning": "a place within life; a living place; the inner place of life",
+      "recovered": false,
+      "confidence": 0.62
+    },
+    {
+      "id": "llm-mr40awa7-201jgt",
+      "at": "2026-07-02T21:18:26.287Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "place",
+        "all",
+        "life"
+      ],
+      "shown_spelling": "chemelfo",
+      "persona": "literal_root_knower",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "unnatural",
+        "too_long"
+      ],
+      "reasoning": "The roots 'place + all + life' point toward 'every living place' or 'all places of life,' not 'the whole ground/earth' — the earth root (fen) is entirely absent, making this construction miss the target meaning. Adding 'life' feels padded and misdirects rather than clarifying.",
+      "inferred_meaning": "every living place; all places of life",
+      "composition_recovery": false,
+      "naturalness": 0.1,
+      "vagueness": 0.85
+    },
+    {
+      "id": "llm-mr40azsf-d1c5uk",
+      "at": "2026-07-02T21:18:30.831Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "place",
+        "all",
+        "life"
+      ],
+      "shown_spelling": "chemelfo",
+      "persona": "skeptical_listener",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "hard_pronounce"
+      ],
+      "reasoning": "I can tentatively parse 'che' (place) + 'mel' (all) + 'fo' (life), suggesting something like 'place of all life' or a living habitat, but the blending of three roots without clear boundaries makes it genuinely ambiguous and I wouldn't confidently act on that guess.",
+      "inferred_meaning": "a place of living; a home or habitat",
+      "recovered": false,
+      "confidence": 0.41
+    },
+    {
+      "id": "llm-mr40b3p9-f5kdlp",
+      "at": "2026-07-02T21:18:35.901Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "place",
+        "all",
+        "life"
+      ],
+      "shown_spelling": "chemelfo",
+      "persona": "skeptical_listener",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "unnatural"
+      ],
+      "reasoning": "Adding 'life' to reach 'ground/earth' is a non-obvious leap — the target meaning is simply 'all the earth/ground,' which the root 'fen' (earth) plus 'mel' (all) would cover directly. This construction drifts toward 'all living places' or 'every life-spot,' missing the concrete ground meaning entirely.",
+      "inferred_meaning": "every living place; all places of life",
+      "composition_recovery": false,
+      "naturalness": 0.1,
+      "vagueness": 0.9
+    },
+    {
+      "id": "llm-mr40b9qv-jlpand",
+      "at": "2026-07-02T21:18:43.735Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "place",
+        "all",
+        "life"
+      ],
+      "shown_spelling": "chemelfo",
+      "persona": "cross_lingual",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Los tres segmentos 'che' (lugar), 'mel' (todo) y 'fo' (vida) se combinan de forma bastante natural para evocar 'el lugar de toda la vida', aunque la fusión de tres raíces en una sola palabra sin pausas hace que la segmentación requiera un esfuerzo adicional.",
+      "inferred_meaning": "a place where all life exists; the living world; nature as a whole",
+      "recovered": true,
+      "confidence": 0.52
+    },
+    {
+      "id": "llm-mr40bdgi-4gxgu2",
+      "at": "2026-07-02T21:18:48.546Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "place",
+        "all",
+        "life"
+      ],
+      "shown_spelling": "chemelfo",
+      "persona": "cross_lingual",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "unnatural",
+        "too_long"
+      ],
+      "reasoning": "La combinación 'lugar + todo + vida' evoca más bien 'todos los lugares vivos' o 'toda la existencia', no específicamente 'toda la tierra/suelo'. Para 'toda la tierra' bastaría con 'fen+mel' (earth+all), directo y sin ambigüedad.",
+      "inferred_meaning": "every living place; all places of life",
+      "composition_recovery": false,
+      "naturalness": 0.15,
+      "vagueness": 0.85
+    },
+    {
+      "id": "llm-mr40bgrz-hd3zif",
+      "at": "2026-07-02T21:18:52.847Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "fenfo",
+      "persona": "campfire_stranger",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Both roots are clear and common — 'fen' (earth) and 'fo' (life) — and their combination feels natural, evoking something like 'living ground' or fertile soil. The compound is short and easy to say, making it feel intuitive even on first hearing.",
+      "inferred_meaning": "living earth; fertile ground; soil that supports life",
+      "recovered": false,
+      "confidence": 0.72
+    },
+    {
+      "id": "llm-mr40bjuw-e66kyd",
+      "at": "2026-07-02T21:18:56.840Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "fenfo",
+      "persona": "campfire_stranger",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "unnatural"
+      ],
+      "reasoning": "Earth + life reads as 'living earth' or 'fertile soil' rather than 'all the ground' — the totality meaning is completely lost. If you want 'all the earth,' mel+fen (all+earth) is the obvious campfire reach.",
+      "inferred_meaning": "living earth; fertile ground; soil that sustains life",
+      "composition_recovery": false,
+      "naturalness": 0.2,
+      "vagueness": 0.7
+    },
+    {
+      "id": "llm-mr40bn97-2t67ia",
+      "at": "2026-07-02T21:19:01.243Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "fenfo",
+      "persona": "literal_root_knower",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Fen means 'earth/ground' and fo means 'life/being alive', so fenfo straightforwardly combines into something like 'earth-life' or 'the living earth/soil'. The two roots sit together naturally and the meaning feels graspable without ambiguity.",
+      "inferred_meaning": "earth-life; living ground; the life of the soil",
+      "recovered": false,
+      "confidence": 0.72
+    },
+    {
+      "id": "llm-mr40bpwa-47gtiu",
+      "at": "2026-07-02T21:19:04.666Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "fenfo",
+      "persona": "literal_root_knower",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "unnatural"
+      ],
+      "reasoning": "Adding 'life' to 'earth' suggests fertile or living soil, not 'all the ground' — the intended meaning of totality is absent. The root 'all' (mel) would be the direct and obvious choice: mel+fen.",
+      "inferred_meaning": "living ground; fertile soil",
+      "composition_recovery": false,
+      "naturalness": 0.2,
+      "vagueness": 0.7
+    },
+    {
+      "id": "llm-mr40btju-8u6dof",
+      "at": "2026-07-02T21:19:09.402Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "fenfo",
+      "persona": "skeptical_listener",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [],
+      "reasoning": "Both roots are clear — 'fen' (earth) and 'fo' (life) — and their combination feels natural, evoking something like 'living earth' or 'fertile soil.' The compound is short, pronounceable, and the semantic link between earth and life is intuitive enough that I'd grasp the gist without much effort.",
+      "inferred_meaning": "living ground; fertile earth; soil that supports life",
+      "recovered": false,
+      "confidence": 0.55
+    },
+    {
+      "id": "llm-mr40bwi9-12ed3y",
+      "at": "2026-07-02T21:19:13.233Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "fenfo",
+      "persona": "skeptical_listener",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "unnatural"
+      ],
+      "reasoning": "Adding 'life' to 'earth' evokes fertile or living soil, not 'all the ground' — the intended meaning of totality is completely absent. The root 'mel' (all) was right there and unused, making this construction both wrong and lazy.",
+      "inferred_meaning": "living earth; fertile soil; earth that is alive",
+      "composition_recovery": false,
+      "naturalness": 0.1,
+      "vagueness": 0.85
+    },
+    {
+      "id": "llm-mr40c04x-n02i95",
+      "at": "2026-07-02T21:19:17.937Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "fenfo",
+      "persona": "cross_lingual",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "worked_well"
+      ],
+      "reasoning": "Fen (earth/ground) + fo (life) combina dos raíces muy concretas y la unión semántica es natural: tierra viva o suelo fértil. La pronunciación es fluida y el significado se infiere con bastante claridad.",
+      "inferred_meaning": "living ground; fertile earth; soil that sustains life",
+      "recovered": false,
+      "confidence": 0.72
+    },
+    {
+      "id": "llm-mr40c2wi-mf3w6b",
+      "at": "2026-07-02T21:19:21.522Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "fenfo",
+      "persona": "cross_lingual",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "unnatural"
+      ],
+      "reasoning": "La combinación 'tierra + vida' evoca suelo fértil o tierra viva, no 'toda la tierra / el suelo completo'. Para expresar totalidad, el componente 'all' (mel) sería indispensable; sin él, el significado deseado no se infiere.",
+      "inferred_meaning": "living earth; fertile soil; the ground that sustains life",
+      "composition_recovery": false,
+      "naturalness": 0.2,
+      "vagueness": 0.7
+    },
+    {
+      "id": "llm-mr40c70c-r2agsl",
+      "at": "2026-07-02T21:19:26.844Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "whole",
+        "place",
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "melfelchefenfo",
+      "persona": "campfire_stranger",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "too_long",
+        "hard_pronounce"
+      ],
+      "reasoning": "I can pick out 'mel' (all), 'fel' (part), 'che' (place), 'fen' (earth), and 'fo' (life) if I squint hard, but six roots jammed together with no breaks makes it nearly impossible to parse in real time around a campfire — I'd lose the thread halfway through.",
+      "inferred_meaning": "all parts of the place of earth-life / every piece of the living land",
+      "recovered": false,
+      "confidence": 0.35
+    },
+    {
+      "id": "llm-mr40ca1q-sypet9",
+      "at": "2026-07-02T21:19:30.782Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "whole",
+        "place",
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "melfelchefenfo",
+      "persona": "campfire_stranger",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "too_long",
+        "unnatural"
+      ],
+      "reasoning": "Four roots is already padded, and 'life' feels like an unnecessary addition — mel+fen (all+earth) would say 'all the earth' cleanly without the extra noise. The place and life roots muddy rather than clarify.",
+      "inferred_meaning": "all living places on the ground / the whole living earth",
+      "composition_recovery": true,
+      "naturalness": 0.2,
+      "vagueness": 0.7
+    },
+    {
+      "id": "llm-mr40ce2b-xgbx4j",
+      "at": "2026-07-02T21:19:35.987Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "whole",
+        "place",
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "melfelchefenfo",
+      "persona": "literal_root_knower",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "too_long",
+        "hard_pronounce"
+      ],
+      "reasoning": "Breaking it down: mel (all) + fel (part) + che (place) + fen (earth) + fo (life) gives 'all parts of the earth-life place,' but five roots chained together creates serious ambiguity about grouping and intended meaning. The word is also very long and difficult to parse or pronounce naturally.",
+      "inferred_meaning": "all parts of the place of earth-life / every piece of the living ground-place",
+      "recovered": false,
+      "confidence": 0.41
+    },
+    {
+      "id": "llm-mr40ci2j-6micg6",
+      "at": "2026-07-02T21:19:41.179Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "whole",
+        "place",
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "melfelchefenfo",
+      "persona": "literal_root_knower",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "too_long",
+        "unnatural"
+      ],
+      "reasoning": "The target meaning 'all the earth / whole ground' is already fully captured by mel+fen (all+earth), making 'place' and 'life' padding that muddies rather than clarifies. Adding 'life' especially pulls the meaning toward living world or biosphere rather than simply the whole ground.",
+      "inferred_meaning": "the living place of all earth / every life-place of ground",
+      "composition_recovery": false,
+      "naturalness": 0.1,
+      "vagueness": 0.7
+    },
+    {
+      "id": "llm-mr40cm5v-mcbtaa",
+      "at": "2026-07-02T21:19:46.483Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "whole",
+        "place",
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "melfelchefenfo",
+      "persona": "skeptical_listener",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "too_long",
+        "hard_pronounce"
+      ],
+      "reasoning": "Six roots crammed together with no clear relational logic — mel(all)+fel(part)+che(place)+fen(earth)+fo(life) is a conceptual pile-up that could mean almost anything from 'every living piece of the earth' to 'all parts of every living place,' making it practically uninterpretable in real-time speech.",
+      "inferred_meaning": "all parts of the living earth / every piece of the ground that lives",
+      "recovered": false,
+      "confidence": 0.27
+    },
+    {
+      "id": "llm-mr40cpw7-y36ewa",
+      "at": "2026-07-02T21:19:51.319Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "whole",
+        "place",
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "melfelchefenfo",
+      "persona": "skeptical_listener",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "too_long",
+        "unnatural"
+      ],
+      "reasoning": "The target meaning is simply 'all the earth / whole ground,' which mel+fen (all+earth) covers cleanly in two roots. Adding 'place' and 'life' bloats the compound and drags it toward 'all living places' or 'the whole living world,' drifting far from the intended meaning.",
+      "inferred_meaning": "all living places on earth; the whole living world",
+      "composition_recovery": true,
+      "naturalness": 0.15,
+      "vagueness": 0.85
+    },
+    {
+      "id": "llm-mr40cvnu-d1htw2",
+      "at": "2026-07-02T21:19:58.794Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "whole",
+        "place",
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "melfelchefenfo",
+      "persona": "cross_lingual",
+      "task": "A",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "too_long",
+        "hard_pronounce"
+      ],
+      "reasoning": "Con cinco raíces encadenadas sin pausas ni marcadores relacionales, la cadena se vuelve difícil de segmentar y pronunciar fluidamente; aunque cada raíz es reconocible por separado, la acumulación hace que el significado global sea ambiguo entre varias interpretaciones posibles.",
+      "inferred_meaning": "every part of the living earth; all regions of life on the ground; the whole living world",
+      "recovered": true,
+      "confidence": 0.42
+    },
+    {
+      "id": "llm-mr40czwe-j7nmmy",
+      "at": "2026-07-02T21:20:04.286Z",
+      "concept_id": "world",
+      "candidate_composition": [
+        "whole",
+        "place",
+        "earth",
+        "life"
+      ],
+      "shown_spelling": "melfelchefenfo",
+      "persona": "cross_lingual",
+      "task": "B",
+      "pair": null,
+      "source": "llm_intuition",
+      "prompt_version": "4",
+      "battery": "cib-v3",
+      "model": "claude-sonnet-4-6",
+      "tags": [
+        "too_long",
+        "unnatural"
+      ],
+      "reasoning": "Para decir 'toda la tierra', bastaría con mel+fen (all+earth), que es directo y campestre. Agregar 'place' y 'life' infla la cadena sin claridad — 'life' especialmente desvía hacia 'mundo vivo' en lugar de simplemente 'suelo/tierra'.",
+      "inferred_meaning": "the living totality of all places on earth; perhaps 'the whole living world'",
+      "composition_recovery": true,
+      "naturalness": 0.2,
+      "vagueness": 0.7
     }
   ],
   "aggregates": {
+    "world": {
+      "earth+all": {
+        "cold_recovery_rate": 0.5,
+        "mean_confidence": 0.76,
+        "mean_naturalness": 0.8099999999999999,
+        "mean_vagueness": 0.21000000000000002,
+        "composition_recovery_rate": 1,
+        "pairwise_score": null,
+        "cold_n": 4,
+        "naturalness_n": 4,
+        "n": 8,
+        "tags": {
+          "worked_well": 7
+        },
+        "recovery_rate": 0.5,
+        "intuition_weight": 0.5615
+      },
+      "place+all+life": {
+        "cold_recovery_rate": 0.25,
+        "mean_confidence": 0.5175000000000001,
+        "mean_naturalness": 0.125,
+        "mean_vagueness": 0.8699999999999999,
+        "composition_recovery_rate": 0,
+        "pairwise_score": null,
+        "cold_n": 4,
+        "naturalness_n": 4,
+        "n": 8,
+        "tags": {
+          "worked_well": 2,
+          "unnatural": 4,
+          "too_long": 3,
+          "hard_pronounce": 1
+        },
+        "recovery_rate": 0.25,
+        "intuition_weight": 0.08950000000000005
+      },
+      "earth+life": {
+        "cold_recovery_rate": 0,
+        "mean_confidence": 0.6775,
+        "mean_naturalness": 0.175,
+        "mean_vagueness": 0.76,
+        "composition_recovery_rate": 0,
+        "pairwise_score": null,
+        "cold_n": 4,
+        "naturalness_n": 4,
+        "n": 8,
+        "tags": {
+          "worked_well": 3,
+          "unnatural": 4
+        },
+        "recovery_rate": 0,
+        "intuition_weight": 0.0635
+      },
+      "whole+place+earth+life": {
+        "cold_recovery_rate": 0.25,
+        "mean_confidence": 0.3625,
+        "mean_naturalness": 0.16250000000000003,
+        "mean_vagueness": 0.76,
+        "composition_recovery_rate": 0.75,
+        "pairwise_score": null,
+        "cold_n": 4,
+        "naturalness_n": 4,
+        "n": 8,
+        "tags": {
+          "too_long": 8,
+          "hard_pronounce": 4,
+          "unnatural": 4
+        },
+        "recovery_rate": 0.25,
+        "intuition_weight": 0.012250000000000018
+      }
+    },
     "tool": {
       "thing+hand+useful": {
         "cold_recovery_rate": 1,
@@ -60527,7 +61412,7 @@
           "unnatural": 2
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.62
+        "intuition_weight": 0.5527500000000001
       },
       "thing+use": {
         "cold_recovery_rate": 1,
@@ -60545,7 +61430,7 @@
           "unnatural": 4
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.534
+        "intuition_weight": 0.5515
       },
       "hand+thing": {
         "cold_recovery_rate": 1,
@@ -60563,7 +61448,7 @@
           "hard_pronounce": 4
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.5599000000000001
+        "intuition_weight": 0.5719
       },
       "useful+thing": {
         "cold_recovery_rate": 1,
@@ -60581,7 +61466,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.5659000000000001
+        "intuition_weight": 0.5841500000000001
       }
     },
     "tribe": {
@@ -60602,7 +61487,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.2832
+        "intuition_weight": 0.10294999999999999
       },
       "collective+person+identity": {
         "cold_recovery_rate": 0,
@@ -60621,7 +61506,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.284
+        "intuition_weight": 0.1305
       },
       "community+bond": {
         "cold_recovery_rate": 0,
@@ -60640,7 +61525,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.292
+        "intuition_weight": 0.1485
       }
     },
     "weapon": {
@@ -60661,7 +61546,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.272
+        "intuition_weight": 0.14350000000000002
       },
       "thing+conflict": {
         "cold_recovery_rate": 0,
@@ -60680,7 +61565,7 @@
           "too_long": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.23200000000000004
+        "intuition_weight": 0.15400000000000003
       },
       "conflict+thing": {
         "cold_recovery_rate": 0,
@@ -60699,7 +61584,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.24799999999999997
+        "intuition_weight": 0.16825
       }
     },
     "community": {
@@ -60717,7 +61602,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.7659999999999999
+        "intuition_weight": 0.7849999999999999
       },
       "many+person": {
         "cold_recovery_rate": 0.25,
@@ -60734,7 +61619,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.30200000000000005
+        "intuition_weight": 0.2795
       },
       "bond+collective": {
         "cold_recovery_rate": 0.5,
@@ -60751,7 +61636,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.49299999999999994
+        "intuition_weight": 0.47825
       }
     },
     "exchange": {
@@ -60770,7 +61655,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.38400000000000006
+        "intuition_weight": 0.298
       },
       "take+give": {
         "cold_recovery_rate": 0,
@@ -60787,7 +61672,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.325
+        "intuition_weight": 0.2615
       },
       "person+give+take": {
         "cold_recovery_rate": 0,
@@ -60805,7 +61690,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.22300000000000006
+        "intuition_weight": 0.14675000000000005
       }
     },
     "knowledge": {
@@ -60824,7 +61709,7 @@
           "unnatural": 2
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.6755
+        "intuition_weight": 0.70775
       },
       "know+thing": {
         "cold_recovery_rate": 0.75,
@@ -60842,7 +61727,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.47550000000000003
+        "intuition_weight": 0.473
       },
       "hold+know": {
         "cold_recovery_rate": 0,
@@ -60860,7 +61745,7 @@
           "worked_well": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3155
+        "intuition_weight": 0.22024999999999997
       }
     },
     "memory": {
@@ -60881,7 +61766,7 @@
           "worked_well": 4
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.397
+        "intuition_weight": 0.30174999999999996
       },
       "know+before+inside": {
         "cold_recovery_rate": 0.25,
@@ -60899,7 +61784,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.347
+        "intuition_weight": 0.28774999999999995
       }
     },
     "war": {
@@ -60920,7 +61805,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.3865
+        "intuition_weight": 0.23925000000000002
       },
       "conflict+tribe": {
         "cold_recovery_rate": 0.25,
@@ -60939,7 +61824,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.3735
+        "intuition_weight": 0.23875
       },
       "collective+conflict+person": {
         "cold_recovery_rate": 0,
@@ -60957,7 +61842,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.21430000000000005
+        "intuition_weight": 0.13805000000000003
       }
     },
     "language": {
@@ -60977,7 +61862,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.3649
+        "intuition_weight": 0.31215
       },
       "speak+collective+know": {
         "cold_recovery_rate": 0.5,
@@ -60995,7 +61880,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.49100000000000005
+        "intuition_weight": 0.46749999999999997
       },
       "collective+speak": {
         "cold_recovery_rate": 0,
@@ -61013,7 +61898,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.24449999999999997
+        "intuition_weight": 0.16024999999999995
       }
     },
     "teacher": {
@@ -61034,7 +61919,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.48800000000000004
+        "intuition_weight": 0.3745
       },
       "give+know+person": {
         "cold_recovery_rate": 0,
@@ -61051,7 +61936,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.406
+        "intuition_weight": 0.3174999999999999
       }
     },
     "family": {
@@ -61070,7 +61955,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.299
+        "intuition_weight": 0.23674999999999996
       },
       "love+person": {
         "cold_recovery_rate": 0,
@@ -61087,7 +61972,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.16600000000000004
+        "intuition_weight": 0.131
       },
       "bond+near": {
         "cold_recovery_rate": 0,
@@ -61105,7 +61990,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.1595
+        "intuition_weight": 0.09575
       },
       "parent+collective": {
         "cold_recovery_rate": 1,
@@ -61122,7 +62007,7 @@
           "unnatural": 5
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.527
+        "intuition_weight": 0.5907500000000001
       }
     },
     "remember": {
@@ -61141,7 +62026,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.38400000000000006
+        "intuition_weight": 0.298
       },
       "hold+know": {
         "cold_recovery_rate": 0,
@@ -61158,7 +62043,7 @@
           "unnatural": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.10950000000000003
+        "intuition_weight": 0.04450000000000003
       }
     },
     "forget": {
@@ -61178,7 +62063,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.20120000000000005
+        "intuition_weight": 0.1162
       },
       "empty+know": {
         "cold_recovery_rate": 0,
@@ -61196,7 +62081,7 @@
           "hard_pronounce": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.17650000000000002
+        "intuition_weight": 0.09774999999999998
       }
     },
     "identity": {
@@ -61217,7 +62102,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.256
+        "intuition_weight": 0.08000000000000002
       },
       "self+know": {
         "cold_recovery_rate": 0,
@@ -61235,7 +62120,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.14540000000000003
+        "intuition_weight": 0.09165000000000001
       },
       "person+self+memory": {
         "cold_recovery_rate": 0,
@@ -61253,7 +62138,7 @@
           "unnatural": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.17200000000000004
+        "intuition_weight": 0.003249999999999975
       }
     },
     "useful": {
@@ -61272,7 +62157,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.6074999999999999
+        "intuition_weight": 0.60475
       },
       "thing+use": {
         "cold_recovery_rate": 0,
@@ -61290,7 +62175,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.15700000000000003
+        "intuition_weight": 0.09199999999999998
       },
       "good+thing": {
         "cold_recovery_rate": 0,
@@ -61308,7 +62193,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.17900000000000005
+        "intuition_weight": 0.10774999999999998
       }
     },
     "run": {
@@ -61327,7 +62212,7 @@
           "worked_well": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.449
+        "intuition_weight": 0.33275
       },
       "fast+move": {
         "cold_recovery_rate": 0.5,
@@ -61343,7 +62228,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.597
+        "intuition_weight": 0.566
       },
       "person+move+fast": {
         "cold_recovery_rate": 0,
@@ -61361,7 +62246,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.22500000000000003
+        "intuition_weight": 0.17124999999999996
       }
     },
     "swim": {
@@ -61379,7 +62264,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3395
+        "intuition_weight": 0.269
       },
       "water+move": {
         "cold_recovery_rate": 0,
@@ -61396,7 +62281,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3365
+        "intuition_weight": 0.25675
       },
       "person+water+move": {
         "cold_recovery_rate": 0,
@@ -61414,7 +62299,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.22500000000000006
+        "intuition_weight": 0.1675
       }
     },
     "fly": {
@@ -61434,7 +62319,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3285
+        "intuition_weight": 0.24075
       },
       "air+move": {
         "cold_recovery_rate": 0.25,
@@ -61451,7 +62336,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.40700000000000003
+        "intuition_weight": 0.36424999999999996
       },
       "sky+move": {
         "cold_recovery_rate": 1,
@@ -61468,7 +62353,7 @@
           "unnatural": 2
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.641
+        "intuition_weight": 0.68
       }
     },
     "river": {
@@ -61486,7 +62371,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.782
+        "intuition_weight": 0.79775
       },
       "water+path": {
         "cold_recovery_rate": 0.75,
@@ -61503,7 +62388,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.5874999999999999
+        "intuition_weight": 0.5974999999999999
       },
       "flow+water": {
         "cold_recovery_rate": 0.75,
@@ -61521,7 +62406,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.5149999999999999
+        "intuition_weight": 0.5237499999999999
       },
       "water+move": {
         "cold_recovery_rate": 0,
@@ -61539,7 +62424,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.20330000000000004
+        "intuition_weight": 0.1383
       }
     },
     "wind": {
@@ -61557,7 +62442,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.5995
+        "intuition_weight": 0.5660000000000001
       },
       "sky+move": {
         "cold_recovery_rate": 0,
@@ -61575,7 +62460,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.12400000000000001
+        "intuition_weight": 0.07650000000000001
       }
     },
     "home": {
@@ -61595,7 +62480,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.304
+        "intuition_weight": 0.2205
       },
       "inside+place": {
         "cold_recovery_rate": 0,
@@ -61613,7 +62498,7 @@
           "unnatural": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.15340000000000004
+        "intuition_weight": 0.08839999999999999
       },
       "sleep+place": {
         "cold_recovery_rate": 0,
@@ -61631,7 +62516,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.09500000000000001
+        "intuition_weight": 0.056249999999999994
       },
       "love+place": {
         "cold_recovery_rate": 0,
@@ -61649,7 +62534,7 @@
           "worked_well": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.23049999999999998
+        "intuition_weight": 0.16199999999999995
       }
     },
     "friend": {
@@ -61669,7 +62554,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.612
+        "intuition_weight": 0.636
       },
       "bond+near": {
         "cold_recovery_rate": 0,
@@ -61687,7 +62572,7 @@
           "hard_pronounce": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.055999999999999994
+        "intuition_weight": 0.0010000000000000078
       },
       "help+person": {
         "cold_recovery_rate": 0,
@@ -61705,7 +62590,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.16100000000000003
+        "intuition_weight": 0.11725000000000003
       },
       "good+person": {
         "cold_recovery_rate": 0,
@@ -61723,7 +62608,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.229
+        "intuition_weight": 0.169
       }
     },
     "enemy": {
@@ -61743,7 +62628,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.293
+        "intuition_weight": 0.22074999999999995
       },
       "conflict+person": {
         "cold_recovery_rate": 0,
@@ -61760,7 +62645,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.309
+        "intuition_weight": 0.24424999999999997
       },
       "bad+person": {
         "cold_recovery_rate": 0,
@@ -61778,7 +62663,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.09600000000000003
+        "intuition_weight": 0.04475000000000001
       },
       "fear+person": {
         "cold_recovery_rate": 0,
@@ -61796,7 +62681,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.07150000000000001
+        "intuition_weight": 0.04525000000000002
       }
     },
     "road": {
@@ -61815,7 +62700,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.405
+        "intuition_weight": 0.32375000000000004
       },
       "move+path": {
         "cold_recovery_rate": 0,
@@ -61832,7 +62717,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.378
+        "intuition_weight": 0.30124999999999996
       },
       "path+place": {
         "cold_recovery_rate": 0,
@@ -61850,7 +62735,7 @@
           "hard_pronounce": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.19300000000000006
+        "intuition_weight": 0.10050000000000002
       }
     },
     "vehicle": {
@@ -61870,7 +62755,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.24549999999999997
+        "intuition_weight": 0.16949999999999998
       },
       "thing+move": {
         "cold_recovery_rate": 0,
@@ -61888,7 +62773,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.21899999999999997
+        "intuition_weight": 0.13774999999999996
       },
       "path+thing": {
         "cold_recovery_rate": 0,
@@ -61906,7 +62791,7 @@
           "hard_pronounce": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.15400000000000003
+        "intuition_weight": 0.07899999999999999
       }
     },
     "food": {
@@ -61925,7 +62810,7 @@
           "unnatural": 1
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.726
+        "intuition_weight": 0.7497499999999999
       },
       "eat+plant": {
         "cold_recovery_rate": 0,
@@ -61943,7 +62828,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.18900000000000003
+        "intuition_weight": 0.13899999999999998
       },
       "good+eat": {
         "cold_recovery_rate": 0.75,
@@ -61960,7 +62845,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.5329999999999999
+        "intuition_weight": 0.5525
       }
     },
     "meal": {
@@ -61979,7 +62864,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.372
+        "intuition_weight": 0.29675
       }
     },
     "lamp": {
@@ -61999,7 +62884,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.465
+        "intuition_weight": 0.43275
       },
       "thing+light": {
         "cold_recovery_rate": 0.25,
@@ -62017,7 +62902,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.3845
+        "intuition_weight": 0.3247499999999999
       }
     },
     "breath": {
@@ -62035,7 +62920,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3235
+        "intuition_weight": 0.254
       },
       "flow+air": {
         "cold_recovery_rate": 0,
@@ -62052,7 +62937,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.27049999999999996
+        "intuition_weight": 0.21124999999999994
       },
       "air+inside": {
         "cold_recovery_rate": 0.5,
@@ -62091,7 +62976,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.508
+        "intuition_weight": 0.45525
       },
       "person+speak": {
         "cold_recovery_rate": 0,
@@ -62109,7 +62994,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.16700000000000004
+        "intuition_weight": 0.1095
       }
     },
     "thought": {
@@ -62127,7 +63012,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.644
+        "intuition_weight": 0.6425
       },
       "inside+think": {
         "cold_recovery_rate": 1,
@@ -62143,7 +63028,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.6954999999999999
+        "intuition_weight": 0.7265
       }
     },
     "shared_meaning": {
@@ -62163,7 +63048,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3605
+        "intuition_weight": 0.27849999999999997
       },
       "same+know+collective": {
         "cold_recovery_rate": 0,
@@ -62180,7 +63065,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3375
+        "intuition_weight": 0.26975
       },
       "speak+same": {
         "cold_recovery_rate": 0,
@@ -62198,7 +63083,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.060500000000000026
+        "intuition_weight": 0.03550000000000001
       }
     },
     "village": {
@@ -62219,7 +63104,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3345
+        "intuition_weight": 0.22674999999999998
       },
       "community+place": {
         "cold_recovery_rate": 0,
@@ -62237,7 +63122,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3605
+        "intuition_weight": 0.26849999999999996
       },
       "many+person+place": {
         "cold_recovery_rate": 0,
@@ -62255,7 +63140,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.26199999999999996
+        "intuition_weight": 0.19599999999999995
       }
     },
     "money": {
@@ -62276,7 +63161,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.307
+        "intuition_weight": 0.16424999999999995
       },
       "give+take+equal": {
         "cold_recovery_rate": 0,
@@ -62293,7 +63178,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.38850000000000007
+        "intuition_weight": 0.3125
       },
       "thing+exchange": {
         "cold_recovery_rate": 0,
@@ -62312,7 +63197,7 @@
           "too_long": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.133
+        "intuition_weight": 0.05675000000000001
       }
     },
     "book": {
@@ -62332,7 +63217,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.2633000000000001
+        "intuition_weight": 0.18855000000000002
       },
       "mark+thing+know": {
         "cold_recovery_rate": 0,
@@ -62350,7 +63235,7 @@
           "worked_well": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.114
+        "intuition_weight": 0.029000000000000012
       },
       "speak+knowledge": {
         "cold_recovery_rate": 0,
@@ -62368,7 +63253,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.07200000000000002
+        "intuition_weight": 0.024500000000000008
       }
     },
     "document": {
@@ -62388,7 +63273,7 @@
           "worked_well": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.25999999999999995
+        "intuition_weight": 0.17525
       },
       "thing+mark": {
         "cold_recovery_rate": 0,
@@ -62407,7 +63292,7 @@
           "too_long": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.15250000000000002
+        "intuition_weight": 0.06249999999999999
       },
       "know+thing+mark": {
         "cold_recovery_rate": 0,
@@ -62425,7 +63310,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.23050000000000004
+        "intuition_weight": 0.16125000000000003
       }
     },
     "joy": {
@@ -62445,7 +63330,7 @@
           "worked_well": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.4115000000000001
+        "intuition_weight": 0.28900000000000003
       },
       "happy+strong": {
         "cold_recovery_rate": 0,
@@ -62463,7 +63348,7 @@
           "worked_well": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.22550000000000003
+        "intuition_weight": 0.1505
       },
       "feel+good": {
         "cold_recovery_rate": 0,
@@ -62479,7 +63364,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.398
+        "intuition_weight": 0.317
       }
     },
     "music": {
@@ -62500,7 +63385,7 @@
           "worked_well": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.27099999999999996
+        "intuition_weight": 0.10999999999999999
       },
       "pulse+good": {
         "cold_recovery_rate": 0,
@@ -62518,7 +63403,7 @@
           "worked_well": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.09350000000000001
+        "intuition_weight": 0.03100000000000002
       }
     },
     "government": {
@@ -62538,7 +63423,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3605
+        "intuition_weight": 0.21849999999999997
       },
       "collective+hold+strong": {
         "cold_recovery_rate": 0,
@@ -62556,7 +63441,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3635
+        "intuition_weight": 0.2815
       },
       "community+strong": {
         "cold_recovery_rate": 0,
@@ -62573,7 +63458,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.282
+        "intuition_weight": 0.22099999999999997
       }
     },
     "law": {
@@ -62593,7 +63478,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3345
+        "intuition_weight": 0.25675
       },
       "collective+still": {
         "cold_recovery_rate": 0,
@@ -62611,7 +63496,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.15900000000000003
+        "intuition_weight": 0.08275000000000002
       },
       "bond+hold": {
         "cold_recovery_rate": 0,
@@ -62629,7 +63514,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.24050000000000002
+        "intuition_weight": 0.14799999999999996
       }
     },
     "religion": {
@@ -62648,7 +63533,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.31649999999999995
+        "intuition_weight": 0.22949999999999995
       },
       "bond+source": {
         "cold_recovery_rate": 0,
@@ -62666,7 +63551,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.226
+        "intuition_weight": 0.166
       },
       "collective+source": {
         "cold_recovery_rate": 0,
@@ -62684,7 +63569,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.18850000000000006
+        "intuition_weight": 0.09600000000000002
       }
     },
     "gift": {
@@ -62704,7 +63589,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.5575
+        "intuition_weight": 0.5627500000000001
       },
       "give+thing": {
         "cold_recovery_rate": 0,
@@ -62721,7 +63606,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.27399999999999997
+        "intuition_weight": 0.21649999999999997
       },
       "good+give": {
         "cold_recovery_rate": 0.5,
@@ -62739,7 +63624,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.49599999999999994
+        "intuition_weight": 0.44975
       }
     },
     "trade": {
@@ -62759,7 +63644,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3015
+        "intuition_weight": 0.2105
       },
       "person+exchange": {
         "cold_recovery_rate": 0,
@@ -62777,7 +63662,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.139
+        "intuition_weight": 0.06775
       },
       "give+take+person": {
         "cold_recovery_rate": 0,
@@ -62795,7 +63680,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.37550000000000006
+        "intuition_weight": 0.29200000000000004
       }
     },
     "work": {
@@ -62816,7 +63701,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3345
+        "intuition_weight": 0.23174999999999998
       },
       "do+person": {
         "cold_recovery_rate": 0,
@@ -62834,7 +63719,7 @@
           "worked_well": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.15900000000000003
+        "intuition_weight": 0.07275000000000001
       },
       "person+make": {
         "cold_recovery_rate": 0,
@@ -62852,7 +63737,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.12000000000000002
+        "intuition_weight": 0.07125
       }
     },
     "forest": {
@@ -62871,7 +63756,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.5985
+        "intuition_weight": 0.60575
       },
       "many+tree": {
         "cold_recovery_rate": 1,
@@ -62888,7 +63773,7 @@
           "unnatural": 3
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.6110000000000001
+        "intuition_weight": 0.656
       },
       "tree+place": {
         "cold_recovery_rate": 1,
@@ -62906,7 +63791,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.556
+        "intuition_weight": 0.601
       }
     },
     "mountain": {
@@ -62925,7 +63810,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3865
+        "intuition_weight": 0.2995
       },
       "earth+up": {
         "cold_recovery_rate": 0,
@@ -62943,7 +63828,7 @@
           "unnatural": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.20100000000000007
+        "intuition_weight": 0.13725
       },
       "stone+up": {
         "cold_recovery_rate": 0,
@@ -62961,7 +63846,7 @@
           "unnatural": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.18600000000000005
+        "intuition_weight": 0.12600000000000003
       }
     },
     "ocean": {
@@ -62981,7 +63866,7 @@
           "worked_well": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.285
+        "intuition_weight": 0.19625
       },
       "water+big": {
         "cold_recovery_rate": 0.25,
@@ -62999,7 +63884,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.3285
+        "intuition_weight": 0.2935
       },
       "water+all": {
         "cold_recovery_rate": 0.25,
@@ -63016,7 +63901,7 @@
           "unnatural": 5
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.1925
+        "intuition_weight": 0.19625000000000004
       }
     },
     "sun": {
@@ -63037,7 +63922,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.589
+        "intuition_weight": 0.56175
       },
       "light+source": {
         "cold_recovery_rate": 0.5,
@@ -63055,7 +63940,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.4545
+        "intuition_weight": 0.4252499999999999
       },
       "sky+fire": {
         "cold_recovery_rate": 1,
@@ -63071,7 +63956,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.7379999999999999
+        "intuition_weight": 0.7609999999999999
       }
     },
     "whole": {
@@ -63089,7 +63974,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.611
+        "intuition_weight": 0.614
       },
       "part+all": {
         "cold_recovery_rate": 1,
@@ -63105,7 +63990,7 @@
           "worked_well": 7
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.681
+        "intuition_weight": 0.7144999999999999
       },
       "all+thing": {
         "cold_recovery_rate": 0,
@@ -63123,64 +64008,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.14600000000000002
-      }
-    },
-    "world": {
-      "whole+place+earth+life": {
-        "cold_recovery_rate": 0.25,
-        "mean_confidence": 0.3775,
-        "mean_naturalness": 0.6275,
-        "mean_vagueness": 0.538,
-        "composition_recovery_rate": 1,
-        "pairwise_score": null,
-        "cold_n": 4,
-        "naturalness_n": 4,
-        "n": 8,
-        "tags": {
-          "too_long": 5,
-          "hard_pronounce": 4,
-          "worked_well": 3,
-          "unnatural": 1
-        },
-        "recovery_rate": 0.25,
-        "intuition_weight": 0.38280000000000003
-      },
-      "earth+all": {
-        "cold_recovery_rate": 0,
-        "mean_confidence": 0.7449999999999999,
-        "mean_naturalness": 0.32499999999999996,
-        "mean_vagueness": 0.72,
-        "composition_recovery_rate": 0,
-        "pairwise_score": null,
-        "cold_n": 4,
-        "naturalness_n": 4,
-        "n": 8,
-        "tags": {
-          "worked_well": 4,
-          "hard_pronounce": 3,
-          "unnatural": 4
-        },
-        "recovery_rate": 0,
-        "intuition_weight": 0.14700000000000002
-      },
-      "place+all+life": {
-        "cold_recovery_rate": 0,
-        "mean_confidence": 0.445,
-        "mean_naturalness": 0.4125,
-        "mean_vagueness": 0.7,
-        "composition_recovery_rate": 0.25,
-        "pairwise_score": null,
-        "cold_n": 4,
-        "naturalness_n": 4,
-        "n": 8,
-        "tags": {
-          "worked_well": 2,
-          "unnatural": 6,
-          "hard_pronounce": 5
-        },
-        "recovery_rate": 0,
-        "intuition_weight": 0.18500000000000005
+        "intuition_weight": 0.09225000000000001
       }
     },
     "question": {
@@ -63199,7 +64027,7 @@
           "unnatural": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.18300000000000005
+        "intuition_weight": 0.07300000000000001
       },
       "want+know": {
         "cold_recovery_rate": 0,
@@ -63217,7 +64045,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.28300000000000003
+        "intuition_weight": 0.21325000000000002
       },
       "speak+want+know": {
         "cold_recovery_rate": 0,
@@ -63236,7 +64064,7 @@
           "too_long": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.348
+        "intuition_weight": 0.23374999999999999
       }
     },
     "answer": {
@@ -63255,7 +64083,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.307
+        "intuition_weight": 0.2435
       },
       "speak+know": {
         "cold_recovery_rate": 0,
@@ -63272,7 +64100,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.36800000000000005
+        "intuition_weight": 0.28525
       }
     },
     "peace": {
@@ -63292,7 +64120,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3380000000000001
+        "intuition_weight": 0.24275
       },
       "collective+good": {
         "cold_recovery_rate": 0,
@@ -63310,7 +64138,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.15100000000000002
+        "intuition_weight": 0.09599999999999999
       }
     },
     "nation": {
@@ -63331,7 +64159,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.27799999999999997
+        "intuition_weight": 0.10949999999999997
       },
       "collective+place": {
         "cold_recovery_rate": 0,
@@ -63349,7 +64177,7 @@
           "worked_well": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.2215
+        "intuition_weight": 0.15225
       },
       "tribe+place": {
         "cold_recovery_rate": 0,
@@ -63367,7 +64195,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.19680000000000006
+        "intuition_weight": 0.023049999999999987
       }
     },
     "grow": {
@@ -63387,7 +64215,7 @@
           "worked_well": 3
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.4600000000000001
+        "intuition_weight": 0.4090000000000001
       },
       "life+more": {
         "cold_recovery_rate": 0,
@@ -63404,7 +64232,7 @@
           "unnatural": 7
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.18380000000000005
+        "intuition_weight": 0.07255
       },
       "change+life": {
         "cold_recovery_rate": 0,
@@ -63422,7 +64250,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.19500000000000006
+        "intuition_weight": 0.10124999999999999
       }
     },
     "death": {
@@ -63441,7 +64269,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.5385
+        "intuition_weight": 0.5165000000000001
       }
     },
     "birth": {
@@ -63459,7 +64287,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.42450000000000004
+        "intuition_weight": 0.341
       },
       "life+before": {
         "cold_recovery_rate": 0,
@@ -63477,7 +64305,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.2255
+        "intuition_weight": 0.1675
       }
     },
     "sad": {
@@ -63495,7 +64323,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.389
+        "intuition_weight": 0.308
       },
       "feel+bad": {
         "cold_recovery_rate": 0,
@@ -63511,7 +64339,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3885
+        "intuition_weight": 0.30799999999999994
       }
     },
     "teach": {
@@ -63529,7 +64357,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.4885
+        "intuition_weight": 0.434
       },
       "give+know": {
         "cold_recovery_rate": 1,
@@ -63545,7 +64373,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.7789999999999999
+        "intuition_weight": 0.7955
       },
       "person+know+give": {
         "cold_recovery_rate": 0,
@@ -63561,7 +64389,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.368
+        "intuition_weight": 0.296
       }
     },
     "learn": {
@@ -63580,7 +64408,7 @@
           "worked_well": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.35050000000000003
+        "intuition_weight": 0.261
       },
       "know+take": {
         "cold_recovery_rate": 0,
@@ -63597,7 +64425,7 @@
           "worked_well": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3635
+        "intuition_weight": 0.26149999999999995
       },
       "person+take+know": {
         "cold_recovery_rate": 0,
@@ -63614,7 +64442,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.27099999999999996
+        "intuition_weight": 0.21499999999999997
       }
     },
     "signal": {
@@ -63633,7 +64461,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.34450000000000003
+        "intuition_weight": 0.275
       },
       "mark+give": {
         "cold_recovery_rate": 0.25,
@@ -63650,7 +64478,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.41150000000000003
+        "intuition_weight": 0.36174999999999996
       },
       "speak+mark": {
         "cold_recovery_rate": 0,
@@ -63668,7 +64496,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.20500000000000002
+        "intuition_weight": 0.15249999999999997
       }
     },
     "seed": {
@@ -63687,7 +64515,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.596
+        "intuition_weight": 0.592
       },
       "plant+source": {
         "cold_recovery_rate": 0.25,
@@ -63704,7 +64532,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.478
+        "intuition_weight": 0.4135
       },
       "small+plant": {
         "cold_recovery_rate": 0.75,
@@ -63721,7 +64549,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.45399999999999996
+        "intuition_weight": 0.48724999999999996
       }
     },
     "cycle": {
@@ -63740,7 +64568,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.35050000000000003
+        "intuition_weight": 0.271
       },
       "time+pulse": {
         "cold_recovery_rate": 0.25,
@@ -63757,7 +64585,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.4745000000000001
+        "intuition_weight": 0.4135
       },
       "change+time": {
         "cold_recovery_rate": 0,
@@ -63775,7 +64603,7 @@
           "worked_well": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.114
+        "intuition_weight": 0.04900000000000001
       }
     },
     "void": {
@@ -63793,7 +64621,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.7275
+        "intuition_weight": 0.7505000000000001
       }
     },
     "agent": {
@@ -63813,7 +64641,7 @@
           "worked_well": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.36100000000000004
+        "intuition_weight": 0.27399999999999997
       },
       "person+do": {
         "cold_recovery_rate": 0,
@@ -63831,7 +64659,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.36099999999999993
+        "intuition_weight": 0.27324999999999994
       },
       "make+person": {
         "cold_recovery_rate": 0,
@@ -63849,7 +64677,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.18680000000000005
+        "intuition_weight": 0.13555
       }
     },
     "container": {
@@ -63869,7 +64697,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.21080000000000007
+        "intuition_weight": 0.15580000000000002
       },
       "inside+thing": {
         "cold_recovery_rate": 0,
@@ -63887,7 +64715,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.22380000000000008
+        "intuition_weight": 0.15405000000000002
       }
     },
     "people": {
@@ -63905,7 +64733,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.8395
+        "intuition_weight": 0.84575
       },
       "collective+person": {
         "cold_recovery_rate": 1,
@@ -63922,7 +64750,7 @@
           "unnatural": 2
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.6659999999999999
+        "intuition_weight": 0.7025000000000001
       },
       "person+many": {
         "cold_recovery_rate": 1,
@@ -63938,7 +64766,7 @@
           "worked_well": 7
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.791
+        "intuition_weight": 0.80675
       }
     },
     "leader": {
@@ -63956,7 +64784,7 @@
           "worked_well": 7
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.599
+        "intuition_weight": 0.605
       },
       "strong+person": {
         "cold_recovery_rate": 0,
@@ -63973,7 +64801,7 @@
           "unnatural": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.17000000000000004
+        "intuition_weight": 0.0925
       },
       "speak+person": {
         "cold_recovery_rate": 0,
@@ -63990,7 +64818,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.11600000000000002
+        "intuition_weight": 0.0935
       }
     },
     "helper": {
@@ -64008,7 +64836,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.7849999999999999
+        "intuition_weight": 0.8015
       },
       "person+help": {
         "cold_recovery_rate": 0.75,
@@ -64024,7 +64852,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.6755
+        "intuition_weight": 0.6695
       },
       "good+person+help": {
         "cold_recovery_rate": 0.75,
@@ -64043,7 +64871,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.5135000000000001
+        "intuition_weight": 0.51475
       }
     },
     "student": {
@@ -64063,7 +64891,7 @@
           "worked_well": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3665
+        "intuition_weight": 0.26449999999999996
       },
       "person+learn": {
         "cold_recovery_rate": 0,
@@ -64080,7 +64908,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.278
+        "intuition_weight": 0.2195
       },
       "take+know+person": {
         "cold_recovery_rate": 0,
@@ -64098,7 +64926,7 @@
           "worked_well": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3625
+        "intuition_weight": 0.26149999999999995
       }
     },
     "child": {
@@ -64116,7 +64944,7 @@
           "worked_well": 8
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.817
+        "intuition_weight": 0.827
       },
       "person+small": {
         "cold_recovery_rate": 0.25,
@@ -64134,7 +64962,7 @@
           "worked_well": 6
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.5415
+        "intuition_weight": 0.469
       }
     },
     "giant": {
@@ -64152,7 +64980,7 @@
           "worked_well": 7
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.7965
+        "intuition_weight": 0.809
       },
       "big+person": {
         "cold_recovery_rate": 0,
@@ -64170,7 +64998,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.129
+        "intuition_weight": 0.09400000000000003
       },
       "body+big": {
         "cold_recovery_rate": 0.25,
@@ -64186,7 +65014,7 @@
           "worked_well": 7
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.5175
+        "intuition_weight": 0.45875
       }
     },
     "mind": {
@@ -64204,7 +65032,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.636
+        "intuition_weight": 0.6365
       },
       "inside+think": {
         "cold_recovery_rate": 0,
@@ -64222,7 +65050,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.2415
+        "intuition_weight": 0.18099999999999994
       }
     },
     "wisdom": {
@@ -64242,7 +65070,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3345
+        "intuition_weight": 0.25675
       },
       "strong+know": {
         "cold_recovery_rate": 0.5,
@@ -64258,7 +65086,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.5210000000000001
+        "intuition_weight": 0.5015000000000001
       }
     },
     "meaning": {
@@ -64277,7 +65105,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.26299999999999996
+        "intuition_weight": 0.20825
       },
       "know+signal": {
         "cold_recovery_rate": 0,
@@ -64295,7 +65123,7 @@
           "worked_well": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.17500000000000004
+        "intuition_weight": 0.09624999999999997
       }
     },
     "word": {
@@ -64315,7 +65143,7 @@
           "worked_well": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3
+        "intuition_weight": 0.19899999999999998
       },
       "speak+mark": {
         "cold_recovery_rate": 1,
@@ -64333,7 +65161,7 @@
           "unnatural": 1
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.6915
+        "intuition_weight": 0.7112499999999999
       },
       "thing+speak": {
         "cold_recovery_rate": 0,
@@ -64352,7 +65180,7 @@
           "too_long": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.19800000000000006
+        "intuition_weight": 0.10924999999999999
       }
     },
     "lake": {
@@ -64371,7 +65199,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.545
+        "intuition_weight": 0.48200000000000004
       },
       "water+place": {
         "cold_recovery_rate": 0.75,
@@ -64389,7 +65217,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.32149999999999995
+        "intuition_weight": 0.37150000000000005
       },
       "water+hold": {
         "cold_recovery_rate": 0,
@@ -64406,7 +65234,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.23000000000000004
+        "intuition_weight": 0.185
       }
     },
     "sea": {
@@ -64427,7 +65255,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.327
+        "intuition_weight": 0.18575
       },
       "water+all": {
         "cold_recovery_rate": 0,
@@ -64443,7 +65271,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.392
+        "intuition_weight": 0.31549999999999995
       }
     },
     "rain": {
@@ -64461,7 +65289,7 @@
           "worked_well": 7
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3605
+        "intuition_weight": 0.2885
       },
       "sky+water": {
         "cold_recovery_rate": 1,
@@ -64478,7 +65306,7 @@
           "unnatural": 1
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.6305
+        "intuition_weight": 0.6725
       }
     },
     "cloud": {
@@ -64497,7 +65325,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.226
+        "intuition_weight": 0.17600000000000002
       },
       "air+water": {
         "cold_recovery_rate": 0,
@@ -64515,7 +65343,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.20600000000000007
+        "intuition_weight": 0.13100000000000003
       },
       "water+up": {
         "cold_recovery_rate": 0,
@@ -64533,7 +65361,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.11100000000000002
+        "intuition_weight": 0.06600000000000002
       }
     },
     "island": {
@@ -64553,7 +65381,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.19000000000000006
+        "intuition_weight": 0.1375
       },
       "earth+inside+water": {
         "cold_recovery_rate": 0,
@@ -64569,7 +65397,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.40850000000000003
+        "intuition_weight": 0.32899999999999996
       },
       "place+water": {
         "cold_recovery_rate": 0,
@@ -64587,7 +65415,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.07700000000000003
+        "intuition_weight": 0.038250000000000006
       }
     },
     "star": {
@@ -64605,7 +65433,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.6785
+        "intuition_weight": 0.6725
       },
       "sky+light+small": {
         "cold_recovery_rate": 1,
@@ -64622,7 +65450,7 @@
           "unnatural": 2
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.663
+        "intuition_weight": 0.6995
       },
       "light+small": {
         "cold_recovery_rate": 0,
@@ -64640,7 +65468,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.1565
+        "intuition_weight": 0.10275
       }
     },
     "moon": {
@@ -64658,7 +65486,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.6944999999999999
+        "intuition_weight": 0.6852499999999999
       }
     },
     "day": {
@@ -64678,7 +65506,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.298
+        "intuition_weight": 0.22449999999999998
       },
       "sun+time": {
         "cold_recovery_rate": 1,
@@ -64696,7 +65524,7 @@
           "unnatural": 4
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.4594
+        "intuition_weight": 0.48315
       },
       "light+before": {
         "cold_recovery_rate": 0.25,
@@ -64713,7 +65541,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.3935
+        "intuition_weight": 0.35374999999999995
       }
     },
     "night": {
@@ -64731,7 +65559,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.6415
+        "intuition_weight": 0.6387499999999999
       },
       "time+dark": {
         "cold_recovery_rate": 0,
@@ -64748,7 +65576,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.39349999999999996
+        "intuition_weight": 0.30324999999999996
       }
     },
     "fever": {
@@ -64766,7 +65594,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.61
+        "intuition_weight": 0.575
       },
       "bad+hot+body": {
         "cold_recovery_rate": 0,
@@ -64784,7 +65612,7 @@
           "unnatural": 7
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.11000000000000001
+        "intuition_weight": 0.006249999999999999
       }
     },
     "wound": {
@@ -64802,7 +65630,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.386
+        "intuition_weight": 0.31175
       },
       "bad+skin": {
         "cold_recovery_rate": 1,
@@ -64820,7 +65648,7 @@
           "unnatural": 4
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.42199999999999993
+        "intuition_weight": 0.48450000000000004
       },
       "bad+body": {
         "cold_recovery_rate": 0,
@@ -64838,7 +65666,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.14200000000000002
+        "intuition_weight": 0.10075
       }
     },
     "heal": {
@@ -64856,7 +65684,7 @@
           "worked_well": 7
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.39049999999999996
+        "intuition_weight": 0.31024999999999997
       },
       "good+body": {
         "cold_recovery_rate": 1,
@@ -64874,7 +65702,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.394
+        "intuition_weight": 0.45275
       },
       "help+body": {
         "cold_recovery_rate": 0.75,
@@ -64892,7 +65720,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.3725
+        "intuition_weight": 0.405
       }
     },
     "journey": {
@@ -64911,7 +65739,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.5245
+        "intuition_weight": 0.46399999999999997
       },
       "far+move": {
         "cold_recovery_rate": 0,
@@ -64929,7 +65757,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.16400000000000003
+        "intuition_weight": 0.12025000000000004
       }
     },
     "city": {
@@ -64949,7 +65777,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.22780000000000003
+        "intuition_weight": 0.14480000000000004
       },
       "place+many": {
         "cold_recovery_rate": 0,
@@ -64967,7 +65795,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.23579999999999998
+        "intuition_weight": 0.15154999999999996
       },
       "community+place": {
         "cold_recovery_rate": 0,
@@ -64985,7 +65813,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.34450000000000003
+        "intuition_weight": 0.255
       }
     },
     "birthplace": {
@@ -65005,7 +65833,7 @@
           "worked_well": 6
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.401
+        "intuition_weight": 0.30149999999999993
       },
       "place+birth": {
         "cold_recovery_rate": 0,
@@ -65022,7 +65850,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3895
+        "intuition_weight": 0.3125
       },
       "source+place": {
         "cold_recovery_rate": 0,
@@ -65040,7 +65868,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3615
+        "intuition_weight": 0.2569999999999999
       }
     },
     "open": {
@@ -65058,7 +65886,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.40850000000000003
+        "intuition_weight": 0.3275
       }
     },
     "sunrise": {
@@ -65078,7 +65906,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3215
+        "intuition_weight": 0.23625
       },
       "light+up": {
         "cold_recovery_rate": 0,
@@ -65094,7 +65922,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3515
+        "intuition_weight": 0.27949999999999997
       },
       "sun+before": {
         "cold_recovery_rate": 0.25,
@@ -65112,7 +65940,7 @@
           "unnatural": 5
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.194
+        "intuition_weight": 0.134
       }
     },
     "sunset": {
@@ -65131,7 +65959,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.594
+        "intuition_weight": 0.592
       },
       "light+down": {
         "cold_recovery_rate": 0.25,
@@ -65149,7 +65977,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.41999999999999993
+        "intuition_weight": 0.36474999999999996
       },
       "sun+after": {
         "cold_recovery_rate": 1,
@@ -65167,7 +65995,7 @@
           "unnatural": 4
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.491
+        "intuition_weight": 0.5085
       }
     },
     "moonlight": {
@@ -65188,7 +66016,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3685
+        "intuition_weight": 0.2095
       }
     },
     "morning": {
@@ -65208,7 +66036,7 @@
           "unnatural": 6
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.18450000000000005
+        "intuition_weight": 0.08450000000000002
       },
       "light+after": {
         "cold_recovery_rate": 0,
@@ -65226,7 +66054,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.037500000000000006
+        "intuition_weight": 0.007499999999999996
       },
       "before+light": {
         "cold_recovery_rate": 0,
@@ -65244,7 +66072,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.14840000000000003
+        "intuition_weight": 0.07465000000000002
       }
     },
     "winter": {
@@ -65264,7 +66092,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.618
+        "intuition_weight": 0.65425
       },
       "cold+after": {
         "cold_recovery_rate": 0.5,
@@ -65281,7 +66109,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.5135
+        "intuition_weight": 0.49324999999999997
       }
     },
     "bridge": {
@@ -65300,7 +66128,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3165
+        "intuition_weight": 0.24874999999999997
       },
       "water+path": {
         "cold_recovery_rate": 0,
@@ -65317,7 +66145,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3585
+        "intuition_weight": 0.2739999999999999
       },
       "place+water+path": {
         "cold_recovery_rate": 0,
@@ -65335,7 +66163,7 @@
           "hard_pronounce": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.226
+        "intuition_weight": 0.13674999999999998
       }
     },
     "beautiful": {
@@ -65354,7 +66182,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.3275
+        "intuition_weight": 0.2615
       },
       "see+good": {
         "cold_recovery_rate": 0.25,
@@ -65372,7 +66200,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.3435
+        "intuition_weight": 0.3055
       },
       "good+body": {
         "cold_recovery_rate": 0,
@@ -65390,7 +66218,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.031
+        "intuition_weight": 0.012249999999999992
       }
     },
     "almost": {
@@ -65409,7 +66237,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.29100000000000004
+        "intuition_weight": 0.23
       },
       "near+all": {
         "cold_recovery_rate": 0,
@@ -65427,7 +66255,7 @@
           "hard_pronounce": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.09100000000000003
+        "intuition_weight": 0.04100000000000001
       }
     },
     "door": {
@@ -65446,7 +66274,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.31750000000000006
+        "intuition_weight": 0.25325
       },
       "bound+path": {
         "cold_recovery_rate": 0,
@@ -65464,7 +66292,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.352
+        "intuition_weight": 0.27175
       },
       "place+bound": {
         "cold_recovery_rate": 0,
@@ -65482,7 +66310,7 @@
           "unnatural": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.15140000000000003
+        "intuition_weight": 0.08765000000000002
       }
     },
     "campfire": {
@@ -65501,7 +66329,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.4159999999999999
+        "intuition_weight": 0.37174999999999997
       },
       "fire+near": {
         "cold_recovery_rate": 0,
@@ -65519,7 +66347,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.17900000000000005
+        "intuition_weight": 0.1315
       },
       "fire+person+place": {
         "cold_recovery_rate": 0,
@@ -65537,7 +66365,7 @@
           "hard_pronounce": 5
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.05249999999999999
+        "intuition_weight": -0.011249999999999996
       }
     },
     "fish": {
@@ -65555,7 +66383,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.606
+        "intuition_weight": 0.5705
       },
       "water+move+animal": {
         "cold_recovery_rate": 0.75,
@@ -65572,7 +66400,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0.75,
-        "intuition_weight": 0.5209999999999999
+        "intuition_weight": 0.5435
       },
       "animal+water": {
         "cold_recovery_rate": 1,
@@ -65589,7 +66417,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.763
+        "intuition_weight": 0.77125
       }
     },
     "blacksmith": {
@@ -65609,7 +66437,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0.25,
-        "intuition_weight": 0.5165
+        "intuition_weight": 0.44799999999999995
       },
       "metal+person": {
         "cold_recovery_rate": 0,
@@ -65626,7 +66454,7 @@
           "unnatural": 3
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.299
+        "intuition_weight": 0.2375
       },
       "make+metal": {
         "cold_recovery_rate": 0,
@@ -65644,7 +66472,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.315
+        "intuition_weight": 0.23024999999999998
       }
     },
     "grandparent": {
@@ -65664,7 +66492,7 @@
           "worked_well": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.38500000000000006
+        "intuition_weight": 0.278
       },
       "parent+before": {
         "cold_recovery_rate": 0,
@@ -65682,7 +66510,7 @@
           "worked_well": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.372
+        "intuition_weight": 0.2774999999999999
       }
     },
     "doctor": {
@@ -65700,7 +66528,7 @@
           "worked_well": 8
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.375
+        "intuition_weight": 0.30049999999999993
       },
       "good+body+person": {
         "cold_recovery_rate": 0,
@@ -65717,7 +66545,7 @@
           "unnatural": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.27199999999999996
+        "intuition_weight": 0.21725
       },
       "help+body+person": {
         "cold_recovery_rate": 0,
@@ -65733,7 +66561,7 @@
           "worked_well": 7
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.401
+        "intuition_weight": 0.32149999999999995
       }
     },
     "hunter": {
@@ -65754,7 +66582,7 @@
           "too_long": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.37000000000000005
+        "intuition_weight": 0.24799999999999997
       },
       "person+take+animal": {
         "cold_recovery_rate": 0,
@@ -65771,7 +66599,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.33649999999999997
+        "intuition_weight": 0.26449999999999996
       }
     },
     "farmer": {
@@ -65790,7 +66618,7 @@
           "unnatural": 1
         },
         "recovery_rate": 1,
-        "intuition_weight": 0.6719999999999999
+        "intuition_weight": 0.7055
       },
       "plant+person": {
         "cold_recovery_rate": 0.5,
@@ -65807,7 +66635,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.35900000000000004
+        "intuition_weight": 0.36650000000000005
       },
       "grow+plant+person": {
         "cold_recovery_rate": 0.5,
@@ -65826,7 +66654,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0.5,
-        "intuition_weight": 0.433
+        "intuition_weight": 0.31949999999999995
       }
     },
     "fisherman": {
@@ -65846,7 +66674,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.288
+        "intuition_weight": 0.207
       },
       "person+fish": {
         "cold_recovery_rate": 0,
@@ -65864,7 +66692,7 @@
           "worked_well": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.18000000000000005
+        "intuition_weight": 0.10074999999999998
       },
       "water+animal+person": {
         "cold_recovery_rate": 0,
@@ -65882,7 +66710,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.254
+        "intuition_weight": 0.17925000000000002
       }
     },
     "knife": {
@@ -65901,7 +66729,7 @@
           "unnatural": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.2915
+        "intuition_weight": 0.23224999999999996
       },
       "tool+bound": {
         "cold_recovery_rate": 0,
@@ -65920,7 +66748,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.20480000000000007
+        "intuition_weight": 0.02980000000000002
       },
       "metal+thing": {
         "cold_recovery_rate": 0,
@@ -65938,7 +66766,7 @@
           "worked_well": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.16800000000000004
+        "intuition_weight": 0.068
       }
     },
     "red": {
@@ -65958,7 +66786,7 @@
           "hard_pronounce": 2
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.16800000000000004
+        "intuition_weight": 0.11175000000000003
       },
       "see+fire": {
         "cold_recovery_rate": 0,
@@ -65976,7 +66804,7 @@
           "hard_pronounce": 1
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.26349999999999996
+        "intuition_weight": 0.19674999999999998
       },
       "hot+see": {
         "cold_recovery_rate": 0,
@@ -65994,7 +66822,7 @@
           "unnatural": 4
         },
         "recovery_rate": 0,
-        "intuition_weight": 0.1585
+        "intuition_weight": 0.09349999999999997
       }
     }
   },

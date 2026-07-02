@@ -1,6 +1,6 @@
 # Fonoran compound audit
 
-> Generated: 2026-07-02T15:26:27.692Z
+> Generated: 2026-07-02T21:20:36.026Z
 
 ## Summary
 
@@ -9,23 +9,23 @@
 | Live compounds | 111 |
 | Demo reference trees | 53 |
 | Missing from live | 2 |
-| Tree mismatches | 25 |
+| Tree mismatches | 26 |
 | Broken dependencies | 0 |
-| Tree-aware preferred forms | 19 |
+| Tree-aware preferred forms | 18 |
 | Seed coverage | 111/111 |
 | Empty alternates | 0 |
-| Flattened length warnings (>4 roots) | 1 |
+| Flattened length warnings (>4 roots) | 0 |
 | Would promote (run optimize) | 0 |
-| LLM evaluated / consensus / split | 111 / 37 / 73 |
-| LLM would promote / low recovery | 1 / 34 |
-| Heuristic preferred / locked | 89 / 0 |
-| Playtested concepts | 61 |
+| LLM evaluated / consensus / split | 111 / 31 / 76 |
+| LLM would promote / low recovery | 8 / 34 |
+| Heuristic preferred / locked | 90 / 0 |
+| Playtested concepts | 70 |
 
 ### Findings by severity
 
 - **critical**: 0
-- **high**: 29
-- **medium**: 119
+- **high**: 31
+- **medium**: 125
 - **low**: 0
 
 ### Phonetic ease
@@ -112,6 +112,10 @@ Tertiary-onset roots:
 - **work** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `person+do+will`
   - live: `person+make`
+- **world** (flat_when_hierarchical): Demo depth 2 but preferred uses only primitive roots
+- **world** (tree_mismatch): Preferred tree differs from semantic foundation
+  - expected: `whole+place+earth+life`
+  - live: `earth+all`
 ### Medium
 
 - **agent** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
@@ -121,6 +125,7 @@ Tertiary-onset roots:
 - **answer** (llm_split): LLM playtests have no clear consensus winner
 - **beautiful** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **beautiful** (llm_split): LLM playtests have no clear consensus winner
+- **birth** (llm_split): LLM playtests have no clear consensus winner
 - **birthplace** (llm_split): LLM playtests have no clear consensus winner
 - **book** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **book** (llm_split): LLM playtests have no clear consensus winner
@@ -169,15 +174,18 @@ Tertiary-onset roots:
 - **identity** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **identity** (llm_split): LLM playtests have no clear consensus winner
 - **island** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **island** (llm_split): LLM playtests have no clear consensus winner
 - **joy** (llm_split): LLM playtests have no clear consensus winner
 - **knife** (llm_split): LLM playtests have no clear consensus winner
 - **lake** (llm_low_recovery): Live preferred recovers at 25% in LLM playtests
+- **lake** (llm_split): LLM playtests have no clear consensus winner
 - **lamp** (llm_split): LLM playtests have no clear consensus winner
 - **language** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **language** (llm_split): LLM playtests have no clear consensus winner
+- **language** (llm_would_promote): LLM consensus would promote collective + speak → speak + collective + know
 - **law** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **law** (llm_split): LLM playtests have no clear consensus winner
 - **learn** (llm_split): LLM playtests have no clear consensus winner
+- **meal** (llm_split): LLM playtests have no clear consensus winner
 - **meal** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `food+thing`
   - live: `food+eat`
@@ -185,8 +193,10 @@ Tertiary-onset roots:
 - **memory** (llm_split): LLM playtests have no clear consensus winner
 - **money** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **money** (llm_split): LLM playtests have no clear consensus winner
+- **moonlight** (llm_split): LLM playtests have no clear consensus winner
 - **morning** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **morning** (llm_split): LLM playtests have no clear consensus winner
+- **mountain** (llm_split): LLM playtests have no clear consensus winner
 - **music** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **music** (llm_split): LLM playtests have no clear consensus winner
 - **music** (tree_mismatch): Preferred tree differs from semantic foundation
@@ -198,6 +208,7 @@ Tertiary-onset roots:
 - **ocean** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `water+place+many`
   - live: `water+big`
+- **open** (llm_split): LLM playtests have no clear consensus winner
 - **peace** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **peace** (llm_split): LLM playtests have no clear consensus winner
 - **peace** (tree_mismatch): Preferred tree differs from semantic foundation
@@ -212,9 +223,10 @@ Tertiary-onset roots:
 - **red** (llm_split): LLM playtests have no clear consensus winner
 - **religion** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **religion** (llm_split): LLM playtests have no clear consensus winner
+- **remember** (llm_split): LLM playtests have no clear consensus winner
 - **road** (llm_split): LLM playtests have no clear consensus winner
 - **run** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **run** (llm_split): LLM playtests have no clear consensus winner
+- **run** (llm_would_promote): LLM consensus would promote move + fast → fast + move
 - **sad** (llm_split): LLM playtests have no clear consensus winner
 - **sea** (llm_split): LLM playtests have no clear consensus winner
 - **seed** (llm_split): LLM playtests have no clear consensus winner
@@ -227,7 +239,6 @@ Tertiary-onset roots:
 - **signal** (llm_split): LLM playtests have no clear consensus winner
 - **star** (llm_split): LLM playtests have no clear consensus winner
 - **student** (llm_split): LLM playtests have no clear consensus winner
-- **sun** (llm_split): LLM playtests have no clear consensus winner
 - **sun** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `source+light+hot`
   - live: `sky+fire`
@@ -249,15 +260,17 @@ Tertiary-onset roots:
 - **weapon** (llm_split): LLM playtests have no clear consensus winner
 - **whole** (llm_split): LLM playtests have no clear consensus winner
 - **winter** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
-- **winter** (llm_split): LLM playtests have no clear consensus winner
+- **winter** (llm_would_promote): LLM consensus would promote cold + after → time + cold
 - **work** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **work** (llm_split): LLM playtests have no clear consensus winner
-- **world** (flattened_length_high): Preferred form flattens to 5 roots (limit 4)
 - **wound** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **wound** (llm_split): LLM playtests have no clear consensus winner
+- **wound** (llm_would_promote): LLM consensus would promote pain + body → bad + skin
 ### Info
 
-- **meal** (llm_would_promote): LLM consensus prefers eat + thing (0% recovery) over live preferred
+- **language** (llm_would_promote): LLM consensus prefers speak + collective + know (50% recovery) over live preferred
+- **run** (llm_would_promote): LLM consensus prefers fast + move (50% recovery) over live preferred
+- **winter** (llm_would_promote): LLM consensus prefers time + cold (100% recovery) over live preferred
+- **wound** (llm_would_promote): LLM consensus prefers bad + skin (100% recovery) over live preferred
 
 ## Teaching-tree dependency order
 
