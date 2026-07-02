@@ -92,6 +92,19 @@ async function writeAllToJson(notes) {
   await writeJsonStore(sortNotes(notes));
 }
 
+function mapPgRow(row, { includeBody = true } = {}) {
+  const mapped = {
+    slug: row.slug,
+    workflow: row.workflow,
+    metadata: row.metadata,
+    updated_at: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
+    published_at: row.published_at instanceof Date ? row.published_at.toISOString() : row.published_at,
+    updated_by: row.updated_by,
+  };
+  if (includeBody) mapped.body = row.body;
+  return mapped;
+}
+
 async function fetchAllFromPg() {
   const client = await (await getPool()).connect();
   try {
@@ -99,15 +112,20 @@ async function fetchAllFromPg() {
       `SELECT slug, workflow, metadata, body, updated_at, published_at, updated_by
        FROM research_notes ORDER BY (metadata->>'date'), (metadata->>'code')`,
     );
-    return rows.map((row) => ({
-      slug: row.slug,
-      workflow: row.workflow,
-      metadata: row.metadata,
-      body: row.body,
-      updated_at: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
-      published_at: row.published_at instanceof Date ? row.published_at.toISOString() : row.published_at,
-      updated_by: row.updated_by,
-    }));
+    return rows.map((row) => mapPgRow(row, { includeBody: true }));
+  } finally {
+    client.release();
+  }
+}
+
+async function fetchAllMetadataFromPg() {
+  const client = await (await getPool()).connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT slug, workflow, metadata, updated_at, published_at, updated_by
+       FROM research_notes ORDER BY (metadata->>'date'), (metadata->>'code')`,
+    );
+    return rows.map((row) => mapPgRow(row, { includeBody: false }));
   } finally {
     client.release();
   }
@@ -122,32 +140,24 @@ async function fetchOneFromPg(slug) {
       [slug],
     );
     if (!rows.length) return null;
-    const row = rows[0];
-    return {
-      slug: row.slug,
-      workflow: row.workflow,
-      metadata: row.metadata,
-      body: row.body,
-      updated_at: row.updated_at instanceof Date ? row.updated_at.toISOString() : row.updated_at,
-      published_at: row.published_at instanceof Date ? row.published_at.toISOString() : row.published_at,
-      updated_by: row.updated_by,
-    };
+    return mapPgRow(rows[0], { includeBody: true });
   } finally {
     client.release();
   }
 }
 
-async function upsertPg(record) {
+async function upsertPg(record, { preserveTimestamps = false } = {}) {
   const client = await (await getPool()).connect();
   try {
+    const updatedAt = preserveTimestamps ? record.updated_at : null;
     await client.query(
       `INSERT INTO research_notes (slug, workflow, metadata, body, updated_at, published_at, updated_by)
-       VALUES ($1, $2, $3::jsonb, $4, NOW(), $5, $6)
+       VALUES ($1, $2, $3::jsonb, $4, COALESCE($5::timestamptz, NOW()), $6, $7)
        ON CONFLICT (slug) DO UPDATE SET
          workflow = EXCLUDED.workflow,
          metadata = EXCLUDED.metadata,
          body = EXCLUDED.body,
-         updated_at = NOW(),
+         updated_at = COALESCE($5::timestamptz, NOW()),
          published_at = EXCLUDED.published_at,
          updated_by = EXCLUDED.updated_by`,
       [
@@ -155,6 +165,7 @@ async function upsertPg(record) {
         record.workflow,
         JSON.stringify(record.metadata),
         record.body,
+        updatedAt,
         record.published_at,
         record.updated_by,
       ],
@@ -179,6 +190,15 @@ async function readAllRecords() {
     return fetchAllFromPg();
   }
   return readAllFromJson();
+}
+
+async function readAllMetadataRecords() {
+  await ensureSchemaOnce();
+  if (resolveStorageMode() === 'postgres' && process.env.DATABASE_URL) {
+    return fetchAllMetadataFromPg();
+  }
+  const notes = await readAllFromJson();
+  return notes.map(({ body: _body, ...meta }) => meta);
 }
 
 async function persistRecord(record) {
@@ -234,7 +254,7 @@ export function publicMetadata(metadata) {
 }
 
 export async function listPublished() {
-  const all = await readAllRecords();
+  const all = await readAllMetadataRecords();
   return sortNotes(all.filter((n) => n.workflow === 'published')).map((n) => publicMetadata(n.metadata));
 }
 
@@ -250,7 +270,7 @@ export async function readPublished(slug) {
 }
 
 export async function listEditor() {
-  const all = await readAllRecords();
+  const all = await readAllMetadataRecords();
   return all.map((n) => ({
     slug: n.slug,
     workflow: n.workflow,
@@ -274,12 +294,12 @@ export async function readForEditor(slug) {
 }
 
 export async function getAllSlugs() {
-  const all = await readAllRecords();
+  const all = await readAllMetadataRecords();
   return all.map((n) => n.slug);
 }
 
 export async function getAllCodes() {
-  const all = await readAllRecords();
+  const all = await readAllMetadataRecords();
   return all.map((n) => n.metadata?.code).filter(Boolean);
 }
 
@@ -423,4 +443,35 @@ export async function importPublishedNote(metadata, body, email = 'import@local'
 
 export async function initResearchNotesStore() {
   await ensureSchemaOnce();
+}
+
+/** Published notes from git seed file (for boot sync). */
+export function publishedNotesFromSeed(notes) {
+  return (Array.isArray(notes) ? notes : []).filter((n) => n.workflow === 'published');
+}
+
+/**
+ * Upsert published research notes from git seed into PostgreSQL on boot.
+ * Git is canonical for published notes; prod-only drafts are untouched.
+ */
+export async function maybeAutoSyncResearchNotesOnStartup() {
+  if (resolveStorageMode() !== 'postgres' || !process.env.DATABASE_URL) {
+    return { skipped: true, reason: 'json mode' };
+  }
+
+  await ensureSchemaOnce();
+  const seedNotes = await readJsonStore();
+  const published = publishedNotesFromSeed(seedNotes);
+  if (!published.length) {
+    return { skipped: true, reason: 'no published seed notes' };
+  }
+
+  let synced = 0;
+  for (const note of published) {
+    await upsertPg(rowFromRecord(note), { preserveTimestamps: true });
+    synced += 1;
+  }
+
+  console.log(`Research notes: synced ${synced} published from git seed`);
+  return { synced, total: published.length };
 }

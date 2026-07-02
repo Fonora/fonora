@@ -28,7 +28,7 @@ export async function runResearchNotesStoreTests() {
   process.env.FONORAN_SKIP_JSON_MIRROR = '1';
   process.env.RESEARCH_NOTES_STORE_PATH = join(dir, 'research-notes-store.json');
 
-  const { saveDraft, publishNote, readPublished, listPublished } = await import(
+  const { saveDraft, publishNote, readPublished, listPublished, maybeAutoSyncResearchNotesOnStartup, publishedNotesFromSeed } = await import(
     `./research-notes-store.js?test=${Date.now()}`
   );
 
@@ -63,6 +63,26 @@ export async function runResearchNotesStoreTests() {
         assert(pub?.body.includes('Test Note'));
         const list = await listPublished();
         assert(list.some((n) => n.slug === 'test-note'));
+      }),
+    );
+
+    results.push(
+      await test('publishedNotesFromSeed keeps published workflow only', async () => {
+        const filtered = publishedNotesFromSeed([
+          { workflow: 'published', slug: 'a' },
+          { workflow: 'draft', slug: 'b' },
+          { workflow: 'published', slug: 'c' },
+        ]);
+        assert(filtered.length === 2);
+        assert(filtered.every((n) => n.workflow === 'published'));
+      }),
+    );
+
+    results.push(
+      await test('maybeAutoSyncResearchNotesOnStartup skips in json mode', async () => {
+        const result = await maybeAutoSyncResearchNotesOnStartup();
+        assert(result.skipped === true);
+        assert(result.reason === 'json mode');
       }),
     );
   } finally {

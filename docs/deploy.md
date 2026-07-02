@@ -139,6 +139,23 @@ Without `DATABASE_URL`, storage falls back to JSON files under `data/`. Use snap
 
 See [platform-overview.md](platform-overview.md) for the data architecture overview.
 
+### Research notes (PostgreSQL)
+
+Published research notes are **not** read from `docs/research-notes/*.md` at runtime. The live `/research` notebook and Tools → Research Notes editor load from the `research_notes` PostgreSQL table when `DATABASE_URL` is set.
+
+Git canonical source: [`data/research-notes-store.json`](../data/research-notes-store.json) (published + draft bodies). Markdown files under `docs/research-notes/` are optional mirrors for git history.
+
+**On server boot** (after schema init), published notes from the git seed file are upserted into Postgres automatically. Prod-only drafts in Postgres are left untouched; git does not delete notes missing from the seed file.
+
+After deploy, verify:
+
+- `GET /api/research/notes` returns the expected note count (including Phase IV entries)
+- `/research/timeline` shows current phases
+
+To author locally: edit in Tools → Research Notes or update the store JSON, commit, merge to staging/main, redeploy (boot sync applies published notes).
+
+See [research-notes-authoring.md](research-notes-authoring.md) for the full workflow.
+
 ## Static hosting alternatives
 
 Platforms like **Netlify**, **Cloudflare Pages**, or **GitHub Pages** can host the files, but you must:
@@ -168,6 +185,7 @@ Because WASM assets are large (~90 MB in `vendor/` after install), a Node static
 - [ ] Write API requires `@fonora.org` session; unsigned users can browse dictionary only
 - [ ] `DATABASE_URL` set; `FONORAN_SKIP_JSON_MIRROR=1` on Heroku
 - [ ] Live state seeded from git JSON on first deploy
+- [ ] Research notes: boot sync populated Postgres (`GET /api/research/notes` count matches git store published count)
 - [ ] Contributor Google Form linked from `/language/` lander
 - [ ] Periodic backup: Advanced → Download snapshot, or `npm run fonoran:snapshot:export`
 

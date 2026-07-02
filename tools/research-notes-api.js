@@ -35,7 +35,12 @@ export async function handleResearchApi(req, res, pathname, method) {
   try {
     if (pathname === '/api/research/notes' && m === 'GET') {
       const notes = await listPublished();
-      return done(200, { notes });
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Cache-Control': 'public, max-age=60',
+      });
+      res.end(JSON.stringify({ notes }));
+      return true;
     }
 
     const mdMatch = pathname.match(/^\/api\/research\/notes\/([^/]+)\.md$/);
