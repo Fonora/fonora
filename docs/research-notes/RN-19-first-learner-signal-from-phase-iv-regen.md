@@ -73,7 +73,7 @@ Phase IV regen may already satisfy (1) and (2) for everyday sentences; (3) remai
 | --- | --- | --- | --- | --- |
 | Dictionary | [/language#dictionary](/language#dictionary) | Do root clusters teach without glosses? | 1 | `ye` = water within ~5s browse |
 | Translator | [/language#translator](/language#translator) | Do compiled sentences stay parseable? | 1 | food/city sentence above |
-| Puzzle Conversation | [/language#puzzle](/language#puzzle) | Do root-knowers recover compound meaning? | 0 | 14 priority concepts in playtest baseline doc |
+| Puzzle Conversation | [/language#puzzle](/language#puzzle) | Do root-knowers recover compound meaning? | 2 | `whole`, `star` recovered (post-regen spellings) |
 | Keyboard / spelling drills | [/](/) (platform home) | Can learners type what they hear? | 0 | RN-16 pipeline |
 
 Session log (living document): [`docs/fonoran-learning-sessions-log.md`](../fonoran-learning-sessions-log.md).

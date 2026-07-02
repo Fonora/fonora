@@ -74,7 +74,7 @@
 | --- | --- |
 | Dictionary sessions | 1 |
 | Translator sentences tested | 1 |
-| Puzzle rounds recorded (post-regen) | 0 |
+| Puzzle rounds recorded (post-regen) | 2 (`whole`, `star` — both recovered first guess) |
 | Keyboard sessions | 0 |
 | Documented failure cases | 0 |
 
