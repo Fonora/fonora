@@ -67,18 +67,10 @@ import {
   loadCandidateContext,
 } from './fonoran-expression-candidates.js';
 import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
-import { safeApiError } from '../js/utils.js';
-
-function sanitizeJsonBody(body) {
-  if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
-  const out = { ...body };
-  if ('stack' in out) delete out.stack;
-  if (out.error instanceof Error) out.error = safeApiError(out.error);
-  return out;
-}
+import { safeApiError, sanitizeForJsonResponse } from '../js/utils.js';
 
 export function jsonResponse(res, status, body) {
-  const payload = JSON.stringify(sanitizeJsonBody(body));
+  const payload = JSON.stringify(sanitizeForJsonResponse(body));
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
@@ -383,6 +375,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     return false;
   } catch (err) {
-    return done(400, { error: safeApiError(err) });
+    console.error('Fonoran API error:', err);
+    const status = err?.status >= 400 && err?.status < 600 ? err.status : 400;
+    const message = status >= 500 ? 'Internal server error' : safeApiError(err);
+    return done(status, { error: message });
   }
 }
