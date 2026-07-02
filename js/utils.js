@@ -8,6 +8,20 @@ export function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+/** Escape a value for safe insertion into a markdown table cell. */
+export function escapeMarkdownTableCell(value) {
+  return String(value ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\|/g, '\\|')
+    .replace(/\r\n|\n|\r/g, ' ');
+}
+
+/** Safe error string for JSON API responses (never includes stack traces). */
+export function safeApiError(err) {
+  if (err instanceof Error) return err.message || 'Request failed';
+  return typeof err === 'string' ? err : 'Request failed';
+}
+
 /** @param {unknown} err */
 export function errorMessage(err) {
   if (err instanceof Error) return err.message;

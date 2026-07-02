@@ -13,6 +13,7 @@ import {
 } from './rules.js';
 import { decodeSymbols, decodeToPhonemeKeys } from './decode.js';
 import { encodeSounds } from './encode.js';
+import { escapeMarkdownTableCell } from './utils.js';
 import { V2_COLLISION_GROUPS } from './vowel-v2-collision-groups.js';
 
 const CONCAT_MAX_LEN = 2;
@@ -392,7 +393,7 @@ function buildExecutiveSummary({ exact, concatenation, greedy, wordIssues, testG
 }
 
 function mdTable(headers, rows) {
-  const line = (cells) => `| ${cells.join(' | ')} |`;
+  const line = (cells) => `| ${cells.map((c) => escapeMarkdownTableCell(c)).join(' | ')} |`;
   return [line(headers), line(headers.map(() => '---')), ...rows.map((r) => line(r))].join('\n');
 }
 
@@ -429,7 +430,7 @@ export function formatCollisionAuditMarkdown(audit) {
         .map((r) => [
           r.key,
           r.type,
-          r.ipa.replace(/\|/g, '\\|'),
+          r.ipa,
           `\`${r.symbols}\``,
           r.source,
           r.status,
@@ -517,7 +518,7 @@ export function formatCollisionAuditMarkdown(audit) {
       ['word', 'IPA', 'phoneme keys', 'symbols', 'recovered keys', 'unspaced', 'issues'],
       audit.wordRows.map((w) => [
         w.word,
-        w.ipa.replace(/\|/g, '\\|'),
+        w.ipa,
         w.phonemeKeys,
         `\`${w.symbols}\``,
         w.recoveredKeys,

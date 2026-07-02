@@ -9,6 +9,7 @@ import {
   normalizeIpa,
   IPA_MULTIGRAPHS,
 } from './ipa-normalize.js';
+import { escapeMarkdownTableCell } from './utils.js';
 
 const STRIP_CHARS = /[ˈˌˑ\.˞ˤ˥˦˧˨˥˩ⁿʰʲʷ\u0303\u031E\u032A\u1D5D-]/g;
 
@@ -228,7 +229,7 @@ export function formatDiagnosticsMarkdown(rows, meta = {}) {
   for (const row of rows) {
     const warn = row.warnings?.length ? row.warnings.join('; ') : '-';
     lines.push(
-      `| ${row.word} | ${escapeCell(row.ipa)} | ${escapeCell(row.normalizedIpa)} | ${escapeCell(row.fonoraPhonemes)} | ${escapeCell(row.fonoraSymbols)} | ${escapeCell(row.decoded)} | ${escapeCell(warn)} |`,
+      `| ${escapeMarkdownTableCell(row.word)} | ${escapeMarkdownTableCell(row.ipa)} | ${escapeMarkdownTableCell(row.normalizedIpa)} | ${escapeMarkdownTableCell(row.fonoraPhonemes)} | ${escapeMarkdownTableCell(row.fonoraSymbols)} | ${escapeMarkdownTableCell(row.decoded)} | ${escapeMarkdownTableCell(warn)} |`,
     );
   }
 
@@ -240,8 +241,4 @@ export function formatDiagnosticsMarkdown(rows, meta = {}) {
   lines.push(`- Words with unmapped IPA warnings: ${failures.length}`);
 
   return lines.join('\n');
-}
-
-function escapeCell(value) {
-  return String(value || '-').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 }

@@ -67,9 +67,18 @@ import {
   loadCandidateContext,
 } from './fonoran-expression-candidates.js';
 import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
+import { safeApiError } from '../js/utils.js';
+
+function sanitizeJsonBody(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) return body;
+  const out = { ...body };
+  if ('stack' in out) delete out.stack;
+  if (out.error instanceof Error) out.error = safeApiError(out.error);
+  return out;
+}
 
 export function jsonResponse(res, status, body) {
-  const payload = JSON.stringify(body);
+  const payload = JSON.stringify(sanitizeJsonBody(body));
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
@@ -138,7 +147,7 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const archive = await createSnapshotZipStream();
       archive.on('error', (err) => {
         if (!res.headersSent) {
-          jsonResponse(res, 500, { error: err.message ?? 'Export failed' });
+          jsonResponse(res, 500, { error: safeApiError(err) ?? 'Export failed' });
         } else {
           res.destroy(err);
         }
@@ -374,6 +383,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     return false;
   } catch (err) {
-    return done(400, { error: err.message ?? 'Request failed' });
+    return done(400, { error: safeApiError(err) });
   }
 }

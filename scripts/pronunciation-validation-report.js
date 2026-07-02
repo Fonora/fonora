@@ -12,6 +12,7 @@ import {
   validatePronunciationBatch,
   summarizeValidationResults,
 } from '../js/pronunciation-validation.js';
+import { escapeMarkdownTableCell } from '../js/utils.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const outDir = join(root, 'reports');
@@ -54,14 +55,14 @@ async function main() {
 
   for (const r of results) {
     if (r.error) {
-      lines.push(`| ${r.word} | n/a |: | n/a | ✗ | ${r.error} |`);
+      lines.push(`| ${escapeMarkdownTableCell(r.word)} | n/a | n/a | n/a | ✗ | ${escapeMarkdownTableCell(r.error)} |`);
       continue;
     }
     const warn = r.collisionWarnings?.length
       ? r.collisionWarnings.map((w) => w.label).join('; ')
-      : ': ';
+      : '-';
     lines.push(
-      `| ${r.word} | ${(r.sourceIpa || '').replace(/\|/g, '\\|')} | ${(r.recoveredIpa || '').replace(/\|/g, '\\|')} | ${r.phonemeKeysMatch ? '✓' : '✗'} | ${r.ipaMatch ? '✓' : '✗'} | ${warn} |`,
+      `| ${escapeMarkdownTableCell(r.word)} | ${escapeMarkdownTableCell(r.sourceIpa || '')} | ${escapeMarkdownTableCell(r.recoveredIpa || '')} | ${r.phonemeKeysMatch ? '✓' : '✗'} | ${r.ipaMatch ? '✓' : '✗'} | ${escapeMarkdownTableCell(warn)} |`,
     );
   }
 
