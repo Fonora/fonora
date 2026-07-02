@@ -30,4 +30,8 @@ data/fonoran-english-lexicon.json
 data/fonoran-stress-test-report.json
 data/fonoran-semantic-cache.json
 
-.cursor/
+# Cursor (keep project hooks; ignore local plans/state)
+.cursor/*
+!.cursor/hooks.json
+!.cursor/hooks/
+!.cursor/hooks/**

@@ -85,7 +85,7 @@ Production must **never** run with writes enabled and no auth when `DATABASE_URL
 
 ## Contributor intake (Google Form)
 
-Use a **Google Form** in Workspace (linked from `/fonoran/` lander and [CONTRIBUTING.md](../CONTRIBUTING.md)). Responses go to a Google Sheet; you review manually and enter approved items yourself in the builder.
+Use a **Google Form** in Workspace (linked from `/language/` lander and [CONTRIBUTING.md](../CONTRIBUTING.md)). Responses go to a Google Sheet; you review manually and enter approved items yourself in the builder.
 
 ### Suggested fields
 
@@ -207,7 +207,7 @@ Optional follow-up (not blockers for merge):
 
 ### Post-deploy
 
-- [ ] `/fonoran/` lander links to Google Form
+- [ ] `/language/` lander links to Google Form
 - [ ] `GET /health` monitored
 - [ ] Document auth troubleshooting in [deploy.md](deploy.md)
 

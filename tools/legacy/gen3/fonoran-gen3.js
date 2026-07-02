@@ -8,7 +8,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const CONFIG_PATH = join(ROOT, 'data', 'fonoran-gen3-config.json');
 const OUTPUT_PATH = join(ROOT, 'data', 'fonoran-gen3-roots.json');
 

@@ -8,7 +8,7 @@
 
 ## Overview
 
-Fonoran went through several generations of **algorithmic vocabulary generation** before the current **sound-first lab** at `/fonoran/` became the primary product. Earlier generations tried to produce hundreds or thousands of words from a small semantic core.
+Fonoran went through several generations of **algorithmic vocabulary generation** before the current **sound-first lab** at `/language/` became the primary product. Earlier generations tried to produce hundreds or thousands of words from a small semantic core.
 
 | Generation | Direction | Scale | Fate |
 | --- | --- | --- | --- |
@@ -130,10 +130,10 @@ Still started from **human concepts** (water, person, light) assigned to coordin
 
 Gen 3 rebased entirely on **DDA coordinates** (Depth, Mode/Dynamics, Aspect). Human concepts appear only at the **derivation layer**, never as primitives.
 
-- **Gen 3:** `tools/fonoran-gen3.js` → `data/fonoran-gen3-roots.json`
-- **Gen 3.1:** readability repairs, distinctiveness, `tools/fonoran-gen3-1.js` → `data/fonoran-gen3-1-roots.json`
+- **Gen 3:** `tools/legacy/gen3/fonoran-gen3.js` → `data/fonoran-gen3-roots.json`
+- **Gen 3.1:** readability repairs, distinctiveness, `tools/legacy/gen3/fonoran-gen3-1.js` → `data/fonoran-gen3-1-roots.json`
 - **Canonical stabilization:** human-approved roots → `data/fonoran-canonical-registry.json`
-- **Expert UIs (retired):** Gen 3 review and canonical review HTML pages were removed; use live tooling at `/fonoran/` (Language Explorer, Health, Advanced → Run DDA).
+- **Expert UIs (retired):** Gen 3 review and canonical review HTML pages were removed; use live tooling at `/language/` (Language Explorer, Health, Advanced → archive DDA experiment).
 
 Full design docs (still present):
 
@@ -153,7 +153,7 @@ Legacy files remain for reference only:
 | File | Role |
 | --- | --- |
 | [`data/fonoran-primitive-roots-config.json`](../data/fonoran-primitive-roots-config.json) | Old concept list |
-| [`tools/fonoran-primitive-roots.js`](../tools/fonoran-primitive-roots.js) | Old generator (do not use for canonical work) |
+| [`tools/legacy/fonoran-primitive-roots.js`](../tools/legacy/fonoran-primitive-roots.js) | Old generator (do not use for canonical work) |
 | [`data/fonoran-primitive-roots.json`](../data/fonoran-primitive-roots.json) | Old output |
 
 ---
@@ -171,7 +171,7 @@ These were removed during cleanup. Passage/feedback JSON lived in `data/fonoran-
 
 ## Current production model (lab-first)
 
-`/fonoran/` stores your language in **`data/fonoran-sound-bucket.json`**:
+`/language/` stores your language in **`data/fonoran-sound-bucket.json`**:
 
 - **Sounds**: user-created syllables with optional English meanings and review state.
 - **Compounds**: concatenations of approved sounds with meanings.

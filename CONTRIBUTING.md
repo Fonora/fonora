@@ -23,7 +23,7 @@ Use the issue templates under [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE
 
 Fonoran vocabulary is curated, not open PRs against the live dictionary. To propose roots, compounds, or meanings:
 
-1. Fill out the **Fonoran contributor form** (Google Form, link on [fonora.org/fonoran/](https://fonora.org/fonoran/) once published; see [docs/fonoran-auth-and-release.md](docs/fonoran-auth-and-release.md))
+1. Fill out the **Fonoran contributor form** (Google Form, link on [fonora.org/language/](https://fonora.org/language/) once published; see [docs/fonoran-auth-and-release.md](docs/fonoran-auth-and-release.md))
 2. Include your name, contact email, university, `.edu` email, and why you want to contribute
 3. Approved proposals are entered by the project maintainer in the language builder
 
@@ -35,6 +35,7 @@ You can always **browse** the public dictionary and read the docs ([fonoran.md](
 git clone https://github.com/jamesc137/fonora.git
 cd fonora
 npm install
+./scripts/install-git-hooks.sh   # strips Cursor co-author trailers from commits
 npm start
 ```
 

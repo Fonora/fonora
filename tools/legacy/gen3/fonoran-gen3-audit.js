@@ -11,9 +11,9 @@ import {
   analyzeAmbiguity,
   auditScores,
   generateAuditMarkdown,
-} from './fonoran-gen3-readability.js';
+} from '../../fonoran-gen3-readability.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const ROOTS_PATH = join(ROOT, 'data', 'fonoran-gen3-roots.json');
 const AUDIT_PATH = join(ROOT, 'reports', 'fonoran-gen3-human-readability-audit.md');
 

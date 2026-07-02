@@ -1,7 +1,7 @@
 {
   "version": "1.0-primitive-roots",
   "generated_at": "2026-06-27T16:24:21.275Z",
-  "status": "experimental",
+  "status": "archive",
   "philosophy": {
     "source": "docs/fonoran-grammar.md",
     "premise": "Invariant concept roots; grammar via particles; compounds are transparent trees.",

@@ -1,0 +1,14 @@
+#!/bin/sh
+# Strip Cursor agent co-author trailers from commit messages.
+# Installed by scripts/install-git-hooks.sh (or copied to .git/hooks/).
+
+MSG_FILE="$1"
+[ -f "$MSG_FILE" ] || exit 0
+
+if sed --version >/dev/null 2>&1; then
+  sed -i '/cursoragent@cursor\.com/d' "$MSG_FILE"
+else
+  sed -i '' '/cursoragent@cursor\.com/d' "$MSG_FILE"
+fi
+
+exit 0

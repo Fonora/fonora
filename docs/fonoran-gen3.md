@@ -14,7 +14,7 @@
 > **Branch:** `feature/fonoran-language-experiment`  
 > **Does not modify:** Fonora translator, phoneme pipeline, IPA mapping, sound grid, quiz, reader, or `language-rules.md`
 
-For the live vocabulary you build by hand, use the [Fonoran language lab](fonoran.md) at `/fonoran/`, Gen 3 JSON here is **reference semantics** for DDA inference and the English meaning picker, not your working dictionary.
+For the live vocabulary you build by hand, use the [Fonoran language lab](fonoran.md) at `/language/`. Gen 3 JSON here is **reference semantics** for DDA inference and the English meaning picker, not your working dictionary.
 
 ---
 
@@ -222,7 +222,7 @@ flow + path  =  ⟨emanation,flux,turbulent⟩ + ⟨index,passage,struct⟩
 | File | Role |
 | --- | --- |
 | [`data/fonoran-gen3-config.json`](../data/fonoran-gen3-config.json) | Articulation map, DDA axes, primitives, derivations |
-| [`tools/fonoran-gen3.js`](../tools/fonoran-gen3.js) | Coordinate → root generator |
+| [`tools/legacy/gen3/fonoran-gen3.js`](../tools/legacy/gen3/fonoran-gen3.js) | Coordinate → root generator |
 | [`data/fonoran-gen3-roots.json`](../data/fonoran-gen3-roots.json) | Generated output (`npm run fonoran:gen3`) |
 
 ### 4.3 Explainability requirement
@@ -397,7 +397,7 @@ Not *person* + *speech*. **Emission + activation**: works for human speaker, ani
 | `docs/fonoran-language.md` | **Removed**: see archive doc |
 | `docs/fonoran-gen2.md` | **Removed**: see archive doc |
 
-Gen 3 is the current experimental authority for **grid-native semantics**. Production language building uses the lab at `/fonoran/` ([fonoran.md](fonoran.md)).
+Gen 3 is the current experimental authority for **grid-native semantics**. Production language building uses the lab at `/language/` ([fonoran.md](fonoran.md)).
 
 ---
 
@@ -429,8 +429,8 @@ Compound templates multiply expressivity:
 
 ```bash
 npm run fonoran:gen3                      # write data/fonoran-gen3-roots.json
-node tools/fonoran-gen3.js --derivations  # print example compounds
-node tools/fonoran-gen3.js --json          # full output to stdout
+node tools/legacy/gen3/fonoran-gen3.js --derivations  # print example compounds
+node tools/legacy/gen3/fonoran-gen3.js --json          # full output to stdout
 ```
 
 Edit primitives or the articulation map in `data/fonoran-gen3-config.json`, then re-run. The inventory is **coordinate-derived archaeology**: not a dictionary to be edited by hand.
@@ -439,13 +439,13 @@ Edit primitives or the articulation map in `data/fonoran-gen3-config.json`, then
 
 ## 10. Human Readability Review
 
-**Live lab:** `/fonoran/` → **Health** runs the same scoring layer on your bucket (learnability, parseability, warnings).
+**Live lab:** `/language/` → **Health** runs the same scoring layer on your bucket (learnability, parseability, warnings).
 
 **Frozen Gen 3 reference** (for generator archaeology only):
 
 | Resource | Purpose |
 | --- | --- |
-| `/fonoran/` Health panel | Live bucket scores + DDA summary |
+| `/language/` Health panel | Live bucket scores + DDA summary |
 | `npm run fonoran:gen3:audit` | Regenerate Gen 3 audit → `reports/fonoran-gen3-human-readability-audit.md` |
 
 ---

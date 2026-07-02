@@ -130,11 +130,6 @@ export function renderTranslateOutput(text = currentSymbols) {
     .join(' ');
 }
 
-/** @deprecated Use setTranslateSymbols / renderTranslateOutput */
-export function renderTranslatePlaybackDisplay(text) {
-  setTranslateSymbols(text);
-}
-
 function highlightWord(index, { active = false, done = false } = {}) {
   const el = getOutputDisplay()?.querySelector(`.tts-word[data-index="${index}"]`);
   if (!el) return;
@@ -305,6 +300,3 @@ export function setupTranslatePlayback(rules) {
   bindPlaybackUiOnce();
   renderTranslateOutput('');
 }
-
-/** @deprecated Use setupTranslatePlayback */
-export const setupFonoraReader = setupTranslatePlayback;

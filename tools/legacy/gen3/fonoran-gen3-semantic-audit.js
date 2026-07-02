@@ -9,7 +9,7 @@ import {
   generateSemanticIntegrityMarkdown,
 } from './fonoran-gen3-semantic-integrity.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
 async function main() {
   const gen31 = JSON.parse(await readFile(join(ROOT, 'data/fonoran-gen3-1-roots.json'), 'utf8'));

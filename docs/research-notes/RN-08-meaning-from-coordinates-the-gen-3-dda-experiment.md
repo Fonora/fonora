@@ -167,7 +167,7 @@ A parallel thread asked whether optimal syllable allocation over a larger primit
 
 **Documentation:** [`docs/fonoran-gen3.md`](../fonoran-gen3.md) (DDA Gen 3 archive, primary theory source)
 
-**Interactive demo:** [Dictionary](/language#dictionary) (early consumer of generated inventory; current lab bucket at `/fonoran/` is authoritative for live work)
+**Interactive demo:** [Dictionary](/language#dictionary) (early consumer of generated inventory; current lab bucket at `/language/` is authoritative for live work)
 
 **Source:** [`tools/fonoran-gen3.js`](../tools/fonoran-gen3.js), [`data/fonoran-gen3-config.json`](../data/fonoran-gen3-config.json), [`data/fonoran-gen3-roots.json`](../data/fonoran-gen3-roots.json), [`tools/fonoran-gen3-readability.js`](../tools/fonoran-gen3-readability.js)
 

@@ -7,7 +7,7 @@ import {
   resolveCanonical,
   generateRoot,
   coordinateFaithfulCandidates,
-} from './fonoran-gen3-coordinates.js';
+} from './legacy/gen3/fonoran-gen3-coordinates.js';
 import {
   distinctivenessPenalty,
   distinctivenessScore,
@@ -16,7 +16,7 @@ import {
 import {
   coordinateFidelity,
   runSemanticIntegrityAudit,
-} from './fonoran-gen3-semantic-integrity.js';
+} from './legacy/gen3/fonoran-gen3-semantic-integrity.js';
 import { analyzeAmbiguity, auditScores, segmentCompound } from './fonoran-gen3-readability.js';
 
 export const FIDELITY_REVIEW_THRESHOLD = 80;
@@ -299,7 +299,7 @@ export function generateCanonicalRootsMarkdown(registry) {
   }
   lines.push('## Review workflow');
   lines.push('');
-  lines.push('Canonical approval is reference-only. Use `/fonoran/` for your live lab vocabulary.');
+  lines.push('Canonical approval is reference-only. Use `/language/` for your live lab vocabulary.');
   lines.push('Registry data: `data/fonoran-canonical-registry.json`');
   lines.push('Re-run `npm run fonoran:canonical:constitution` to refresh registry + `reports/fonoran-canonical-roots.md`.');
   lines.push('');

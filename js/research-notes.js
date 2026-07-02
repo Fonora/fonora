@@ -3,7 +3,7 @@
  * Published note metadata and bodies live in API storage (/api/research/notes).
  */
 
-/** Display order + labels for the three eras the notebook is organized into. */
+/** Display order + labels for the research notebook eras. */
 export const RESEARCH_PHASES = [
   {
     id: 'phase-1',
@@ -20,10 +20,12 @@ export const RESEARCH_PHASES = [
     label: 'Phase III: A language people can actually use',
     blurb: 'The pivot from algorithmic correctness to recoverable, human communication.',
   },
+  {
+    id: 'phase-4',
+    label: 'Phase IV: Reconstructing compounds',
+    blurb: 'Teaching trees, meaning-attempts, and playtest-driven preferred forms under the constitution.',
+  },
 ];
-
-/** @deprecated Use RESEARCH_PHASES */
-export const RESEARCH_ACTS = RESEARCH_PHASES;
 
 /**
  * @typedef {Object} ResearchLink
@@ -65,7 +67,8 @@ export function inferPhaseFromCode(code) {
   const num = Number.parseInt(match[1], 10);
   if (num <= 6) return 'phase-1';
   if (num <= 11) return 'phase-2';
-  return 'phase-3';
+  if (num <= 17) return 'phase-3';
+  return 'phase-4';
 }
 
 /** Resolve a note's phase id from metadata or notebook code. */

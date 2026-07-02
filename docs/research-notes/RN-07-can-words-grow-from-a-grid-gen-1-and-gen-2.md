@@ -98,7 +98,7 @@ Both generators were archived. Their files are not present in this repository's 
 
 ## What Changed
 
-Gen 1 and Gen 2 did not survive into the current production model. The lab-first workflow at `/fonoran/` ([`docs/fonoran.md`](../fonoran.md)) stores user-built syllables in `data/fonoran-sound-bucket.json`; bulk algorithmic generators are reference-only.
+Gen 1 and Gen 2 did not survive into the current production model. The lab-first workflow at `/language/` ([`docs/fonoran.md`](../docs/fonoran.md)) stores user-built syllables in `data/fonoran-sound-bucket.json`; bulk algorithmic generators are reference-only.
 
 What persisted: the intuition that related meanings should share structure (now as invariant-root **compounds**, not vowel paradigms); Gen 2's grid-linked phonology (foreshadowing RN-08's DDA manifold); and collision/distinctiveness hygiene (RN-06 at the script layer, RN-09 at the phonetic layer).
 

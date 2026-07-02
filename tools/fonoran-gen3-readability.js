@@ -387,7 +387,7 @@ export function generateAuditMarkdown({ inventory, derivations, warnings, scores
   lines.push('# Fonoran Gen 3: Human Readability Audit');
   lines.push('');
   lines.push(`> Generated: ${generatedAt}`);
-  lines.push('> Live lab health: `/fonoran/` → Health');
+  lines.push('> Live lab health: `/language/` → Health');
   lines.push('> Regenerate (frozen Gen 3 JSON): `npm run fonoran:gen3:audit` → `reports/`');
   lines.push('> **Goal:** learnability through Fonoran internal logic: not English familiarity.');
   lines.push('');

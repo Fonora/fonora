@@ -47,11 +47,6 @@ export function notesByPhase(phases) {
   }));
 }
 
-/** @deprecated Use notesByPhase */
-export function notesByAct(phases) {
-  return notesByPhase(phases);
-}
-
 export async function loadPublishedNotesFromApi() {
   const res = await fetch('/api/research/notes', { credentials: 'same-origin' });
   if (!res.ok) throw new Error(`Could not load research notes (HTTP ${res.status})`);

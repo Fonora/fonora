@@ -363,6 +363,7 @@ function renderOpen() {
           <li><strong>Per-language vowel and consonant tables</strong> — non-English vowels still ride an English overlay (<a href="${escapeHtml(researchHref('multilingual-script'))}">RN-05</a>, <a href="${escapeHtml(docViewerHref('docs/multilingual-support.md'))}">multilingual support</a>).</li>
           <li><strong>Translator compound assembly</strong> — assembling new compounds from approved roots and more coordinated-clause patterns (<a href="${escapeHtml(researchHref('interpretive-translator'))}">RN-15</a>).</li>
           <li><strong>Grammar future work</strong> — pronouns, aspect, negation, questions, comparatives, conditionals, relative clauses (<a href="${escapeHtml(docViewerHref('docs/fonoran-grammar.md'))}">grammar spec</a>).</li>
+          <li><strong>Compound reconstruction</strong> — teaching trees and meaning-attempts under the constitution (<a href="${escapeHtml(researchHref('compound-reconstruction'))}">RN-18</a>).</li>
           <li><strong>Recoverable-meaning playtests</strong> — does the whole system pass its own campfire test? (<a href="${escapeHtml(researchHref('puzzle-conversation'))}">RN-17</a>).</li>
         </ul>
       </section>

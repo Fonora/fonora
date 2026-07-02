@@ -595,6 +595,38 @@
         }
       ],
       "phase": "phase-3"
+    },
+    {
+      "slug": "compound-reconstruction",
+      "code": "RN-18",
+      "title": "Reconstructing compounds under the constitution",
+      "status": "Active",
+      "date": "2026-07-01",
+      "description": "Phase IV kickoff: rebuild the compound inventory as teaching trees and meaning-attempts under the constitution.",
+      "abstract": "The Phase IV frontier — reconstructing compounds as communicative strategies, not canonical answers.",
+      "related": [
+        "puzzle-conversation",
+        "the-constitution"
+      ],
+      "docs": [
+        {
+          "label": "The Fonoran Constitution",
+          "path": "docs/fonoran-constitution.md"
+        }
+      ],
+      "tools": [
+        {
+          "label": "Language lab",
+          "href": "/language#dictionary"
+        }
+      ],
+      "source": [
+        {
+          "label": "data/fonoran-compounds.json",
+          "path": "data/fonoran-compounds.json"
+        }
+      ],
+      "phase": "phase-4"
     }
   ]
 }

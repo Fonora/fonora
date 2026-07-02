@@ -404,7 +404,7 @@ async function main() {
   console.log(`    Avg compound len ${s.compoundLength}`);
   console.log(`    Algorithmic feel ${s.algorithmicFeel}%`);
   console.log(`    Warnings: ${r.health.scores.warningCount} (${r.health.scores.highSeverityCount} high)`);
-  console.log('Reload /fonoran/ to see Concept Editor, Dictionary and Health in sync.');
+  console.log('Reload /language/ to see Concept Editor, Dictionary and Health in sync.');
 }
 
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];

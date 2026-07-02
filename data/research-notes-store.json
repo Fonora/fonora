@@ -1313,6 +1313,62 @@
       "updated_at": "2026-07-01T03:21:37.177Z",
       "published_at": "2026-07-01T03:21:37.046Z",
       "updated_by": "sync@md-export"
+    },
+    {
+      "slug": "compound-reconstruction",
+      "workflow": "published",
+      "metadata": {
+        "slug": "compound-reconstruction",
+        "code": "RN-18",
+        "title": "Reconstructing compounds under the constitution",
+        "status": "Active",
+        "date": "2026-07-01",
+        "phase": "phase-4",
+        "description": "Phase IV kickoff: rebuild the compound inventory as teaching trees and meaning-attempts under the constitution, with playtests as the authority over heuristics.",
+        "abstract": "The Phase IV frontier — reconstructing compounds as communicative strategies, not canonical answers.",
+        "related": [
+          "puzzle-conversation",
+          "the-constitution"
+        ],
+        "docs": [
+          {
+            "path": "docs/fonoran-constitution.md",
+            "label": "The Fonoran Constitution"
+          },
+          {
+            "path": "docs/fonoran-semantic-foundation.md",
+            "label": "Semantic foundation (Phase 4 hierarchy)"
+          }
+        ],
+        "tools": [
+          {
+            "href": "/language#dictionary",
+            "label": "Language lab"
+          },
+          {
+            "href": "/language#puzzle",
+            "label": "Puzzle Conversation"
+          }
+        ],
+        "source": [
+          {
+            "path": "tools/fonoran-expression-candidates.js",
+            "label": "fonoran-expression-candidates.js"
+          },
+          {
+            "path": "data/fonoran-compounds.json",
+            "label": "fonoran-compounds.json"
+          },
+          {
+            "path": "scripts/fonoran-migrate-compounds.js",
+            "label": "fonoran-migrate-compounds.js"
+          }
+        ]
+      },
+      "body": "# Reconstructing compounds under the constitution\n\n## Research Question\n\n[RN-17](/research/notes/puzzle-conversation) established the measurement instrument: puzzle conversation records whether root-knowers recover intended meaning from compounds, and playtests should eventually override heuristic rankings. Phase III closed the prerequisites: constitution, editorial roots, grammar particles, the interpretive translator, script literacy, and a frontend that presents the project as open language research.\n\nThat leaves the vocabulary work the constitution actually describes:\n\n**How do we rebuild the compound inventory as teaching trees and meaning-attempts, not flat algorithmic outputs, so strangers can invent and recover expressions from a small shared root set?**\n\nRN-10 through RN-13 already rejected one-answer compound generation. The converged model in [`data/fonoran-compounds.json`](../data/fonoran-compounds.json) (v2.0-communicative) stores a preferred form plus ranked alternates per concept. Most alternates remain `source: \"heuristic\"` until playtests promote them. Phase IV is where that model gets rebuilt concept by concept under the new identity, tooling, and communication experiment.\n\n## Hypothesis\n\nThe working hypothesis for Phase IV:\n\n- **Compounds are communicative strategies**, not canonical decompositions. Multiple root combinations for one concept can coexist if a root-knower would likely recover the intent.\n- **Teaching trees beat flat strings.** Compounds should prefer paths through already-approved roots and intermediate compounds (`war` → `tribe` + `conflict`, not opaque concatenations).\n- **Seeds propose; playtests decide.** [`tools/fonoran-expression-candidates.js`](../tools/fonoran-expression-candidates.js) and `ASSOCIATION_SEEDS` generate overlapping strategies; [`tools/fonoran-playtests.js`](../tools/fonoran-playtests.js) and Puzzle Conversation are the authority for preferred forms.\n- **Understandability ranks; it does not certify.** The heuristic in [`tools/fonoran-understandability.js`](../tools/fonoran-understandability.js) orders candidates for review. It must not silently mint vocabulary.\n\n## Approach\n\nPhase IV work picks up from the compound stack frozen at RN-17:\n\n| Layer | Path | Role |\n| --- | --- | --- |\n| Candidate generator | [`tools/fonoran-expression-candidates.js`](../tools/fonoran-expression-candidates.js) | Multi-strategy compositions from `ASSOCIATION_SEEDS` |\n| Ranking aid | [`tools/fonoran-understandability.js`](../tools/fonoran-understandability.js) | Advisory scores for alternates |\n| Curated inventory | [`data/fonoran-compounds.json`](../data/fonoran-compounds.json) | Preferred + alternates (82 concepts at Phase IV entry) |\n| Migration | [`scripts/fonoran-migrate-compounds.js`](../scripts/fonoran-migrate-compounds.js) | Refresh alternates without losing human-chosen preferred forms |\n| Build | [`tools/fonoran-build.js`](../tools/fonoran-build.js) | Resolve curated compounds into the live lab bucket |\n| Evidence | [`data/fonoran-playtests.json`](../data/fonoran-playtests.json) | Human recovery data from Puzzle Conversation |\n\n### Planned workflow\n\n1. **Audit** each concept in the compound inventory against the constitution: is the preferred form a plausible meaning-attempt? Are alternates diverse enough to test?\n2. **Expand seeds** in `ASSOCIATION_SEEDS` for concepts that lack communicative variety.\n3. **Re-run migration** to refresh heuristic alternates and scores (`node scripts/fonoran-migrate-compounds.js`).\n4. **Playtest** promoted candidates through Puzzle Conversation; record recovery rates.\n5. **Promote** preferred forms when playtest evidence consistently favors an alternate.\n6. **Rebuild lab** with `npm run fonoran:build` after editorial approval.\n\n### What Phase IV is not\n\n- **Not phonetic assignment at scale.** Semantic foundation Phase 3 (rank primitives, assign shortest syllables) remains deferred per RN-11.\n- **Not a return to bulk generators.** Legacy Huffman and Gen 3 pipelines live under `tools/legacy/` as archive reference only.\n- **Not automated dictionary mutation from playtests yet.** The feedback loop from playtests to preferred forms is specified in the constitution but still manual in the builder.\n\n## Evaluation\n\nPhase IV has just begun. Success criteria:\n\n- Compound inventory grows with **transparent teaching trees** documented in glosses and notes.\n- **Playtest coverage** increases across the inventory; preferred forms change when evidence demands it.\n- **Puzzle recovery rates** improve for core-tier compounds without expanding the root set prematurely.\n- **Heuristic vs human divergence** is measured and documented (where understandability rank disagrees with recovery).\n\n## Open Questions\n\n- Which concepts in the current 82-compound set fail the campfire test first?\n- How deep should compound trees go before learners lose recoverability?\n- When should an alternate become preferred automatically vs through editor review?\n- Which missing concepts block compound reconstruction (inventory gaps vs composition gaps)?\n\n## References\n\n**Documentation:** [`docs/fonoran-constitution.md`](../docs/fonoran-constitution.md), [`docs/fonoran-semantic-foundation.md`](../docs/fonoran-semantic-foundation.md) (Phase 4 semantic hierarchy)\n\n**Interactive demo:** [Language lab](/language#dictionary), [Puzzle Conversation](/language#puzzle)\n\n**Source:** [`tools/fonoran-expression-candidates.js`](../tools/fonoran-expression-candidates.js), [`data/fonoran-compounds.json`](../data/fonoran-compounds.json), [`scripts/fonoran-migrate-compounds.js`](../scripts/fonoran-migrate-compounds.js)\n\n**Prior note:** [RN-17 · Can strangers recover meaning?](/research/notes/puzzle-conversation)\n",
+      "updated_at": "2026-07-02T00:10:03.035Z",
+      "published_at": "2026-07-02T00:10:03.035Z",
+      "updated_by": "phase4-cleanup@local"
     }
   ]
 }

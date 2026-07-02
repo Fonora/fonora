@@ -109,7 +109,7 @@ Familiar labels remain reviewer aids only.
 | [`data/fonoran-gen3-1-roots.json`](../data/fonoran-gen3-1-roots.json) | Generated inventory |
 | [`tools/fonoran-gen3-1.js`](../tools/fonoran-gen3-1.js) | Generator |
 | [`tools/fonoran-gen3-distinctiveness.js`](../tools/fonoran-gen3-distinctiveness.js) | Scoring utilities |
-| Live Fonoran at `/fonoran/` | Health, parser, Language Explorer for your lab bucket |
+| Live Fonoran at `/language/` | Health, parser, Language Explorer for your lab bucket |
 
 ### Commands
 

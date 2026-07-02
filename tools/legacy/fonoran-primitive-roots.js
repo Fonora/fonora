@@ -18,9 +18,9 @@ import {
   distinctivenessScore,
   rhymeKey,
   splitRoot,
-} from './fonoran-gen3-distinctiveness.js';
+} from '../fonoran-gen3-distinctiveness.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const CONFIG_PATH = join(ROOT, 'data/fonoran-primitive-roots-config.json');
 const COMPOUNDS_PATH = join(ROOT, 'data/fonoran-stress-test-concepts.json');
 const OUTPUT_PATH = join(ROOT, 'data/fonoran-primitive-roots.json');

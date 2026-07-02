@@ -11,10 +11,10 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { writeBucketRaw } from './fonoran-store.js';
-import { emptyDda, migrateBucket, normalizeCompoundRecord, normalizeSoundRecord } from './fonoran-derivation.js';
+import { writeBucketRaw } from '../fonoran-store.js';
+import { emptyDda, migrateBucket, normalizeCompoundRecord, normalizeSoundRecord } from '../fonoran-derivation.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const VOCAB_PATH = join(ROOT, 'data/fonoran-primitive-roots.json');
 
 function englishLabel(entry) {
@@ -144,7 +144,7 @@ async function main() {
   if (result.unresolved.length) {
     console.warn(`Unresolved: ${result.unresolved.map(u => u.english).join(', ')}`);
   }
-  console.log('Dictionary will show these after reload at /fonoran/#dictionary');
+  console.log('Dictionary will show these after reload at /language/#dictionary');
 }
 
 const isMain = process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1];

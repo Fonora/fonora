@@ -12,10 +12,10 @@ import {
   distinctivenessScore,
   splitRoot,
   rhymeKey,
-} from './fonoran-gen3-distinctiveness.js';
-import { analyzeAmbiguity, auditScores, segmentCompound } from './fonoran-gen3-readability.js';
+} from '../../fonoran-gen3-distinctiveness.js';
+import { analyzeAmbiguity, auditScores, segmentCompound } from '../../fonoran-gen3-readability.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 const CONFIG_PATH = join(ROOT, 'data', 'fonoran-gen3-1-config.json');
 const OUTPUT_PATH = join(ROOT, 'data', 'fonoran-gen3-1-roots.json');
 

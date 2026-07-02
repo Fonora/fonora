@@ -4,9 +4,9 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { analyzeAmbiguity, auditScores } from './fonoran-gen3-readability.js';
+import { analyzeAmbiguity, auditScores } from '../../fonoran-gen3-readability.js';
 
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
 async function load(name) {
   return JSON.parse(await readFile(join(ROOT, 'data', name), 'utf8'));

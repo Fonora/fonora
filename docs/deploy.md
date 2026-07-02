@@ -74,9 +74,9 @@ Use for uptime monitors.
 | `ALLOWED_DOMAIN` | `fonora.org` | Only `@domain` Google accounts may edit Fonoran |
 | `ADMIN_EMAILS` | - | Optional comma-separated allowlist instead of domain |
 | `AUTH_CALLBACK_URL` | derived from request | OAuth redirect URI override |
-| `FONORAN_AUTH` | - | Set to `off` to disable auth locally |
+| `FONORAN_AUTH` | omit in production | Opt-out only: set to `off` locally to disable auth when OAuth is configured |
 
-No secrets are required for the **public script app** alone. When all three OAuth vars are set (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`), Fonoran **write** routes require a signed-in `@fonora.org` Google account. Copy [`.env.example`](../.env.example) for local testing.
+No secrets are required for the **public script app** alone. When all three OAuth vars are set (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`), Fonoran **write** routes require a signed-in `@fonora.org` Google account. Omit `FONORAN_AUTH` in production; it is an opt-out flag only (`off` disables auth for local builder work). Copy [`.env.example`](../.env.example) for local testing.
 
 ## PostgreSQL (Fonoran storage)
 
@@ -164,10 +164,11 @@ Because WASM assets are large (~90 MB in `vendor/` after install), a Node static
 
 - [ ] Google Workspace + OAuth credentials configured ([fonoran-auth-and-release.md](fonoran-auth-and-release.md))
 - [ ] `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`, `ALLOWED_DOMAIN` set on Heroku
+- [ ] `FONORAN_AUTH` omitted in production (opt-out only; do not set to `off` on Heroku)
 - [ ] Write API requires `@fonora.org` session; unsigned users can browse dictionary only
 - [ ] `DATABASE_URL` set; `FONORAN_SKIP_JSON_MIRROR=1` on Heroku
 - [ ] Live state seeded from git JSON on first deploy
-- [ ] Contributor Google Form linked from `/fonoran/` lander
+- [ ] Contributor Google Form linked from `/language/` lander
 - [ ] Periodic backup: Advanced → Download snapshot, or `npm run fonoran:snapshot:export`
 
 ## CI
