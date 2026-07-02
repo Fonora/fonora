@@ -67,15 +67,24 @@ import {
   loadCandidateContext,
 } from './fonoran-expression-candidates.js';
 import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
-import { safeApiError, sanitizeForJsonResponse } from '../js/utils.js';
+import { sanitizeForJsonResponse } from '../js/utils.js';
 
-export function jsonResponse(res, status, body) {
-  const payload = JSON.stringify(sanitizeForJsonResponse(body));
+function writeJsonPayload(res, status, payload) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
   });
   res.end(payload);
+}
+
+export function jsonResponse(res, status, body) {
+  writeJsonPayload(res, status, JSON.stringify(sanitizeForJsonResponse(body)));
+}
+
+/** Error responses: plain message string only (never pass Error objects). */
+export function jsonErrorResponse(res, status, message) {
+  const safe = String(message || 'Request failed').slice(0, 500);
+  writeJsonPayload(res, status, JSON.stringify({ error: safe }));
 }
 
 export async function readJsonBody(req) {
@@ -138,8 +147,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
       });
       const archive = await createSnapshotZipStream();
       archive.on('error', (err) => {
+        console.error('Snapshot export failed:', err);
         if (!res.headersSent) {
-          jsonResponse(res, 500, { error: safeApiError(err) ?? 'Export failed' });
+          jsonErrorResponse(res, 500, 'Export failed');
         } else {
           res.destroy(err);
         }
@@ -377,7 +387,7 @@ export async function handleFonoranApi(req, res, pathname, method) {
   } catch (err) {
     console.error('Fonoran API error:', err);
     const status = err?.status >= 400 && err?.status < 600 ? err.status : 400;
-    const message = status >= 500 ? 'Internal server error' : safeApiError(err);
-    return done(status, { error: message });
+    jsonErrorResponse(res, status, status >= 500 ? 'Internal server error' : 'Request failed');
+    return true;
   }
 }

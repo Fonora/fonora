@@ -24,7 +24,9 @@ export async function runFonoranAuthTests() {
   const {
     __testCreateSession,
     __testReadSession,
-    __testSafeRedirectTarget,
+    __testCreateOAuthState,
+    __testConsumeOAuthState,
+    __testSanitizeReturnTo,
   } = await import(`./fonoran-auth.js?test=${Date.now()}`);
 
   const results = [];
@@ -58,25 +60,23 @@ export async function runFonoranAuthTests() {
     );
 
     results.push(
-      await test('safeRedirectTarget blocks open redirects', async () => {
-        assert(__testSafeRedirectTarget('/language') === '/language', 'relative path');
-        assert(__testSafeRedirectTarget(' /language ') === '/language', 'trimmed relative path');
-        assert(__testSafeRedirectTarget('//evil.example') === '/language', 'protocol-relative');
-        assert(__testSafeRedirectTarget('https://evil.example') === '/language', 'absolute external');
-        assert(
-          __testSafeRedirectTarget('https://accounts.google.com/o/oauth2/v2/auth.evil.com')
-            === '/language',
-          'google oauth prefix bypass',
-        );
-        assert(
-          __testSafeRedirectTarget('https://accounts.google.com/o/oauth2/v2/auth?x=1')
-            === 'https://accounts.google.com/o/oauth2/v2/auth?x=1',
-          'google oauth',
-        );
-        assert(
-          __testSafeRedirectTarget('/language?auth_error=denied') === '/language?auth_error=denied',
-          'query preserved',
-        );
+      await test('oauth state is validated server-side without a cookie', async () => {
+        const state = __testCreateOAuthState('/language');
+        assert(typeof state === 'string' && state.length > 10, 'expected oauth state id');
+        const opened = __testConsumeOAuthState(state);
+        assert(opened?.returnTo === '/language', 'returnTo mismatch');
+        assert(__testConsumeOAuthState(state) === null, 'oauth state must be single-use');
+      }),
+    );
+
+    results.push(
+      await test('sanitizeReturnTo blocks open redirects', async () => {
+        assert(__testSanitizeReturnTo('/language') === '/language', 'relative path');
+        assert(__testSanitizeReturnTo(' /language ') === '/language', 'trimmed relative path');
+        assert(__testSanitizeReturnTo('//evil.example') === '/language', 'protocol-relative');
+        assert(__testSanitizeReturnTo('/evil') === '/language', 'unknown path');
+        assert(__testSanitizeReturnTo('/tools') === '/tools', 'allowed root');
+        assert(__testSanitizeReturnTo('/research/notes/foo') === '/research/notes/foo', 'allowed subpath');
       }),
     );
   } finally {
