@@ -22,6 +22,27 @@ export function safeApiError(err) {
   return typeof err === 'string' ? err : 'Request failed';
 }
 
+/** Strip stack traces and Error objects before serializing API JSON bodies. */
+export function sanitizeForJsonResponse(body) {
+  const seen = new WeakSet();
+  function walk(value, depth) {
+    if (depth > 8) return null;
+    if (value instanceof Error) return value.message || 'Request failed';
+    if (value === null || typeof value !== 'object') return value;
+    if (seen.has(value)) return null;
+    seen.add(value);
+    if (Array.isArray(value)) return value.map((item) => walk(item, depth + 1));
+    /** @type {Record<string, unknown>} */
+    const out = {};
+    for (const [key, val] of Object.entries(value)) {
+      if (key === 'stack' || key === 'stackTrace' || key === 'trace') continue;
+      out[key] = walk(val, depth + 1);
+    }
+    return out;
+  }
+  return walk(body, 0);
+}
+
 /** @param {unknown} err */
 export function errorMessage(err) {
   if (err instanceof Error) return err.message;

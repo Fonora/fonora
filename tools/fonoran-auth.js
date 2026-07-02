@@ -3,18 +3,22 @@
  * Zero extra dependencies: uses Node crypto + fetch.
  */
 
-import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
+import { randomBytes, createCipheriv, createDecipheriv, createHash } from 'node:crypto';
 
 const SESSION_COOKIE = 'fonoran_session';
 const OAUTH_STATE_COOKIE = 'fonoran_oauth_state';
 const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14; // 14 days
 const OAUTH_STATE_MAX_AGE_SEC = 600;
-const GCM_IV_BYTES = 12;
-const GCM_TAG_BYTES = 16;
 
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://openidconnect.googleapis.com/v1/userinfo';
+
+/** @type {Map<string, { email: string, name?: string, exp: number }>} */
+const sessions = new Map();
+
+/** @type {Map<string, { returnTo: string, exp: number }>} */
+const oauthStates = new Map();
 
 function envFlag(name) {
   const v = process.env[name]?.trim().toLowerCase();
@@ -91,38 +95,54 @@ function parseCookies(req) {
   return out;
 }
 
-function deriveKey(secret) {
-  return createHash('sha256').update(secret).digest();
+function purgeExpired(store) {
+  const now = Math.floor(Date.now() / 1000);
+  for (const [key, record] of store) {
+    if (!record?.exp || record.exp < now) store.delete(key);
+  }
 }
 
-function sealPayload(payload) {
-  const iv = randomBytes(GCM_IV_BYTES);
-  const key = deriveKey(sessionSecret());
-  const cipher = createCipheriv('aes-256-gcm', key, iv);
-  const plaintext = Buffer.from(JSON.stringify(payload), 'utf8');
-  const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
-  const tag = cipher.getAuthTag();
-  return Buffer.concat([iv, tag, encrypted]).toString('base64url');
+function newOpaqueId(bytes = 32) {
+  return randomBytes(bytes).toString('base64url');
 }
 
-function verifySignedToken(token) {
-  if (!token || typeof token !== 'string') return null;
-  try {
-    const buf = Buffer.from(token, 'base64url');
-    if (buf.length < GCM_IV_BYTES + GCM_TAG_BYTES + 1) return null;
-    const iv = buf.subarray(0, GCM_IV_BYTES);
-    const tag = buf.subarray(GCM_IV_BYTES, GCM_IV_BYTES + GCM_TAG_BYTES);
-    const encrypted = buf.subarray(GCM_IV_BYTES + GCM_TAG_BYTES);
-    const key = deriveKey(sessionSecret());
-    const decipher = createDecipheriv('aes-256-gcm', key, iv);
-    decipher.setAuthTag(tag);
-    const plaintext = Buffer.concat([decipher.update(encrypted), decipher.final()]);
-    const payload = JSON.parse(plaintext.toString('utf8'));
-    if (!payload?.exp || payload.exp < Math.floor(Date.now() / 1000)) return null;
-    return payload;
-  } catch {
+function createSession(record) {
+  purgeExpired(sessions);
+  const id = newOpaqueId();
+  sessions.set(id, record);
+  return id;
+}
+
+function readSession(id) {
+  if (!id) return null;
+  const record = sessions.get(id);
+  if (!record?.exp || record.exp < Math.floor(Date.now() / 1000)) {
+    sessions.delete(id);
     return null;
   }
+  return record;
+}
+
+function destroySession(id) {
+  if (id) sessions.delete(id);
+}
+
+function createOAuthState(returnTo) {
+  purgeExpired(oauthStates);
+  const id = newOpaqueId(24);
+  oauthStates.set(id, {
+    returnTo: sanitizeReturnTo(returnTo),
+    exp: Math.floor(Date.now() / 1000) + OAUTH_STATE_MAX_AGE_SEC,
+  });
+  return id;
+}
+
+function consumeOAuthState(id) {
+  if (!id) return null;
+  const record = oauthStates.get(id);
+  oauthStates.delete(id);
+  if (!record?.exp || record.exp < Math.floor(Date.now() / 1000)) return null;
+  return record;
 }
 
 function cookieSecure(req) {
@@ -131,8 +151,25 @@ function cookieSecure(req) {
   return true;
 }
 
+function cookieCryptoKey() {
+  const secret = process.env.FONORAN_COOKIE_SECRET?.trim();
+  if (!secret) return null;
+  return createHash('sha256').update(secret, 'utf8').digest();
+}
+
+function encryptCookieValue(value) {
+  const key = cookieCryptoKey();
+  if (!key) return value;
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', key, iv);
+  const ciphertext = Buffer.concat([cipher.update(String(value), 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return `v1.${iv.toString('base64url')}.${ciphertext.toString('base64url')}.${tag.toString('base64url')}`;
+}
+
 function setCookie(res, name, value, { maxAge, req, httpOnly = true }) {
-  const parts = [`${name}=${encodeURIComponent(value)}`];
+  const protectedValue = encryptCookieValue(value);
+  const parts = [`${name}=${encodeURIComponent(protectedValue)}`];
   if (maxAge != null) parts.push(`Max-Age=${maxAge}`);
   parts.push('Path=/');
   parts.push('SameSite=Lax');
@@ -158,22 +195,52 @@ function jsonResponse(res, status, body, extraHeaders = {}) {
   res.end(JSON.stringify(body));
 }
 
+function sanitizeRedirectQuery(query) {
+  if (!query) return '';
+  const out = new URLSearchParams();
+  const params = new URLSearchParams(query);
+  for (const [key, value] of params) {
+    if (!/^[a-z_][a-z0-9_-]*$/i.test(key)) continue;
+    out.set(key, String(value).slice(0, 500));
+  }
+  const serialized = out.toString();
+  return serialized ? `?${serialized}` : '';
+}
+
 function safeRedirectTarget(location) {
   if (typeof location !== 'string') return '/language';
-  if (location.startsWith(GOOGLE_AUTH_URL)) return location;
-  if (location.startsWith('/') && !location.startsWith('//')) {
-    const qIndex = location.indexOf('?');
-    const path = qIndex === -1 ? location : location.slice(0, qIndex);
-    const query = qIndex === -1 ? '' : location.slice(qIndex + 1);
+  const candidate = location.trim();
+  if (!candidate) return '/language';
+
+  if (candidate.startsWith('/') && !candidate.startsWith('//')) {
+    const qIndex = candidate.indexOf('?');
+    const path = qIndex === -1 ? candidate : candidate.slice(0, qIndex);
+    const query = qIndex === -1 ? '' : candidate.slice(qIndex + 1);
     const safePath = sanitizeReturnTo(path);
-    return query ? `${safePath}?${query}` : safePath;
+    return `${safePath}${sanitizeRedirectQuery(query)}`;
   }
+
+  try {
+    const parsed = new URL(candidate);
+    const google = new URL(GOOGLE_AUTH_URL);
+    if (
+      parsed.protocol === 'https:'
+      && parsed.origin === google.origin
+      && parsed.pathname === google.pathname
+    ) {
+      return parsed.toString();
+    }
+  } catch {
+    // fall through to safe default
+  }
+
   return '/language';
 }
 
 function redirect(res, location) {
+  const target = safeRedirectTarget(location);
   res.writeHead(302, {
-    Location: safeRedirectTarget(location),
+    Location: target,
     'Cache-Control': 'no-store',
   });
   res.end();
@@ -185,14 +252,25 @@ function sanitizeReturnTo(raw) {
   if (!path.startsWith('/')) return '/language';
   if (path.startsWith('//')) return '/language';
   if (path.includes('\\')) return '/language';
+
+  // Legacy compatibility: old /fonoran route now lives under /language.
   if (path === '/fonoran' || path.startsWith('/fonoran/')) {
     let rest = path.slice('/fonoran'.length);
     if (!rest || rest === '/') rest = '';
-    return `/language${rest}`;
+    path = `/language${rest}`;
   }
-  if (path === '/language/') return '/language';
-  if (path === '/script/') return '/script';
-  return path;
+
+  if (path === '/language/') path = '/language';
+  if (path === '/script/') path = '/script';
+
+  // Allow only known local app route roots (and their subpaths).
+  if (path === '/') return '/';
+  const allowedRoots = ['/language', '/script', '/learn', '/tools', '/research'];
+  for (const root of allowedRoots) {
+    if (path === root || path.startsWith(`${root}/`)) return path;
+  }
+
+  return '/language';
 }
 
 function emailAllowed(email) {
@@ -211,7 +289,7 @@ function emailAllowed(email) {
 export function getAuthenticatedUser(req) {
   if (!isAuthConfigured()) return null;
   const cookies = parseCookies(req);
-  const payload = verifySignedToken(cookies[SESSION_COOKIE]);
+  const payload = readSession(cookies[SESSION_COOKIE]);
   if (!payload?.email || !emailAllowed(payload.email)) return null;
   return { email: payload.email, name: payload.name ?? payload.email };
 }
@@ -338,6 +416,8 @@ export async function handleAuthRoutes(req, res, url, method) {
   }
 
   if (pathname === '/auth/logout' && (method === 'POST' || method === 'GET')) {
+    const cookies = parseCookies(req);
+    destroySession(cookies[SESSION_COOKIE]);
     clearCookie(res, SESSION_COOKIE, req);
     if (method === 'POST') {
       jsonResponse(res, 200, { ok: true });
@@ -353,14 +433,9 @@ export async function handleAuthRoutes(req, res, url, method) {
       return true;
     }
     const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
-    const state = randomBytes(24).toString('base64url');
+    const state = createOAuthState(returnTo);
 
-    const stateToken = sealPayload({
-      state,
-      returnTo,
-      exp: Math.floor(Date.now() / 1000) + OAUTH_STATE_MAX_AGE_SEC,
-    });
-    setCookie(res, OAUTH_STATE_COOKIE, stateToken, {
+    setCookie(res, OAUTH_STATE_COOKIE, state, {
       maxAge: OAUTH_STATE_MAX_AGE_SEC,
       req,
     });
@@ -388,15 +463,17 @@ export async function handleAuthRoutes(req, res, url, method) {
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state');
     const cookies = parseCookies(req);
-    const statePayload = verifySignedToken(cookies[OAUTH_STATE_COOKIE]);
+    const cookieState = cookies[OAUTH_STATE_COOKIE];
     clearCookie(res, OAUTH_STATE_COOKIE, req);
 
-    if (!code || !state || !statePayload?.state || statePayload.state !== state) {
+    const statePayload = state && cookieState === state ? consumeOAuthState(state) : null;
+
+    if (!code || !state || !statePayload) {
       redirect(res, '/language?auth_error=invalid_state');
       return true;
     }
 
-    const returnTo = sanitizeReturnTo(statePayload.returnTo ?? '/language');
+    const returnTo = statePayload.returnTo ?? '/language';
 
     try {
       const tokens = await exchangeCode(code, req);
@@ -411,12 +488,12 @@ export async function handleAuthRoutes(req, res, url, method) {
         return true;
       }
 
-      const sessionToken = sealPayload({
+      const sessionId = createSession({
         email,
         name: profile.name ?? email,
         exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE_SEC,
       });
-      setCookie(res, SESSION_COOKIE, sessionToken, {
+      setCookie(res, SESSION_COOKIE, sessionId, {
         maxAge: SESSION_MAX_AGE_SEC,
         req,
       });
@@ -450,12 +527,12 @@ export function logAuthStatus() {
 }
 
 /** @internal Test helpers */
-export function __testSealPayload(payload) {
-  return sealPayload(payload);
+export function __testCreateSession(payload) {
+  return createSession(payload);
 }
 
-export function __testOpenPayload(token) {
-  return verifySignedToken(token);
+export function __testReadSession(id) {
+  return readSession(id);
 }
 
 export function __testSafeRedirectTarget(location) {

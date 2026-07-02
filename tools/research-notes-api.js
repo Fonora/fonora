@@ -118,7 +118,9 @@ export async function handleResearchApi(req, res, pathname, method) {
 
     return false;
   } catch (err) {
+    console.error('Research API error:', err);
     const status = err.status || 500;
-    return done(status, { error: safeApiError(err) });
+    const message = status >= 500 ? 'Internal server error' : safeApiError(err);
+    return done(status, { error: message });
   }
 }
