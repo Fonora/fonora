@@ -608,6 +608,7 @@ html[data-fonora-tab='home'] [data-fonoran-page='home'].tab-btn,
 html[data-fonora-tab='translator'] [data-fonoran-page='translator'].tab-btn,
 html[data-fonora-tab='dictionary'] [data-fonoran-page='dictionary'].tab-btn,
 html[data-fonora-tab='grammar'] [data-fonoran-page='grammar'].tab-btn,
+html[data-fonora-tab='puzzle'] [data-fonoran-page='puzzle'].tab-btn,
 html[data-fonora-tab='roots'] [data-fonoran-page='roots'].tab-btn,
 html[data-fonora-tab='create'] [data-fonoran-page='create'].tab-btn,
 html[data-fonora-tab='review'] [data-fonoran-page='review'].tab-btn,
@@ -1274,7 +1275,6 @@ html[data-fonora-tab='docs'] .main-content {
 
 @media (prefers-reduced-motion: no-preference) {
   .content-card:hover {
-    transform: translateY(-1px);
     box-shadow: var(--shadow-card-hover);
   }
 }

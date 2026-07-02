@@ -1,13 +1,13 @@
 # Phase IV playtest baseline
 
-> Generated: 2026-07-02T01:03:09.320Z
+> Generated: 2026-07-02T16:21:02.937Z
 
 ## Smoke test
 
 - Priority concepts: 14
 - Present in lab: 14
 - Missing from lab: 0
-- Previously playtested (any concept): 4
+- Previously playtested (any concept): 61
 
 ## Priority teaching-tree prompts
 
@@ -17,15 +17,15 @@ Use Puzzle Conversation at `/language#puzzle` to record recovery for each:
 
 - **Spelling:** `danba`
 - **Tree:** community = collective + person
-- **Understandability (heuristic):** 0.82
+- **Understandability (heuristic):** 0.8
 - **Alternates in lab:** 2
-- **Playtested before:** no
+- **Playtested before:** yes
 
 ### identity
 
-- **Spelling:** `dehugatmes`
-- **Tree:** identity = self + memory
-- **Understandability (heuristic):** 0.83
+- **Spelling:** `dehu`
+- **Tree:** identity = self + know
+- **Understandability (heuristic):** 0.84
 - **Alternates in lab:** 2
 - **Playtested before:** no
 
@@ -33,39 +33,39 @@ Use Puzzle Conversation at `/language#puzzle` to record recovery for each:
 
 - **Spelling:** `hugatmes`
 - **Tree:** memory = know + hold + inside
-- **Understandability (heuristic):** 0.76
+- **Understandability (heuristic):** 0.77
 - **Alternates in lab:** 1
 - **Playtested before:** no
 
 ### tribe
 
-- **Spelling:** `danbadehugatmes`
-- **Tree:** tribe = community + identity
-- **Understandability (heuristic):** 0.85
-- **Alternates in lab:** 1
-- **Playtested before:** no
+- **Spelling:** `danbakam`
+- **Tree:** tribe = community + bond
+- **Understandability (heuristic):** 0.82
+- **Alternates in lab:** 2
+- **Playtested before:** yes
 
 ### war
 
-- **Spelling:** `danbadehugatmespa`
+- **Spelling:** `danbakampa`
 - **Tree:** war = tribe + conflict
-- **Understandability (heuristic):** 0.83
+- **Understandability (heuristic):** 0.77
 - **Alternates in lab:** 2
-- **Playtested before:** no
+- **Playtested before:** yes
 
 ### shared_meaning
 
-- **Spelling:** `danhuho`
-- **Tree:** shared_meaning = collective + know + same
-- **Understandability (heuristic):** 0.76
+- **Spelling:** `seho`
+- **Tree:** shared_meaning = speak + same
+- **Understandability (heuristic):** 0.84
 - **Alternates in lab:** 2
-- **Playtested before:** no
+- **Playtested before:** yes
 
 ### language
 
-- **Spelling:** `sedanhuho`
-- **Tree:** language = speak + shared_meaning
-- **Understandability (heuristic):** 0.83
+- **Spelling:** `danse`
+- **Tree:** language = collective + speak
+- **Understandability (heuristic):** 0.84
 - **Alternates in lab:** 2
 - **Playtested before:** no
 
@@ -73,15 +73,15 @@ Use Puzzle Conversation at `/language#puzzle` to record recovery for each:
 
 - **Spelling:** `kula`
 - **Tree:** exchange = give + take
-- **Understandability (heuristic):** 0.82
+- **Understandability (heuristic):** 0.84
 - **Alternates in lab:** 2
-- **Playtested before:** no
+- **Playtested before:** yes
 
 ### money
 
-- **Spelling:** `kulamekto`
-- **Tree:** money = exchange + equal + thing
-- **Understandability (heuristic):** 0.75
+- **Spelling:** `tokula`
+- **Tree:** money = thing + exchange
+- **Understandability (heuristic):** 0.8
 - **Alternates in lab:** 2
 - **Playtested before:** no
 
@@ -89,39 +89,39 @@ Use Puzzle Conversation at `/language#puzzle` to record recovery for each:
 
 - **Spelling:** `hugat`
 - **Tree:** knowledge = know + hold
-- **Understandability (heuristic):** 0.82
+- **Understandability (heuristic):** 0.84
 - **Alternates in lab:** 2
 - **Playtested before:** no
 
 ### teacher
 
-- **Spelling:** `bahugatku`
-- **Tree:** teacher = person + knowledge + give
+- **Spelling:** `kuhuba`
+- **Tree:** teacher = give + know + person
 - **Understandability (heuristic):** 0.77
 - **Alternates in lab:** 1
-- **Playtested before:** no
+- **Playtested before:** yes
 
 ### tool
 
-- **Spelling:** `todakgugek`
-- **Tree:** tool = thing + hand + useful
-- **Understandability (heuristic):** 0.75
+- **Spelling:** `gugekto`
+- **Tree:** tool = useful + thing
+- **Understandability (heuristic):** 0.8
 - **Alternates in lab:** 3
-- **Playtested before:** no
+- **Playtested before:** yes
 
 ### weapon
 
-- **Spelling:** `todakgugekpa`
+- **Spelling:** `gugektopa`
 - **Tree:** weapon = tool + conflict
-- **Understandability (heuristic):** 0.83
+- **Understandability (heuristic):** 0.77
 - **Alternates in lab:** 2
 - **Playtested before:** no
 
 ### nation
 
-- **Spelling:** `danbadehugatmestemche`
-- **Tree:** nation = tribe + bound + place
-- **Understandability (heuristic):** 0.75
+- **Spelling:** `danche`
+- **Tree:** nation = collective + place
+- **Understandability (heuristic):** 0.82
 - **Alternates in lab:** 2
 - **Playtested before:** no
 
@@ -129,3 +129,30 @@ Use Puzzle Conversation at `/language#puzzle` to record recovery for each:
 
 After each round, recovery data is stored in `data/fonoran-playtests.json`.
 Compare heuristic rank vs human recovery to validate Phase IV teaching trees.
+
+## LLM-promoted compounds (Session 4)
+
+These preferred forms changed after v3 intuition ranking. Test each in Puzzle Conversation:
+
+- **birth** — `lofo` (source + life) · [/language#puzzle?concept=birth](/language#puzzle?concept=birth)
+- **blacksmith** — `jakelba` (metal + make + person) · [/language#puzzle?concept=blacksmith](/language#puzzle?concept=blacksmith)
+- **campfire** — `datche` (fire + place) · [/language#puzzle?concept=campfire](/language#puzzle?concept=campfire)
+- **community** — `danba` (collective + person) · [/language#puzzle?concept=community](/language#puzzle?concept=community)
+- **family** — `sodan` (parent + collective) · [/language#puzzle?concept=family](/language#puzzle?concept=family)
+- **farmer** — `keltetba` (make + plant + person) · [/language#puzzle?concept=farmer](/language#puzzle?concept=farmer)
+- **fish** — `kalye` (animal + water) · [/language#puzzle?concept=fish](/language#puzzle?concept=fish)
+- **fly** — `samgi` (sky + move) · [/language#puzzle?concept=fly](/language#puzzle?concept=fly)
+- **food** — `telto` (eat + thing) · [/language#puzzle?concept=food](/language#puzzle?concept=food)
+- **friend** — `bakamgu` (person + bond + good) · [/language#puzzle?concept=friend](/language#puzzle?concept=friend)
+- **grow** — `fochamas` (life + change + more) · [/language#puzzle?concept=grow](/language#puzzle?concept=grow)
+- **island** — `fenmesye` (earth + inside + water) · [/language#puzzle?concept=island](/language#puzzle?concept=island)
+- **journey** — `ginan` (move + path) · [/language#puzzle?concept=journey](/language#puzzle?concept=journey)
+- **meal** — `teltotel` (food + eat) · [/language#puzzle?concept=meal](/language#puzzle?concept=meal)
+- **mountain** — `fenrati` (earth + up + still) · [/language#puzzle?concept=mountain](/language#puzzle?concept=mountain)
+- **rain** — `samye` (sky + water) · [/language#puzzle?concept=rain](/language#puzzle?concept=rain)
+- **river** — `yetasnan` (water + flow + path) · [/language#puzzle?concept=river](/language#puzzle?concept=river)
+- **teach** — `kuhu` (give + know) · [/language#puzzle?concept=teach](/language#puzzle?concept=teach)
+- **voice** — `segestas` (speak + breath) · [/language#puzzle?concept=voice](/language#puzzle?concept=voice)
+- **wisdom** — `ruhu` (strong + know) · [/language#puzzle?concept=wisdom](/language#puzzle?concept=wisdom)
+- **word** — `sewu` (speak + mark) · [/language#puzzle?concept=word](/language#puzzle?concept=word)
+- **world** — `melfelchefenfo` (whole + place + earth + life) · [/language#puzzle?concept=world](/language#puzzle?concept=world)

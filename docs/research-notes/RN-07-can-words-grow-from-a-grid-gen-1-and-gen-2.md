@@ -8,7 +8,7 @@ That left a different problem. A script is not a language. [RN-05](/research/not
 
 The question this note addresses is the Phase II pivot those script notes deferred:
 
-**Could Fonora carry a language whose vocabulary was systematic and discoverable — words that belong to visible families — rather than a pile of memorized, unrelated forms?**
+**Could Fonora carry a language whose vocabulary was systematic and discoverable: words that belong to visible families, rather than a pile of memorized, unrelated forms?**
 
 Gen 1 and Gen 2 were the first two attempts to answer that question. Both tried to *grow* words from a small semantic core instead of importing a full dictionary. Both were complete enough to seed an early Dictionary UI and then archived when a third generation shipped the same week.
 
@@ -80,7 +80,7 @@ There was no formal user study, memorability battery, or cross-linguistic compre
 
 The archive doc records the honest assessment at retirement time: Gen 1 roots were largely English/Latin cognates (`wa` = water, `ter` = earth, `man` = person, `lum` = light). Good for UI prototyping; poor for the archaeology goal. Gen 2's collision repair reduced accidental borrowing but did not eliminate concept-first design; you still began with *water* and *person*, not with unnamed grid coordinates.
 
-A later retrospective ([`docs/fonoran-primitive-roots-report.md`](../fonoran-primitive-roots-report.md), RN-10) rated Gen 1 **No — violates invariant-word grammar** and Gen 2 **No — concept-first, not grid-native**; a failure mode already visible when inflection vowels were compared to [`docs/fonoran-grammar.md`](../fonoran-grammar.md)'s invariant-concept model.
+A later retrospective ([`docs/fonoran-primitive-roots-report.md`](../fonoran-primitive-roots-report.md), RN-10) rated Gen 1 **No: violates invariant-word grammar** and Gen 2 **No: concept-first, not grid-native**; a failure mode already visible when inflection vowels were compared to [`docs/fonoran-grammar.md`](../fonoran-grammar.md)'s invariant-concept model.
 
 ## Findings
 

@@ -16,6 +16,8 @@
 import { readDoc } from './fonoran-store.js';
 import { scoreUnderstandability, metaLookupFromRecords } from './fonoran-understandability.js';
 import { experienceMetaFor } from './fonoran-experience-tiers.js';
+import { buildCompositionResolver } from './fonoran-composition-resolve.js';
+import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
 
 /**
  * Hand-seeded communicative strategies: intuitive ways a stranger might try to express a
@@ -156,6 +158,7 @@ function compositionKey(comp) {
 export function rankCandidates(conceptId, compositions, ctx = {}) {
   const metaFor = ctx.metaFor ?? (id => experienceMetaFor(id));
   const collisionCounts = ctx.collisionCounts ?? new Map();
+  const flatCountFor = ctx.flatCountFor ?? (() => null);
   const seen = new Set();
   const ranked = [];
 
@@ -165,17 +168,25 @@ export function rankCandidates(conceptId, compositions, ctx = {}) {
     if (seen.has(key)) continue;
     seen.add(key);
     const collisionCount = collisionCounts.get(key) ?? 1;
-    const scored = scoreUnderstandability(comp, { metaFor, collisionCount });
+    const flatCount = flatCountFor(comp);
+    const scored = scoreUnderstandability(comp, { metaFor, collisionCount, flatCount });
     ranked.push({
       composition: comp,
       readable: comp.join(' + '),
       understandability: scored.score,
       label: scored.label,
       breakdown: scored.breakdown,
+      flat_count: flatCount,
     });
   }
 
-  ranked.sort((a, b) => b.understandability - a.understandability);
+  ranked.sort((a, b) => {
+    const scoreDiff = b.understandability - a.understandability;
+    if (Math.abs(scoreDiff) > 0.01) return scoreDiff;
+    const flatA = a.flat_count ?? 99;
+    const flatB = b.flat_count ?? 99;
+    return flatA - flatB;
+  });
   return ranked;
 }
 
@@ -218,20 +229,50 @@ export async function loadCandidateContext() {
       collisionCounts.set(key, (collisionCounts.get(key) ?? 0) + 1);
     }
   }
-  return { metaFor, collisionCounts, knownByConcept };
+
+  const primitiveIds = (inventory?.primitives ?? []).map(p => p.id);
+  const resolver = buildCompositionResolver(primitiveIds, compoundsDoc?.compounds ?? []);
+  const flatCountFor = comp => resolver.flatCount(comp);
+
+  return {
+    metaFor,
+    collisionCounts,
+    knownByConcept,
+    flatCountFor,
+    compoundsDoc,
+    primitiveIds,
+  };
 }
 
 async function main() {
-  const conceptId = process.argv[2];
+  const args = process.argv.slice(2);
+  const useLlm = args.includes('--llm');
+  const conceptId = args.find(a => !a.startsWith('--'));
   if (!conceptId) {
-    console.error('Usage: node tools/fonoran-expression-candidates.js <concept-id>');
+    console.error('Usage: node tools/fonoran-expression-candidates.js <concept-id> [--llm]');
     process.exit(1);
   }
   const ctx = await loadCandidateContext();
+  let extraCompositions = [];
+  if (useLlm) {
+    const compound = ctx.compoundsDoc?.compounds?.find(c => c.concept === conceptId);
+    const gloss = compound?.preferred?.gloss ?? compound?.gloss ?? conceptId;
+    extraCompositions = await proposeLlmCandidates(conceptId, {
+      gloss,
+      primitiveIds: ctx.primitiveIds,
+      compoundDefs: ctx.compoundsDoc?.compounds ?? [],
+      maxFlattened: 4,
+    });
+    if (extraCompositions.length) {
+      console.log(`LLM proposed ${extraCompositions.length} candidate(s).\n`);
+    }
+  }
   const ranked = generateCandidates(conceptId, {
     metaFor: ctx.metaFor,
     collisionCounts: ctx.collisionCounts,
     knownComposition: ctx.knownByConcept.get(conceptId),
+    flatCountFor: ctx.flatCountFor,
+    extraCompositions,
   });
   if (!ranked.length) {
     console.log(`No candidate strategies seeded for "${conceptId}". Add some to ASSOCIATION_SEEDS.`);
@@ -239,7 +280,8 @@ async function main() {
   }
   console.log(`Candidate expressions for "${conceptId}" (ranked by understandability):\n`);
   for (const r of ranked) {
-    console.log(`  ${String(r.understandability).padEnd(5)} ${r.readable.padEnd(28)} ${r.label}`);
+    const flat = r.flat_count != null ? `${r.flat_count} roots` : '? roots';
+    console.log(`  ${String(r.understandability).padEnd(5)} ${r.readable.padEnd(28)} ${flat.padEnd(8)} ${r.label}`);
   }
   console.log('\nThe score only ranks. A human guess-the-meaning playtest decides the preferred form.');
 }

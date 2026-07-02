@@ -15,6 +15,10 @@ const LEARN_TAB_LABELS = {
   listening: 'Listening',
 };
 
+const LEARN_LINK_TABS = [
+  { id: 'puzzle', label: 'Puzzle Conversation', href: '/language#puzzle' },
+];
+
 const LEARN_TABS = LEARN_SKILL_ORDER.map((id) => ({
   id,
   label: LEARN_TAB_LABELS[id] ?? id,
@@ -33,6 +37,7 @@ const BUILDER_TABS = [
   { id: 'translator', label: 'Translator' },
   { id: 'dictionary', label: 'Dictionary' },
   { id: 'grammar', label: 'Grammar' },
+  { id: 'puzzle', label: 'Puzzle' },
 ];
 
 const LEARN_TITLES = {
@@ -265,11 +270,14 @@ function renderLearnRow2(activeTab) {
         t.id === activeTab ? ' aria-current="page"' : ''
       }>${t.label}</button>`,
   ).join('');
+  const links = LEARN_LINK_TABS.map(
+    (t) => `<a href="${t.href}" class="tab-btn tab-btn--link">${t.label}</a>`,
+  ).join('');
 
   return `
     <div class="app-header__row app-header__row--tools" data-nav-row="learn-tools">
       <nav class="main-nav" aria-label="Learn">
-        <div class="main-nav-primary">${tabs}</div>
+        <div class="main-nav-primary">${tabs}${links}</div>
       </nav>
     </div>`;
 }

@@ -9,18 +9,20 @@
  * Pure and dependency-free so it runs in the browser (UI), in tools, and in tests.
  *
  * Factors (all 0..1, blended):
- *   - familiarity   how well-known the component roots are (core > extended > complete)
- *   - simplicity    fewer roots are easier to recover (2 is ideal)
- *   - transparency  are the components recognizable roots at all?
- *   - ambiguity     how uniquely the combination points at the intended meaning
- *   - concreteness  concrete/human-experience components recover better than abstract ones
+ *   - familiarity       how well-known the component roots are (core > extended > complete)
+ *   - simplicity        fewer direct components are easier to recover (2 is ideal)
+ *   - flattenedLength   penalizes long flattened spellings (2–3 syllables ideal)
+ *   - transparency      are the components recognizable roots at all?
+ *   - ambiguity         how uniquely the combination points at the intended meaning
+ *   - concreteness      concrete/human-experience components recover better than abstract ones
  */
 
 const WEIGHTS = {
-  familiarity: 0.3,
-  simplicity: 0.2,
-  transparency: 0.2,
-  ambiguity: 0.2,
+  familiarity: 0.25,
+  simplicity: 0.15,
+  flattenedLength: 0.2,
+  transparency: 0.15,
+  ambiguity: 0.15,
   concreteness: 0.1,
 };
 
@@ -71,6 +73,16 @@ function simplicity(n) {
   return 0.3;
 }
 
+/** Penalize long flattened spellings (atomic root syllable count after nesting). */
+export function flattenedSimplicity(flatCount) {
+  if (flatCount == null || flatCount <= 0) return 0.55;
+  if (flatCount <= 2) return 1;
+  if (flatCount === 3) return 0.85;
+  if (flatCount === 4) return 0.6;
+  if (flatCount === 5) return 0.4;
+  return 0.2;
+}
+
 function transparency(parts, metaFor) {
   if (!parts.length) return 0;
   const known = parts.filter(id => Boolean(metaFor(id))).length;
@@ -113,15 +125,18 @@ export function understandabilityLabel(score) {
  * @param {(id:string)=> ({language_tier?:string, experience_tier?:string}|null)} ctx.metaFor
  *        Returns experience metadata for a component id, or null if unknown.
  * @param {number} [ctx.collisionCount]  how many concepts claim this exact combination.
- * @returns {{ score:number, label:string, breakdown:object }}
+ * @param {number} [ctx.flatCount]       flattened atomic root count (when known).
+ * @returns {{ score:number, label:string, breakdown:object, flatCount:number|null }}
  */
 export function scoreUnderstandability(composition, ctx = {}) {
   const parts = Array.isArray(composition) ? composition.filter(Boolean) : [];
   const metaFor = ctx.metaFor ?? (() => null);
+  const flatCount = ctx.flatCount ?? null;
 
   const breakdown = {
     familiarity: clamp01(familiarity(parts, metaFor)),
     simplicity: clamp01(simplicity(parts.length)),
+    flattenedLength: clamp01(flattenedSimplicity(flatCount)),
     transparency: clamp01(transparency(parts, metaFor)),
     ambiguity: clamp01(ambiguity(parts, ctx)),
     concreteness: clamp01(concreteness(parts, metaFor)),
@@ -131,7 +146,12 @@ export function scoreUnderstandability(composition, ctx = {}) {
   for (const [k, w] of Object.entries(WEIGHTS)) score += breakdown[k] * w;
   score = clamp01(score);
 
-  return { score: Math.round(score * 100) / 100, label: understandabilityLabel(score), breakdown };
+  return {
+    score: Math.round(score * 100) / 100,
+    label: understandabilityLabel(score),
+    breakdown,
+    flatCount,
+  };
 }
 
 /**

@@ -14,10 +14,13 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readDoc } from './fonoran-store.js';
-import { ASSOCIATION_SEEDS } from './fonoran-expression-candidates.js';
+import { ASSOCIATION_SEEDS, loadCandidateContext } from './fonoran-expression-candidates.js';
 import { experienceMetaFor } from './fonoran-experience-tiers.js';
 import { splitRoot } from './fonoran-gen3-distinctiveness.js';
 import { checkCompoundBoundary } from './fonoran-gen3-readability.js';
+import { buildCompositionResolver, maxFlattenedRoots } from './fonoran-composition-resolve.js';
+import { isPreferredLocked, optimizeCompoundInventory } from './fonoran-preferred-select.js';
+import { pickConsensus } from './fonoran-llm-aggregate.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -36,6 +39,7 @@ function normalizeLive(def) {
     gloss: def.preferred?.gloss ?? def.gloss ?? '',
     alternates: def.alternates ?? [],
     notes: def.notes ?? '',
+    preferred_source: def.preferred_source ?? 'heuristic',
   };
 }
 
@@ -80,13 +84,15 @@ function topologicalSort(compounds) {
 }
 
 export async function runCompoundAudit() {
-  const [compoundsDoc, inventory, approved, candidatesDoc, playtestsDoc] =
+  const [compoundsDoc, inventory, approved, candidatesDoc, playtestsDoc, candidateCtx, llmDoc] =
     await Promise.all([
       readDoc('compounds'),
       readDoc('concept_inventory'),
       readDoc('approved_roots'),
       readDoc('root_candidates'),
       readDoc('playtests'),
+      loadCandidateContext(),
+      readDoc('llm_evaluations'),
     ]);
   const demoDoc = JSON.parse(
     readFileSync(join(ROOT, 'data/fonoran-semantic-demo-compounds.json'), 'utf8'),
@@ -101,8 +107,42 @@ export async function runCompoundAudit() {
     ...(inventory?.primitives ?? []).map(p => p.id),
     ...(approved?.roots ?? []).map(r => r.id),
   ]);
-
+  const resolver = buildCompositionResolver([...primitiveIds], compoundsDoc?.compounds ?? []);
+  const maxFlat = maxFlattenedRoots();
+  const demoTrees = new Map((demo ?? []).map(d => [d.id, d.tree]));
   const roots = approved?.roots ?? [];
+  const metaFor = candidateCtx.metaFor;
+  const collisionCounts = candidateCtx.collisionCounts;
+  const rankCtx = {
+    metaFor,
+    collisionCounts,
+    flatCountFor: comp => resolver.flatCount(comp),
+  };
+  const rootGraph = {
+    rootById: Object.fromEntries(roots.map(r => [r.id, r.spelling])),
+    rootSpellings: roots.map(r => r.spelling),
+    primitiveIds: [...primitiveIds],
+    demoTrees,
+    rankCtx,
+  };
+
+  const llmAggregates = llmDoc?.aggregates ?? {};
+  const optimizeCtx = {
+    rootById: rootGraph.rootById,
+    rootSpellings: rootGraph.rootSpellings,
+    primitiveIds: rootGraph.primitiveIds,
+    metaFor,
+    collisionCounts,
+    demoTrees,
+    llmAggregates,
+  };
+  const { compounds: optimizedRows } = optimizeCompoundInventory(
+    compoundsDoc?.compounds ?? [],
+    optimizeCtx,
+    { useLlm: Object.keys(llmAggregates).length > 0 },
+  );
+  const optimizedById = new Map(optimizedRows.map(r => [r.concept, r]));
+
   const rootById = Object.fromEntries(roots.map(r => [r.id, r]));
   const candidateById = Object.fromEntries((candidatesDoc?.candidates ?? []).map(c => [c.id, c]));
 
@@ -160,6 +200,70 @@ export async function runCompoundAudit() {
     if (!c.alternates.length) {
       add('medium', 'no_alternates', c.concept, 'No alternate meaning-attempts');
     }
+
+    const flatCount = resolver.flatCount(c.composition);
+    if (flatCount != null && flatCount > maxFlat) {
+      const sev = flatCount > maxFlat + 1 ? 'high' : 'medium';
+      const shorter = (c.alternates ?? [])
+        .map(a => ({ comp: a.composition, flat: resolver.flatCount(a.composition) }))
+        .filter(x => x.flat != null && x.flat <= maxFlat)
+        .sort((a, b) => a.flat - b.flat);
+      add(sev, 'flattened_length_high', c.concept,
+        `Preferred form flattens to ${flatCount} roots (limit ${maxFlat})`,
+        {
+          flat_count: flatCount,
+          composition: c.composition,
+          shorter_alternates: shorter.slice(0, 3).map(x => x.comp),
+        });
+    }
+
+    if (!isPreferredLocked(c.preferred_source)) {
+      const opt = optimizedById.get(c.concept);
+      const liveKey = compKey(c.composition);
+      const optKey = compKey(opt?.preferred?.composition);
+      const sel = opt?._selection;
+      if (liveKey !== optKey && sel?.promoted) {
+        const category = sel.preferred_source === 'llm_consensus' ? 'llm_would_promote' : 'would_promote';
+        add('medium', category, c.concept,
+          `${category === 'llm_would_promote' ? 'LLM consensus would promote' : 'Optimizer would promote'} ${(sel.from ?? c.composition).join(' + ')} → ${sel.to.join(' + ')}`,
+          {
+            from: sel.from ?? c.composition,
+            to: sel.to,
+            from_flat: sel.from_flat,
+            to_flat: sel.to_flat,
+            reason: sel.reason,
+            llm_recovery: sel.llm_consensus?.recovery_rate ?? null,
+          });
+      }
+    }
+
+    const conceptAgg = llmAggregates[c.concept];
+    if (conceptAgg && Object.keys(conceptAgg).length) {
+      const consensus = pickConsensus(llmAggregates, c.concept);
+      const liveKey = compKey(c.composition);
+      const currentStats = conceptAgg[liveKey];
+      if (!consensus) {
+        add('medium', 'llm_split', c.concept,
+          'LLM playtests have no clear consensus winner',
+          { candidates: Object.keys(conceptAgg).length });
+      } else if (compKey(consensus.composition) !== liveKey) {
+        add('info', 'llm_would_promote', c.concept,
+          `LLM consensus prefers ${consensus.composition.join(' + ')} (${(consensus.recovery_rate * 100).toFixed(0)}% recovery) over live preferred`,
+          {
+            llm_winner: consensus.composition,
+            recovery_rate: consensus.recovery_rate,
+            live_recovery: currentStats?.recovery_rate ?? null,
+          });
+      }
+      if (currentStats && currentStats.recovery_rate < 0.75) {
+        const best = Object.entries(conceptAgg).sort((a, b) => b[1].recovery_rate - a[1].recovery_rate)[0];
+        if (best && best[0] !== liveKey) {
+          add('medium', 'llm_low_recovery', c.concept,
+            `Live preferred recovers at ${(currentStats.recovery_rate * 100).toFixed(0)}% in LLM playtests`,
+            { live_recovery: currentStats.recovery_rate, best_candidate: best[0], best_recovery: best[1].recovery_rate });
+        }
+      }
+    }
   }
 
   // --- Phonetic checks ---
@@ -201,6 +305,16 @@ export async function runCompoundAudit() {
   const treeAware = live.filter(c => usesIntermediateCompound(c.composition, compoundIds)).length;
   const seeded = live.filter(c => ASSOCIATION_SEEDS[c.concept]?.length).length;
 
+  const llmEvaluated = live.filter(c => llmAggregates[c.concept]).length;
+  const llmConsensusCount = live.filter(c => {
+    const consensus = pickConsensus(llmAggregates, c.concept);
+    return consensus && compKey(consensus.composition) === compKey(c.composition);
+  }).length;
+  const llmSplitCount = live.filter(c => {
+    const agg = llmAggregates[c.concept];
+    return agg && Object.keys(agg).length && !pickConsensus(llmAggregates, c.concept);
+  }).length;
+
   const summary = {
     generated_at: new Date().toISOString(),
     live_compound_count: live.length,
@@ -211,6 +325,16 @@ export async function runCompoundAudit() {
     tree_aware_preferred: treeAware,
     seed_coverage: `${seeded}/${live.length}`,
     empty_alternates: live.filter(c => !c.alternates.length).length,
+    flattened_length_high: findings.filter(f => f.category === 'flattened_length_high').length,
+    would_promote: findings.filter(f => f.category === 'would_promote').length,
+    llm_evaluated_count: llmEvaluated,
+    llm_consensus_count: llmConsensusCount,
+    llm_split_count: llmSplitCount,
+    llm_would_promote: findings.filter(f => f.category === 'llm_would_promote').length,
+    llm_low_recovery: findings.filter(f => f.category === 'llm_low_recovery').length,
+    heuristic_preferred_count: live.filter(c => (c.preferred_source ?? 'heuristic') === 'heuristic').length,
+    locked_preferred_count: live.filter(c => isPreferredLocked(c.preferred_source)).length,
+    max_flattened_roots: maxFlat,
     findings_by_severity: {
       critical: findings.filter(f => f.severity === 'critical').length,
       high: findings.filter(f => f.severity === 'high').length,
@@ -254,6 +378,11 @@ function renderMarkdown({ summary, findings, dependencyGraph }) {
   lines.push(`| Tree-aware preferred forms | ${summary.tree_aware_preferred} |`);
   lines.push(`| Seed coverage | ${summary.seed_coverage} |`);
   lines.push(`| Empty alternates | ${summary.empty_alternates} |`);
+  lines.push(`| Flattened length warnings (>${summary.max_flattened_roots} roots) | ${summary.flattened_length_high} |`);
+  lines.push(`| Would promote (run optimize) | ${summary.would_promote} |`);
+  lines.push(`| LLM evaluated / consensus / split | ${summary.llm_evaluated_count} / ${summary.llm_consensus_count} / ${summary.llm_split_count} |`);
+  lines.push(`| LLM would promote / low recovery | ${summary.llm_would_promote} / ${summary.llm_low_recovery} |`);
+  lines.push(`| Heuristic preferred / locked | ${summary.heuristic_preferred_count} / ${summary.locked_preferred_count} |`);
   lines.push(`| Playtested concepts | ${summary.playtested_concepts} |`);
   lines.push('');
   lines.push('### Findings by severity');

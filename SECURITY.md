@@ -12,7 +12,7 @@ Instead, email the maintainers or open a private security advisory on GitHub if 
 
 ## Secrets and credentials
 
-- Never commit `.env`, OAuth secrets, `SESSION_SECRET`, or `DATABASE_URL`.
+- Never commit `.env`, OAuth secrets, `SESSION_SECRET`, `DATABASE_URL`, or `ANTHROPIC_API_KEY`.
 - Production secrets belong in Heroku config vars (or your host's secret store) only.
 - The repository ships [`.env.example`](.env.example) with empty placeholders.
 
@@ -46,6 +46,6 @@ Set `FONORAN_AUTH=off` or `FONORAN_AUTH_OFF=1` only on a trusted development mac
 | In git (public) | Out of git |
 | --- | --- |
 | Reference JSON, docs, builder UI, auth middleware | Live lab bucket, runtime lexicon, PostgreSQL rows |
-| Milestone snapshots (`fonoran-compounds.json`, etc.) | `.env`, local backups |
+| Milestone snapshots (`fonoran-compounds.json`, `fonoran-llm-evaluations.json`, etc.) | `.env`, local backups |
 
 Security does not depend on hiding source code. Write access requires a valid session on an allowlisted Google account (`ALLOWED_DOMAIN` or `ADMIN_EMAILS`).

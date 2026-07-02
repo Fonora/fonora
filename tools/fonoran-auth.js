@@ -217,6 +217,7 @@ export function isWriteAuthRequired(pathname, method) {
   // Puzzle Conversation playtests are public: anyone who knows the roots can play and
   // their guess-the-meaning results are exactly the evidence the language needs.
   if (m === 'POST' && pathname === '/api/fonoran/puzzle/guess') return false;
+  if (m === 'POST' && pathname === '/api/fonoran/puzzle/feedback') return false;
   if (m === 'POST' && pathname === '/api/fonoran/expressions/candidates') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
 }

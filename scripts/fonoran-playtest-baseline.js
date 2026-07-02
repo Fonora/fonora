@@ -87,6 +87,22 @@ async function main() {
   lines.push('Compare heuristic rank vs human recovery to validate Phase IV teaching trees.');
   lines.push('');
 
+  const compoundsDoc = await readDoc('compounds');
+  const llmPromoted = (compoundsDoc?.compounds ?? []).filter(c => c.preferred_source === 'llm_consensus');
+  if (llmPromoted.length) {
+    lines.push('## LLM-promoted compounds (Session 4)');
+    lines.push('');
+    lines.push('These preferred forms changed after v3 intuition ranking. Test each in Puzzle Conversation:');
+    lines.push('');
+    for (const c of llmPromoted.sort((a, b) => a.concept.localeCompare(b.concept))) {
+      const labRow = byConcept.get(c.concept);
+      const spelling = labRow?.spelling ?? 'n/a';
+      const comp = c.preferred?.composition?.join(' + ') ?? 'n/a';
+      lines.push(`- **${c.concept}** — \`${spelling}\` (${comp}) · [/language#puzzle?concept=${c.concept}](/language#puzzle?concept=${c.concept})`);
+    }
+    lines.push('');
+  }
+
   const outPath = join(ROOT, 'docs/fonoran-phase4-playtest-baseline.md');
   writeFileSync(outPath, lines.join('\n'));
 

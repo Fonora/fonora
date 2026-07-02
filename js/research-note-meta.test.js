@@ -11,6 +11,9 @@ import {
   extractTldr,
   formatNoteMarkdownExport,
   nextResearchCode,
+  NEW_NOTE_STUB_TEMPLATE,
+  RESEARCH_NOTE_SECTIONS,
+  researchNoteBodyTemplate,
   resolveResearchNoteTitle,
   slugifyTitle,
   validateNoteMetadata,
@@ -91,8 +94,16 @@ export function runResearchNoteMetaTests() {
     test('githubCommitUrl links to repo commit', () => {
       assert(githubCommitUrl('abc1234') === 'https://github.com/jamesc137/fonora/commit/abc1234');
     }),
-    test('githubBlobUrl pins path to ref', () => {
-      assert(githubBlobUrl('js/app.js', 'abc1234').includes('/blob/abc1234/js/app.js'));
+    test('researchNoteBodyTemplate includes RN-01 sections', () => {
+      const body = researchNoteBodyTemplate('Test');
+      for (const section of RESEARCH_NOTE_SECTIONS) {
+        assert(body.includes(`## ${section}`), `missing ## ${section}`);
+      }
+      assert(!body.includes('TL;DR'), 'expanded template should not include TL;DR blockquote');
+    }),
+    test('NEW_NOTE_STUB_TEMPLATE keeps short seed sections', () => {
+      assert(NEW_NOTE_STUB_TEMPLATE.includes('## The question'));
+      assert(NEW_NOTE_STUB_TEMPLATE.includes('## The question that followed'));
     }),
   ];
 }

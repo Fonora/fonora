@@ -6,7 +6,7 @@
 
 RN-04 closed by asking whether those English-specific vowel rules would survive contact with languages whose inventories English never stress-tested. The articulation grid itself is language-agnostic: place and manner compose the same way whether the word is English, Spanish, or Arabic. [RN-02](/research/notes/ipa-pipeline) had already wired a `lang` parameter through eSpeak voice selection and the IPA pipeline. The practical question this note addresses is the one RN-04 deferred:
 
-**Could a single IPA pipeline — shared consonant map, shared vowel inventory from markdown, parameterized by language — encode many languages without a bespoke ruleset for each?**
+**Could a single IPA pipeline: shared consonant map, shared vowel inventory from markdown, parameterized by language, encode many languages without a bespoke ruleset for each?**
 
 ## Hypothesis
 
