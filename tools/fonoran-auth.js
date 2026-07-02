@@ -3,12 +3,14 @@
  * Zero extra dependencies: uses Node crypto + fetch.
  */
 
-import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
 
 const SESSION_COOKIE = 'fonoran_session';
 const OAUTH_STATE_COOKIE = 'fonoran_oauth_state';
 const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14; // 14 days
 const OAUTH_STATE_MAX_AGE_SEC = 600;
+const GCM_IV_BYTES = 12;
+const GCM_TAG_BYTES = 16;
 
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
@@ -89,28 +91,33 @@ function parseCookies(req) {
   return out;
 }
 
-function signPayload(payload) {
-  const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
-  const sig = createHmac('sha256', sessionSecret()).update(body).digest('base64url');
-  return `${body}.${sig}`;
+function deriveKey(secret) {
+  return createHash('sha256').update(secret).digest();
+}
+
+function sealPayload(payload) {
+  const iv = randomBytes(GCM_IV_BYTES);
+  const key = deriveKey(sessionSecret());
+  const cipher = createCipheriv('aes-256-gcm', key, iv);
+  const plaintext = Buffer.from(JSON.stringify(payload), 'utf8');
+  const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return Buffer.concat([iv, tag, encrypted]).toString('base64url');
 }
 
 function verifySignedToken(token) {
   if (!token || typeof token !== 'string') return null;
-  const dot = token.lastIndexOf('.');
-  if (dot <= 0) return null;
-  const body = token.slice(0, dot);
-  const sig = token.slice(dot + 1);
-  const expected = createHmac('sha256', sessionSecret()).update(body).digest('base64url');
   try {
-    const a = Buffer.from(sig);
-    const b = Buffer.from(expected);
-    if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
-  } catch {
-    return null;
-  }
-  try {
-    const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
+    const buf = Buffer.from(token, 'base64url');
+    if (buf.length < GCM_IV_BYTES + GCM_TAG_BYTES + 1) return null;
+    const iv = buf.subarray(0, GCM_IV_BYTES);
+    const tag = buf.subarray(GCM_IV_BYTES, GCM_IV_BYTES + GCM_TAG_BYTES);
+    const encrypted = buf.subarray(GCM_IV_BYTES + GCM_TAG_BYTES);
+    const key = deriveKey(sessionSecret());
+    const decipher = createDecipheriv('aes-256-gcm', key, iv);
+    decipher.setAuthTag(tag);
+    const plaintext = Buffer.concat([decipher.update(encrypted), decipher.final()]);
+    const payload = JSON.parse(plaintext.toString('utf8'));
     if (!payload?.exp || payload.exp < Math.floor(Date.now() / 1000)) return null;
     return payload;
   } catch {
@@ -151,9 +158,22 @@ function jsonResponse(res, status, body, extraHeaders = {}) {
   res.end(JSON.stringify(body));
 }
 
-function redirect(res, location, req) {
+function safeRedirectTarget(location) {
+  if (typeof location !== 'string') return '/language';
+  if (location.startsWith(GOOGLE_AUTH_URL)) return location;
+  if (location.startsWith('/') && !location.startsWith('//')) {
+    const qIndex = location.indexOf('?');
+    const path = qIndex === -1 ? location : location.slice(0, qIndex);
+    const query = qIndex === -1 ? '' : location.slice(qIndex + 1);
+    const safePath = sanitizeReturnTo(path);
+    return query ? `${safePath}?${query}` : safePath;
+  }
+  return '/language';
+}
+
+function redirect(res, location) {
   res.writeHead(302, {
-    Location: location,
+    Location: safeRedirectTarget(location),
     'Cache-Control': 'no-store',
   });
   res.end();
@@ -322,7 +342,7 @@ export async function handleAuthRoutes(req, res, url, method) {
     if (method === 'POST') {
       jsonResponse(res, 200, { ok: true });
     } else {
-      redirect(res, sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language'), req);
+      redirect(res, sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language'));
     }
     return true;
   }
@@ -335,7 +355,7 @@ export async function handleAuthRoutes(req, res, url, method) {
     const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
     const state = randomBytes(24).toString('base64url');
 
-    const stateToken = signPayload({
+    const stateToken = sealPayload({
       state,
       returnTo,
       exp: Math.floor(Date.now() / 1000) + OAUTH_STATE_MAX_AGE_SEC,
@@ -354,14 +374,14 @@ export async function handleAuthRoutes(req, res, url, method) {
       prompt: 'select_account',
       access_type: 'online',
     });
-    redirect(res, `${GOOGLE_AUTH_URL}?${params}`, req);
+    redirect(res, `${GOOGLE_AUTH_URL}?${params}`);
     return true;
   }
 
   if (pathname === '/auth/callback' && method === 'GET') {
     const err = url.searchParams.get('error');
     if (err) {
-      redirect(res, `/language?auth_error=${encodeURIComponent(err)}`, req);
+      redirect(res, `/language?auth_error=${encodeURIComponent(err)}`);
       return true;
     }
 
@@ -372,7 +392,7 @@ export async function handleAuthRoutes(req, res, url, method) {
     clearCookie(res, OAUTH_STATE_COOKIE, req);
 
     if (!code || !state || !statePayload?.state || statePayload.state !== state) {
-      redirect(res, '/language?auth_error=invalid_state', req);
+      redirect(res, '/language?auth_error=invalid_state');
       return true;
     }
 
@@ -383,15 +403,15 @@ export async function handleAuthRoutes(req, res, url, method) {
       const profile = await fetchGoogleUser(tokens.access_token);
       const email = profile.email?.trim().toLowerCase();
       if (!email || profile.email_verified === false) {
-        redirect(res, '/language?auth_error=email_unverified', req);
+        redirect(res, '/language?auth_error=email_unverified');
         return true;
       }
       if (!emailAllowed(email)) {
-        redirect(res, `/language?auth_error=domain&email=${encodeURIComponent(email)}`, req);
+        redirect(res, `/language?auth_error=domain&email=${encodeURIComponent(email)}`);
         return true;
       }
 
-      const sessionToken = signPayload({
+      const sessionToken = sealPayload({
         email,
         name: profile.name ?? email,
         exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE_SEC,
@@ -400,10 +420,10 @@ export async function handleAuthRoutes(req, res, url, method) {
         maxAge: SESSION_MAX_AGE_SEC,
         req,
       });
-      redirect(res, returnTo, req);
+      redirect(res, returnTo);
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'auth_failed';
-      redirect(res, `/language?auth_error=${encodeURIComponent(msg)}`, req);
+      redirect(res, `/language?auth_error=${encodeURIComponent(msg)}`);
     }
     return true;
   }
@@ -427,4 +447,17 @@ export function logAuthStatus() {
   console.warn(
     'Fonoran auth: not configured: write API is open. Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and SESSION_SECRET to enable.',
   );
+}
+
+/** @internal Test helpers */
+export function __testSealPayload(payload) {
+  return sealPayload(payload);
+}
+
+export function __testOpenPayload(token) {
+  return verifySignedToken(token);
+}
+
+export function __testSafeRedirectTarget(location) {
+  return safeRedirectTarget(location);
 }

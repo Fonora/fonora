@@ -301,7 +301,7 @@ export function researchHref(slug) {
   if (!slug) return RESEARCH_BASE;
   if (slug === 'timeline') return `${RESEARCH_BASE}/timeline`;
   if (slug === 'open') return `${RESEARCH_BASE}#open`;
-  return `${RESEARCH_BASE}/notes/${slug}`;
+  return `${RESEARCH_BASE}/notes/${encodeURIComponent(slug)}`;
 }
 
 /** Absolute canonical URL for a research view (for SEO tags / sitemap). */

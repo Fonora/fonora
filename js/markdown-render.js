@@ -5,7 +5,7 @@ import { buildMermaidPanZoomHtml } from './mermaid-pan-zoom.js';
 function slugifyHeading(text) {
   return text
     .toLowerCase()
-    .replace(/<[^>]+>/g, '')
+    .replace(/[<>]/g, '')
     .replace(/[^\w\s-]/g, '')
     .trim()
     .replace(/\s+/g, '-');
@@ -21,11 +21,11 @@ function inlineFormat(text, docPath, options = {}) {
     const docPathAttr = repoPathFromViewerHref(resolved);
     const isDoc = Boolean(docPathAttr) || (href.endsWith('.md') && !/^https?:\/\//i.test(href));
     if (isDoc && !/^https?:\/\//i.test(resolved)) {
-      return `<a href="${escapeHtml(resolved)}" class="doc-internal-link" data-doc-path="${escapeHtml(docPathAttr ?? href)}">${label}</a>`;
+      return `<a href="${escapeHtml(resolved)}" class="doc-internal-link" data-doc-path="${escapeHtml(docPathAttr ?? href)}">${escapeHtml(label)}</a>`;
     }
     const external = /^https?:\/\//i.test(resolved);
     const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
-    return `<a href="${escapeHtml(resolved)}"${attrs}>${label}</a>`;
+    return `<a href="${escapeHtml(resolved)}"${attrs}>${escapeHtml(label)}</a>`;
   });
   if (options.grammar) {
     out = out.replace(/\[([^\]/\[]+)\](?!\()/g, '<span class="grammar-missing">$1</span>');

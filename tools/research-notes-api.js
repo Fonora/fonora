@@ -3,6 +3,7 @@
  */
 
 import { readJsonBody, jsonResponse } from './fonoran-api.js';
+import { safeApiError } from '../js/utils.js';
 import { getSessionUser, isAuthEnabled, unauthorizedResponse } from './fonoran-auth.js';
 import {
   createDraft,
@@ -118,6 +119,6 @@ export async function handleResearchApi(req, res, pathname, method) {
     return false;
   } catch (err) {
     const status = err.status || 500;
-    return done(status, { error: err instanceof Error ? err.message : String(err) });
+    return done(status, { error: safeApiError(err) });
   }
 }

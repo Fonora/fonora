@@ -4,6 +4,7 @@
 
 import { escapeHtml, errorMessage } from './utils.js';
 import { renderMarkdown } from './markdown-render.js';
+import { sanitizePreviewHtml } from './safe-html.js';
 import { researchHref } from './doc-urls.js';
 import { RESEARCH_PHASES } from './research-notes.js';
 import {
@@ -125,7 +126,9 @@ function updatePreview() {
   const preview = document.getElementById('rn-preview');
   if (!preview) return;
   const slug = document.getElementById('rn-field-slug')?.value || 'draft';
-  preview.innerHTML = renderMarkdown(body, { docPath: `research/${slug}`, skipTitle: false });
+  const html = sanitizePreviewHtml(renderMarkdown(body, { docPath: `research/${slug}`, skipTitle: false }));
+  preview.replaceChildren();
+  preview.append(document.createRange().createContextualFragment(html));
 }
 
 function setFontSize(size) {
