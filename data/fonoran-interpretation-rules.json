@@ -15,7 +15,10 @@
     "outside": { "concept_id": "outside", "reason": "spatial path outward" },
     "toward": { "concept_id": "path", "reason": "spatial path toward" },
     "towards": { "concept_id": "path", "reason": "spatial path toward" },
-    "to": { "concept_id": "path", "reason": "spatial path toward" }
+    "to": { "concept_id": "path", "reason": "spatial path toward" },
+    "from": { "concept_id": "source", "reason": "spatial path from" },
+    "away": { "concept_id": "far", "reason": "spatial path away" },
+    "near": { "concept_id": "near", "reason": "spatial path near" }
   },
   "classes": {
     "locomotion": {
@@ -34,7 +37,12 @@
         "slide", "slid", "sliding", "slides",
         "roll", "rolled", "rolling", "rolls",
         "dance", "danced", "dancing", "dances",
-        "travel", "traveled", "travelled", "traveling", "travelling", "travels"
+        "travel", "traveled", "travelled", "traveling", "travelling", "travels",
+        "go", "goes", "went", "going", "gone",
+        "come", "came", "comes", "coming",
+        "return", "returned", "returns", "returning",
+        "leave", "left", "leaves", "leaving",
+        "follow", "followed", "follows", "following"
       ]
     },
     "speech": {

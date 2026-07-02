@@ -115,6 +115,26 @@ function classifyTokens(tokens) {
  * counts plus the specific tokens that need review or are missing, and a single
  * `gate` verdict (worst tier present).
  */
+/** Food-like English that should not hypernym-collapse to eat in noun slots. */
+const FOOD_LIKE_ENGLISH = /^(seafood|sea food|food|meal|bread|meat|fish)$/i;
+
+/** Noun-like roles where food→eat hypernym collapse is a quality concern. */
+const NOUN_LIKE_ROLES = new Set(['object', 'modifier', 'concept', 'path']);
+
+function extraReviewFlags(token) {
+  const flags = [];
+  const role = token?.role ?? 'concept';
+  const reason = String(token?.interpret_reason ?? '');
+  if (
+    NOUN_LIKE_ROLES.has(role)
+    && reason.includes('hypernym:eat')
+    && FOOD_LIKE_ENGLISH.test(String(token?.english ?? ''))
+  ) {
+    flags.push('food-like hypernym collapsed to eat');
+  }
+  return flags;
+}
+
 export function gradePhrase(tokens) {
   const review = [];
   const gaps = [];
@@ -123,13 +143,21 @@ export function gradePhrase(tokens) {
   let hard = 0;
   for (const t of tokens ?? []) {
     const kind = tokenResolutionKind(t);
-    const tier = RESOLUTION_QUALITY[kind] ?? 'soft';
+    let tier = RESOLUTION_QUALITY[kind] ?? 'soft';
+    const extra = extraReviewFlags(t);
+    if (extra.length && tier === 'pass') tier = 'soft';
     if (tier === 'hard') {
       hard += 1;
       gaps.push({ english: t.english, kind });
     } else if (tier === 'soft') {
       soft += 1;
-      review.push({ english: t.english, kind, concept_id: t.concept_id ?? null, fonoran: t.fonoran ?? null });
+      review.push({
+        english: t.english,
+        kind,
+        concept_id: t.concept_id ?? null,
+        fonoran: t.fonoran ?? null,
+        ...(extra.length ? { flags: extra } : {}),
+      });
     } else {
       pass += 1;
     }

@@ -47,7 +47,7 @@
   },
   "deliberately_lexical": {
     "note": "Handled by concepts/roots, NOT particles, to avoid duplicating the lexicon.",
-    "spatial_relations": ["in -> inside", "at/here -> here", "there -> there", "toward up -> up (dal)", "toward down -> down (nat)", "toward/reach -> reach (ni)", "near -> near", "far -> far"],
+    "spatial_relations": ["in/into -> inside (mes)", "at/here -> here (nam)", "there -> there (tak)", "toward/to -> path (nan)", "from -> source (lo)", "away -> far (fet)", "up/over -> up (ra)", "down/under -> down (ju)", "near -> near (dal)"],
     "pronouns": ["you/we/they/he/she/it resolve lexically; only mi is a particle"],
     "connectives": ["and/or/but handled structurally via clause splitting", "because/so handled as clause connectives"]
   },

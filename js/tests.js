@@ -429,7 +429,34 @@ const fonoranTranslatorResult = await (async () => {
     // root (bel) instead of being silently dropped as a function word.
     const fromRiver = await translateEnglish('I come from the river.');
     const fromTok = fromRiver.tokens.find(t => t.english === 'from');
-    assert(fromTok?.concept_id === 'source' && Boolean(fromTok?.fonoran), `from -> source: ${JSON.stringify(fromTok)}`);
+    assert(fromTok?.concept_id === 'source' && fromTok?.role === 'path' && Boolean(fromTok?.fonoran), `from -> source path: ${JSON.stringify(fromTok)}`);
+
+    const goToCity = await translateEnglish('I go to the city.');
+    assert(goToCity.unresolved.length === 0, `go to city unresolved: ${goToCity.unresolved.join(', ')}`);
+    assert(!goToCity.surface.roman.includes(' sa '), `go to city should not use sa: ${goToCity.surface.roman}`);
+    assert(goToCity.tokens.some(t => t.concept_id === 'move' && t.role === 'event'), 'go -> move event');
+    assert(goToCity.tokens.some(t => t.concept_id === 'path' && t.role === 'path'), 'to -> path slot');
+
+    const willGoCity = await translateEnglish('I will go to the city.');
+    assert(willGoCity.surface.roman.includes(' sa '), `will go to city needs sa: ${willGoCity.surface.roman}`);
+    assert(willGoCity.tokens.some(t => t.concept_id === 'path' && t.role === 'path'), 'will go path slot');
+
+    const goingToGo = await translateEnglish('I am going to go to the city.');
+    assert(goingToGo.tokens.some(t => t.fonoran === 'sa'), `going to go future: ${goingToGo.surface.roman}`);
+    assert(goingToGo.tokens.filter(t => t.concept_id === 'path').length >= 1, 'going to go path');
+
+    const walkToward = await translateEnglish('I walk toward the city.');
+    assert(walkToward.surface.roman === goToCity.surface.roman, `walk toward matches go to: ${walkToward.surface.roman}`);
+
+    const awayFrom = await translateEnglish('I go away from the city.');
+    assert(awayFrom.tokens.some(t => t.concept_id === 'far' && t.role === 'path'), 'away -> far path');
+    assert(awayFrom.tokens.some(t => t.concept_id === 'source' && t.role === 'path'), 'from -> source path');
+
+    const seafoodA = await translateEnglish('I want to eat seafood.');
+    const seafoodB = await translateEnglish('I want to eat sea food.');
+    assert(seafoodA.surface.roman === 'mi sak tel yemelfel telto', `seafood roman: ${seafoodA.surface.roman}`);
+    assert(seafoodB.surface.roman === seafoodA.surface.roman, `sea food diverged: ${seafoodB.surface.roman}`);
+    assert(!seafoodA.tokens.some(t => t.interpret_reason?.includes('hypernym:eat')), 'seafood must not collapse to eat');
 
     return { name: testName, ok: true };
   } catch (e) {

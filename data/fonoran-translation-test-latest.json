@@ -1,19 +1,19 @@
 {
-  "generated_at": "2026-07-02T21:20:58.933Z",
+  "generated_at": "2026-07-02T23:07:07.881Z",
   "corpus_version": "2.0",
-  "total_phrases": 100,
-  "clean_phrases": 96,
-  "coverage_pct": 96,
-  "distinct_gaps": 4,
+  "total_phrases": 131,
+  "clean_phrases": 124,
+  "coverage_pct": 95,
+  "distinct_gaps": 7,
   "quality": {
     "tokens": {
-      "pass": 351,
-      "soft": 18,
-      "hard": 4
+      "pass": 487,
+      "soft": 23,
+      "hard": 7
     },
-    "pass_phrases": 82,
-    "soft_phrases": 14,
-    "hard_phrases": 4
+    "pass_phrases": 107,
+    "soft_phrases": 17,
+    "hard_phrases": 7
   },
   "levels": [
     {
@@ -27,8 +27,8 @@
     {
       "level": 2,
       "name": "Objects",
-      "phrases": 10,
-      "clean": 10,
+      "phrases": 12,
+      "clean": 12,
       "coverage": 100,
       "unresolved_words": 0
     },
@@ -103,6 +103,30 @@
       "clean": 4,
       "coverage": 100,
       "unresolved_words": 0
+    },
+    {
+      "level": 12,
+      "name": "Motion & direction",
+      "phrases": 9,
+      "clean": 9,
+      "coverage": 100,
+      "unresolved_words": 0
+    },
+    {
+      "level": 13,
+      "name": "Complex motion & discourse",
+      "phrases": 10,
+      "clean": 9,
+      "coverage": 90,
+      "unresolved_words": 1
+    },
+    {
+      "level": 14,
+      "name": "Advanced resolution & frames",
+      "phrases": 10,
+      "clean": 8,
+      "coverage": 80,
+      "unresolved_words": 2
     }
   ],
   "gaps": [
@@ -133,6 +157,27 @@
       "samples": [
         "The child laughed after the dog ran away."
       ]
+    },
+    {
+      "word": "alone",
+      "count": 1,
+      "samples": [
+        "Go away and leave me alone."
+      ]
+    },
+    {
+      "word": "fonoran",
+      "count": 1,
+      "samples": [
+        "She wants to learn Fonoran."
+      ]
+    },
+    {
+      "word": "ruled",
+      "count": 1,
+      "samples": [
+        "The old king ruled the city for many years."
+      ]
     }
   ],
   "collapses": [
@@ -145,13 +190,20 @@
         "come",
         "continuing",
         "crossed",
+        "flew",
+        "followed",
         "follows",
+        "go",
+        "going",
+        "leave",
         "left",
         "return",
         "returned",
         "travels",
+        "walk",
         "walked",
         "walking",
+        "went",
         "young"
       ],
       "concepts": [
@@ -202,6 +254,20 @@
       ]
     },
     {
+      "root": "se",
+      "words": [
+        "said",
+        "speaks",
+        "stories",
+        "story",
+        "tell",
+        "tells"
+      ],
+      "concepts": [
+        "speak"
+      ]
+    },
+    {
       "root": "ti",
       "words": [
         "peaceful",
@@ -241,15 +307,15 @@
       ]
     },
     {
-      "root": "se",
+      "root": "ju",
       "words": [
-        "said",
-        "speaks",
-        "stories",
-        "tells"
+        "fall",
+        "fell",
+        "set",
+        "sets"
       ],
       "concepts": [
-        "speak"
+        "down"
       ]
     },
     {
@@ -298,17 +364,6 @@
       ]
     },
     {
-      "root": "ju",
-      "words": [
-        "fall",
-        "fell",
-        "sets"
-      ],
-      "concepts": [
-        "down"
-      ]
-    },
-    {
       "root": "tet",
       "words": [
         "leaves",
@@ -350,6 +405,28 @@
       ],
       "concepts": [
         "open"
+      ]
+    },
+    {
+      "root": "sak",
+      "words": [
+        "hungry",
+        "want",
+        "wants"
+      ],
+      "concepts": [
+        "want"
+      ]
+    },
+    {
+      "root": "yetasnan",
+      "words": [
+        "forest toward the river",
+        "river",
+        "us from the river"
+      ],
+      "concepts": [
+        "river"
       ]
     },
     {
@@ -405,6 +482,17 @@
       ],
       "concepts": [
         "change"
+      ]
+    },
+    {
+      "root": "hugatmes",
+      "words": [
+        "memory",
+        "over",
+        "store"
+      ],
+      "concepts": [
+        "memory"
       ]
     },
     {
@@ -517,16 +605,6 @@
       ]
     },
     {
-      "root": "guwi",
-      "words": [
-        "beautiful",
-        "cold but morning was beautiful"
-      ],
-      "concepts": [
-        "beautiful"
-      ]
-    },
-    {
       "root": "samye",
       "words": [
         "because it rained",
@@ -567,6 +645,16 @@
       ]
     },
     {
+      "root": "mo",
+      "words": [
+        "guard",
+        "market"
+      ],
+      "concepts": [
+        "do"
+      ]
+    },
+    {
       "root": "kasfemba",
       "words": [
         "doctor",
@@ -587,13 +675,13 @@
       ]
     },
     {
-      "root": "hugatmes",
+      "root": "gan",
       "words": [
-        "memory",
-        "over"
+        "afraid of dark",
+        "dark"
       ],
       "concepts": [
-        "memory"
+        "dark"
       ]
     }
   ],
@@ -1072,6 +1160,52 @@
       "review": [],
       "gaps": [],
       "expected": "gesgi gesgi tet",
+      "matches_golden": true
+    },
+    {
+      "level": 2,
+      "phrase": "I want to eat seafood.",
+      "roman": "mi sak tel yemelfel telto",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi sak tel yemelfel telto",
+      "matches_golden": true
+    },
+    {
+      "level": 2,
+      "phrase": "I want to eat sea food.",
+      "roman": "mi sak tel yemelfel telto",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi sak tel yemelfel telto",
       "matches_golden": true
     },
     {
@@ -2567,25 +2701,26 @@
     {
       "level": 9,
       "phrase": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
-      "roman": "di ta dan gi yetasnan ye ta guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan",
+      "roman": "di ta dan gi nan yetasnan ye kekshu ta ta mak guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan",
       "unresolved": [],
       "counts": {
-        "direct": 28,
-        "interpreted": 2,
+        "direct": 30,
+        "interpreted": 4,
         "semantic": 0,
         "alias_weak": 0,
         "unknown": 0
       },
       "quality": {
         "gate": "pass",
-        "pass": 30,
+        "pass": 34,
         "soft": 0,
         "hard": 0
       },
       "review": [],
       "gaps": [],
-      "expected": "di ta dan gi yetasnan ye ta guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan",
-      "matches_golden": true
+      "expected": "di ta dan gi nan yetasnan ye kekshu ta ta mak guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan",
+      "matches_golden": true,
+      "note": "walked to river surfaces path (nan); but-clause splits coordinated discourse"
     },
     {
       "level": 10,
@@ -3065,6 +3200,738 @@
       "gaps": [],
       "expected": "kan kasfemba mel tesfem hugatmes gat tes fo",
       "matches_golden": true
+    },
+    {
+      "level": 12,
+      "phrase": "I go to the city.",
+      "roman": "mi gi nan lekche",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi gi nan lekche",
+      "matches_golden": true
+    },
+    {
+      "level": 12,
+      "phrase": "I walk toward the city.",
+      "roman": "mi gi nan lekche",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi gi nan lekche",
+      "matches_golden": true
+    },
+    {
+      "level": 12,
+      "phrase": "I will go to the city.",
+      "roman": "mi sa gi nan lekche",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi sa gi nan lekche",
+      "matches_golden": true
+    },
+    {
+      "level": 12,
+      "phrase": "I am going to go to the city.",
+      "roman": "mi sa gi nan lekche",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi sa gi nan lekche",
+      "matches_golden": true
+    },
+    {
+      "level": 12,
+      "phrase": "I am going to the city.",
+      "roman": "mi gi nan lekche",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi gi nan lekche",
+      "matches_golden": true,
+      "note": "going-to-place: present motion, not future sa"
+    },
+    {
+      "level": 12,
+      "phrase": "He went to the store.",
+      "roman": "ba ta gi nan hugatmes",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "interpreted": 2,
+        "semantic": 1,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "soft",
+        "pass": 4,
+        "soft": 1,
+        "hard": 0
+      },
+      "review": [
+        {
+          "english": "store",
+          "kind": "semantic",
+          "concept_id": "memory",
+          "fonoran": "hugatmes"
+        }
+      ],
+      "gaps": [],
+      "expected": "ba ta gi nan hugatmes",
+      "matches_golden": true
+    },
+    {
+      "level": 12,
+      "phrase": "The dog ran away.",
+      "roman": "kal ta ginek fet",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "kal ta ginek fet",
+      "matches_golden": true
+    },
+    {
+      "level": 12,
+      "phrase": "I come from the river.",
+      "roman": "mi gi lo yetasnan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi gi lo yetasnan",
+      "matches_golden": true
+    },
+    {
+      "level": 12,
+      "phrase": "I go away from the city.",
+      "roman": "mi gi fet lo lekche",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 2,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi gi fet lo lekche",
+      "matches_golden": true
+    },
+    {
+      "level": 13,
+      "phrase": "They ran toward us from the river.",
+      "roman": "dan ta ginek nan yetasnan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 2,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "dan ta ginek nan yetasnan",
+      "matches_golden": true,
+      "note": "compound path toward + from"
+    },
+    {
+      "level": 13,
+      "phrase": "Are you going to the market tomorrow?",
+      "roman": "shu be gi nan mo",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "interpreted": 2,
+        "semantic": 1,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "soft",
+        "pass": 4,
+        "soft": 1,
+        "hard": 0
+      },
+      "review": [
+        {
+          "english": "market",
+          "kind": "semantic",
+          "concept_id": "do",
+          "fonoran": "mo"
+        }
+      ],
+      "gaps": [],
+      "expected": "shu be gi nan mo",
+      "matches_golden": true,
+      "note": "question subject preserved; tomorrow trailing time"
+    },
+    {
+      "level": 13,
+      "phrase": "Come here quickly.",
+      "roman": "gi nan nam",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "gi nan nam",
+      "matches_golden": true
+    },
+    {
+      "level": 13,
+      "phrase": "The hunter followed the animal into the forest.",
+      "roman": "lakalba ta gi mes kal lekshe",
+      "unresolved": [],
+      "counts": {
+        "direct": 5,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 6,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "lakalba ta gi mes kal lekshe",
+      "matches_golden": true,
+      "note": "transitive motion + into path"
+    },
+    {
+      "level": 13,
+      "phrase": "We should not go there at night.",
+      "roman": "dan no gi nan tak",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 2,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "dan no gi nan tak",
+      "matches_golden": true,
+      "note": "negation on motion frame"
+    },
+    {
+      "level": 13,
+      "phrase": "Go away and leave me alone.",
+      "roman": "gi gi fet mi [alone]",
+      "unresolved": [
+        "alone"
+      ],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 1
+      },
+      "quality": {
+        "gate": "hard",
+        "pass": 4,
+        "soft": 0,
+        "hard": 1
+      },
+      "review": [],
+      "gaps": [
+        {
+          "english": "alone",
+          "kind": "unknown"
+        }
+      ],
+      "expected": "gi gi fet mi [alone]",
+      "matches_golden": true,
+      "note": "coordinated motion clauses; alone gap"
+    },
+    {
+      "level": 13,
+      "phrase": "I want to go to the city but I am afraid of the dark.",
+      "roman": "mi gi nan lekche gan",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi gi nan lekche gan",
+      "matches_golden": true,
+      "note": "but-clause split; want omitted (no obligation grammar)"
+    },
+    {
+      "level": 13,
+      "phrase": "The bird flew over the lake and landed near the trees.",
+      "roman": "kal gi ra yeti",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "interpreted": 2,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "kal gi ra yeti",
+      "matches_golden": true,
+      "note": "over path; second clause partially compiled"
+    },
+    {
+      "level": 13,
+      "phrase": "He said he would return home after the sun set.",
+      "roman": "ba se ba gi chekam shu samdat ju",
+      "unresolved": [],
+      "counts": {
+        "direct": 7,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 8,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "ba se ba gi chekam shu samdat ju",
+      "matches_golden": true
+    },
+    {
+      "level": 13,
+      "phrase": "I have never been to the city before.",
+      "roman": "mi ta no lekche di",
+      "unresolved": [],
+      "counts": {
+        "direct": 5,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi ta no lekche di",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "I want to sleep.",
+      "roman": "mi sak nal",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi sak nal",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "She wants to learn Fonoran.",
+      "roman": "ba sak lahu [fonoran]",
+      "unresolved": [
+        "fonoran"
+      ],
+      "counts": {
+        "direct": 2,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 1
+      },
+      "quality": {
+        "gate": "hard",
+        "pass": 3,
+        "soft": 0,
+        "hard": 1
+      },
+      "review": [],
+      "gaps": [
+        {
+          "english": "fonoran",
+          "kind": "unknown"
+        }
+      ],
+      "expected": "ba sak lahu [fonoran]",
+      "matches_golden": true,
+      "note": "gap: fonoran (needs a root)"
+    },
+    {
+      "level": 14,
+      "phrase": "Do not eat the fish.",
+      "roman": "no tel kalye",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "no tel kalye",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "The fish swims in the river.",
+      "roman": "kalye giye yetasnan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "kalye giye yetasnan",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "Bring me water.",
+      "roman": "la mi ye",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "interpreted": 0,
+        "semantic": 1,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "soft",
+        "pass": 2,
+        "soft": 1,
+        "hard": 0
+      },
+      "review": [
+        {
+          "english": "bring",
+          "kind": "semantic",
+          "concept_id": "take",
+          "fonoran": "la"
+        }
+      ],
+      "gaps": [],
+      "expected": "la mi ye",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "We ran through the forest toward the river.",
+      "roman": "dan ta ginek nan yetasnan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 2,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "dan ta ginek nan yetasnan",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "Nobody went home after dark.",
+      "roman": "no ba gi chekam shu gan",
+      "unresolved": [],
+      "counts": {
+        "direct": 6,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 6,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "no ba gi chekam shu gan",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "Tell the child a story about the sea.",
+      "roman": "se genba se yemelfel",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "se genba se yemelfel",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "I am afraid of the dark.",
+      "roman": "mi pe gan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi pe gan",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "The old king ruled the city for many years.",
+      "roman": "di ta ru [ruled] lekche lek kekdi",
+      "unresolved": [
+        "ruled"
+      ],
+      "counts": {
+        "direct": 4,
+        "interpreted": 0,
+        "semantic": 2,
+        "alias_weak": 0,
+        "unknown": 1
+      },
+      "quality": {
+        "gate": "hard",
+        "pass": 4,
+        "soft": 2,
+        "hard": 1
+      },
+      "review": [
+        {
+          "english": "king",
+          "kind": "semantic",
+          "concept_id": "strong",
+          "fonoran": "ru"
+        },
+        {
+          "english": "years",
+          "kind": "semantic",
+          "concept_id": "day",
+          "fonoran": "kekdi"
+        }
+      ],
+      "gaps": [
+        {
+          "english": "ruled",
+          "kind": "unknown"
+        }
+      ],
+      "expected": "di ta ru [ruled] lekche lek kekdi",
+      "matches_golden": true,
+      "note": "gap: ruled (needs a root)"
     }
   ]
 }

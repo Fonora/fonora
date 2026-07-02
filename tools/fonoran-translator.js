@@ -19,6 +19,7 @@ import {
   matchSubjectBeAdj,
   matchBeConstruction,
   matchSubjectVerbToNp,
+  matchDesireInfinitive,
   matchIdiomPhrase,
   peelFutureIntent,
   irregularPastLemma,
@@ -26,17 +27,24 @@ import {
   resetInterpretationCache,
   nominalPhraseFromTokens,
   parseTrailingPhrase,
+  assignFallbackTrailing,
   matchLeadingTimeAdverbial,
   matchSubjectLinkingPredicate,
   splitIntoClauses,
   mergePhrasalTokens,
   MODALS,
   splitLandmarkPhrase,
+  matchMotionPhrase,
+  normalizeMotionSlots,
+  peelFutureFromTokens,
+  LEADING_TIME_WORDS,
+  peelQuestionAuxiliary,
 } from './fonoran-interpretation.js';
 import {
   buildResolveContext,
   resolveEnglishToken,
   tokenizeEnglish,
+  mergeEnglishCompounds,
   lemmatizeEnglish,
   IRREGULAR,
   CONJUNCTIONS,
@@ -224,6 +232,28 @@ export function splitSentences(text) {
     .filter(Boolean);
 }
 
+function applyTenseToSlots(slots, tense) {
+  if (tense === 'past' && !slots.time.some(t => t.particle === PARTICLE_PLACEHOLDERS.tense_past)) {
+    slots.time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
+  } else if (tense === 'future' && !slots.time.some(t => t.particle === PARTICLE_PLACEHOLDERS.tense_future)) {
+    slots.time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
+  }
+}
+
+function applyMotionPhrase(motionHit, slots, rules, { subject = [] } = {}) {
+  if (motionHit.subject && !subject.length) {
+    slots.subject.push(motionHit.subject);
+  }
+  slots.event.push(motionHit.event);
+  const paths = Array.isArray(motionHit.path) ? motionHit.path : (motionHit.path ? [motionHit.path] : []);
+  slots.path.push(...paths);
+  if (motionHit.object) slots.object.push(motionHit.object);
+  if (motionHit.modifiers?.length) slots.modifiers.push(...motionHit.modifiers);
+  if (motionHit.trailingTime?.length) slots.time.push(...motionHit.trailingTime);
+  applyTenseToSlots(slots, motionHit.tense);
+  return normalizeMotionSlots(slots, rules);
+}
+
 function applyBeConstruction(beHit, slots, rules) {
   if (!slots.subject.length) {
     slots.subject.push({ english: beHit.subject, role: 'subject' });
@@ -289,6 +319,22 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
     tokens = tokens.slice(1);
   }
 
+  const questionPeel = peelQuestionAuxiliary(tokens, { pronounWords: PRONOUN_WORDS });
+  tokens = questionPeel.tokens;
+  if (questionPeel.peeled && questionPeel.subjectWord && !subject.length) {
+    const p = questionPeel.subjectWord.toLowerCase();
+    if (PRONOUNS[p]) {
+      subject.push({ english: questionPeel.subjectWord, role: 'subject', particle: PRONOUNS[p] });
+    } else {
+      const conceptHint = PRONOUN_CONCEPTS[p];
+      subject.push({
+        english: questionPeel.subjectWord,
+        role: 'subject',
+        ...(conceptHint ? { concept_hint: conceptHint, interpret_reason: 'pronoun' } : {}),
+      });
+    }
+  }
+
   const timeHit = matchLeadingTimeAdverbial(tokens);
   if (timeHit) {
     time.push({ english: timeHit.english, role: 'time' });
@@ -308,6 +354,31 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
       });
     }
     tokens = tokens.slice(1);
+  }
+
+  let motionTokens = [...tokens];
+  let motionNegated = false;
+  motionTokens = motionTokens.filter((t) => {
+    if (isNegationWord(t)) {
+      motionNegated = true;
+      return false;
+    }
+    return true;
+  });
+  const futureOnRaw = peelFutureFromTokens(motionTokens, rules);
+  if (futureOnRaw.tense === 'future') {
+    motionTokens = futureOnRaw.tokens;
+  }
+  const motionHit = matchMotionPhrase(motionTokens, rules);
+  if (motionHit) {
+    const slots = { subject, time, event, path, object, modifiers };
+    if (futureOnRaw.tense === 'future') motionHit.tense = 'future';
+    applyMotionPhrase(motionHit, slots, rules, { subject });
+    if (motionNegated) {
+      const negForm = PARTICLES?.byId.get('logic_not')?.form ?? 'no';
+      time.push({ english: 'not', role: 'time', particle: negForm });
+    }
+    return slots;
   }
 
   if (tokens.length <= 1) {
@@ -364,6 +435,30 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
     return slots;
   }
 
+  const desireInf = matchDesireInfinitive(patternTokens, rules);
+  if (desireInf) {
+    if (desireInf.subject && !subject.length) subject.push(desireInf.subject);
+    event.push(desireInf.event);
+    object.push(desireInf.object);
+    modifiers.push(...desireInf.modifiers);
+    let auxTense = null;
+    let negated = false;
+    for (const t of patternTokens) {
+      if (TENSE_AUX[t]) auxTense = TENSE_AUX[t];
+      if (isNegationWord(t)) negated = true;
+    }
+    if (auxTense === 'past') {
+      time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
+    } else if (auxTense === 'future') {
+      time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
+    }
+    if (negated) {
+      const negForm = PARTICLES?.byId.get('logic_not')?.form ?? 'no';
+      time.push({ english: 'not', role: 'time', particle: negForm });
+    }
+    return { subject, time, event, path, object, modifiers };
+  }
+
   const content = [];
   let auxTense = null;
   let negated = false;
@@ -383,7 +478,7 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
   let working = [...content];
   let tense = auxTense ?? 'present';
 
-  const futurePeel = peelFutureIntent(working);
+  const futurePeel = peelFutureIntent(working, rules);
   if (futurePeel) {
     tense = 'future';
     working = [...futurePeel.before, ...futurePeel.after];
@@ -467,7 +562,9 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
     if (firstPos === 'verb' && secondPos !== 'verb') {
       event.push({ english: working[0], role: 'event' });
       object.push({ english: working[1], role: 'object' });
-      for (const extra of working.slice(2)) modifiers.push({ english: extra, role: 'modifier' });
+      const trailing = await assignFallbackTrailing(working.slice(2), rules, { skip: SKIP });
+      object.push(...trailing.object);
+      modifiers.push(...trailing.modifiers);
       return slots;
     }
     subject.push({ english: working[0], role: 'subject' });
@@ -477,12 +574,14 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
   if (working.length >= 2) {
     event.push({ english: working[0], role: 'event' });
     object.push({ english: working[1], role: 'object' });
-    for (const extra of working.slice(2)) modifiers.push({ english: extra, role: 'modifier' });
+    const trailing = await assignFallbackTrailing(working.slice(2), rules, { skip: SKIP });
+    object.push(...trailing.object);
+    modifiers.push(...trailing.modifiers);
   } else if (working.length === 1) {
     event.push({ english: working[0], role: 'event' });
   }
 
-  return slots;
+  return normalizeMotionSlots({ subject, time, event, path, object, modifiers }, rules);
 }
 
 /**
@@ -516,9 +615,20 @@ async function compileSemanticSlots(tokens, rules) {
   for (const clause of clauses) {
     const slotData = await compileClause(clause, rules, { carriedSubject });
     if (slotData.subject.length) {
+      const lastSubj = combined.subject.at(-1);
+      const newSubj = slotData.subject[0];
+      const dupPronoun = lastSubj?.particle && newSubj?.particle
+        && lastSubj.particle === newSubj.particle;
+      if (!dupPronoun) {
+        appendSlots(combined, slotData);
+      } else {
+        const { subject: _skip, ...rest } = slotData;
+        appendSlots(combined, { subject: [], ...rest });
+      }
       carriedSubject = slotData.subject;
+    } else {
+      appendSlots(combined, slotData);
     }
-    appendSlots(combined, slotData);
   }
   return { mode: 'discourse', ...combined };
 }
@@ -575,10 +685,23 @@ async function resolveSlot(ctx, slot, role) {
     allowSemantic: true,
     allowGuess: true,
     surfaceEnglish: slot.english,
+    avoidConceptIds: role === 'modifier' ? ctx.frameConceptIds : null,
   });
 }
 
 async function slotsToTokens(ctx, slots) {
+  ctx.frameConceptIds = ctx.frameConceptIds ?? new Set();
+
+  const trackResolved = (token, role) => {
+    if (!token) return;
+    if (Array.isArray(token)) {
+      for (const t of token) trackResolved(t, role);
+      return;
+    }
+    if (token.concept_id && (role === 'event' || role === 'object')) {
+      ctx.frameConceptIds.add(token.concept_id);
+    }
+  };
   if (slots.mode === 'word') {
     const english = slots.event[0]?.english;
     if (!english) return [];
@@ -589,9 +712,16 @@ async function slotsToTokens(ctx, slots) {
   }
 
   const out = [];
-  const push = (resolved) => {
-    if (Array.isArray(resolved)) out.push(...resolved);
-    else out.push(resolved);
+  const push = (resolved, role) => {
+    if (Array.isArray(resolved)) {
+      for (const t of resolved) {
+        trackResolved(t, role);
+        out.push(t);
+      }
+    } else {
+      trackResolved(resolved, role);
+      out.push(resolved);
+    }
   };
 
   // A wh-interrogative anywhere in the clause flags a question; emit the clause-initial marker.
@@ -608,18 +738,36 @@ async function slotsToTokens(ctx, slots) {
     if (marker?.form) out.push(particleToken('interrogative', marker.form, 'question'));
   }
 
-  for (const slot of slots.subject) {
-    if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
-    else push(await resolveSlot(ctx, slot, 'subject'));
+  const calendarTime = slots.time.filter(s => LEADING_TIME_WORDS.has(String(s.english ?? '').toLowerCase()));
+  const otherTime = slots.time.filter(s => !LEADING_TIME_WORDS.has(String(s.english ?? '').toLowerCase()));
+
+  if (calendarTime.length) {
+    for (const slot of calendarTime) {
+      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'time'), 'time');
+    }
+    for (const slot of otherTime) {
+      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'time'), 'time');
+    }
+    for (const slot of slots.subject) {
+      if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'subject'), 'subject');
+    }
+  } else {
+    for (const slot of slots.subject) {
+      if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'subject'), 'subject');
+    }
+    for (const slot of slots.time) {
+      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'time'), 'time');
+    }
   }
-  for (const slot of slots.time) {
-    if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
-    else push(await resolveSlot(ctx, slot, 'time'));
-  }
-  for (const slot of slots.event) push(await resolveSlot(ctx, slot, 'event'));
-  for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'));
-  for (const slot of slots.object) push(await resolveSlot(ctx, slot, 'object'));
-  for (const slot of slots.modifiers) push(await resolveSlot(ctx, slot, 'modifier'));
+  for (const slot of slots.event) push(await resolveSlot(ctx, slot, 'event'), 'event');
+  for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'), 'path');
+  for (const slot of slots.object) push(await resolveSlot(ctx, slot, 'object'), 'object');
+  for (const slot of slots.modifiers) push(await resolveSlot(ctx, slot, 'modifier'), 'modifier');
   return out;
 }
 
@@ -673,7 +821,7 @@ export async function translateEnglish(text, options = {}) {
     const allTokens = [];
     const mergedSlots = emptySlots();
     for (const sent of sentences) {
-      const englishTokens = mergePhrasalTokens(tokenizeEnglish(sent));
+      const englishTokens = mergePhrasalTokens(mergeEnglishCompounds(tokenizeEnglish(sent), ctx.aliasIndex));
       const semantic = await compileSemanticSlots(englishTokens, rules);
       appendSlots(mergedSlots, semantic);
       allTokens.push(...await slotsToTokens(ctx, semantic));
@@ -706,7 +854,7 @@ export async function translateEnglish(text, options = {}) {
     };
   }
 
-  const englishTokens = mergePhrasalTokens(tokenizeEnglish(sentences[0] ?? input));
+  const englishTokens = mergePhrasalTokens(mergeEnglishCompounds(tokenizeEnglish(sentences[0] ?? input), ctx.aliasIndex));
   const semantic = await compileSemanticSlots(englishTokens, rules);
   const tokens = await slotsToTokens(ctx, semantic);
   const surface = buildSurface(tokens);
