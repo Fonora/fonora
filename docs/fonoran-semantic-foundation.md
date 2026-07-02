@@ -220,9 +220,9 @@ Subject · Time · Event · Object · Modifiers
 | Group | Particles | Notes |
 | --- | --- | --- |
 | **Pronoun** | I, you, we, they, he, she, it | `mi` is an existing placeholder for I |
-| **Tense** | past (`ta`), future (`na`) | Present has **no particle**; inferred when Time slot is empty |
+| **Tense** | past (`ta`), future (`sa`) | Present has **no particle**; inferred when Time slot is empty |
 | **Logical** | not, and, or, if, because, therefore, yes, no | Clause-level relationships; causation is grammar |
-| **Relationship** | with, without, toward, from, in, at | Relational modifiers; not lexical roots |
+| **Spatial direction** | — | **Lexical Path slot**, not particles: `path` (toward/to), `source` (from), `far` (away), `inside`, `up`, `near` — see RN-14 |
 | **Deixis** | this, that | Pointing at referents |
 | **Interrogative** | what, who, when, where, why, how | Questions |
 
@@ -234,7 +234,7 @@ Subject · Time · Event · Object · Modifiers
 | --- | --- | --- |
 | Particle | past (`ta`) | Marks time in clause. Never a concept root |
 | Inferred | present | No surface particle. Default tense |
-| Particle | future (`na`) | Marks time in clause. Never a concept root |
+| Particle | future (`sa`) | Marks time in clause. Never a concept root |
 | Primitive | before | Lexical time concept usable in compounds |
 | Compound | memory | knowledge + inside |
 

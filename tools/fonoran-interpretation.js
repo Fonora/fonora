@@ -25,8 +25,24 @@ export const PREP_OBJECT = new Set([
   'with', 'against', 'versus', 'vs', 'toward', 'towards', 'from', 'by',
 ]);
 
-/** English futurate markers before an infinitive (to is stripped earlier as a particle). */
-const FUTURE_INTENT_MARKERS = new Set(['will', 'going', 'go', 'goes', 'shall']);
+/** English futurate auxiliaries (go/goes are locomotion, not future markers). */
+const FUTURE_INTENT_MARKERS = new Set(['will', 'shall']);
+
+/** Locomotion verbs outside the locomotion class index. */
+const LOCOMOTION_EXTRA = new Set([
+  'go', 'goes', 'went', 'going', 'gone',
+  'come', 'came', 'comes', 'coming',
+  'return', 'returned', 'returns', 'returning',
+  'leave', 'left', 'leaves', 'leaving',
+]);
+
+/** Calendar words that open a clause as a time adverbial. */
+export const LEADING_TIME_WORDS = new Set(['yesterday', 'today', 'tomorrow', 'now', 'tonight']);
+
+const TENSE_AUX_FOR_MOTION = new Set([
+  'is', 'am', 'are', 'was', 'were', 'be', 'been', 'being',
+  'do', 'does', 'did', 'have', 'has', 'had',
+]);
 
 const BE_FORMS = new Set(['is', 'am', 'are', 'was', 'were', 'be', 'been', 'being']);
 
@@ -358,15 +374,343 @@ export function mergePhrasalTokens(tokens) {
   return out;
 }
 
-/** Leading time phrase: every morning, each day. */
+/** Leading time phrase: yesterday; every morning, each day. */
 export function matchLeadingTimeAdverbial(tokens) {
+  if (!tokens.length) return null;
+  const head = tokens[0]?.toLowerCase();
+  if (LEADING_TIME_WORDS.has(head)) {
+    return { english: head, consumed: 1 };
+  }
   if (tokens.length < 2) return null;
-  if (!TIME_DETERMINERS.has(tokens[0]?.toLowerCase())) return null;
+  if (!TIME_DETERMINERS.has(head)) return null;
   if (!TIME_NOUNS.has(tokens[1]?.toLowerCase())) return null;
   return {
     english: `${tokens[0]} ${tokens[1]}`.toLowerCase(),
     consumed: 2,
   };
+}
+
+/** Whether a surface form is a locomotion verb (move family). */
+export function isLocomotionVerb(word, rules) {
+  const w = String(word ?? '').trim().toLowerCase();
+  if (!w) return false;
+  if (LOCOMOTION_EXTRA.has(w)) return true;
+  const classIndex = buildClassIndex(rules);
+  for (const key of lemmaCandidates(w, rules)) {
+    if (classIndex.get(key)?.concept_id === 'move') return true;
+  }
+  return false;
+}
+
+function isLikelyInfinitiveVerb(word, rules) {
+  const w = String(word ?? '').trim().toLowerCase();
+  if (!w || ARTICLES.has(w) || w === 'away' || w === 'from') return false;
+  if (BE_FORMS.has(w) || TENSE_AUX_FOR_MOTION.has(w)) return false;
+  if (isLocomotionVerb(w, rules)) return true;
+  const classIndex = buildClassIndex(rules);
+  for (const key of lemmaCandidates(w, rules)) {
+    if (classIndex.has(key)) return true;
+  }
+  return false;
+}
+
+function stripSubjectNoise(parts) {
+  return parts.filter(w => {
+    const x = w?.toLowerCase();
+    return x && !BE_FORMS.has(x) && !ARTICLES.has(x) && !TENSE_AUX_FOR_MOTION.has(x);
+  });
+}
+
+const SUBORDINATORS = new Set([
+  'after', 'before', 'when', 'while', 'until', 'since', 'because', 'although', 'if', 'as',
+]);
+
+/** Stop landmark NPs at clause boundaries and trailing time adverbs. */
+export const CLAUSE_BOUNDARY = new Set([
+  'but', 'and', 'or', 'when', 'after', 'before', 'because', 'although', 'if', 'then', 'while', 'until', 'since',
+]);
+
+const TRAILING_TIME_IN_NP = new Set(['tomorrow', 'today', 'yesterday', 'tonight', 'now']);
+
+function spatialPrepKeys(rules) {
+  return new Set(Object.keys(rules?.spatial_path ?? {}));
+}
+
+function looksLikeVerbWord(word, rules) {
+  const w = String(word ?? '').toLowerCase();
+  if (!w || BE_FORMS.has(w) || TENSE_AUX_FOR_MOTION.has(w)) return false;
+  if (isLocomotionVerb(w, rules)) return true;
+  if (LINKING_VERBS.has(w)) return true;
+  const classIndex = buildClassIndex(rules);
+  for (const key of lemmaCandidates(w, rules)) {
+    if (classIndex.has(key)) return true;
+  }
+  if (w.endsWith('ed') && w.length > 3) return true;
+  return false;
+}
+
+function subjectPartsBeforeVerb(tokens, verbIdx, rules) {
+  const parts = stripSubjectNoise(tokens.slice(0, verbIdx));
+  if (!parts.length) return parts;
+  const lower = parts.map(p => p.toLowerCase());
+  if (lower.some(w => SUBORDINATORS.has(w))) return null;
+  if (parts.some(w => looksLikeVerbWord(w, rules))) return null;
+  return parts;
+}
+
+function extractLandmarkNp(tokens, start, { stopPreps = null } = {}) {
+  let i = start;
+  while (i < tokens.length && ARTICLES.has(tokens[i]?.toLowerCase())) i += 1;
+  const parts = [];
+  for (; i < tokens.length; i += 1) {
+    const w = tokens[i]?.toLowerCase();
+    if (CLAUSE_BOUNDARY.has(w)) break;
+    if (stopPreps?.has(w)) break;
+    if (TRAILING_TIME_IN_NP.has(w) && parts.length) break;
+    parts.push(tokens[i]);
+  }
+  if (!parts.length) return null;
+  return { english: parts.join(' '), end: i };
+}
+
+function pathEntry(prep, rules) {
+  const key = prep?.toLowerCase();
+  const spec = rules?.spatial_path?.[key];
+  return {
+    english: key,
+    role: 'path',
+    concept_hint: spec?.concept_id ?? null,
+    interpret_reason: spec?.reason ?? 'spatial path',
+  };
+}
+
+function inferMotionTense(tokens, eventWord, rules) {
+  for (const t of tokens) {
+    const x = t?.toLowerCase();
+    if (x === 'will' || x === 'shall') return 'future';
+    if (TENSE_AUX_FOR_MOTION.has(x) && (x === 'was' || x === 'were' || x === 'did' || x === 'had')) {
+      return 'past';
+    }
+  }
+  const w = String(eventWord ?? '').toLowerCase();
+  if (irregularPastLemma(w, rules)) return 'past';
+  if (w === 'went' || w === 'came' || w === 'left' || w === 'returned') return 'past';
+  if (w.endsWith('ed') && w.length > 3) return 'past';
+  return 'present';
+}
+
+/**
+ * SUBJECT* + locomotion verb + toward NP + from NP.
+ */
+export function matchMotionTowardFrom(tokens, rules) {
+  if (!tokens?.length || tokens.length < 5) return null;
+  const preps = spatialPrepKeys(rules);
+
+  for (let verbIdx = 0; verbIdx < tokens.length; verbIdx += 1) {
+    const verb = tokens[verbIdx];
+    if (!isLocomotionVerb(verb, rules)) continue;
+
+    const prep1 = tokens[verbIdx + 1]?.toLowerCase();
+    if (prep1 !== 'toward' && prep1 !== 'towards' && prep1 !== 'to') continue;
+
+    const midLandmark = extractLandmarkNp(tokens, verbIdx + 2);
+    if (!midLandmark) continue;
+    if (tokens[midLandmark.end]?.toLowerCase() !== 'from') continue;
+
+    const finalLandmark = extractLandmarkNp(tokens, midLandmark.end + 1);
+    if (!finalLandmark) continue;
+
+    const subjectParts = subjectPartsBeforeVerb(tokens, verbIdx, rules);
+    if (subjectParts === null) continue;
+
+    return {
+      subject: subjectParts.length
+        ? { english: subjectParts.join(' '), role: 'subject' }
+        : null,
+      event: { english: verb, role: 'event' },
+      path: [pathEntry(prep1, rules), pathEntry('from', rules)],
+      object: { english: finalLandmark.english, role: 'object' },
+      modifiers: [{ english: midLandmark.english, role: 'modifier' }],
+      tense: inferMotionTense(tokens, verb, rules),
+    };
+  }
+  return null;
+}
+
+/**
+ * SUBJECT* + locomotion verb + spatial prep + landmark NP.
+ * Scans raw tokens before function-word stripping so preps stay visible.
+ */
+export function matchMotionDestination(tokens, rules) {
+  if (!tokens?.length || tokens.length < 2) return null;
+  const preps = spatialPrepKeys(rules);
+
+  for (let verbIdx = 0; verbIdx < tokens.length; verbIdx += 1) {
+    const verb = tokens[verbIdx];
+    if (!isLocomotionVerb(verb, rules)) continue;
+
+    let i = verbIdx + 1;
+    const prep = tokens[i]?.toLowerCase();
+    let pathSlot = null;
+    let landmark = null;
+
+    if (prep && preps.has(prep) && prep !== 'away' && prep !== 'from') {
+      pathSlot = pathEntry(prep, rules);
+      i += 1;
+      landmark = extractLandmarkNp(tokens, i);
+    } else {
+      const deictic = tokens[i]?.toLowerCase();
+      if (deictic === 'here' || deictic === 'there') {
+        pathSlot = pathEntry('to', rules);
+        landmark = { english: deictic, end: i + 1 };
+      } else {
+        continue;
+      }
+    }
+
+    if (!landmark) continue;
+
+    const subjectParts = subjectPartsBeforeVerb(tokens, verbIdx, rules);
+    if (subjectParts === null) continue;
+
+    const trailingTime = [];
+    const trailWord = tokens[landmark.end]?.toLowerCase();
+    if (trailWord && TRAILING_TIME_IN_NP.has(trailWord)) {
+      trailingTime.push({ english: trailWord, role: 'time' });
+    }
+
+    return {
+      subject: subjectParts.length
+        ? { english: subjectParts.join(' '), role: 'subject' }
+        : null,
+      event: { english: verb, role: 'event' },
+      path: pathSlot,
+      object: { english: landmark.english, role: 'object' },
+      trailingTime,
+      tense: inferMotionTense(tokens, verb, rules),
+    };
+  }
+  return null;
+}
+
+/**
+ * SUBJECT* + locomotion verb + from + landmark NP → path source.
+ */
+export function matchMotionFrom(tokens, rules) {
+  if (!tokens?.length || tokens.length < 3) return null;
+
+  for (let verbIdx = 0; verbIdx < tokens.length; verbIdx += 1) {
+    const verb = tokens[verbIdx];
+    if (!isLocomotionVerb(verb, rules)) continue;
+    if (tokens[verbIdx + 1]?.toLowerCase() !== 'from') continue;
+
+    const landmark = extractLandmarkNp(tokens, verbIdx + 2);
+    if (!landmark) continue;
+
+    const subjectParts = subjectPartsBeforeVerb(tokens, verbIdx, rules);
+    if (subjectParts === null) continue;
+
+    return {
+      subject: subjectParts.length
+        ? { english: subjectParts.join(' '), role: 'subject' }
+        : null,
+      event: { english: verb, role: 'event' },
+      path: pathEntry('from', rules),
+      object: { english: landmark.english, role: 'object' },
+      tense: inferMotionTense(tokens, verb, rules),
+    };
+  }
+  return null;
+}
+
+/**
+ * SUBJECT* + locomotion verb + away [from landmark NP].
+ */
+export function matchMotionAway(tokens, rules) {
+  if (!tokens?.length || tokens.length < 2) return null;
+
+  for (let verbIdx = 0; verbIdx < tokens.length; verbIdx += 1) {
+    const verb = tokens[verbIdx];
+    if (!isLocomotionVerb(verb, rules)) continue;
+    if (tokens[verbIdx + 1]?.toLowerCase() !== 'away') continue;
+
+    const paths = [pathEntry('away', rules)];
+    let object = null;
+    let i = verbIdx + 2;
+    if (tokens[i]?.toLowerCase() === 'from') {
+      paths.push(pathEntry('from', rules));
+      const landmark = extractLandmarkNp(tokens, i + 1);
+      if (landmark) object = { english: landmark.english, role: 'object' };
+    }
+
+    const subjectParts = subjectPartsBeforeVerb(tokens, verbIdx, rules);
+    if (subjectParts === null) continue;
+
+    return {
+      subject: subjectParts.length
+        ? { english: subjectParts.join(' '), role: 'subject' }
+        : null,
+      event: { english: verb, role: 'event' },
+      path: paths,
+      object,
+      tense: inferMotionTense(tokens, verb, rules),
+    };
+  }
+  return null;
+}
+
+/**
+ * SUBJECT* + locomotion verb + object NP + spatial prep + landmark.
+ * e.g. followed the animal into the forest.
+ */
+export function matchMotionTransitiveDestination(tokens, rules) {
+  if (!tokens?.length || tokens.length < 4) return null;
+  const preps = spatialPrepKeys(rules);
+
+  for (let verbIdx = 0; verbIdx < tokens.length; verbIdx += 1) {
+    const verb = tokens[verbIdx];
+    if (!isLocomotionVerb(verb, rules)) continue;
+
+    const objectLandmark = extractLandmarkNp(tokens, verbIdx + 1, { stopPreps: preps });
+    if (!objectLandmark) continue;
+
+    const prep = tokens[objectLandmark.end]?.toLowerCase();
+    if (!prep || !preps.has(prep) || prep === 'away' || prep === 'from') continue;
+
+    const pathLandmark = extractLandmarkNp(tokens, objectLandmark.end + 1);
+    if (!pathLandmark) continue;
+
+    const subjectParts = subjectPartsBeforeVerb(tokens, verbIdx, rules);
+    if (subjectParts === null) continue;
+
+    return {
+      subject: subjectParts.length
+        ? { english: subjectParts.join(' '), role: 'subject' }
+        : null,
+      event: { english: verb, role: 'event' },
+      object: { english: objectLandmark.english, role: 'object' },
+      path: pathEntry(prep, rules),
+      modifiers: [{ english: pathLandmark.english, role: 'modifier' }],
+      tense: inferMotionTense(tokens, verb, rules),
+    };
+  }
+  return null;
+}
+
+/** Motion phrase: toward+from, away, origin, destination, or transitive+path — first match wins. */
+export function matchMotionPhrase(tokens, rules) {
+  return matchMotionAway(tokens, rules)
+    ?? matchMotionTowardFrom(tokens, rules)
+    ?? matchMotionTransitiveDestination(tokens, rules)
+    ?? matchMotionFrom(tokens, rules)
+    ?? matchMotionDestination(tokens, rules);
+}
+
+/**
+ * Motion slot pass-through (destination frames set path explicitly).
+ */
+export function normalizeMotionSlots(slots, rules) {
+  return slots;
 }
 
 /**
@@ -383,7 +727,7 @@ export function matchSubjectLinkingPredicate(content, rules) {
     const subjectParts = content.slice(0, i).filter(w => !ARTICLES.has(w.toLowerCase()));
     const predParts = content.slice(i + 1).filter(w => !ARTICLES.has(w.toLowerCase()));
     if (!subjectParts.length || !predParts.length) continue;
-    if (peelFutureIntent(predParts)) continue;
+    if (peelFutureIntent(predParts, rules)) continue;
 
     const conceptId = LINKING_CONCEPT[verb] ?? null;
     return {
@@ -419,30 +763,57 @@ const COORD_CLAUSE_VERBS = new Set([
   'sing', 'sings', 'sang', 'singing',
   'wake', 'wakes', 'woke', 'waking',
   'act', 'acts', 'acted', 'acting',
+  'go', 'goes', 'went', 'going', 'leave', 'left', 'leaves', 'leaving',
+  'run', 'runs', 'ran', 'running', 'bark', 'barks', 'barked', 'barking',
 ]);
 
 /** Modals — start a new coordinated clause when followed by a main verb. */
 export const MODALS = new Set(['should', 'must', 'may', 'might', 'can', 'could', 'would', 'shall']);
 
+/** Copula/auxiliaries in yes/no questions that precede a pronoun subject. */
+const YES_NO_BE_AUX = new Set(['are', 'am', 'is', 'was', 'were']);
+
 /**
- * Split token list on clause boundaries: and + (the|pronoun|verb).
+ * Peel question auxiliary before pronoun: "Are you going" → subject you + [going, …].
+ * Does not peel do/did (those carry tense / interrogative) or it/there subjects.
+ */
+export function peelQuestionAuxiliary(tokens, { pronounWords = null } = {}) {
+  const pronouns = pronounWords ?? new Set(['i', 'me', 'you', 'we', 'they', 'he', 'she', 'it']);
+  if (tokens.length < 2) return { tokens, peeled: false };
+  const aux = tokens[0]?.toLowerCase();
+  const subj = tokens[1]?.toLowerCase();
+  if (YES_NO_BE_AUX.has(aux) && pronouns.has(subj) && subj !== 'it' && subj !== 'there') {
+    return { tokens: tokens.slice(2), peeled: true, subjectWord: tokens[1] };
+  }
+  return { tokens, peeled: false };
+}
+
+/**
+ * Split token list on coordinated clause boundaries: and/but + (the|pronoun|verb).
  */
 export function splitIntoClauses(tokens, { pronounWords = null } = {}) {
   const pronouns = pronounWords ?? new Set(['i', 'me', 'you', 'we', 'they', 'he', 'she', 'it']);
   const out = [];
   let cur = [];
+
+  const startsNewClause = (next, afterNext) => {
+    if (next === 'the' || pronouns.has(next)) return true;
+    if (COORD_CLAUSE_VERBS.has(next)) return true;
+    if (MODALS.has(next) && afterNext && COORD_CLAUSE_VERBS.has(afterNext)) return true;
+    return false;
+  };
+
   for (let i = 0; i < tokens.length; i += 1) {
     const t = tokens[i]?.toLowerCase();
-    if (t === 'and' && i + 1 < tokens.length) {
-      const next = tokens[i + 1]?.toLowerCase();
-      const afterModal = tokens[i + 2]?.toLowerCase();
-      const modalClause = MODALS.has(next) && afterModal && COORD_CLAUSE_VERBS.has(afterModal);
-      if (next === 'the' || pronouns.has(next) || COORD_CLAUSE_VERBS.has(next) || modalClause) {
-        if (cur.length) out.push(cur);
-        cur = [];
-        continue;
-      }
+    const next = tokens[i + 1]?.toLowerCase();
+    const afterNext = tokens[i + 2]?.toLowerCase();
+
+    if ((t === 'and' || t === 'but') && i + 1 < tokens.length && startsNewClause(next, afterNext)) {
+      if (cur.length) out.push(cur);
+      cur = [];
+      continue;
     }
+
     cur.push(tokens[i]);
   }
   if (cur.length) out.push(cur);
@@ -478,7 +849,7 @@ function beConstructionFromParts(subject, be, afterBe, rules) {
   const head = afterBe[0];
   const trailing = afterBe.slice(1);
 
-  if (peelFutureIntent(afterBe)) return null;
+  if (peelFutureIntent(afterBe, rules)) return null;
 
   const headLower = head.toLowerCase();
   if (PREP_OBJECT.has(headLower) || rules?.spatial_path?.[headLower]) return null;
@@ -671,18 +1042,59 @@ export function landmarkPhrase(phrase) {
 }
 
 /**
- * Peel “going to jump”, “will jump”, “goes to jump” → future intent + main verb phrase.
+ * Peel future markers from raw tokens (before SKIP), returning shortened tokens.
+ * @param {string[]} tokens
+ * @param {object} rules
+ */
+export function peelFutureFromTokens(tokens, rules) {
+  const lower = tokens.map(t => String(t ?? '').toLowerCase());
+  for (let i = 0; i < tokens.length; i += 1) {
+    if (lower[i] === 'will' || lower[i] === 'shall') {
+      return {
+        tense: 'future',
+        tokens: [...tokens.slice(0, i), ...tokens.slice(i + 1)],
+      };
+    }
+    if (lower[i] === 'going') {
+      let j = i + 1;
+      if (lower[j] === 'to') j += 1;
+      if (j < tokens.length && isLikelyInfinitiveVerb(tokens[j], rules)) {
+        return {
+          tense: 'future',
+          tokens: [...tokens.slice(0, i), ...tokens.slice(j)],
+        };
+      }
+    }
+  }
+  return { tense: null, tokens };
+}
+
+/**
+ * Peel “going to jump”, “will jump” → future intent + main verb phrase.
+ * Does not peel bare go/goes or going-to-place (motion toward a landmark).
  * @param {string[]} content
+ * @param {object} [rules]
  * @returns {{ before: string[], after: string[] } | null}
  */
-export function peelFutureIntent(content) {
+export function peelFutureIntent(content, rules = null) {
   if (!content?.length) return null;
   for (let i = 0; i < content.length; i += 1) {
-    if (FUTURE_INTENT_MARKERS.has(content[i]) && i + 1 < content.length) {
+    const w = content[i]?.toLowerCase();
+    if (FUTURE_INTENT_MARKERS.has(w) && i + 1 < content.length) {
       return {
         before: content.slice(0, i),
         after: content.slice(i + 1),
       };
+    }
+    if (w === 'going' && rules) {
+      let j = i + 1;
+      if (content[j]?.toLowerCase() === 'to') j += 1;
+      if (j < content.length && isLikelyInfinitiveVerb(content[j], rules)) {
+        return {
+          before: content.slice(0, i),
+          after: content.slice(j),
+        };
+      }
     }
   }
   return null;

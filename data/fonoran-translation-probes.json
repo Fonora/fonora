@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "description": "Soft probe corpus for complex English. target_frame lists required English slot heads (not exact fon). Does not gate CI — run with node scripts/fonoran-translation-probes.js",
+  "phrases": [
+    {
+      "en": "I want to go to the city but I am afraid of the dark.",
+      "target_frame": "go · to · city · afraid · dark",
+      "status": "pass",
+      "note": "but-clause split; want not compiled (no modal grammar)"
+    },
+    {
+      "en": "They ran toward us from the river.",
+      "target_frame": "ran · toward · from · river",
+      "status": "pass",
+      "note": "compound path toward + from"
+    },
+    {
+      "en": "The hunter followed the animal into the forest.",
+      "target_frame": "followed · into · forest",
+      "status": "pass",
+      "note": "transitive motion + into path"
+    },
+    {
+      "en": "Are you going to the market tomorrow?",
+      "target_frame": "you · going · to · market · tomorrow",
+      "status": "pass",
+      "note": "question subject preserved; tomorrow trailing time"
+    },
+    {
+      "en": "The child ran away when the dog barked.",
+      "target_frame": "ran · away · when · barked",
+      "status": "broken",
+      "note": "subordinate when-clause not yet split"
+    },
+    {
+      "en": "Go away and leave me alone.",
+      "target_frame": "away · leave",
+      "status": "pass",
+      "note": "coordinated motion clauses"
+    },
+    {
+      "en": "Come here quickly.",
+      "target_frame": "come · here",
+      "status": "pass",
+      "note": "deictic here landmark"
+    },
+    {
+      "en": "We should not go there at night.",
+      "target_frame": "not · go · there",
+      "status": "pass",
+      "note": "negation on motion frame"
+    },
+    {
+      "en": "I am going to tell you a story about the old king.",
+      "target_frame": "tell · you · story",
+      "status": "pass",
+      "note": "going-to-VERB future + speech event"
+    },
+    {
+      "en": "The bird flew over the lake and landed near the trees.",
+      "target_frame": "flew · over · lake",
+      "status": "pass",
+      "note": "over path; second clause partial"
+    },
+    {
+      "en": "Bring the water from the spring to the camp.",
+      "target_frame": "from · to",
+      "status": "broken",
+      "note": "bring not in lexicon; dual paths incomplete"
+    },
+    {
+      "en": "He said he would return home after the sun set.",
+      "target_frame": "said · return · home · after",
+      "status": "pass",
+      "note": "reported speech + temporal after"
+    },
+    {
+      "en": "I have never been to the city before.",
+      "target_frame": "city",
+      "status": "pass",
+      "note": "perfect aspect collapsed; city landmark"
+    },
+    {
+      "en": "When she arrives, we will leave for the mountains.",
+      "target_frame": "when · leave · mountains",
+      "status": "pass",
+      "note": "when opens clause; arrives gap"
+    },
+    {
+      "en": "I go to the city.",
+      "target_frame": "go · to · city",
+      "status": "pass",
+      "note": "regression guard from level 12"
+    }
+  ]
+}

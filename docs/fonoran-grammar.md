@@ -424,6 +424,40 @@ flowchart TD
   EN --> ME --> SG --> PC --> CC --> GP --> FO
 ```
 
+**Current implementation (slot-filling compiler).** The live translator in
+`tools/fonoran-translator.js` implements an earlier stage of this pipeline: English
+→ **grammar slots** (Subject · Time · Event · Path · Object · Modifiers) →
+resolution cascade → surface. It does **not** yet build a full semantic graph.
+Motion frames are matched programmatically (`matchMotionPhrase` in
+`tools/fonoran-interpretation.js`) from declarative rules in
+`data/fonoran-interpretation-rules.json` — not per-phrase hard-coded glosses.
+
+**Multi-path motion** (direction in the Path slot, multiple entries allowed):
+
+```example
+go away from the city
+
+↓ slots
+
+move · far · source · city
+
+↓ surface
+
+gi fet lo lekche
+```
+
+```example
+run toward us from the river
+
+↓ slots
+
+collective · past · run · path · source · river
+
+↓ surface
+
+dan ta ginek nan yetasnan
+```
+
 **Pipeline stages:**
 
 1. **English**: arbitrary phrasing, idioms, reorderings
@@ -476,12 +510,24 @@ root. Anything else is an honest gap.
 **Meaningful function words.** Relational words that carry meaning are not
 blanket-skipped: e.g. `from` resolves to the `source` root rather than being
 dropped. Only truly contentless articles/possessives/conjunctions are skipped.
-Second-person **`you`** resolves lexically to the **`addressee`** root (**`ti`**), symmetric to **`self`** (**`de`**) for the speaker.
+Second-person **`you`** resolves lexically to the **`addressee`** root (**`be`**), symmetric to **`self`** (**`de`**) for the speaker.
+
+### Probe corpus (complex English, non-blocking)
+
+[../data/fonoran-translation-probes.json](../data/fonoran-translation-probes.json) holds
+**soft probes**: English phrases with a `target_frame` of required slot heads. The
+probe runner checks structure, not exact roman — it does **not** fail CI.
+
+```bash
+npm run test:translator:probes
+```
+
+Promote a probe to the golden corpus once its output is committed.
 
 ### Golden regression suite
 
 [../data/fonoran-translation-tests.json](../data/fonoran-translation-tests.json)
-is a **golden corpus**: ~100 canonical English sentences (11 levels), each with
+is a **golden corpus**: canonical English sentences (13 levels, 119 phrases), each with
 the exact `fon` (roman) output the project commits to, plus a `note` recording
 known gaps/decisions. It is the permanent regression snapshot — run it on every
 grammar, root, or rule change:
@@ -561,19 +607,23 @@ Experiment history: [RN-08 · Meaning from coordinates](/research/notes/dda-coor
 
 ## Future Work
 
-The following topics are **intentionally incomplete**. They will extend this specification without breaking Rules 1 through 7.
+The following topics extend this specification without breaking Rules 1 through 7.
+**Status** reflects the live translator (not the full Rule 7 semantic-graph target).
 
-- Pronouns
-- Aspect
-- Negation
-- Questions
-- Comparisons
-- Numbers
-- Quantifiers
-- Time expressions
-- Locations
-- Conditionals
-- Relative clauses
+| Topic | Status |
+| --- | --- |
+| Pronouns | **Partial** — `mi` particle; `you`/`we`/`he`/`she` resolve to roots |
+| Negation | **Partial** — `no` particle in Time slot |
+| Questions | **Partial** — wh-words and `lel` marker; yes/no with `are` + pronoun peel |
+| Comparisons | Open |
+| Numbers | Open |
+| Quantifiers | **Partial** — `nobody`, `everyone`, etc. expand to particles + roots |
+| Time expressions | **Partial** — `yesterday`/`tomorrow`, `every morning` |
+| Locations / motion | **Partial** — Path slot: `path`, `source`, `far`, `inside`, `up`, `near` |
+| Conditionals | **Partial** — `if` / `von` in golden torture tests |
+| Relative clauses | Open |
+| Aspect / progressive | Open — English progressive collapses to `move` (`gi`) for now |
+| Subordinate clauses | **Partial** — `and`/`but` coordination; `when`/`after` still weak |
 
 Contributions should preserve: invariant words, particle-based grammar, fixed default order, visible semantic compounding, and semantic economy in compounds.
 

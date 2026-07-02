@@ -391,7 +391,8 @@
       "phrases": [
         {
           "en": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
-          "fon": "di ta dan gi yetasnan ye ta guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan"
+          "fon": "di ta dan gi nan yetasnan ye kekshu ta ta mak guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan",
+          "note": "walked to river surfaces path (nan); but-clause splits coordinated discourse"
         }
       ]
     },
@@ -483,6 +484,102 @@
         {
           "en": "Time heals all wounds, but memory keeps the pain alive.",
           "fon": "kan kasfemba mel tesfem hugatmes gat tes fo"
+        }
+      ]
+    },
+    {
+      "level": 12,
+      "name": "Motion & direction",
+      "phrases": [
+        {
+          "en": "I go to the city.",
+          "fon": "mi gi nan lekche"
+        },
+        {
+          "en": "I walk toward the city.",
+          "fon": "mi gi nan lekche"
+        },
+        {
+          "en": "I will go to the city.",
+          "fon": "mi sa gi nan lekche"
+        },
+        {
+          "en": "I am going to go to the city.",
+          "fon": "mi sa gi nan lekche"
+        },
+        {
+          "en": "I am going to the city.",
+          "fon": "mi gi nan lekche",
+          "note": "going-to-place: present motion, not future sa"
+        },
+        {
+          "en": "He went to the store.",
+          "fon": "ba ta gi nan hugatmes"
+        },
+        {
+          "en": "The dog ran away.",
+          "fon": "kal ta ginek fet"
+        },
+        {
+          "en": "I come from the river.",
+          "fon": "mi gi lo yetasnan"
+        },
+        {
+          "en": "I go away from the city.",
+          "fon": "mi gi fet lo lekche"
+        }
+      ]
+    },
+    {
+      "level": 13,
+      "name": "Complex motion & discourse",
+      "phrases": [
+        {
+          "en": "They ran toward us from the river.",
+          "fon": "dan ta ginek nan yetasnan",
+          "note": "compound path toward + from"
+        },
+        {
+          "en": "Are you going to the market tomorrow?",
+          "fon": "shu be gi nan mo",
+          "note": "question subject preserved; tomorrow trailing time"
+        },
+        {
+          "en": "Come here quickly.",
+          "fon": "gi nan nam"
+        },
+        {
+          "en": "The hunter followed the animal into the forest.",
+          "fon": "lakalba ta gi mes kal lekshe",
+          "note": "transitive motion + into path"
+        },
+        {
+          "en": "We should not go there at night.",
+          "fon": "dan no gi nan tak",
+          "note": "negation on motion frame"
+        },
+        {
+          "en": "Go away and leave me alone.",
+          "fon": "gi gi fet mi [alone]",
+          "note": "coordinated motion clauses; alone gap"
+        },
+        {
+          "en": "I want to go to the city but I am afraid of the dark.",
+          "fon": "mi gi nan lekche gan",
+          "note": "but-clause split; want omitted (no obligation grammar)"
+        },
+        {
+          "en": "The bird flew over the lake and landed near the trees.",
+          "fon": "kal gi ra yeti",
+          "note": "over path; second clause partially compiled"
+        },
+        {
+          "en": "He said he would return home after the sun set.",
+          "fon": "ba se ba gi chekam shu samdat ju"
+        },
+        {
+          "en": "I have never been to the city before.",
+          "fon": "mi ta no lekche di"
         }
       ]
     }

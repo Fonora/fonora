@@ -32,6 +32,11 @@ import {
   mergePhrasalTokens,
   MODALS,
   splitLandmarkPhrase,
+  matchMotionPhrase,
+  normalizeMotionSlots,
+  peelFutureFromTokens,
+  LEADING_TIME_WORDS,
+  peelQuestionAuxiliary,
 } from './fonoran-interpretation.js';
 import {
   buildResolveContext,
@@ -224,6 +229,28 @@ export function splitSentences(text) {
     .filter(Boolean);
 }
 
+function applyTenseToSlots(slots, tense) {
+  if (tense === 'past' && !slots.time.some(t => t.particle === PARTICLE_PLACEHOLDERS.tense_past)) {
+    slots.time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
+  } else if (tense === 'future' && !slots.time.some(t => t.particle === PARTICLE_PLACEHOLDERS.tense_future)) {
+    slots.time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
+  }
+}
+
+function applyMotionPhrase(motionHit, slots, rules, { subject = [] } = {}) {
+  if (motionHit.subject && !subject.length) {
+    slots.subject.push(motionHit.subject);
+  }
+  slots.event.push(motionHit.event);
+  const paths = Array.isArray(motionHit.path) ? motionHit.path : (motionHit.path ? [motionHit.path] : []);
+  slots.path.push(...paths);
+  if (motionHit.object) slots.object.push(motionHit.object);
+  if (motionHit.modifiers?.length) slots.modifiers.push(...motionHit.modifiers);
+  if (motionHit.trailingTime?.length) slots.time.push(...motionHit.trailingTime);
+  applyTenseToSlots(slots, motionHit.tense);
+  return normalizeMotionSlots(slots, rules);
+}
+
 function applyBeConstruction(beHit, slots, rules) {
   if (!slots.subject.length) {
     slots.subject.push({ english: beHit.subject, role: 'subject' });
@@ -289,6 +316,22 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
     tokens = tokens.slice(1);
   }
 
+  const questionPeel = peelQuestionAuxiliary(tokens, { pronounWords: PRONOUN_WORDS });
+  tokens = questionPeel.tokens;
+  if (questionPeel.peeled && questionPeel.subjectWord && !subject.length) {
+    const p = questionPeel.subjectWord.toLowerCase();
+    if (PRONOUNS[p]) {
+      subject.push({ english: questionPeel.subjectWord, role: 'subject', particle: PRONOUNS[p] });
+    } else {
+      const conceptHint = PRONOUN_CONCEPTS[p];
+      subject.push({
+        english: questionPeel.subjectWord,
+        role: 'subject',
+        ...(conceptHint ? { concept_hint: conceptHint, interpret_reason: 'pronoun' } : {}),
+      });
+    }
+  }
+
   const timeHit = matchLeadingTimeAdverbial(tokens);
   if (timeHit) {
     time.push({ english: timeHit.english, role: 'time' });
@@ -308,6 +351,31 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
       });
     }
     tokens = tokens.slice(1);
+  }
+
+  let motionTokens = [...tokens];
+  let motionNegated = false;
+  motionTokens = motionTokens.filter((t) => {
+    if (isNegationWord(t)) {
+      motionNegated = true;
+      return false;
+    }
+    return true;
+  });
+  const futureOnRaw = peelFutureFromTokens(motionTokens, rules);
+  if (futureOnRaw.tense === 'future') {
+    motionTokens = futureOnRaw.tokens;
+  }
+  const motionHit = matchMotionPhrase(motionTokens, rules);
+  if (motionHit) {
+    const slots = { subject, time, event, path, object, modifiers };
+    if (futureOnRaw.tense === 'future') motionHit.tense = 'future';
+    applyMotionPhrase(motionHit, slots, rules, { subject });
+    if (motionNegated) {
+      const negForm = PARTICLES?.byId.get('logic_not')?.form ?? 'no';
+      time.push({ english: 'not', role: 'time', particle: negForm });
+    }
+    return slots;
   }
 
   if (tokens.length <= 1) {
@@ -383,7 +451,7 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
   let working = [...content];
   let tense = auxTense ?? 'present';
 
-  const futurePeel = peelFutureIntent(working);
+  const futurePeel = peelFutureIntent(working, rules);
   if (futurePeel) {
     tense = 'future';
     working = [...futurePeel.before, ...futurePeel.after];
@@ -482,7 +550,7 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
     event.push({ english: working[0], role: 'event' });
   }
 
-  return slots;
+  return normalizeMotionSlots({ subject, time, event, path, object, modifiers }, rules);
 }
 
 /**
@@ -516,9 +584,20 @@ async function compileSemanticSlots(tokens, rules) {
   for (const clause of clauses) {
     const slotData = await compileClause(clause, rules, { carriedSubject });
     if (slotData.subject.length) {
+      const lastSubj = combined.subject.at(-1);
+      const newSubj = slotData.subject[0];
+      const dupPronoun = lastSubj?.particle && newSubj?.particle
+        && lastSubj.particle === newSubj.particle;
+      if (!dupPronoun) {
+        appendSlots(combined, slotData);
+      } else {
+        const { subject: _skip, ...rest } = slotData;
+        appendSlots(combined, { subject: [], ...rest });
+      }
       carriedSubject = slotData.subject;
+    } else {
+      appendSlots(combined, slotData);
     }
-    appendSlots(combined, slotData);
   }
   return { mode: 'discourse', ...combined };
 }
@@ -608,13 +687,31 @@ async function slotsToTokens(ctx, slots) {
     if (marker?.form) out.push(particleToken('interrogative', marker.form, 'question'));
   }
 
-  for (const slot of slots.subject) {
-    if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
-    else push(await resolveSlot(ctx, slot, 'subject'));
-  }
-  for (const slot of slots.time) {
-    if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
-    else push(await resolveSlot(ctx, slot, 'time'));
+  const calendarTime = slots.time.filter(s => LEADING_TIME_WORDS.has(String(s.english ?? '').toLowerCase()));
+  const otherTime = slots.time.filter(s => !LEADING_TIME_WORDS.has(String(s.english ?? '').toLowerCase()));
+
+  if (calendarTime.length) {
+    for (const slot of calendarTime) {
+      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'time'));
+    }
+    for (const slot of otherTime) {
+      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'time'));
+    }
+    for (const slot of slots.subject) {
+      if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'subject'));
+    }
+  } else {
+    for (const slot of slots.subject) {
+      if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'subject'));
+    }
+    for (const slot of slots.time) {
+      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
+      else push(await resolveSlot(ctx, slot, 'time'));
+    }
   }
   for (const slot of slots.event) push(await resolveSlot(ctx, slot, 'event'));
   for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'));

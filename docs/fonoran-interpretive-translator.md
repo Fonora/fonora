@@ -24,7 +24,7 @@ person · make · equal
 ba no mal
 ```
 
-Present has **no time particle**. Past uses **ta**, future **na**.
+Present has **no time particle**. Past uses **ta**, future **sa**.
 
 ## Three layers
 
@@ -57,15 +57,31 @@ Tokenizes English, skips articles/auxiliaries/conjunctions, assigns **grammar sl
 | --- | --- |
 | Sentence split | Paragraphs on `.` / `!` / `?` → `discourse` mode |
 | Clause split | `and` + `the` / pronoun / verb → coordinated clauses |
-| Time adverbial | `every morning`, `each day` → time slot |
+| Time adverbial | `every morning`, `yesterday`, `each day` → time slot |
 | Idiom | `at war` → `conflict` |
 | Be + participle / adjective | `are created equal`, `is quiet` |
 | Linking verb + predicate | `air feels cool` → event `feel`, modifier `cool` |
 | Phrasal verb | `wake up`, `wakes up` |
+| Motion destination | `go to the city` → event `move` + path `path` + object `city` |
+| Motion origin / away | `come from the river` → move + source + river; `ran away` → move + far |
 | Spatial phrase | `jumped over the moon` → event + path + object |
-| Future peel | `going to`, `will` → `na` + main verb phrase |
+| Future peel | `going to jump`, `will` → `sa` + main verb phrase (not bare `go` or `going to` + place) |
 
-**Pronouns:** `I` / `me` → particle **mi** (any slot). Other pronouns map to nearest concept hints (`we` → `collective`, etc.). Second-person `you` has **no root yet**, so it surfaces as a gap rather than mis-mapping.
+**Pronouns:** `I` / `me` → particle **mi** (any slot). Other pronouns map to nearest concept hints (`we` → `collective`, etc.). Second-person `you` maps to **addressee** (`be`).
+
+### Motion toward / away / from
+
+English locomotion collapses to **`move`** (`gi`). Direction is lexical in the **Path** slot — not a separate English “go”:
+
+| English | Frame | Example surface |
+| --- | --- | --- |
+| go / walk to X | move · path · X | `mi gi nan lekche` |
+| will go to X | · sa · move · path · X | `mi sa gi nan lekche` |
+| come from X | move · source · X | `mi gi lo yetasnan` |
+| run away | move · far | `kal ta ginek fet` |
+| go away from X | move · far · source · X | `mi gi fet lo lekche` |
+
+`going to` + **verb** (future intent) peels to **sa**; `going to` + **place** stays present motion with path **nan**.
 
 ### Layer 2: Resolution
 
