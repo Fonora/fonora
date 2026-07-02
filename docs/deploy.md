@@ -145,14 +145,23 @@ Published research notes are **not** read from `docs/research-notes/*.md` at run
 
 Git canonical source: [`data/research-notes-store.json`](../data/research-notes-store.json) (published + draft bodies). Markdown files under `docs/research-notes/` are optional mirrors for git history.
 
-**On server boot** (after schema init), published notes from the git seed file are upserted into Postgres automatically. Prod-only drafts in Postgres are left untouched; git does not delete notes missing from the seed file.
+**On deploy** (Heroku release phase), published notes from the git seed file are upserted into Postgres via `scripts/research-notes-sync-deploy.js` (`Procfile` `release:` hook). Prod-only drafts in Postgres are left untouched; git does not delete notes missing from the seed file.
+
+**At web startup**, the server warms an in-memory cache of published notes and embeds the index (and note body when viewing `/research/notes/:slug`) in the research HTML shell. The public notebook does not wait on `/api/research/notes` on first paint.
+
+Manual sync (local or CI):
+
+```bash
+node scripts/research-notes-sync-deploy.js
+```
 
 After deploy, verify:
 
 - `GET /api/research/notes` returns the expected note count (including Phase IV entries)
-- `/research/timeline` shows current phases
+- `/research/timeline` HTML source includes `research-notes-bootstrap` JSON
+- `/research/timeline` shows current phases without a slow API wait
 
-To author locally: edit in Tools → Research Notes or update the store JSON, commit, merge to staging/main, redeploy (boot sync applies published notes).
+To author locally: edit in Tools → Research Notes or update the store JSON, commit, merge to staging/main, redeploy (release sync applies published notes).
 
 See [research-notes-authoring.md](research-notes-authoring.md) for the full workflow.
 
@@ -185,7 +194,7 @@ Because WASM assets are large (~90 MB in `vendor/` after install), a Node static
 - [ ] Write API requires `@fonora.org` session; unsigned users can browse dictionary only
 - [ ] `DATABASE_URL` set; `FONORAN_SKIP_JSON_MIRROR=1` on Heroku
 - [ ] Live state seeded from git JSON on first deploy
-- [ ] Research notes: boot sync populated Postgres (`GET /api/research/notes` count matches git store published count)
+- [ ] Research notes: release sync populated Postgres (`GET /api/research/notes` count matches git store published count)
 - [ ] Contributor Google Form linked from `/language/` lander
 - [ ] Periodic backup: Advanced → Download snapshot, or `npm run fonoran:snapshot:export`
 

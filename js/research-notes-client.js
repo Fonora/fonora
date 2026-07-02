@@ -47,7 +47,22 @@ export function notesByPhase(phases) {
   }));
 }
 
+function readBootstrapPayload() {
+  const el = document.getElementById('research-notes-bootstrap');
+  if (!el?.textContent) return null;
+  try {
+    return JSON.parse(el.textContent);
+  } catch {
+    return null;
+  }
+}
+
 export async function loadPublishedNotesFromApi() {
+  const bootstrap = readBootstrapPayload();
+  if (bootstrap?.notes) {
+    setPublishedNotes(bootstrap.notes);
+    return publishedNotes;
+  }
   const res = await fetch('/api/research/notes', { credentials: 'same-origin' });
   if (!res.ok) throw new Error(`Could not load research notes (HTTP ${res.status})`);
   const data = await res.json();
@@ -56,7 +71,12 @@ export async function loadPublishedNotesFromApi() {
 }
 
 export async function loadPublishedNoteBody(slug) {
-  const res = await fetch(`/api/research/notes/${encodeURIComponent(slug)}`, {
+  const cleanSlug = String(slug || '').trim();
+  const bootstrap = readBootstrapPayload();
+  if (bootstrap?.note && bootstrap.note.metadata?.slug === cleanSlug) {
+    return bootstrap.note;
+  }
+  const res = await fetch(`/api/research/notes/${encodeURIComponent(cleanSlug)}`, {
     credentials: 'same-origin',
   });
   if (!res.ok) throw new Error(`Could not load note (HTTP ${res.status})`);
