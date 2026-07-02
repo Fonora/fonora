@@ -1003,11 +1003,18 @@
               <h2 id="docs-viewer-title">Documentation</h2>
               <p id="docs-viewer-path" class="doc-viewer-path"></p>
             </div>
-            <a id="docs-viewer-github" class="btn doc-viewer-github-btn" href="https://github.com/jamesc137/fonora/blob/main/docs/README.md" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
+            <div class="doc-viewer-toolbar-actions">
+              <button type="button" class="btn doc-viewer-sidebar-toggle" id="docs-viewer-sidebar-toggle" aria-expanded="false" aria-controls="docs-viewer-sidebar">Browse docs</button>
+              <a id="docs-viewer-github" class="btn doc-viewer-github-btn" href="https://github.com/jamesc137/fonora/blob/main/docs/README.md" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
+            </div>
           </header>
-          <article id="docs-viewer-content" class="doc-viewer-content markdown-body" aria-live="polite">
-            <p class="doc-viewer-loading">Select a document from the sidebar.</p>
-          </article>
+          <div class="doc-viewer-body">
+            <aside id="docs-viewer-toc" class="doc-viewer-toc" aria-label="On this page" hidden></aside>
+            <article id="docs-viewer-content" class="doc-viewer-content markdown-body" aria-live="polite">
+              <p class="doc-viewer-loading">Select a document from the sidebar.</p>
+            </article>
+          </div>
+          <nav id="docs-viewer-pager" class="doc-viewer-pager" aria-label="Document navigation" hidden></nav>
         </div>
       </div>
     </section>

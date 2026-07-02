@@ -78,161 +78,24 @@ The full proposed primitive inventory lives in [fonoran-semantic-foundation.md](
 
 Read the examples first. You can already start understanding this language.
 
-## Core Philosophy
+## At a glance
 
-> **Fonoran minimizes lexical categories and represents sentences as relationships between invariant concepts.**
+Fonoran grammar **minimizes lexical categories**. Every lexical item is an **invariant concept**; its role comes from **grammar particles** and **sentence position**, not from noun, verb, or adjective labels.
 
-Fonoran grammar deliberately avoids copying English or traditional linguistic categories. Every lexical item is an **invariant concept**. Its role in a sentence comes from **grammar particles** and **sentence position**, not from noun, verb, or adjective labels.
+For the *why* — the communication experiment, campfire test, meaning-attempts, and tiered vocabulary — read **[the Fonoran Constitution](fonoran-constitution.md)**. The **Rules** below are the authoritative syntax reference.
 
-### Concepts instead of parts of speech
+| Idea | Rule |
+| --- | --- |
+| Concepts, not parts of speech | [Rule 1](#rule-1-concepts-are-universal) |
+| Words never inflect | [Rule 2](#rule-2-words-never-change) |
+| Grammar uses particles | [Rule 3](#rule-3-grammar-uses-particles) |
+| Fixed default order | [Rule 4](#rule-4-sentence-order) |
+| Meaning through composition | [Rule 5](#rule-5-semantic-compounding) |
+| English → Fonoran compiler | [Rule 7](#rule-7-translator-architecture) |
 
-There are no permanent nouns, verbs, or adjectives. Only concepts that take on roles from context.
+**Present has no time particle.** Past uses **ta**, future **sa** (*Under Development*). The event concept stays identical across tenses: `mi bem` / `mi ta bem` / `mi sa bem` → I love / loved / will love.
 
-```example
-mi bem
-
-↓
-
-I love.
-```
-
-- **mi** = I (placeholder pronoun, *Under Development*)
-- **bem** = love
-
-Notice that **love never changes form**.
-
-English requires: love, loves, loved, loving.
-
-Fonoran simply uses **bem**. Grammar communicates the relationship, not the word itself.
-
-```example
-mi ta bem
-
-↓
-
-I loved.
-```
-
-- **ta** = past (*Under Development*)
-- **bem** never changes
-
-```example
-mi sa bem
-
-↓
-
-I will love.
-```
-
-- **sa** = future (*Under Development*)
-- The event concept stays identical regardless of tense
-
-```example
-mi ta benbanal
-
-↓
-
-I fought.
-```
-
-- **benbanal** never changes
-- Only **ta** marks that the event is in the past
-
-Concepts can also sit beside other concepts as modifiers:
-
-```example
-bem ba
-
-love person
-
-↓
-
-loving person
-```
-
-```example
-bem ben
-
-love collective
-
-↓
-
-loving community
-```
-
-```example
-bem nal
-
-love conflict
-
-↓
-
-conflict about love
-```
-
-The same concept, three different readings. No spelling change required.
-
-### Composition instead of memorization
-
-New meaning is built by stacking known concepts.
-
-When you know **ben** (collective) and **ba** (person), **benba** (tribe) should feel inevitable.
-
-```example
-ben ba
-
-collective person
-
-↓
-
-benba (tribe)
-```
-
-You did not memorize a new word. You read a relationship.
-
-### No irregular grammar
-
-Words never inflect. Relationships never hide inside spelling changes.
-
-```example
-mi ta bem
-mi bem
-mi sa bem
-
-↓
-
-I loved.
-I love.
-I will love.
-```
-
-**bem** stays **bem** in every sentence. Only **ta** or **sa** mark non-present time.
-
-### Minimal syntax
-
-The surface grammar stays small on purpose. One predictable sentence skeleton carries most of the work.
-
-```text
-Subject · Time · Event · Object · Modifiers
-```
-
-The **Time** slot is **empty for present**. Present is the default and is inferred from context. Only past (**ta**) or future (**sa**) need a particle.
-
-### Transparent meaning
-
-Reading a compound should reveal its ancestry.
-
-```example
-benba nal
-
-tribe conflict
-
-↓
-
-benbanal (war)
-```
-
-**benbanal** is not an opaque token. It is **benba** (tribe) in relation to **nal** (conflict). The spelling is a compressed semantic tree.
+Modifier chains use the same invariant spellings — **bem ba** (loving person), **bem ben** (loving community), **bem nal** (conflict about love) — with reading fixed by order and context. Compounds like **benba** (collective + person) and **benbanal** (tribe + conflict) preserve their ancestry in the spelling; see [Rule 5](#rule-5-semantic-compounding).
 
 ## Rule 1: Concepts Are Universal
 
@@ -688,43 +551,13 @@ This architecture allows multiple English expressions to converge into the **sam
 - inflection mimicry
 - opaque lexical lookup when a compound path exists
 
-## Semantic coordinates
+## Semantic coordinates (archive / DDA)
 
-Every word in Fonoran carries three internal coordinates called **depth**, **mode**, and **aspect**. Together they form a compact address in semantic space — where a concept sits relative to others.
+> **Constitution demoted the DDA coordinate track** as production design. Roots are organized by human experience and the campfire test; compounds are judged by recoverable meaning, not coordinate correctness. This section documents the **legacy internal mapping** still used by the lab's DDA inference (Advanced tab).
 
-| Coordinate | What it captures | Example values |
-| --- | --- | --- |
-| **Depth** | How abstract or concrete the concept is | `interface`, `index`, `junction`, `emanation`, `origin` |
-| **Mode** | How the concept moves or acts in the world | `packet`, `live`, `flux`, `hollow`, `passage` |
-| **Aspect** | How it relates to its surroundings | `contact`, `focal`, `field` |
+Each word may carry internal **depth**, **mode**, and **aspect** coordinates — a compact address in semantic space. They are assigned automatically (**DDA inference**) from sound shape and English gloss match, blended for compounds, with status `pending | inferred | confirmed | stale`. You do not edit them in normal workflow; re-run DDA from the Advanced tab when coordinates go stale after a meaning or recipe change. The word detail view shows the three values plus how they were inferred.
 
-You do not edit these coordinates directly. They are assigned automatically by the language lab — a process called **DDA inference** — and are an internal mapping layer, not something the language creator needs to manage word by word.
-
-### How coordinates are assigned
-
-Coordinates start as **pending** the moment a root or compound is created. The lab infers them on demand using two signals:
-
-1. **Sound shape** — the onset consonant and vowel of a syllable carry phonetic weight that maps loosely onto depth and mode. This gives a starting guess with moderate confidence.
-2. **Meaning match** — the English gloss is matched against a reference inventory of 36 primitive concepts, each with authoritative coordinates. An exact match raises confidence significantly.
-
-For **compound words**, the system blends the coordinates of each component root. The dominant depth comes from the first component; mode consolidates when multiple parts are combined.
-
-After inference, each coordinate gets a **status**:
-
-- `inferred` — assigned automatically, confidence below 80 %
-- `confirmed` — high-confidence assignment (≥ 80 %)
-- `stale` — the word's meaning or composition changed after the last inference; re-run DDA to refresh
-- `pending` — not yet processed
-
-### When to re-run
-
-Coordinates go **stale** automatically whenever a word's meaning or recipe changes. The lab never silently overwrites them. To refresh stale coordinates, open the Advanced tab in the lab and click **Run DDA**.
-
-Over time, coordinates that started as `inferred` can be locked in manually by confirming them — making the language progressively more stable as it matures.
-
-### What the UI shows
-
-The word detail view labels these as **Semantic coordinates**, not DDA. Non-technical users see the three named values — depth, mode, aspect — along with a note indicating whether the coordinate was matched by meaning, inferred from sound, or blended from parent words. A visual relationship chart shows how the parts of a compound word combine into its final coordinates.
+Experiment history: [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates) · [fonoran-gen3.md](fonoran-gen3.md).
 
 ## Future Work
 

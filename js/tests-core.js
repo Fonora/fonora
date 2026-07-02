@@ -578,13 +578,33 @@ export function runTests(options) {
     assert(parseDocFromLocation({ pathname: '/docs', hash: '', search: '' })?.path === 'docs/platform-overview.md');
   });
 
+  t('navigable doc catalog excludes runtime research routes', async () => {
+    const { getNavigableDocCatalog, setResearchDocEntries } = await import('./doc-urls.js');
+    setResearchDocEntries([
+      { path: 'research/example', label: 'RN-01 · Example', layer: 'research' },
+    ]);
+    const paths = getNavigableDocCatalog().map((entry) => entry.path);
+    assert(!paths.includes('research/example'));
+    assert(paths.includes('docs/fonoran-constitution.md'));
+    setResearchDocEntries([]);
+  });
+
   t('markdown renderer handles headings and tables', () => {
     const html = renderMarkdown('# Title\n\n| a | b |\n| --- | --- |\n| 1 | 2 |', {
       docPath: 'docs/README.md',
     });
-    assert(html.includes('<h1 id="title">Title</h1>'));
+    assert(html.includes('<h1 id="title" class="doc-heading doc-heading--h1">Title</h1>'));
     assert(html.includes('<table'));
     assert(html.includes('<td>1</td>'));
+  });
+
+  t('markdown renderer supports heading anchors and horizontal rules', () => {
+    const html = renderMarkdown('## Section\n\n---\n\nBody', {
+      docPath: 'docs/README.md',
+      headingAnchors: true,
+    });
+    assert(html.includes('class="doc-heading__anchor" href="#section"'));
+    assert(html.includes('<hr class="doc-hr">'));
   });
 
   t('markdown renderer can skip the first h1 title', () => {

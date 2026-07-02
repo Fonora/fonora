@@ -29,12 +29,13 @@ export const DEFAULT_DOC_PATH = 'docs/platform-overview.md';
 /** Base path for the public research notebook (path-routed for SEO). */
 export const RESEARCH_BASE = '/research';
 
-const ALLOWED_EXACT = new Set(['CONTRIBUTING.md', 'README.md']);
+const ALLOWED_EXACT = new Set(['CONTRIBUTING.md', 'README.md', 'SECURITY.md']);
 const ALLOWED_PREFIX = 'docs/';
 
 const ROOT_DOC_SLUGS = {
   'README.md': 'project-readme',
   'CONTRIBUTING.md': 'contributing',
+  'SECURITY.md': 'security',
 };
 
 /** @type {Record<string, string>} */
@@ -62,40 +63,54 @@ export function setResearchDocEntries(entries) {
 function buildDocCatalog() {
   return [
     { path: 'docs/platform-overview.md', label: 'Platform overview', layer: 'essential' },
-  { path: 'docs/README.md', label: 'Documentation index', layer: 'essential' },
-  { path: 'README.md', label: 'Project README', layer: 'essential' },
-  { path: 'docs/third-party.md', label: 'Third-party licenses', layer: 'essential' },
-  { path: 'docs/deploy.md', label: 'Deploy & PostgreSQL', layer: 'essential' },
-  { path: 'CONTRIBUTING.md', label: 'Contributing', layer: 'essential' },
+    { path: 'docs/README.md', label: 'Documentation index', layer: 'essential' },
+    { path: 'README.md', label: 'Project README', layer: 'essential' },
+    { path: 'docs/third-party.md', label: 'Third-party licenses', layer: 'essential' },
+    { path: 'docs/deploy.md', label: 'Deploy & PostgreSQL', layer: 'essential' },
+    { path: 'docs/fonoran-auth-and-release.md', label: 'Fonoran auth & release', layer: 'essential' },
+    { path: 'SECURITY.md', label: 'Security', layer: 'essential' },
+    { path: 'CONTRIBUTING.md', label: 'Contributing', layer: 'essential' },
 
-  { path: 'docs/language-rules.md', label: 'Encoding rules', layer: 'script' },
-  { path: 'docs/multilingual-support.md', label: 'Multilingual support', layer: 'script' },
-  { path: 'docs/IPA-PIPELINE-REPORT.md', label: 'IPA pipeline report', layer: 'script' },
-  { path: 'docs/espeak-integration.md', label: 'eSpeak integration', layer: 'script' },
-  { path: 'docs/pronunciation-validation.md', label: 'Pronunciation validation', layer: 'script' },
-  { path: 'docs/ipa-normalize.md', label: 'IPA normalization', layer: 'script' },
+    { path: 'docs/language-rules.md', label: 'Encoding rules', layer: 'script' },
+    { path: 'docs/multilingual-support.md', label: 'Multilingual support', layer: 'script' },
+    { path: 'docs/IPA-PIPELINE-REPORT.md', label: 'IPA pipeline report', layer: 'script' },
+    { path: 'docs/espeak-integration.md', label: 'eSpeak integration', layer: 'script' },
+    { path: 'docs/pronunciation-validation.md', label: 'Pronunciation validation', layer: 'script' },
+    { path: 'docs/ipa-normalize.md', label: 'IPA normalization', layer: 'script' },
 
-  { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
-  { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
-  { path: 'docs/fonoran-interpretive-translator.md', label: 'Interpretive translator', layer: 'language' },
+    { path: 'docs/fonoran-constitution.md', label: 'Fonoran constitution', layer: 'language' },
+    { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
+    { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
+    { path: 'docs/fonoran-interpretive-translator.md', label: 'Interpretive translator', layer: 'language' },
 
-  ...RESEARCH_DOC_ENTRIES,
+    ...RESEARCH_DOC_ENTRIES,
 
-  { path: 'docs/fonoran-gen3.md', label: 'DDA Gen 3 (archive)', layer: 'archive' },
-  { path: 'docs/fonoran-gen3-1.md', label: 'Gen 3.1 phonetic layer', layer: 'archive' },
-  { path: 'docs/fonoran-generator-archive.md', label: 'Generator archive', layer: 'archive' },
-  { path: 'docs/fonoran-semantic-foundation.md', label: 'Semantic foundation', layer: 'archive' },
-  { path: 'docs/fonoran-primitive-roots-report.md', label: 'Primitive roots report', layer: 'archive' },
-  { path: 'docs/FONORA_CLEANUP_AUDIT.md', label: 'Cleanup audit (2026)', layer: 'archive' },
-  { path: 'docs/FONORA_COLLISION_AUDIT.md', label: 'Collision audit', layer: 'archive' },
-  { path: 'docs/IPA_VOWEL_NORMALIZATION_AUDIT.md', label: 'Vowel normalization audit', layer: 'archive' },
-  { path: 'docs/FONORA_VOWEL_DECISION_REPORT.md', label: 'Vowel decision report (v2)', layer: 'archive' },
+    { path: 'docs/fonoran-gen3.md', label: 'DDA Gen 3 (archive)', layer: 'archive' },
+    { path: 'docs/fonoran-gen3-1.md', label: 'Gen 3.1 phonetic layer', layer: 'archive' },
+    { path: 'docs/fonoran-generator-archive.md', label: 'Generator archive', layer: 'archive' },
+    { path: 'docs/fonoran-semantic-foundation.md', label: 'Semantic foundation', layer: 'archive' },
+    { path: 'docs/fonoran-primitive-roots-report.md', label: 'Primitive roots report', layer: 'archive' },
+    { path: 'docs/FONORA_CLEANUP_AUDIT.md', label: 'Cleanup audit (2026)', layer: 'archive' },
+    { path: 'docs/FONORA_COLLISION_AUDIT.md', label: 'Collision audit', layer: 'archive' },
+    { path: 'docs/IPA_VOWEL_NORMALIZATION_AUDIT.md', label: 'Vowel normalization audit', layer: 'archive' },
+    { path: 'docs/FONORA_VOWEL_DECISION_REPORT.md', label: 'Vowel decision report (v2)', layer: 'archive' },
   ];
 }
 
 /** Curated doc list for the viewer sidebar (includes runtime research entries). */
 export function getDocCatalog() {
-  return [...buildDocCatalog(), ...RESEARCH_DOC_ENTRIES];
+  return buildDocCatalog();
+}
+
+/** Docs the viewer can fetch and render (excludes runtime research notebook routes). */
+export function getNavigableDocCatalog() {
+  return getDocCatalog().filter(
+    (entry) =>
+      entry.path.startsWith('docs/') ||
+      entry.path === 'README.md' ||
+      entry.path === 'CONTRIBUTING.md' ||
+      entry.path === 'SECURITY.md',
+  );
 }
 
 /**

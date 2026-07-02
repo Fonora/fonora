@@ -1,12 +1,10 @@
 # Fonoran semantic foundation
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-11 · The irreducible dimensions of meaning](/research/notes/semantic-foundation).
 
-
-> **Status:** proposal v1.2 · **Superseded for phonetics** by [fonoran.md](fonoran.md) · Semantic inventory remains reference for compounds
+> **Archive — superseded for phonetics** by [fonoran.md](fonoran.md). Primary source for [RN-11 · The irreducible dimensions of meaning](/research/notes/semantic-foundation). Semantic inventory remains reference for compounds; phonetic assignment follows the editorial pipeline in the guide.
 
 This document supersedes the algorithmic primitive-roots experiment (`fonoran-primitive-roots.js`). That tooling assigned phonetic forms before semantic approval. **This foundation starts from concepts only.**
 
-Authoritative grammar philosophy: [fonoran-grammar.md](fonoran-grammar.md)
+Authoritative grammar: [fonoran-grammar.md](fonoran-grammar.md) · constitution: [fonoran-constitution.md](fonoran-constitution.md)
 
 Machine-readable inventories:
 
@@ -23,20 +21,17 @@ Machine-readable inventories:
 1. **Dimensions of reality, not a word list.** The goal is ~100 **semantic dimensions**: carved space from which compounds write themselves. Not 100 English words.
 2. **Minimize lexical categories.** Fonoran represents sentences as relationships between invariant concepts. Avoid noun/verb/adjective framing in documentation and tooling.
 3. **The fundamental experience test.** A primitive represents an experience that **cannot be naturally expressed using simpler Fonoran concepts.** Inspired by early language learning, but not limited to toddler cognition (equal, before, remember are primitives; run and useful are not).
+
+   | Misread (avoid) | Correct read |
+   | --- | --- |
+   | "Would a two-year-old say this word?" | "Can a speaker naturally understand this only from simpler Fonoran roots?" |
+   | Toddler vocabulary = primitive list | Early experience **informs** the test; adult-needed concepts (equal, before) still qualify |
+   | 100 common English words | 100 **dimensions of reality** |
+
 4. **Grammar is separate.** Pronouns, tense, logic, causation (because / therefore), and relational particles are never lexical roots. Present tense has no particle.
 5. **Phonetics come last.** No syllable assignments until this semantic inventory is approved.
 6. **Hierarchical compounding.** Prefer `community + identity → tribe` over flattening intermediate concepts.
 7. **Productive dimensions.** **thing**, **change**, **move**, **equal**, **strong**, and **bond** are high-leverage roots. Most compounds should flow from them naturally.
-
-### The fundamental experience test (defining rule)
-
-> **A primitive concept should represent a fundamental human experience that cannot be naturally expressed using simpler Fonoran concepts.**
-
-| Misread (avoid) | Correct read |
-| --- | --- |
-| "Would a two-year-old say this word?" | "Can a speaker naturally understand this only from simpler Fonoran roots?" |
-| Toddler vocabulary = primitive list | Early experience **informs** the test; adult-needed concepts (equal, before) still qualify |
-| 100 common English words | 100 **dimensions of reality** |
 
 **Not primitives (v1.2):** walk, useful, cause, effect, void — see demoted list in JSON.
 

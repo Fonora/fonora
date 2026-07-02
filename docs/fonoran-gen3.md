@@ -1,20 +1,10 @@
 # Fonoran Gen 3: Grid-Native Language Architecture
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates).
 
+> **Archive — superseded direction.** Primary source for [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates). The Gen 3 / DDA coordinate track is **demoted** under the [Fonoran Constitution](fonoran-constitution.md): roots are organized by **human experience** and the **campfire test**; compounds are judged by recoverable meaning, not coordinate correctness. Kept for reference and DDA inference in the lab Advanced tab — not the production design. Active workflow: [fonoran.md](fonoran.md) at `/language`.
 
-> **Archive — superseded direction.** Experimental generator, not the active workflow. See [fonoran.md](fonoran.md).
->
-> The Gen 3 / DDA coordinate track (abstract, articulation-derived `⟨D,M,A⟩` semantics) is
-> **demoted** under the [Fonoran Constitution](fonoran-constitution.md): roots are now
-> organized by **human experience** and gated by the **campfire test**, and compounds are
-> judged by whether another root-knower can recover the meaning — not by coordinate
-> correctness. Kept for reference and DDA inference; not the production design.
+**On this page:** [Rebasing](#0-the-rebasing) · [Semantic theory](#1-semantic-theory) · [Articulation map](#2-articulation-meaning-map) · [Coordinate system](#3-coordinate-system-dda) · [Root generation](#4-root-generation-system) · [Running the generator](#9-running-the-generator)
 
-> **Status:** experimental rebase, all prior Fonoran work (Gen 1 inventory, Gen 2 primitives, English-adjacent roots) is **disposable**  
-> **Branch:** `feature/fonoran-language-experiment`  
-> **Does not modify:** Fonora translator, phoneme pipeline, IPA mapping, sound grid, quiz, reader, or `language-rules.md`
-
-For the live vocabulary you build by hand, use the [Fonoran language lab](fonoran.md) at `/language/`. Gen 3 JSON here is **reference semantics** for DDA inference and the English meaning picker, not your working dictionary.
+For the live vocabulary you build by hand, use the [Fonoran language lab](fonoran.md). Gen 3 JSON here is **reference semantics** for DDA inference and the English meaning picker, not your working dictionary.
 
 ---
 

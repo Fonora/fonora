@@ -126,6 +126,12 @@ export function renderMarkdown(source, options = {}) {
   while (i < lines.length) {
     const line = lines[i];
 
+    if (/^(-{3,}|\*{3,}|_{3,})\s*$/.test(line.trim())) {
+      blocks.push('<hr class="doc-hr">');
+      i += 1;
+      continue;
+    }
+
     if (line.startsWith('```')) {
       const fence = line.trim();
       const lang = fence.slice(3).trim();
@@ -178,7 +184,13 @@ export function renderMarkdown(source, options = {}) {
       const plainTitle = heading[2].replace(/\*\*/g, '').replace(/`/g, '');
       const id = slugifyHeading(plainTitle);
       const idAttr = id ? ` id="${escapeHtml(id)}"` : '';
-      blocks.push(`<h${level}${idAttr}>${formatInline(heading[2])}</h${level}>`);
+      const anchor =
+        options.headingAnchors && id
+          ? `<a class="doc-heading__anchor" href="#${escapeHtml(id)}" aria-label="Link to this section">#</a>`
+          : '';
+      blocks.push(
+        `<h${level}${idAttr} class="doc-heading doc-heading--h${level}">${anchor}${formatInline(heading[2])}</h${level}>`,
+      );
       i += 1;
       continue;
     }
@@ -189,7 +201,20 @@ export function renderMarkdown(source, options = {}) {
         quoteLines.push(lines[i].replace(/^>\s?/, ''));
         i += 1;
       }
-      blocks.push(`<blockquote><p>${formatInline(quoteLines.join(' '))}</p></blockquote>`);
+      /** @type {string[]} */
+      const paragraphs = [];
+      let current = [];
+      for (const quoteLine of quoteLines) {
+        if (!quoteLine.trim()) {
+          if (current.length) paragraphs.push(current.join(' '));
+          current = [];
+          continue;
+        }
+        current.push(quoteLine);
+      }
+      if (current.length) paragraphs.push(current.join(' '));
+      const inner = (paragraphs.length ? paragraphs : ['']).map((p) => `<p>${formatInline(p)}</p>`).join('');
+      blocks.push(`<blockquote>${inner}</blockquote>`);
       continue;
     }
 

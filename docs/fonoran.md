@@ -20,7 +20,7 @@
 ```mermaid
 flowchart TD
   subgraph semantics [Semantic layer]
-    Inventory["concept-inventory.json\n118 concepts"]
+    Inventory["concept-inventory.json\n110 primitives"]
   end
 
   subgraph phonetics [Phonetic assignment]
@@ -31,7 +31,7 @@ flowchart TD
   end
 
   subgraph composition [Composition]
-    CompoundsJson["compounds.json\n46 curated recipes"]
+    CompoundsJson["compounds.json\n82 curated recipes"]
     Build["fonoran-build.js\nunique-parse check"]
     Lab["sound-bucket.json\nruntime lab"]
   end
@@ -201,41 +201,26 @@ Reserved particles (never roots): `mi`, `na`, `ta`.
 
 ## API
 
-### Lab (vocabulary)
-
-| Endpoint | Method | Auth |
-| --- | --- | --- |
-| `/api/fonoran/lab` | GET | Public |
-| `/api/fonoran/lab/health` | GET | Public |
-| `/api/fonoran/lab/graph/:kind/:ref` | GET | Public |
-| `/api/fonoran/lab/compounds` | POST | Sign-in |
-| `/api/fonoran/lab/run-dda` | POST | Sign-in |
-| `/api/fonoran/lab/build` | POST | Sign-in |
-
-### Root review
-
-| Endpoint | Method | Purpose |
-| --- | --- | --- |
-| `/api/fonoran/roots/candidates` | GET | List candidates (`?status=pending`) |
-| `/api/fonoran/roots/candidates/:id` | PATCH | `{ action: approve\|reject\|edit\|reopen, … }` |
-| `/api/fonoran/roots/candidates/:id/regenerate` | POST | New spelling for one concept |
-| `/api/fonoran/roots/canonical` | GET | Approved root export |
-
-### Snapshots
-
 | Endpoint | Method | Auth | Purpose |
 | --- | --- | --- | --- |
+| `/api/fonoran/lab` | GET | Public | Lab bucket (sounds, compounds) |
+| `/api/fonoran/lab/health` | GET | Public | Readability scores |
+| `/api/fonoran/lab/graph/:kind/:ref` | GET | Public | Derivation / family graph |
+| `/api/fonoran/lab/compounds` | POST | Sign-in | Save compound |
+| `/api/fonoran/lab/run-dda` | POST | Sign-in | Run DDA inference (archive experiment) |
+| `/api/fonoran/lab/build` | POST | Sign-in | Import build into lab |
+| `/api/fonoran/roots/candidates` | GET | Sign-in | Root queue (`?status=pending`) |
+| `/api/fonoran/roots/candidates/:id` | PATCH | Sign-in | Approve / reject / edit / reopen |
+| `/api/fonoran/roots/candidates/:id/regenerate` | POST | Sign-in | New spelling for one concept |
+| `/api/fonoran/roots/canonical` | GET | Public | Approved root export |
 | `/api/fonoran/snapshot/status` | GET | Public | Storage mode and doc counts |
 | `/api/fonoran/snapshot/export` | GET | Admin | Download full-state zip |
-| `/api/fonoran/snapshot/preview` | POST | Sign-in | Preview zip contents before restore |
+| `/api/fonoran/snapshot/preview` | POST | Sign-in | Preview zip before restore |
 | `/api/fonoran/snapshot/import` | POST | Admin | Replace all state (`confirm: RESTORE`) |
+| `/api/fonoran/translate` | POST | Public | English sentence → Fonoran |
+| `/api/fonoran/concepts` | GET | Public | Concept inventory + spellings |
 
-### Other
-
-| Endpoint | Method | Purpose |
-| --- | --- | --- |
-| `/api/fonoran/translate` | POST | English sentence → Fonoran |
-| `/api/fonoran/concepts` | GET | Concept inventory + spellings |
+Auth and production release checklist: [fonoran-auth-and-release.md](fonoran-auth-and-release.md).
 
 ## Credits
 
