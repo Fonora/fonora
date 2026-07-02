@@ -46,6 +46,7 @@ Read in this order for a new contributor:
 | --- | --- | --- |
 | 1 | **Fonoran constitution** | [fonoran-constitution.md](fonoran-constitution.md) |
 | 2 | **Fonoran guide** | [fonoran.md](fonoran.md) |
+| 2b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
 | 3 | Fonoran grammar | [fonoran-grammar.md](fonoran-grammar.md) |
 | 4 | Interpretive translator | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
 

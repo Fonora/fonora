@@ -24,7 +24,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -59,7 +59,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -425,7 +425,7 @@
           "understandability": 0.8,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -461,7 +461,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -587,7 +587,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -747,7 +747,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -776,21 +776,21 @@
       "alternates": [
         {
           "composition": [
-            "eat",
-            "thing"
-          ],
-          "understandability": 0.78,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "demoted_heuristic"
-        },
-        {
-          "composition": [
             "food",
             "thing"
           ],
           "understandability": 0.8,
           "label": "very likely understood",
+          "status": "plausible",
+          "source": "heuristic"
+        },
+        {
+          "composition": [
+            "eat",
+            "thing"
+          ],
+          "understandability": 0.78,
+          "label": "likely understood",
           "status": "plausible",
           "source": "heuristic"
         }
@@ -933,7 +933,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -1692,7 +1692,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -1793,8 +1793,8 @@
       "alternates": [
         {
           "composition": [
-            "part",
-            "all"
+            "all",
+            "thing"
           ],
           "understandability": 0.82,
           "label": "very likely understood",
@@ -1803,8 +1803,8 @@
         },
         {
           "composition": [
-            "all",
-            "thing"
+            "part",
+            "all"
           ],
           "understandability": 0.82,
           "label": "very likely understood",
@@ -1819,24 +1819,35 @@
       "concept": "world",
       "preferred": {
         "composition": [
-          "whole",
-          "place",
           "earth",
-          "life"
+          "all"
         ],
-        "gloss": "whole place of earth and life"
+        "gloss": "all the earth; the whole ground"
       },
-      "preferred_source": "llm_consensus",
+      "preferred_source": "heuristic",
+      "notes": "Spoken compression; teaching tree whole+place+earth+life kept as alternate",
       "alternates": [
         {
           "composition": [
+            "whole",
+            "place",
             "earth",
-            "all"
+            "life"
+          ],
+          "understandability": 0.63,
+          "label": "plausible",
+          "status": "plausible",
+          "source": "demoted_heuristic"
+        },
+        {
+          "composition": [
+            "earth",
+            "life"
           ],
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -1850,8 +1861,8 @@
           "source": "heuristic"
         }
       ],
-      "understandability": 0.63,
-      "notes": "Teaching tree (depth 2): whole + place + earth + life"
+      "understandability": 0.84,
+      "notes": "Spoken compression; teaching tree whole+place+earth+life kept as alternate"
     },
     {
       "concept": "question",
@@ -2017,7 +2028,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -2087,7 +2098,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -2157,7 +2168,7 @@
           "understandability": 0.82,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -2686,7 +2697,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -2755,7 +2766,7 @@
           "understandability": 0.82,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -2860,7 +2871,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -2931,7 +2942,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -3215,7 +3226,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -3672,7 +3683,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -3708,7 +3719,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -3745,7 +3756,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [
@@ -3890,7 +3901,7 @@
           "understandability": 0.84,
           "label": "very likely understood",
           "status": "plausible",
-          "source": "demoted_heuristic"
+          "source": "heuristic"
         },
         {
           "composition": [

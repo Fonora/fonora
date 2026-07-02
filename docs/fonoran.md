@@ -169,7 +169,8 @@ npm run fonoran:inventory-migrate  # seed editorial metadata fields on the conce
 npm run fonoran:snapshot:export -- --to=data/   # Postgres → seed JSON (commit milestones)
 npm run fonoran:snapshot:import -- --from=data/ # seed JSON → Postgres (local bootstrap)
 npm run fonoran:optimize-compounds       # heuristic preferred-form promotion
-npm run fonoran:optimize-compounds -- --use-llm   # rank by intuition_weight when v3 data exists
+npm run fonoran:optimize-compounds -- --length-only   # demote only when flat > 4 and shorter seed exists
+npm run fonoran:optimize-compounds -- --use-llm   # rank by intuition_weight when v4/v3 data exists
 npm run fonoran:llm-intuition -- --pilot          # v3 smoke: tool, weapon, tribe (~80 calls)
 npm run fonoran:llm-intuition -- --calibration    # v3 calibration: 10 concepts (~320 calls)
 npm run fonoran:llm-intuition -- --dry-run        # cost estimate
@@ -178,7 +179,9 @@ npm run fonoran:compound-audit           # includes llm_split / llm_would_promot
 
 See [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md) for protocol design and recorded results. Research note workflow: [research-notes-authoring.md](research-notes-authoring.md).
 
-**Preferred-form authority tiers:** `human` / `playtest` (locked) → `llm_consensus` (v3 weights + clear margin) → `heuristic` (length/score fallback). Set `ANTHROPIC_API_KEY` in `.env`. LLMs evaluate seed candidates only; they do not invent compositions.
+**Full sequential workflow (local + Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md) — optimize → build → audit → deploy commands in order.
+
+**Preferred-form authority tiers:** `human` / `playtest` (locked) → `llm_consensus` (v4 weights + clear margin) → `heuristic` (length/score fallback). Set `ANTHROPIC_API_KEY` in `.env`. LLMs evaluate seed candidates only; they do not invent compositions.
 
 Typical compound optimization loop (after v3 batch):
 

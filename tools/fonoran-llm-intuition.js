@@ -109,9 +109,13 @@ function clamp01(n) {
 
 function personaSystem(persona, task) {
   const p = PERSONAS[persona] ?? PERSONAS.literal_root_knower;
+  const lengthGuidance = task === 'B'
+    ? '\nPrefer short, campfire-sayable compounds (2–3 roots). Penalize chains above 3 flattened roots — tag too_long when a construction feels padded for semantic completeness rather than communicative efficiency.'
+    : '';
   return [
     'You evaluate Fonoran compound communicative intuition.',
     p.systemExtra,
+    lengthGuidance,
     '',
     `Task ${task}. Respond with JSON only. Use tags from: ${PUZZLE_FEEDBACK_TAGS.join(', ')}.`,
     'Keep reasoning to 1-2 sentences.',
