@@ -47,6 +47,7 @@ import {
   isWriteAuthRequired,
   isAdminUser,
   isSnapshotAdminRequired,
+  isRegenAdminRequired,
   adminRequiredResponse,
   unauthorizedResponse,
 } from './fonoran-auth.js';
@@ -67,6 +68,13 @@ import {
   loadCandidateContext,
 } from './fonoran-expression-candidates.js';
 import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
+import {
+  getRegenStatus,
+  runRegenerate,
+  optimizeCompoundsInStore,
+  runTranslatorRegression,
+} from './fonoran-regen.js';
+import { importEditorialFromSeedPaths } from './fonoran-store.js';
 import { sanitizeForJsonResponse } from '../js/utils.js';
 
 function writeJsonPayload(res, status, payload) {
@@ -131,6 +139,10 @@ export async function handleFonoranApi(req, res, pathname, method) {
     return true;
   }
   if (isSnapshotAdminRequired(pathname, method) && !isAdminUser(req)) {
+    adminRequiredResponse(res);
+    return true;
+  }
+  if (isRegenAdminRequired(pathname, method) && !isAdminUser(req)) {
     adminRequiredResponse(res);
     return true;
   }
@@ -304,11 +316,54 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/lab/undo' && method === 'POST') {
       return done(200, await undoLast());
     }
+    if (pathname === '/api/fonoran/lab/regen/status' && method === 'GET') {
+      return done(200, await getRegenStatus());
+    }
+    if (pathname === '/api/fonoran/lab/editorial/import' && method === 'POST') {
+      const body = await readJsonBody(req);
+      if (body.confirm !== 'IMPORT') {
+        return done(400, { error: 'Type IMPORT in confirm field to reload editorial seeds from deploy' });
+      }
+      return done(200, await importEditorialFromSeedPaths());
+    }
+    if (pathname === '/api/fonoran/lab/optimize-compounds' && method === 'POST') {
+      const body = await readJsonBody(req);
+      return done(200, await optimizeCompoundsInStore({
+        useLlm: body.use_llm !== false,
+        lengthOnly: Boolean(body.length_only),
+      }));
+    }
+    if (pathname === '/api/fonoran/lab/regenerate' && method === 'POST') {
+      const body = await readJsonBody(req);
+      if (body.confirm !== 'REGENERATE') {
+        return done(400, { error: 'Type REGENERATE in confirm field to run the full generator pipeline' });
+      }
+      return done(200, await runRegenerate({
+        applyLlm: body.apply_llm === true,
+        approveAll: body.approve_all !== false,
+      }));
+    }
+    if (pathname === '/api/fonoran/lab/regression/translator' && method === 'POST') {
+      const lab = await getLab();
+      return done(200, await runTranslatorRegression({ lab }));
+    }
     if (pathname === '/api/fonoran/lab/seed' && method === 'POST') {
       return done(200, await resetProject());
     }
     if ((pathname === '/api/fonoran/lab/build' || pathname === '/api/fonoran/lab/import-vocabulary') && method === 'POST') {
       const body = await readJsonBody(req);
+      if (!body.force) {
+        const status = await getRegenStatus();
+        const stale = status.warnings?.some(w => w.code === 'lab_newer_than_seeds' || w.code === 'never_imported_seeds');
+        if (stale && status.storage_mode === 'postgres') {
+          return done(409, {
+            error: 'Editorial seeds are stale. Use Regenerate from git seeds in Advanced, or pass force: true with confirm BUILD.',
+          });
+        }
+      }
+      if (body.force && body.confirm !== 'BUILD') {
+        return done(400, { error: 'Type BUILD in confirm field to force rebuild without reloading seeds' });
+      }
       return done(200, await buildFonoran({ approveAll: Boolean(body.approve_all) }));
     }
     if (pathname === '/api/fonoran/lab/reset-review' && method === 'POST') {

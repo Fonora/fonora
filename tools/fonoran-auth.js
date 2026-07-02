@@ -309,6 +309,16 @@ export function isSnapshotAdminRequired(pathname, method) {
   return pathname.startsWith('/api/fonoran/snapshot/');
 }
 
+/** Regeneration pipeline mutates editorial + lab state — admin on prod. */
+export function isRegenAdminRequired(pathname, method) {
+  const m = method.toUpperCase();
+  if (pathname === '/api/fonoran/lab/regen/status' && m === 'GET') return false;
+  if (m !== 'POST') return false;
+  return pathname === '/api/fonoran/lab/regenerate'
+    || pathname === '/api/fonoran/lab/editorial/import'
+    || pathname === '/api/fonoran/lab/optimize-compounds';
+}
+
 export function adminRequiredResponse(res) {
   jsonResponse(res, 403, {
     error: 'Admin access required',

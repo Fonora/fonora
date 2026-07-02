@@ -472,6 +472,90 @@ export async function readSnapshotFromSeedPaths(baseDir = ROOT) {
   return importAllSnapshotDocs({ bucket, docs });
 }
 
+const OPTIONAL_EDITORIAL_DOCS = new Set(['playtests', 'llm_evaluations']);
+
+/** Read editorial seed JSON from disk (deploy slug / data/). */
+export async function readEditorialSeedsFromPaths(baseDir = ROOT) {
+  const docs = {};
+  const missing = [];
+  for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
+    const body = await readJsonFile(join(baseDir, rel));
+    if (!body) {
+      if (OPTIONAL_EDITORIAL_DOCS.has(key)) continue;
+      missing.push(rel);
+      continue;
+    }
+    docs[key] = body;
+  }
+  if (missing.length) {
+    throw new Error(`Missing editorial seed file(s): ${missing.join(', ')}`);
+  }
+  return docs;
+}
+
+/** Import editorial docs from seed paths into the active store (no lab bucket). */
+export async function importEditorialFromSeedPaths(baseDir = ROOT) {
+  const docs = await readEditorialSeedsFromPaths(baseDir);
+  clearStoreCache();
+  for (const [key, body] of Object.entries(docs)) {
+    await writeDoc(key, body);
+  }
+  await markEditorialSeedsImported();
+  clearStoreCache();
+  return {
+    docs: Object.keys(docs).length,
+    keys: Object.keys(docs),
+    counts: Object.fromEntries(
+      Object.entries(docs).map(([key, body]) => [key, docCounts(key, body)]),
+    ),
+  };
+}
+
+/** When editorial seeds were last loaded from disk into Postgres. */
+export async function getEditorialSeedsImportedAt() {
+  if (resolveStorageMode() !== 'postgres') return null;
+  await ensurePgSchemaOnce();
+  const client = await (await getPool()).connect();
+  try {
+    const { rows } = await client.query(
+      'SELECT imported_from_json_at FROM fonoran_lab_meta WHERE id = 1',
+    );
+    return rows[0]?.imported_from_json_at ?? null;
+  } finally {
+    client.release();
+  }
+}
+
+/** Record that editorial seeds were loaded from git JSON paths. */
+export async function markEditorialSeedsImported() {
+  if (resolveStorageMode() !== 'postgres') return { skipped: true, reason: 'json mode' };
+  await ensurePgSchemaOnce();
+  const client = await (await getPool()).connect();
+  try {
+    await client.query(
+      `INSERT INTO fonoran_lab_meta (id, schema_version, imported_from_json_at)
+       VALUES (1, $1, NOW())
+       ON CONFLICT (id) DO UPDATE SET imported_from_json_at = NOW()`,
+      [SCHEMA_VERSION],
+    );
+  } finally {
+    client.release();
+  }
+  return { marked: true, at: new Date().toISOString() };
+}
+
+/** Counts from seed files on disk (for regen status vs Postgres). */
+export async function readSeedFileStatus(baseDir = ROOT) {
+  const status = {};
+  for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
+    const body = await readJsonFile(join(baseDir, rel));
+    status[key] = body
+      ? { present: true, counts: docCounts(key, body) }
+      : { present: false, counts: {} };
+  }
+  return status;
+}
+
 export async function pgBucketIsEmpty() {
   if (resolveStorageMode() !== 'postgres') return true;
   const bucket = await readBucketFromPg();

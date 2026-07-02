@@ -4906,17 +4906,70 @@
       close: closeSheet,
       isOpen: () => $('sheet')?.classList.contains('open'),
     });
-    $('adv-import-vocabulary').addEventListener('click', async () => {
+    $('adv-regenerate')?.addEventListener('click', async () => {
+      const applyLlm = $('adv-regen-apply-llm')?.checked !== false;
       if (!confirmDangerAction({
-        title: 'Run converged build',
-        message: 'Generate the converged vocabulary (roots + curated compounds), locking any approved spellings? Lab vocabulary is rebuilt; user-added roots and words you created are preserved.',
+        title: 'Regenerate dictionary from git seeds',
+        message: 'This will:\n1. Reload editorial seeds from deploy (compounds, LLM evaluations, roots…)\n'
+          + (applyLlm ? '2. Re-run LLM optimizer (may change preferred forms)\n' : '')
+          + `${applyLlm ? '3' : '2'}. Rebuild the live dictionary (approve all)\n\n`
+          + 'LLM promotions already in git compounds.json are loaded in step 1. '
+          + 'User-created roots and words (created_by: user) are preserved.',
+        typeToConfirm: 'REGENERATE',
       })) return;
-      const r = await api('/api/fonoran/lab/build', { method: 'POST', body: '{}' });
-      const preserved = (r.preserved_compounds ?? 0) + (r.preserved_sounds ?? 0);
-      toast(`Generated ${r.roots} roots and ${r.compounds} words${preserved ? ` (${preserved} user items kept)` : ''}`);
-      await load();
-      rememberMainPage();
-      switchPage('dictionary');
+      try {
+        const r = await api('/api/fonoran/lab/regenerate', {
+          method: 'POST',
+          body: JSON.stringify({ confirm: 'REGENERATE', apply_llm: applyLlm, approve_all: true }),
+        });
+        const build = r.steps?.find(s => s.step === 'build');
+        toast(`Regenerated ${build?.roots ?? '?'} roots, ${build?.compounds ?? '?'} words`);
+        const out = $('adv-regen-result');
+        if (out) {
+          out.textContent = JSON.stringify(r, null, 2);
+          out.hidden = false;
+        }
+        STATE.lexicon = null;
+        await load();
+        await renderAdvanced();
+        rememberMainPage();
+        switchPage('dictionary');
+      } catch (e) { toast(e.message); }
+    });
+
+    $('adv-run-translator-tests')?.addEventListener('click', async () => {
+      try {
+        const r = await api('/api/fonoran/lab/regression/translator', { method: 'POST', body: '{}' });
+        const out = $('adv-translator-result');
+        if (out) {
+          out.textContent = JSON.stringify(r, null, 2);
+          out.hidden = false;
+        }
+        if (r.ok) {
+          toast(`Translation tests passed — ${r.total}/${r.total} golden phrases match`);
+        } else {
+          toast(`Translation tests failed — ${r.mismatches}/${r.total} drifted`);
+        }
+      } catch (e) { toast(e.message); }
+    });
+
+    $('adv-force-build')?.addEventListener('click', async () => {
+      if (!confirmDangerAction({
+        title: 'Force rebuild only',
+        message: 'Rebuild the dictionary from current Postgres editorial state WITHOUT reloading git seeds. '
+          + 'Only use this if seeds were already imported. Blocked when seeds are stale.',
+        typeToConfirm: 'BUILD',
+      })) return;
+      try {
+        const r = await api('/api/fonoran/lab/build', {
+          method: 'POST',
+          body: JSON.stringify({ confirm: 'BUILD', force: true, approve_all: true }),
+        });
+        const preserved = (r.preserved_compounds ?? 0) + (r.preserved_sounds ?? 0);
+        toast(`Built ${r.roots} roots, ${r.compounds} words${preserved ? ` (${preserved} user items kept)` : ''}`);
+        await load();
+        await renderAdvanced();
+      } catch (e) { toast(e.message); }
     });
     $('adv-reset-review').addEventListener('click', async () => {
       if (!confirmDangerAction({
@@ -4949,19 +5002,68 @@
       await load();
     });
 
+    async function renderAdvancedMermaid() {
+      const el = document.querySelector('#page-advanced .adv-regen-mermaid');
+      if (!el || !window.mermaid) return;
+      try {
+        const { MERMAID_INIT } = await import('../js/mermaid-theme.js');
+        window.mermaid.initialize(MERMAID_INIT);
+        await window.mermaid.run({ nodes: [el] });
+      } catch (err) {
+        console.warn('Advanced mermaid render failed:', err);
+      }
+    }
+
+    function formatRegenStatusHtml(status) {
+      if (!status) return '<p class="empty">Could not load regeneration status.</p>';
+      const imp = status.editorial_imported_at
+        ? new Date(status.editorial_imported_at).toLocaleString()
+        : 'never';
+      const labUp = status.lab?.updated_at
+        ? new Date(status.lab.updated_at).toLocaleString()
+        : '—';
+      const llmStore = status.store_docs?.llm_evaluations?.counts?.rounds ?? 0;
+      const llmSeed = status.seed_files?.llm_evaluations?.counts?.rounds ?? 0;
+      const cmpStore = status.store_docs?.compounds?.counts?.compounds ?? 0;
+      const cmpSeed = status.seed_files?.compounds?.counts?.compounds ?? 0;
+      return `<dl>
+        <dt>Storage</dt><dd>${escapeHtml(status.storage_mode ?? '—')}</dd>
+        <dt>Dictionary</dt><dd>${status.lab?.sounds ?? 0} roots · ${status.lab?.compounds ?? 0} words · updated ${escapeHtml(labUp)}</dd>
+        <dt>Seeds imported</dt><dd>${escapeHtml(imp)}</dd>
+        <dt>LLM eval rounds</dt><dd>Postgres ${llmStore} · deploy slug ${llmSeed}${llmStore === llmSeed ? '' : ' (drift)'}</dd>
+        <dt>Compound recipes</dt><dd>Postgres ${cmpStore} · deploy slug ${cmpSeed}${cmpStore === cmpSeed ? '' : ' (drift)'}</dd>
+      </dl>`;
+    }
+
     async function renderAdvanced() {
       try {
         const h = await fetchHealth();
         const d = h.dda ?? {};
         $('adv-dda-status').textContent = `DDA: ${d.pending ?? 0} pending · ${d.stale ?? 0} stale · ${d.inferred ?? 0} inferred · ${d.confirmed ?? 0} confirmed`;
         try {
-          const status = await api('/api/fonoran/snapshot/status');
-          const lab = status.lab ?? {};
-          $('adv-storage-status').textContent =
-            `Storage: ${status.storage_mode} · ${lab.sounds ?? 0} roots · ${lab.compounds ?? 0} words · lab updated ${lab.updated_at ? new Date(lab.updated_at).toLocaleString() : '—'}`;
+          const status = await api('/api/fonoran/lab/regen/status');
+          const regenEl = $('adv-regen-status');
+          if (regenEl) regenEl.innerHTML = formatRegenStatusHtml(status);
+          const warnEl = $('adv-regen-warnings');
+          if (warnEl) {
+            const warnings = status.warnings ?? [];
+            if (warnings.length) {
+              warnEl.innerHTML = warnings.map(w => `<li>${escapeHtml(w.message)}</li>`).join('');
+              warnEl.hidden = false;
+            } else {
+              warnEl.hidden = true;
+              warnEl.innerHTML = '';
+            }
+          }
+          if ($('adv-storage-status')) {
+            $('adv-storage-status').textContent =
+              `Storage: ${status.storage_mode} · ${status.lab?.sounds ?? 0} roots · ${status.lab?.compounds ?? 0} words`;
+          }
         } catch {
+          if ($('adv-regen-status')) $('adv-regen-status').textContent = 'Could not load regeneration status.';
           if ($('adv-storage-status')) $('adv-storage-status').textContent = '';
         }
+        void renderAdvancedMermaid();
         if (STATE.showDebugDda && STATE.lab) {
           const debug = {
             sounds: STATE.lab.sounds.map(s => ({ spelling: s.spelling, dda: s.dda })),
