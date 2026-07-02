@@ -452,6 +452,12 @@ const fonoranTranslatorResult = await (async () => {
     assert(awayFrom.tokens.some(t => t.concept_id === 'far' && t.role === 'path'), 'away -> far path');
     assert(awayFrom.tokens.some(t => t.concept_id === 'source' && t.role === 'path'), 'from -> source path');
 
+    const seafoodA = await translateEnglish('I want to eat seafood.');
+    const seafoodB = await translateEnglish('I want to eat sea food.');
+    assert(seafoodA.surface.roman === 'mi sak tel yemelfel telto', `seafood roman: ${seafoodA.surface.roman}`);
+    assert(seafoodB.surface.roman === seafoodA.surface.roman, `sea food diverged: ${seafoodB.surface.roman}`);
+    assert(!seafoodA.tokens.some(t => t.interpret_reason?.includes('hypernym:eat')), 'seafood must not collapse to eat');
+
     return { name: testName, ok: true };
   } catch (e) {
     return { name: testName, ok: false, error: e.message };

@@ -101,7 +101,7 @@ const HYPERNYM_BRIDGE = new Map([
   ['artifact',          ['make', 'thing']],
   ['tool',              ['use']],
   ['container',         ['hold']],
-  ['food',              ['eat']],
+  ['food',              ['food', 'eat']],
   ['shelter',           ['protect', 'place']],
   ['dwelling',          ['place', 'protect']],
 
@@ -144,6 +144,16 @@ async function flushCache() {
 }
 
 function norm(w) { return String(w).toLowerCase().replace(/_/g, ' ').trim(); }
+
+/** Role-aware disambiguation when both food and eat are bridge targets. */
+export function pickHypernymConcept(concepts, role) {
+  if (!concepts?.length) return null;
+  if (concepts.includes('food') && concepts.includes('eat')) {
+    const nounRoles = new Set(['object', 'modifier', 'concept', 'path', 'subject']);
+    return nounRoles.has(role) ? 'food' : 'eat';
+  }
+  return concepts[0];
+}
 
 // ─── Core lookup ─────────────────────────────────────────────────────────────
 

@@ -55,24 +55,45 @@ export function checkTargetFrame(targetFrame, result) {
   return { pass: missing.length === 0, missing, signals: [...signals] };
 }
 
+/** Probes marked pass must keep their frame; broken probes are informational only. */
+export function classifyProbeResult(entry, check) {
+  const status = entry.status ?? 'pass';
+  const framePass = check.pass;
+  let regression = false;
+  if (status === 'pass') regression = !framePass;
+  return { status, framePass, regression };
+}
+
 export async function runTranslationProbes({ lab = null } = {}) {
   const corpus = await loadTranslationProbes();
   resetTranslatorCache();
   const phrases = [];
-  let passCount = 0;
+  let framePassCount = 0;
+  let committedPass = 0;
+  let committedFail = 0;
+  let regressions = 0;
 
   for (const entry of corpus.phrases) {
     const r = await translateEnglish(entry.en, lab ? { lab } : {});
     const check = checkTargetFrame(entry.target_frame, r);
-    if (check.pass) passCount += 1;
+    const unresolved = r.unresolved ?? [];
+    const verdict = classifyProbeResult(entry, check);
+    if (check.pass) framePassCount += 1;
+    if (verdict.status === 'pass') {
+      committedPass += 1;
+      if (verdict.regression) regressions += 1;
+    } else {
+      committedFail += 1;
+    }
     phrases.push({
       en: entry.en,
       target_frame: entry.target_frame,
-      status: entry.status,
+      status: verdict.status,
       note: entry.note ?? null,
       roman: r.surface?.roman ?? '',
-      unresolved: r.unresolved ?? [],
-      frame_pass: check.pass,
+      unresolved,
+      frame_pass: verdict.framePass,
+      regression: verdict.regression,
       missing: check.missing,
     });
   }
@@ -80,7 +101,11 @@ export async function runTranslationProbes({ lab = null } = {}) {
   return {
     version: corpus.version,
     total: phrases.length,
-    frame_pass: passCount,
+    frame_pass: framePassCount,
+    committed_pass: committedPass,
+    committed_broken: committedFail,
+    regressions,
+    ok: regressions === 0,
     phrases,
   };
 }

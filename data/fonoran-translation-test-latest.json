@@ -1,19 +1,19 @@
 {
-  "generated_at": "2026-07-02T22:15:36.862Z",
+  "generated_at": "2026-07-02T23:07:07.881Z",
   "corpus_version": "2.0",
-  "total_phrases": 119,
-  "clean_phrases": 114,
-  "coverage_pct": 96,
-  "distinct_gaps": 5,
+  "total_phrases": 131,
+  "clean_phrases": 124,
+  "coverage_pct": 95,
+  "distinct_gaps": 7,
   "quality": {
     "tokens": {
-      "pass": 443,
-      "soft": 20,
-      "hard": 5
+      "pass": 487,
+      "soft": 23,
+      "hard": 7
     },
-    "pass_phrases": 98,
-    "soft_phrases": 16,
-    "hard_phrases": 5
+    "pass_phrases": 107,
+    "soft_phrases": 17,
+    "hard_phrases": 7
   },
   "levels": [
     {
@@ -27,8 +27,8 @@
     {
       "level": 2,
       "name": "Objects",
-      "phrases": 10,
-      "clean": 10,
+      "phrases": 12,
+      "clean": 12,
       "coverage": 100,
       "unresolved_words": 0
     },
@@ -119,6 +119,14 @@
       "clean": 9,
       "coverage": 90,
       "unresolved_words": 1
+    },
+    {
+      "level": 14,
+      "name": "Advanced resolution & frames",
+      "phrases": 10,
+      "clean": 8,
+      "coverage": 80,
+      "unresolved_words": 2
     }
   ],
   "gaps": [
@@ -155,6 +163,20 @@
       "count": 1,
       "samples": [
         "Go away and leave me alone."
+      ]
+    },
+    {
+      "word": "fonoran",
+      "count": 1,
+      "samples": [
+        "She wants to learn Fonoran."
+      ]
+    },
+    {
+      "word": "ruled",
+      "count": 1,
+      "samples": [
+        "The old king ruled the city for many years."
       ]
     }
   ],
@@ -232,6 +254,20 @@
       ]
     },
     {
+      "root": "se",
+      "words": [
+        "said",
+        "speaks",
+        "stories",
+        "story",
+        "tell",
+        "tells"
+      ],
+      "concepts": [
+        "speak"
+      ]
+    },
+    {
       "root": "ti",
       "words": [
         "peaceful",
@@ -280,18 +316,6 @@
       ],
       "concepts": [
         "down"
-      ]
-    },
-    {
-      "root": "se",
-      "words": [
-        "said",
-        "speaks",
-        "stories",
-        "tells"
-      ],
-      "concepts": [
-        "speak"
       ]
     },
     {
@@ -381,6 +405,28 @@
       ],
       "concepts": [
         "open"
+      ]
+    },
+    {
+      "root": "sak",
+      "words": [
+        "hungry",
+        "want",
+        "wants"
+      ],
+      "concepts": [
+        "want"
+      ]
+    },
+    {
+      "root": "yetasnan",
+      "words": [
+        "forest toward the river",
+        "river",
+        "us from the river"
+      ],
+      "concepts": [
+        "river"
       ]
     },
     {
@@ -559,16 +605,6 @@
       ]
     },
     {
-      "root": "yetasnan",
-      "words": [
-        "river",
-        "us from the river"
-      ],
-      "concepts": [
-        "river"
-      ]
-    },
-    {
       "root": "samye",
       "words": [
         "because it rained",
@@ -636,6 +672,16 @@
       ],
       "concepts": [
         "pain"
+      ]
+    },
+    {
+      "root": "gan",
+      "words": [
+        "afraid of dark",
+        "dark"
+      ],
+      "concepts": [
+        "dark"
       ]
     }
   ],
@@ -1114,6 +1160,52 @@
       "review": [],
       "gaps": [],
       "expected": "gesgi gesgi tet",
+      "matches_golden": true
+    },
+    {
+      "level": 2,
+      "phrase": "I want to eat seafood.",
+      "roman": "mi sak tel yemelfel telto",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi sak tel yemelfel telto",
+      "matches_golden": true
+    },
+    {
+      "level": 2,
+      "phrase": "I want to eat sea food.",
+      "roman": "mi sak tel yemelfel telto",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi sak tel yemelfel telto",
       "matches_golden": true
     },
     {
@@ -3574,6 +3666,272 @@
       "gaps": [],
       "expected": "mi ta no lekche di",
       "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "I want to sleep.",
+      "roman": "mi sak nal",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi sak nal",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "She wants to learn Fonoran.",
+      "roman": "ba sak lahu [fonoran]",
+      "unresolved": [
+        "fonoran"
+      ],
+      "counts": {
+        "direct": 2,
+        "interpreted": 1,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 1
+      },
+      "quality": {
+        "gate": "hard",
+        "pass": 3,
+        "soft": 0,
+        "hard": 1
+      },
+      "review": [],
+      "gaps": [
+        {
+          "english": "fonoran",
+          "kind": "unknown"
+        }
+      ],
+      "expected": "ba sak lahu [fonoran]",
+      "matches_golden": true,
+      "note": "gap: fonoran (needs a root)"
+    },
+    {
+      "level": 14,
+      "phrase": "Do not eat the fish.",
+      "roman": "no tel kalye",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "no tel kalye",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "The fish swims in the river.",
+      "roman": "kalye giye yetasnan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "kalye giye yetasnan",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "Bring me water.",
+      "roman": "la mi ye",
+      "unresolved": [],
+      "counts": {
+        "direct": 2,
+        "interpreted": 0,
+        "semantic": 1,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "soft",
+        "pass": 2,
+        "soft": 1,
+        "hard": 0
+      },
+      "review": [
+        {
+          "english": "bring",
+          "kind": "semantic",
+          "concept_id": "take",
+          "fonoran": "la"
+        }
+      ],
+      "gaps": [],
+      "expected": "la mi ye",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "We ran through the forest toward the river.",
+      "roman": "dan ta ginek nan yetasnan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 2,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 5,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "dan ta ginek nan yetasnan",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "Nobody went home after dark.",
+      "roman": "no ba gi chekam shu gan",
+      "unresolved": [],
+      "counts": {
+        "direct": 6,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 6,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "no ba gi chekam shu gan",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "Tell the child a story about the sea.",
+      "roman": "se genba se yemelfel",
+      "unresolved": [],
+      "counts": {
+        "direct": 4,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 4,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "se genba se yemelfel",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "I am afraid of the dark.",
+      "roman": "mi pe gan",
+      "unresolved": [],
+      "counts": {
+        "direct": 3,
+        "interpreted": 0,
+        "semantic": 0,
+        "alias_weak": 0,
+        "unknown": 0
+      },
+      "quality": {
+        "gate": "pass",
+        "pass": 3,
+        "soft": 0,
+        "hard": 0
+      },
+      "review": [],
+      "gaps": [],
+      "expected": "mi pe gan",
+      "matches_golden": true
+    },
+    {
+      "level": 14,
+      "phrase": "The old king ruled the city for many years.",
+      "roman": "di ta ru [ruled] lekche lek kekdi",
+      "unresolved": [
+        "ruled"
+      ],
+      "counts": {
+        "direct": 4,
+        "interpreted": 0,
+        "semantic": 2,
+        "alias_weak": 0,
+        "unknown": 1
+      },
+      "quality": {
+        "gate": "hard",
+        "pass": 4,
+        "soft": 2,
+        "hard": 1
+      },
+      "review": [
+        {
+          "english": "king",
+          "kind": "semantic",
+          "concept_id": "strong",
+          "fonoran": "ru"
+        },
+        {
+          "english": "years",
+          "kind": "semantic",
+          "concept_id": "day",
+          "fonoran": "kekdi"
+        }
+      ],
+      "gaps": [
+        {
+          "english": "ruled",
+          "kind": "unknown"
+        }
+      ],
+      "expected": "di ta ru [ruled] lekche lek kekdi",
+      "matches_golden": true,
+      "note": "gap: ruled (needs a root)"
     }
   ]
 }

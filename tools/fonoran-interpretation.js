@@ -6,6 +6,7 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getPosHint } from './fonoran-semantic-lookup.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const RULES_PATH = join(ROOT, 'data/fonoran-interpretation-rules.json');
@@ -23,6 +24,13 @@ export const POSSESSIVES = new Set([
 /** Prepositions that introduce an object landmark after an idiom or clause. */
 export const PREP_OBJECT = new Set([
   'with', 'against', 'versus', 'vs', 'toward', 'towards', 'from', 'by',
+]);
+
+/** Prepositions that split a trailing NP into head + locative modifier. */
+export const NP_BOUNDARY_PREPS = new Set([
+  ...PREP_OBJECT,
+  'in', 'at', 'on', 'into', 'onto', 'near', 'around', 'through', 'across', 'over', 'under',
+  'between', 'among', 'inside', 'outside', 'within', 'without', 'behind', 'beside', 'beyond',
 ]);
 
 /** English futurate auxiliaries (go/goes are locomotion, not future markers). */
@@ -247,6 +255,20 @@ export function parseTrailingPhrase(tokens, { skip = null } = {}) {
   const words = raw.filter(w => !skip?.has(w.toLowerCase()));
   if (!words.length) return { object: [], modifiers: [] };
 
+  const prepIdx = words.findIndex((w, idx) => idx > 0 && NP_BOUNDARY_PREPS.has(w.toLowerCase()));
+  if (prepIdx > 0) {
+    const headPart = parseTrailingPhrase(words.slice(0, prepIdx), { skip });
+    const tailPart = parseTrailingPhrase(words.slice(prepIdx), { skip });
+    return {
+      object: headPart.object,
+      modifiers: [
+        ...headPart.modifiers,
+        ...tailPart.object.map(o => ({ ...o, role: 'modifier' })),
+        ...tailPart.modifiers,
+      ],
+    };
+  }
+
   if (words.length >= 2 && words.some(w => w.toLowerCase() === 'and')) {
     const joined = words.join(' ');
     const parts = joined.split(/\s+and\s+/i).map(s => s.trim()).filter(Boolean);
@@ -355,6 +377,77 @@ const LINKING_CONCEPT = {
   smell: 'know', smells: 'know', smelled: 'know', smelt: 'know',
   appear: 'see', appears: 'see', appeared: 'see',
 };
+
+/** Desire/modal verbs that take a to-infinitive complement. */
+const DESIRE_VERBS = new Set([
+  'want', 'wants', 'wanted', 'wanting',
+  'wish', 'wishes', 'wished', 'wishing',
+  'hope', 'hopes', 'hoped', 'hoping',
+  'need', 'needs', 'needed', 'needing',
+  'like', 'likes', 'liked', 'liking',
+  'plan', 'plans', 'planned', 'planning',
+  'try', 'tries', 'tried', 'trying',
+]);
+
+/**
+ * DESIRE_VERB + to + VERB + NP* → event (desire) + object (infinitive verb) + modifiers (NP).
+ */
+export function matchDesireInfinitive(tokens, rules) {
+  if (!tokens?.length || tokens.length < 3) return null;
+
+  let start = 0;
+  const head = tokens[0]?.toLowerCase();
+  if (tokens.length >= 4 && !DESIRE_VERBS.has(head)) start = 1;
+
+  const desire = tokens[start]?.toLowerCase();
+  if (!DESIRE_VERBS.has(desire)) return null;
+
+  const toIdx = start + 1;
+  if (tokens[toIdx]?.toLowerCase() !== 'to') return null;
+
+  const verbIdx = toIdx + 1;
+  const infVerb = tokens[verbIdx];
+  if (!infVerb || ARTICLES.has(infVerb.toLowerCase())) return null;
+
+  const npParts = tokens.slice(verbIdx + 1);
+  let i = 0;
+  while (i < npParts.length && ARTICLES.has(npParts[i]?.toLowerCase())) i += 1;
+  const npRest = npParts.slice(i);
+
+  const modifiers = [];
+  if (npRest.length) {
+    const trailing = parseTrailingPhrase(npRest, { skip: null });
+    modifiers.push(...trailing.object, ...trailing.modifiers);
+  }
+
+  return {
+    subject: start > 0 ? { english: tokens[0], role: 'subject' } : null,
+    event: { english: tokens[start], role: 'event' },
+    object: { english: infVerb, role: 'object' },
+    modifiers,
+  };
+}
+
+/**
+ * Assign trailing tokens in naive fallback — per-token modifiers unless a verb appears.
+ */
+export async function assignFallbackTrailing(tokens, rules, { skip = null } = {}) {
+  if (!tokens.length) return { object: [], modifiers: [] };
+  const raw = tokens.filter(w => {
+    const x = w.toLowerCase();
+    return !BE_FORMS.has(x) && !ARTICLES.has(x) && !skip?.has(x);
+  });
+  if (!raw.length) return { object: [], modifiers: [] };
+  if (raw.length === 1) {
+    return { object: [], modifiers: [{ english: raw[0], role: 'modifier' }] };
+  }
+  for (const w of raw) {
+    if (await getPosHint(w) === 'verb') {
+      return { object: [], modifiers: raw.map(t => ({ english: t, role: 'modifier' })) };
+    }
+  }
+  return { object: [], modifiers: raw.map(t => ({ english: t, role: 'modifier' })) };
+}
 
 /** Merge phrasal particles: wake + up → wake up. */
 export function mergePhrasalTokens(tokens) {

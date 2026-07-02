@@ -10,7 +10,7 @@ import {
   compoundEnglishGuide,
 } from './fonoran-pronunciation.js';
 import { buildConceptAliasIndex, loadRuntimeConceptInventory, buildRootById } from './fonoran-concepts.js';
-import { expandWord } from './fonoran-semantic-lookup.js';
+import { expandWord, pickHypernymConcept } from './fonoran-semantic-lookup.js';
 import { getLab } from './fonoran-sound-bucket.js';
 import {
   loadInterpretationRules,
@@ -76,6 +76,116 @@ const SEMANTIC_DENY_SYNONYMS = new Map([
 
 /** Conjunctions — not content words. */
 export const CONJUNCTIONS = new Set(['and', 'or', 'but', 'nor', 'yet', 'so']);
+
+const CLOSED_ENGLISH_COMPOUNDS = new Set([
+  'seafood', 'something', 'someone', 'anyone', 'everyone', 'nothing', 'anything', 'everything',
+  'somebody', 'anybody', 'everybody', 'nobody', 'somewhere', 'anywhere', 'everywhere', 'nowhere',
+  'somehow', 'anyhow', 'into', 'onto', 'upon', 'within', 'without', 'throughout', 'underneath',
+]);
+
+export function mergeEnglishCompounds(tokens, aliasIndex = null) {
+  const out = [];
+  let i = 0;
+  while (i < tokens.length) {
+    let merged = null;
+    let consumed = 0;
+    for (let len = Math.min(3, tokens.length - i); len >= 2; len -= 1) {
+      const slice = tokens.slice(i, i + len);
+      if (slice.some(t => String(t).toLowerCase() === 'to')) break;
+      const spaced = slice.join(' ').toLowerCase();
+      const closed = slice.join('').toLowerCase();
+      if (aliasIndex?.has(spaced)) { merged = spaced; consumed = len; break; }
+      if (CLOSED_ENGLISH_COMPOUNDS.has(closed)) { merged = closed; consumed = len; break; }
+    }
+    if (merged) { out.push(merged); i += consumed; continue; }
+    if (i + 1 < tokens.length) {
+      const closed = `${tokens[i]}${tokens[i + 1]}`.toLowerCase();
+      const hasTo = String(tokens[i]).toLowerCase() === 'to' || String(tokens[i + 1]).toLowerCase() === 'to';
+      if (!hasTo && CLOSED_ENGLISH_COMPOUNDS.has(closed)) { out.push(closed); i += 2; continue; }
+    }
+    out.push(tokens[i]);
+    i += 1;
+  }
+  return out;
+}
+
+const ASSEMBLY_STOP = new Set([
+  'to', 'in', 'at', 'on', 'of', 'by', 'as', 'an', 'or', 'if', 'so', 'do', 'be', 'we', 'he', 'ye',
+  'way', 'side', 'line', 'like', 'less', 'ness', 'ful',
+]);
+
+function assemblyKeys(aliasIndex) {
+  return [...aliasIndex.keys()]
+    .filter(k => !k.includes(' ') && k.length >= 3 && !ASSEMBLY_STOP.has(k))
+    .sort((a, b) => b.length - a.length);
+}
+
+function segmentEnglishWord(word, aliasIndex) {
+  const w = String(word ?? '').trim().toLowerCase();
+  if (w.length < 4) return null;
+  const keys = assemblyKeys(aliasIndex);
+  const solutions = [];
+  function dfs(start, parts) {
+    if (start === w.length) {
+      if (parts.length >= 2) solutions.push([...parts]);
+      return;
+    }
+    for (const key of keys) {
+      if (key.length <= w.length - start && w.startsWith(key, start)) {
+        dfs(start + key.length, [...parts, key]);
+      }
+    }
+  }
+  dfs(0, []);
+  return solutions.length === 1 ? solutions[0] : null;
+}
+
+function assemblyToken(parts, resolved, surface, role, reason) {
+  const fonoranParts = resolved.map(r => r.fonoran).filter(Boolean);
+  if (!fonoranParts.length) return null;
+  return enrichToken({
+    english: surface,
+    fonoran: fonoranParts.join(' '),
+    parts: fonoranParts,
+    resolved: true,
+    gloss: resolved.map(r => r.gloss ?? r.english).join(' + '),
+    kind: 'compound',
+    source: 'assembly',
+    pronunciation: pronunciationForParts(fonoranParts),
+  }, {
+    resolution_kind: 'interpreted',
+    confidence: 'medium',
+    role,
+    interpreted: true,
+    interpreted_from: surface,
+    interpret_reason: reason,
+    guess_components: parts,
+  });
+}
+
+async function tryTransparentWordAssembly(word, ctx, role) {
+  const parts = segmentEnglishWord(word, ctx.aliasIndex);
+  if (!parts) return null;
+  const resolved = [];
+  for (const part of parts) {
+    const hit = lookupByKeys(ctx, buildTryKeys(part, ctx.rules));
+    if (!hit.resolved || hit.alias_strength === 'weak') return null;
+    resolved.push(hit);
+  }
+  return assemblyToken(parts, resolved, word, role, `transparent assembly:${parts.join('+')}`);
+}
+
+async function tryTransparentPhraseAssembly(phrase, ctx, role) {
+  const words = String(phrase ?? '').trim().toLowerCase().split(/\s+/).filter(Boolean);
+  if (words.length < 2) return null;
+  const resolved = [];
+  for (const word of words) {
+    const hit = lookupByKeys(ctx, buildTryKeys(word, ctx.rules));
+    if (!hit.resolved || hit.alias_strength === 'weak') return null;
+    resolved.push(hit);
+  }
+  return assemblyToken(words, resolved, phrase, role, `transparent assembly:${words.join('+')}`);
+}
 
 export function tokenizeEnglish(text) {
   return String(text ?? '')
@@ -358,6 +468,7 @@ export async function resolveEnglishToken(english, ctx, {
   allowSemantic = true,
   allowGuess = true,
   surfaceEnglish = null,
+  avoidConceptIds = null,
 } = {}) {
   const surface = String(surfaceEnglish ?? english ?? '').trim();
   const lookupWord = role === 'object' ? landmarkPhrase(surface) : String(english ?? '').trim().toLowerCase();
@@ -421,6 +532,7 @@ export async function resolveEnglishToken(english, ctx, {
         role,
         allowSemantic,
         allowGuess: false,
+        avoidConceptIds,
       });
       if (headToken.resolved) {
         return enrichToken({ ...headToken, english: surface }, {
@@ -432,6 +544,9 @@ export async function resolveEnglishToken(english, ctx, {
         });
       }
     }
+
+    const phraseAssembly = await tryTransparentPhraseAssembly(lookupWord, ctx, role);
+    if (phraseAssembly) return phraseAssembly;
   }
 
   const keys = buildTryKeys(lookupWord, ctx.rules);
@@ -495,10 +610,18 @@ export async function resolveEnglishToken(english, ctx, {
     }
   }
 
+  const wordAssembly = await tryTransparentWordAssembly(lookupWord, ctx, role);
+  if (wordAssembly) return wordAssembly;
+
   if (allowSemantic) {
     const { synonyms, hypernym_concepts } = await expandWord(lookupWord);
+    const hypernymPick = pickHypernymConcept(hypernym_concepts, role);
+    const hypernymCandidates = hypernymPick
+      ? [hypernymPick, ...hypernym_concepts.filter(c => c !== hypernymPick)]
+      : hypernym_concepts;
 
-    for (const cid of hypernym_concepts) {
+    for (const cid of hypernymCandidates) {
+      if (avoidConceptIds?.has(cid)) continue;
       if (!ctx.rootById.has(cid)) continue;
       conceptIds.push(cid);
       hit = lookupByConceptId(ctx, cid);

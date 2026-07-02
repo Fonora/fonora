@@ -1,12 +1,12 @@
 {
-  "version": "1.0",
-  "description": "Soft probe corpus for complex English. target_frame lists required English slot heads (not exact fon). Does not gate CI — run with node scripts/fonoran-translation-probes.js",
+  "version": "1.1",
+  "description": "Structural probe corpus for complex English. target_frame lists required English slot heads (not exact fon). Probes with status pass gate CI via --assert; broken probes track known gaps.",
   "phrases": [
     {
       "en": "I want to go to the city but I am afraid of the dark.",
       "target_frame": "go · to · city · afraid · dark",
       "status": "pass",
-      "note": "but-clause split; want not compiled (no modal grammar)"
+      "note": "but-clause split; want omitted per golden L13 (no obligation grammar)"
     },
     {
       "en": "They ran toward us from the river.",
@@ -91,6 +91,72 @@
       "target_frame": "go · to · city",
       "status": "pass",
       "note": "regression guard from level 12"
+    },
+    {
+      "en": "I want to eat seafood.",
+      "target_frame": "want · eat · seafood",
+      "status": "pass",
+      "note": "desire+infinitive frame; seafood transparent assembly"
+    },
+    {
+      "en": "I want to eat sea food.",
+      "target_frame": "want · eat · seafood",
+      "status": "pass",
+      "note": "sea food token merge converges with seafood"
+    },
+    {
+      "en": "seafood",
+      "target_frame": "seafood",
+      "status": "pass",
+      "note": "word mode; must not collapse to eat"
+    },
+    {
+      "en": "I want to sleep.",
+      "target_frame": "want · sleep",
+      "status": "pass",
+      "note": "desire+infinitive: event desire + object infinitive verb"
+    },
+    {
+      "en": "Do not eat the fish.",
+      "target_frame": "not · eat · fish",
+      "status": "pass",
+      "note": "imperative negation; fish must not hypernym-collapse to eat"
+    },
+    {
+      "en": "The fish swims in the river.",
+      "target_frame": "fish · river",
+      "status": "pass",
+      "note": "fish in subject slot must stay fish, not eat"
+    },
+    {
+      "en": "I am afraid of the dark.",
+      "target_frame": "afraid · dark",
+      "status": "pass",
+      "note": "emotion predicate + fear object"
+    },
+    {
+      "en": "Nobody went home after dark.",
+      "target_frame": "home · after · dark",
+      "status": "pass",
+      "note": "quantifier + temporal after + landmark"
+    },
+    {
+      "en": "Tell the child a story about the sea.",
+      "target_frame": "tell · child · story · sea",
+      "status": "pass",
+      "note": "speech event + recipient + topic modifier"
+    },
+    {
+      "en": "We ran through the forest toward the river.",
+      "target_frame": "ran · through · forest · toward · river",
+      "status": "pass",
+      "note": "through path + toward path on same motion frame"
+    },
+    {
+      "en": "Bring me water.",
+      "target_frame": "water",
+      "status": "pass",
+      "note": "bring resolves via la; water object present"
     }
   ]
 }
