@@ -252,14 +252,25 @@ function sanitizeReturnTo(raw) {
   if (!path.startsWith('/')) return '/language';
   if (path.startsWith('//')) return '/language';
   if (path.includes('\\')) return '/language';
+
+  // Legacy compatibility: old /fonoran route now lives under /language.
   if (path === '/fonoran' || path.startsWith('/fonoran/')) {
     let rest = path.slice('/fonoran'.length);
     if (!rest || rest === '/') rest = '';
-    return `/language${rest}`;
+    path = `/language${rest}`;
   }
-  if (path === '/language/') return '/language';
-  if (path === '/script/') return '/script';
-  return path;
+
+  if (path === '/language/') path = '/language';
+  if (path === '/script/') path = '/script';
+
+  // Allow only known local app route roots (and their subpaths).
+  if (path === '/') return '/';
+  const allowedRoots = ['/language', '/script', '/learn', '/tools', '/research'];
+  for (const root of allowedRoots) {
+    if (path === root || path.startsWith(`${root}/`)) return path;
+  }
+
+  return '/language';
 }
 
 function emailAllowed(email) {
