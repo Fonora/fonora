@@ -1,0 +1,334 @@
+#!/usr/bin/env node
+/**
+ * Phase IV compound audit — semantic teaching trees + phonetic ease.
+ *
+ * Compares live compounds against semantic-foundation demo trees, seed coverage,
+ * dependency integrity, and root pronounceability tiers.
+ *
+ * Run: npm run fonoran:compound-audit
+ *      npm run fonoran:compound-audit -- --json
+ *      npm run fonoran:compound-audit -- --out=docs/fonoran-compound-audit-latest.md
+ */
+
+import { readFileSync, writeFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { readDoc } from './fonoran-store.js';
+import { ASSOCIATION_SEEDS } from './fonoran-expression-candidates.js';
+import { experienceMetaFor } from './fonoran-experience-tiers.js';
+import { splitRoot } from './fonoran-gen3-distinctiveness.js';
+import { checkCompoundBoundary } from './fonoran-gen3-readability.js';
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+const TERTIARY_ONSETS = new Set(['p', 'ch', 'sh', 'j', 'r']);
+const SECONDARY_ONSETS = new Set(['h', 'w', 'y']);
+
+function compKey(comp) {
+  return (comp ?? []).join('+');
+}
+
+function normalizeLive(def) {
+  const composition = def.preferred?.composition ?? def.composition ?? [];
+  return {
+    concept: def.concept,
+    composition,
+    gloss: def.preferred?.gloss ?? def.gloss ?? '',
+    alternates: def.alternates ?? [],
+    notes: def.notes ?? '',
+  };
+}
+
+function onsetTier(spelling) {
+  const { onset } = splitRoot((spelling ?? '').toLowerCase());
+  if (TERTIARY_ONSETS.has(onset)) return 'tertiary';
+  if (SECONDARY_ONSETS.has(onset)) return 'secondary';
+  return 'preferred';
+}
+
+function severityRank(sev) {
+  const order = { critical: 0, high: 1, medium: 2, low: 3, info: 4 };
+  return order[sev] ?? 9;
+}
+
+function usesIntermediateCompound(composition, compoundIds) {
+  return (composition ?? []).some(id => compoundIds.has(id));
+}
+
+function topologicalSort(compounds) {
+  const byId = new Map(compounds.map(c => [c.concept, c]));
+  const sorted = [];
+  const done = new Set();
+
+  function visit(id, stack = new Set()) {
+    if (done.has(id)) return;
+    if (stack.has(id)) return;
+    stack.add(id);
+    const c = byId.get(id);
+    if (c) {
+      for (const part of c.composition ?? []) {
+        if (byId.has(part)) visit(part, stack);
+      }
+    }
+    stack.delete(id);
+    done.add(id);
+    if (c) sorted.push(c);
+  }
+
+  for (const c of compounds) visit(c.concept);
+  return sorted;
+}
+
+export async function runCompoundAudit() {
+  const [compoundsDoc, inventory, approved, candidatesDoc, playtestsDoc] =
+    await Promise.all([
+      readDoc('compounds'),
+      readDoc('concept_inventory'),
+      readDoc('approved_roots'),
+      readDoc('root_candidates'),
+      readDoc('playtests'),
+    ]);
+  const demoDoc = JSON.parse(
+    readFileSync(join(ROOT, 'data/fonoran-semantic-demo-compounds.json'), 'utf8'),
+  );
+
+  const live = (compoundsDoc?.compounds ?? []).map(normalizeLive);
+  const demo = demoDoc?.compounds ?? [];
+  const demoById = new Map(demo.map(d => [d.id, d]));
+  const liveById = new Map(live.map(c => [c.concept, c]));
+  const compoundIds = new Set(live.map(c => c.concept));
+  const primitiveIds = new Set([
+    ...(inventory?.primitives ?? []).map(p => p.id),
+    ...(approved?.roots ?? []).map(r => r.id),
+  ]);
+
+  const roots = approved?.roots ?? [];
+  const rootById = Object.fromEntries(roots.map(r => [r.id, r]));
+  const candidateById = Object.fromEntries((candidatesDoc?.candidates ?? []).map(c => [c.id, c]));
+
+  const findings = [];
+
+  function add(severity, category, concept, message, extra = {}) {
+    findings.push({ severity, category, concept, message, ...extra });
+  }
+
+  // --- Semantic checks ---
+  for (const d of demo) {
+    if (primitiveIds.has(d.id)) continue;
+    if (!liveById.has(d.id)) {
+      add('critical', 'missing_reference', d.id,
+        `In semantic demo (depth ${d.depth}) but absent from live compounds`,
+        { expected_tree: d.tree });
+    }
+  }
+
+  for (const d of demo) {
+    const c = liveById.get(d.id);
+    if (!c) continue;
+    const liveKey = compKey(c.composition);
+    const demoKey = compKey(d.tree);
+    if (liveKey !== demoKey) {
+      const sev = (d.depth ?? 1) >= 2 ? 'high' : 'medium';
+      add(sev, 'tree_mismatch', d.id,
+        `Preferred tree differs from semantic foundation`,
+        { live: c.composition, expected: d.tree, depth: d.depth });
+    }
+  }
+
+  for (const c of live) {
+    for (const part of c.composition) {
+      if (primitiveIds.has(part) || compoundIds.has(part)) continue;
+      add('critical', 'broken_dependency', c.concept,
+        `Component "${part}" is neither a primitive root nor a compound in inventory`);
+    }
+  }
+
+  for (const d of demo) {
+    const c = liveById.get(d.id);
+    if (!c || (d.depth ?? 1) < 2) continue;
+    if (!usesIntermediateCompound(c.composition, compoundIds)) {
+      add('high', 'flat_when_hierarchical', d.id,
+        `Demo depth ${d.depth} but preferred uses only primitive roots`,
+        { composition: c.composition, expected_depth: d.depth });
+    }
+  }
+
+  for (const c of live) {
+    if (!ASSOCIATION_SEEDS[c.concept]?.length) {
+      add('medium', 'no_seeds', c.concept, 'No ASSOCIATION_SEEDS entry');
+    }
+    if (!c.alternates.length) {
+      add('medium', 'no_alternates', c.concept, 'No alternate meaning-attempts');
+    }
+  }
+
+  // --- Phonetic checks ---
+  for (const r of roots) {
+    const tier = onsetTier(r.spelling);
+    const meta = experienceMetaFor(r.id);
+    if (meta.language_tier === 'communicative_core' && tier === 'tertiary') {
+      add('high', 'core_tertiary_onset', r.id,
+        `Communicative-core root "${r.spelling}" uses tertiary onset (${splitRoot(r.spelling).onset})`,
+        { spelling: r.spelling, phonetic_cost: candidateById[r.id]?.generation?.phonetic_cost ?? null });
+    }
+  }
+
+  const coreRoots = roots.filter(r => experienceMetaFor(r.id).language_tier === 'communicative_core');
+  const extRoots = roots.filter(r => experienceMetaFor(r.id).language_tier === 'extended_core');
+  const avgCost = (list) => {
+    const costs = list
+      .map(r => candidateById[r.id]?.generation?.phonetic_cost ?? candidateById[r.id]?.phonetic_cost)
+      .filter(n => typeof n === 'number');
+    return costs.length ? costs.reduce((a, b) => a + b, 0) / costs.length : null;
+  };
+
+  const phoneticSummary = {
+    core_count: coreRoots.length,
+    core_avg_phonetic_cost: avgCost(coreRoots),
+    core_tertiary_onsets: coreRoots.filter(r => onsetTier(r.spelling) === 'tertiary').length,
+    extended_count: extRoots.length,
+    extended_avg_phonetic_cost: avgCost(extRoots),
+    tertiary_onset_roots: roots.filter(r => onsetTier(r.spelling) === 'tertiary').map(r => ({
+      id: r.id, spelling: r.spelling, tier: experienceMetaFor(r.id).language_tier,
+    })),
+  };
+
+  // --- Playtest coverage ---
+  const playtested = new Set((playtestsDoc?.rounds ?? []).map(r => r.concept_id));
+  const untested = live.filter(c => !playtested.has(c.concept)).map(c => c.concept);
+
+  // --- Summary stats ---
+  const treeAware = live.filter(c => usesIntermediateCompound(c.composition, compoundIds)).length;
+  const seeded = live.filter(c => ASSOCIATION_SEEDS[c.concept]?.length).length;
+
+  const summary = {
+    generated_at: new Date().toISOString(),
+    live_compound_count: live.length,
+    demo_compound_count: demo.length,
+    missing_from_live: demo.filter(d => !liveById.has(d.id)).length,
+    tree_mismatches: findings.filter(f => f.category === 'tree_mismatch').length,
+    broken_dependencies: findings.filter(f => f.category === 'broken_dependency').length,
+    tree_aware_preferred: treeAware,
+    seed_coverage: `${seeded}/${live.length}`,
+    empty_alternates: live.filter(c => !c.alternates.length).length,
+    findings_by_severity: {
+      critical: findings.filter(f => f.severity === 'critical').length,
+      high: findings.filter(f => f.severity === 'high').length,
+      medium: findings.filter(f => f.severity === 'medium').length,
+      low: findings.filter(f => f.severity === 'low').length,
+    },
+    phonetic: phoneticSummary,
+    playtested_concepts: playtested.size,
+    untested_compound_count: untested.length,
+  };
+
+  findings.sort((a, b) =>
+    severityRank(a.severity) - severityRank(b.severity)
+    || a.concept.localeCompare(b.concept)
+    || a.category.localeCompare(b.category));
+
+  const dependencyGraph = topologicalSort(live).map(c => ({
+    concept: c.concept,
+    composition: c.composition,
+    uses_compounds: c.composition.filter(p => compoundIds.has(p)),
+  }));
+
+  return { summary, findings, dependencyGraph, live, demo };
+}
+
+function renderMarkdown({ summary, findings, dependencyGraph }) {
+  const lines = [];
+  lines.push('# Fonoran compound audit');
+  lines.push('');
+  lines.push(`> Generated: ${summary.generated_at}`);
+  lines.push('');
+  lines.push('## Summary');
+  lines.push('');
+  lines.push('| Metric | Value |');
+  lines.push('| --- | --- |');
+  lines.push(`| Live compounds | ${summary.live_compound_count} |`);
+  lines.push(`| Demo reference trees | ${summary.demo_compound_count} |`);
+  lines.push(`| Missing from live | ${summary.missing_from_live} |`);
+  lines.push(`| Tree mismatches | ${summary.tree_mismatches} |`);
+  lines.push(`| Broken dependencies | ${summary.broken_dependencies} |`);
+  lines.push(`| Tree-aware preferred forms | ${summary.tree_aware_preferred} |`);
+  lines.push(`| Seed coverage | ${summary.seed_coverage} |`);
+  lines.push(`| Empty alternates | ${summary.empty_alternates} |`);
+  lines.push(`| Playtested concepts | ${summary.playtested_concepts} |`);
+  lines.push('');
+  lines.push('### Findings by severity');
+  lines.push('');
+  for (const [sev, count] of Object.entries(summary.findings_by_severity)) {
+    lines.push(`- **${sev}**: ${count}`);
+  }
+  lines.push('');
+  lines.push('### Phonetic ease');
+  lines.push('');
+  lines.push(`- Communicative-core roots: ${summary.phonetic.core_count} (avg cost ${summary.phonetic.core_avg_phonetic_cost?.toFixed(1) ?? 'n/a'})`);
+  lines.push(`- Core on tertiary onsets: ${summary.phonetic.core_tertiary_onsets}`);
+  lines.push(`- Extended-core avg cost: ${summary.phonetic.extended_avg_phonetic_cost?.toFixed(1) ?? 'n/a'}`);
+  if (summary.phonetic.tertiary_onset_roots.length) {
+    lines.push('');
+    lines.push('Tertiary-onset roots:');
+    for (const r of summary.phonetic.tertiary_onset_roots) {
+      lines.push(`- \`${r.id}\` → ${r.spelling} (${r.tier})`);
+    }
+  }
+  lines.push('');
+  lines.push('## Findings');
+  lines.push('');
+  if (!findings.length) {
+    lines.push('_No issues found._');
+  } else {
+    let lastSev = '';
+    for (const f of findings) {
+      if (f.severity !== lastSev) {
+        lines.push(`### ${f.severity.charAt(0).toUpperCase() + f.severity.slice(1)}`);
+        lines.push('');
+        lastSev = f.severity;
+      }
+      lines.push(`- **${f.concept}** (${f.category}): ${f.message}`);
+      if (f.expected) lines.push(`  - expected: \`${compKey(f.expected)}\``);
+      if (f.live) lines.push(`  - live: \`${compKey(f.live)}\``);
+    }
+  }
+  lines.push('');
+  lines.push('## Teaching-tree dependency order');
+  lines.push('');
+  for (const n of dependencyGraph.slice(0, 40)) {
+    const tag = n.uses_compounds.length ? ` [via: ${n.uses_compounds.join(', ')}]` : '';
+    lines.push(`- \`${n.concept}\` = ${n.composition.join(' + ')}${tag}`);
+  }
+  if (dependencyGraph.length > 40) {
+    lines.push(`- … and ${dependencyGraph.length - 40} more`);
+  }
+  lines.push('');
+  return lines.join('\n');
+}
+
+async function main() {
+  const argv = process.argv.slice(2);
+  const jsonOut = argv.includes('--json');
+  const outArg = argv.find(a => a.startsWith('--out='));
+  const outPath = outArg
+    ? outArg.slice('--out='.length)
+    : join(ROOT, 'docs/fonoran-compound-audit-latest.md');
+
+  const audit = await runCompoundAudit();
+
+  if (jsonOut) {
+    console.log(JSON.stringify(audit, null, 2));
+    return;
+  }
+
+  const md = renderMarkdown(audit);
+  writeFileSync(outPath, md);
+  console.log(`Compound audit written to ${outPath}`);
+  console.log(`  ${audit.summary.live_compound_count} compounds, ${audit.findings.length} findings`);
+  console.log(`  critical=${audit.summary.findings_by_severity.critical} high=${audit.summary.findings_by_severity.high}`);
+}
+
+const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+if (isMain) {
+  main().catch(err => { console.error(err); process.exit(1); });
+}
