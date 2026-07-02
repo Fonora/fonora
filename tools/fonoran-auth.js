@@ -3,7 +3,7 @@
  * Zero extra dependencies: uses Node crypto + fetch.
  */
 
-import { randomBytes } from 'node:crypto';
+import { randomBytes, createCipheriv, createDecipheriv, createHash } from 'node:crypto';
 
 const SESSION_COOKIE = 'fonoran_session';
 const OAUTH_STATE_COOKIE = 'fonoran_oauth_state';
@@ -151,8 +151,25 @@ function cookieSecure(req) {
   return true;
 }
 
+function cookieCryptoKey() {
+  const secret = process.env.FONORAN_COOKIE_SECRET?.trim();
+  if (!secret) return null;
+  return createHash('sha256').update(secret, 'utf8').digest();
+}
+
+function encryptCookieValue(value) {
+  const key = cookieCryptoKey();
+  if (!key) return value;
+  const iv = randomBytes(12);
+  const cipher = createCipheriv('aes-256-gcm', key, iv);
+  const ciphertext = Buffer.concat([cipher.update(String(value), 'utf8'), cipher.final()]);
+  const tag = cipher.getAuthTag();
+  return `v1.${iv.toString('base64url')}.${ciphertext.toString('base64url')}.${tag.toString('base64url')}`;
+}
+
 function setCookie(res, name, value, { maxAge, req, httpOnly = true }) {
-  const parts = [`${name}=${encodeURIComponent(value)}`];
+  const protectedValue = encryptCookieValue(value);
+  const parts = [`${name}=${encodeURIComponent(protectedValue)}`];
   if (maxAge != null) parts.push(`Max-Age=${maxAge}`);
   parts.push('Path=/');
   parts.push('SameSite=Lax');
