@@ -21,6 +21,7 @@ import { generateRootCandidates } from './fonoran-root-candidates.js';
 import { writeBucketRaw, readBucketRaw, readDoc, writeDoc } from './fonoran-store.js';
 import { emptyDda, migrateBucket, normalizeCompoundRecord, normalizeSoundRecord } from './fonoran-derivation.js';
 import { analyzeAmbiguity, auditScores, segmentCompound, checkCompoundBoundary } from './fonoran-gen3-readability.js';
+import { maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { aliasesForConcept, loadLocalization } from './fonoran-concepts.js';
 import { parseSyllable } from './fonoran-pronunciation.js';
 
@@ -288,6 +289,15 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
   const compoundDoc = (await readDoc('compounds')) ?? { compounds: [] };
   const { resolved, dropped } = resolveCompounds(compoundDoc.compounds ?? [], rootById, rootSpellings);
 
+  const maxFlat = maxFlattenedRoots();
+  const lengthWarnings = resolved
+    .filter(def => (def.rootSeq?.length ?? 0) > maxFlat)
+    .map(def => ({
+      concept: def.concept,
+      flat_count: def.rootSeq.length,
+      composition: def.composition,
+    }));
+
   // 3. Lab records.
   const sounds = candidates
     .map(c => {
@@ -321,6 +331,7 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
         aliases: aliasesForConcept({ id: def.concept, concept: def.gloss ?? def.concept }, locData),
         state: approveAll ? 'approved' : 'needs_review',
         composition_readable: `${def.concept} = ${def.composition.join(' + ')}`,
+        direct_composition: def.composition,
         generator_hint: `curated: ${def.concept} = ${def.composition.join(' + ')}`,
         created_by: 'generator',
         named_at: now,
@@ -376,6 +387,7 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
     preserved_compounds: preservedCompounds.length,
     preserved_sounds: preservedSounds.length,
     dropped,
+    lengthWarnings,
     health,
   };
 }
@@ -394,6 +406,12 @@ async function main() {
   }
   if (r.dropped.length) {
     for (const d of r.dropped) console.log(`    - dropped ${d.concept}: ${d.reason}`);
+  }
+  if (r.lengthWarnings?.length) {
+    console.log(`  Flattened length warnings (>${maxFlattenedRoots()} roots): ${r.lengthWarnings.length}`);
+    for (const w of r.lengthWarnings) {
+      console.log(`    - ${w.concept}: ${w.flat_count} roots (${w.composition.join(' + ')})`);
+    }
   }
   const s = r.health.scores;
   console.log('  Health:');

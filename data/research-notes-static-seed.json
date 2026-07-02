@@ -627,6 +627,105 @@
         }
       ],
       "phase": "phase-4"
+    },
+    {
+      "slug": "phase-iv-first-learner-signal",
+      "code": "RN-19",
+      "title": "First learner signal from Phase IV regen",
+      "status": "Active",
+      "date": "2026-07-02",
+      "description": "Phase IV regen learner signal: dictionary clustering, translator compilation, 129/132 puzzle recovery; LLM promotions await Session 4 validation.",
+      "abstract": "Post-regen inventory teaches in the ear and sentence at small scale; human playtests remain authority over 22 LLM promotions.",
+      "related": [
+        "compound-reconstruction",
+        "puzzle-conversation",
+        "compiling-english-into-meaning",
+        "synthetic-intuition-ranking"
+      ],
+      "docs": [
+        {
+          "label": "Compound audit (post-regen)",
+          "path": "docs/fonoran-compound-audit-latest.md"
+        },
+        {
+          "label": "Learning sessions log",
+          "path": "docs/fonoran-learning-sessions-log.md"
+        }
+      ],
+      "tools": [
+        {
+          "label": "Dictionary",
+          "href": "/language#dictionary"
+        },
+        {
+          "label": "Translator",
+          "href": "/language#translator"
+        },
+        {
+          "label": "Puzzle Conversation",
+          "href": "/language#puzzle"
+        }
+      ],
+      "source": [
+        {
+          "label": "data/fonoran-compounds.json",
+          "path": "data/fonoran-compounds.json"
+        },
+        {
+          "label": "fonoran-compound-audit.js",
+          "path": "tools/fonoran-compound-audit.js"
+        }
+      ],
+      "phase": "phase-4"
+    },
+    {
+      "slug": "synthetic-intuition-ranking",
+      "code": "RN-20",
+      "title": "Synthetic intuition ranking",
+      "status": "Active",
+      "date": "2026-07-02",
+      "description": "v3 Compositional Intuition Battery complete: 2,432 rounds, 88/111 Task B spread, 22 conservative LLM promotions.",
+      "abstract": "Synthetic root-knower intuition ranks seed candidates; Task B discriminates; humans validate via Puzzle Conversation.",
+      "related": [
+        "phase-iv-first-learner-signal",
+        "puzzle-conversation",
+        "compound-reconstruction"
+      ],
+      "docs": [
+        {
+          "label": "LLM playtest experiment",
+          "path": "docs/fonoran-llm-playtest-experiment.md"
+        },
+        {
+          "label": "Compound audit",
+          "path": "docs/fonoran-compound-audit-latest.md"
+        },
+        {
+          "label": "Learning sessions log",
+          "path": "docs/fonoran-learning-sessions-log.md"
+        }
+      ],
+      "tools": [
+        {
+          "label": "Puzzle Conversation",
+          "href": "/language#puzzle"
+        },
+        {
+          "label": "Dictionary",
+          "href": "/language#dictionary"
+        }
+      ],
+      "source": [
+        {
+          "label": "data/fonoran-llm-evaluations.json",
+          "path": "data/fonoran-llm-evaluations.json"
+        },
+        {
+          "label": "data/fonoran-compounds.json",
+          "path": "data/fonoran-compounds.json"
+        }
+      ],
+      "phase": "phase-4"
     }
   ]
 }

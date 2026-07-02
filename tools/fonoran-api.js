@@ -58,6 +58,7 @@ import {
 } from './fonoran-snapshot.js';
 import {
   buildPuzzleChallenge,
+  recordPlaytestFeedback,
   recordPlaytestRound,
   summarizePlaytests,
 } from './fonoran-playtests.js';
@@ -65,6 +66,7 @@ import {
   generateCandidates,
   loadCandidateContext,
 } from './fonoran-expression-candidates.js';
+import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
 
 export function jsonResponse(res, status, body) {
   const payload = JSON.stringify(body);
@@ -222,7 +224,14 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     if (pathname === '/api/fonoran/puzzle/guess' && method === 'POST') {
       const body = await readJsonBody(req);
+      if (body.feedback_only) {
+        return done(200, await recordPlaytestFeedback(body));
+      }
       return done(200, await recordPlaytestRound(body));
+    }
+    if (pathname === '/api/fonoran/puzzle/feedback' && method === 'POST') {
+      const body = await readJsonBody(req);
+      return done(200, await recordPlaytestFeedback(body));
     }
     if (pathname === '/api/fonoran/playtests/summary' && method === 'GET') {
       return done(200, await summarizePlaytests());
@@ -231,11 +240,24 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const body = await readJsonBody(req);
       if (!body.concept_id) return done(400, { error: 'concept_id is required' });
       const ctx = await loadCandidateContext();
+      let extra = Array.isArray(body.extra) ? body.extra : [];
+      if (body.llm) {
+        const compound = ctx.compoundsDoc?.compounds?.find(c => c.concept === body.concept_id);
+        const gloss = compound?.preferred?.gloss ?? compound?.gloss ?? body.concept_id;
+        const llmExtra = await proposeLlmCandidates(body.concept_id, {
+          gloss,
+          primitiveIds: ctx.primitiveIds,
+          compoundDefs: ctx.compoundsDoc?.compounds ?? [],
+          maxFlattened: body.max_flattened ?? 4,
+        });
+        extra = [...extra, ...llmExtra];
+      }
       const candidates = generateCandidates(body.concept_id, {
         metaFor: ctx.metaFor,
         collisionCounts: ctx.collisionCounts,
         knownComposition: ctx.knownByConcept.get(body.concept_id),
-        extraCompositions: Array.isArray(body.extra) ? body.extra : [],
+        flatCountFor: ctx.flatCountFor,
+        extraCompositions: extra,
       });
       return done(200, { concept_id: body.concept_id, candidates });
     }

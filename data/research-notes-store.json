@@ -1328,7 +1328,8 @@
         "abstract": "The Phase IV frontier — reconstructing compounds as communicative strategies, not canonical answers.",
         "related": [
           "puzzle-conversation",
-          "the-constitution"
+          "the-constitution",
+          "phase-iv-first-learner-signal"
         ],
         "docs": [
           {
@@ -1369,6 +1370,130 @@
       "updated_at": "2026-07-02T00:10:03.035Z",
       "published_at": "2026-07-02T00:10:03.035Z",
       "updated_by": "phase4-cleanup@local"
+    },
+    {
+      "slug": "phase-iv-first-learner-signal",
+      "workflow": "published",
+      "metadata": {
+        "slug": "phase-iv-first-learner-signal",
+        "code": "RN-19",
+        "title": "First learner signal from Phase IV regen",
+        "status": "Active",
+        "date": "2026-07-02",
+        "phase": "phase-4",
+        "description": "Phase IV regen learner signal: dictionary clustering, translator compilation, 129/132 puzzle recovery; LLM promotions await Session 4 validation.",
+        "abstract": "Post-regen inventory teaches in the ear and sentence at small scale; human playtests remain authority over 22 LLM promotions.",
+        "related": [
+          "compound-reconstruction",
+          "puzzle-conversation",
+          "compiling-english-into-meaning",
+          "synthetic-intuition-ranking"
+        ],
+        "docs": [
+          {
+            "path": "docs/fonoran-compound-audit-latest.md",
+            "label": "Compound audit (post-regen)"
+          },
+          {
+            "path": "docs/fonoran-learning-sessions-log.md",
+            "label": "Learning sessions log"
+          }
+        ],
+        "tools": [
+          {
+            "href": "/language#dictionary",
+            "label": "Dictionary"
+          },
+          {
+            "href": "/language#translator",
+            "label": "Translator"
+          },
+          {
+            "href": "/language#puzzle",
+            "label": "Puzzle Conversation"
+          }
+        ],
+        "source": [
+          {
+            "path": "data/fonoran-compounds.json",
+            "label": "fonoran-compounds.json"
+          },
+          {
+            "path": "tools/fonoran-compound-audit.js",
+            "label": "fonoran-compound-audit.js"
+          },
+          {
+            "path": "data/fonoran-playtests.json",
+            "label": "fonoran-playtests.json"
+          }
+        ],
+        "git_commit": "e127aacd28dc8a093f64d268502b9b4fa5e91c20"
+      },
+      "body": "# First learner signal from Phase IV regen\n\n## Research Question\n\n[RN-18](/research/notes/compound-reconstruction) rebuilt the compound inventory as teaching trees and meaning-attempts under the constitution. That answered *how* to regenerate vocabulary: `ASSOCIATION_SEEDS`, migration scripts, audit tooling, and a path from heuristic alternates to playtest authority.\n\nRN-18 closed with success criteria still open: transparent trees, rising playtest coverage, and measured divergence between heuristic rank and human recovery. Phase IV regen shipped 111 compounds with fresh root spellings after `npm run fonoran:reset`. The question this note addresses is the one RN-18 deferred until someone actually used the lab:\n\n**Does the Phase IV regen teach in the ear and the sentence, recognition, compilation, and compound recovery, before we treat the inventory as stable?**\n\nThis is not the constitutional stranger test in full (RN-17). It is the first structured learner signal on the post-regen inventory: one author, English-mediated, using the live web GUI.\n\n## Hypothesis\n\nIf the regen succeeded as a teaching inventory, a root-knower should:\n\n- **Recognize root clusters** after brief dictionary exposure (onset families such as `ye` = water-related).\n- **Parse compiled sentences** into roots and compounds without rehearsing every word in advance.\n- **Recover compound meaning** in Puzzle Conversation at rates that justify preferred forms, with repair turns helping when first guesses fail.\n\nThe hypothesis is not that every compound communicates on first exposure. It is that the regen should produce *measurably better* signal on layers (1) and (2) than the pre-regen inventory, and enough volume on (3) to compare against heuristic understandability before locking preferred forms.\n\n## Approach\n\nPhase IV regen (Jul 2026) replaced the live compound set and root spellings:\n\n| Layer | Implementation |\n| --- | --- |\n| Compounds | 111 curated entries (`data/fonoran-compounds.json` v2.0-communicative) |\n| Teaching trees | Chains such as `community → identity → tribe → war`, `exchange → money`, `shared_meaning → language` |\n| Seeds | `ASSOCIATION_SEEDS` coverage 111/111; alternates per concept |\n| Phonetics | Fresh assignment after reset; no legacy spelling locks |\n| Build | `npm run fonoran:regen-compounds`, `npm run fonoran:build:approved` → 111/111, 0 dropped |\n| Tooling | `npm run fonoran:compound-audit`, `npm run fonoran:playtest:baseline` |\n\nEvaluation used the live language lab at `/language/`:\n\n1. **Dictionary**: browse roots and compounds; note onset clustering without gloss keys.\n2. **Translator**: compile an everyday English sentence; inspect roman output and segmentation.\n3. **Puzzle Conversation**: guess meaning from live preferred spellings; one repair turn on miss; rounds recorded to [`data/fonoran-playtests.json`](../data/fonoran-playtests.json).\n\nSessions are logged in [`docs/fonoran-learning-sessions-log.md`](../fonoran-learning-sessions-log.md). Puzzle UI fixes during Session 2 (boundary formatting `·`, nested breakdown levels, separated spellings from glosses) are documented there and in [`language/pages/puzzle-page.js`](../language/pages/puzzle-page.js).\n\nAfter Session 2, synthetic ranking ([RN-20](/research/notes/synthetic-intuition-ranking)) promoted 22 preferred forms. Session 4 in the learning log is reserved for human validation of those promotions, not covered in this note's primary evidence set.\n\n## Evaluation\n\nThere has been no cross-linguistic study, no stranger pairs, and no keyboard/spelling session yet (RN-16 pipeline untested on post-regen spellings).\n\nWhat exists (Jul 2026):\n\n**Session 1: Dictionary + Translator (~5 min browse + one sentence)**\n\n- Input: *i want to eat food in the city*\n- Output: `mi sak tel telto lekche` (`telto` = eat + thing; `lekche` = many + place)\n- Within ~5 seconds of dictionary browsing, words starting with **`ye`** were treated as water-related (`ye` = primitive *water*) without an explicit gloss key.\n\n**Session 2: Puzzle Conversation (~54 rounds, post-regen UI)**\n\n- Documented in the learning log; compound and UI fixes applied after the session.\n- Failures on first repair pass: `open` (guessed *money*), `meaning` (guessed *law*).\n\n**Aggregate playtest store (puzzle source, all time through Jul 2026)**\n\n- **132** puzzle rounds recorded; **129** recovered (first guess or one repair turn).\n- **3** non-recoveries: `open`, `meaning`, and one `war` round with no guess recorded.\n- **61** distinct concepts have at least one recorded round; 14 priority teaching-tree concepts pass lab smoke test ([`docs/fonoran-phase4-playtest-baseline.md`](../fonoran-phase4-playtest-baseline.md)).\n\n**Audit**\n\n- Post-regen compound audit: 0 critical findings at regen time; latest audit after LLM optimize reports 29 high findings (mostly tree mismatches vs semantic demo and tertiary onsets), see [`docs/fonoran-compound-audit-latest.md`](../fonoran-compound-audit-latest.md).\n\nInformal questions the team was asking:\n\n- Do root onset clusters teach family membership without glosses?\n- Do transparent compounds (`tel` + `to` → `telto`) survive compilation in ordinary sentences?\n- Does Puzzle Conversation recovery stay high enough to trust preferred forms on most concepts?\n- Where do heuristics and human recovery disagree?\n\n## Findings\n\n**Recognition and compilation look promising; recovery is strong but not universal.** One author session produced immediate water-family clustering and a clean everyday sentence compile. That supports layer (1) and (2) as necessary preconditions; it is not proof for other learners or languages.\n\n**Puzzle recovery is high on the post-regen inventory at small scale.** 129/132 recorded puzzle rounds recovered, roughly 98% on the current store. That is far above what would be needed to dismiss the regen as unteachable, but the sample is biased: one primary author, English gloss multiple choice, and concepts already partially familiar from building the inventory.\n\n**Documented failures matter.** `open` and `meaning` failed after repair, both are concepts where semantic transparency and teaching-tree depth were already disputed in Session 2. These are exactly the cases the constitution expects: repair helps often, not always; failures flag concepts for seed or preferred-form work.\n\n**Heuristic vs human divergence is still under-measured.** Session 2 surfaced disagreements (`island`, `fly`, `teacher`) where recovery succeeded in MCQ but the construction felt weak. No systematic Spearman comparison across ≥10 concepts has been run yet.\n\n**Synthetic ranking is now a parallel signal, not a substitute.** [RN-20](/research/notes/synthetic-intuition-ranking) ran after Session 2 and changed 22 preferred forms. Human Session 4 on promoted spellings is the next gate before treating those promotions as settled.\n\n## What Changed\n\n- **Inventory:** 111 compounds with teaching trees and fresh spellings; build pipeline stable at 111/0.\n- **Puzzle UI:** Morpheme boundaries, nested breakdown, concept filter URLs (`#puzzle?concept=<id>`).\n- **Playtest store:** 132+ puzzle rounds; aggregate counters in the Puzzle page.\n- **Learning log:** Structured session template and Sessions 1–2 recorded; Session 4 planned for LLM promotion validation.\n- **Research notes:** This note moves from draft anecdote to Active learner signal; [RN-20](/research/notes/synthetic-intuition-ranking) covers the synthetic ranking layer that followed.\n\nPrior notes this work builds on:\n\n- **RN-17:** Puzzle Conversation as constitutional instrument\n- **RN-18:** Compound reconstruction under the constitution\n- **RN-15:** Translator compilation path tested in Session 1\n\n## Open Questions\n\n- Does Session 4 human play on the 22 LLM-promoted compounds confirm or reject synthetic rankings?\n- How deep can teaching trees go before spellings stop teaching and start memorizing?\n- Does onset clustering (`ye`, `tel`, `dan`, …) hold outside water and body domains?\n- Which compounds fail Puzzle Conversation despite high understandability scores?\n- When should playtest evidence override `llm_consensus` or heuristic preferred forms?\n- When will keyboard/spelling drills (RN-16) be run on post-regen spellings?\n\n## References\n\n**Documentation:** [`docs/fonoran-compound-audit-latest.md`](../fonoran-compound-audit-latest.md), [`docs/fonoran-phase4-playtest-baseline.md`](../fonoran-phase4-playtest-baseline.md), [`docs/fonoran-learning-sessions-log.md`](../fonoran-learning-sessions-log.md)\n\n**Interactive demo:** [Dictionary](/language#dictionary), [Translator](/language#translator), [Puzzle Conversation](/language#puzzle)\n\n**Future research notes:** [RN-20 · Synthetic intuition ranking](/research/notes/synthetic-intuition-ranking)\n\n**Source:** [`data/fonoran-compounds.json`](../data/fonoran-compounds.json), [`data/fonoran-playtests.json`](../data/fonoran-playtests.json), [`tools/fonoran-compound-audit.js`](../tools/fonoran-compound-audit.js), [`scripts/fonoran-playtest-baseline.js`](../scripts/fonoran-playtest-baseline.js)\n\n**Prior notes:** [RN-18 · Reconstructing compounds](/research/notes/compound-reconstruction), [RN-17 · Puzzle conversation](/research/notes/puzzle-conversation), [RN-15 · Compiling English into meaning](/research/notes/compiling-english-into-meaning)\n",
+      "updated_at": "2026-07-02T19:11:50.702Z",
+      "published_at": "2026-07-02T19:11:50.702Z",
+      "updated_by": "sync@md-export"
+    },
+    {
+      "slug": "synthetic-intuition-ranking",
+      "workflow": "published",
+      "metadata": {
+        "slug": "synthetic-intuition-ranking",
+        "code": "RN-20",
+        "title": "Synthetic intuition ranking",
+        "status": "Active",
+        "date": "2026-07-02",
+        "phase": "phase-4",
+        "description": "v3 Compositional Intuition Battery complete: 2,432 rounds, 88/111 Task B spread, 22 conservative LLM promotions.",
+        "abstract": "Synthetic root-knower intuition ranks seed candidates; Task B discriminates; humans validate via Puzzle Conversation.",
+        "related": [
+          "phase-iv-first-learner-signal",
+          "puzzle-conversation",
+          "compound-reconstruction"
+        ],
+        "docs": [
+          {
+            "path": "docs/fonoran-llm-playtest-experiment.md",
+            "label": "LLM playtest experiment"
+          },
+          {
+            "path": "docs/fonoran-compound-audit-latest.md",
+            "label": "Compound audit"
+          },
+          {
+            "path": "docs/fonoran-learning-sessions-log.md",
+            "label": "Learning sessions log"
+          }
+        ],
+        "tools": [
+          {
+            "href": "/language#puzzle",
+            "label": "Puzzle Conversation"
+          },
+          {
+            "href": "/language#dictionary",
+            "label": "Dictionary"
+          }
+        ],
+        "source": [
+          {
+            "path": "data/fonoran-llm-evaluations.json",
+            "label": "fonoran-llm-evaluations.json"
+          },
+          {
+            "path": "data/fonoran-compounds.json",
+            "label": "fonoran-compounds.json"
+          },
+          {
+            "path": "scripts/fonoran-llm-intuition.js",
+            "label": "fonoran-llm-intuition.js"
+          }
+        ]
+      },
+      "body": "# Synthetic intuition ranking (Compositional Intuition Battery v3)\n\n## Research Question\n\n[RN-17](/research/notes/puzzle-conversation) established human Puzzle Conversation as the constitutional test for recoverable meaning. [RN-19](/research/notes/phase-iv-first-learner-signal) showed early learner signal after Phase IV regen: dictionary clustering, translator compilation, and ~98% puzzle recovery at small scale, but only **61** of **111** concepts had any human playtest data, and each concept carries multiple seed candidates competing for preferred form.\n\nHeuristic understandability ([`tools/fonoran-understandability.js`](../tools/fonoran-understandability.js)) ranks candidates by length, collision, and experience tiers. It does not simulate root-knower listening. v2 LLM playtests copied the Puzzle MC UI and failed: a shared answer key let every candidate pass after repair.\n\nThe question this note addresses:\n\n**Can synthetic root-knower intuition, without multiple choice or answer-key leakage, rank competing seed compositions well enough to guide preferred-form selection, while keeping humans as final authority?**\n\nThis is not LLM *inventing* words. It is LLM *evaluating* pre-seeded meaning-attempts with the constitutional question: *If someone only knew the roots, would this expression probably help them recover the intended meaning?*\n\n## Hypothesis\n\n1. **Task B (composition naturalness)** assigns meaningfully different scores to seed candidates for the same concept, avoiding v2's MC failure mode.\n2. **Conservative promotion**: auto-change preferred forms only when `intuition_weight` shows clear margin; most concepts remain split for human review.\n3. **Human correlation**: LLM rankings on calibration concepts align with author intuition on promoted forms; mismatches flag concepts for Puzzle Conversation first.\n\nThe hypothesis is not that LLM playtests replace humans. It is that they can pre-filter 111 concepts × ~3 candidates each at a scale no human session can match alone.\n\n## Approach\n\n### Instrument: Compositional Intuition Battery (cib-v3)\n\nThree tasks, no multiple choice (Tasks A and B used for full inventory; Task C optional for tie-breaks):\n\n| Task | Stimulus | Measures |\n| --- | --- | --- |\n| **A: Cold hearing** | Primitive root glossary + Fonoran spelling only | Inferred meaning, confidence |\n| **B: Composition judgment** | Roots + composition breakdown | Naturalness, vagueness, composition recovery |\n| **C: Pairwise** (optional) | Two candidates side-by-side | Preference, reasoning |\n\n**Weight formula:** `0.35×cold + 0.40×naturalness + 0.25×pairwise − 0.15×vagueness`\n\nFour synthetic personas · prompt version **3** · battery **`cib-v3`**. Full protocol: [`docs/fonoran-llm-playtest-experiment.md`](../fonoran-llm-playtest-experiment.md).\n\n### Implementation\n\n| Component | Path |\n| --- | --- |\n| Batch runner | [`scripts/fonoran-llm-intuition.js`](../scripts/fonoran-llm-intuition.js) |\n| Task prompts + personas | [`tools/fonoran-llm-intuition.js`](../tools/fonoran-llm-intuition.js) |\n| Aggregation + consensus | [`tools/fonoran-llm-aggregate.js`](../tools/fonoran-llm-aggregate.js) |\n| Anthropic client | [`tools/fonoran-llm-client.js`](../tools/fonoran-llm-client.js) |\n| Storage | [`data/fonoran-llm-evaluations.json`](../data/fonoran-llm-evaluations.json) |\n| Promotion | [`scripts/fonoran-optimize-compounds.js`](../scripts/fonoran-optimize-compounds.js) `--use-llm` |\n| Preferred selection | [`tools/fonoran-preferred-select.js`](../tools/fonoran-preferred-select.js) |\n\nRequires `ANTHROPIC_API_KEY` in `.env` (documented in [`.env.example`](../.env.example)). Resume keys skip completed `(concept, composition, persona, task)` tuples.\n\n### Run sequence (Jul 2026)\n\n```bash\nnpm run fonoran:llm-intuition -- --pilot          # tool, weapon, tribe\nnpm run fonoran:llm-intuition -- --calibration --resume\nnpm run fonoran:llm-intuition -- --resume        # full 111 concepts, Tasks A+B\nnpm run fonoran:optimize-compounds -- --use-llm\nnpm run fonoran:build:approved\nnpm run fonoran:compound-audit\n```\n\n## Evaluation\n\n### Scale\n\n| Stage | API calls | Est. cost | Gate |\n| --- | --- | --- | --- |\n| Pilot | 80 | ~$0.32 | Task B discriminates, pass |\n| Calibration (10 concepts) | 232 | ~$0.94 | Task B spread ≥7/10, **pass (7/10)** |\n| Full inventory | 2,168 | ~$8.78 | Complete |\n| Resume (failures) | 5 | ~$0.02 | 0 failed |\n| **Total stored** | **2,432** | **~$10** | |\n\n### Full inventory metrics\n\n- **111/111** concepts with v3 weights\n- **88/111** (79%) show Task B naturalness spread ≥0.10 between candidates\n- **37–38/111** (~34%) reach clear consensus (promotion-eligible margin)\n- **22/111** (19.8%) auto-promoted by `optimize-compounds --use-llm`, at the <20% conservative target\n- **111/111** build after optimize, **0** dropped; one flattened-length warning on `world` (5 roots)\n\n### Calibration detail (10 concepts)\n\nTask B spread passed on **7/10**: `community`, `exchange`, `knowledge`, `memory`, `tool`, `teacher`, `war`. Failed spread on `language`, `tribe`, `weapon`. Only **`community`** and **`knowledge`** reached clear consensus at calibration scale.\n\nPilot directional checks matched intuition: on `tool`, `useful + thing` beat `hand + thing` on naturalness; `weapon` and `tribe` remained near-ties.\n\n### Instrument limits observed\n\n- **Task A cold recovery** saturated (~100% on some concepts) because synonym matching is too loose, do not rely on cold alone for promotion until scoring tightens.\n- **No Task C** on full inventory: disputed concepts (`tool`, `tribe`) remain split.\n- **Synthetic personas ≠ humans**: Session 4 in [`docs/fonoran-learning-sessions-log.md`](../fonoran-learning-sessions-log.md) is the correlation gate.\n\nPer-concept reports: `node tools/fonoran-llm-aggregate.js --report <concept>`\n\n## Findings\n\n**v3 works for its intended job: rank seed candidates, promote conservatively.** Task B composition naturalness does what v2 MC failed to do, separate constructions for the same concept without a giveaway answer key. 88/111 concepts show measurable spread; auto-promote stayed at 20%.\n\n**Strongest synthetic signals** clustered on transparent body/social compounds: `people` (many + person, 0.84), `child` (small + person, 0.82), `community` (collective + person, 0.77), `river` (water + flow + path, 0.78). Weakest: `morning`, `forget`, `container`, `cloud`, `vehicle`, `identity`, `meaning`, `book`, all below 0.27 weight; these need seed or teaching-tree work, not a preferred-form swap alone.\n\n**22 promotions are hypotheses, not canon.** Examples: `community` (bond+collective → collective+person), `river` (flow+water → water+flow+path), `birth` (life+before → source+life), `island` (earth+water → earth+inside+water). One promotion (`meal`) fixed an invalid current form rather than LLM consensus. `world` (whole+place+earth+life) triggers a 5-root flatten warning, monitor in human play.\n\n**73 concepts remain split**: explicit human review queue. Audit reports **73** `llm_split`-class findings alongside **37** consensus candidates.\n\n**Three authority tiers now operate in parallel:** heuristic understandability (fast rank), synthetic intuition (volume rank), human Puzzle Conversation (constitutional authority). [`docs/fonoran.md`](../fonoran.md) documents the preferred-form tier order: `human` / `playtest` → `llm_consensus` → `heuristic`.\n\n## What Changed\n\n- **New tooling:** v3 intuition battery, LLM aggregate, optimize-with-LLM pipeline, composition resolver, preferred-select module.\n- **Data:** [`data/fonoran-llm-evaluations.json`](../data/fonoran-llm-evaluations.json) (2,432 rounds); 22 compounds with `preferred_source: llm_consensus` in [`data/fonoran-compounds.json`](../data/fonoran-compounds.json).\n- **Lab:** Rebuilt via `build:approved`; puzzle supports `#puzzle?concept=<id>` for targeted human validation.\n- **Docs:** [`docs/fonoran-llm-playtest-experiment.md`](../fonoran-llm-playtest-experiment.md) (protocol + results), [`docs/research-notes-authoring.md`](../research-notes-authoring.md) (RN expansion workflow).\n- **Legacy:** v2 runner (`npm run fonoran:llm-playtest`) retained for comparison only; do not use for promotion.\n\nHuman Puzzle Conversation ([RN-19](/research/notes/phase-iv-first-learner-signal)) remains the gate for whether promoted spellings actually teach.\n\n## Open Questions\n\n- Do human recovery rates on the 22 promotions beat their demoted alternates?\n- Where LLM and author disagree (e.g. `tool`, LLM ranks `thing + hand + useful` above `useful + thing`), which wins in live play?\n- Should Task A cold scoring tighten, or should cold weight drop in `intuition_weight`?\n- Does Task C pairwise on `tool`, `tribe`, `weapon` break ties worth breaking?\n- When does a human playtest lock override `llm_consensus`?\n- Can Spearman correlation on the 10 calibration concepts reach ≥0.6 vs author ordering?\n\n## References\n\n**Documentation:** [`docs/fonoran-llm-playtest-experiment.md`](../fonoran-llm-playtest-experiment.md), [`docs/fonoran-compound-audit-latest.md`](../fonoran-compound-audit-latest.md), [`docs/fonoran-learning-sessions-log.md`](../fonoran-learning-sessions-log.md), [`docs/research-notes-authoring.md`](../research-notes-authoring.md)\n\n**Interactive demo:** [Puzzle Conversation](/language#puzzle), [Dictionary](/language#dictionary), [Translator](/language#translator)\n\n**Source:** [`data/fonoran-llm-evaluations.json`](../data/fonoran-llm-evaluations.json), [`data/fonoran-compounds.json`](../data/fonoran-compounds.json), [`scripts/fonoran-llm-intuition.js`](../scripts/fonoran-llm-intuition.js), [`tools/fonoran-llm-aggregate.js`](../tools/fonoran-llm-aggregate.js)\n\n**Prior notes:** [RN-19 · First learner signal](/research/notes/phase-iv-first-learner-signal), [RN-17 · Puzzle conversation](/research/notes/puzzle-conversation), [RN-18 · Compound reconstruction](/research/notes/compound-reconstruction)\n",
+      "updated_at": "2026-07-02T19:11:33.707Z",
+      "published_at": "2026-07-02T16:20:54.988Z",
+      "updated_by": "sync@md-export"
     }
   ]
 }

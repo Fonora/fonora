@@ -1,8 +1,8 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-06-29T21:34:06.720Z",
+  "updated_at": "2026-07-02T15:26:27.435Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
-  "root_count": 100,
+  "root_count": 110,
   "roots": [
     {
       "id": "person",
@@ -11,11 +11,7 @@
       "concept": "a person; someone",
       "domain": "being",
       "reason": "a person — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T05:47:05.441Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "self",
@@ -24,37 +20,25 @@
       "concept": "oneself; me, myself",
       "domain": "being",
       "reason": "oneself — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T05:47:13.744Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "collective",
-      "spelling": "ben",
-      "ipa": "/bɛn/",
+      "spelling": "dan",
+      "ipa": "/dʌn/",
       "concept": "a group seen as one; togetherness",
       "domain": "being",
       "reason": "a group seen as one — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:06.009Z",
-      "experience_tier": "social",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "body",
-      "spelling": "dam",
-      "ipa": "/dʌm/",
+      "spelling": "fem",
+      "ipa": "/fɛm/",
       "concept": "your body",
       "domain": "being",
       "reason": "your body — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:10.026Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "life",
@@ -63,11 +47,7 @@
       "concept": "being alive",
       "domain": "being",
       "reason": "being alive — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:18:13.347Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "move",
@@ -76,11 +56,7 @@
       "concept": "to go from one place to another",
       "domain": "action",
       "reason": "to go from one place to another — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T05:47:36.355Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "give",
@@ -89,11 +65,7 @@
       "concept": "to give something to someone",
       "domain": "action",
       "reason": "to give something to someone — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:18:16.737Z",
-      "experience_tier": "social",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "take",
@@ -102,50 +74,34 @@
       "concept": "to take something",
       "domain": "action",
       "reason": "to take something — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:18:25.268Z",
-      "experience_tier": "social",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "hold",
-      "spelling": "fes",
-      "ipa": "/fɛs/",
+      "spelling": "gat",
+      "ipa": "/gʌt/",
       "concept": "to keep something in your grasp",
       "domain": "action",
       "reason": "to keep something in your grasp — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:37.475Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "use",
-      "spelling": "gak",
-      "ipa": "/gʌk/",
+      "spelling": "gek",
+      "ipa": "/gɛk/",
       "concept": "to use something",
       "domain": "action",
       "reason": "to use something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:48.834Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "help",
-      "spelling": "kat",
-      "ipa": "/kʌt/",
+      "spelling": "kas",
+      "ipa": "/kʌs/",
       "concept": "to help someone",
       "domain": "action",
       "reason": "to help someone — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:51.765Z",
-      "experience_tier": "social",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "make",
@@ -154,11 +110,7 @@
       "concept": "to make something",
       "domain": "action",
       "reason": "to make something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:55.535Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "do",
@@ -167,11 +119,7 @@
       "concept": "to do something",
       "domain": "action",
       "reason": "to do something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:18:59.403Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "speak",
@@ -180,11 +128,7 @@
       "concept": "to speak; to talk",
       "domain": "action",
       "reason": "to speak — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:19:05.471Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "see",
@@ -193,63 +137,43 @@
       "concept": "to see",
       "domain": "action",
       "reason": "to see — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:08.018Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "hear",
-      "spelling": "gem",
-      "ipa": "/gɛm/",
+      "spelling": "len",
+      "ipa": "/lɛn/",
       "concept": "to hear",
       "domain": "action",
       "reason": "to hear — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:10.898Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "touch",
-      "spelling": "lek",
-      "ipa": "/lɛk/",
+      "spelling": "mam",
+      "ipa": "/mʌm/",
       "concept": "to touch",
       "domain": "action",
       "reason": "to touch — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:14.310Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "smell",
-      "spelling": "ket",
-      "ipa": "/kɛt/",
+      "spelling": "tek",
+      "ipa": "/tɛk/",
       "concept": "to smell",
       "domain": "action",
       "reason": "to smell — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:18.705Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "taste",
-      "spelling": "tel",
-      "ipa": "/tɛl/",
+      "spelling": "tal",
+      "ipa": "/tʌl/",
       "concept": "to taste",
       "domain": "action",
       "reason": "to taste — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:24.175Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "know",
@@ -258,76 +182,52 @@
       "concept": "to know something",
       "domain": "action",
       "reason": "to know something — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:19:27.066Z",
-      "experience_tier": "thinking",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "think",
-      "spelling": "mas",
-      "ipa": "/mʌs/",
+      "spelling": "met",
+      "ipa": "/mɛt/",
       "concept": "to use your mind",
       "domain": "action",
       "reason": "to use your mind — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:29.927Z",
-      "experience_tier": "thinking",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "feel",
-      "spelling": "met",
-      "ipa": "/mɛt/",
+      "spelling": "nes",
+      "ipa": "/nɛs/",
       "concept": "to feel something inside",
       "domain": "action",
       "reason": "to feel something inside — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:33.151Z",
-      "experience_tier": "emotion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "want",
-      "spelling": "san",
-      "ipa": "/sʌn/",
+      "spelling": "sak",
+      "ipa": "/sʌk/",
       "concept": "to wish for something",
       "domain": "action",
       "reason": "to wish for something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:37.414Z",
-      "experience_tier": "emotion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "eat",
-      "spelling": "nel",
-      "ipa": "/nɛl/",
+      "spelling": "tel",
+      "ipa": "/tɛl/",
       "concept": "to eat",
       "domain": "action",
       "reason": "to eat — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:40.296Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "sleep",
-      "spelling": "tem",
-      "ipa": "/tɛm/",
+      "spelling": "nal",
+      "ipa": "/nʌl/",
       "concept": "to sleep",
       "domain": "action",
       "reason": "to sleep — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:45.644Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "thing",
@@ -336,37 +236,25 @@
       "concept": "any object or item",
       "domain": "ontology",
       "reason": "any object or item — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:19:51.042Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "substance",
-      "spelling": "sak",
-      "ipa": "/sʌk/",
+      "spelling": "ken",
+      "ipa": "/kɛn/",
       "concept": "stuff things are made of",
       "domain": "ontology",
       "reason": "stuff things are made of — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:19:57.571Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "form",
-      "spelling": "les",
-      "ipa": "/lɛs/",
+      "spelling": "das",
+      "ipa": "/dʌs/",
       "concept": "shape; how something looks",
       "domain": "ontology",
       "reason": "shape — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:03.337Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "change",
@@ -375,24 +263,16 @@
       "concept": "to become different",
       "domain": "ontology",
       "reason": "to become different — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:20:06.216Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "empty",
-      "spelling": "tal",
-      "ipa": "/tʌl/",
+      "spelling": "tam",
+      "ipa": "/tʌm/",
       "concept": "having nothing inside",
       "domain": "ontology",
       "reason": "having nothing inside — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:20:09.034Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "water",
@@ -401,310 +281,214 @@
       "concept": "water",
       "domain": "element",
       "reason": "water — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:20:11.555Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "fire",
-      "spelling": "nan",
-      "ipa": "/nʌn/",
+      "spelling": "dat",
+      "ipa": "/dʌt/",
       "concept": "fire; a hot burning flame",
       "domain": "element",
       "reason": "fire — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:13.892Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "earth",
-      "spelling": "re",
-      "ipa": "/rɛ/",
+      "spelling": "fen",
+      "ipa": "/fɛn/",
       "concept": "the ground or soil",
       "domain": "element",
       "reason": "the ground or soil — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:16.307Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "air",
-      "spelling": "bek",
-      "ipa": "/bɛk/",
+      "spelling": "ges",
+      "ipa": "/gɛs/",
       "concept": "the air we breathe",
       "domain": "element",
       "reason": "the air we breathe — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:18.674Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "light",
-      "spelling": "dat",
-      "ipa": "/dʌt/",
+      "spelling": "kek",
+      "ipa": "/kɛk/",
       "concept": "light; what lets you see",
       "domain": "element",
       "reason": "light — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:21.013Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "dark",
-      "spelling": "ges",
-      "ipa": "/gɛs/",
+      "spelling": "gan",
+      "ipa": "/gʌn/",
       "concept": "darkness; no light",
       "domain": "element",
       "reason": "darkness — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:23.390Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "hot",
-      "spelling": "fen",
-      "ipa": "/fɛn/",
+      "spelling": "lem",
+      "ipa": "/lɛm/",
       "concept": "hot; warm to burning",
       "domain": "element",
       "reason": "hot — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:25.790Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "cold",
-      "spelling": "kam",
-      "ipa": "/kʌm/",
+      "spelling": "mak",
+      "ipa": "/mʌk/",
       "concept": "cold; chilly to freezing",
       "domain": "element",
       "reason": "cold — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:28.209Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "stone",
-      "spelling": "mak",
-      "ipa": "/mʌk/",
+      "spelling": "sas",
+      "ipa": "/sʌs/",
       "concept": "a hard rock",
       "domain": "element",
       "reason": "a hard rock — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:30.624Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "plant",
-      "spelling": "sas",
-      "ipa": "/sʌs/",
+      "spelling": "tet",
+      "ipa": "/tɛt/",
       "concept": "a plant",
       "domain": "element",
       "reason": "a plant — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:32.978Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "animal",
-      "spelling": "tet",
-      "ipa": "/tɛt/",
+      "spelling": "kal",
+      "ipa": "/kʌl/",
       "concept": "an animal",
       "domain": "element",
       "reason": "an animal — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:35.371Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "inside",
-      "spelling": "lel",
-      "ipa": "/lɛl/",
+      "spelling": "mes",
+      "ipa": "/mɛs/",
       "concept": "in; within something",
       "domain": "space",
       "reason": "in — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:37.687Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "outside",
-      "spelling": "gan",
-      "ipa": "/gʌn/",
+      "spelling": "nen",
+      "ipa": "/nɛn/",
       "concept": "out; beyond something's edge",
       "domain": "space",
       "reason": "out — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:40.048Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "here",
-      "spelling": "kek",
-      "ipa": "/kɛk/",
+      "spelling": "nam",
+      "ipa": "/nʌm/",
       "concept": "at this place",
       "domain": "space",
       "reason": "at this place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:42.443Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "there",
-      "spelling": "mem",
-      "ipa": "/mɛm/",
+      "spelling": "tak",
+      "ipa": "/tʌk/",
       "concept": "at that place",
       "domain": "space",
       "reason": "at that place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:44.887Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "near",
-      "spelling": "yo",
-      "ipa": "/jɑ/",
+      "spelling": "dal",
+      "ipa": "/dʌl/",
       "concept": "close by",
       "domain": "space",
       "reason": "close by — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:47.336Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "far",
-      "spelling": "nes",
-      "ipa": "/nɛs/",
+      "spelling": "fet",
+      "ipa": "/fɛt/",
       "concept": "a long way off",
       "domain": "space",
       "reason": "a long way off — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:49.737Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "up",
-      "spelling": "dal",
-      "ipa": "/dʌl/",
+      "spelling": "ra",
+      "ipa": "/rʌ/",
       "concept": "toward a higher place",
       "domain": "space",
       "reason": "toward a higher place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:52.301Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "down",
-      "spelling": "nat",
-      "ipa": "/nʌt/",
+      "spelling": "ju",
+      "ipa": "/dʒʊ/",
       "concept": "toward a lower place",
       "domain": "space",
       "reason": "toward a lower place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:54.893Z",
-      "experience_tier": "space_motion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "path",
-      "spelling": "kal",
-      "ipa": "/kʌl/",
+      "spelling": "nan",
+      "ipa": "/nʌn/",
       "concept": "a way or route to travel along",
       "domain": "space",
       "reason": "a way or route to travel along — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:57.325Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "place",
-      "spelling": "ja",
-      "ipa": "/dʒʌ/",
+      "spelling": "che",
+      "ipa": "/tʃɛ/",
       "concept": "a spot or location",
       "domain": "space",
       "reason": "a spot or location — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:20:59.736Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "surface",
-      "spelling": "fem",
-      "ipa": "/fɛm/",
+      "spelling": "lel",
+      "ipa": "/lɛl/",
       "concept": "the outer side you touch",
       "domain": "space",
       "reason": "the outer side you touch — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:02.206Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "bound",
-      "spelling": "mek",
-      "ipa": "/mɛk/",
+      "spelling": "tem",
+      "ipa": "/tɛm/",
       "concept": "an edge; where something ends",
       "domain": "space",
       "reason": "an edge — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:06.227Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "center",
-      "spelling": "dan",
-      "ipa": "/dʌn/",
+      "spelling": "fes",
+      "ipa": "/fɛs/",
       "concept": "the middle",
       "domain": "space",
       "reason": "the middle — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:10.661Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "before",
@@ -713,11 +497,7 @@
       "concept": "earlier; in the past",
       "domain": "time",
       "reason": "earlier — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:21:13.931Z",
-      "experience_tier": "time",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "after",
@@ -726,37 +506,25 @@
       "concept": "later; coming next",
       "domain": "time",
       "reason": "later — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:21:16.767Z",
-      "experience_tier": "time",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "now",
-      "spelling": "che",
-      "ipa": "/tʃɛ/",
+      "spelling": "gem",
+      "ipa": "/gɛm/",
       "concept": "right now; this moment",
       "domain": "time",
       "reason": "right now — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:19.832Z",
-      "experience_tier": "time",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "time",
-      "spelling": "pu",
-      "ipa": "/pʊ/",
+      "spelling": "kan",
+      "ipa": "/kʌn/",
       "concept": "time; how long things last",
       "domain": "time",
       "reason": "time — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:23.344Z",
-      "experience_tier": "time",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "one",
@@ -765,128 +533,88 @@
       "concept": "a single one",
       "domain": "quantity",
       "reason": "a single one — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:26.205Z",
-      "experience_tier": "abstract",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "many",
-      "spelling": "yi",
-      "ipa": "/jɪ/",
+      "spelling": "lek",
+      "ipa": "/lɛk/",
       "concept": "a lot; lots of them",
       "domain": "quantity",
       "reason": "a lot — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:29.129Z",
-      "experience_tier": "abstract",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "all",
-      "spelling": "tak",
-      "ipa": "/tʌk/",
+      "spelling": "mel",
+      "ipa": "/mɛl/",
       "concept": "every one of them",
       "domain": "quantity",
       "reason": "every one of them — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:32.064Z",
-      "experience_tier": "abstract",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "some",
-      "spelling": "fet",
-      "ipa": "/fɛt/",
+      "spelling": "ket",
+      "ipa": "/kɛt/",
       "concept": "a few; part of them",
       "domain": "quantity",
       "reason": "a few — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:34.881Z",
-      "experience_tier": "abstract",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "more",
-      "spelling": "kas",
-      "ipa": "/kʌs/",
+      "spelling": "mas",
+      "ipa": "/mʌs/",
       "concept": "a greater amount",
       "domain": "quantity",
       "reason": "a greater amount — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:37.642Z",
-      "experience_tier": "abstract",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "less",
-      "spelling": "ken",
-      "ipa": "/kɛn/",
+      "spelling": "sha",
+      "ipa": "/ʃʌ/",
       "concept": "a smaller amount",
       "domain": "quantity",
       "reason": "a smaller amount — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:40.049Z",
-      "experience_tier": "abstract",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "fast",
-      "spelling": "mal",
-      "ipa": "/mʌl/",
+      "spelling": "nek",
+      "ipa": "/nɛk/",
       "concept": "quick; moving at high speed",
       "domain": "quantity",
       "reason": "quick — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:42.632Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "love",
-      "spelling": "bem",
-      "ipa": "/bɛm/",
+      "spelling": "san",
+      "ipa": "/sʌn/",
       "concept": "to deeply care for someone",
       "domain": "emotion",
       "reason": "to deeply care for someone — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:46.039Z",
-      "experience_tier": "emotion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "fear",
-      "spelling": "sam",
-      "ipa": "/sʌm/",
+      "spelling": "pe",
+      "ipa": "/pɛ/",
       "concept": "to be afraid",
       "domain": "emotion",
       "reason": "to be afraid — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:49.225Z",
-      "experience_tier": "emotion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "pain",
-      "spelling": "gat",
-      "ipa": "/gʌt/",
+      "spelling": "tes",
+      "ipa": "/tɛs/",
       "concept": "hurting; physical or emotional hurt",
       "domain": "emotion",
       "reason": "hurting — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:51.717Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "good",
@@ -895,414 +623,376 @@
       "concept": "good; works well or is wanted",
       "domain": "evaluation",
       "reason": "good — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:54.122Z",
-      "experience_tier": "emotion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "bad",
-      "spelling": "len",
-      "ipa": "/lɛn/",
+      "spelling": "gam",
+      "ipa": "/gʌm/",
       "concept": "bad; harmful or unwanted",
       "domain": "evaluation",
       "reason": "bad — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:56.465Z",
-      "experience_tier": "emotion",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "true",
-      "spelling": "sha",
-      "ipa": "/ʃʌ/",
+      "spelling": "nat",
+      "ipa": "/nʌt/",
       "concept": "true; matches what's real",
       "domain": "evaluation",
       "reason": "true — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:21:58.818Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "equal",
-      "spelling": "mam",
-      "ipa": "/mʌm/",
+      "spelling": "mek",
+      "ipa": "/mɛk/",
       "concept": "the same amount; even and fair",
       "domain": "evaluation",
       "reason": "the same amount — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:22:01.139Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "bond",
-      "spelling": "tat",
-      "ipa": "/tʌt/",
+      "spelling": "kam",
+      "ipa": "/kʌm/",
       "concept": "a bond; a tie between things",
       "domain": "relationships",
       "reason": "a bond — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:22:03.494Z",
-      "experience_tier": "social",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "conflict",
-      "spelling": "nal",
-      "ipa": "/nʌl/",
+      "spelling": "pa",
+      "ipa": "/pʌ/",
       "concept": "a clash or fight between sides",
       "domain": "relationships",
       "reason": "a clash or fight between sides — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:22:05.842Z",
-      "experience_tier": "social",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "same",
-      "spelling": "nek",
-      "ipa": "/nɛk/",
+      "spelling": "ho",
+      "ipa": "/hɑ/",
       "concept": "the same; not different",
       "domain": "relationships",
       "reason": "the same — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:08.128Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "part",
-      "spelling": "tes",
-      "ipa": "/tɛs/",
+      "spelling": "fel",
+      "ipa": "/fɛl/",
       "concept": "a piece of something bigger",
       "domain": "relationships",
       "reason": "a piece of something bigger — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:10.410Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "mark",
-      "spelling": "nen",
-      "ipa": "/nɛn/",
+      "spelling": "wu",
+      "ipa": "/wʊ/",
       "concept": "a mark, sign, or drawing",
       "domain": "process",
       "reason": "a mark, sign, or drawing — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:12.748Z",
-      "experience_tier": "social",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "source",
-      "spelling": "bel",
-      "ipa": "/bɛl/",
+      "spelling": "lo",
+      "ipa": "/lɑ/",
       "concept": "where something comes from",
       "domain": "process",
       "reason": "where something comes from — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:15.088Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "flow",
-      "spelling": "pa",
-      "ipa": "/pʌ/",
+      "spelling": "tas",
+      "ipa": "/tʌs/",
       "concept": "to flow",
       "domain": "process",
       "reason": "to flow — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:17.890Z",
-      "experience_tier": "space_motion",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "pulse",
-      "spelling": "gek",
-      "ipa": "/gɛk/",
+      "spelling": "re",
+      "ipa": "/rɛ/",
       "concept": "a beat; a steady throb",
       "domain": "process",
       "reason": "a beat — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:20.542Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "still",
-      "spelling": "kan",
-      "ipa": "/kʌn/",
+      "spelling": "ti",
+      "ipa": "/tɪ/",
       "concept": "not moving; staying put",
       "domain": "process",
       "reason": "not moving — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:22.885Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "will",
-      "spelling": "gam",
-      "ipa": "/gʌm/",
+      "spelling": "nem",
+      "ipa": "/nɛm/",
       "concept": "the drive or intent to do something",
       "domain": "process",
       "reason": "the drive or intent to do something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:25.183Z",
-      "experience_tier": "thinking",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "strong",
-      "spelling": "mel",
-      "ipa": "/mɛl/",
+      "spelling": "ru",
+      "ipa": "/rʊ/",
       "concept": "strong; powerful and hard to break",
       "domain": "process",
       "reason": "strong — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-06-29T06:22:27.553Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "reach",
-      "spelling": "ni",
-      "ipa": "/nɪ/",
+      "spelling": "nak",
+      "ipa": "/nʌk/",
       "concept": "to stretch out toward something",
       "domain": "process",
       "reason": "to stretch out toward something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:29.900Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "wave",
-      "spelling": "she",
-      "ipa": "/ʃɛ/",
+      "spelling": "yo",
+      "ipa": "/jɑ/",
       "concept": "a wave",
       "domain": "process",
       "reason": "a wave — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:32.230Z",
-      "experience_tier": "space_motion",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "hand",
-      "spelling": "ho",
-      "ipa": "/hɑ/",
+      "spelling": "dak",
+      "ipa": "/dʌk/",
       "concept": "your hand",
       "domain": "body",
       "reason": "your hand — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:34.583Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "eye",
-      "spelling": "gen",
-      "ipa": "/gɛn/",
+      "spelling": "kem",
+      "ipa": "/kɛm/",
       "concept": "your eye",
       "domain": "body",
       "reason": "your eye — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:36.901Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "skin",
-      "spelling": "ru",
-      "ipa": "/rʊ/",
+      "spelling": "tat",
+      "ipa": "/tʌt/",
       "concept": "your skin",
       "domain": "body",
       "reason": "your skin — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:39.268Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "bone",
-      "spelling": "nas",
-      "ipa": "/nʌs/",
+      "spelling": "je",
+      "ipa": "/dʒɛ/",
       "concept": "a bone",
       "domain": "body",
       "reason": "a bone — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:41.721Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "big",
-      "spelling": "je",
-      "ipa": "/dʒɛ/",
+      "spelling": "ni",
+      "ipa": "/nɪ/",
       "concept": "big; large in size",
       "domain": "quality",
       "reason": "big — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:44.206Z",
-      "experience_tier": "abstract",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "small",
-      "spelling": "nam",
-      "ipa": "/nʌm/",
+      "spelling": "gen",
+      "ipa": "/gɛn/",
       "concept": "small; little in size",
       "domain": "quality",
       "reason": "small — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:46.741Z",
-      "experience_tier": "abstract",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "head",
-      "spelling": "chu",
-      "ipa": "/tʃʊ/",
+      "spelling": "kes",
+      "ipa": "/kɛs/",
       "concept": "your head",
       "domain": "body",
       "reason": "your head — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:49.239Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "heart",
-      "spelling": "so",
-      "ipa": "/sɑ/",
+      "spelling": "pu",
+      "ipa": "/pʊ/",
       "concept": "your heart",
       "domain": "body",
       "reason": "your heart — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:51.964Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "mouth",
-      "spelling": "mes",
-      "ipa": "/mɛs/",
+      "spelling": "dam",
+      "ipa": "/dʌm/",
       "concept": "your mouth",
       "domain": "body",
       "reason": "your mouth — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:55.246Z",
-      "experience_tier": "survival_body",
-      "language_tier": "communicative_core",
-      "campfire_pass": true,
-      "campfire_reason": "Two strangers would plausibly need this in their first week."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "need",
-      "spelling": "dak",
-      "ipa": "/dʌk/",
+      "spelling": "les",
+      "ipa": "/lɛs/",
       "concept": "to need something",
       "domain": "cognition",
       "reason": "to need something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:22:58.284Z",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "cause",
-      "spelling": "lem",
-      "ipa": "/lɛm/",
+      "spelling": "wa",
+      "ipa": "/wʌ/",
       "concept": "to make something happen",
       "domain": "relation",
       "reason": "to make something happen — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:23:01.503Z",
-      "experience_tier": "abstract",
-      "language_tier": "complete",
-      "campfire_pass": false,
-      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "name",
-      "spelling": "tas",
-      "ipa": "/tʌs/",
+      "spelling": "mal",
+      "ipa": "/mʌl/",
       "concept": "a name",
       "domain": "communication",
       "reason": "a name — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-06-29T06:23:04.546Z",
-      "experience_tier": "social",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "addressee",
-      "spelling": "ti",
-      "ipa": "/tɪ/",
+      "spelling": "be",
+      "ipa": "/bɛ/",
       "concept": "the entity spoken to; you",
       "domain": "being",
-      "reason": "New concept: the person spoken to.",
-      "approved_at": "2026-06-29T21:09:49.678Z",
-      "experience_tier": "social",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "reason": "the entity spoken to — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "metal",
-      "spelling": "pel",
-      "ipa": "/pɛl/",
+      "spelling": "ja",
+      "ipa": "/dʒʌ/",
       "concept": "a hard shiny material you can shape, like iron",
       "domain": "element",
-      "reason": "metal — a basic worked material; needed for tools, weapons, and a smith.",
-      "approved_at": "2026-06-29T21:23:15.573Z",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "reason": "a hard shiny material you can shape, like iron — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
       "id": "parent",
-      "spelling": "po",
-      "ipa": "/pɑ/",
+      "spelling": "so",
+      "ipa": "/sɑ/",
       "concept": "a mother or father",
       "domain": "being",
-      "reason": "parent — core kinship root for family terms like grandparent.",
-      "approved_at": "2026-06-29T21:23:25.725Z",
-      "experience_tier": "social",
-      "language_tier": "extended_core",
-      "campfire_pass": true,
-      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+      "reason": "a mother or father — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "drink",
+      "spelling": "ko",
+      "ipa": "/kɑ/",
+      "concept": "to drink",
+      "domain": "action",
+      "reason": "to drink — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "sky",
+      "spelling": "sam",
+      "ipa": "/sʌm/",
+      "concept": "the sky above",
+      "domain": "element",
+      "reason": "the sky above — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "tree",
+      "spelling": "she",
+      "ipa": "/ʃɛ/",
+      "concept": "a tree",
+      "domain": "element",
+      "reason": "a tree — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "left",
+      "spelling": "chu",
+      "ipa": "/tʃʊ/",
+      "concept": "the left side",
+      "domain": "space",
+      "reason": "the left side — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "right",
+      "spelling": "gak",
+      "ipa": "/gʌk/",
+      "concept": "the right side",
+      "domain": "space",
+      "reason": "the right side — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "happy",
+      "spelling": "yi",
+      "ipa": "/jɪ/",
+      "concept": "feeling glad and content",
+      "domain": "emotion",
+      "reason": "feeling glad and content — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "angry",
+      "spelling": "kat",
+      "ipa": "/kʌt/",
+      "concept": "feeling mad or hostile",
+      "domain": "emotion",
+      "reason": "feeling mad or hostile — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "calm",
+      "spelling": "nel",
+      "ipa": "/nɛl/",
+      "concept": "feeling settled and at peace",
+      "domain": "emotion",
+      "reason": "feeling settled and at peace — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "trust",
+      "spelling": "nas",
+      "ipa": "/nʌs/",
+      "concept": "to believe someone is safe and reliable",
+      "domain": "emotion",
+      "reason": "to believe someone is safe and reliable — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "hope",
+      "spelling": "mem",
+      "ipa": "/mɛm/",
+      "concept": "to wish and expect something good",
+      "domain": "emotion",
+      "reason": "to wish and expect something good — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
     }
   ]
 }

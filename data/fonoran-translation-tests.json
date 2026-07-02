@@ -8,43 +8,43 @@
       "phrases": [
         {
           "en": "I eat.",
-          "fon": "mi nel"
+          "fon": "mi tel"
         },
         {
           "en": "You sleep.",
-          "fon": "ti tem"
+          "fon": "be nal"
         },
         {
           "en": "The child runs.",
-          "fon": "namba gi"
+          "fon": "genba ginek"
         },
         {
           "en": "The dog drinks water.",
-          "fon": "tet ye ye"
+          "fon": "kal ye ye"
         },
         {
           "en": "The bird flies.",
-          "fon": "tet gi"
+          "fon": "kal samgi"
         },
         {
           "en": "The sun rises.",
-          "fon": "datbel dal"
+          "fon": "samdat ra"
         },
         {
           "en": "The sun sets.",
-          "fon": "datbel nat"
+          "fon": "samdat ju"
         },
         {
           "en": "Fire is hot.",
-          "fon": "nan fen"
+          "fon": "dat lem"
         },
         {
           "en": "Water is cold.",
-          "fon": "ye kam"
+          "fon": "ye mak"
         },
         {
           "en": "The tree is tall.",
-          "fon": "sas je"
+          "fon": "tet ni"
         }
       ]
     },
@@ -54,45 +54,45 @@
       "phrases": [
         {
           "en": "I eat bread.",
-          "fon": "mi nel nelto"
+          "fon": "mi tel telto"
         },
         {
           "en": "You drink water.",
-          "fon": "ti ye ye"
+          "fon": "be ye ye"
         },
         {
           "en": "We build a house.",
-          "fon": "ben kel ja",
-          "note": "review: house→ja(semantic)"
+          "fon": "dan kel che",
+          "note": "review: house→che(semantic)"
         },
         {
           "en": "The child sees the dog.",
-          "fon": "namba wi tet"
+          "fon": "genba wi kal"
         },
         {
           "en": "The woman carries the baby.",
-          "fon": "ba fes ba",
+          "fon": "ba gat ba",
           "note": "review: baby→ba(semantic)"
         },
         {
           "en": "The man opens the door.",
-          "fon": "ba kelkal kalmek"
+          "fon": "ba kelnan nantem"
         },
         {
           "en": "The cat chases the bird.",
-          "fon": "tet gi tet"
+          "fon": "kal gi kal"
         },
         {
           "en": "The teacher speaks.",
-          "fon": "kelhuba se"
+          "fon": "kuhuba se"
         },
         {
           "en": "The student listens.",
-          "fon": "lahuba gem"
+          "fon": "lahuba len"
         },
         {
           "en": "The wind moves the leaves.",
-          "fon": "bek gi sas"
+          "fon": "gesgi gesgi tet"
         }
       ]
     },
@@ -102,46 +102,46 @@
       "phrases": [
         {
           "en": "The large dog runs fast.",
-          "fon": "je tet gi mal"
+          "fon": "ni kal ginek nek"
         },
         {
           "en": "The small child is happy.",
-          "fon": "namba bo"
+          "fon": "genba yi"
         },
         {
           "en": "The old tree is strong.",
-          "fon": "sas mel"
+          "fon": "tet ru"
         },
         {
           "en": "The new house is beautiful.",
-          "fon": "ja guwi"
+          "fon": "che guwi"
         },
         {
           "en": "The red flower grows.",
-          "fon": "nanwi pa jecha",
-          "note": "review: flower→pa(semantic)"
+          "fon": "datwi tas fochamas",
+          "note": "review: flower→tas(semantic)"
         },
         {
           "en": "The river is wide.",
-          "fon": "pakal taktes",
-          "note": "review: wide→taktes(semantic)"
+          "fon": "yetasnan melfel",
+          "note": "review: wide→melfel(semantic)"
         },
         {
           "en": "The mountain is high.",
-          "fon": "redal mal",
-          "note": "review: high→mal(alias_weak)"
+          "fon": "fenrati nek",
+          "note": "review: high→nek(alias_weak)"
         },
         {
           "en": "The food tastes good.",
-          "fon": "nelto nel gu"
+          "fon": "telto tel gu"
         },
         {
           "en": "The night is quiet.",
-          "fon": "gespu kan"
+          "fon": "gankan ti"
         },
         {
           "en": "The morning is bright.",
-          "fon": "datdi dat"
+          "fon": "kekshu kek"
         }
       ]
     },
@@ -151,24 +151,24 @@
       "phrases": [
         {
           "en": "I ate yesterday.",
-          "fon": "mi ta nel di"
+          "fon": "mi ta tel di"
         },
         {
           "en": "I will eat tomorrow.",
-          "fon": "mi sa nel shu"
+          "fon": "mi sa tel shu"
         },
         {
           "en": "We built a house.",
-          "fon": "ben ta kel ja",
-          "note": "review: house→ja(semantic)"
+          "fon": "dan ta kel che",
+          "note": "review: house→che(semantic)"
         },
         {
           "en": "We will build a bridge.",
-          "fon": "ben sa kel kalye"
+          "fon": "dan sa kel nanye"
         },
         {
           "en": "She came home.",
-          "fon": "ba gi lelja"
+          "fon": "ba gi chekam"
         },
         {
           "en": "He will return.",
@@ -176,20 +176,19 @@
         },
         {
           "en": "The rain stopped.",
-          "fon": "yenat ta kan"
+          "fon": "samye ta ti"
         },
         {
           "en": "Winter will come.",
-          "fon": "kampu sa gi"
+          "fon": "makshu sa gi"
         },
         {
           "en": "They finished the work.",
-          "fon": "ben ta mek mo",
-          "note": "review: work→mo(semantic)"
+          "fon": "dan ta tem bakel"
         },
         {
           "en": "The child will learn.",
-          "fon": "namba sa lahu"
+          "fon": "genba sa lahu"
         }
       ]
     },
@@ -199,11 +198,11 @@
       "phrases": [
         {
           "en": "Where are you?",
-          "fon": "wo zis ti"
+          "fon": "wo zis lel"
         },
         {
           "en": "Who are you?",
-          "fon": "wo zas ti"
+          "fon": "wo zas lel"
         },
         {
           "en": "What is this?",
@@ -211,32 +210,32 @@
         },
         {
           "en": "Why are you here?",
-          "fon": "wo zos kek"
+          "fon": "wo zos nam"
         },
         {
           "en": "When will you return?",
-          "fon": "wo zes sa ti gi"
+          "fon": "wo zes sa lel gi"
         },
         {
           "en": "How do you know?",
-          "fon": "wo zus ti hu"
+          "fon": "wo zus lel hu"
         },
         {
           "en": "Is the food ready?",
-          "fon": "nelto kel",
+          "fon": "telto kel",
           "note": "review: ready→kel(semantic)"
         },
         {
           "en": "Can you help me?",
-          "fon": "ti kat mi"
+          "fon": "be kas mi"
         },
         {
           "en": "Did you see it?",
-          "fon": "ti ta wi to"
+          "fon": "lel ta wi to"
         },
         {
           "en": "Will it rain?",
-          "fon": "to sa yenat"
+          "fon": "to sa samye"
         }
       ]
     },
@@ -246,45 +245,46 @@
       "phrases": [
         {
           "en": "I love my family.",
-          "fon": "mi bem tatba"
+          "fon": "mi san sodan"
         },
         {
           "en": "Friends help each other.",
-          "fon": "kat cha"
+          "fon": "kas cha"
         },
         {
           "en": "The teacher teaches the student.",
-          "fon": "kelhuba kelhuba lahuba"
+          "fon": "kuhuba [teaches] lahuba",
+          "note": "gap: teaches (needs a root)"
         },
         {
           "en": "Parents protect children.",
-          "fon": "po fes namba"
+          "fon": "so gat genba"
         },
         {
           "en": "The king trusts the guard.",
-          "fon": "mel tat mo",
-          "note": "review: king→mel(semantic), guard→mo(semantic)"
+          "fon": "ru kam mo",
+          "note": "review: king→ru(semantic), guard→mo(semantic)"
         },
         {
           "en": "The hunter follows the animal.",
-          "fon": "latetba gi tet"
+          "fon": "lakalba gi kal"
         },
         {
           "en": "The doctor helps sick people.",
-          "fon": "kelguba katba gat yiba"
+          "fon": "kasfemba bakas tes balek"
         },
         {
           "en": "The farmer grows food.",
-          "fon": "kelsasba jecha nelto"
+          "fon": "keltetba fochamas telto"
         },
         {
           "en": "The traveler finds a river.",
-          "fon": "ba wi pakal",
+          "fon": "ba wi yetasnan",
           "note": "review: traveler→ba(semantic)"
         },
         {
           "en": "The group builds together.",
-          "fon": "ben kel ben"
+          "fon": "dan kel dan"
         }
       ]
     },
@@ -294,46 +294,46 @@
       "phrases": [
         {
           "en": "The sunrise is beautiful.",
-          "fon": "datbeldal guwi"
+          "fon": "kekra guwi"
         },
         {
           "en": "The sunset is peaceful.",
-          "fon": "datbelnat kan"
+          "fon": "kekju ti"
         },
         {
           "en": "The moonlight shines on the river.",
-          "fon": "datkamdat dat pakal"
+          "fon": "gankankek kek yetasnan"
         },
         {
           "en": "The campfire keeps us warm.",
-          "fon": "nanja fes ben fen"
+          "fon": "datche gat dan lem"
         },
         {
           "en": "The fisherman crossed the river.",
-          "fon": "yetetba ta gi pakal"
+          "fon": "kalyeba ta gi yetasnan"
         },
         {
           "en": "The blacksmith made a knife.",
-          "fon": "pelkelba ta sak pelmek",
-          "note": "review: made→sak(alias_weak)"
+          "fon": "jakelba ta ken jatem",
+          "note": "review: made→ken(alias_weak)"
         },
         {
           "en": "The grandmother tells stories.",
-          "fon": "dipo se se"
+          "fon": "diso se se"
         },
         {
           "en": "The doorway is open.",
-          "fon": "kalmek kelkal",
-          "note": "review: doorway→kalmek(semantic)"
+          "fon": "nantem kelnan",
+          "note": "review: doorway→nantem(semantic)"
         },
         {
           "en": "The raindrops fall quietly.",
-          "fon": "[raindrops] nat kan",
+          "fon": "[raindrops] ju ti",
           "note": "gap: raindrops (needs a root)"
         },
         {
           "en": "The birdsong wakes everyone.",
-          "fon": "[birdsong] cha ben ba",
+          "fon": "[birdsong] cha dan ba",
           "note": "gap: birdsong (needs a root)"
         }
       ]
@@ -344,20 +344,20 @@
       "phrases": [
         {
           "en": "I ate because I was hungry.",
-          "fon": "mi ta san"
+          "fon": "mi ta sak"
         },
         {
           "en": "We stayed inside because it rained.",
-          "fon": "ben ta kan lel yenat"
+          "fon": "dan ta ti mes samye"
         },
         {
           "en": "The child laughed after the dog ran away.",
-          "fon": "namba ta [laughed] shu tet gi nes",
+          "fon": "genba ta [laughed] shu kal ginek fet",
           "note": "gap: laughed (needs a root)"
         },
         {
           "en": "When the sun rose, we began walking.",
-          "fon": "wo zes datbel dal ben bel gi"
+          "fon": "wo zes samdat ra dan lo gi"
         },
         {
           "en": "Although it was cold, they continued.",
@@ -365,7 +365,7 @@
         },
         {
           "en": "I know that you are here.",
-          "fon": "mi kek"
+          "fon": "mi nam"
         },
         {
           "en": "She said she would return tomorrow.",
@@ -373,15 +373,15 @@
         },
         {
           "en": "The man who built the house is my friend.",
-          "fon": "ja tatyo"
+          "fon": "che bakamgu"
         },
         {
           "en": "If you help me, we will finish today.",
-          "fon": "von sa ti kat mi ben mek che"
+          "fon": "von sa lel kas mi dan tem gem"
         },
         {
           "en": "We rested before continuing our journey.",
-          "fon": "ben ta kan di gi gikal"
+          "fon": "dan ta ti di gi ginan"
         }
       ]
     },
@@ -391,7 +391,7 @@
       "phrases": [
         {
           "en": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
-          "fon": "di ta ben gi pakal ye ta guwi ben ta kel nam nan kel nelto shu ta ben nel ben wi datbeldal kalye re shu ta ben gi lelja ben"
+          "fon": "di ta dan gi yetasnan ye ta guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan"
         }
       ]
     },
@@ -401,15 +401,15 @@
       "phrases": [
         {
           "en": "I only saw the red bird.",
-          "fon": "mi ta vat wi nanwi tet"
+          "fon": "mi ta vat wi datwi kal"
         },
         {
           "en": "Only I saw the red bird.",
-          "fon": "vat ta mi wi nanwi tet"
+          "fon": "vat ta mi wi datwi kal"
         },
         {
           "en": "I almost fell.",
-          "fon": "mi yones nat"
+          "fon": "mi dalfet ju"
         },
         {
           "en": "I never said that.",
@@ -417,50 +417,50 @@
         },
         {
           "en": "Everyone knows something.",
-          "fon": "tak ba hu mek"
+          "fon": "mel ba hu wa"
         },
         {
           "en": "Nobody knows everything.",
-          "fon": "no ba hu tak to"
+          "fon": "no ba hu mel to"
         },
         {
           "en": "The door opened.",
-          "fon": "kalmek ta kelkal"
+          "fon": "nantem ta kelnan"
         },
         {
           "en": "I opened the door.",
-          "fon": "mi ta kelkal kalmek"
+          "fon": "mi ta kelnan nantem"
         },
         {
           "en": "The child made the toy.",
-          "fon": "namba ta sak kel",
-          "note": "review: made→sak(alias_weak), toy→kel(semantic)"
+          "fon": "genba ta ken kel",
+          "note": "review: made→ken(alias_weak), toy→kel(semantic)"
         },
         {
           "en": "The toy was made by the child.",
-          "fon": "kel ta sak namba",
-          "note": "review: toy→kel(semantic), made→sak(alias_weak)"
+          "fon": "kel ta ken genba",
+          "note": "review: toy→kel(semantic), made→ken(alias_weak)"
         },
         {
           "en": "I think he knows that she left.",
-          "fon": "mi ta mas ba hu ba gi"
+          "fon": "mi ta met ba hu ba gi"
         },
         {
           "en": "The old man's young son.",
-          "fon": "di ba gi nense",
-          "note": "review: young→gi(semantic), son→nense(semantic)"
+          "fon": "di ba gi sewu",
+          "note": "review: young→gi(semantic), son→sewu(semantic)"
         },
         {
           "en": "They can fish.",
-          "fon": "ben yetet"
+          "fon": "dan kalye"
         },
         {
           "en": "Time flies.",
-          "fon": "pu gi"
+          "fon": "kan samgi"
         },
         {
           "en": "Light travels fast.",
-          "fon": "dat gi mal"
+          "fon": "kek gi nek"
         }
       ]
     },
@@ -470,19 +470,19 @@
       "phrases": [
         {
           "en": "If you had not helped us, we would not have finished the bridge.",
-          "fon": "von no ti kat ben ben mek kalye"
+          "fon": "von no lel kas dan dan tem nanye"
         },
         {
           "en": "The woman who taught me said that the river had changed.",
-          "fon": "wo ba ta zas kelhu mi se pakal cha"
+          "fon": "wo ba ta zas kuhu mi se yetasnan cha"
         },
         {
           "en": "Why did the old hunter give the child his knife?",
-          "fon": "wo zos ta di latetba ku namba pelmek"
+          "fon": "wo zos ta di lakalba ku genba jatem"
         },
         {
           "en": "Time heals all wounds, but memory keeps the pain alive.",
-          "fon": "pu kelguba tak gatdam hudito fes gat fo"
+          "fon": "kan kasfemba mel tesfem hugatmes gat tes fo"
         }
       ]
     }

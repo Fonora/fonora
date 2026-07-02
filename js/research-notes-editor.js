@@ -8,8 +8,11 @@ import { researchHref } from './doc-urls.js';
 import { RESEARCH_PHASES } from './research-notes.js';
 import {
   NOTE_STATUSES,
-  NEW_NOTE_TEMPLATE,
   deriveMetadataFromBody,
+  NEW_NOTE_TEMPLATE,
+  NEW_NOTE_STUB_TEMPLATE,
+  RESEARCH_NOTE_SECTIONS,
+  researchNoteBodyTemplate,
 } from './research-note-meta.js';
 
 const ROOT_ID = 'research-notes-editor-root';
@@ -172,7 +175,9 @@ function renderListHtml(notes) {
 
   return `
     <div class="rn-list-toolbar">
-      <button type="button" class="btn btn--primary" id="rn-new-note">New note</button>
+      <button type="button" class="btn btn--primary" id="rn-new-stub">New stub</button>
+      <button type="button" class="btn" id="rn-new-note">New expanded draft</button>
+      <a class="btn" href="/docs/research-notes-authoring.md" target="_blank" rel="noopener noreferrer">Authoring guide</a>
       <div class="rn-filter" role="group" aria-label="Filter notes">
         <button type="button" class="btn btn--sm${listFilter === 'all' ? ' btn--primary' : ''}" data-rn-filter="all">All</button>
         <button type="button" class="btn btn--sm${listFilter === 'drafts' ? ' btn--primary' : ''}" data-rn-filter="drafts">Drafts</button>
@@ -282,7 +287,7 @@ async function openEditor(slug) {
   }
 }
 
-async function createNewNote() {
+async function createNewNote(bodyTemplate = NEW_NOTE_TEMPLATE) {
   view = 'edit';
   editingSlug = null;
   dirty = false;
@@ -306,12 +311,12 @@ async function createNewNote() {
       tools: [],
       source: [],
     },
-    body: NEW_NOTE_TEMPLATE,
+    body: bodyTemplate,
   };
   try {
     const created = await api('/api/research/editor', {
       method: 'POST',
-      body: JSON.stringify({ metadata: { phase: 'phase-3', status: 'Active', date: today }, body: NEW_NOTE_TEMPLATE }),
+      body: JSON.stringify({ metadata: { phase: 'phase-3', status: 'Active', date: today }, body: bodyTemplate }),
     });
     currentRow = created;
     editingSlug = created.slug;
@@ -321,7 +326,9 @@ async function createNewNote() {
   }
   wireEditorEvents();
   updateEditorLinks();
-  setStatus('New draft created — edit and save.');
+  setStatus(bodyTemplate === NEW_NOTE_STUB_TEMPLATE
+    ? 'New stub draft — expand per docs/research-notes-authoring.md'
+    : 'New expanded draft — edit and save.');
 }
 
 function updateEditorLinks() {
@@ -408,7 +415,8 @@ async function publishCurrent() {
 }
 
 function wireListEvents() {
-  document.getElementById('rn-new-note')?.addEventListener('click', () => createNewNote());
+  document.getElementById('rn-new-stub')?.addEventListener('click', () => createNewNote(NEW_NOTE_STUB_TEMPLATE));
+  document.getElementById('rn-new-note')?.addEventListener('click', () => createNewNote(NEW_NOTE_TEMPLATE));
   root()?.querySelectorAll('[data-rn-filter]').forEach((btn) => {
     btn.addEventListener('click', () => {
       listFilter = btn.getAttribute('data-rn-filter') || 'all';

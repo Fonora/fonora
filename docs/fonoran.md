@@ -150,6 +150,7 @@ Distinctiveness, collision, and boundary scores plus any warnings are surfaced p
 | `data/fonoran-approved-roots.json` | Canonical approved roots (with experience/language tier + campfire pass) |
 | `data/fonoran-compounds.json` | Curated compounds as ranked meaning-attempts: a `preferred` form + `alternates[]` with advisory `understandability` (see [constitution](fonoran-constitution.md)) |
 | `data/fonoran-playtests.json` | Guess-the-meaning playtest rounds — the human authority that decides preferred forms |
+| `data/fonoran-llm-evaluations.json` | v3 intuition battery rounds + `intuition_weight` aggregates (advisory) |
 | `data/fonoran-primitive-roots-config.json` | Phonetics rules + active `collision_profile` |
 | `data/fonoran-collision-profiles/` | Editorial collision profiles (default `en.json`) |
 | `data/fonoran-sound-bucket.json` | Runtime lab: sounds, compounds, history (seed + snapshot format) |
@@ -167,9 +168,27 @@ npm run fonoran:root-candidates    # refresh candidates only (no lab import)
 npm run fonoran:inventory-migrate  # seed editorial metadata fields on the concept inventory
 npm run fonoran:snapshot:export -- --to=data/   # Postgres → seed JSON (commit milestones)
 npm run fonoran:snapshot:import -- --from=data/ # seed JSON → Postgres (local bootstrap)
+npm run fonoran:optimize-compounds       # heuristic preferred-form promotion
+npm run fonoran:optimize-compounds -- --use-llm   # rank by intuition_weight when v3 data exists
+npm run fonoran:llm-intuition -- --pilot          # v3 smoke: tool, weapon, tribe (~80 calls)
+npm run fonoran:llm-intuition -- --calibration    # v3 calibration: 10 concepts (~320 calls)
+npm run fonoran:llm-intuition -- --dry-run        # cost estimate
+npm run fonoran:compound-audit           # includes llm_split / llm_would_promote findings
 ```
 
-Typical loop:
+See [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md) for protocol design and recorded results. Research note workflow: [research-notes-authoring.md](research-notes-authoring.md).
+
+**Preferred-form authority tiers:** `human` / `playtest` (locked) → `llm_consensus` (v3 weights + clear margin) → `heuristic` (length/score fallback). Set `ANTHROPIC_API_KEY` in `.env`. LLMs evaluate seed candidates only; they do not invent compositions.
+
+Typical compound optimization loop (after v3 batch):
+
+```bash
+npm run fonoran:llm-intuition -- --calibration   # or full inventory when ready
+npm run fonoran:optimize-compounds -- --use-llm
+npm run fonoran:build:approved
+```
+
+Typical lab loop:
 
 ```bash
 npm run fonoran:reset && npm run fonoran:build

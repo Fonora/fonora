@@ -18,6 +18,7 @@
 import { readDoc, writeDoc } from './fonoran-store.js';
 import { loadBucket, getLab } from './fonoran-sound-bucket.js';
 import { experienceMetaFor } from './fonoran-experience-tiers.js';
+import { buildPuzzleBreakdown, formatSpellingDisplay } from './fonoran-puzzle-format.js';
 
 function nowIso() {
   return new Date().toISOString();
@@ -27,10 +28,20 @@ function randId() {
   return `pt-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+export const PUZZLE_FEEDBACK_TAGS = [
+  'too_long',
+  'unnatural',
+  'hard_pronounce',
+  'worked_well',
+];
+
 export async function loadPlaytests() {
   const doc = await readDoc('playtests');
-  if (doc?.rounds) return doc;
-  return { version: '1.0-playtests', rounds: [] };
+  if (doc?.rounds) {
+    if (!Array.isArray(doc.feedback)) doc.feedback = [];
+    return doc;
+  }
+  return { version: '1.0-playtests', rounds: [], feedback: [] };
 }
 
 /** concept id → live language tier (lab-aware via concept id), with a static fallback. */
@@ -52,6 +63,64 @@ function isCoreCompound(compound, soundBySpelling) {
 
 function meaningOf(item) {
   return (item.meaning ?? item.concept_id ?? item.gloss ?? '').toString().trim();
+}
+
+function normalizeMeaning(text) {
+  return String(text ?? '').trim().toLowerCase();
+}
+
+/**
+ * Build multiple-choice meaning options (correct + distractors), matching Puzzle Conversation.
+ * @param {string} answer intended meaning
+ * @param {string[]} pool other meanings to draw distractors from
+ * @param {number} [choiceCount] total choices including answer (default 4)
+ */
+export function buildMeaningChoices(answer, pool, choiceCount = 4) {
+  const correct = String(answer ?? '').trim();
+  if (!correct) return [];
+
+  const distractorCount = Math.max(0, choiceCount - 1);
+  const used = new Set([normalizeMeaning(correct)]);
+  const distractors = [];
+  const candidates = [...(pool ?? [])].filter(Boolean);
+
+  while (distractors.length < distractorCount && candidates.length) {
+    const idx = Math.floor(Math.random() * candidates.length);
+    const pick = candidates.splice(idx, 1)[0];
+    const key = normalizeMeaning(pick);
+    if (!key || used.has(key)) continue;
+    used.add(key);
+    distractors.push(pick);
+  }
+
+  while (distractors.length < distractorCount) {
+    distractors.push(`other meaning ${distractors.length + 1}`);
+  }
+
+  return [correct, ...distractors]
+    .map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(c => c.value);
+}
+
+/** Deterministic MC scoring — choice must match one of the offered options and equal the answer. */
+export function scoreMultipleChoice(choice, answer, choices) {
+  const normalizedAnswer = normalizeMeaning(answer);
+  const normalizedChoice = normalizeMeaning(choice);
+  if (!normalizedChoice) return false;
+  const offered = new Set((choices ?? []).map(normalizeMeaning));
+  if (!offered.has(normalizedChoice)) return false;
+  return normalizedChoice === normalizedAnswer;
+}
+
+/** Editorial compounds doc → meaning pool for distractors. */
+export function buildMeaningPoolFromCompounds(compounds) {
+  return (compounds ?? [])
+    .map(c => meaningOf({
+      concept_id: c.concept,
+      gloss: c.preferred?.gloss ?? c.gloss,
+    }))
+    .filter(Boolean);
 }
 
 /**
@@ -86,37 +155,31 @@ export async function buildPuzzleChallenge({ lab = null, coreOnly = false, conce
     return { spelling, meaning: snd ? meaningOf(snd) : spelling };
   });
 
-  // Distractor meanings from other compounds.
-  const others = compounds
-    .filter(c => c.concept_id !== target.concept_id && meaningOf(c))
-    .map(meaningOf);
-  const distractors = [];
-  const usedMeanings = new Set([meaningOf(target).toLowerCase()]);
-  while (distractors.length < 3 && others.length) {
-    const pick = others.splice(Math.floor(Math.random() * others.length), 1)[0];
-    if (!pick || usedMeanings.has(pick.toLowerCase())) continue;
-    usedMeanings.add(pick.toLowerCase());
-    distractors.push(pick);
-  }
-
-  const choices = [meaningOf(target), ...distractors]
-    .map(value => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(c => c.value);
+  const answer = meaningOf(target);
+  const distractorPool = compounds
+    .filter(c => c.concept_id !== target.concept_id)
+    .map(meaningOf)
+    .filter(Boolean);
+  const choices = buildMeaningChoices(answer, distractorPool, 4);
 
   const alternateForms = (target.alternate_forms ?? []).map(a => ({
     spelling: a.spelling,
+    spelling_display: formatSpellingDisplay(a.parts ?? []),
     readable: (a.composition ?? []).join(' + '),
     understandability: a.understandability ?? null,
   }));
+
+  const breakdown = buildPuzzleBreakdown({ compound: target, lab: liveLab });
 
   return {
     concept_id: target.concept_id,
     answer: meaningOf(target),
     spelling: target.spelling,
+    spelling_display: breakdown.spelling_display,
     parts: target.parts ?? [],
     literal_parts: literalParts,
     composition_readable: target.composition_readable ?? null,
+    breakdown,
     understandability: target.understandability ?? null,
     alternate_forms: alternateForms,
     choices,
@@ -136,6 +199,7 @@ export async function buildPuzzleChallenge({ lab = null, coreOnly = false, conce
  * @param {string[]} [round.confusions]  meanings it was confused with.
  * @param {boolean} [round.core_only]
  * @param {string} [round.source]        'puzzle' | 'manual' | ...
+ * @param {string} [round.difficulty_mode] 'easy' | 'normal' | 'hard'
  */
 export async function recordPlaytestRound(round) {
   if (!round?.concept_id) throw new Error('concept_id is required');
@@ -151,11 +215,46 @@ export async function recordPlaytestRound(round) {
     guess: round.guess ?? null,
     confusions: Array.isArray(round.confusions) ? round.confusions : [],
     core_only: Boolean(round.core_only),
+    difficulty_mode: round.difficulty_mode ?? null,
     source: round.source ?? 'puzzle',
   };
   doc.rounds.push(entry);
   await writeDoc('playtests', doc);
   return { recorded: true, round: entry, summary: summarizeConcept(doc, round.concept_id) };
+}
+
+/**
+ * Learner feedback on a word experience (length, intuitiveness, pronunciation, etc.).
+ * @param {object} fb
+ * @param {string} fb.concept_id
+ * @param {string} [fb.shown_spelling]
+ * @param {string} [fb.round_id]
+ * @param {string[]} [fb.tags]  too_long | unnatural | hard_pronounce | worked_well
+ * @param {string} [fb.note]
+ * @param {string} [fb.difficulty_mode]
+ */
+export async function recordPlaytestFeedback(fb) {
+  if (!fb?.concept_id) throw new Error('concept_id is required');
+  const tags = (fb.tags ?? []).filter(t => PUZZLE_FEEDBACK_TAGS.includes(t));
+  if (!tags.length) {
+    throw new Error('Select a feedback tag');
+  }
+  const doc = await loadPlaytests();
+  if (!Array.isArray(doc.feedback)) doc.feedback = [];
+  const entry = {
+    id: randId(),
+    at: nowIso(),
+    concept_id: fb.concept_id,
+    shown_spelling: fb.shown_spelling ?? null,
+    round_id: fb.round_id ?? null,
+    tags,
+    note: fb.note?.trim() || null,
+    difficulty_mode: fb.difficulty_mode ?? null,
+    source: 'puzzle',
+  };
+  doc.feedback.push(entry);
+  await writeDoc('playtests', doc);
+  return { recorded: true, feedback: entry };
 }
 
 function summarizeConcept(doc, conceptId) {

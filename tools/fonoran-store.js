@@ -22,6 +22,7 @@ export const EDITORIAL_DOCS = {
   compounds: 'data/fonoran-compounds.json',
   phonetics_config: 'data/fonoran-primitive-roots-config.json',
   playtests: 'data/fonoran-playtests.json',
+  llm_evaluations: 'data/fonoran-llm-evaluations.json',
 };
 
 /** Snapshot bundle file paths (includes lab bucket). */
@@ -194,6 +195,8 @@ function isDocBodyEmpty(key, body) {
       return !body.phonetics && !body.version;
     case 'playtests':
       // A playtests doc with a version but no rounds yet is still a valid (empty) doc.
+      return !body.version && !(body.rounds?.length);
+    case 'llm_evaluations':
       return !body.version && !(body.rounds?.length);
     default:
       return false;
@@ -382,6 +385,11 @@ function docCounts(key, body) {
       return { phonetics: Boolean(body.phonetics) };
     case 'playtests':
       return { rounds: body.rounds?.length ?? 0 };
+    case 'llm_evaluations':
+      return {
+        rounds: body.rounds?.length ?? 0,
+        concepts: Object.keys(body.aggregates ?? {}).length,
+      };
     default:
       return {};
   }
@@ -394,7 +402,7 @@ export async function readAllSnapshotDocs() {
 
   // Docs that may be absent in older stores/snapshots; their absence must not break
   // export or import of the rest of the language state.
-  const OPTIONAL_DOCS = new Set(['playtests']);
+  const OPTIONAL_DOCS = new Set(['playtests', 'llm_evaluations']);
 
   const docs = {};
   for (const key of Object.keys(EDITORIAL_DOCS)) {
@@ -416,7 +424,7 @@ export async function readAllSnapshotDocs() {
 export async function importAllSnapshotDocs({ bucket, docs }) {
   // Optional docs (e.g. playtests) added after some snapshots were created — skip them
   // when an older snapshot does not carry them rather than failing the whole restore.
-  const OPTIONAL_DOCS = new Set(['playtests']);
+  const OPTIONAL_DOCS = new Set(['playtests', 'llm_evaluations']);
   clearStoreCache();
   await writeBucketRaw(bucket);
   for (const key of Object.keys(EDITORIAL_DOCS)) {

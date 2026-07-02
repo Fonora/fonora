@@ -22,9 +22,73 @@ export function resolveResearchNoteTitle(markdown, metadataTitle = '') {
 
 export const NOTE_STATUSES = ['Foundational', 'Active', 'Superseded', 'Open'];
 
-export const NEW_NOTE_TEMPLATE = `# [Title]
+/**
+ * Canonical long-form body structure — matches RN-01 and expanded notes in docs/research-notes/.
+ * See docs/research-notes-authoring.md for the full expansion prompt and workflow.
+ */
+export const RESEARCH_NOTE_SECTIONS = [
+  'Research Question',
+  'Hypothesis',
+  'Approach',
+  'Evaluation',
+  'Findings',
+  'What Changed',
+  'Open Questions',
+  'References',
+];
 
-> **TL;DR.** One-line summary.
+/** @returns {string} Markdown with all canonical section headers (RN-01 style). */
+export function researchNoteBodyTemplate(title = '[Title]') {
+  return `# ${title}
+
+## Research Question
+
+Connect to the open question(s) left by the previous research note where applicable.
+
+## Hypothesis
+
+State as a hypothesis at the time — not a proven result.
+
+## Approach
+
+What was actually built. Reference real files, docs, and commits; do not invent implementation details.
+
+## Evaluation
+
+How the idea was tested — tools, reports, audits, or informal questions if no formal evaluation yet.
+
+## Findings
+
+What was learned, including what worked and what did not. Note partial or provisional results.
+
+## What Changed
+
+How this work influenced later iterations — what survived and what was superseded. Reference real RN codes that follow.
+
+## Open Questions
+
+Unresolved questions that should flow into the next note's Research Question.
+
+## References
+
+**Related commits**
+
+**Documentation:**
+
+**Interactive demo:**
+
+**Future research notes:**
+`;
+}
+
+/** Default template for new editor drafts — long-form structure (publish-ready target). */
+export const NEW_NOTE_TEMPLATE = researchNoteBodyTemplate('[Title]');
+
+/**
+ * Short seed stub for a note before expansion (question → hypothesis → … → next question).
+ * Use when capturing scope first; expand with docs/research-notes-authoring.md.
+ */
+export const NEW_NOTE_STUB_TEMPLATE = `# [Title]
 
 ## The question
 

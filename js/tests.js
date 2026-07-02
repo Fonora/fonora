@@ -412,9 +412,9 @@ const fonoranTranslatorResult = await (async () => {
     // real root. `light` previously resolved to dark (ges) and `travels` to path
     // (kal) via gloss tokens leaked through lab-sound aliases.
     const light = await translateEnglish('Light travels fast.');
-    assert(light.surface.roman === 'dat gi mal', `light roman: ${light.surface.roman}`);
+    assert(light.surface.roman === 'kek gi nek', `light roman: ${light.surface.roman}`);
     const lightTok = light.tokens.find(t => t.english === 'light');
-    assert(lightTok?.fonoran === 'dat' && lightTok?.resolution_kind === 'direct', `light token: ${JSON.stringify(lightTok)}`);
+    assert(lightTok?.fonoran === 'kek' && lightTok?.resolution_kind === 'direct', `light token: ${JSON.stringify(lightTok)}`);
     const travelsTok = light.tokens.find(t => t.english === 'travels');
     assert(travelsTok?.concept_id === 'move' && travelsTok?.fonoran === 'gi', `travels token: ${JSON.stringify(travelsTok)}`);
 
@@ -422,7 +422,7 @@ const fonoranTranslatorResult = await (async () => {
     const youSleep = await translateEnglish('You sleep.');
     assert(youSleep.unresolved.length === 0, `you sleep unresolved: ${youSleep.unresolved.join(', ')}`);
     const youTok = youSleep.tokens.find(t => t.english === 'you');
-    assert(youTok?.concept_id === 'addressee' && youTok?.fonoran === 'ti', `you token: ${JSON.stringify(youTok)}`);
+    assert(youTok?.concept_id === 'addressee' && youTok?.fonoran === 'be', `you token: ${JSON.stringify(youTok)}`);
 
     // Regression: `from` carries origin meaning and resolves to the `source`
     // root (bel) instead of being silently dropped as a function word.
