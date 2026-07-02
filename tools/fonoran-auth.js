@@ -3,16 +3,23 @@
  * Zero extra dependencies: uses Node crypto + fetch.
  */
 
-import { randomBytes, createCipheriv, createDecipheriv, createHash } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 
 const SESSION_COOKIE = 'fonoran_session';
-const OAUTH_STATE_COOKIE = 'fonoran_oauth_state';
 const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14; // 14 days
-const OAUTH_STATE_MAX_AGE_SEC = 600;
+const OAUTH_STATE_TTL_SEC = 600;
 
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://openidconnect.googleapis.com/v1/userinfo';
+
+const AUTH_ERROR_CODES = new Set([
+  'invalid_state',
+  'email_unverified',
+  'domain',
+  'denied',
+  'auth_failed',
+]);
 
 /** @type {Map<string, { email: string, name?: string, exp: number }>} */
 const sessions = new Map();
@@ -41,12 +48,6 @@ export function isAuthConfigured() {
 export function isAuthEnabled() {
   if (isAuthExplicitlyOff()) return false;
   return isAuthConfigured();
-}
-
-function sessionSecret() {
-  const secret = process.env.SESSION_SECRET?.trim();
-  if (!secret) throw new Error('SESSION_SECRET is not set');
-  return secret;
 }
 
 function allowedDomain() {
@@ -132,7 +133,7 @@ function createOAuthState(returnTo) {
   const id = newOpaqueId(24);
   oauthStates.set(id, {
     returnTo: sanitizeReturnTo(returnTo),
-    exp: Math.floor(Date.now() / 1000) + OAUTH_STATE_MAX_AGE_SEC,
+    exp: Math.floor(Date.now() / 1000) + OAUTH_STATE_TTL_SEC,
   });
   return id;
 }
@@ -151,29 +152,13 @@ function cookieSecure(req) {
   return true;
 }
 
-function cookieCryptoKey() {
-  const secret = process.env.FONORAN_COOKIE_SECRET?.trim();
-  if (!secret) return null;
-  return createHash('sha256').update(secret, 'utf8').digest();
-}
-
-function encryptCookieValue(value) {
-  const key = cookieCryptoKey();
-  if (!key) return value;
-  const iv = randomBytes(12);
-  const cipher = createCipheriv('aes-256-gcm', key, iv);
-  const ciphertext = Buffer.concat([cipher.update(String(value), 'utf8'), cipher.final()]);
-  const tag = cipher.getAuthTag();
-  return `v1.${iv.toString('base64url')}.${ciphertext.toString('base64url')}.${tag.toString('base64url')}`;
-}
-
-function setCookie(res, name, value, { maxAge, req, httpOnly = true }) {
-  const protectedValue = encryptCookieValue(value);
-  const parts = [`${name}=${encodeURIComponent(protectedValue)}`];
+/** Set HttpOnly session cookie (opaque id only — no PII in the cookie value). */
+function setSessionCookie(res, sessionId, maxAge, req) {
+  const parts = [`${SESSION_COOKIE}=${encodeURIComponent(sessionId)}`];
   if (maxAge != null) parts.push(`Max-Age=${maxAge}`);
   parts.push('Path=/');
   parts.push('SameSite=Lax');
-  if (httpOnly) parts.push('HttpOnly');
+  parts.push('HttpOnly');
   if (cookieSecure(req)) parts.push('Secure');
   const existing = res.getHeader('Set-Cookie');
   const next = Array.isArray(existing) ? [...existing, parts.join('; ')] : existing
@@ -182,8 +167,14 @@ function setCookie(res, name, value, { maxAge, req, httpOnly = true }) {
   res.setHeader('Set-Cookie', next);
 }
 
-function clearCookie(res, name, req) {
-  setCookie(res, name, '', { maxAge: 0, req });
+function clearSessionCookie(res, req) {
+  const parts = [`${SESSION_COOKIE}=`, 'Max-Age=0', 'Path=/', 'SameSite=Lax', 'HttpOnly'];
+  if (cookieSecure(req)) parts.push('Secure');
+  const existing = res.getHeader('Set-Cookie');
+  const next = Array.isArray(existing) ? [...existing, parts.join('; ')] : existing
+    ? [String(existing), parts.join('; ')]
+    : [parts.join('; ')];
+  res.setHeader('Set-Cookie', next);
 }
 
 function jsonResponse(res, status, body, extraHeaders = {}) {
@@ -195,55 +186,33 @@ function jsonResponse(res, status, body, extraHeaders = {}) {
   res.end(JSON.stringify(body));
 }
 
-function sanitizeRedirectQuery(query) {
-  if (!query) return '';
-  const out = new URLSearchParams();
-  const params = new URLSearchParams(query);
-  for (const [key, value] of params) {
-    if (!/^[a-z_][a-z0-9_-]*$/i.test(key)) continue;
-    out.set(key, String(value).slice(0, 500));
-  }
-  const serialized = out.toString();
-  return serialized ? `?${serialized}` : '';
-}
-
-function safeRedirectTarget(location) {
-  if (typeof location !== 'string') return '/language';
-  const candidate = location.trim();
-  if (!candidate) return '/language';
-
-  if (candidate.startsWith('/') && !candidate.startsWith('//')) {
-    const qIndex = candidate.indexOf('?');
-    const path = qIndex === -1 ? candidate : candidate.slice(0, qIndex);
-    const query = qIndex === -1 ? '' : candidate.slice(qIndex + 1);
-    const safePath = sanitizeReturnTo(path);
-    return `${safePath}${sanitizeRedirectQuery(query)}`;
-  }
-
-  try {
-    const parsed = new URL(candidate);
-    const google = new URL(GOOGLE_AUTH_URL);
-    if (
-      parsed.protocol === 'https:'
-      && parsed.origin === google.origin
-      && parsed.pathname === google.pathname
-    ) {
-      return parsed.toString();
-    }
-  } catch {
-    // fall through to safe default
-  }
-
-  return '/language';
-}
-
-function redirect(res, location) {
-  const target = safeRedirectTarget(location);
+function redirect302(res, locationHeader) {
   res.writeHead(302, {
-    Location: target,
+    Location: locationHeader,
     'Cache-Control': 'no-store',
   });
   res.end();
+}
+
+function redirectToLocalPath(res, sanitizedPath) {
+  redirect302(res, sanitizeReturnTo(sanitizedPath));
+}
+
+function redirectToAuthError(res, code, details = {}) {
+  const safeCode = AUTH_ERROR_CODES.has(code) ? code : 'auth_failed';
+  let target = `/language?auth_error=${encodeURIComponent(safeCode)}`;
+  if (safeCode === 'domain' && details.email) {
+    target += `&email=${encodeURIComponent(String(details.email).slice(0, 200))}`;
+  }
+  redirect302(res, target);
+}
+
+function redirectToGoogleOAuth(res, params) {
+  const googleUrl = new URL(GOOGLE_AUTH_URL);
+  for (const [key, value] of params.entries()) {
+    googleUrl.searchParams.set(key, value);
+  }
+  redirect302(res, googleUrl.toString());
 }
 
 function sanitizeReturnTo(raw) {
@@ -253,7 +222,6 @@ function sanitizeReturnTo(raw) {
   if (path.startsWith('//')) return '/language';
   if (path.includes('\\')) return '/language';
 
-  // Legacy compatibility: old /fonoran route now lives under /language.
   if (path === '/fonoran' || path.startsWith('/fonoran/')) {
     let rest = path.slice('/fonoran'.length);
     if (!rest || rest === '/') rest = '';
@@ -263,7 +231,6 @@ function sanitizeReturnTo(raw) {
   if (path === '/language/') path = '/language';
   if (path === '/script/') path = '/script';
 
-  // Allow only known local app route roots (and their subpaths).
   if (path === '/') return '/';
   const allowedRoots = ['/language', '/script', '/learn', '/tools', '/research'];
   for (const root of allowedRoots) {
@@ -271,6 +238,13 @@ function sanitizeReturnTo(raw) {
   }
 
   return '/language';
+}
+
+function normalizeAuthErrorCode(raw) {
+  const code = String(raw || '').trim().toLowerCase().slice(0, 64);
+  if (AUTH_ERROR_CODES.has(code)) return code;
+  if (code === 'access_denied') return 'denied';
+  return 'auth_failed';
 }
 
 function emailAllowed(email) {
@@ -312,8 +286,6 @@ export function isWriteAuthRequired(pathname, method) {
   if (m === 'POST' && pathname === '/api/fonoran/translate') return false;
   if (m === 'POST' && pathname === '/api/fonoran/translation-tests/run') return false;
   if (m === 'POST' && pathname === '/api/fonoran/snapshot/preview') return false;
-  // Puzzle Conversation playtests are public: anyone who knows the roots can play and
-  // their guess-the-meaning results are exactly the evidence the language needs.
   if (m === 'POST' && pathname === '/api/fonoran/puzzle/guess') return false;
   if (m === 'POST' && pathname === '/api/fonoran/puzzle/feedback') return false;
   if (m === 'POST' && pathname === '/api/fonoran/expressions/candidates') return false;
@@ -418,11 +390,11 @@ export async function handleAuthRoutes(req, res, url, method) {
   if (pathname === '/auth/logout' && (method === 'POST' || method === 'GET')) {
     const cookies = parseCookies(req);
     destroySession(cookies[SESSION_COOKIE]);
-    clearCookie(res, SESSION_COOKIE, req);
+    clearSessionCookie(res, req);
     if (method === 'POST') {
       jsonResponse(res, 200, { ok: true });
     } else {
-      redirect(res, sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language'));
+      redirectToLocalPath(res, sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language'));
     }
     return true;
   }
@@ -435,11 +407,6 @@ export async function handleAuthRoutes(req, res, url, method) {
     const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
     const state = createOAuthState(returnTo);
 
-    setCookie(res, OAUTH_STATE_COOKIE, state, {
-      maxAge: OAUTH_STATE_MAX_AGE_SEC,
-      req,
-    });
-
     const params = new URLSearchParams({
       client_id: process.env.GOOGLE_CLIENT_ID?.trim() ?? '',
       redirect_uri: redirectUri(req),
@@ -449,27 +416,23 @@ export async function handleAuthRoutes(req, res, url, method) {
       prompt: 'select_account',
       access_type: 'online',
     });
-    redirect(res, `${GOOGLE_AUTH_URL}?${params}`);
+    redirectToGoogleOAuth(res, params);
     return true;
   }
 
   if (pathname === '/auth/callback' && method === 'GET') {
     const err = url.searchParams.get('error');
     if (err) {
-      redirect(res, `/language?auth_error=${encodeURIComponent(err)}`);
+      redirectToAuthError(res, normalizeAuthErrorCode(err));
       return true;
     }
 
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state');
-    const cookies = parseCookies(req);
-    const cookieState = cookies[OAUTH_STATE_COOKIE];
-    clearCookie(res, OAUTH_STATE_COOKIE, req);
-
-    const statePayload = state && cookieState === state ? consumeOAuthState(state) : null;
+    const statePayload = consumeOAuthState(state);
 
     if (!code || !state || !statePayload) {
-      redirect(res, '/language?auth_error=invalid_state');
+      redirectToAuthError(res, 'invalid_state');
       return true;
     }
 
@@ -480,11 +443,11 @@ export async function handleAuthRoutes(req, res, url, method) {
       const profile = await fetchGoogleUser(tokens.access_token);
       const email = profile.email?.trim().toLowerCase();
       if (!email || profile.email_verified === false) {
-        redirect(res, '/language?auth_error=email_unverified');
+        redirectToAuthError(res, 'email_unverified');
         return true;
       }
       if (!emailAllowed(email)) {
-        redirect(res, `/language?auth_error=domain&email=${encodeURIComponent(email)}`);
+        redirectToAuthError(res, 'domain', { email });
         return true;
       }
 
@@ -493,14 +456,11 @@ export async function handleAuthRoutes(req, res, url, method) {
         name: profile.name ?? email,
         exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE_SEC,
       });
-      setCookie(res, SESSION_COOKIE, sessionId, {
-        maxAge: SESSION_MAX_AGE_SEC,
-        req,
-      });
-      redirect(res, returnTo);
+      setSessionCookie(res, sessionId, SESSION_MAX_AGE_SEC, req);
+      redirectToLocalPath(res, returnTo);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'auth_failed';
-      redirect(res, `/language?auth_error=${encodeURIComponent(msg)}`);
+      console.error('OAuth callback failed:', e);
+      redirectToAuthError(res, 'auth_failed');
     }
     return true;
   }
@@ -535,6 +495,14 @@ export function __testReadSession(id) {
   return readSession(id);
 }
 
-export function __testSafeRedirectTarget(location) {
-  return safeRedirectTarget(location);
+export function __testCreateOAuthState(returnTo) {
+  return createOAuthState(returnTo);
+}
+
+export function __testConsumeOAuthState(id) {
+  return consumeOAuthState(id);
+}
+
+export function __testSanitizeReturnTo(raw) {
+  return sanitizeReturnTo(raw);
 }

@@ -2,8 +2,7 @@
  * Research notes API routes.
  */
 
-import { readJsonBody, jsonResponse } from './fonoran-api.js';
-import { safeApiError } from '../js/utils.js';
+import { readJsonBody, jsonResponse, jsonErrorResponse } from './fonoran-api.js';
 import { getSessionUser, isAuthEnabled, unauthorizedResponse } from './fonoran-auth.js';
 import {
   createDraft,
@@ -120,7 +119,7 @@ export async function handleResearchApi(req, res, pathname, method) {
   } catch (err) {
     console.error('Research API error:', err);
     const status = err.status || 500;
-    const message = status >= 500 ? 'Internal server error' : safeApiError(err);
-    return done(status, { error: message });
+    jsonErrorResponse(res, status, status >= 500 ? 'Internal server error' : 'Request failed');
+    return true;
   }
 }
