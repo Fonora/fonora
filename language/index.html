@@ -522,38 +522,88 @@
       <section id="page-advanced" class="page">
         <div class="box">
           <h2>Advanced</h2>
-          <p>Tools for maintaining your language. Normal creation never requires any of this.</p>
+          <p>Generator tools for rebuilding vocabulary from git seeds and LLM evaluation data. Normal creation never requires any of this.</p>
+
+          <div class="adv-regen-zone">
+            <h3>Regenerate language from git seeds</h3>
+            <p class="sans adv-regen-zone__lead">Canonical data lives in git (<code>data/*.json</code> + LLM evaluations). The dictionary is <em>derived</em> — rebuild it with the pipeline below, not from snapshot backups.</p>
+
+            <div class="adv-regen-flow mermaid-wrap">
+              <pre class="mermaid adv-regen-mermaid">flowchart LR
+  subgraph gitSeeds [Git seeds]
+    Compounds["compounds.json"]
+    LLM["llm-evaluations.json"]
+    Roots["approved-roots.json"]
+    Inv["concept-inventory.json"]
+  end
+  subgraph pipeline [Generator pipeline]
+    Import["1. Reload editorial"]
+    Opt["2. Apply LLM rankings"]
+    Build["3. Rebuild dictionary"]
+  end
+  subgraph derived [Derived runtime]
+    Lab["Postgres lab / Dictionary"]
+  end
+  Compounds --> Import
+  LLM --> Import
+  Roots --> Import
+  Inv --> Import
+  Import --> Opt
+  Opt --> Build
+  Build --> Lab</pre>
+            </div>
+
+            <nav class="adv-doc-links sans" aria-label="Regeneration documentation">
+              <span class="adv-doc-links__label">Reference docs:</span>
+              <a href="/?path=docs%2Ffonoran-compound-workflow.md" target="_blank" rel="noopener">Compound workflow</a>
+              <a href="/?path=docs%2Ffonoran-llm-playtest-experiment.md" target="_blank" rel="noopener">LLM intuition experiment</a>
+              <a href="/?path=docs%2Ffonoran.md" target="_blank" rel="noopener">Fonoran pipeline overview</a>
+              <a href="/?path=docs%2Fdeploy.md" target="_blank" rel="noopener">Deploy &amp; production</a>
+            </nav>
+
+            <div id="adv-regen-status" class="adv-regen-status sans" aria-live="polite">Loading status…</div>
+            <ul id="adv-regen-warnings" class="adv-regen-warnings sans" hidden></ul>
+
+            <div class="adv-regen-actions actions">
+              <button type="button" class="btn btn--primary" id="adv-regenerate" data-write>Regenerate dictionary from git seeds</button>
+              <label class="adv-regen-opt sans"><input type="checkbox" id="adv-regen-apply-llm" data-write-input> Re-run LLM optimizer (promote from saved evaluations)</label>
+              <button type="button" class="btn" id="adv-run-translator-tests" data-write>Run translation tests</button>
+            </div>
+            <pre id="adv-regen-result" class="debug-panel adv-regen-result" hidden></pre>
+            <pre id="adv-translator-result" class="debug-panel adv-regen-result" hidden></pre>
+          </div>
+
+          <details class="adv-optional-zone">
+            <summary>Optional: milestone export</summary>
+            <p class="sans adv-optional-zone__lead">Export a zip for milestones or Postgres sync — not required for regeneration.</p>
+            <p id="adv-storage-status" class="sans adv-storage-status"></p>
+            <div class="actions adv-backup-zone__actions">
+              <a class="btn" id="adv-snapshot-download" href="/api/fonoran/snapshot/export" download data-write>Download snapshot zip</a>
+              <label class="btn" id="adv-snapshot-import-label" data-write>
+                Import snapshot zip
+                <input type="file" id="adv-snapshot-import" accept=".zip,application/zip" hidden data-write-input>
+              </label>
+            </div>
+            <pre id="adv-snapshot-preview" class="debug-panel" hidden></pre>
+          </details>
+
           <h3>Semantic analysis (DDA) — archive experiment</h3>
           <p class="sans adv-hint">Gen 3 coordinate inference (RN-08/RN-09). Constitution-era work uses meaning-attempts and playtests instead. This batch job still runs on pending syllables for reference; results surface in Health warnings only.</p>
           <div class="actions">
             <button type="button" class="btn" id="adv-run-dda" data-write>Run DDA (archive)</button>
           </div>
           <p id="adv-dda-status" class="sans adv-status"></p>
-          <div class="adv-backup-zone">
-            <h3>Backup &amp; sync</h3>
-            <p class="sans adv-backup-zone__lead">Download a full snapshot (lab + concepts + word banks + build inputs) or restore from backup. Snapshots use the same JSON layout as seed files.</p>
-            <p id="adv-storage-status" class="sans adv-storage-status"></p>
-            <div class="actions adv-backup-zone__actions">
-              <a class="btn btn--primary" id="adv-snapshot-download" href="/api/fonoran/snapshot/export" download data-write>Download snapshot</a>
-              <label class="btn" id="adv-snapshot-import-label" data-write>
-                Import snapshot
-                <input type="file" id="adv-snapshot-import" accept=".zip,application/zip" hidden data-write-input>
-              </label>
-            </div>
-            <p class="sans adv-backup-zone__hint">CLI: <code>npm run fonoran:snapshot:export -- --to=data/</code> (sync Postgres → JSON for git) · <code>npm run fonoran:snapshot:import -- --from=data/</code> (JSON → Postgres)</p>
-            <pre id="adv-snapshot-preview" class="debug-panel" hidden></pre>
-          </div>
+
           <div class="adv-danger-zone">
             <h3>Danger zone</h3>
-            <p class="adv-danger-zone__lead sans">These actions have irreversible effects on your lab data. Proceed with caution.</p>
+            <p class="adv-danger-zone__lead sans">Destructive maintenance only. Prefer <strong>Regenerate dictionary from git seeds</strong> above for prod recovery.</p>
             <div class="actions adv-danger-zone__actions">
-              <button type="button" class="btn danger" id="adv-import-vocabulary" data-write>Run converged build (roots + words, for review)</button>
-              <p class="sans adv-danger-zone__hint">CLI: <code>npm run fonoran:reset && npm run fonoran:build</code> (review) or <code>npm run fonoran:reset && npm run fonoran:build:approved</code> (pre-approved).</p>
+              <button type="button" class="btn danger" id="adv-force-build" data-write>Force rebuild only (skip seed reload)</button>
+              <p class="sans adv-danger-zone__hint">Requires typing BUILD. Use only when editorial seeds are already loaded. Blocked on prod when seeds are stale.</p>
               <button type="button" class="btn danger" id="adv-reset-review" data-write>Reset all review states (keep meanings)</button>
               <button type="button" class="btn" id="adv-reconcile-inventory" data-write>Reconcile inventory from lab</button>
-              <p class="sans adv-danger-zone__hint">Legacy repair for drift before unified storage. Prefer snapshot export/import for backups.</p>
               <button type="button" class="btn danger" id="adv-reseed" data-write>Reset lab (blank slate)</button>
-              <p class="sans adv-danger-zone__hint">Clears Dictionary, Review queue, and assigned sounds. Concept inventory is kept.</p>
+              <p class="sans adv-danger-zone__hint">Reset lab clears Dictionary, Review queue, and assigned sounds. Concept inventory is kept.</p>
             </div>
           </div>
           <label class="sans wc-toggle adv-debug-toggle"><input type="checkbox" id="adv-debug-dda" data-write-input> Show debug DDA fields</label>

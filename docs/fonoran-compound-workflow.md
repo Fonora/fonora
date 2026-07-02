@@ -133,24 +133,25 @@ git push heroku staging:main -a fonora
 
 Release phase runs research-notes sync only (`Procfile` `release:`). Vocabulary is **not** rebuilt yet.
 
-**Step B — import editorial seeds into Postgres + rebuild lab**
+**Step B — reload editorial seeds + rebuild lab (GUI or CLI)**
 
-Run on a one-off dyno (uses git `data/` files from the deploy slug):
+After deploy, regenerate vocabulary from git seeds. **Do not run build alone** — it uses stale Postgres editorial state.
+
+**Advanced UI (recommended on Heroku):**
+
+1. Sign in as admin → `/language#advanced`
+2. Click **Regenerate dictionary from git seeds** → type `REGENERATE`
+3. Click **Run translation tests** to verify
+
+**CLI (local or one-off dyno):**
 
 ```bash
-heroku run "npm run fonoran:snapshot:import -- --from=data/" -a fonora
-heroku run "npm run fonoran:build:approved" -a fonora
+npm run fonoran:regenerate
+# optional — re-promote from llm-evaluations.json (may change compounds.json):
+npm run fonoran:regenerate -- --use-llm
 ```
 
-Or combine:
-
-```bash
-heroku run bash -a fonora
-# inside dyno:
-npm run fonoran:snapshot:import -- --from=data/
-npm run fonoran:build:approved
-exit
-```
+Reference: [fonoran-compound-workflow.md](fonoran-compound-workflow.md) · [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md)
 
 **Step C — verify**
 
@@ -195,7 +196,8 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 | Audit | `npm run fonoran:compound-audit` | yes | optional |
 | LLM intuition (one concept) | `npm run fonoran:llm-intuition -- world` | yes (API key) | yes (API key on dyno) |
 | Tests | `npm test` | yes | CI / local before push |
-| Import seeds → Postgres | `npm run fonoran:snapshot:import -- --from=data/` | yes | **required on prod** |
+| Import editorial seeds → Postgres | `npm run fonoran:editorial:import -- --from=data/` | yes | **required on prod** (or use Advanced GUI) |
+| Full generator pipeline | `npm run fonoran:regenerate` | yes | **Advanced GUI on prod** |
 | Export Postgres → seeds | `npm run fonoran:snapshot:export -- --to=data/` | yes | optional |
 | Start app | `npm start` | yes | automatic (`web` dyno) |
 
@@ -208,7 +210,7 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 - [ ] `npm test` — unit + golden translator pass
 - [ ] Commit: `data/fonoran-compounds.json`, `tools/fonoran-expression-candidates.js`, tool/script changes, audit markdown, LLM eval JSON if re-run
 - [ ] Do **not** commit `data/fonoran-sound-bucket.json` (gitignored)
-- [ ] After Heroku deploy: run snapshot import + build on dyno (Step B above)
+- [ ] After Heroku deploy: Advanced → **Regenerate dictionary from git seeds** → **Run translation tests**
 
 ---
 

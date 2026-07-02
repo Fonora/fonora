@@ -139,7 +139,7 @@ Without `DATABASE_URL`, storage falls back to JSON files under `data/`. Use snap
 
 See [platform-overview.md](platform-overview.md) for the data architecture overview.
 
-**Fonoran vocabulary pipeline (optimize → build → Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md).
+**Fonoran vocabulary pipeline (optimize → build → Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md). On Heroku after deploy, use **Advanced → Regenerate dictionary from git seeds** at `/language#advanced` (admin sign-in required).
 
 ### Research notes (PostgreSQL)
 

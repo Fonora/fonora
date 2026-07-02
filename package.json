@@ -48,6 +48,8 @@
     "fonoran:roots": "node tools/fonoran-english-roots-build.js",
     "fonoran:lexicon": "node -e \"import('./tools/fonoran-english-lexicon.js').then(m => m.writeEnglishLexicon().then(l => console.log('Lexicon:', l.word_count, 'words')))\"",
     "fonoran:reset": "node tools/fonoran-reset.js",
+    "fonoran:regenerate": "node scripts/fonoran-regenerate.js",
+    "fonoran:editorial:import": "node scripts/fonoran-editorial-import.js",
     "fonoran:build": "node tools/fonoran-build.js",
     "fonoran:build:approved": "node tools/fonoran-build.js --approve-all",
     "fonoran:compound-audit": "node tools/fonoran-compound-audit.js",

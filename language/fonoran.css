@@ -949,6 +949,26 @@
     .box h3 { font-size:0.95rem; margin:0.75rem 0 0.35rem; }
     .adv-links { display:flex; flex-direction:column; gap:0.4rem; }
     .adv-links a { color:var(--accent); font-size:0.9rem; }
+    .adv-regen-zone { margin:1rem 0 1.25rem; padding:1rem 1.1rem; border:1px solid color-mix(in srgb, var(--accent) 28%, var(--border)); border-radius:10px; background:color-mix(in srgb, var(--accent) 4%, var(--surface)); }
+    .adv-regen-zone h3 { margin:0 0 0.35rem; color:var(--accent); }
+    .adv-regen-zone__lead { margin:0 0 0.85rem; font-size:0.86rem; line-height:1.45; color:var(--text); }
+    .adv-regen-flow { margin:0.75rem 0 1rem; overflow:auto; }
+    .adv-regen-mermaid { margin:0; min-height:120px; }
+    .adv-doc-links { display:flex; flex-wrap:wrap; gap:0.35rem 0.85rem; align-items:center; margin:0 0 0.85rem; font-size:0.84rem; }
+    .adv-doc-links__label { color:var(--muted); }
+    .adv-doc-links a { color:var(--accent); text-decoration:none; }
+    .adv-doc-links a:hover { text-decoration:underline; }
+    .adv-regen-status { margin:0 0 0.65rem; font-size:0.84rem; line-height:1.5; color:var(--text); }
+    .adv-regen-status dl { margin:0; display:grid; grid-template-columns:auto 1fr; gap:0.2rem 0.75rem; }
+    .adv-regen-status dt { color:var(--muted); }
+    .adv-regen-warnings { margin:0 0 0.75rem; padding-left:1.1rem; color:var(--reject); font-size:0.84rem; }
+    .adv-regen-actions { flex-direction:column; align-items:flex-start; margin-bottom:0.5rem; }
+    .adv-regen-opt { display:flex; align-items:center; gap:0.4rem; font-size:0.84rem; color:var(--muted); margin:0; }
+    .adv-regen-result { max-height:280px; }
+    .adv-optional-zone { margin:1rem 0; padding:0.75rem 0; border-top:1px solid var(--border); }
+    .adv-optional-zone summary { cursor:pointer; font-family:var(--font-serif); font-size:0.92rem; color:var(--muted); }
+    .adv-optional-zone__lead { margin:0.65rem 0; font-size:0.84rem; color:var(--muted); }
+    .adv-storage-status { margin:0 0 0.5rem; font-size:0.82rem; color:var(--muted); }
     .danger { color:var(--reject); }
     .adv-danger-zone { margin-top:1.5rem; padding:1rem 1.1rem; border:1px solid color-mix(in srgb, var(--reject) 35%, var(--border)); border-radius:10px; background:color-mix(in srgb, var(--reject) 6%, var(--surface)); }
     .adv-danger-zone h3 { margin:0 0 0.35rem; color:var(--reject); }

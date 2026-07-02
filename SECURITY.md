@@ -33,6 +33,9 @@ Intentionally public endpoints (research participation):
 - `POST /api/fonoran/translate` — read-only translation (no vocabulary mutation)
 - `POST /api/fonoran/lab/graph/preview` — graph preview (compute-only)
 - `POST /api/fonoran/snapshot/preview` — parse uploaded snapshot zip without restoring
+- `POST /api/fonoran/lab/regenerate` — full generator pipeline (admin; confirm REGENERATE)
+- `POST /api/fonoran/lab/editorial/import` — reload git editorial seeds (admin; confirm IMPORT)
+- `POST /api/fonoran/lab/regression/translator` — golden translation regression report
 - `POST /api/fonoran/translation-tests/run` — regenerates `data/fonoran-translation-test-latest.json` (shared metrics file)
 
 See [docs/deploy.md](docs/deploy.md) and [docs/fonoran-auth-and-release.md](docs/fonoran-auth-and-release.md) for the full checklist.
