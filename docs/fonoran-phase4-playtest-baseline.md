@@ -1,13 +1,13 @@
 # Phase IV playtest baseline
 
-> Generated: 2026-07-02T00:50:12.380Z
+> Generated: 2026-07-02T01:03:09.320Z
 
 ## Smoke test
 
 - Priority concepts: 14
 - Present in lab: 14
 - Missing from lab: 0
-- Previously playtested (any concept): 3
+- Previously playtested (any concept): 4
 
 ## Priority teaching-tree prompts
 

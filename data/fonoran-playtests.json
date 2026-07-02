@@ -49,6 +49,38 @@
       "confusions": [],
       "core_only": true,
       "source": "puzzle"
+    },
+    {
+      "id": "pt-mr2svn54-b9do70",
+      "at": "2026-07-02T01:02:51.112Z",
+      "concept_id": "whole",
+      "shown_spelling": "melfel",
+      "shown_composition": [
+        "mel",
+        "fel"
+      ],
+      "recovered": true,
+      "repair_turns": 0,
+      "guess": "whole",
+      "confusions": [],
+      "core_only": false,
+      "source": "puzzle"
+    },
+    {
+      "id": "pt-mr2svxw3-nuypjj",
+      "at": "2026-07-02T01:03:05.043Z",
+      "concept_id": "star",
+      "shown_spelling": "kekfet",
+      "shown_composition": [
+        "kek",
+        "fet"
+      ],
+      "recovered": true,
+      "repair_turns": 0,
+      "guess": "star",
+      "confusions": [],
+      "core_only": false,
+      "source": "puzzle"
     }
   ]
 }
