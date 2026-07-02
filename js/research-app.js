@@ -98,7 +98,7 @@ function phaseShortLabel(phase) {
 }
 
 function phaseTitle(phase) {
-  const match = phase.label.match(/^Phase [IVXLC]+ — (.+)$/);
+  const match = phase.label.match(/^Phase [IVXLC]+(?: —|:) (.+)$/);
   return match ? match[1] : phase.label;
 }
 
@@ -220,7 +220,7 @@ function noteCard(note) {
         <span class="${statusClass(note.status)}">${escapeHtml(note.status)}</span>
       </div>
       <h3 class="research-card__title">${escapeHtml(note.title)}</h3>
-      <p class="research-card__abstract">${escapeHtml(note.abstract)}</p>
+      <p class="research-card__abstract">${escapeHtml(plainExcerpt(note.abstract))}</p>
       <p class="research-card__date">${escapeHtml(formatDate(note.date))}</p>
     </a>`;
 }

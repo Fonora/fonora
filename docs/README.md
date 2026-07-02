@@ -49,9 +49,9 @@ Narrative research notes (one per major experiment), authored in `docs/research/
 
 | Era | Notes |
 | --- | --- |
-| Phase I — Writing sound | the articulation grid, IPA pipeline, vowel v2 → v3, multilingual script, collision audit |
-| Phase II — Inventing a language | Gen 1/2 roots, Gen 3 DDA, Gen 3.1 distinctiveness, the 200-primitive allocation |
-| Phase III — A usable language | semantic foundation, the Constitution, the editorial pipeline, grammar particles, the translator, typing, puzzle conversation |
+| Phase I: Writing sound | the articulation grid, IPA pipeline, vowel v2 → v3, multilingual script, collision audit |
+| Phase II: Inventing a language | Gen 1/2 roots, Gen 3 DDA, Gen 3.1 distinctiveness, the 200-primitive allocation |
+| Phase III: A usable language | semantic foundation, the Constitution, the editorial pipeline, grammar particles, the translator, typing, puzzle conversation |
 
 ---
 

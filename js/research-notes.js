@@ -7,17 +7,17 @@
 export const RESEARCH_PHASES = [
   {
     id: 'phase-1',
-    label: 'Phase I — Writing sound, not spelling',
+    label: 'Phase I: Writing sound, not spelling',
     blurb: 'Fonora the script: encoding how speech is produced instead of how it is spelled.',
   },
   {
     id: 'phase-2',
-    label: 'Phase II — Inventing a language from first principles',
+    label: 'Phase II: Inventing a language from first principles',
     blurb: 'Fonoran the language: six generations of trying to grow a vocabulary from a grid.',
   },
   {
     id: 'phase-3',
-    label: 'Phase III — A language people can actually use',
+    label: 'Phase III: A language people can actually use',
     blurb: 'The pivot from algorithmic correctness to recoverable, human communication.',
   },
 ];

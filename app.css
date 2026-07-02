@@ -5851,6 +5851,7 @@ a.btn:hover {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
+  min-width: 0;
   padding: 1rem 1.1rem 1.05rem;
   border: 1px solid var(--layout-border);
   border-radius: 12px;
@@ -5891,6 +5892,7 @@ a.btn:hover {
   color: var(--text-body);
   margin: 0;
   line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
 .research-card__date {
