@@ -2,6 +2,29 @@ import { escapeHtml } from './utils.js';
 import { initMermaidPanZoomIn } from './mermaid-pan-zoom.js';
 import { MERMAID_INIT } from './mermaid-theme.js';
 
+const MERMAID_CDN = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+
+/** @type {Promise<void> | null} */
+let mermaidLoadPromise = null;
+
+/** Load mermaid.min.js on demand (research note pages only). */
+export function ensureMermaidLoaded() {
+  if (typeof window !== 'undefined' && window.mermaid) return Promise.resolve();
+  if (mermaidLoadPromise) return mermaidLoadPromise;
+  mermaidLoadPromise = new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = MERMAID_CDN;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => {
+      mermaidLoadPromise = null;
+      reject(new Error('Failed to load Mermaid'));
+    };
+    document.head.appendChild(script);
+  });
+  return mermaidLoadPromise;
+}
+
 /**
  * @param {string} mermaidSource
  */
@@ -11,9 +34,12 @@ export function buildStaticMermaidHtml(mermaidSource) {
 }
 
 async function runMermaidIn(rootEl, { interactive = true, panZoomOptions = {}, mermaidInit = MERMAID_INIT } = {}) {
-  if (!window.mermaid || !rootEl) return;
+  if (!rootEl) return;
   const nodes = rootEl.querySelectorAll('.mermaid');
   if (!nodes.length) return;
+
+  await ensureMermaidLoaded();
+  if (!window.mermaid) return;
 
   window.mermaid.initialize(mermaidInit);
 

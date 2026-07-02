@@ -8,7 +8,7 @@ import { handleAuthRoutes, logAuthStatus } from './tools/fonoran-auth.js';
 import { handleFonoranApi } from './tools/fonoran-api.js';
 import { handleResearchApi } from './tools/research-notes-api.js';
 import { maybeAutoSeedOnStartup, initStore } from './tools/fonoran-store.js';
-import { initResearchNotesStore } from './tools/research-notes-store.js';
+import { initResearchNotesStore, maybeAutoSyncResearchNotesOnStartup } from './tools/research-notes-store.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const host = process.env.HOST || '0.0.0.0';
@@ -308,6 +308,7 @@ createServer(async (req, res) => {
   try {
     await initStore();
     await initResearchNotesStore();
+    await maybeAutoSyncResearchNotesOnStartup();
     await maybeAutoSeedOnStartup();
   } catch (err) {
     console.warn('Fonoran auto-import skipped:', err instanceof Error ? err.message : err);
