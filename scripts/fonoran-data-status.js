@@ -53,11 +53,8 @@ async function main() {
   if (existsSync(manifestPath())) {
     manifest = JSON.parse(await readFile(manifestPath(), 'utf8'));
     console.log('  manifest pin:', manifest.ref ?? manifest.commit ?? '(unset)');
-    if (manifest.commit && dataDir) {
-      const head = tryGitHead(dataDir);
-      if (head && head !== manifest.commit && !head.startsWith(manifest.commit.slice(0, 7))) {
-        console.warn('  WARNING: submodule HEAD does not match manifest commit');
-      }
+    if (manifest.commit && dataDir && existsSync(join(dataDir, 'manifest.json'))) {
+      console.log('  manifest commit:', manifest.commit.slice(0, 12));
     }
   } else {
     console.warn('  WARNING: missing data/fonora-data.manifest.json');

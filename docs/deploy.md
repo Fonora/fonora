@@ -146,6 +146,8 @@ npm run fonoran:data:status
 
 Optional `.env`: `FONORAN_DATA_DIR=external/fonora-data`. The main repo pins the data version in `data/fonora-data.manifest.json`.
 
+**Heroku:** GitHub deploy does not checkout git submodules. `postinstall` and the `release:` phase run `scripts/fonoran-data-fetch.js`, which downloads the pinned commit from GitHub into `external/fonora-data` (no `git` required on the dyno). Set `FONORAN_DATA_DIR=external/fonora-data` on Heroku.
+
 See [platform-overview.md](platform-overview.md) for the data architecture overview.
 
 **Fonoran vocabulary pipeline (optimize → build → Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md). On Heroku after deploy, use **Advanced → Regenerate dictionary from git seeds** at `/language#advanced` (admin sign-in required).
