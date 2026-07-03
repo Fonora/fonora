@@ -141,20 +141,32 @@ function platformTabHref(_context, tabId) {
 function renderThemeToggle() {
   const theme = getStoredTheme();
   const label = theme === 'dark' ? 'Dark' : theme === 'light' ? 'Light' : 'Auto';
-  return `<button type="button" class="app-header__theme-btn" id="fonora-theme-toggle" title="Theme (${label})">${label}</button>`;
+  const icons = {
+    light:
+      '<svg class="app-header__theme-icon" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10" cy="10" r="3.25"/><path stroke-linecap="round" d="M10 2v2M10 16v2M2 10h2M16 10h2M4.4 4.4l1.4 1.4M14.2 14.2l1.4 1.4M4.4 15.6l1.4-1.4M14.2 5.8l1.4-1.4"/></svg>',
+    dark: '<svg class="app-header__theme-icon" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M14.5 12.5a5.5 5.5 0 11-3.4-9.8 6.5 6.5 0 003.4 9.8z"/></svg>',
+    system:
+      '<svg class="app-header__theme-icon" viewBox="0 0 20 20" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="4" width="14" height="9" rx="1.5"/><path stroke-linecap="round" d="M8 16h4"/></svg>',
+  };
+  const icon = icons[theme === 'system' ? 'system' : theme];
+  return `<button type="button" class="app-header__theme-btn" id="fonora-theme-toggle" aria-label="Theme: ${label}" title="Theme (${label})">${icon}</button>`;
 }
 
 function renderGlobalAuthTools() {
   const themeBtn = renderThemeToggle();
-  if (!fonoranAuthState?.configured) return themeBtn;
+  if (!fonoranAuthState?.configured) {
+    return `<div class="app-header__account">${themeBtn}</div>`;
+  }
   if (fonoranAuthState.authenticated) {
     const email = escapeAttr(fonoranAuthState.email ?? 'Signed in');
-    return `${themeBtn}
+    return `<div class="app-header__account">
+        ${themeBtn}
         <span class="fonoran-auth-user" title="${email}">${escapeHtml(fonoranAuthState.email ?? 'Signed in')}</span>
-        <button type="button" class="app-header__sign-out-btn" id="fonoran-sign-out">Sign out</button>`;
+        <button type="button" class="app-header__global-link app-header__global-link--button" id="fonoran-sign-out">Sign out</button>
+      </div>`;
   }
   const loginUrl = escapeAttr(fonoranAuthState.loginUrl);
-  return `${themeBtn}<a href="${loginUrl}" class="app-header__global-link">Sign in</a>`;
+  return `<div class="app-header__account">${themeBtn}<a href="${loginUrl}" class="app-header__global-link">Sign in</a></div>`;
 }
 
 function renderPlatformTabs(context) {

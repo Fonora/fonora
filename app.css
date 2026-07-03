@@ -743,22 +743,29 @@ html[data-fonora-tools-nav='hidden'] .platform-tab[data-nav-tab='tools'] {
 .app-header__global {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
   flex-shrink: 0;
+}
+
+.app-header__account {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  min-height: 2rem;
 }
 
 .app-header__global-link {
   font-size: 0.82rem;
-  color: #4b5563;
+  color: var(--color-text-muted);
   text-decoration: none;
-  padding: 0.3rem 0.5rem;
-  border-radius: 4px;
+  padding: 0.35rem 0.55rem;
+  border-radius: 6px;
   white-space: nowrap;
+  line-height: 1.2;
 }
 
 .app-header__global-link:hover {
-  background: #f3f4f6;
-  color: #111;
+  background: var(--color-btn-hover-bg);
+  color: var(--color-text);
 }
 
 .app-header__global-link--button {
@@ -768,39 +775,30 @@ html[data-fonora-tools-nav='hidden'] .platform-tab[data-nav-tab='tools'] {
   cursor: pointer;
 }
 
-.app-header__sign-out-btn {
-  font-family: inherit;
-  font-size: 0.82rem;
-  padding: 0.38rem 0.75rem;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  background: var(--color-btn-bg);
-  color: var(--color-text-body);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.app-header__sign-out-btn:hover {
-  background: var(--color-btn-hover-bg);
-  border-color: var(--color-text-muted);
-  color: var(--color-text);
-}
-
 .app-header__theme-btn {
-  margin-right: 0.65rem;
-  padding: 0.25rem 0.55rem;
-  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
   font-family: inherit;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  background: var(--color-surface);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
   color: var(--color-text-muted);
   cursor: pointer;
 }
 
 .app-header__theme-btn:hover {
   color: var(--color-heading);
-  border-color: var(--color-accent);
+  background: var(--color-btn-hover-bg);
+  border-color: var(--color-border);
+}
+
+.app-header__theme-icon {
+  display: block;
 }
 
 .app-header__row--platform .app-header__global {
@@ -809,11 +807,15 @@ html[data-fonora-tools-nav='hidden'] .platform-tab[data-nav-tab='tools'] {
 
 .fonoran-auth-user {
   font-size: 0.82rem;
-  color: #4b5563;
-  max-width: 10rem;
+  color: var(--color-text-muted);
+  max-width: min(12rem, 28vw);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1.2;
+  padding: 0.35rem 0.55rem;
+  border-left: 1px solid var(--color-border);
+  margin-left: 0.15rem;
 }
 
 .auth-gate {
@@ -1442,6 +1444,11 @@ html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
   .app-header__row--platform {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .app-header__global {
+    width: 100%;
+    justify-content: flex-end;
   }
 
   .app-header__tools {
