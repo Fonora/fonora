@@ -25,6 +25,11 @@ export const RESEARCH_PHASES = [
     label: 'Phase IV: Reconstructing compounds',
     blurb: 'Teaching trees, meaning-attempts, and playtest-driven preferred forms under the constitution.',
   },
+  {
+    id: 'phase-5',
+    label: 'Phase V: Foundations under the Constitution',
+    blurb: 'Re-auditing script pedagogy, root tiers, and grammar machinery against recoverable meaning and minimal memorization.',
+  },
 ];
 
 /**
@@ -68,7 +73,8 @@ export function inferPhaseFromCode(code) {
   if (num <= 6) return 'phase-1';
   if (num <= 11) return 'phase-2';
   if (num <= 17) return 'phase-3';
-  return 'phase-4';
+  if (num <= 20) return 'phase-4';
+  return 'phase-5';
 }
 
 /** Resolve a note's phase id from metadata or notebook code. */

@@ -1,7 +1,7 @@
 ---
 status: Active
 date: 2026-07-03
-phase: phase-1
+phase: phase-5
 ---
 
 # Vowel+Glide Phantom Diphthongs

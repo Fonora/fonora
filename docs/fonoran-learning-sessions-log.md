@@ -80,20 +80,29 @@
 
 ---
 
-## Session 4 — LLM-promoted compounds (human validation)
+## Session 4 — LLM-promoted compounds + post-RN-21 core (human validation)
 
-> **Goal:** Validate 22 LLM-promoted preferred forms via Puzzle Conversation. Compare recovery against pre-promotion session (Session 2).
+> **Goal:** Validate 22 LLM-promoted preferred forms via Puzzle Conversation. Re-test repair and deixis phrases on the **rebalanced 50-root core** (RN-21). Compare recovery against pre-promotion session (Session 2). Feeds Phase IV (compounds) and Phase V (grammar constitutional audit, RN-24).
 
 **Start the lab:** `npm start` → [Puzzle Conversation](/language#puzzle)
 
 | Field | Value |
 | --- | --- |
 | Date | _TBD_ |
-| Tool | Puzzle Conversation (+ Dictionary spot-checks) |
-| Goal | Human recovery on LLM-promoted spellings; flag disagreements |
+| Tool | Puzzle Conversation (+ Dictionary spot-checks, Translator repair phrases) |
+| Goal | Human recovery on LLM-promoted spellings; repair/deixis on post-RN-21 core |
 | Outcome | _pending_ |
 
-**Priority rounds (use concept filter URLs):**
+**Phase V grammar repair probes (RN-24):**
+
+| Phrase (English) | Fonoran target | Probe |
+| --- | --- | --- |
+| I don't understand | `mi no cha` (or current compile) | Post-RN-21 **understand** root |
+| Where? | `wo zis` → answer with **nam** / **tak** | wh-particle vs lexical **here**/**there** |
+| What is that? | `wo vus` + **thing** | **vus** + core **thing** repair loop |
+| Only water | `vat ye` (or paraphrase) | Focus particle **vat** campfire fit |
+
+**Priority compound rounds (use concept filter URLs):**
 
 | Concept | Why | URL |
 | --- | --- | --- |
@@ -134,6 +143,8 @@
 | Puzzle rounds recorded (post-regen) | 54 (52 recovered, 2 failed: `open`, `meaning`) |
 | LLM intuition rounds (v3) | 2,432 |
 | LLM-promoted compounds | 22 (awaiting Session 4 human validation) |
+| Phase V grammar repair probes | 4 scripted (awaiting Session 4) |
+| RN-21 core validation | Pending (50-root filter `?core=1`) |
 | Keyboard sessions | 0 |
 | Documented failure cases | 2 (`open` → money; `meaning` → law) |
 

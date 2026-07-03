@@ -1,7 +1,7 @@
 ---
 status: Active
 date: 2026-07-03
-phase: phase-4
+phase: phase-5
 ---
 
 # Remediating the beginner core

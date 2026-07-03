@@ -28,7 +28,7 @@ phase: phase-1
 | --- | --- |
 | `status` | Foundational · Active · Superseded · Open (default: Active) |
 | `date` | ISO date for timeline ordering (default: git last-commit date on the file) |
-| `phase` | phase-1 … phase-4 (default: inferred from RN code) |
+| `phase` | phase-1 … phase-5 (default: inferred from RN code) |
 
 Everything else is derived from the markdown body: title from the H1, description from the opening paragraph, related slugs from `/research/notes/...` links.
 
