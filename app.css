@@ -8023,6 +8023,62 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   color: var(--text-body);
 }
 
+.research-note__body code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--doc-code-bg);
+  color: var(--color-text);
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+}
+
+.research-note__body pre {
+  overflow-x: auto;
+  padding: 0.85rem 1rem;
+  background: #111827;
+  color: #f3f4f6;
+  border-radius: 6px;
+}
+
+.research-note__body pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+.research-note__body a {
+  color: var(--color-link);
+}
+
+.research-note__body a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+}
+
+.research-note__body .table-wrap {
+  margin-bottom: 0.85rem;
+  overflow-x: auto;
+}
+
+.research-note__body .doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.research-note__body .doc-table th,
+.research-note__body .doc-table td {
+  padding: 0.45rem 0.65rem;
+  border: 1px solid var(--color-table-border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.research-note__body .doc-table th {
+  background: var(--color-table-header-bg);
+  font-weight: 600;
+}
+
 /* Research note footer (pager + resource links) */
 .research-note-footer {
   margin-top: 2.5rem;
