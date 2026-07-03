@@ -196,7 +196,7 @@
     --color-accent-soft: #2a241c;
     --color-accent-hover: #dfc296;
     --color-accent-on: #1a140c;
-    --color-word: #2d6a4f;
+    --color-word: var(--color-accent);
     --color-accent-line-end: #8a7355;
     --color-script-soft: #1e293b;
     --color-tab-inactive: #a3a3a3;
@@ -309,7 +309,7 @@
   --color-accent-soft: #2a241c;
   --color-accent-hover: #dfc296;
   --color-accent-on: #1a140c;
-  --color-word: #2d6a4f;
+  --color-word: var(--color-accent);
   --color-accent-line-end: #8a7355;
   --color-script-soft: #1e293b;
   --color-tab-inactive: #a3a3a3;
