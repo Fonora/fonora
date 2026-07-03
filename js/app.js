@@ -7,14 +7,36 @@ import {
 import {
   getVowelEntries,
   soundGridVowelRowHtml,
-  findVowelForCell,
-  isVowelQuizCell,
 } from './vowel-display.js';
 import { notifyFonoraTabChange } from './fonora-keyboard-ui.js';
 import {
-  setupSpellingPractice,
-  onSpellingPracticeTabActivated,
-} from './fonora-spelling-practice.js';
+  setupScriptWriting,
+  onScriptWritingTabActivated,
+} from './fonora-script-writing.js';
+import {
+  setupScriptReadingWords,
+  onScriptReadingTabActivated,
+} from './fonora-script-reading.js';
+import {
+  setupScriptSounds,
+  onScriptSoundsTabActivated,
+} from './fonora-script-sounds-practice.js';
+import {
+  setupFonoranReading,
+  onFonoranReadingTabActivated,
+} from './fonoran-reading-practice.js';
+import {
+  setupFonoranWriting,
+  onFonoranWritingTabActivated,
+} from './fonoran-writing-practice.js';
+import {
+  setupFonoranHearing,
+  onFonoranHearingTabActivated,
+} from './fonoran-hearing-practice.js';
+import {
+  setupFonoranGrammar,
+  onFonoranGrammarTabActivated,
+} from './fonoran-grammar-practice.js';
 import {
   setupKeyboardTesting,
   onKeyboardTestingTabActivated,
@@ -23,7 +45,6 @@ import {
   loadLanguageRulesFromString,
   buildKeyboardMap,
   findGridCell,
-  getQuizEntries,
   reverseLookup,
 } from './rules.js';
 import { setActiveLanguageRulesBundle, LANGUAGE_RULES_PATH } from './fonora-config.js';
@@ -56,9 +77,15 @@ import {
   LEARN_SKILL_IDS,
   LEGACY_LEARN_HASH,
   LEARN_DEFAULT_TAB,
+  LEARN_HUB_TAB,
+  LEARN_LESSON_PANEL_IDS,
+  LEARN_SECTION_HASHES,
   LEARN_REDIRECT_HASHES,
   normalizeLearnTab as resolveLearnTab,
   learnNavTabToHash,
+  learnHashRedirectsToTools,
+  toolsTabForLearnLegacyHash,
+  learnTrackForTab,
 } from './learn-routing.js';
 import { mountSiteFooter } from './site-footer.js';
 import {
@@ -68,45 +95,17 @@ import {
   handleAuthUrlErrors,
 } from './auth-session.js';
 import { setReaderWordSources } from './fonora-tts.js';
+import { refreshLearnHomeProgress } from './learn-home-progress.js';
+import { syncLearnSessionBar, saveLearnHomeScroll, restoreLearnHomeScroll } from './learn-session-ui.js';
+import {
+  setupLearningLanguageSelect,
+  updateLearningLanguageNote,
+} from './learning-language-select.js';
 
 let rules = null;
 let usingFallback = false;
 /** @type {string | null} */
 let markdownSource = null;
-const quizStats = { attempts: 0, correct: 0 };
-let currentQuiz = null;
-
-function renderSymbolButtons(container, textarea) {
-  if (!container || !textarea) return;
-  container.innerHTML = '';
-  const allKeys = [
-    ...rules.places.map((p) => ({ symbol: p.symbol, label: p.label, type: 'place' })),
-    ...rules.modifiers.map((m) => ({ symbol: m.symbol, label: m.label, type: 'modifier' })),
-  ];
-  for (const item of allKeys) {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = `symbol-btn symbol-btn--${item.type}`;
-    btn.title = item.label;
-    btn.innerHTML = `<span class="symbol-text">${item.symbol}</span><span class="symbol-btn-label">${item.label}</span>`;
-    btn.addEventListener('click', () => insertAtCursor(textarea, item.symbol));
-    container.appendChild(btn);
-  }
-}
-
-function attachKeyboardShortcuts(textarea) {
-  const map = buildKeyboardMap(rules);
-  textarea.onkeydown = (e) => {
-    if (e.ctrlKey || e.metaKey || e.altKey) return;
-    let symbol = null;
-    if (e.key >= '1' && e.key <= '9') symbol = map.byNumber[e.key];
-    else if (e.key.length === 1) symbol = map.byLetter[e.key.toLowerCase()];
-    if (symbol) {
-      e.preventDefault();
-      insertAtCursor(textarea, symbol);
-    }
-  };
-}
 
 function showFallbackBanner() {
   const banner = document.getElementById('fallback-banner');
@@ -503,150 +502,6 @@ function setupReverseLookup() {
   document.getElementById('reverse-btn').addEventListener('click', run);
 }
 
-function buildSymbolLabelMap(r) {
-  const map = {};
-  for (const p of r.places) map[p.symbol] = p.label;
-  for (const m of r.modifiers) map[m.symbol] = m.label;
-  return map;
-}
-
-function getQuizHintLines(cell) {
-  const labelMap = buildSymbolLabelMap(rules);
-  const symbols = cell.symbols || '';
-  const vowelDef = findVowelForCell(rules, cell);
-
-  if (vowelDef || isVowelQuizCell(rules, cell)) {
-    const lines = [];
-    for (const ch of symbols) {
-      const label = labelMap[ch];
-      if (label) lines.push({ symbol: ch, label });
-    }
-    if (vowelDef?.example) {
-      lines.push({ symbol: symbols, label: `as in ${vowelDef.example}`, vowelNote: true });
-    }
-    const note = cell.notes || cell.explanation;
-    if (note && note !== vowelDef?.lexicalSet) {
-      lines.push({ symbol: symbols, label: note, vowelNote: true });
-    }
-    return lines.length ? lines : [{ symbol: symbols, label: 'Vowel' }];
-  }
-
-  const seen = new Set();
-  const lines = [];
-
-  for (const ch of symbols) {
-    if (seen.has(ch)) continue;
-    seen.add(ch);
-    const label = labelMap[ch];
-    if (label) lines.push({ symbol: ch, label });
-  }
-
-  if (!lines.length && cell.explanation) {
-    lines.push({ symbol: symbols, label: cell.explanation });
-  }
-
-  return lines;
-}
-
-function updateQuizHints() {
-  const hintsEl = document.getElementById('quiz-hints');
-  const showHints = document.getElementById('quiz-show-hints')?.checked ?? true;
-  if (!hintsEl || !currentQuiz?.cell) return;
-
-  const lines = getQuizHintLines(currentQuiz.cell);
-  hintsEl.hidden = !showHints;
-  hintsEl.innerHTML = showHints
-    ? lines.length
-      ? lines
-          .map(
-            (line) =>
-              `<div class="quiz-hint"><span class="quiz-hint-symbol symbol-text">${escapeHtml(line.symbol)}</span><span class="quiz-hint-label">: ${escapeHtml(line.label)}</span></div>`,
-          )
-          .join('')
-      : '<em class="quiz-hint-label">No component hints for this entry.</em>'
-    : '';
-}
-
-function setupTestMode() {
-  const constructInput = document.getElementById('quiz-answer-construct');
-  renderSymbolButtons(document.getElementById('quiz-keyboard'), constructInput);
-  attachKeyboardShortcuts(constructInput);
-  document.getElementById('quiz-normalize')?.addEventListener('click', () => {
-    constructInput.value = normalizeSymbolInput(constructInput.value, rules);
-  });
-  document.getElementById('quiz-backspace')?.addEventListener('click', () => {
-    deleteSymbolBeforeCursor(constructInput);
-  });
-
-  document.querySelectorAll('[name="quiz-type"]').forEach((radio) => {
-    radio.addEventListener('change', () => {
-      if (radio.checked) startQuiz(radio.value);
-    });
-  });
-  document.getElementById('quiz-show-hints')?.addEventListener('change', updateQuizHints);
-  document.getElementById('quiz-check').addEventListener('click', checkQuizAnswer);
-  document.getElementById('quiz-next').addEventListener('click', () => {
-    startQuiz(document.querySelector('[name="quiz-type"]:checked')?.value || 'decode');
-  });
-  startQuiz('decode');
-  updateQuizStats();
-}
-
-function pickRandomQuizCell() {
-  const cells = getQuizEntries(rules);
-  return cells[Math.floor(Math.random() * cells.length)];
-}
-
-function startQuiz(type) {
-  currentQuiz = { type, cell: pickRandomQuizCell(), answered: false };
-  document.getElementById('quiz-feedback').textContent = '';
-  document.getElementById('quiz-answer-decode').value = '';
-  document.getElementById('quiz-answer-construct').value = '';
-  const decodeAnswer = document.getElementById('quiz-decode-answer');
-  const constructAnswer = document.getElementById('quiz-construct-answer');
-  const vowelBadge = isVowelQuizCell(rules, currentQuiz.cell)
-    ? ' <span class="draft-badge">Vowel</span>'
-    : '';
-  if (type === 'decode') {
-    document.getElementById('quiz-prompt').innerHTML =
-      `<span class="symbol-text">${escapeHtml(currentQuiz.cell.symbols)}</span>${vowelBadge}`;
-    decodeAnswer.hidden = false;
-    constructAnswer.hidden = true;
-  } else {
-    document.getElementById('quiz-prompt').innerHTML =
-      `${escapeHtml(currentQuiz.cell.sound)}${vowelBadge}`;
-    decodeAnswer.hidden = true;
-    constructAnswer.hidden = false;
-  }
-  updateQuizHints();
-}
-
-function checkQuizAnswer() {
-  if (!currentQuiz || currentQuiz.answered) return;
-  let correct = false;
-  if (currentQuiz.type === 'decode') {
-    correct = document.getElementById('quiz-answer-decode').value.trim() === currentQuiz.cell.sound;
-  } else {
-    correct = normalizeSymbolInput(document.getElementById('quiz-answer-construct').value, rules) === currentQuiz.cell.symbols;
-  }
-  quizStats.attempts++;
-  if (correct) quizStats.correct++;
-  currentQuiz.answered = true;
-  updateQuizStats();
-  const fb = document.getElementById('quiz-feedback');
-  fb.className = correct ? 'quiz-feedback quiz-feedback--ok' : 'quiz-feedback quiz-feedback--miss';
-  fb.innerHTML = correct
-    ? 'Correct.'
-    : currentQuiz.type === 'decode'
-      ? `Expected: ${currentQuiz.cell.sound}`
-      : `Expected: <span class="symbol-text">${escapeHtml(currentQuiz.cell.symbols)}</span>`;
-}
-
-function updateQuizStats() {
-  const acc = quizStats.attempts ? Math.round((quizStats.correct / quizStats.attempts) * 100) : 0;
-  document.getElementById('quiz-stats').textContent = `Attempts: ${quizStats.attempts} · Correct: ${quizStats.correct} · Accuracy: ${acc}%`;
-}
-
 function migrateLegacyUrl() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
   const hash = window.location.hash.replace(/^#/, '');
@@ -659,7 +514,12 @@ function migrateLegacyUrl() {
     return;
   }
   if (path === '/learn') {
-    if (hash && LEGACY_LEARN_HASH[hash]) {
+    if (hash && learnHashRedirectsToTools(hash)) {
+      const toolsTab = toolsTabForLearnLegacyHash(hash);
+      history.replaceState(null, '', `/tools#${toolsTab}${window.location.search}`);
+      return;
+    }
+    if (hash && LEGACY_LEARN_HASH[hash] && !learnHashRedirectsToTools(hash)) {
       const navTab = LEGACY_LEARN_HASH[hash];
       const nextHash = learnNavTabToHash(navTab);
       history.replaceState(null, '', `/learn${nextHash}${window.location.search}`);
@@ -704,6 +564,8 @@ const BUILDER_TOOLS_TAB_IDS = new Set([
   'pronunciation-validation',
   'symbols',
   'research-notes',
+  'breakdown',
+  'samples',
 ]);
 
 function isLearnPath() {
@@ -729,11 +591,26 @@ function defaultTabForBase(base) {
   return 'home';
 }
 
+function scrollLearnHomeToSection() {
+  const hash = window.location.hash.replace(/^#/, '');
+  if (!LEARN_SECTION_HASHES.has(hash)) return;
+  const target = document.getElementById(hash);
+  if (!target) return;
+  requestAnimationFrame(() => {
+    const headerOffset =
+      Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-offset')) ||
+      112;
+    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset - 12;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
+  });
+}
+
 function getTabFromHash() {
   migrateLegacyUrl();
   if (isDocsRoute()) return 'docs';
   if (isLearnPath()) {
     const id = window.location.hash.replace(/^#/, '');
+    if (id && LEARN_SECTION_HASHES.has(id)) return LEARN_DEFAULT_TAB;
     if (id && (LEARN_SKILL_IDS.has(id) || id === LEARN_DEFAULT_TAB)) return id;
     if (id && LEGACY_LEARN_HASH[id]) return LEGACY_LEARN_HASH[id];
     return defaultTabForBase('/learn');
@@ -826,9 +703,22 @@ function showTab(tabId) {
   const previousPanel = document.querySelector('.tab-panel--active')?.dataset.tabPanel;
   const context = currentNavContext();
   const { navTab, panelId } = normalizeLearnTab(tabId);
+  const goingLearnHome = panelId === LEARN_HUB_TAB;
+  const leftLearnHome = previousPanel === LEARN_HUB_TAB && !goingLearnHome;
+  const returningFromLesson = goingLearnHome && previousPanel && LEARN_LESSON_PANEL_IDS.has(previousPanel);
+
+  // Capture scroll before hiding Learn home — once the panel is display:none, scrollY resets.
+  if (leftLearnHome) {
+    saveLearnHomeScroll();
+  }
 
   document.documentElement.setAttribute('data-fonora-nav', context);
   document.documentElement.setAttribute('data-fonora-tab', navTab);
+  if (context === 'learn') {
+    document.documentElement.setAttribute('data-learn-track', learnTrackForTab(navTab));
+  } else {
+    document.documentElement.removeAttribute('data-learn-track');
+  }
 
   setNavContext(context);
   setActiveTab(navTab);
@@ -842,7 +732,22 @@ function showTab(tabId) {
   closeAllNavDropdowns();
 
   if (previousPanel !== panelId) {
-    window.scrollTo(0, 0);
+    if (returningFromLesson) {
+      // restoreLearnHomeScroll runs at end of showTab after layout settles
+    } else if (goingLearnHome && LEARN_SECTION_HASHES.has(window.location.hash.replace(/^#/, ''))) {
+      scrollLearnHomeToSection();
+    } else if (!goingLearnHome) {
+      window.scrollTo(0, 0);
+    }
+  }
+
+  syncLearnSessionBar(`tab-${panelId}`);
+
+  if (panelId === 'learn-home') {
+    refreshLearnHomeProgress();
+    if (!returningFromLesson) {
+      scrollLearnHomeToSection();
+    }
   }
 
   if (panelId === 'samples') {
@@ -861,7 +766,31 @@ function showTab(tabId) {
   }
 
   if (panelId === 'spelling-practice') {
-    onSpellingPracticeTabActivated();
+    onFonoranWritingTabActivated();
+  }
+
+  if (panelId === 'script-writing') {
+    onScriptWritingTabActivated();
+  }
+
+  if (panelId === 'script-reading-words') {
+    onScriptReadingTabActivated();
+  }
+
+  if (panelId === 'quiz') {
+    onScriptSoundsTabActivated(rules);
+  }
+
+  if (panelId === 'fonoran-reading') {
+    onFonoranReadingTabActivated();
+  }
+
+  if (panelId === 'fonoran-hearing') {
+    onFonoranHearingTabActivated();
+  }
+
+  if (panelId === 'fonoran-grammar') {
+    onFonoranGrammarTabActivated();
   }
 
   notifyFonoraTabChange(panelId);
@@ -875,6 +804,10 @@ function showTab(tabId) {
   }
 
   requestAnimationFrame(syncAppHeaderOffset);
+
+  if (returningFromLesson) {
+    restoreLearnHomeScroll();
+  }
 }
 
 window.showTab = showTab;
@@ -981,18 +914,28 @@ function applyRulesBundle(loaded) {
   renderPlatformShowcase();
   renderHomeHowItWorks();
   renderKeyboardSection();
-  setupSpellingPractice(rules);
+  setupKeyboardTesting(rules);
   renderSoundGrid();
   renderSupplementalSoundTables();
   setupUtilityButtons();
   setupReverseLookup();
-  setupTestMode();
+  setupScriptSounds(rules);
   setupEncoderTesting(rules);
   setupPronunciationValidation(rules);
   setupTranslatePlayback(rules);
   setupBreakdown(rules);
   setupSamples(rules);
   setupHomeSample(rules);
+  void setupScriptWriting(rules);
+  void setupScriptReadingWords(rules);
+  void setupFonoranReading(rules);
+  void setupFonoranWriting(rules);
+  void setupFonoranHearing(rules);
+  void setupFonoranGrammar();
+  setupLearningLanguageSelect('learn-language-global', () => {
+    updateLearningLanguageNote('script-writing-language-note');
+    updateLearningLanguageNote('script-reading-language-note');
+  });
   setupDocsViewer();
   setupTranslator();
   setupAlphabetLab({

@@ -69,17 +69,6 @@
         </div>
       </nav>
     </div>
-    <div class="app-header__row app-header__row--tools" data-nav-row="learn-tools">
-      <nav class="main-nav" aria-label="Learn">
-        <div class="main-nav-primary">
-          <button type="button" class="tab-btn" data-learn-tab="writing">Writing</button>
-          <button type="button" class="tab-btn" data-learn-tab="reading">Reading</button>
-          <button type="button" class="tab-btn" data-learn-tab="breakdown">Breakdown</button>
-          <button type="button" class="tab-btn" data-learn-tab="listening">Listening</button>
-          <a href="/language#puzzle" class="tab-btn tab-btn--link">Puzzle Conversation</a>
-        </div>
-      </nav>
-    </div>
     <div class="app-header__row app-header__row--tools" data-nav-row="tools-tools">
       <nav class="main-nav" aria-label="Tools">
         <div class="main-nav-primary">
@@ -87,6 +76,8 @@
           <button type="button" class="tab-btn" data-tab="research-notes">Research Notes</button>
           <button type="button" class="tab-btn" data-tab="keyboard">Keyboard</button>
           <button type="button" class="tab-btn" data-tab="reverse">Reverse</button>
+          <button type="button" class="tab-btn" data-tab="breakdown">Breakdown</button>
+          <button type="button" class="tab-btn" data-tab="samples">Samples</button>
           <button type="button" class="tab-btn" data-tab="symbols">Symbols</button>
           <button type="button" class="tab-btn" data-tab="encoder-testing">Pronunciation Testing</button>
           <button type="button" class="tab-btn" data-tab="pronunciation-validation">Validation</button>
@@ -94,6 +85,17 @@
       </nav>
     </div>
   </header>
+
+  <div id="learn-session-bar" class="learn-session-bar" hidden aria-label="Session progress">
+    <div class="learn-session-bar__inner">
+      <button type="button" id="learn-session-back" class="learn-session__back" aria-label="Back to Learn"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      <span class="learn-session__lesson"></span>
+      <div class="learn-session__progress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10">
+        <span class="learn-session__progress-fill"></span>
+      </div>
+      <span class="learn-session__question">1 / 10</span>
+    </div>
+  </div>
 
   <main class="main-content" id="main-content">
     <!-- Platform home -->
@@ -189,67 +191,152 @@
     </section>
 
     <!-- Learn home -->
-    <section class="content-page tab-panel" id="tab-learn-home" data-tab-panel="learn-home" hidden aria-labelledby="learn-home-title">
-      <section class="content-section content-section--intro" aria-labelledby="learn-home-title">
-        <header class="home-intro-header">
-          <h1 id="learn-home-title">Learn</h1>
-          <p class="home-subtitle">Learn to read, hear, and write Fonora Script.</p>
-        </header>
-        <div class="home-prose">
-          <p>
-            The learning tools are designed to answer a practical question:
-          </p>
-          <p class="home-hypothesis">
-            <strong>How quickly can someone learn an unfamiliar writing system if the symbols themselves explain how sounds are produced?</strong>
-          </p>
-          <p>
-            Practice reading symbols, hearing pronunciation, writing words from sound, and recognizing patterns. Each exercise helps evaluate whether Fonora is genuinely easier to learn than conventional writing systems.
-          </p>
+    <section class="content-page tab-panel learn-home" id="tab-learn-home" data-tab-panel="learn-home" hidden aria-labelledby="learn-home-title">
+      <header class="learn-home__hero">
+        <h1 id="learn-home-title" class="learn-home__title">Learn</h1>
+        <p class="learn-home__subtitle">Two paths, one system. Learn the Fonora script, the Fonoran language, or both. You don't need to learn the script to learn the language.</p>
+        <div class="learn-home__lang">
+          <label for="learn-language-global">I'm learning in</label>
+          <select id="learn-language-global" class="text-input">
+            <option value="en" selected>English</option>
+          </select>
+        </div>
+      </header>
+
+      <div id="learn-home-progress" class="learn-stats" aria-label="Your learning progress"></div>
+
+      <section class="learn-track learn-track--script" id="fonora-script" aria-labelledby="learn-script-heading">
+        <div class="learn-track__head">
+          <span class="learn-track__badge" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+          <div class="learn-track__heading">
+            <h2 id="learn-script-heading">Fonora Script</h2>
+            <p class="learn-track__desc">Read and write any language in Fonora symbols.</p>
+          </div>
+        </div>
+
+        <div class="learn-skill-list">
+          <article class="learn-skill-card learn-skill-card--script" data-skill="script-sounds">
+            <span class="learn-skill-card__medallion" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+            <div class="learn-skill-card__body">
+              <div class="learn-skill-card__head">
+                <h3 class="learn-skill-card__title">Symbol Sounds</h3>
+                <span class="learn-skill-card__tag">Start Here</span>
+              </div>
+              <p class="learn-skill-card__desc">See a Fonora symbol and work out the sound it represents.</p>
+              <div class="learn-skill-card__foot">
+                <div class="learn-skill-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="learn-skill-card__progress-fill"></span></div>
+                <span class="learn-skill-card__level">Level 1</span>
+              </div>
+            </div>
+            <button type="button" class="btn btn--primary learn-skill-card__cta" data-learn-tab="script-sounds"><span class="learn-skill-card__cta-label">Start</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </article>
+
+          <article class="learn-skill-card learn-skill-card--script" data-skill="script-writing">
+            <span class="learn-skill-card__medallion" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+            <div class="learn-skill-card__body">
+              <div class="learn-skill-card__head">
+                <h3 class="learn-skill-card__title">Writing</h3>
+                <span class="learn-skill-card__tag">Then</span>
+              </div>
+              <p class="learn-skill-card__desc">See a word in your language — type it in Fonora Script.</p>
+              <div class="learn-skill-card__foot">
+                <div class="learn-skill-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="learn-skill-card__progress-fill"></span></div>
+                <span class="learn-skill-card__level">Level 1</span>
+              </div>
+            </div>
+            <button type="button" class="btn learn-skill-card__cta" data-learn-tab="script-writing"><span class="learn-skill-card__cta-label">Start</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </article>
+
+          <article class="learn-skill-card learn-skill-card--script" data-skill="script-words">
+            <span class="learn-skill-card__medallion" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+            <div class="learn-skill-card__body">
+              <div class="learn-skill-card__head">
+                <h3 class="learn-skill-card__title">Read Words</h3>
+                <span class="learn-skill-card__tag">Then</span>
+              </div>
+              <p class="learn-skill-card__desc">Read Fonora Script words and type them back in your language.</p>
+              <div class="learn-skill-card__foot">
+                <div class="learn-skill-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="learn-skill-card__progress-fill"></span></div>
+                <span class="learn-skill-card__level">Level 1</span>
+              </div>
+            </div>
+            <button type="button" class="btn learn-skill-card__cta" data-learn-tab="script-words"><span class="learn-skill-card__cta-label">Start</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </article>
         </div>
       </section>
 
-      <section class="home-section home-section--layers content-section" aria-labelledby="learn-tools-heading">
-        <h2 id="learn-tools-heading">Learning Tools</h2>
-        <div class="home-layer-cards">
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Learn</p>
-            <h3>Learn the Sounds</h3>
-            <p>See a Fonora symbol, work out the sound it represents.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn btn--primary" data-learn-tab="reading">Learn the Sounds</button>
+      <section class="learn-track learn-track--language" id="fonoran-language" aria-labelledby="learn-fonoran-heading">
+        <div class="learn-track__head">
+          <span class="learn-track__badge" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          <div class="learn-track__heading">
+            <h2 id="learn-fonoran-heading">Fonoran Language</h2>
+            <p class="learn-track__desc">Speak and understand Fonoran. Roman spelling is enough to start.</p>
+          </div>
+        </div>
+
+        <div class="learn-skill-list">
+          <article class="learn-skill-card learn-skill-card--language" data-skill="fonoran-reading">
+            <span class="learn-skill-card__medallion" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+            <div class="learn-skill-card__body">
+              <div class="learn-skill-card__head">
+                <h3 class="learn-skill-card__title">Reading</h3>
+                <span class="learn-skill-card__tag">Start Here</span>
+              </div>
+              <p class="learn-skill-card__desc">Recognize Fonoran words and pick the meaning that matches.</p>
+              <div class="learn-skill-card__foot">
+                <div class="learn-skill-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="learn-skill-card__progress-fill"></span></div>
+                <span class="learn-skill-card__level">Level 1</span>
+              </div>
             </div>
+            <button type="button" class="btn btn--primary learn-skill-card__cta" data-learn-tab="fonoran-reading"><span class="learn-skill-card__cta-label">Start</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
           </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Pronunciation</p>
-            <h3>Breakdown</h3>
-            <p>See how spoken words break down into Fonora symbols, sound by sound.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-learn-tab="breakdown">Try Breakdown</button>
+
+          <article class="learn-skill-card learn-skill-card--language" data-skill="fonoran-writing">
+            <span class="learn-skill-card__medallion" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>
+            <div class="learn-skill-card__body">
+              <div class="learn-skill-card__head">
+                <h3 class="learn-skill-card__title">Writing</h3>
+                <span class="learn-skill-card__tag">Vocabulary</span>
+              </div>
+              <p class="learn-skill-card__desc">Type Fonoran spellings from a meaning prompt.</p>
+              <div class="learn-skill-card__foot">
+                <div class="learn-skill-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="learn-skill-card__progress-fill"></span></div>
+                <span class="learn-skill-card__level">Level 1</span>
+              </div>
             </div>
+            <button type="button" class="btn learn-skill-card__cta" data-learn-tab="fonoran-writing"><span class="learn-skill-card__cta-label">Start</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
           </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Demo</p>
-            <h3>Samples</h3>
-            <p>Hear Fonora Script read aloud — a demo of it working as a universal script.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-learn-tab="listening">Listen to Samples</button>
+
+          <article class="learn-skill-card learn-skill-card--language" data-skill="fonoran-hearing">
+            <span class="learn-skill-card__medallion" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg></span>
+            <div class="learn-skill-card__body">
+              <div class="learn-skill-card__head">
+                <h3 class="learn-skill-card__title">Hearing</h3>
+                <span class="learn-skill-card__tag">Listening</span>
+              </div>
+              <p class="learn-skill-card__desc">Listen to a Fonoran word and choose its meaning.</p>
+              <div class="learn-skill-card__foot">
+                <div class="learn-skill-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="learn-skill-card__progress-fill"></span></div>
+                <span class="learn-skill-card__level">Level 1</span>
+              </div>
             </div>
+            <button type="button" class="btn learn-skill-card__cta" data-learn-tab="fonoran-hearing"><span class="learn-skill-card__cta-label">Start</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
           </article>
-          <article class="home-layer-card home-layer-card--language">
-            <p class="home-layer-card__tag">Fonoran</p>
-            <h3>Puzzle Conversation</h3>
-            <p>Guess what a compound means from its roots — the core learnability experiment for Fonoran.</p>
-            <div class="home-layer-card__actions">
-              <a href="/language#puzzle" class="btn btn--primary">Play Puzzle Conversation</a>
+
+          <article class="learn-skill-card learn-skill-card--language" data-skill="fonoran-grammar">
+            <span class="learn-skill-card__medallion" aria-hidden="true"><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+            <div class="learn-skill-card__body">
+              <div class="learn-skill-card__head">
+                <h3 class="learn-skill-card__title">Grammar</h3>
+                <span class="learn-skill-card__tag">Stories</span>
+              </div>
+              <p class="learn-skill-card__desc">Translate short sentences once you know the words.</p>
+              <div class="learn-skill-card__foot">
+                <div class="learn-skill-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="learn-skill-card__progress-fill"></span></div>
+                <span class="learn-skill-card__level">Level 1</span>
+              </div>
             </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Practice</p>
-            <h3>Spelling Practice</h3>
-            <p>Type the romanized word in Fonora script and check your spelling.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-learn-tab="writing">Practice Spelling</button>
-            </div>
+            <button type="button" class="btn learn-skill-card__cta" data-learn-tab="fonoran-grammar"><span class="learn-skill-card__cta-label">Start</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
           </article>
         </div>
       </section>
@@ -316,6 +403,22 @@
             <p>Validate that Fonora preserves pronunciation through the full encode/decode pipeline.</p>
             <div class="home-layer-card__actions">
               <button type="button" class="btn" data-tab="pronunciation-validation">Open Validation</button>
+            </div>
+          </article>
+          <article class="home-layer-card">
+            <p class="home-layer-card__tag">Analysis</p>
+            <h3>Breakdown</h3>
+            <p>See how spoken words break down into Fonora symbols, sound by sound.</p>
+            <div class="home-layer-card__actions">
+              <button type="button" class="btn" data-tab="breakdown">Open Breakdown</button>
+            </div>
+          </article>
+          <article class="home-layer-card">
+            <p class="home-layer-card__tag">Demo</p>
+            <h3>Samples</h3>
+            <p>Hear Fonora Script read aloud across languages — a universal-script demo.</p>
+            <div class="home-layer-card__actions">
+              <button type="button" class="btn" data-tab="samples">Open Samples</button>
             </div>
           </article>
           <article class="home-layer-card">
@@ -592,18 +695,41 @@
         <p class="typing-practice__tab-hint">Press <kbd>Tab</kbd> for next word</p>
 
         <div id="keyboard-testing-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
-        <div id="keyboard-testing-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora script keyboard"></div>
+        <div id="keyboard-testing-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
       </div>
     </section>
 
-    <!-- Spelling Practice -->
-    <section class="panel tab-panel" id="tab-spelling-practice" data-tab-panel="spelling-practice" hidden>
-      <h2>Spelling Practice</h2>
-      <p class="section-desc">Type the roman word in Fonora script, then press <kbd>↵</kbd> check on the keyboard.</p>
+    <!-- Spelling Practice (Fonoran Writing — script mode) -->
+    <section class="panel tab-panel learn-exercise learn-exercise--fonoran-writing learn-exercise--language" id="tab-spelling-practice" data-tab-panel="spelling-practice" hidden>
+      <div id="fonoran-writing-mode" class="learn-exercise__mode-row" aria-label="Display mode">
+        <div class="learn-mode-group" role="radiogroup">
+          <label class="learn-mode-pill"><input type="radio" name="fonoran-writing-display-mode" value="roman" checked><span>Roman</span></label>
+          <label class="learn-mode-pill"><input type="radio" name="fonoran-writing-display-mode" value="script"><span>Fonora Script</span></label>
+        </div>
+      </div>
 
-      <p id="spelling-practice-status" class="typing-practice__status section-desc" hidden></p>
+      <div class="learn-session-summary" hidden></div>
 
-      <div class="typing-practice">
+      <p id="fonoran-writing-status" class="typing-practice__status section-desc learn-exercise__status" hidden></p>
+
+      <div id="fonoran-writing-roman-panel" class="learn-exercise__card learn-exercise__card--prompt">
+        <div class="learn-exercise__verdict-slot">
+          <span id="fonoran-writing-roman-verdict" class="typing-practice__verdict-badge learn-exercise__verdict" hidden aria-live="polite"></span>
+        </div>
+        <div class="quiz-prompt-label">Meaning</div>
+        <p class="typing-practice__meaning learn-exercise__prompt-display" id="fonoran-writing-roman-meaning">—</p>
+        <label for="fonoran-writing-roman-input">Type the Fonoran Word (Roman Spelling)</label>
+        <input type="text" id="fonoran-writing-roman-input" class="learn-exercise__input text-input text-input--full" autocomplete="off" spellcheck="false">
+        <div class="button-row learn-exercise__actions">
+          <button type="button" id="fonoran-writing-roman-check" class="btn btn--primary">Check</button>
+          <button type="button" id="fonoran-writing-roman-next" class="btn learn-exercise__continue" hidden>Continue</button>
+        </div>
+        <div id="fonoran-writing-roman-feedback" class="learn-exercise__feedback quiz-feedback"></div>
+      </div>
+
+      <div id="fonoran-writing-script-panel" class="learn-exercise__card typing-practice" hidden>
+        <p id="spelling-practice-status" class="typing-practice__status section-desc" hidden></p>
+
         <div class="typing-practice__prompt">
           <div class="typing-practice__word-col">
             <div class="typing-practice__verdict-slot">
@@ -617,14 +743,48 @@
             </div>
           </div>
           <p class="typing-practice__meaning" id="spelling-prompt-meaning"></p>
+          <button type="button" id="spelling-practice-continue" class="learn-exercise__next" hidden aria-label="Next word"><span>Tab</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         </div>
 
-        <textarea id="spelling-practice-input" class="symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
+        <textarea id="spelling-practice-input" class="learn-exercise__input symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
 
-        <p class="typing-practice__tab-hint">Press <kbd>Tab</kbd> for next word</p>
+        <p class="typing-practice__tab-hint">Press <kbd>Tab</kbd> for next word · <kbd>↵</kbd> check</p>
 
         <div id="spelling-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
-        <div id="spelling-practice-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora script keyboard"></div>
+        <div id="spelling-practice-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
+      </div>
+    </section>
+
+    <!-- Script Writing -->
+    <section class="panel tab-panel learn-exercise learn-exercise--writing learn-exercise--script" id="tab-script-writing" data-tab-panel="script-writing" hidden>
+      <p id="script-writing-language-note" class="section-desc learn-language-note" hidden></p>
+      <p id="script-writing-status" class="typing-practice__status section-desc" hidden></p>
+
+      <div class="learn-session-summary" hidden></div>
+
+      <div class="learn-exercise__card typing-practice">
+        <div class="typing-practice__prompt">
+          <div class="typing-practice__word-col">
+            <div class="typing-practice__verdict-slot">
+              <span id="script-writing-verdict" class="typing-practice__verdict-badge" aria-live="polite"></span>
+            </div>
+            <p class="typing-practice__word learn-exercise__prompt-word" id="script-writing-prompt-word">—</p>
+            <div id="script-writing-answer-compare" class="typing-practice__compare" aria-hidden="true">
+              <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--yours symbol-text" id="script-writing-user-glyphs"></span>
+              <span class="typing-practice__compare-arrow" aria-hidden="true">→</span>
+              <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--correct symbol-text" id="script-writing-expected-glyphs"></span>
+            </div>
+          </div>
+          <button type="button" id="script-writing-continue" class="learn-exercise__next learn-exercise__next--neutral learn-exercise__next--prompt-action" aria-label="Check answer"><span class="learn-exercise__next-label">Check</span><kbd class="learn-exercise__next-kbd">↵</kbd></button>
+        </div>
+
+        <textarea id="script-writing-input" class="learn-exercise__input symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
+
+        <p class="typing-practice__tab-hint"><kbd>↵</kbd> Check · <kbd>Tab</kbd> Next · vowel keys show sound options</p>
+
+        <div id="script-writing-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
+        <div id="script-writing-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
+        <div id="script-writing-breakdown-feedback" class="breakdown-feedback-panel" hidden aria-live="polite"></div>
       </div>
     </section>
 
@@ -1028,53 +1188,179 @@
       </div>
     </section>
 
-    <!-- Quiz: surfaced via Learn as "Learn the Sounds" (data-tab="quiz" panel reused as-is) -->
-    <section class="panel tab-panel" id="tab-quiz" data-tab-panel="quiz" hidden>
-      <h2>Learn the Sounds</h2>
-      <p id="quiz-stats" class="quiz-stats">Attempts: 0 · Correct: 0 · Accuracy: 0%</p>
-
-      <div class="quiz-type-row">
-        <label><input type="radio" name="quiz-type" value="decode" checked> Decode quiz</label>
-        <label><input type="radio" name="quiz-type" value="construct"> Construct quiz</label>
-      </div>
-
-      <div class="quiz-layout">
-        <div class="quiz-main">
-          <div class="quiz-area">
-            <div class="quiz-prompt-label">Prompt</div>
-            <div id="quiz-prompt" class="quiz-prompt"></div>
-
-            <div id="quiz-decode-answer">
-              <label for="quiz-answer-decode">Your answer (sound)</label>
-              <input type="text" id="quiz-answer-decode" class="text-input">
-            </div>
-
-            <div id="quiz-construct-answer" hidden>
-              <label for="quiz-answer-construct">Your answer (symbols)</label>
-              <textarea id="quiz-answer-construct" class="text-input text-input--full symbol-text symbol-input quiz-symbol-input" rows="2" placeholder="Type or insert symbols…"></textarea>
-              <div id="quiz-keyboard" class="symbol-buttons symbol-buttons--compact"></div>
-              <div class="button-row">
-                <button type="button" id="quiz-normalize" class="btn">Normalize spacing</button>
-                <button type="button" id="quiz-backspace" class="btn">Backspace</button>
-              </div>
-            </div>
-
-            <div class="button-row">
-              <button type="button" id="quiz-check" class="btn btn--primary">Check</button>
-              <button type="button" id="quiz-next" class="btn">Next question</button>
-            </div>
-            <div id="quiz-feedback" class="quiz-feedback"></div>
-          </div>
+    <!-- Script Sounds (symbol quiz) -->
+    <section class="panel tab-panel learn-exercise learn-exercise--sounds learn-exercise--script" id="tab-quiz" data-tab-panel="quiz" hidden>
+      <div id="script-sounds-mode" class="learn-exercise__mode-row" aria-label="Mode">
+        <div class="learn-mode-group" role="radiogroup">
+          <label class="learn-mode-pill"><input type="radio" name="script-sounds-mode" value="decode" checked><span>Decode</span></label>
+          <label class="learn-mode-pill"><input type="radio" name="script-sounds-mode" value="construct"><span>Construct</span></label>
         </div>
-
-        <aside class="quiz-hints-panel">
-          <label class="quiz-hints-toggle">
-            <input type="checkbox" id="quiz-show-hints" checked>
-            Show hints
-          </label>
-          <div id="quiz-hints" class="quiz-hints"></div>
-        </aside>
       </div>
+
+      <div class="learn-session-summary" hidden></div>
+
+      <div class="learn-exercise__card">
+        <div class="quiz-layout">
+          <div class="quiz-main">
+            <div class="quiz-area">
+              <div class="learn-exercise__verdict-slot">
+                <span id="quiz-verdict" class="typing-practice__verdict-badge learn-exercise__verdict" hidden aria-live="polite"></span>
+              </div>
+              <div class="quiz-prompt-label">Prompt</div>
+              <div id="quiz-prompt" class="quiz-prompt learn-exercise__prompt-display"></div>
+
+              <div id="quiz-decode-answer">
+                <label for="quiz-answer-decode">Your Answer (Sound)</label>
+                <input type="text" id="quiz-answer-decode" class="learn-exercise__input text-input text-input--full" autocomplete="off" spellcheck="false">
+              </div>
+
+              <div id="quiz-construct-answer" hidden>
+                <label for="quiz-answer-construct">Your Answer (Symbols)</label>
+                <textarea id="quiz-answer-construct" class="learn-exercise__input text-input text-input--full symbol-text symbol-input" rows="1" placeholder="Type or insert symbols…"></textarea>
+                <div id="quiz-keyboard" class="symbol-buttons symbol-buttons--compact"></div>
+              </div>
+
+              <div class="button-row learn-exercise__actions">
+                <button type="button" id="quiz-check" class="btn btn--primary">Check</button>
+                <button type="button" id="quiz-next" class="btn learn-exercise__continue" hidden>Continue</button>
+              </div>
+              <div id="quiz-feedback" class="learn-exercise__feedback quiz-feedback"></div>
+              <div id="quiz-symbol-breakdown" class="breakdown-feedback-panel" hidden aria-live="polite"></div>
+            </div>
+          </div>
+
+          <aside class="quiz-hints-panel learn-exercise__hints">
+            <label class="quiz-hints-toggle">
+              <input type="checkbox" id="quiz-show-hints" checked>
+              Show hints
+            </label>
+            <div id="quiz-hints" class="quiz-hints"></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- Script Words -->
+    <section class="panel tab-panel learn-exercise learn-exercise--words learn-exercise--script" id="tab-script-reading-words" data-tab-panel="script-reading-words" hidden>
+      <p id="script-reading-language-note" class="section-desc learn-language-note" hidden></p>
+      <p id="script-reading-word-status" class="section-desc learn-exercise__status" hidden></p>
+
+      <div class="learn-session-summary" hidden></div>
+
+      <div class="learn-exercise__card learn-exercise__card--prompt">
+        <div class="learn-exercise__verdict-slot">
+          <span id="script-reading-word-verdict" class="typing-practice__verdict-badge learn-exercise__verdict" hidden aria-live="polite"></span>
+        </div>
+        <div class="quiz-prompt-label">Fonora Script Word</div>
+        <div id="script-reading-word-prompt" class="quiz-prompt learn-exercise__prompt-display"></div>
+        <label id="script-reading-word-label" for="script-reading-word-answer">Your Answer</label>
+        <input type="text" id="script-reading-word-answer" class="learn-exercise__input text-input text-input--full" autocomplete="off" spellcheck="false">
+        <div class="button-row learn-exercise__actions">
+          <button type="button" id="script-reading-word-check" class="btn btn--primary">Check</button>
+          <button type="button" id="script-reading-word-next" class="btn learn-exercise__continue" hidden>Continue</button>
+        </div>
+        <div id="script-reading-word-feedback" class="learn-exercise__feedback quiz-feedback"></div>
+        <div id="script-reading-word-breakdown" class="breakdown-feedback-panel" hidden aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- Fonoran Reading -->
+    <section class="panel tab-panel learn-exercise learn-exercise--reading learn-exercise--language" id="tab-fonoran-reading" data-tab-panel="fonoran-reading" hidden>
+      <div id="fonoran-reading-mode" class="learn-exercise__mode-row" aria-label="Display mode">
+        <div class="learn-mode-group" role="radiogroup">
+          <label class="learn-mode-pill"><input type="radio" name="fonoran-reading-display-mode" value="roman" checked><span>Roman</span></label>
+          <label class="learn-mode-pill"><input type="radio" name="fonoran-reading-display-mode" value="script"><span>Fonora Script</span></label>
+        </div>
+      </div>
+      <p id="fonoran-reading-status" class="section-desc learn-exercise__status" hidden></p>
+
+      <div class="learn-session-summary" hidden></div>
+
+      <div class="learn-exercise__card">
+        <div class="quiz-prompt-label">Word</div>
+        <div id="fonoran-reading-prompt" class="quiz-prompt fonoran-reading-prompt learn-exercise__prompt-display"></div>
+        <div id="fonoran-reading-choices" class="fonoran-mcq-grid learn-choice-grid"></div>
+        <div class="button-row learn-exercise__actions">
+          <button type="button" id="fonoran-reading-next" class="btn learn-exercise__continue" hidden>Continue</button>
+        </div>
+        <div id="fonoran-reading-feedback" class="learn-exercise__feedback quiz-feedback"></div>
+      </div>
+    </section>
+
+    <!-- Fonoran Hearing -->
+    <section class="panel tab-panel learn-exercise learn-exercise--hearing learn-exercise--language" id="tab-fonoran-hearing" data-tab-panel="fonoran-hearing" hidden>
+      <p id="fonoran-hearing-status" class="section-desc learn-exercise__status" hidden></p>
+
+      <div class="learn-session-summary" hidden></div>
+
+      <div class="learn-exercise__card">
+        <div class="learn-play-area">
+          <div class="learn-play-group" role="group" aria-label="Play word">
+            <button type="button" id="fonoran-hearing-play" class="learn-play-btn" aria-label="Play word">
+              <svg class="learn-play-btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button type="button" id="fonoran-hearing-play-slow" class="learn-play-btn learn-play-btn--slow" aria-label="Play slowly, syllable by syllable">
+              <svg class="learn-play-btn__icon learn-play-btn__icon--turtle" viewBox="0 0 78 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 38c3-18 17-29 34-25 7 1.6 12 5.5 15 10"/>
+                <path d="M6 38c15 1.5 34-1 47-15"/>
+                <path d="M54 23c2.8-7.8 8.5-16 16-13.2 4.8 1.8 6.4 7 3.5 11.4C69 28 61.5 35.5 53 39"/>
+                <path d="M16 39l-4 14h13l1-10"/>
+                <path d="M43 39l1 14h13l-4-14"/>
+                <path d="M5.5 38c-3.5-.2-4.5-3.6-1.3-5.4"/>
+                <circle class="learn-icon__dot" cx="65.2" cy="16.5" r="2.4"/>
+              </svg>
+            </button>
+          </div>
+          <p id="fonoran-hearing-play-status" class="learn-play-hint">Tap to listen</p>
+        </div>
+        <div id="fonoran-hearing-choices" class="fonoran-mcq-grid learn-choice-grid"></div>
+        <div class="button-row learn-exercise__actions">
+          <button type="button" id="fonoran-hearing-next" class="btn learn-exercise__continue" hidden>Continue</button>
+        </div>
+        <div id="fonoran-hearing-feedback" class="learn-exercise__feedback quiz-feedback"></div>
+      </div>
+    </section>
+
+    <!-- Fonoran Grammar -->
+    <section class="panel tab-panel learn-exercise learn-exercise--grammar learn-exercise--language" id="tab-fonoran-grammar" data-tab-panel="fonoran-grammar" hidden>
+      <div class="learn-exercise__mode-row" aria-label="Direction">
+        <div class="learn-mode-group" role="radiogroup">
+          <label class="learn-mode-pill"><input type="radio" name="fonoran-grammar-direction" value="to-fonoran" checked><span>To Fonoran</span></label>
+          <label class="learn-mode-pill"><input type="radio" name="fonoran-grammar-direction" value="to-lang"><span>To my language</span></label>
+        </div>
+      </div>
+      <p id="fonoran-grammar-status" class="section-desc learn-exercise__status" hidden></p>
+
+      <div class="learn-session-summary" hidden></div>
+
+      <div class="learn-exercise__card learn-exercise__card--prompt">
+        <div class="learn-exercise__verdict-slot">
+          <span id="fonoran-grammar-verdict" class="typing-practice__verdict-badge learn-exercise__verdict" hidden aria-live="polite"></span>
+        </div>
+        <div class="quiz-prompt-label">Prompt</div>
+        <p id="fonoran-grammar-prompt" class="quiz-prompt learn-exercise__prompt-display"></p>
+        <label id="fonoran-grammar-answer-label" for="fonoran-grammar-answer">Your Answer</label>
+        <input type="text" id="fonoran-grammar-answer" class="learn-exercise__input text-input text-input--full" autocomplete="off" spellcheck="false">
+        <div class="button-row learn-exercise__actions">
+          <button type="button" id="fonoran-grammar-check" class="btn btn--primary">Check</button>
+          <button type="button" id="fonoran-grammar-next" class="btn learn-exercise__continue" hidden>Continue</button>
+        </div>
+        <div id="fonoran-grammar-feedback" class="learn-exercise__feedback quiz-feedback"></div>
+      </div>
+    </section>
+
+    <!-- Fonoran Speaking (future) -->
+    <section class="panel tab-panel learn-exercise learn-exercise--speaking" id="tab-fonoran-speaking" data-tab-panel="fonoran-speaking" hidden>
+      <header class="learn-exercise__header">
+        <p class="learn-exercise__track">Fonoran Language</p>
+        <h2 class="learn-exercise__title">Speaking</h2>
+        <p class="learn-exercise__desc section-desc">Practice pronunciation with your microphone — coming in a future release.</p>
+      </header>
+
+      <article class="learn-exercise__card content-card">
+        <p class="section-desc">Speaking practice will require microphone input and phonetic matching. Fonoran has no dedicated speech-recognition model yet — this exercise is planned for a future release.</p>
+        <p>For now, use <button type="button" class="btn" data-learn-tab="fonoran-hearing">Hearing</button> to train your ear, and practice aloud while reading roman spellings.</p>
+      </article>
     </section>
   </main>
 

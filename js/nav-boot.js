@@ -35,6 +35,8 @@
     'pronunciation-validation',
     'symbols',
     'research-notes',
+    'breakdown',
+    'samples',
   ]);
 
   const FONORAN_PAGES = new Set([
@@ -86,12 +88,20 @@
   }
 
   if (path === '/learn' || path.startsWith('/learn/')) {
+    const LEARN_TO_TOOLS = learnRouting.LEARN_TO_TOOLS_REDIRECT;
+    if (hash && LEARN_TO_TOOLS[hash]) {
+      window.location.replace(`/tools#${LEARN_TO_TOOLS[hash]}${window.location.search}`);
+      return;
+    }
     let tab = LEARN_DEFAULT_TAB;
     if (hash && hash === LEARN_DEFAULT_TAB) tab = LEARN_DEFAULT_TAB;
     else if (hash && LEARN_TABS.has(hash)) tab = hash;
-    else if (hash && LEGACY_LEARN_HASH[hash]) tab = LEGACY_LEARN_HASH[hash];
+    else if (hash && LEGACY_LEARN_HASH[hash] && !LEARN_TO_TOOLS[hash]) tab = LEGACY_LEARN_HASH[hash];
     html.setAttribute('data-fonora-nav', 'learn');
     html.setAttribute('data-fonora-tab', tab);
+    if (learnRouting.learnTrackForTab) {
+      html.setAttribute('data-learn-track', learnRouting.learnTrackForTab(tab));
+    }
     return;
   }
 
