@@ -102,8 +102,12 @@
   --tl-phase-1-banner-bg: linear-gradient(135deg, #f6f9ff 0%, #faf8f5 100%);
   --tl-phase-2-banner-bg: linear-gradient(135deg, #f2f9f5 0%, #faf8f5 100%);
   --tl-phase-3-banner-bg: linear-gradient(135deg, #fff8ef 0%, #faf8f5 100%);
+  --tl-phase-4-banner-bg: linear-gradient(135deg, #f5f2fa 0%, #faf8f5 100%);
+  --tl-phase-5-banner-bg: linear-gradient(135deg, #f2f7f9 0%, #faf8f5 100%);
   --tl-phase-1-eyebrow: #2a4d8f;
   --tl-phase-3-eyebrow: #9a5a14;
+  --tl-phase-4-eyebrow: #5c4585;
+  --tl-phase-5-eyebrow: #2f5f6d;
   --tl-step-rail-gradient: linear-gradient(180deg, #b7d4c4, #e0dad2);
   --tl-step-demotion-bg: #fff8ef;
   --tl-step-demotion-text: #6b6560;
@@ -253,8 +257,12 @@
     --tl-phase-1-banner-bg: linear-gradient(135deg, #1a2840 0%, #1a1a1a 100%);
     --tl-phase-2-banner-bg: linear-gradient(135deg, #142820 0%, #1a1a1a 100%);
     --tl-phase-3-banner-bg: linear-gradient(135deg, #3d2a14 0%, #1a1a1a 100%);
+    --tl-phase-4-banner-bg: linear-gradient(135deg, #251f35 0%, #1a1a1a 100%);
+    --tl-phase-5-banner-bg: linear-gradient(135deg, #142830 0%, #1a1a1a 100%);
     --tl-phase-1-eyebrow: #9bb8e8;
     --tl-phase-3-eyebrow: #f2c78a;
+    --tl-phase-4-eyebrow: #c4b0e8;
+    --tl-phase-5-eyebrow: #8ec4d4;
     --tl-step-rail-gradient: linear-gradient(180deg, #3d5248, #444);
     --tl-step-demotion-bg: #3d2a14;
     --tl-step-demotion-text: #d4d4d4;
@@ -366,8 +374,12 @@
   --tl-phase-1-banner-bg: linear-gradient(135deg, #1a2840 0%, #1a1a1a 100%);
   --tl-phase-2-banner-bg: linear-gradient(135deg, #142820 0%, #1a1a1a 100%);
   --tl-phase-3-banner-bg: linear-gradient(135deg, #3d2a14 0%, #1a1a1a 100%);
+  --tl-phase-4-banner-bg: linear-gradient(135deg, #251f35 0%, #1a1a1a 100%);
+  --tl-phase-5-banner-bg: linear-gradient(135deg, #142830 0%, #1a1a1a 100%);
   --tl-phase-1-eyebrow: #9bb8e8;
   --tl-phase-3-eyebrow: #f2c78a;
+  --tl-phase-4-eyebrow: #c4b0e8;
+  --tl-phase-5-eyebrow: #8ec4d4;
   --tl-step-rail-gradient: linear-gradient(180deg, #3d5248, #444);
   --tl-step-demotion-bg: #3d2a14;
   --tl-step-demotion-text: #d4d4d4;
@@ -7754,6 +7766,16 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   background: var(--tl-phase-3-banner-bg);
 }
 
+.tl-phase--4 .tl-phase__banner {
+  border-top: 3px solid #6b5294;
+  background: var(--tl-phase-4-banner-bg);
+}
+
+.tl-phase--5 .tl-phase__banner {
+  border-top: 3px solid #3d6b7a;
+  background: var(--tl-phase-5-banner-bg);
+}
+
 .tl-phase__eyebrow {
   margin: 0 0 0.25rem;
   font-size: 0.72rem;
@@ -7765,6 +7787,8 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 
 .tl-phase--1 .tl-phase__eyebrow { color: var(--tl-phase-1-eyebrow); }
 .tl-phase--3 .tl-phase__eyebrow { color: var(--tl-phase-3-eyebrow); }
+.tl-phase--4 .tl-phase__eyebrow { color: var(--tl-phase-4-eyebrow); }
+.tl-phase--5 .tl-phase__eyebrow { color: var(--tl-phase-5-eyebrow); }
 
 .tl-phase__title {
   margin: 0 0 0.45rem;
