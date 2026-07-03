@@ -1,10 +1,16 @@
+---
+status: Foundational
+date: 2026-07-03
+phase: phase-1
+---
+
 # Mouth-intuitive Vowel Glyphs (Iteration)
 
 ## Research Question
 
-[RN-04](/research/notes/vowel-grammar-v3) rebuilt English vowels as fixed symbol grammar (`⚬X` / `⚬XᵔY`) and anchored the second symbol on the same manner and place axes used for consonants. That solved structural problems — diphthong homographs like *now* / *go*, retirement of `⚬⚬`, load-time shape validation — but the **assignment** of which glyph `X` should be for each vowel key remained partly historical. Simple vowels mixed manner tokens (`e` → voice `⌇`) with place tokens (`o` → throat `⊃`), while long monophthongs reused manner classes (`ae` → friction `⌀`, `oh` → nasal `⏌`). Learners on the Sound Grid saw tier headers (Simple / Long / Diphthong) that did not match what the glyphs were doing.
+[RN-04](/research/notes/vowels-as-grammar-the-v3-rebuild) rebuilt English vowels as fixed symbol grammar (`⚬X` / `⚬XᵔY`) and anchored the second symbol on the same manner and place axes used for consonants. That solved structural problems — diphthong homographs like *now* / *go*, retirement of `⚬⚬`, load-time shape validation — but the **assignment** of which glyph `X` should be for each vowel key remained partly historical. Simple vowels mixed manner tokens (`e` → voice `⌇`) with place tokens (`o` → throat `⊃`), while long monophthongs reused manner classes (`ae` → friction `⌀`, `oh` → nasal `⏌`). Learners on the Sound Grid saw tier headers (Simple / Long / Diphthong) that did not match what the glyphs were doing.
 
-[RN-06](/research/notes/collision-audit) showed the script could be audited systematically; it did not resolve whether vowel glyphs should **feel** like mouth position when read left-to-right. A separate swap (`a` ↔ `o` place glyphs so LOT-family vowels looked more “open”) made the inconsistency sharper: back vowels were place-anchored, but DRESS and KIT were not aligned on a back → front place scale.
+[RN-06](/research/notes/hunting-ambiguity-in-the-script) showed the script could be audited systematically; it did not resolve whether vowel glyphs should **feel** like mouth position when read left-to-right. A separate swap (`a` ↔ `o` place glyphs so LOT-family vowels looked more “open”) made the inconsistency sharper: back vowels were place-anchored, but DRESS and KIT were not aligned on a back → front place scale.
 
 The question this note addresses:
 
@@ -15,7 +21,7 @@ The question this note addresses:
 1. **Two visual tiers, one grammar:** Simple keys (`a`, `e`, `i`, `o`, `u`) use place glyphs only; long keys (`ae`, `ee`, `oh`) use manner glyphs only; diphthongs compose from simple-vowel place recipes (`ay` = DRESS nucleus + glide + CUP offglide).
 2. **Keys and IPA stay frozen:** Only composed **symbols** change at load time via `applyPrimarySymbols()` — encoder identifiers (`e`, `ee`, `ay`, …), IPA tables, and [`js/ipa-normalize.js`](../js/ipa-normalize.js) routing are untouched.
 3. **Fonoran language layer is unaffected:** The interpretive translator, dictionary roots, and compound spellings (`gi`, `ba`, `tel`) operate on **roman** syllables, not Fonora script strings; golden regression should not drift.
-4. **Known collision class persists:** Vowel+glide vs diphthong homographs ([RN-06](/research/notes/collision-audit)) remain documented design trade-offs; changing `ay`'s nucleus updates which sequence equals which diphthong but does not eliminate the class.
+4. **Known collision class persists:** Vowel+glide vs diphthong homographs ([RN-06](/research/notes/hunting-ambiguity-in-the-script)) remain documented design trade-offs; changing `ay`'s nucleus updates which sequence equals which diphthong but does not eliminate the class.
 
 ## Approach
 
@@ -109,6 +115,6 @@ No formal learner study was run for this change; evaluation is engineering-drive
 
 **Source:** [`js/symbol-compose.js`](../js/symbol-compose.js), [`js/vowel-grammar.js`](../js/vowel-grammar.js), [`js/vowel-display.js`](../js/vowel-display.js), [`js/ipa-normalize.js`](../js/ipa-normalize.js)
 
-**Prior notes:** [RN-04 · Vowels as grammar](/research/notes/vowel-grammar-v3), [RN-06 · Collision audit](/research/notes/collision-audit), [RN-08 · DDA experiment](/research/notes/meaning-from-coordinates-the-gen-3-dda-experiment)
+**Prior notes:** [RN-04 · Vowels as grammar](/research/notes/vowels-as-grammar-the-v3-rebuild), [RN-06 · Collision audit](/research/notes/hunting-ambiguity-in-the-script), [RN-08 · DDA experiment](/research/notes/meaning-from-coordinates-the-gen-3-dda-experiment)
 
 **Future research notes:** Learner playtest on vowel tier readability; puzzle glyph migration policy

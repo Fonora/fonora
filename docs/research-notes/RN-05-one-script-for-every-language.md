@@ -1,10 +1,16 @@
+---
+status: Active
+date: 2026-06-23
+phase: phase-1
+---
+
 # One script for every language
 
 ## Research Question
 
-[RN-04](/research/notes/vowel-grammar-v3) rebuilt English vowels as a fixed symbol grammar and added `ENGLISH_IPA_VOWEL_NORMALIZATION` so the encoder could collapse KIT/FLEECE, STRUT/schwa/NURSE, and LOT/THOUGHT variants without `?` fallbacks. That overlay was written for English stress patterns and documented as engineering, not linguistic truth, but it was merged unconditionally into every call to `normalizeIpa()`.
+[RN-04](/research/notes/vowels-as-grammar-the-v3-rebuild) rebuilt English vowels as a fixed symbol grammar and added `ENGLISH_IPA_VOWEL_NORMALIZATION` so the encoder could collapse KIT/FLEECE, STRUT/schwa/NURSE, and LOT/THOUGHT variants without `?` fallbacks. That overlay was written for English stress patterns and documented as engineering, not linguistic truth, but it was merged unconditionally into every call to `normalizeIpa()`.
 
-RN-04 closed by asking whether those English-specific vowel rules would survive contact with languages whose inventories English never stress-tested. The articulation grid itself is language-agnostic: place and manner compose the same way whether the word is English, Spanish, or Arabic. [RN-02](/research/notes/ipa-pipeline) had already wired a `lang` parameter through eSpeak voice selection and the IPA pipeline. The practical question this note addresses is the one RN-04 deferred:
+RN-04 closed by asking whether those English-specific vowel rules would survive contact with languages whose inventories English never stress-tested. The articulation grid itself is language-agnostic: place and manner compose the same way whether the word is English, Spanish, or Arabic. [RN-02](/research/notes/teaching-the-machine-to-hear) had already wired a `lang` parameter through eSpeak voice selection and the IPA pipeline. The practical question this note addresses is the one RN-04 deferred:
 
 **Could a single IPA pipeline: shared consonant map, shared vowel inventory from markdown, parameterized by language, encode many languages without a bespoke ruleset for each?**
 
@@ -64,7 +70,7 @@ There was no formal user study or native-speaker panel. Evaluation was engineeri
 
 **Samples as informal QA.** Rendering UDHR Article 1 in seven languages exposed unmapped IPA tokens (`?` fallbacks), CJK clause-boundary artifacts, and RTL layout for Arabic, visible on the page rather than hidden in logs. Non-English output was labeled experimental precisely because no systematic readability audit existed yet.
 
-**What was not evaluated.** No per-language vowel accuracy study (French nasal vowels, German vowel length, Arabic emphatics). No comparison of eSpeak IPA quality across scripts. No measurement of how often the global supplemental consonant map (e.g. American flap `ɾ` → `t`) distorts non-English output. The collision audit ([RN-06](/research/notes/collision-audit)) ran in parallel during the v3 rebuild but was not extended per language in this experiment.
+**What was not evaluated.** No per-language vowel accuracy study (French nasal vowels, German vowel length, Arabic emphatics). No comparison of eSpeak IPA quality across scripts. No measurement of how often the global supplemental consonant map (e.g. American flap `ɾ` → `t`) distorts non-English output. The collision audit ([RN-06](/research/notes/hunting-ambiguity-in-the-script)) ran in parallel during the v3 rebuild but was not extended per language in this experiment.
 
 ## Findings
 

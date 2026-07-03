@@ -1,8 +1,14 @@
+---
+status: Superseded
+date: 2026-06-21
+phase: phase-1
+---
+
 # How few vowels can English tolerate?
 
 ## Research Question
 
-[RN-02](/research/notes/ipa-pipeline) answered how typed text reaches the articulation grid: eSpeak NG emits IPA, normalization maps tokens to phoneme keys, and the encoder composes symbols. That pipeline worked for consonants almost immediately. For vowels it did the opposite of hiding problems; it made them unavoidable. Once spelling was bypassed, every place the inventory collapsed two Wells lexical sets into one phoneme key showed up as a real-word homograph.
+[RN-02](/research/notes/teaching-the-machine-to-hear) answered how typed text reaches the articulation grid: eSpeak NG emits IPA, normalization maps tokens to phoneme keys, and the encoder composes symbols. That pipeline worked for consonants almost immediately. For vowels it did the opposite of hiding problems; it made them unavoidable. Once spelling was bypassed, every place the inventory collapsed two Wells lexical sets into one phoneme key showed up as a real-word homograph.
 
 RN-01 had already flagged vowels as provisional and bound to a two-symbol length constraint. RN-02 confirmed that English eSpeak output carries far more vowel qualities than early inventories had distinct slots for. The question this note addresses is the one RN-02 left open:
 

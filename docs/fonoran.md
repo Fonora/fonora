@@ -1,6 +1,6 @@
 # Fonoran language guide
 
-> **Read the research.** How this build pipeline was designed is told in the research notebook: [RN-13 · Concepts are canonical, sounds are editorial proposals](/research/notes/editorial-pipeline).
+> **Read the research.** How this build pipeline was designed is told in the research notebook: [RN-13 · Concepts are canonical, sounds are editorial proposals](/research/notes/the-campfire-test-communication-over-correctness).
 
 > **Start here** for the experimental Fonoran language and its builder at [`/language`](/language). To
 > practice reading the script Fonoran is written in — Learn the Sounds, Breakdown, Samples — see

@@ -1,14 +1,20 @@
+---
+status: Active
+date: 2026-06-29
+phase: phase-3
+---
+
 # Grammar as particles, not words
 
 ## Research Question
 
-[RN-13](/research/notes/editorial-pipeline) closed Jun 28 with approved spellings for every root candidate and a working editorial loop, concepts in, phonetic proposals out, humans as the gate. Its explicit follow-up was grammatical, not lexical:
+[RN-13](/research/notes/the-campfire-test-communication-over-correctness) closed Jun 28 with approved spellings for every root candidate and a working editorial loop, concepts in, phonetic proposals out, humans as the gate. Its explicit follow-up was grammatical, not lexical:
 
 **With roots flowing cleanly, which relationships belong in the sentence skeleton, and which belong in the open-ended lexicon?**
 
-That boundary had already failed once. [RN-10](/research/notes/huffman-roots) assigned Huffman syllables to English-ranked lemmas and produced `do` for *because*, while *with* and *without* competed for root slots. [RN-11](/research/notes/semantic-foundation) responded by demoting **cause** and **effect** from the primitive inventory and proposing a separate closed-class particle list, 32 roles in the v1.2 JSON, phonetic forms reserved but not finalized. Commit `d31ae25` (Jun 28) reserved tense and polarity placeholders in the root generator so particles would not collide with lexical assignment, but the inventory was still a proposal on paper.
+That boundary had already failed once. [RN-10](/research/notes/optimal-sounds-wrong-premise) assigned Huffman syllables to English-ranked lemmas and produced `do` for *because*, while *with* and *without* competed for root slots. [RN-11](/research/notes/the-irreducible-dimensions-of-meaning) responded by demoting **cause** and **effect** from the primitive inventory and proposing a separate closed-class particle list, 32 roles in the v1.2 JSON, phonetic forms reserved but not finalized. Commit `d31ae25` (Jun 28) reserved tense and polarity placeholders in the root generator so particles would not collide with lexical assignment, but the inventory was still a proposal on paper.
 
-By the same evening, [RN-15](/research/notes/interpretive-translator) had a three-layer English compiler: frame parser, resolution cascade, surface builder. It could map content words to approved concepts and surface honest red gaps. Running real sentences against that compiler made the particle question operational rather than philosophical. English treats *not*, *when*, *only*, and *if* as small words that sit beside content vocabulary; Fonoran had to decide which of those compile to invariant grammatical markers, which resolve to lexical concepts like **inside** or **here**, and which are handled structurally without any emitted form at all.
+By the same evening, [RN-15](/research/notes/concepts-are-canonical-sounds-are-editorial-proposals) had a three-layer English compiler: frame parser, resolution cascade, surface builder. It could map content words to approved concepts and surface honest red gaps. Running real sentences against that compiler made the particle question operational rather than philosophical. English treats *not*, *when*, *only*, and *if* as small words that sit beside content vocabulary; Fonoran had to decide which of those compile to invariant grammatical markers, which resolve to lexical concepts like **inside** or **here**, and which are handled structurally without any emitted form at all.
 
 The question this note addresses:
 

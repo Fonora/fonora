@@ -1,10 +1,16 @@
+---
+status: Superseded
+date: 2026-06-24
+phase: phase-2
+---
+
 # Can words grow from a grid? (Gen 1 and Gen 2)
 
 ## Research Question
 
 Phase I established that Fonora could *write* sounds: the articulatory grid (RN-01), an IPA pipeline that bypasses spelling (RN-02), vowel grammar (RN-03, RN-04), multilingual encoding with scoped English overlays (RN-05), and a collision audit that could enumerate symbol hazards before trusting the script at scale (RN-06). By late June 2026 the script side had enough machinery to transliterate text from several languages onto the same compositional inventory.
 
-That left a different problem. A script is not a language. [RN-05](/research/notes/multilingual-script) closed by asking what should sit *on top* of a grid that could now represent sounds from multiple source languages, and whether vocabulary could be *generated* rather than borrowed word by word from English or Latin.
+That left a different problem. A script is not a language. [RN-05](/research/notes/one-script-for-every-language) closed by asking what should sit *on top* of a grid that could now represent sounds from multiple source languages, and whether vocabulary could be *generated* rather than borrowed word by word from English or Latin.
 
 The question this note addresses is the Phase II pivot those script notes deferred:
 

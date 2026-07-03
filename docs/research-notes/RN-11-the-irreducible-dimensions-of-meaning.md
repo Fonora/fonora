@@ -1,8 +1,14 @@
+---
+status: Active
+date: 2026-06-28
+phase: phase-3
+---
+
 # The irreducible dimensions of meaning
 
 ## Research Question
 
-[RN-10](/research/notes/huffman-roots) treated vocabulary generation as a coding problem: sort ~200 human concepts by curated priority, allocate syllables with Huffman-like phonetic cost, and score candidates with Gen 3.1 distinctiveness heuristics. The numbers cooperated, top-decile concepts averaged a phonetic cost of 9.7 versus 68 for the bottom decile, but the premise failed. Grammar leaked into the lexicon (`because` became a root; `with` and `without` competed as words). Compounds concatenated flatly (`lobawi` for war instead of teaching `tribe → conflict`). Most critically, every sound had been assigned before anyone approved the underlying meanings.
+[RN-10](/research/notes/optimal-sounds-wrong-premise) treated vocabulary generation as a coding problem: sort ~200 human concepts by curated priority, allocate syllables with Huffman-like phonetic cost, and score candidates with Gen 3.1 distinctiveness heuristics. The numbers cooperated, top-decile concepts averaged a phonetic cost of 9.7 versus 68 for the bottom decile, but the premise failed. Grammar leaked into the lexicon (`because` became a root; `with` and `without` competed as words). Compounds concatenated flatly (`lobawi` for war instead of teaching `tribe → conflict`). Most critically, every sound had been assigned before anyone approved the underlying meanings.
 
 RN-10 closed with an explicit reordering:
 

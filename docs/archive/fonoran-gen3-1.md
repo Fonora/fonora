@@ -1,5 +1,5 @@
 # Fonoran Gen 3.1: Phonetic Distinctiveness Layer
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-09 · Making invented words memorable](/research/notes/distinctiveness-gen31).
+> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-09 · Making invented words memorable](/research/notes/making-invented-words-memorable-gen-3-1).
 
 
 > **Archive — superseded direction.** Experimental generator, not the active workflow. See [fonoran.md](../fonoran.md).

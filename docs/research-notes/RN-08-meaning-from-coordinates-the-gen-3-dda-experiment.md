@@ -1,8 +1,14 @@
+---
+status: Superseded
+date: 2026-06-24
+phase: phase-2
+---
+
 # Meaning from coordinates: the Gen 3 DDA experiment
 
 ## Research Question
 
-[RN-07](/research/notes/roots-from-grammar) documented two concept-first vocabulary generators (Gen 1 (hand roots plus grammar-vowel inflection) and Gen 2 (semantic coordinates with Indo-European collision repair). Both could produce systematic word families for demos, but both still began from human labels: *water*, *person*, *light*. Neither asked what meaning might occupy the Fonora articulation grid if you assumed no prior word for any of those things.
+[RN-07](/research/notes/can-words-grow-from-a-grid-gen-1-and-gen-2) documented two concept-first vocabulary generators (Gen 1 (hand roots plus grammar-vowel inflection) and Gen 2 (semantic coordinates with Indo-European collision repair). Both could produce systematic word families for demos, but both still began from human labels: *water*, *person*, *light*. Neither asked what meaning might occupy the Fonora articulation grid if you assumed no prior word for any of those things.
 
 RN-07 closed with an explicit inversion:
 

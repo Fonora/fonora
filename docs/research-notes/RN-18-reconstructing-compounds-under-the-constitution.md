@@ -1,8 +1,14 @@
+---
+status: Active
+date: 2026-07-01
+phase: phase-4
+---
+
 # Reconstructing compounds under the constitution
 
 ## Research Question
 
-[RN-17](/research/notes/puzzle-conversation) established the measurement instrument: puzzle conversation records whether root-knowers recover intended meaning from compounds, and playtests should eventually override heuristic rankings. Phase III closed the prerequisites: constitution, editorial roots, grammar particles, the interpretive translator, script literacy, and a frontend that presents the project as open language research.
+[RN-17](/research/notes/can-strangers-recover-meaning) established the measurement instrument: puzzle conversation records whether root-knowers recover intended meaning from compounds, and playtests should eventually override heuristic rankings. Phase III closed the prerequisites: constitution, editorial roots, grammar particles, the interpretive translator, script literacy, and a frontend that presents the project as open language research.
 
 That leaves the vocabulary work the constitution actually describes:
 
@@ -71,4 +77,4 @@ Phase IV has just begun. Success criteria:
 
 **Source:** [`tools/fonoran-expression-candidates.js`](../tools/fonoran-expression-candidates.js), [`data/fonoran-compounds.json`](../data/fonoran-compounds.json), [`scripts/fonoran-migrate-compounds.js`](../scripts/fonoran-migrate-compounds.js)
 
-**Prior note:** [RN-17 · Can strangers recover meaning?](/research/notes/puzzle-conversation)
+**Prior note:** [RN-17 · Can strangers recover meaning?](/research/notes/can-strangers-recover-meaning)

@@ -1,12 +1,18 @@
+---
+status: Active
+date: 2026-06-28
+phase: phase-3
+---
+
 # Concepts are canonical, sounds are editorial proposals
 
 ## Research Question
 
-[RN-11](/research/notes/semantic-foundation) established that Fonoran's semantic inventory could be frozen before anyone touched phonetics: ~99 primitive dimensions, grammar kept out of the lexicon, compounds documented as trees rather than flat strings. It deliberately deferred sound assignment and closed with an explicit follow-up:
+[RN-11](/research/notes/the-irreducible-dimensions-of-meaning) established that Fonoran's semantic inventory could be frozen before anyone touched phonetics: ~99 primitive dimensions, grammar kept out of the lexicon, compounds documented as trees rather than flat strings. It deliberately deferred sound assignment and closed with an explicit follow-up:
 
 **How do approved concepts get exactly one Fonora-script spelling without algorithms silently minting vocabulary?**
 
-[RN-12](/research/notes/the-constitution) reframed the success metric two days later, recoverable meaning, not ontological perfection; generators *propose*, humans *approve*, and asked the operational version of the same problem:
+[RN-12](/research/notes/compiling-english-into-meaning) reframed the success metric two days later, recoverable meaning, not ontological perfection; generators *propose*, humans *approve*, and asked the operational version of the same problem:
 
 **How do we turn concepts into sounds into compounds into a human review queue without sliding back into auto-generation?**
 

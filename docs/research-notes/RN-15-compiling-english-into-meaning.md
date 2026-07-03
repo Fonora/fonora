@@ -1,8 +1,14 @@
+---
+status: Active
+date: 2026-06-28
+phase: phase-3
+---
+
 # Compiling English into meaning
 
 ## Research Question
 
-[RN-13](/research/notes/editorial-pipeline) closed the editorial loop: every concept in the inventory could carry exactly one human-approved spelling, and algorithms were demoted to proposing candidates rather than minting vocabulary. That answered *how roots get into the language*. It left a different problem open: *how does ordinary English get into the language?*
+[RN-13](/research/notes/the-campfire-test-communication-over-correctness) closed the editorial loop: every concept in the inventory could carry exactly one human-approved spelling, and algorithms were demoted to proposing candidates rather than minting vocabulary. That answered *how roots get into the language*. It left a different problem open: *how does ordinary English get into the language?*
 
 A word-for-word gloss is the wrong model. English *jump* does not map to a Fonoran root for jumping if the nearest approved concept is **move**; *over* is not a preposition particle but a spatial path that compiles to **up**. Earlier generators (RN-10's Huffman run, the retired Word Generator) tried to fill gaps by inventing spellings. The Constitution's honesty principle forbids that: if a concept has no approved root, the system should show the gap, not hide it behind a guess.
 

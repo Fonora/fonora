@@ -1,8 +1,14 @@
+---
+status: Active
+date: 2026-07-03
+phase: phase-1
+---
+
 # Vowel+Glide Phantom Diphthongs
 
 ## Research Question
 
-[RN-22](/research/notes/mouth-intuitive-vowel-glyphs) realigned simple vowel glyphs to tongue **place** (back → front), long vowels to **manner**, and diphthong nuclei to the simple-vowel place recipes. A side effect became visible during manual review: English words like *all* encode as `o + l` → `⚬⊃ᵔ∩`, which **looks** like a diphthong token even though it is not a registered vowel key. The known Category A collisions (`e + y` ↔ `ay`, etc.) were documented in [RN-06](/research/notes/collision-audit); the audit did not yet enumerate the complementary set — vowel+glide pairs that share diphthong **shape** but are **not** inventory keys.
+[RN-22](/research/notes/mouth-intuitive-vowel-glyphs) realigned simple vowel glyphs to tongue **place** (back → front), long vowels to **manner**, and diphthong nuclei to the simple-vowel place recipes. A side effect became visible during manual review: English words like *all* encode as `o + l` → `⚬⊃ᵔ∩`, which **looks** like a diphthong token even though it is not a registered vowel key. The known Category A collisions (`e + y` ↔ `ay`, etc.) were documented in [RN-06](/research/notes/hunting-ambiguity-in-the-script); the audit did not yet enumerate the complementary set — vowel+glide pairs that share diphthong **shape** but are **not** inventory keys.
 
 The question this note addresses:
 
@@ -278,6 +284,6 @@ The throat column has two **reserved** grid cells ([`docs/language-rules.md`](..
 
 **Source:** [`js/collision-audit.js`](../js/collision-audit.js), [`js/vowel-grammar.js`](../js/vowel-grammar.js), [`js/vowel-display.js`](../js/vowel-display.js), [`js/ipa-normalize.js`](../js/ipa-normalize.js)
 
-**Prior notes:** [RN-04 · Vowels as grammar](/research/notes/vowel-grammar-v3), [RN-06 · Collision audit](/research/notes/collision-audit), [RN-22 · Mouth-intuitive vowel glyphs](/research/notes/mouth-intuitive-vowel-glyphs)
+**Prior notes:** [RN-04 · Vowels as grammar](/research/notes/vowels-as-grammar-the-v3-rebuild), [RN-06 · Collision audit](/research/notes/hunting-ambiguity-in-the-script), [RN-22 · Mouth-intuitive vowel glyphs](/research/notes/mouth-intuitive-vowel-glyphs)
 
 **Future research notes:** Adoption PR for `ear`/`air`/`ure` + `⏌⊃`; en-gb dialect profile; r-vowel promotion policy; learner study on phantom-diphthong readability

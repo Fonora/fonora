@@ -73,7 +73,7 @@
       <nav class="main-nav" aria-label="Tools">
         <div class="main-nav-primary">
           <button type="button" class="tab-btn" data-tab="tools-home">Home</button>
-          <button type="button" class="tab-btn" data-tab="research-notes">Research Notes</button>
+          <button type="button" class="tab-btn tab-btn--deprecated" data-tab="research-notes" title="Deprecated — edit markdown in repo">Research Notes</button>
           <button type="button" class="tab-btn" data-tab="samples">Samples</button>
           <button type="button" class="tab-btn" data-tab="encoder-testing">Pronunciation Testing</button>
           <button type="button" class="tab-btn" data-tab="pronunciation-validation">Validation</button>
@@ -388,9 +388,10 @@
           <article class="home-layer-card">
             <p class="home-layer-card__tag">Research</p>
             <h3>Research Notes</h3>
-            <p>Draft, format, and publish research notebook articles to the public site.</p>
+            <p>Research notes are markdown files in the repo. The in-app editor is deprecated.</p>
             <div class="home-layer-card__actions">
-              <button type="button" class="btn btn--primary" data-tab="research-notes">Open Research Notes</button>
+              <a class="btn btn--primary" href="/docs/research-notes-authoring.md">Authoring guide</a>
+              <a class="btn" href="/research">Public Research site</a>
             </div>
           </article>
         </div>
@@ -985,7 +986,7 @@
     <section class="panel tab-panel content-page" id="tab-research-notes" data-tab-panel="research-notes" hidden aria-labelledby="research-notes-title">
       <header class="content-section content-section--intro">
         <h1 id="research-notes-title">Research Notes</h1>
-        <p class="section-desc">Draft and publish research notebook articles. Published notes appear on the public <a href="/research">Research</a> site immediately.</p>
+        <p class="section-desc">Deprecated. Author notes as markdown in <code>docs/research-notes/</code> and view them on the public <a href="/research">Research</a> site.</p>
       </header>
       <div id="research-notes-editor-root" class="rn-editor-root"></div>
     </section>

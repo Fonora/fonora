@@ -1,6 +1,6 @@
 # Fonoran semantic foundation
 
-> **Archive — superseded for phonetics** by [fonoran.md](../fonoran.md). Primary source for [RN-11 · The irreducible dimensions of meaning](/research/notes/semantic-foundation). Semantic inventory remains reference for compounds; phonetic assignment follows the editorial pipeline in the guide.
+> **Archive — superseded for phonetics** by [fonoran.md](../fonoran.md). Primary source for [RN-11 · The irreducible dimensions of meaning](/research/notes/the-irreducible-dimensions-of-meaning). Semantic inventory remains reference for compounds; phonetic assignment follows the editorial pipeline in the guide.
 
 This document supersedes the algorithmic primitive-roots experiment (`fonoran-primitive-roots.js`). That tooling assigned phonetic forms before semantic approval. **This foundation starts from concepts only.**
 

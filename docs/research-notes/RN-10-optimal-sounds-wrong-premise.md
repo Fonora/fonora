@@ -1,8 +1,14 @@
+---
+status: Superseded
+date: 2026-06-27
+phase: phase-2
+---
+
 # Optimal sounds, wrong premise
 
 ## Research Question
 
-[RN-09](/research/notes/distinctiveness-gen31) showed that phonetic learnability could be improved without touching semantic coordinates: Gen 3.1 spread vowels within Fonora-native pools, raised memorability from 70 to 85, and eliminated prefix ambiguities, reusing a distinctiveness scorer that still lives in the repo today. That work operated on Gen 3's **36 grid-native primitives**, where meaning was a DDA coordinate and familiar English labels like "river" appeared only at the derivation layer.
+[RN-09](/research/notes/making-invented-words-memorable-gen-3-1) showed that phonetic learnability could be improved without touching semantic coordinates: Gen 3.1 spread vowels within Fonora-native pools, raised memorability from 70 to 85, and eliminated prefix ambiguities, reusing a distinctiveness scorer that still lives in the repo today. That work operated on Gen 3's **36 grid-native primitives**, where meaning was a DDA coordinate and familiar English labels like "river" appeared only at the derivation layer.
 
 Gen 3.1 also left a practical ceiling in view. Thirty-six roots could seed a principled lexicon, but real communication needs a much larger shared core, person, water, give, inside, because, tribe, war, and Gen 3's derivation layer still required a reader to mentally decode coordinate trees. RN-09 closed by asking whether speakers would actually communicate by reconstructing those trees in real time. This note took a different tack first: keep the **phonetic machinery** Gen 3.1 had validated, but scale the **concept inventory** up to roughly Swadesh-list size and ask whether syllables could be allocated *optimally* across that larger set.
 

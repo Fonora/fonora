@@ -1,8 +1,14 @@
+---
+status: Active
+date: 2026-07-03
+phase: phase-4
+---
+
 # Remediating the beginner core
 
 ## Research Question
 
-[RN-19](/research/notes/phase-iv-first-learner-signal) showed that the Phase IV inventory teaches at small scale: dictionary clustering, translator compilation, and ~98% puzzle recovery on recorded rounds. [RN-20](/research/notes/synthetic-intuition-ranking) added a third ranking layer, synthetic intuition, to pre-filter preferred forms across 111 compounds.
+[RN-19](/research/notes/first-learner-signal-from-phase-iv-regen) showed that the Phase IV inventory teaches at small scale: dictionary clustering, translator compilation, and ~98% puzzle recovery on recorded rounds. [RN-20](/research/notes/synthetic-intuition-ranking) added a third ranking layer, synthetic intuition, to pre-filter preferred forms across 111 compounds.
 
 Neither note asked whether the **50-root communicative core** itself was the right scaffold for a first-week stranger conversation. The constitution ([RN-12](/research/notes/the-campfire-test-communication-over-correctness)) gates roots by recoverable meaning in week one, but the existing core was emotionally rich (`love`, `happy`, `trust`, `hope`) while thin on reference, location, repair, and basic needs (`thing`, `addressee`, `here`/`there`, `food`, `understand`, `need`).
 
@@ -128,7 +134,7 @@ The codebase moved from `jamesc137/fonora` to [Fonora/fonora](https://github.com
 - **Org:** Canonical GitHub URL now [github.com/Fonora/fonora](https://github.com/Fonora/fonora).
 - **Research notes:** This note (RN-21); store lives in fonora-data.
 
-Prior notes this work builds on: [RN-19](/research/notes/phase-iv-first-learner-signal), [RN-20](/research/notes/synthetic-intuition-ranking), [RN-12](/research/notes/the-campfire-test-communication-over-correctness).
+Prior notes this work builds on: [RN-19](/research/notes/first-learner-signal-from-phase-iv-regen), [RN-20](/research/notes/synthetic-intuition-ranking), [RN-12](/research/notes/the-campfire-test-communication-over-correctness).
 
 ## Open Questions
 
@@ -148,4 +154,4 @@ Prior notes this work builds on: [RN-19](/research/notes/phase-iv-first-learner-
 
 **Source:** [`tools/fonoran-experience-tiers.js`](../tools/fonoran-experience-tiers.js), [`data/fonoran-concept-inventory.json`](../data/fonoran-concept-inventory.json), [`tools/fonoran-data-paths.js`](../tools/fonoran-data-paths.js), [`data/fonora-data.manifest.json`](../data/fonora-data.manifest.json)
 
-**Prior notes:** [RN-20 · Synthetic intuition ranking](/research/notes/synthetic-intuition-ranking), [RN-19 · First learner signal](/research/notes/phase-iv-first-learner-signal), [RN-18 · Compound reconstruction](/research/notes/compound-reconstruction)
+**Prior notes:** [RN-20 · Synthetic intuition ranking](/research/notes/synthetic-intuition-ranking), [RN-19 · First learner signal](/research/notes/first-learner-signal-from-phase-iv-regen), [RN-18 · Compound reconstruction](/research/notes/reconstructing-compounds-under-the-constitution)

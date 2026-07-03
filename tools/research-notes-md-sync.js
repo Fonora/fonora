@@ -1,6 +1,6 @@
 /**
  * Build published research notes from docs/research-notes/RN-*.md (main repo).
- * Used on Heroku release deploy — markdown is canonical; JSON store is metadata overlay only.
+ * Markdown is the only source — optional YAML frontmatter for status/date/phase.
  */
 
 import { readdir, readFile, stat } from 'node:fs/promises';
@@ -10,13 +10,13 @@ import { fileURLToPath } from 'node:url';
 import {
   deriveMetadataFromBody,
   extractMarkdownH1,
+  parseResearchNoteFrontmatter,
   validateNoteMetadata,
 } from '../js/research-note-meta.js';
 import { inferPhaseFromCode, normalizeNoteMetadata } from '../js/research-notes.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const RESEARCH_NOTES_MD_DIR = join(ROOT, 'docs/research-notes');
-export const METADATA_CATALOG_PATH = join(ROOT, 'data/research-notes-store.json');
 
 export const RESEARCH_NOTE_FILENAME_RE = /^RN-(\d+)-([a-z0-9-]+)\.md$/i;
 
@@ -33,25 +33,6 @@ export function parseResearchNoteFilename(filename) {
 
 function shellQuote(value) {
   return `'${String(value).replace(/'/g, `'\\''`)}'`;
-}
-
-/** @returns {Promise<Map<string, object>>} slug → metadata overlay */
-export async function loadMetadataCatalog(catalogPath = METADATA_CATALOG_PATH) {
-  const bySlug = new Map();
-  try {
-    const raw = await readFile(catalogPath, 'utf8');
-    const data = JSON.parse(raw);
-    for (const note of data.notes || []) {
-      const meta = note.metadata || note;
-      const slug = String(meta.slug || note.slug || '').trim();
-      if (!slug) continue;
-      bySlug.set(slug, { ...meta, slug });
-      if (meta.code) bySlug.set(String(meta.code), { ...meta, slug });
-    }
-  } catch {
-    // Optional overlay — MD + deriveMetadataFromBody still works without catalog.
-  }
-  return bySlug;
 }
 
 /** @param {string} absPath */
@@ -71,12 +52,11 @@ async function fileDateIso(absPath) {
 }
 
 /**
- * @param {{ mdDir?: string, catalogPath?: string }} [options]
- * @returns {Promise<object[]>} published note records ready for Postgres upsert
+ * @param {{ mdDir?: string }} [options]
+ * @returns {Promise<object[]>} published note records
  */
 export async function buildPublishedNotesFromMarkdown(options = {}) {
   const mdDir = options.mdDir || RESEARCH_NOTES_MD_DIR;
-  const catalog = await loadMetadataCatalog(options.catalogPath);
 
   const files = (await readdir(mdDir))
     .filter((name) => RESEARCH_NOTE_FILENAME_RE.test(name))
@@ -95,30 +75,33 @@ export async function buildPublishedNotesFromMarkdown(options = {}) {
     if (!parsed) continue;
 
     const absPath = join(mdDir, file);
-    const body = await readFile(absPath, 'utf8');
-    const overlay = catalog.get(parsed.slug) || catalog.get(parsed.code) || {};
+    const raw = await readFile(absPath, 'utf8');
+    const { meta: frontmatter, body } = parseResearchNoteFrontmatter(raw);
 
     const derived = deriveMetadataFromBody(body, {
-      ...overlay,
       slug: parsed.slug,
       code: parsed.code,
+      title: frontmatter.title,
+      status: frontmatter.status,
+      date: frontmatter.date,
+      phase: frontmatter.phase,
     });
 
-    const title = derived.title || overlay.title || extractMarkdownH1(body) || parsed.slug;
-    const description = derived.description || overlay.description || title;
+    const title = derived.title || frontmatter.title || extractMarkdownH1(body) || parsed.slug;
+    const description = derived.description || frontmatter.description || title;
     const metadata = normalizeNoteMetadata({
       slug: parsed.slug,
       code: parsed.code,
       title,
-      status: overlay.status || 'Active',
-      phase: overlay.phase || inferPhaseFromCode(parsed.code),
-      date: overlay.date || (await fileDateIso(absPath)),
+      status: frontmatter.status || 'Active',
+      phase: frontmatter.phase || inferPhaseFromCode(parsed.code),
+      date: frontmatter.date || (await fileDateIso(absPath)),
       description,
-      abstract: derived.abstract || overlay.abstract || description.slice(0, 160),
-      related: derived.related?.length ? derived.related : (overlay.related || []),
-      docs: overlay.docs || [],
-      tools: overlay.tools || [],
-      source: derived.source?.length ? derived.source : (overlay.source || []),
+      abstract: derived.abstract || frontmatter.abstract || description.slice(0, 160),
+      related: derived.related?.length ? derived.related : [],
+      docs: [],
+      tools: [],
+      source: derived.source?.length ? derived.source : [],
     });
 
     const errors = validateNoteMetadata(metadata, {
@@ -137,8 +120,8 @@ export async function buildPublishedNotesFromMarkdown(options = {}) {
       metadata,
       body: `${body.trimEnd()}\n`,
       updated_at: now,
-      published_at: overlay.published_at || now,
-      updated_by: 'deploy@research-notes-md',
+      published_at: frontmatter.published_at || now,
+      updated_by: 'markdown',
     });
   }
 

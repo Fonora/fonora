@@ -1,146 +1,69 @@
 # Research notes — authoring guide
 
-Fonora research notes are engineering/research notebook entries, not marketing articles. They document how the project evolved: objective, honest, technical where appropriate, readable, no hype, uncertainty included.
+Fonora research notes are markdown files in the repo. Edit the file, commit, deploy. That's it.
 
-**Canonical example:** [`docs/research-notes/RN-01-writing-sound-instead-of-spelling.md`](research-notes/RN-01-writing-sound-instead-of-spelling.md)
+**Location:** [`docs/research-notes/RN-XX-slug.md`](research-notes/RN-01-writing-sound-instead-of-spelling.md)
 
-**Audience:** curious developers, linguists, conlang creators, writing-system enthusiasts, future contributors.
+**Canonical example:** [`RN-01-writing-sound-instead-of-spelling.md`](research-notes/RN-01-writing-sound-instead-of-spelling.md)
 
-**Target length (expanded note):** approximately 1,200–2,000 words.
+**Public site:** [`/research`](/research) — server reads the markdown files at startup.
 
 ---
 
-## Two forms
+## File format
 
-| Form | Purpose | Where it lives |
-| --- | --- | --- |
-| **Stub** | Seed arc: question → hypothesis → constraints → built → happened → next question | New draft in Tools → Research Notes (`NEW_NOTE_STUB_TEMPLATE`) |
-| **Expanded** | Long-form RN-01 structure for publication | **`docs/research-notes/RN-XX-slug.md`** (canonical) + optional metadata in `data/research-notes-store.json` |
+Each note is one file: `RN-<code>-<kebab-title>.md`
 
-**Production:** When `DATABASE_URL` is set (Heroku), the **release phase** upserts every `docs/research-notes/RN-*.md` file into PostgreSQL via `scripts/research-notes-sync-deploy.js`. Commit the markdown file in the main repo and deploy — no fonora-data push required for the notebook.
+Optional YAML frontmatter at the top (status, date, phase):
 
-Prod-only drafts created in Tools stay in Postgres until published or removed.
+```yaml
+---
+status: Active
+date: 2026-06-21
+phase: phase-1
+---
+```
 
-The editor inserts the **long-form** template by default (`NEW_NOTE_TEMPLATE`). Use the **stub** template when you only have the arc and plan to expand later.
+| Field | Values |
+| --- | --- |
+| `status` | Foundational · Active · Superseded · Open (default: Active) |
+| `date` | ISO date for timeline ordering (default: git last-commit date on the file) |
+| `phase` | phase-1 … phase-4 (default: inferred from RN code) |
 
-Templates are defined in [`js/research-note-meta.js`](../js/research-note-meta.js):
-
-- `NEW_NOTE_STUB_TEMPLATE` — short seed
-- `NEW_NOTE_TEMPLATE` / `researchNoteBodyTemplate()` — expanded sections
+Everything else is derived from the markdown body: title from the H1, description from the opening paragraph, related slugs from `/research/notes/...` links.
 
 ---
 
 ## Expanded note sections (exact order)
 
-Use exactly these headers, in this order (no TL;DR blockquote — summary lives in metadata `abstract`):
+Use exactly these headers, in this order:
 
-1. **Research Question** — central question; chain from the previous note's open questions
-2. **Hypothesis** — working hypothesis *at the time*, not hindsight
-3. **Approach** — what was built; real files and design decisions only
-4. **Evaluation** — how it was tested; say if informal only
-5. **Findings** — what worked and didn't; partial/provisional results OK
-6. **What Changed** — what survived vs was superseded; cite real following RN codes
-7. **Open Questions** — flows into the next note's Research Question
-8. **References** — commits, docs, demos, future notes
+1. Research Question
+2. Hypothesis
+3. Approach
+4. Evaluation
+5. Findings
+6. What Changed
+7. Open Questions
+8. References
 
-Optional metadata block at the top (RN-16 style, usually omitted — the published UI supplies metadata):
-
-```markdown
-**Date:** Jun 20, 2026 · **Stage:** Foundational · **Project:** Fonora Script · **Status:** Complete
-```
+Templates: `NEW_NOTE_TEMPLATE` and `NEW_NOTE_STUB_TEMPLATE` in [`js/research-note-meta.js`](../js/research-note-meta.js).
 
 ---
 
-## Expansion prompt (for Cursor / manual use)
-
-Replace `<SLUG>` with the note slug (e.g. `synthetic-intuition-ranking`).
-
-```
-Write the next Fonora Research Note by expanding an existing stub into the same long-form structure used for RN-01 (docs/research-notes/RN-01-writing-sound-instead-of-spelling.md).
-
-Source: draft for slug `<SLUG>` in data/research-notes-store.json (Tools → Research Notes editor), or a stub using NEW_NOTE_STUB_TEMPLATE in js/research-note-meta.js.
-
-Look up code, title, date, status, phase, description, abstract, related, docs, tools, and source in:
-- data/research-notes-store.json (search for slug `<SLUG>`)
-- js/research-notes.js (RESEARCH_PHASES for phase labels)
-
-This is not a marketing article or blog post. It should read like an engineering/research notebook documenting how the project evolved — objective, honest, technical where appropriate but readable, no hype or grand claims, documenting uncertainty as well as certainty.
-
-Audience: curious developers, linguists, conlang creators, writing system enthusiasts, future contributors.
-
-Length: approximately 1,200–2,000 words.
-
-Before writing:
-
-1. Read the existing stub/draft body in full — it contains the condensed question/hypothesis/constraints/what-we-built/what-happened/next-question arc. Treat it as the seed, not the final word.
-
-2. Read its metadata entry in data/research-notes-store.json to ground scope and cross-links.
-
-3. Read every doc and source file the stub and metadata point to (files under docs/, js/, tools/, data/).
-
-4. Use git log / git show on those files and on commits around the note's date to reconstruct actual reasoning in chronological order. Do not invent motivations, metrics, or implementation details unsupported by repo history.
-
-5. Read the note immediately before it in notebook order (sort by date, then code in the store) and, if expanded, docs/research-notes/ for that prior note, so this note's Research Question and Approach build on what the previous one concluded and left open.
-
-Title: <CODE> — <Title from metadata, refined if needed for standalone read>
-
-Sections (use exactly these headers, in this order):
-
-## Research Question
-## Hypothesis
-## Approach
-## Evaluation
-## Findings
-## What Changed
-## Open Questions
-## References
-
-References subsections:
-- Related commits (real hashes from git log)
-- Documentation (paths from metadata docs array)
-- Interactive demo (paths from metadata tools array)
-- Future research notes (real codes/titles of following notes in sequence)
-
-Output:
-- Update the note body in the Research Notes editor / store, and
-- Save mirror copy to docs/research-notes/<CODE>-<kebab-case-title>.md
-
-Match the style, heading structure, and tone of RN-01. Do not use a TL;DR blockquote in the body — use metadata abstract for one-line summary.
-
-After polish (optional): node scripts/polish-research-notes-md.js
-```
-
----
-
-## Metadata (store / editor)
-
-| Field | Values |
-| --- | --- |
-| `status` | Foundational · Active · Superseded · Open |
-| `phase` | phase-1 … phase-4 (see `RESEARCH_PHASES` in js/research-notes.js) |
-| `workflow` | draft · published |
-
-Status mapping for prose:
-
-- **Foundational** — early architecture that later notes build on
-- **Active** — current line of work or instrument in use
-- **Open** — question stated, insufficient evidence yet
-- **Superseded** — replaced by a later approach (say which RN)
-
----
-
-## Polish script
+## Verify before merge
 
 ```bash
-node scripts/polish-research-notes-md.js
+npm run research:verify-md
 ```
-
-Flattens nested Reference lists for the custom renderer and normalizes em dashes. Run after editing files under `docs/research-notes/`.
 
 ---
 
-## Related
+## Not used for research notes
 
-- [`scripts/research-notes-import-static.js`](../scripts/research-notes-import-static.js) — one-time seed import
-- [`data/research-notes-static-seed.json`](../data/research-notes-static-seed.json) — metadata seed backup
-- [`docs/fonoran-learning-sessions-log.md`](fonoran-learning-sessions-log.md) — living human session log (feeds Phase IV notes, not a substitute for RN structure)
+- PostgreSQL / `research_notes` table
+- Fonora/fonora-data submodule
+- Tools → Research Notes editor (deprecated)
+- `data/research-notes-store.json` (gitignored legacy editor store)
+
+LLM evaluations and playtests still live in [fonora-data](https://github.com/Fonora/fonora-data) — that is separate from the research notebook.

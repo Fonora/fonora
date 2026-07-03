@@ -1,5 +1,5 @@
 # Multilingual support
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-05 · One script for every language](/research/notes/multilingual-script).
+> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-05 · One script for every language](/research/notes/one-script-for-every-language).
 
 
 Fonora’s Translator, Breakdown, and Samples pages share one IPA pipeline. The **Reader** replays Fonora symbols with a language-selected TTS voice; it does not re-run encoding.

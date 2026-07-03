@@ -1,6 +1,6 @@
 # Fonoran Gen 3: Grid-Native Language Architecture
 
-> **Archive — superseded direction.** Primary source for [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates). The Gen 3 / DDA coordinate track is **demoted** under the [Fonoran Constitution](../fonoran-constitution.md): roots are organized by **human experience** and the **campfire test**; compounds are judged by recoverable meaning, not coordinate correctness. Kept for reference only — not the production design. Active workflow: [fonoran.md](../fonoran.md) at `/language`.
+> **Archive — superseded direction.** Primary source for [RN-08 · Meaning from coordinates](/research/notes/meaning-from-coordinates-the-gen-3-dda-experiment). The Gen 3 / DDA coordinate track is **demoted** under the [Fonoran Constitution](../fonoran-constitution.md): roots are organized by **human experience** and the **campfire test**; compounds are judged by recoverable meaning, not coordinate correctness. Kept for reference only — not the production design. Active workflow: [fonoran.md](../fonoran.md) at `/language`.
 
 **Vowel glyphs** in §2.3 follow the mouth-intuitive tiers in [language-rules.md](../language-rules.md) (simple = place, long = manner).
 

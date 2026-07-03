@@ -1,6 +1,6 @@
 # Fonoran primitive roots — generation report
 
-> **Archive — auto-generated report (2026-06-27).** Primary source for [RN-10 · Optimal sounds, wrong premise](/research/notes/huffman-roots). Superseded by the editorial pipeline in [fonoran.md](../fonoran.md); not committed as canonical vocabulary.
+> **Archive — auto-generated report (2026-06-27).** Primary source for [RN-10 · Optimal sounds, wrong premise](/research/notes/optimal-sounds-wrong-premise). Superseded by the editorial pipeline in [fonoran.md](../fonoran.md); not committed as canonical vocabulary.
 
 >
 > **Archive — superseded direction.** This ~200-primitive algorithmic run predates the

@@ -8,6 +8,7 @@ import {
   extractTldr,
   formatNoteMarkdownExport,
   nextResearchCode,
+  parseResearchNoteFrontmatter,
   NEW_NOTE_STUB_TEMPLATE,
   RESEARCH_NOTE_SECTIONS,
   researchNoteBodyTemplate,
@@ -39,7 +40,7 @@ const SAMPLE_NOTE_METADATA = {
   date: '2026-06-20',
   description: 'How Fonora encodes articulation instead of orthography.',
   abstract: 'How Fonora encodes articulation instead of orthography.',
-  related: ['ipa-pipeline'],
+  related: ['teaching-the-machine-to-hear'],
   docs: [{ label: 'language-rules.md', path: 'docs/language-rules.md' }],
   tools: [{ label: 'Sound Grid', href: '/script#grid' }],
   source: [{ label: 'rules.js', path: 'js/rules.js' }],
@@ -58,10 +59,17 @@ export function runResearchNoteMetaTests() {
       const md = '# Title\n\n> **TL;DR.** Summary line.\n\nBody paragraph.';
       assert(extractDescription(md) === 'Summary line.');
     }),
+    test('parseResearchNoteFrontmatter reads status and date', () => {
+      const md = '---\nstatus: Superseded\ndate: 2026-06-21\n---\n\n# Title\n\nBody.';
+      const { meta, body } = parseResearchNoteFrontmatter(md);
+      assert(meta.status === 'Superseded');
+      assert(meta.date === '2026-06-21');
+      assert(body.includes('# Title'));
+    }),
     test('extractRelatedSlugs finds research links', () => {
-      const md = 'See [RN-02](/research/notes/ipa-pipeline) and /research/notes/foo';
+      const md = 'See [RN-02](/research/notes/teaching-the-machine-to-hear) and /research/notes/foo';
       const related = extractRelatedSlugs(md);
-      assert(related.includes('ipa-pipeline'));
+      assert(related.includes('teaching-the-machine-to-hear'));
       assert(related.includes('foo'));
     }),
     test('deriveMetadataFromBody fills title and abstract', () => {

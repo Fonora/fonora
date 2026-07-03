@@ -1,5 +1,5 @@
 # Fonora Vowel-System Decision Report
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-03 · How few vowels can English tolerate?](/research/notes/vowel-mergers-v2).
+> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-03 · How few vowels can English tolerate?](/research/notes/how-few-vowels-can-english-tolerate).
 
 
 > **Superseded by v3 vowel architecture** (see `language-rules.md`, `fonora_version: v3`). This report analyzed the retired v2 double-vowel system (`⚬⚬`). Retained for historical context only.

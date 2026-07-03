@@ -1,5 +1,5 @@
 # The Fonoran Constitution
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-12 · The campfire test](/research/notes/the-constitution).
+> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-12 · The campfire test](/research/notes/compiling-english-into-meaning).
 
 
 > **Status**: Authoritative. This document states *what Fonoran is for*. Where the

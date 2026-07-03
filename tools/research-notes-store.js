@@ -15,15 +15,20 @@ import {
   validateNoteMetadata,
 } from '../js/research-note-meta.js';
 import { normalizeNoteMetadata, resolveNotePhase } from '../js/research-notes.js';
-import { resolveResearchNotesCatalogPath } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const STORE_PATH =
   process.env.RESEARCH_NOTES_STORE_PATH?.trim() ||
-  resolveResearchNotesCatalogPath();
+  join(ROOT, 'data/research-notes-store.json');
 
 let schemaReady = false;
 let pool = null;
+
+/** In-app editor disabled by default; set RESEARCH_NOTES_EDITOR_ENABLED=1 to re-enable. */
+export function isResearchNotesEditorEnabled() {
+  const val = process.env.RESEARCH_NOTES_EDITOR_ENABLED?.trim().toLowerCase();
+  return val === '1' || val === 'true' || val === 'yes';
+}
 
 /** @type {{ notes: object[], warmedAt: string } | null} */
 let publishedIndexCache = null;
@@ -286,15 +291,12 @@ function cachePublishedNote(note) {
   publishedBodyCache.set(note.metadata.slug, note);
 }
 
-/** Load published notes into memory (call once at server startup). */
-export async function warmPublishedCache() {
-  await ensureSchemaOnce();
-  let publishedRows;
-  if (resolveStorageMode() === 'postgres' && process.env.DATABASE_URL) {
-    publishedRows = (await fetchAllFromPg()).filter((n) => n.workflow === 'published');
-  } else {
-    publishedRows = (await readAllFromJson()).filter((n) => n.workflow === 'published');
-  }
+async function loadPublishedRowsFromMarkdown() {
+  const { buildPublishedNotesFromMarkdown } = await import('./research-notes-md-sync.js');
+  return buildPublishedNotesFromMarkdown();
+}
+
+function populatePublishedCache(publishedRows) {
   const sorted = sortNotes(publishedRows);
   const notes = sorted.map((n) => publicMetadata(n.metadata));
   publishedIndexCache = { notes, warmedAt: new Date().toISOString() };
@@ -310,18 +312,26 @@ export async function warmPublishedCache() {
   return { count: notes.length, warmedAt: publishedIndexCache.warmedAt };
 }
 
+/** Load published notes into memory from git markdown (call once at server startup). */
+export async function warmPublishedCache() {
+  const publishedRows = await loadPublishedRowsFromMarkdown();
+  return populatePublishedCache(publishedRows);
+}
+
 export async function listPublished() {
   if (publishedIndexCache?.notes) {
     return publishedIndexCache.notes;
   }
-  return loadPublishedIndexFromStore();
+  await warmPublishedCache();
+  return publishedIndexCache?.notes ?? [];
 }
 
 export async function readPublished(slug) {
   const cleanSlug = String(slug || '').trim();
   const cached = publishedBodyCache.get(cleanSlug);
   if (cached) return cached;
-  return loadPublishedNoteFromStore(cleanSlug);
+  await warmPublishedCache();
+  return publishedBodyCache.get(cleanSlug) ?? null;
 }
 
 /**
@@ -488,7 +498,7 @@ export async function deleteDraft(slug) {
 }
 
 export async function exportMarkdown(slug) {
-  const row = await readForEditor(slug);
+  const row = await readPublished(slug);
   if (!row) return null;
   return formatNoteMarkdownExport(row);
 }
@@ -513,6 +523,7 @@ export async function importPublishedNote(metadata, body, email = 'import@local'
 }
 
 export async function initResearchNotesStore() {
+  if (!isResearchNotesEditorEnabled()) return;
   await ensureSchemaOnce();
 }
 
@@ -522,30 +533,31 @@ export function publishedNotesFromSeed(notes) {
 }
 
 /**
- * Upsert published research notes into PostgreSQL from main-repo markdown.
- * Git canonical: docs/research-notes/RN-XX-slug.md (bodies) + optional metadata overlay
- * in data/research-notes-store.json. Prod-only drafts in Postgres are untouched.
+ * Published rows whose code matches markdown but slug is a pre-migration alias.
+ * @param {object[]} publishedRows
+ * @param {Map<string, string>} canonicalByCode code → canonical slug from markdown
+ * @returns {string[]} slugs to delete
+ */
+export function findSupersededPublishedSlugs(publishedRows, canonicalByCode) {
+  /** @type {string[]} */
+  const toPrune = [];
+  for (const row of publishedRows) {
+    if (row.workflow !== 'published') continue;
+    const code = row.metadata?.code;
+    const canonicalSlug = code ? canonicalByCode.get(code) : null;
+    if (canonicalSlug && row.slug !== canonicalSlug) {
+      toPrune.push(row.slug);
+    }
+  }
+  return toPrune;
+}
+
+/**
+ * @deprecated Published notes are served from docs/research-notes/*.md at runtime.
+ * Postgres sync is no longer run on deploy; kept for optional editor re-enable.
  */
 export async function syncResearchNotesFromSeed() {
-  if (resolveStorageMode() !== 'postgres' || !process.env.DATABASE_URL) {
-    return { skipped: true, reason: 'json mode' };
-  }
-
-  await ensureSchemaOnce();
-  const { buildPublishedNotesFromMarkdown } = await import('./research-notes-md-sync.js');
-  const published = await buildPublishedNotesFromMarkdown();
-  if (!published.length) {
-    return { skipped: true, reason: 'no published markdown notes' };
-  }
-
-  let synced = 0;
-  for (const note of published) {
-    await upsertPg(rowFromRecord(note), { preserveTimestamps: true });
-    synced += 1;
-  }
-
-  clearPublishedCache();
-  return { synced, total: published.length, source: 'docs/research-notes' };
+  return { skipped: true, reason: 'markdown canonical — Postgres sync deprecated' };
 }
 
 /** @deprecated Use syncResearchNotesFromSeed at deploy time instead of web boot. */

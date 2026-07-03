@@ -1,8 +1,14 @@
+---
+status: Open
+date: 2026-06-22
+phase: phase-1
+---
+
 # Hunting ambiguity in the script
 
 ## Research Question
 
-[RN-04](/research/notes/vowel-grammar-v3) rebuilt English vowels as fixed symbol grammar (`⚬X` / `⚬XᵔY`) and resolved the worst *within-key* homograph, *now* and *go* no longer share a symbol. It did not resolve every way symbols collide when concatenated. [RN-03](/research/notes/vowel-mergers-v2) had flagged sequence hazards (`o + w` ↔ `ow`, `e + y` ↔ `ay`), and RN-04 closed by asking whether concatenation hazards would require explicit boundary markers once the script met more languages.
+[RN-04](/research/notes/vowels-as-grammar-the-v3-rebuild) rebuilt English vowels as fixed symbol grammar (`⚬X` / `⚬XᵔY`) and resolved the worst *within-key* homograph, *now* and *go* no longer share a symbol. It did not resolve every way symbols collide when concatenated. [RN-03](/research/notes/how-few-vowels-can-english-tolerate) had flagged sequence hazards (`o + w` ↔ `ow`, `e + y` ↔ `ay`), and RN-04 closed by asking whether concatenation hazards would require explicit boundary markers once the script met more languages.
 
 The v2 minimal-pair suite (`npm run test:minimal-pairs`) reported "0 collision groups", but that metric only checked whether words inside five hand-picked groups encoded to *different* symbols. It did not ask whether two phoneme sequences could produce the *same* string, or whether greedy decode on unsegmented text recovered the wrong keys. Pronunciation Validation was surfacing round-trip failures on *bar*, *boy*, and *bor* that looked like bugs but often masked deeper ambiguity.
 

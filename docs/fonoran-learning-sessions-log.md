@@ -1,6 +1,6 @@
 # Fonoran learning sessions log
 
-> Living log for Phase IV learnability experiments. Feeds [RN-19](/research/notes/phase-iv-first-learner-signal) and [RN-20](/research/notes/synthetic-intuition-ranking).
+> Living log for Phase IV learnability experiments. Feeds [RN-19](/research/notes/first-learner-signal-from-phase-iv-regen) and [RN-20](/research/notes/synthetic-intuition-ranking).
 
 ## Session template
 
@@ -54,7 +54,7 @@
 | Goal | Recovery rate on post-regen compounds; surface UI and semantic issues |
 | Outcome | **Strong.** 52/54 recovered (96%). Two failures on first repair pass. |
 | Failures / repair | `open` (`kelnan`, guessed *money*); `meaning` (`kuwuhu`, guessed *law*) |
-| Notes | [RN-19](/research/notes/phase-iv-first-learner-signal) published (Active); compound + UI fixes applied after this session. |
+| Notes | [RN-19](/research/notes/first-learner-signal-from-phase-iv-regen) published (Active); compound + UI fixes applied after this session. |
 
 **Post-regen stats:** 54 puzzle rounds recorded Jul 2; 52 recovered on first or repair turn; 2 not recovered.
 
