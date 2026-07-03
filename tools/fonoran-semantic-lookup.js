@@ -1,21 +1,23 @@
 /**
- * Deterministic semantic lookup via WordNet (wordpos).
+ * OFFLINE curation assistant built on WordNet (wordpos). This is NOT part of the
+ * runtime translate path — the translator is concept-first and never guesses. It
+ * proposes alias/concept candidates for a HUMAN to approve into
+ * localizations/en.json (see the gap report and concept editor).
  *
- * Two-layer expansion for English words that don't match the alias index:
+ * Word-sense disambiguation:
+ *   - Synsets are filtered by the part of speech matching the slot role (e.g. a
+ *     preposition like "behind" in a path role yields no verb/noun sense worth
+ *     bridging → honest gap, never a stray noun sense like "buttocks" → can).
+ *   - Candidates are ranked by WordNet sense order (most frequent sense first).
  *
- *   Layer 1 — Synonym expansion
- *     WordNet synsets give co-synonyms: "large" → "big", "travel" → "move".
- *     These are tried directly against the Fonoran alias index.
+ *   Layer 1 — Synonym expansion: co-synonyms from POS-matched synsets, tried
+ *             against the alias index by the caller.
+ *   Layer 2 — Hypernym bridge: walk the is-a chain one level up and map through
+ *             a curated table (geological_formation → earth, body_of_water →
+ *             water, …) for the long tail of concrete nouns.
  *
- *   Layer 2 — Hypernym bridge
- *     Walk the is-a chain one level up. Unknown nouns (mountain, river, storm)
- *     are mapped through a curated table: geological_formation → earth,
- *     body_of_water → water, etc. Covers the long tail of concrete nouns with
- *     no direct synonym in the inventory.
- *
- * Results are cached in data/fonoran-semantic-cache.json so repeated lookups
- * are instant and the system stays deterministic (same word → same candidates
- * forever once written to cache).
+ * Results are cached in data/fonoran-semantic-cache.json (keyed by word + POS)
+ * so repeated lookups are instant and deterministic.
  */
 
 import { createRequire } from 'node:module';
@@ -145,6 +147,23 @@ async function flushCache() {
 
 function norm(w) { return String(w).toLowerCase().replace(/_/g, ' ').trim(); }
 
+/**
+ * Slot role → WordNet parts of speech for word-sense disambiguation. A word is
+ * only expanded through the senses that match its grammatical role, so a
+ * preposition in a path role (behind, front) yields nothing to bridge and stays
+ * an honest gap instead of collapsing to an unrelated noun sense.
+ */
+export const ROLE_POS = {
+  event: ['v'],
+  verb: ['v'],
+  subject: ['n'],
+  object: ['n'],
+  path: ['n'],
+  time: ['n'],
+  modifier: ['a', 's', 'v'],
+  concept: ['n', 'v', 'a', 's'],
+};
+
 /** Role-aware disambiguation when both food and eat are bridge targets. */
 export function pickHypernymConcept(concepts, role) {
   if (!concepts?.length) return null;
@@ -155,39 +174,45 @@ export function pickHypernymConcept(concepts, role) {
   return concepts[0];
 }
 
-// ─── Core lookup ─────────────────────────────────────────────────────────────
+// ─── Core lookup (offline curation assistant) ────────────────────────────────
+
+/** Which WordNet POS buckets a role admits (defaults to all). */
+function posForRole(role) {
+  return new Set(ROLE_POS[role] ?? ['n', 'v', 'a', 's']);
+}
 
 /**
- * Return ranked candidate English terms for `word` via WordNet, suitable for
- * trying against the Fonoran alias index.
+ * Propose ranked candidate English terms + bridged concept ids for `word`,
+ * disambiguated by the slot `role`. Intended for OFFLINE curation only.
  *
- * Returns: { synonyms: string[], hypernym_concepts: string[] }
- *   synonyms         — co-synonyms from the same synsets (try against alias index)
- *   hypernym_concepts — Fonoran concept IDs inferred from the hypernym bridge
- *                       (use directly if synonym pass still fails)
+ * Returns: { pos, synonyms: string[], hypernym_concepts: string[] }
+ *   synonyms          — co-synonyms from POS-matched synsets (sense-ranked)
+ *   hypernym_concepts — Fonoran concept IDs from the hypernym bridge
  */
-export async function expandWord(word) {
-  const key = norm(word).replace(/\s+/g, '_');
+export async function expandWord(word, { role = null } = {}) {
+  const posSet = role ? posForRole(role) : new Set(['n', 'v', 'a', 's']);
+  const posKey = [...posSet].sort().join('');
+  const key = `${norm(word).replace(/\s+/g, '_')}::${posKey}`;
   const cache = await loadCache();
   if (cache[key]) return cache[key];
 
   const wp = getWp();
-  if (!wp) return { synonyms: [], hypernym_concepts: [] };
+  if (!wp) return { pos: [...posSet], synonyms: [], hypernym_concepts: [] };
 
   try {
-    // Look up across all relevant parts of speech.
-    const [nouns, verbs, adjs] = await Promise.all([
-      wp.lookupNoun(key).catch(() => []),
-      wp.lookupVerb(key).catch(() => []),
-      wp.lookupAdjective(key).catch(() => []),
-    ]);
-    const all = [...nouns, ...verbs, ...adjs];
+    // Look up only the parts of speech admitted by the role. WordNet returns
+    // synsets ordered by sense frequency, so earlier entries rank higher.
+    const buckets = [];
+    if (posSet.has('n')) buckets.push(...await wp.lookupNoun(norm(word)).catch(() => []));
+    if (posSet.has('v')) buckets.push(...await wp.lookupVerb(norm(word)).catch(() => []));
+    if (posSet.has('a') || posSet.has('s')) buckets.push(...await wp.lookupAdjective(norm(word)).catch(() => []));
+    const all = buckets;
 
-    // Layer 1: co-synonyms in shared synsets.
+    // Layer 1: co-synonyms in shared synsets (sense-ranked, dedup preserves order).
     const synonyms = [...new Set(
       all.flatMap(s => s.synonyms ?? [])
         .map(norm)
-        .filter(s => s !== key && s !== word && !/\d/.test(s)),
+        .filter(s => s !== norm(word) && !/\d/.test(s)),
     )];
 
     // Layer 2: hypernym bridge — walk '@' (hypernym) ptrs one level up.
@@ -199,8 +224,7 @@ export async function expandWord(word) {
         const parent = await wp.seek(ptr.synsetOffset, ptr.pos).catch(() => null);
         if (!parent) continue;
         for (const pSyn of parent.synonyms ?? []) {
-          const pNorm = norm(pSyn);
-          const bridge = HYPERNYM_BRIDGE.get(pNorm);
+          const bridge = HYPERNYM_BRIDGE.get(norm(pSyn));
           if (bridge) {
             for (const cid of bridge) {
               if (!seenConcepts.has(cid)) {
@@ -213,13 +237,13 @@ export async function expandWord(word) {
       }
     }
 
-    const result = { synonyms, hypernym_concepts };
+    const result = { pos: [...posSet], synonyms, hypernym_concepts };
     cache[key] = result;
     _dirty = true;
     await flushCache();
     return result;
   } catch {
-    return { synonyms: [], hypernym_concepts: [] };
+    return { pos: [...posSet], synonyms: [], hypernym_concepts: [] };
   }
 }
 

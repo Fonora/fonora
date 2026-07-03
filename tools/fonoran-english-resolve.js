@@ -1,6 +1,10 @@
 /**
- * Unified English → Fonoran concept resolution for Translator and Word Generator.
- * Tiers: direct → interpreted → semantic (WordNet) → guessed compound → unknown.
+ * Unified, concept-first English → Fonoran resolution for Translator and Word
+ * Generator. Deterministic ordered tiers with a hard confidence floor:
+ *   direct (strong alias/concept id/lemma) → interpreted (curated rule / hint /
+ *   morphology / transparent assembly) → honest gap.
+ * WordNet is not consulted at runtime (moved to an offline curation assistant);
+ * below-floor elements surface as honest gaps rather than fabricated words.
  */
 
 import {
@@ -10,6 +14,8 @@ import {
   compoundEnglishGuide,
 } from './fonoran-pronunciation.js';
 import { buildConceptAliasIndex, loadRuntimeConceptInventory, buildRootById, loadLocalization } from './fonoran-concepts.js';
+// WordNet is imported ONLY for the offline curation assistant (suggestGapConcepts).
+// It is never used by resolveEnglishToken / the runtime translate path.
 import { expandWord, pickHypernymConcept } from './fonoran-semantic-lookup.js';
 import { getLab } from './fonoran-sound-bucket.js';
 import {
@@ -54,24 +60,15 @@ export const IRREGULAR = {
   wars: 'conflict',
 };
 
-/** Block WordNet/hypernym guessing on function words. */
-const SEMANTIC_BLOCK = new Set([
-  'something', 'anything', 'nothing', 'everything', 'another', 'else', 'someone', 'anyone',
-  'spirit',
-]);
-
-/** Force nearest concept before WordNet (honest bridges). */
+/**
+ * Curated English → concept bridges. Deliberate, human-authored mappings for
+ * meaning-bearing words that have no direct alias but a clear nearest concept
+ * (e.g. `reason` → think, `from` → source). This is NOT WordNet guessing: each
+ * entry is a reviewed decision, applied as a concept hint.
+ */
 const SEMANTIC_BRIDGE = new Map([
   ['reason', 'think'],
-  // `from` carries origin meaning; bridge it to the existing `source` root
-  // instead of silently dropping it as a function word.
   ['from', 'source'],
-]);
-
-/** Synonyms to reject during semantic tier. */
-const SEMANTIC_DENY_SYNONYMS = new Map([
-  ['reason', new Set(['ground', 'earth'])],
-  ['spirit', new Set(['feel', 'feeling', 'emotion'])],
 ]);
 
 /** Conjunctions — not content words. */
@@ -319,7 +316,27 @@ function enrichToken(base, meta) {
     guessed: meta.guessed ?? false,
     guess_components: meta.guess_components ?? null,
     lookup: meta.lookup ?? base.lookup ?? null,
+    // Gap provenance: why an element did not resolve, plus a non-authoritative
+    // low-confidence suggestion for the human curation queue (never surfaced).
+    gap_reason: meta.gap_reason ?? base.gap_reason ?? null,
+    suggestion: meta.suggestion ?? base.suggestion ?? null,
   };
+}
+
+/**
+ * Build an honest gap token. Below the resolver's confidence floor an element
+ * surfaces as `[english]` — never a fabricated word (docs Design Rule 0). An
+ * optional `suggestion` (e.g. a demoted weak/gloss alias) is carried for the
+ * curation queue but is deliberately not used as output.
+ */
+function gapToken(surface, role, { reason = 'no confident concept', suggestion = null, conceptId = null } = {}) {
+  return enrichToken({ ...unknownHit(surface), role, english: surface, resolved: false, fonoran: null }, {
+    resolution_kind: 'unknown',
+    confidence: 'low',
+    concept_id: conceptId,
+    gap_reason: reason,
+    suggestion,
+  });
 }
 
 /**
@@ -460,34 +477,59 @@ export function resolveEnglishPhrase(phrase, ctx, { skip = null } = {}) {
   return unknownHit(raw);
 }
 
+/** Non-authoritative curation suggestion built from a demoted weak alias. */
+function weakSuggestionFromHit(hit) {
+  if (!hit?.concept_id && !hit?.fonoran) return null;
+  return {
+    kind: 'weak_alias',
+    concept_id: hit.concept_id ?? null,
+    fonoran: hit.fonoran ?? null,
+    reason: `weak alias:${hit.matched_alias ?? hit.lookup ?? ''}`.replace(/:$/, ''),
+  };
+}
+
 /**
- * Full async resolution pipeline for one English token or phrase.
+ * Deterministic, concept-first English → Fonoran resolution for one token or
+ * phrase. Ordered tiers with a hard confidence floor:
+ *
+ *   HIGH   (direct):      curated strong alias / concept id / lemma / phrase.
+ *   MEDIUM (interpreted): curated concept hint, curated interpretation rule
+ *                         (spatial_path / classes / idioms), irregular past,
+ *                         head-noun of a phrase, agentive morphology, and
+ *                         transparent compound assembly over strong aliases.
+ *   BELOW FLOOR:          honest gap — surfaces as `[english]`, never a
+ *                         fabricated word (docs Design Rule 0). A demoted weak
+ *                         (gloss-derived) alias is carried as a curation
+ *                         `suggestion` but is NOT emitted as output.
+ *
+ * WordNet is no longer consulted at runtime; it is an offline curation
+ * assistant (tools/fonoran-semantic-lookup.js). `allowSemantic`/`allowGuess`/
+ * `avoidConceptIds` are retained for call-site compatibility but no longer gate
+ * any runtime guessing.
  */
 export async function resolveEnglishToken(english, ctx, {
   role = 'concept',
   hints = {},
-  allowSemantic = true,
-  allowGuess = true,
+  allowSemantic = true, // eslint-disable-line no-unused-vars
+  allowGuess = true, // eslint-disable-line no-unused-vars
   surfaceEnglish = null,
-  avoidConceptIds = null,
+  avoidConceptIds = null, // eslint-disable-line no-unused-vars
 } = {}) {
   const surface = String(surfaceEnglish ?? english ?? '').trim();
   const lookupWord = role === 'object' ? landmarkPhrase(surface) : String(english ?? '').trim().toLowerCase();
   if (!lookupWord) {
-    return enrichToken(unknownHit(''), { resolution_kind: 'unknown', confidence: 'low', role, english: surface });
+    return gapToken(surface, role, { reason: 'empty token' });
   }
 
-  if (SEMANTIC_BLOCK.has(lookupWord)) {
-    allowSemantic = false;
-    allowGuess = false;
-  }
-
+  // Curated semantic bridge (e.g. reason → think, from → source): a deliberate
+  // English → concept mapping, treated as a concept hint (not a WordNet guess).
   const bridgeConcept = SEMANTIC_BRIDGE.get(lookupWord);
   if (bridgeConcept && !hints.concept_hint) {
     hints.concept_hint = bridgeConcept;
     hints.interpret_reason = hints.interpret_reason ?? 'semantic bridge';
   }
 
+  // Tier MEDIUM: curated concept hint.
   if (hints.concept_hint) {
     const hintHit = lookupByConceptId(ctx, hints.concept_hint);
     if (hintHit.resolved) {
@@ -501,40 +543,26 @@ export async function resolveEnglishToken(english, ctx, {
     }
   }
 
+  let weakSuggestion = null;
+
   if (lookupWord.includes(' ')) {
     const phraseHit = resolveEnglishPhrase(lookupWord, ctx);
-    if (phraseHit.resolved) {
-      const weakAlias = phraseHit.resolution_kind === 'alias_weak';
+    // Tier HIGH: strong multi-word alias.
+    if (phraseHit.resolved && phraseHit.resolution_kind !== 'alias_weak') {
       return enrichToken({ ...phraseHit, role, english: surface }, {
-        resolution_kind: weakAlias ? 'alias_weak' : 'direct',
-        confidence: weakAlias ? 'low' : 'high',
-        interpreted: phraseHit.interpreted ?? false,
-        interpreted_from: phraseHit.interpreted_from ?? null,
-        interpret_reason: phraseHit.interpret_reason ?? null,
+        resolution_kind: 'direct',
+        confidence: 'high',
       });
     }
-
-    if (hints.concept_hint) {
-      const hintHit = lookupByConceptId(ctx, hints.concept_hint);
-      if (hintHit.resolved) {
-        return enrichToken({ ...hintHit, role, english: surface }, {
-          resolution_kind: 'interpreted',
-          confidence: 'medium',
-          interpreted: true,
-          interpreted_from: surface,
-          interpret_reason: hints.interpret_reason ?? 'concept hint',
-        });
-      }
+    // Weak phrase alias → curation suggestion only, never output.
+    if (phraseHit.resolution_kind === 'alias_weak') {
+      weakSuggestion = weakSuggestion ?? weakSuggestionFromHit(phraseHit);
     }
 
+    // Tier MEDIUM: head noun of the phrase.
     const head = headNounToken(lookupWord.split(/\s+/), { skip: null });
     if (head && head !== lookupWord) {
-      const headToken = await resolveEnglishToken(head, ctx, {
-        role,
-        allowSemantic,
-        allowGuess: false,
-        avoidConceptIds,
-      });
+      const headToken = await resolveEnglishToken(head, ctx, { role });
       if (headToken.resolved) {
         return enrichToken({ ...headToken, english: surface }, {
           interpreted: true,
@@ -544,8 +572,10 @@ export async function resolveEnglishToken(english, ctx, {
             : `head noun:${head}`,
         });
       }
+      if (headToken.suggestion) weakSuggestion = weakSuggestion ?? headToken.suggestion;
     }
 
+    // Tier MEDIUM: transparent phrase assembly over strong aliases only.
     const phraseAssembly = await tryTransparentPhraseAssembly(lookupWord, ctx, role);
     if (phraseAssembly) return phraseAssembly;
   }
@@ -553,39 +583,28 @@ export async function resolveEnglishToken(english, ctx, {
   const keys = buildTryKeys(lookupWord, ctx.rules);
   let hit = lookupByKeys(ctx, keys);
   if (hit.resolved) {
-    const pastLemma = irregularPastLemma(surface, ctx.rules);
-    const interpretedPast = Boolean(pastLemma && hit.past_lemma);
-    // A weak (description/gloss-derived) alias is a low-confidence match — flag
-    // it so the quality gate can treat it as a review item, not a clean hit.
     const weakAlias = hit.alias_strength === 'weak';
-    return enrichToken({ ...hit, role, english: surface }, {
-      resolution_kind: weakAlias ? 'alias_weak' : 'direct',
-      confidence: weakAlias ? 'low' : 'high',
-      concept_id: hit.concept_id ?? hit.english,
-      interpreted: interpretedPast,
-      interpreted_from: interpretedPast ? surface : null,
-      interpret_reason: interpretedPast ? 'irregular past' : (weakAlias ? `weak alias:${hit.matched_alias ?? lookupWord}` : null),
-    });
-  }
-
-  if (hints.concept_hint) {
-    hit = lookupByConceptId(ctx, hints.concept_hint);
-    if (hit.resolved || hit.concept_id) {
+    if (!weakAlias) {
+      // Tier HIGH: strong alias / concept id / lemma.
+      const pastLemma = irregularPastLemma(surface, ctx.rules);
+      const interpretedPast = Boolean(pastLemma && hit.past_lemma);
       return enrichToken({ ...hit, role, english: surface }, {
-        resolution_kind: hit.resolved ? 'interpreted' : 'semantic',
-        confidence: hit.resolved ? 'medium' : 'low',
-        interpreted: true,
-        interpreted_from: surface,
-        interpret_reason: hints.interpret_reason ?? 'concept hint fallback',
+        resolution_kind: interpretedPast ? 'interpreted' : 'direct',
+        confidence: interpretedPast ? 'medium' : 'high',
+        concept_id: hit.concept_id ?? hit.english,
+        interpreted: interpretedPast,
+        interpreted_from: interpretedPast ? surface : null,
+        interpret_reason: interpretedPast ? 'irregular past' : null,
       });
     }
+    // Weak single-word alias → curation suggestion only, never output.
+    weakSuggestion = weakSuggestion ?? weakSuggestionFromHit(hit);
   }
 
+  // Tier MEDIUM: curated interpretation rule (spatial_path / classes / idioms).
   const interp = interpretToConceptRelaxed(surface, role, ctx.rules)
     ?? interpretToConceptRelaxed(lemmatizeEnglish(surface, ctx.rules), role, ctx.rules);
-  let conceptIds = [];
   if (interp?.concept_id) {
-    conceptIds.push(interp.concept_id);
     hit = lookupByConceptId(ctx, interp.concept_id);
     if (hit.resolved) {
       return enrichToken({ ...hit, role, english: surface }, {
@@ -597,99 +616,91 @@ export async function resolveEnglishToken(english, ctx, {
         interpret_class: interp.class,
       });
     }
+    // Rule matched a concept that has no spelling yet: honest gap, but keep the
+    // concept id so the curation queue knows which root to grow.
+    return gapToken(surface, role, {
+      reason: `interpretation rule matched unspelled concept:${interp.concept_id}`,
+      conceptId: interp.concept_id,
+      suggestion: weakSuggestion,
+    });
   }
 
-  const bases = agentiveBase(lookupWord);
-  if (bases) {
-    for (const base of bases) {
-      const agentHit = lookupAliasEntry(ctx.aliasIndex, buildTryKeys(base, ctx.rules));
-      if (agentHit?.hit?.concept_id) {
-        conceptIds.push(agentHit.hit.concept_id);
-        if (ctx.rootById.has('person')) conceptIds.push('person');
-        break;
-      }
-    }
-  }
+  // NOTE: naive agentive `-er/-or/-ist` stripping is intentionally NOT a runtime
+  // tier. Without part-of-speech disambiguation it fabricates (e.g. flower→flow,
+  // power→pow, water→wat). Genuine agentive nouns (healer, hunter, traveler) are
+  // curated as explicit aliases; unknown ones surface as honest gaps and the
+  // offline WordNet assistant proposes agentive splits for human review.
 
+  // Tier MEDIUM: transparent single-word assembly over strong aliases only.
   const wordAssembly = await tryTransparentWordAssembly(lookupWord, ctx, role);
   if (wordAssembly) return wordAssembly;
 
-  if (allowSemantic) {
-    const { synonyms, hypernym_concepts } = await expandWord(lookupWord);
-    const hypernymPick = pickHypernymConcept(hypernym_concepts, role);
-    const hypernymCandidates = hypernymPick
-      ? [hypernymPick, ...hypernym_concepts.filter(c => c !== hypernymPick)]
-      : hypernym_concepts;
-
-    for (const cid of hypernymCandidates) {
-      if (avoidConceptIds?.has(cid)) continue;
-      if (!ctx.rootById.has(cid)) continue;
-      conceptIds.push(cid);
-      hit = lookupByConceptId(ctx, cid);
-      if (hit.resolved) {
-        return enrichToken({ ...hit, role, english: surface }, {
-          resolution_kind: 'semantic',
-          confidence: 'medium',
-          interpreted: true,
-          interpreted_from: surface,
-          interpret_reason: `hypernym:${cid}`,
-        });
-      }
-    }
-
-    for (const syn of synonyms) {
-      const synNorm = String(syn).toLowerCase().replace(/_/g, ' ').trim();
-      const denied = SEMANTIC_DENY_SYNONYMS.get(lookupWord);
-      if (denied?.has(synNorm)) continue;
-      const synKeys = buildTryKeys(syn.replace(/\s+/g, '_'), ctx.rules);
-      synKeys.push(syn, lemmatizeEnglish(syn, ctx.rules));
-      const synHit = lookupAliasEntry(ctx.aliasIndex, [...new Set(synKeys)]);
-      if (synHit?.hit?.concept_id) {
-        conceptIds.push(synHit.hit.concept_id);
-        hit = lookupByConceptId(ctx, synHit.hit.concept_id);
-        if (hit.resolved) {
-          return enrichToken({ ...hit, role, english: surface }, {
-            resolution_kind: 'semantic',
-            confidence: 'medium',
-            interpreted: true,
-            interpreted_from: surface,
-            interpret_reason: `synonym:${syn}`,
-          });
-        }
-      }
-    }
-  }
-
-  conceptIds = [...new Set(conceptIds.filter(id => ctx.rootById.has(id)))];
-
-  // Honest single-concept fallback: map to the nearest existing root if one
-  // exists. We never fabricate a new multi-root compound — an unmatched word
-  // surfaces as a gap so the language can be grown deliberately.
-  if (allowGuess && conceptIds.length >= 1) {
-    const single = lookupByConceptId(ctx, conceptIds[0]);
-    if (single.resolved) {
-      return enrichToken({ ...single, role, english: surface }, {
-        resolution_kind: 'semantic',
-        confidence: 'medium',
-        interpreted: true,
-        interpreted_from: surface,
-        interpret_reason: interp?.reason ?? 'nearest concept',
-      });
-    }
-    if (single.concept_id && !single.resolved) {
-      return enrichToken({ ...single, role, english: surface, resolved: false }, {
-        resolution_kind: 'unknown',
-        confidence: 'low',
-        concept_id: conceptIds[0],
-        interpreted: true,
-        interpreted_from: surface,
-        interpret_reason: interp?.reason ?? 'concept without spelling',
-      });
-    }
-  }
-
-  return enrichToken({ ...unknownHit(lookupWord), role, english: surface }, {
-    resolution_kind: 'unknown',
-    confidence: 'low',
+  // Below the confidence floor → honest gap (never fabricate a word).
+  return gapToken(surface, role, {
+    reason: weakSuggestion ? 'only a weak (gloss-derived) alias matched' : 'no confident concept',
+    suggestion: weakSuggestion,
   });
+}
+
+/**
+ * OFFLINE curation assistant: propose ranked, human-reviewable concept mappings
+ * for an unresolved English word, disambiguated by slot role via WordNet (WSD +
+ * POS). Each suggestion points at an EXISTING Fonoran root the human can approve
+ * into localizations/en.json. This is deliberately NOT called from
+ * resolveEnglishToken — the runtime never guesses (docs Design Rule 0).
+ *
+ * @returns {Promise<Array<{ concept_id, fonoran, gloss, reason, kind }>>}
+ */
+export async function suggestGapConcepts(word, role, ctx, { limit = 5 } = {}) {
+  const lookupWord = String(word ?? '').trim().toLowerCase();
+  if (!lookupWord) return [];
+  const suggestions = [];
+  const seen = new Set();
+  const push = (conceptId, reason) => {
+    if (!conceptId || seen.has(conceptId)) return;
+    const hit = lookupByConceptId(ctx, conceptId);
+    if (!hit.resolved) return;
+    seen.add(conceptId);
+    suggestions.push({
+      concept_id: conceptId,
+      fonoran: hit.fonoran,
+      gloss: hit.gloss ?? conceptId,
+      reason,
+      kind: 'wordnet',
+    });
+  };
+
+  // A demoted weak (gloss-derived) alias is the cheapest suggestion.
+  const weakHit = lookupByKeys(ctx, buildTryKeys(lookupWord, ctx.rules));
+  if (weakHit.resolved && weakHit.alias_strength === 'weak' && weakHit.concept_id) {
+    push(weakHit.concept_id, `weak alias:${weakHit.matched_alias ?? lookupWord}`);
+  }
+
+  let expanded;
+  try {
+    expanded = await expandWord(lookupWord, { role });
+  } catch {
+    return suggestions.slice(0, limit);
+  }
+  const { synonyms = [], hypernym_concepts = [] } = expanded ?? {};
+
+  const hypernymPick = pickHypernymConcept(hypernym_concepts, role);
+  const rankedHypernyms = hypernymPick
+    ? [hypernymPick, ...hypernym_concepts.filter(c => c !== hypernymPick)]
+    : hypernym_concepts;
+  for (const cid of rankedHypernyms) push(cid, `hypernym:${cid}`);
+
+  for (const syn of synonyms) {
+    const synKeys = [...new Set([
+      ...buildTryKeys(syn.replace(/\s+/g, '_'), ctx.rules),
+      syn,
+      lemmatizeEnglish(syn, ctx.rules),
+    ])];
+    const synHit = lookupAliasEntry(ctx.aliasIndex, synKeys);
+    if (synHit?.hit?.concept_id && synHit.hit.alias_strength !== 'weak') {
+      push(synHit.hit.concept_id, `synonym:${syn}`);
+    }
+  }
+
+  return suggestions.slice(0, limit);
 }

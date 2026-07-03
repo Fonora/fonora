@@ -345,9 +345,11 @@ const fonoranTranslatorResult = await (async () => {
     assert(atWar.unresolved.length === 0, `at war unresolved: ${atWar.unresolved.join(', ')}`);
     assert(atWar.tokens.some(t => t.english === 'at war' && t.resolution_kind === 'interpreted'), `at war idiom: ${JSON.stringify(atWar.tokens)}`);
 
+    // mountain resolves via a curated strong alias (earth) or its own root —
+    // always 'direct'. The old WordNet 'semantic' tier is gone from runtime.
     const mountain = await translateEnglish('mountain');
     assert(mountain.tokens[0]?.resolved, 'mountain should resolve');
-    assert(['direct', 'semantic'].includes(mountain.tokens[0]?.resolution_kind), `mountain tier: ${mountain.tokens[0]?.resolution_kind}`);
+    assert(mountain.tokens[0]?.resolution_kind === 'direct', `mountain tier: ${mountain.tokens[0]?.resolution_kind}`);
 
     const timeTravelerLab = {
       sounds: [],
@@ -461,6 +463,58 @@ const fonoranTranslatorResult = await (async () => {
     assert(seafoodA.surface.roman === 'mi sak tel yemelto tel', `seafood roman: ${seafoodA.surface.roman}`);
     assert(seafoodB.surface.roman === seafoodA.surface.roman, `sea food diverged: ${seafoodB.surface.roman}`);
     assert(!seafoodA.tokens.some(t => t.interpret_reason?.includes('hypernym:eat')), 'seafood must not collapse to eat');
+
+    // Concept-first honest gaps (docs Design Rule 0): `behind` is a preposition
+    // whose only WordNet noun sense is "buttocks" (→ can → metal → ja). The
+    // runtime never consults WordNet and never fabricates, so it surfaces as an
+    // honest gap. This is the regression that kills the old `behind -> ja`.
+    const behind = await translateEnglish('behind');
+    assert(!behind.tokens.some(t => t.resolved), `behind must not fabricate a word: ${JSON.stringify(behind.tokens)}`);
+    assert(behind.surface.roman === '[behind]', `behind honest gap surface: ${behind.surface.roman}`);
+    assert(behind.frame?.gaps?.some(g => g.english === 'behind'), `behind must be a frame gap: ${JSON.stringify(behind.frame)}`);
+
+    // Locative predicate (grammar Rule 7): a spatial relation in "X is <prep> Y"
+    // must reach the Place slot instead of being silently dropped by head-noun
+    // reduction. Concept-less relations (behind, between) surface as an honest
+    // Place gap; relations with a concept (above→up) resolve. The old parser
+    // collapsed "the cat is behind the tree" to just "cat tree".
+    const catBehind = await translateEnglish('the cat is behind the tree');
+    assert(catBehind.surface.roman === 'kal [behind] tet', `locative behind: ${catBehind.surface.roman}`);
+    assert(catBehind.frame?.gaps?.some(g => g.english === 'behind' && g.role === 'path'),
+      `behind must be a Place-slot gap, not dropped: ${JSON.stringify(catBehind.frame?.gaps)}`);
+    assert(catBehind.frame?.target?.some(t => t.concept_id === 'plant'),
+      `tree must remain the locative ground: ${JSON.stringify(catBehind.frame?.target)}`);
+
+    const boxBetween = await translateEnglish('the box is between the trees');
+    assert(boxBetween.frame?.gaps?.some(g => g.english === 'between' && g.role === 'path'),
+      `between must be a Place-slot gap: ${JSON.stringify(boxBetween.frame?.gaps)}`);
+
+    // A spatial relation that HAS a Fonoran concept resolves in the Place slot.
+    const birdAbove = await translateEnglish('the bird is above the tree');
+    assert(birdAbove.frame?.place?.some(p => p.concept_id === 'up'),
+      `above must resolve to the up concept in Place: ${JSON.stringify(birdAbove.frame?.place)}`);
+
+    // The semantic frame (grammar Rule 7) is a real pivot: filled roles carry a
+    // concept_id + provenance (resolution_kind), never a raw English token.
+    const framed = await translateEnglish('the man jumped');
+    assert(framed.frame && Array.isArray(framed.frame.actor), 'frame object present');
+    assert(framed.frame.actor.some(a => a.concept_id === 'person' && a.resolution_kind), `frame actor: ${JSON.stringify(framed.frame.actor)}`);
+    assert(framed.frame.action.some(a => a.concept_id === 'move'), `frame action: ${JSON.stringify(framed.frame.action)}`);
+
+    // Curated backfill replaces fabricated matches: flower -> plant (was the
+    // WordNet-fabricated flower -> person), king -> person (was → strong).
+    const flower = await translateEnglish('flower');
+    assert(flower.tokens[0]?.concept_id === 'plant' && flower.tokens[0]?.resolution_kind === 'direct', `flower -> plant: ${JSON.stringify(flower.tokens[0])}`);
+
+    // No runtime WordNet/weak-alias fabrication: every resolved token is a
+    // curated 'direct' or deliberate 'interpreted' hit — never 'semantic' or
+    // 'alias_weak'.
+    const kingGuard = await translateEnglish('The king trusts the guard.');
+    assert(kingGuard.tokens.some(t => t.english === 'king' && t.concept_id === 'person'), `king -> person: ${JSON.stringify(kingGuard.tokens)}`);
+    for (const t of kingGuard.tokens) {
+      assert(t.resolution_kind !== 'semantic' && t.resolution_kind !== 'alias_weak',
+        `runtime must not use WordNet/weak tier: ${t.english} -> ${t.resolution_kind}`);
+    }
 
     return { name: testName, ok: true };
   } catch (e) {

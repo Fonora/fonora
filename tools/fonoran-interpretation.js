@@ -33,6 +33,18 @@ export const NP_BOUNDARY_PREPS = new Set([
   'between', 'among', 'inside', 'outside', 'within', 'without', 'behind', 'beside', 'beyond',
 ]);
 
+/**
+ * Spatial-relation prepositions that carry real positional meaning but have no
+ * Fonoran concept root yet. In a locative predicate ("the cat is behind the
+ * tree") they must surface as an honest Place-slot gap ([behind]) instead of
+ * being swallowed by head-noun reduction. Relations that DO have a concept
+ * (over→up, under→down, near, inside, outside, beside→near) are handled by the
+ * spatial_path rules and are deliberately excluded here.
+ */
+export const LOCATIVE_GAP_PREPS = new Set([
+  'behind', 'between', 'among', 'beyond', 'around',
+]);
+
 /** English futurate auxiliaries (go/goes are locomotion, not future markers). */
 const FUTURE_INTENT_MARKERS = new Set(['will', 'shall']);
 
@@ -252,6 +264,23 @@ export function parseTrailingPhrase(tokens, { skip = null } = {}) {
     }
   }
 
+  // Locative predicate: a leading spatial/relational preposition ("is behind
+  // the tree", "is above the river") introduces a position relation. Surface the
+  // relation in the Place slot — its spatial concept if one exists (above → up),
+  // otherwise an honest gap ([behind]) — plus the ground as the object, instead
+  // of silently swallowing the preposition via head-noun reduction. Contentless
+  // containment preps (in/at/on/into) stay in `skip` and fall through unchanged.
+  const leadPrep = raw[0]?.toLowerCase();
+  if (raw.length >= 2 && NP_BOUNDARY_PREPS.has(leadPrep) && !skip?.has(leadPrep)) {
+    const groundRaw = raw.slice(1).filter(w => !skip?.has(w.toLowerCase()));
+    const ground = groundRaw.join(' ');
+    return {
+      object: ground ? [{ english: ground, role: 'object' }] : [],
+      path: [{ english: leadPrep, role: 'path' }],
+      modifiers: [],
+    };
+  }
+
   const words = raw.filter(w => !skip?.has(w.toLowerCase()));
   if (!words.length) return { object: [], modifiers: [] };
 
@@ -261,6 +290,7 @@ export function parseTrailingPhrase(tokens, { skip = null } = {}) {
     const tailPart = parseTrailingPhrase(words.slice(prepIdx), { skip });
     return {
       object: headPart.object,
+      path: [...(headPart.path ?? []), ...(tailPart.path ?? [])],
       modifiers: [
         ...headPart.modifiers,
         ...tailPart.object.map(o => ({ ...o, role: 'modifier' })),
@@ -952,6 +982,20 @@ function beConstructionFromParts(subject, be, afterBe, rules) {
 
   const headLower = head.toLowerCase();
   if (PREP_OBJECT.has(headLower) || rules?.spatial_path?.[headLower]) return null;
+
+  // Locative predicate led by a concept-less spatial relation ("is behind the
+  // tree", "is between the trees"): route the whole predicate through trailing
+  // parsing so the relation lands in the Place slot (an honest gap) instead of
+  // being swallowed as a modifier or misread as a participle/verb.
+  if (LOCATIVE_GAP_PREPS.has(headLower)) {
+    return {
+      subject,
+      be,
+      event: null,
+      modifiers: [],
+      trailingTokens: afterBe,
+    };
+  }
 
   if (looksLikeParticiple(head, rules)) {
     let modifiers = [];

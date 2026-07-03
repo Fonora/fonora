@@ -18,8 +18,10 @@
     "to": { "concept_id": "path", "reason": "spatial path toward" },
     "from": { "concept_id": "source", "reason": "spatial path from" },
     "away": { "concept_id": "far", "reason": "spatial path away" },
-    "near": { "concept_id": "near", "reason": "spatial path near" }
+    "near": { "concept_id": "near", "reason": "spatial path near" },
+    "beside": { "concept_id": "near", "reason": "spatial path beside" }
   },
+  "_relational_gaps": "behind / front / between have no Fonoran concept root yet; they surface as honest gaps (Design Rule 0) until a root is grown through the normal pipeline. Do NOT map them to an unrelated root.",
   "classes": {
     "locomotion": {
       "concept_id": "move",
