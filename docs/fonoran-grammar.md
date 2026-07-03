@@ -15,6 +15,19 @@ Fonoran is a language of **concepts**.
 
 Every lexical item represents a semantic concept. Grammar exists only to describe **relationships between concepts**. Complexity should live in semantic composition, not grammatical exceptions.
 
+## Design Rule 0: Grammar is the last resort
+
+> **If a distinction can be expressed through ordinary concepts, it should not become grammar. Grammar exists only to express relationships that cannot be naturally represented as concepts.**
+
+This is the filter every other rule answers to. Before adding any particle, marker, or grammatical mechanism, ask whether the same meaning can be expressed compositionally using existing concepts. If the answer is yes, grammar stays out of it. This single principle explains why Fonoran has:
+
+- no dedicated *who / what / where / when / why / how* particles (questions are compositional — see [Rule 3](#rule-3-grammar-uses-particles));
+- no *only / also / even* focus particles (these are refinements, expressed lexically if and when usage demands them);
+- an intentionally tiny particle inventory (`mi`, `ta`, `sa`, `no`, `ya`, `von`);
+- a strong preference for transparent compounds over new grammatical machinery.
+
+A distinction earns a particle only once real usage shows it *cannot* be carried by concepts and word order alone.
+
 Roots are organized by **human experience** (survival/body, space/motion, social, emotion,
 time, thinking, abstract) and gated by the **campfire test**: *could two strangers stranded
 with no common language plausibly need this root in their first week?* If yes, it belongs in
@@ -86,16 +99,17 @@ For the *why* — the communication experiment, campfire test, meaning-attempts,
 
 | Idea | Rule |
 | --- | --- |
+| Grammar is the last resort | [Design Rule 0](#design-rule-0-grammar-is-the-last-resort) |
 | Concepts, not parts of speech | [Rule 1](#rule-1-concepts-are-universal) |
 | Words never inflect | [Rule 2](#rule-2-words-never-change) |
 | Grammar uses particles | [Rule 3](#rule-3-grammar-uses-particles) |
-| Fixed default order | [Rule 4](#rule-4-sentence-order) |
+| Fixed core, floating periphery | [Rule 4](#rule-4-fixed-core-floating-periphery) |
 | Meaning through composition | [Rule 5](#rule-5-semantic-compounding) |
 | English → Fonoran compiler | [Rule 7](#rule-7-translator-architecture) |
 
-**Present has no time particle.** Past uses **ta**, future **sa** (*Under Development*). The event concept stays identical across tenses: `mi bem` / `mi ta bem` / `mi sa bem` → I love / loved / will love.
+**Present has no time particle.** Past uses **ta**, future **sa**. The event concept stays identical across tenses: `mi bem` / `mi ta bem` / `mi sa bem` → I love / loved / will love.
 
-Modifier chains use the same invariant spellings — **bem ba** (loving person), **bem ben** (loving community), **bem nal** (conflict about love) — with reading fixed by order and context. Compounds like **benba** (collective + person) and **benbanal** (tribe + conflict) preserve their ancestry in the spelling; see [Rule 5](#rule-5-semantic-compounding).
+Modifier chains use the same invariant spellings — **bem ba** (loving person), **bem ben** (loving community), **bem nal** (conflict about love) — with the modifier placed **before its head** ([Rule 4](#rule-4-fixed-core-floating-periphery)). Compounds like **benba** (collective + person) and **benbanal** (tribe + conflict) preserve their ancestry in the spelling; see [Rule 5](#rule-5-semantic-compounding).
 
 ## Rule 1: Concepts Are Universal
 
@@ -162,7 +176,7 @@ Time, plurality, and relationships are expressed through **particles** and **wor
 
 Instead of modifying words, Fonoran uses small **invariant particles** to mark grammatical relationships.
 
-The particle inventory is not finalized. Placeholders below show the intended architecture.
+The v1 inventory is intentionally tiny (Design Rule 0): six forms, listed below. It grows only when usage proves a distinction cannot be carried by concepts and word order.
 
 ### Tense
 
@@ -170,32 +184,27 @@ Present is **not** a particle. It is the default when no time marker appears.
 
 | Tense | Particle | Status |
 | --- | --- | --- |
-| Past | ta | Under Development |
-| Future | sa | Under Development |
+| Past | ta | Active |
+| Future | sa | Active |
 
-### Other particles
+### The v1 particle inventory
 
-The full inventory (forms, roles, English triggers) lives in [../data/fonoran-grammar-particles.json](../data/fonoran-grammar-particles.json). The particle class is **closed and minimal**: a word is a particle only if it is genuinely grammatical (cannot be a lexical concept) *and* is sanctioned here or wired in the translator.
+The full inventory (forms, roles, English triggers) lives in [../data/fonoran-grammar-particles.json](../data/fonoran-grammar-particles.json). The particle class is **closed and minimal** (Design Rule 0): a word is a particle only if it is genuinely grammatical — it cannot be a lexical concept — *and* it is sanctioned here or wired in the translator. The complete v1 set is:
 
 | Role | Particle | Status |
 | --- | --- | --- |
+| Pronoun (I) | mi | Active |
+| Past | ta | Active |
+| Future | sa | Active |
 | Negation | no | Active |
 | Affirmation | ya | Active |
-| Question (marker) | wo | Active |
 | Conditional (if) | von | Active |
-| Interrogative (what) | vus | Active |
-| Interrogative (who) | zas | Active |
-| Interrogative (when) | zes | Active |
-| Interrogative (where) | zis | Active |
-| Interrogative (why) | zos | Active |
-| Interrogative (how) | zus | Active |
-| Focus (only) | vat | Active |
-| Focus (also) | vet | Active |
-| Focus (even) | vit | Active |
-| Possession | TBD | Under Development |
-| Comparison | TBD | Under Development |
 
-Particles are **reserved**: the root generator never assigns particle forms to a lexical concept. The reserved set is `mi`, `ta`, `sa`, `no`, `ya`, `wo` plus the `v*`/`z*` particle forms enumerated in [../data/fonoran-primitive-roots-config.json](../data/fonoran-primitive-roots-config.json) (`reserved_particles.forms`).
+That is the entire grammatical inventory. Everything else — questions, focus, possession, comparison — is expressed with **concepts and word order**, not particles, until usage proves a distinction genuinely needs one.
+
+**Questions carry no particle.** There is no question marker and no interrogative pro-form. Content (*wh*) questions are formed **compositionally from ordinary concepts** (e.g. an "unknown person / thing / place / time" placed in the relevant role), and written questions are marked with **`?`**; spoken questions rely on **intonation**. How a given question is composed is a matter of the lexicon and the translator, not grammar — so the grammar never fixes a particular form. *Why* and *how* are deliberately **not yet expressible** in v1: Fonoran has no robust *reason* or *method* concept, and the language admits that rather than approximating it. (Removed in v1: the former question marker `wo`, the interrogatives `vus/zas/zes/zis/zos/zus`, and the focus particles `vat/vet/vit`.)
+
+Particles are **reserved**: the root generator never assigns particle forms to a lexical concept. The reserved set is enumerated in [../data/fonoran-primitive-roots-config.json](../data/fonoran-primitive-roots-config.json) (`reserved_particles.forms`) — it includes the active v1 forms plus the forms freed by v1 removals, which stay blocked from lexical reuse for spelling stability pending a future decision.
 
 **Grammar vs. lexicon.** Spatial and relational meaning is *lexical*, not grammatical: "in/inside", "here/there", and the three sense of "toward" (`up`/`dal`, `down`/`nat`, `reach`/`ni`), plus `near`/`far`, are **concepts/roots**, never particles. Likewise, personal pronouns other than `mi` (you/we/they/he/she/it) resolve lexically, and conjunctions (`and`/`or`/`but`/`because`) are handled structurally as clause connectives rather than as emitted particles. This keeps the particle class small and prevents it from shadowing the lexicon.
 
@@ -205,10 +214,9 @@ Polarity is grammar, not vocabulary — **false** is `no` + **true**, **differen
 
 Particles occupy fixed positions within the sentence skeleton; they never fuse into adjacent spellings.
 
-- **Negation** sits between Time and Event: `Subject · Time · no · Event · …` (e.g. *I never said that* -> `mi no` + event). It is clause-scoped.
-- **Question marker** `wo` is clause-initial; a specific interrogative particle (e.g. `zes` for *when*) fills its slot in addition to the marker.
-- **Focus** particles (`vat`/`vet`/`vit`) attach as modifiers next to the element they focus.
+- **Negation** attaches near the action, before the Action concept (e.g. *I never said that* -> `mi no` + action). It is clause-scoped.
 - **Quantifier pronouns compose** rather than taking their own root: *nobody* = `no` + **person**, *nothing* = `no` + **thing**, *everyone* = **all** + **person**, *everything* = **all** + **thing**, *someone* = **some** + **person**.
+- **Questions** add no particle: content questions compose from concepts and are written with `?` (see above).
 
 Even before the full inventory exists, you can already read sentences by treating each slot as a labeled relationship:
 
@@ -222,30 +230,43 @@ I love someone.
 
 Particles are separate from concepts. They never fuse into word spellings.
 
-## Rule 4: Fixed Word Order
+## Rule 4: Fixed Core, Floating Periphery
 
-Fonoran recommends a **default sentence structure**:
+Fonoran's sentence structure follows how people naturally think about an event — **who did what to what, where, and when**:
 
 ```text
-Subject · Time · Event · Object · Modifiers
+Actor · Action · Target · Place · Time
 ```
 
 ```mermaid
 flowchart LR
-  S["Subject"]
-  T["Time"]
-  E["Event"]
-  O["Object"]
-  M["Modifiers"]
-  S --> T --> E --> O --> M
+  Actor["Actor"]
+  Action["Action"]
+  Target["Target"]
+  Place["Place"]
+  Time["Time"]
+  Actor --> Action --> Target --> Place --> Time
+```
+
+Fonoran has no case markers, so **word order is the sole disambiguator for the core roles**. The rule splits into two parts:
+
+- **The core — Actor → Action → Target — is strict.** These roles are semantically interchangeable (a person can love or be loved), so their order is fixed and load-bearing.
+- **The periphery — Place and Time — floats.** A place concept or a time concept can only be read as place or time, so it cannot be mistaken for a core role. It may sit in its slot or be fronted as scene-setting. All of these are valid:
+
+```text
+mi tel lo kan-now        (I eat fish now)
+kan-now mi tel lo        (now, I eat fish)
+mi tel lo che-home       (I eat fish at-home)
 ```
 
 **Why this order:**
 
-- **Predictable**: every clause follows the same skeleton
-- **Machine friendly**: parsers do not need probabilistic reordering
-- **Easy to learn**: one template instead of many constructions
-- **Easy to parse**: slot-based analysis maps cleanly to a semantic graph
+- **Intuitive**: it mirrors "who → did what → to what → where → when"
+- **Predictable**: the ambiguous core always follows one template
+- **Natural**: fronting time/place as scene-setting is what many languages do
+- **Easy to parse**: the strict core maps cleanly to who-did-what-to-whom
+
+> Note: `ta`/`sa` (tense) and `no` (negation) are grammatical markers that stay next to the action; they are not the floating **Time** periphery, which is for *time concepts* (before / now / after, calendar words).
 
 ```example
 benba benbanal
@@ -271,7 +292,9 @@ mi sa bem benba
 I will love the tribe.
 ```
 
-Modifiers attach to the nearest eligible slot unless a future particle specifies otherwise (*Under Development*).
+**Modifier attachment is deterministic:** within a phrase, each concept modifies the concept to its **right**; the rightmost concept is the head (`bem ba` = loving person; `datwi kal` = red bird). This makes grouping mechanical rather than interpretive.
+
+> **Long-term design goal:** a meaning that needs modifiers and fills a single role should eventually resolve to *one lexical unit per role* — a root or an approved compound. In v1 we do **not** force adjacent concepts to fuse into a single written word: compounds become canonical because they are useful, reusable concepts (Rule 5), not merely because two words appeared next to each other. Deterministic ordering now; earned compounds over time.
 
 ## Rule 5: Semantic Compounding
 
@@ -426,7 +449,7 @@ flowchart TD
 
 **Current implementation (slot-filling compiler).** The live translator in
 `tools/fonoran-translator.js` implements an earlier stage of this pipeline: English
-→ **grammar slots** (Subject · Time · Event · Path · Object · Modifiers) →
+→ **grammar slots** (Actor · Action · Target · Place · Time; Place covers spatial/motion landmarks) →
 resolution cascade → surface. It does **not** yet build a full semantic graph.
 Motion frames are matched programmatically (`matchMotionPhrase` in
 `tools/fonoran-interpretation.js`) from declarative rules in
@@ -465,7 +488,7 @@ dan ta ginek nan yetasnan
 3. **Semantic graph**: entities, events, relations, time, negation
 4. **Primitive concepts**: map graph nodes to approved Fonoran roots
 5. **Compound construction**: build or select transparent compounds for complex nodes
-6. **Grammar particles**: attach past (**ta**), future (**sa**), question, possession, etc. (*Under Development*). **Omit time particles for present.**
+6. **Grammar particles**: attach past (**ta**), future (**sa**), negation (**no**), conditional (**von**). **Omit time particles for present.** Questions add no particle — content questions compose from concepts and are written with `?`.
 7. **Fonoran sentence**: emit fixed-order surface string
 
 Full implementation spec: [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md).
@@ -527,7 +550,7 @@ Promote a probe to the golden corpus once its output is committed.
 ### Golden regression suite
 
 [../data/fonoran-translation-tests.json](../data/fonoran-translation-tests.json)
-is a **golden corpus**: canonical English sentences (13 levels, 119 phrases), each with
+is a **golden corpus**: canonical English sentences across leveled tiers, each with
 the exact `fon` (roman) output the project commits to, plus a `note` recording
 known gaps/decisions. It is the permanent regression snapshot — run it on every
 grammar, root, or rule change:
@@ -614,7 +637,7 @@ The following topics extend this specification without breaking Rules 1 through 
 | --- | --- |
 | Pronouns | **Partial** — `mi` particle; `you`/`we`/`he`/`she` resolve to roots |
 | Negation | **Partial** — `no` particle in Time slot |
-| Questions | **Partial** — wh-words and `lel` marker; yes/no with `are` + pronoun peel |
+| Questions | **v1** — no particle; content questions compose from concepts (*unknown* + person/thing/place/time), written with `?`, spoken via intonation. *why/how* deferred (no *reason*/*method* concept yet) |
 | Comparisons | Open |
 | Numbers | Open |
 | Quantifiers | **Partial** — `nobody`, `everyone`, etc. expand to particles + roots |

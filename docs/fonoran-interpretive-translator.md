@@ -42,14 +42,16 @@ Roman line + pronunciation + script
 
 Tokenizes English, skips articles/auxiliaries/conjunctions, assigns **grammar slots** per [fonoran-grammar.md](fonoran-grammar.md).
 
-| Slot | Role |
-| --- | --- |
-| Subject | Who or what the sentence is about |
-| Time | Tense particle or time phrase (`every morning`). **Omitted for present** |
-| Event | What happens |
-| Path | Spatial relation |
-| Object | Landmark or patient |
-| Modifiers | Adjectives, predicates, extra concepts |
+The v1 skeleton is **Actor · Action · Target · Place · Time** ([fonoran-grammar.md Rule 4](fonoran-grammar.md#rule-4-fixed-core-floating-periphery)). The parser's internal slot keys keep their historical names (`subject`, `event`, `object`, `path`) but map onto the new roles as below:
+
+| Slot (role) | Internal key | Meaning |
+| --- | --- | --- |
+| Actor | `subject` | Who or what the sentence is about |
+| Action | `event` | What happens |
+| Target | `object` | Landmark or patient |
+| Place | `path` | Spatial relation / motion landmark (floats) |
+| Time | `time` | Tense particle or time phrase (`every morning`). **Omitted for present**; floats |
+| (Modifiers) | `modifiers` | Adjectives, predicates, extra concepts, placed before their head |
 
 **Before naive word-order fallback**, the parser tries:
 
