@@ -1,11 +1,13 @@
 {
-  "version": "2.1-grammar-inventory",
+  "version": "3.0-grammar-inventory-v1",
   "status": "active",
-  "description": "Fonoran grammar particle inventory. Particles mark relationships in the sentence skeleton (Subject · Time · Event · Object · Modifiers); they are invariant and never fuse into lexical spellings (docs/fonoran-grammar.md Rule 3). All forms are reserved in data/fonoran-primitive-roots-config.json so the root generator never assigns them to a lexical concept.",
+  "description": "Fonoran v1 grammar particle inventory. Particles mark relationships in the sentence skeleton (Actor · Action · Target · Place · Time); they are invariant and never fuse into lexical spellings (docs/fonoran-grammar.md Rule 3). All forms are reserved in data/fonoran-primitive-roots-config.json so the root generator never assigns them to a lexical concept.",
   "philosophy_source": "docs/fonoran-grammar.md",
+  "design_rule_0": "If a distinction can be expressed through ordinary concepts, it should not become grammar. Grammar exists only to express relationships that cannot be naturally represented as concepts. This is why v1 has no question particles, no focus particles, and no interrogative pro-form.",
   "scope_note": "This is a closed, minimal class. A particle belongs here ONLY if it is genuinely grammatical (cannot be expressed as a lexical concept) AND is either sanctioned by the grammar doc or actively wired in the translator. Spatial/relational meaning (in/at/toward/from/with, this/that) is LEXICAL in Fonoran — it lives in concepts/roots such as inside, here, there, near, far, up, down, reach — so those are deliberately NOT particles. Personal pronouns other than mi resolve lexically and are out of scope for now.",
   "note": "Present tense has no particle: it is the default when the Time slot is empty. Polarity is grammar, not vocabulary: false = no + true, different = no + same. Quantifier pronouns compose at the particle/root layer: nobody = no + person, everyone = all + person.",
-  "triggers_note": "triggers[] are English surface words that compile to this particle. Empty triggers[] means the particle is core grammar emitted programmatically (tense via the translator's tense pass; the question marker when a wh-word is present).",
+  "questions_note": "v1 has NO grammatical question particles and NO interrogative pro-form. Content (wh) questions are expressed compositionally from ordinary concepts, and written questions are marked with '?' (spoken questions rely on intonation). The specific current compositions (who/what/where/when) live in the translation/vocabulary layer, not here — grammar must stay independent of how the lexicon builds them. Removed in v1: the question marker `wo`, the six interrogative forms (vus/zas/zes/zis/zos/zus), and the focus forms (vat/vet/vit).",
+  "triggers_note": "triggers[] are English surface words that compile to this particle. Empty triggers[] means the particle is core grammar emitted programmatically (tense via the translator's tense pass).",
   "existing_placeholders": {
     "mi": { "role": "pronoun", "gloss": "I" },
     "ta": { "role": "tense", "gloss": "past" },
@@ -20,19 +22,7 @@
 
     { "id": "logic_not", "role": "negation", "gloss": "not; negation", "group": "logical", "form": "no", "triggers": ["not", "never", "n't", "no"] },
     { "id": "logic_yes", "role": "affirmation", "gloss": "yes; affirmative", "group": "logical", "form": "ya", "triggers": ["yes", "yeah", "yep"] },
-    { "id": "logic_if", "role": "conditional", "gloss": "if; condition", "group": "logical", "form": "von", "triggers": ["if"] },
-
-    { "id": "query_marker", "role": "interrogative", "gloss": "question marker; flags an interrogative clause", "group": "interrogative", "form": "wo", "triggers": [] },
-    { "id": "query_what", "role": "interrogative", "gloss": "what; which thing or idea", "group": "interrogative", "form": "vus", "triggers": ["what"] },
-    { "id": "query_who", "role": "interrogative", "gloss": "who; which person", "group": "interrogative", "form": "zas", "triggers": ["who", "whom"] },
-    { "id": "query_when", "role": "interrogative", "gloss": "when; at what time", "group": "interrogative", "form": "zes", "triggers": ["when"] },
-    { "id": "query_where", "role": "interrogative", "gloss": "where; at what place", "group": "interrogative", "form": "zis", "triggers": ["where"] },
-    { "id": "query_why", "role": "interrogative", "gloss": "why; for what reason", "group": "interrogative", "form": "zos", "triggers": ["why"] },
-    { "id": "query_how", "role": "interrogative", "gloss": "how; by what manner", "group": "interrogative", "form": "zus", "triggers": ["how"] },
-
-    { "id": "focus_only", "role": "focus", "gloss": "only; restricts focus to one thing", "group": "focus", "form": "vat", "triggers": ["only", "just"] },
-    { "id": "focus_also", "role": "focus", "gloss": "also; adds to focus", "group": "focus", "form": "vet", "triggers": ["also", "too"] },
-    { "id": "focus_even", "role": "focus", "gloss": "even; scalar focus", "group": "focus", "form": "vit", "triggers": ["even"] }
+    { "id": "logic_if", "role": "conditional", "gloss": "if; condition", "group": "logical", "form": "von", "triggers": ["if"] }
   ],
   "quantifier_pronouns": {
     "note": "Composed at the particle/root layer, not lexical. 'neg' -> logic_not particle; 'all'/'some' resolve to their lexical roots (concepts all/some).",
@@ -51,5 +41,5 @@
     "pronouns": ["you/we/they/he/she/it resolve lexically; only mi is a particle"],
     "connectives": ["and/or/but handled structurally via clause splitting", "because/so handled as clause connectives"]
   },
-  "particle_count": 17
+  "particle_count": 7
 }

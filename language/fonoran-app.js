@@ -3529,7 +3529,6 @@
           { parts: ['no', 'same'], gloss: 'different' },
         ],
         logic_yes: [{ text: 'Standalone affirmative answer' }],
-        query_marker: [{ text: 'Clause-initial flag when a question word is present' }],
       }[p.id];
       if (rows?.length) return rows;
       if (p.note) return [{ text: p.note }];

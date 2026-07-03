@@ -205,44 +205,36 @@
       "phrases": [
         {
           "en": "Where are you?",
-          "fon": "wo zis be"
+          "fon": "no hu che be ?"
         },
         {
           "en": "Who are you?",
-          "fon": "wo zas be"
+          "fon": "no hu ba be ?"
         },
         {
-          "en": "What is this?",
-          "fon": "wo vus to"
-        },
-        {
-          "en": "Why are you here?",
-          "fon": "wo zos nam"
+          "en": "What do you want?",
+          "fon": "no hu to be sak ?"
         },
         {
           "en": "When will you return?",
-          "fon": "wo zes sa be gi"
-        },
-        {
-          "en": "How do you know?",
-          "fon": "wo zus be hu"
+          "fon": "no hu kan sa be gi ?"
         },
         {
           "en": "Is the food ready?",
-          "fon": "tel kel",
+          "fon": "tel kel ?",
           "note": "review: ready→kel(semantic)"
         },
         {
           "en": "Can you help me?",
-          "fon": "be kas mi"
+          "fon": "be kas mi ?"
         },
         {
           "en": "Did you see it?",
-          "fon": "be ta wi to"
+          "fon": "be ta wi to ?"
         },
         {
           "en": "Will it rain?",
-          "fon": "to sa yeju"
+          "fon": "to sa yeju ?"
         }
       ]
     },
@@ -363,7 +355,8 @@
         },
         {
           "en": "When the sun rose, we began walking.",
-          "fon": "wo zes samdat ra dan diye gi"
+          "fon": "[when] samdat ra dan diye gi",
+          "note": "gap: when (needs a root)"
         },
         {
           "en": "Although it was cold, they continued.",
@@ -406,12 +399,12 @@
       "name": "Translator torture tests",
       "phrases": [
         {
-          "en": "I only saw the red bird.",
-          "fon": "mi ta vat wi datwi kal"
+          "en": "I saw the red bird.",
+          "fon": "mi ta wi datwi kal"
         },
         {
-          "en": "Only I saw the red bird.",
-          "fon": "vat ta mi wi datwi kal"
+          "en": "The bird saw me.",
+          "fon": "kal ta wi mi"
         },
         {
           "en": "I almost fell.",
@@ -480,11 +473,11 @@
         },
         {
           "en": "The woman who taught me said that the river had changed.",
-          "fon": "wo ba ta zas kuhu mi se yenanye diho"
+          "fon": "ba ta bakas kuhu mi se yenanye diho"
         },
         {
-          "en": "Why did the old hunter give the child his knife?",
-          "fon": "wo zos ta di lakalba ku re jatem"
+          "en": "The old hunter gave the child his knife.",
+          "fon": "di ta lakalba ku re jatem"
         },
         {
           "en": "Time heals all wounds, but memory keeps the pain alive.",
@@ -545,7 +538,7 @@
         },
         {
           "en": "Are you going to the market tomorrow?",
-          "fon": "shu be gi nan mo",
+          "fon": "shu be gi nan mo ?",
           "note": "review: market→mo(semantic)"
         },
         {

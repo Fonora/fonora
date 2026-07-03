@@ -1,7 +1,7 @@
 /**
  * Generate Fonoran grammar exercises dynamically from the live lab dictionary and the
  * grammar particle inventory. Sentences follow the documented skeleton
- * (Subject · Event · Object) so they stay grammatical, and each exercise is tagged with a
+ * (Actor · Action · Target) so they stay grammatical, and each exercise is tagged with a
  * tierRank so the curriculum can order them from simple to complex.
  */
 import { experienceMetaFor, LANGUAGE_TIERS } from '../tools/fonoran-experience-tiers.js';

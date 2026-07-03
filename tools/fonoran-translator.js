@@ -66,7 +66,58 @@ function isNegationWord(word) {
   return NEGATION_WORDS.has(w) || w.endsWith("n't");
 }
 
-const GRAMMAR_SKELETON = 'Subject · Time · Event · Path · Object · Modifiers';
+// User-facing skeleton (docs/fonoran-grammar.md Rule 4). Internal slot keys keep
+// their historical names (subject/event/object/path) and map onto these roles:
+// Actor=subject, Action=event, Target=object, Place=path, Time=time.
+const GRAMMAR_SKELETON = 'Actor · Action · Target · Place · Time';
+
+/**
+ * TRANSLATOR/VOCABULARY POLICY — NOT grammar.
+ * Content (wh) questions have no grammatical particle in v1. They are expressed
+ * compositionally from ordinary concepts: an "unknown" (not + know) applied to a
+ * category concept (person/thing/place/time). Grammar only states that questions
+ * are compositional (docs/fonoran-grammar.md Rule 3); the concrete mapping lives
+ * here and MAY CHANGE as the lexicon evolves (e.g. if a dedicated `unknown` root
+ * or `reason`/`method` concept is later justified by usage).
+ *   who   -> no hu ba   (not-known person)
+ *   what  -> no hu to    (not-known thing)
+ *   where -> no hu che   (not-known place)
+ *   when  -> no hu kan   (not-known time)
+ * why/how are intentionally absent: Fonoran has no robust reason/method concept yet.
+ * Applied only in interrogative sentences (source marked with `?`) so relative /
+ * subordinate "who"/"when" are left alone.
+ */
+const WH_QUESTION_COMPOSITION = {
+  who: ['neg', 'know', 'person'],
+  whom: ['neg', 'know', 'person'],
+  what: ['neg', 'know', 'thing'],
+  where: ['neg', 'know', 'place'],
+  when: ['neg', 'know', 'time'],
+};
+
+/** A source sentence is a written question when it ends with `?`. */
+function isQuestionSentence(sentence) {
+  return String(sentence ?? '').trim().endsWith('?');
+}
+
+/** Trailing punctuation token so written questions surface a `?` (Rule 3/4). */
+function punctuationToken(mark) {
+  return {
+    role: 'punctuation',
+    english: mark,
+    fonoran: mark,
+    parts: [],
+    resolved: true,
+    kind: 'punctuation',
+    source: 'grammar',
+    gloss: mark,
+    interpreted: false,
+    resolution_kind: 'direct',
+    confidence: 'high',
+    guessed: false,
+    pronunciation: { sayLine: '', englishLine: '' },
+  };
+}
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PARTICLES_PATH = join(ROOT, 'data/fonoran-grammar-particles.json');
@@ -670,6 +721,13 @@ async function resolveSlot(ctx, slot, role) {
     return particleToken(role, PRONOUNS[lower], surface);
   }
 
+  // Content-question composition (translator/vocabulary policy, NOT grammar).
+  // Only in interrogative sentences, so relative/subordinate who/when are untouched.
+  if (ctx.isQuestion && lower && WH_QUESTION_COMPOSITION[lower]) {
+    const expanded = await expandQuantifier(ctx, WH_QUESTION_COMPOSITION[lower], role, surface);
+    if (expanded) return expanded;
+  }
+
   // Grammar particles + quantifier pronouns (closed class, single-word slots only).
   if (PARTICLES && lower && !lower.includes(' ')) {
     const quant = PARTICLES.quantifiers[lower];
@@ -713,6 +771,10 @@ async function slotsToTokens(ctx, slots) {
     const english = slots.event[0]?.english;
     if (!english) return [];
     const lower = String(english).toLowerCase();
+    if (ctx.isQuestion && WH_QUESTION_COMPOSITION[lower]) {
+      const expanded = await expandQuantifier(ctx, WH_QUESTION_COMPOSITION[lower], 'concept', english);
+      if (expanded) return expanded;
+    }
     const particle = PARTICLES && !lower.includes(' ') ? PARTICLES.index.get(lower) : null;
     if (particle?.form) return [particleToken('concept', particle.form, english)];
     return [await resolveEnglishToken(english, ctx, { role: 'concept', allowSemantic: true, allowGuess: true })];
@@ -731,19 +793,8 @@ async function slotsToTokens(ctx, slots) {
     }
   };
 
-  // A wh-interrogative anywhere in the clause flags a question; emit the clause-initial marker.
-  const allSlots = [
-    ...slots.subject, ...slots.time, ...slots.event,
-    ...slots.path, ...slots.object, ...slots.modifiers,
-  ];
-  const isQuestion = PARTICLES && allSlots.some((s) => {
-    const p = PARTICLES.index.get(String(s.english ?? '').toLowerCase());
-    return p?.group === 'interrogative';
-  });
-  if (isQuestion) {
-    const marker = PARTICLES.byId.get('query_marker');
-    if (marker?.form) out.push(particleToken('interrogative', marker.form, 'question'));
-  }
+  // v1: questions carry no particle. Written questions are marked with `?`
+  // (appended by translateEnglish); content questions compose from concepts.
 
   const calendarTime = slots.time.filter(s => LEADING_TIME_WORDS.has(String(s.english ?? '').toLowerCase()));
   const otherTime = slots.time.filter(s => !LEADING_TIME_WORDS.has(String(s.english ?? '').toLowerCase()));
@@ -828,10 +879,12 @@ export async function translateEnglish(text, options = {}) {
     const allTokens = [];
     const mergedSlots = emptySlots();
     for (const sent of sentences) {
+      ctx.isQuestion = isQuestionSentence(sent);
       const englishTokens = mergePhrasalTokens(mergeEnglishCompounds(tokenizeEnglish(sent), ctx.aliasIndex));
       const semantic = await compileSemanticSlots(englishTokens, rules);
       appendSlots(mergedSlots, semantic);
       allTokens.push(...await slotsToTokens(ctx, semantic));
+      if (ctx.isQuestion) allTokens.push(punctuationToken('?'));
     }
     const tokens = allTokens;
     const surface = buildSurface(tokens);
@@ -861,9 +914,11 @@ export async function translateEnglish(text, options = {}) {
     };
   }
 
+  ctx.isQuestion = isQuestionSentence(sentences[0] ?? input);
   const englishTokens = mergePhrasalTokens(mergeEnglishCompounds(tokenizeEnglish(sentences[0] ?? input), ctx.aliasIndex));
   const semantic = await compileSemanticSlots(englishTokens, rules);
   const tokens = await slotsToTokens(ctx, semantic);
+  if (ctx.isQuestion) tokens.push(punctuationToken('?'));
   const surface = buildSurface(tokens);
   const unresolved = tokens.filter(t => !t.resolved).map(t => t.english);
   const interpretations = tokens

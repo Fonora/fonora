@@ -12,7 +12,7 @@
   },
   "collision_profile": "en",
   "reserved_particles": {
-    "note": "Grammar particles, never lexical roots (docs/fonoran-grammar.md Rule 3). Full inventory + roles in data/fonoran-grammar-particles.json. mi=pronoun I, ta=past, sa=future, no=negation, ya=affirmation, wo=question marker, von=if. v*/z* forms cover interrogatives (what/who/when/where/why/how) and focus (only/also/even). Spatial relations and other pronouns are lexical, not particles. (Future is sa, not na, to keep it phonemically distinct from the negation particle no.)",
+    "note": "Grammar particles, never lexical roots (docs/fonoran-grammar.md Rule 3). Full inventory + roles in data/fonoran-grammar-particles.json. Active v1 particles: mi=pronoun I, ta=past, sa=future, no=negation, ya=affirmation, von=if. REMOVED FROM GRAMMAR in v1 but kept reserved (blocked from lexical reuse for spelling stability, pending a future decision): wo (question marker) and the v*/z* forms that were interrogatives (vus/zas/zes/zis/zos/zus) and focus (vat/vet/vit). v1 questions are compositional + '?' with no question particle. Spatial relations and other pronouns are lexical, not particles. (Future is sa, not na, to keep it phonemically distinct from the negation particle no.)",
     "forms": [
       "mi",
       "ta",
