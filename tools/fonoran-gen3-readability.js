@@ -14,11 +14,11 @@ export const MANNER_SYM = {
 
 export const ASPECT_FONORA = {
   contact: '⚬∋',
-  focal: '⚬∩',
-  struct: '⚬⌓',
-  field: '⚬∪',
-  source: '⚬⊃',
-  animated: '⚬⌇',
+  focal: '⚬⌇',
+  struct: '⚬∩',
+  field: '⚬⊃',
+  source: '⚬∪',
+  animated: '⚬⌓',
   turbulent: '⚬⌀',
   resonant: '⚬⏌',
 };

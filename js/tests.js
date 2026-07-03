@@ -220,22 +220,22 @@ const flapResult = await (async () => {
       {
         word: 'dignity',
         phonemes: 'd i g n i t i',
-        symbols: '⌇∩⚬⌓⌇∪⏌∩⚬⌓∩⚬⌓',
+        symbols: '⌇∩⚬∩⌇∪⏌∩⚬∩∩⚬∩',
       },
       {
         word: 'city',
         phonemes: 's i t i',
-        symbols: '⌀∩⚬⌓∩⚬⌓',
+        symbols: '⌀∩⚬∩∩⚬∩',
       },
       {
         word: 'pretty',
         phonemes: 'p r i t i',
-        symbols: '∋ᵔ⌓⚬⌓∩⚬⌓',
+        symbols: '∋ᵔ⌓⚬∩∩⚬∩',
       },
       {
         word: 'water',
         phonemes: 'w o t a',
-        symbols: 'ᵔ∋⚬∪∩⚬⊃',
+        symbols: 'ᵔ∋⚬⊃∩⚬∪',
       },
     ];
     for (const { word, phonemes, symbols } of cases) {
@@ -264,7 +264,7 @@ const perroResult = await (async () => {
     const bundle = loadActiveRulesFixture();
     applyBundleMaps(bundle);
     const result = await translateIpaPhrase('perro', bundle.rules, 'es', { lang: 'es', voice: 'es' });
-    assert(result.symbols === '∋⚬⌇ᵔ⌓⚬⏌', `symbols: ${result.symbols}`);
+    assert(result.symbols === '∋⚬⌓ᵔ⌓⚬⏌', `symbols: ${result.symbols}`);
     assert(result.normalizedPhonemes === 'p e r oh', `phonemes: ${result.normalizedPhonemes}`);
     return { name: 'Spanish perro encodes with oh vowel ending', ok: true };
   } catch (e) {

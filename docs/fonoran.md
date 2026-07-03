@@ -77,7 +77,7 @@ npm run fonoran:build    # assign roots + build curated compounds → lab
 | **Concept Editor** | Sign-in | Edit concept gloss, aliases, and spelling |
 | **Review** | Sign-in | **Root queue** (pending spellings) · **Roots** · **Words** · **Generated** |
 | **Health** | Public | Readability scores and warnings |
-| **Advanced** | Sign-in | Import build, Run DDA, lab reset |
+| **Advanced** | Sign-in | Import build, lab reset, snapshot export |
 
 **Language Explorer** (from Dictionary): derivation trees, “used in” lists, Mermaid family graphs. Read-only graph API, no sign-in.
 
@@ -230,7 +230,7 @@ Reserved particles (never roots): `mi`, `na`, `ta`.
 | `/api/fonoran/lab/health` | GET | Public | Readability scores |
 | `/api/fonoran/lab/graph/:kind/:ref` | GET | Public | Derivation / family graph |
 | `/api/fonoran/lab/compounds` | POST | Sign-in | Save compound |
-| `/api/fonoran/lab/run-dda` | POST | Sign-in | Run DDA inference (archive experiment) |
+| `/api/fonoran/lab/run-dda` | POST | Sign-in | Run DDA inference (archive-only; no UI) |
 | `/api/fonoran/lab/build` | POST | Sign-in | Import build into lab |
 | `/api/fonoran/roots/candidates` | GET | Sign-in | Root queue (`?status=pending`) |
 | `/api/fonoran/roots/candidates/:id` | PATCH | Sign-in | Approve / reject / edit / reopen |
@@ -256,4 +256,4 @@ The translator's semantic lookup uses **WordNet** (via **wordpos**). See [third-
 - [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — translator design
 - [platform-overview.md](platform-overview.md) — three platform layers
 - [deploy.md](deploy.md) — PostgreSQL and production hosting
-- Legacy generators: [fonoran-generator-archive.md](fonoran-generator-archive.md)
+- Legacy generators: [fonoran-generator-archive.md](fonoran-generator-archive.md) — includes the archived **DDA** coordinate experiment (not live word generation; no Language Lab UI)

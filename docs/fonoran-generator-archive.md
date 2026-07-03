@@ -133,14 +133,16 @@ Gen 3 rebased entirely on **DDA coordinates** (Depth, Mode/Dynamics, Aspect). Hu
 - **Gen 3:** `tools/legacy/gen3/fonoran-gen3.js` → `data/fonoran-gen3-roots.json`
 - **Gen 3.1:** readability repairs, distinctiveness, `tools/legacy/gen3/fonoran-gen3-1.js` → `data/fonoran-gen3-1-roots.json`
 - **Canonical stabilization:** human-approved roots → `data/fonoran-canonical-registry.json`
-- **Expert UIs (retired):** Gen 3 review and canonical review HTML pages were removed; use live tooling at `/language/` (Language Explorer, Health, Advanced → archive DDA experiment).
+- **Expert UIs (retired):** Gen 3 review and canonical review HTML pages were removed; use live tooling at `/language/` (Language Explorer, Health, Advanced).
+
+**DDA (Depth · Mode · Aspect)** was a Gen 3 experiment: optional coordinate metadata on lab items, inferred by `tools/fonoran-dda-infer.js`. It is **not** live Fonoran word generation (that uses editorial root assignment and compound composition). The Language Lab UI no longer surfaces DDA; the `/api/fonoran/lab/run-dda` endpoint remains for archive scripts only.
 
 Full design docs (still present):
 
 - [fonoran-gen3.md](fonoran-gen3.md)
 - [fonoran-gen3-1.md](fonoran-gen3-1.md)
 
-Gen 3 JSON is **reference data** for DDA inference and the English meaning picker, not the live dictionary. Audits and constitution exports go to `reports/` (gitignored). The lab bucket is authoritative for the language you are building.
+Gen 3 JSON is **historical reference** for archived generators and the English meaning picker, not the live dictionary. Audits and constitution exports go to `reports/` (gitignored). The lab bucket is authoritative for the language you are building.
 
 ---
 

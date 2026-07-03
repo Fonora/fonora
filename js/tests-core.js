@@ -134,17 +134,17 @@ export function runTests(options) {
 
     const eeRow = inventory.vowels.find((r) => r.key === 'ee');
     assert(eeRow, 'ee vowel row missing');
-    assert(eeRow.symbols === `${vowelMarker}${front}`);
+    assert(eeRow.symbols === `${vowelMarker}${voice}`);
     assert(eeRow.symbols.length === 2, 'ee should be 2-symbol vowel spelling');
   });
 
   t('core vowels composed from recipes', () => {
-    assert(registry.vowels.ee === `${vowelMarker}${front}`);
-    assert(registry.vowels.i === `${vowelMarker}${middle}`);
-    assert(registry.vowels.e === `${vowelMarker}${voice}`);
+    assert(registry.vowels.ee === `${vowelMarker}${voice}`);
+    assert(registry.vowels.i === `${vowelMarker}${front}`);
+    assert(registry.vowels.e === `${vowelMarker}${middle}`);
     assert(registry.vowels.ae === `${vowelMarker}${friction}`);
-    assert(registry.vowels.a === `${vowelMarker}${throat}`);
-    assert(registry.vowels.o === `${vowelMarker}${back}`);
+    assert(registry.vowels.a === `${vowelMarker}${back}`);
+    assert(registry.vowels.o === `${vowelMarker}${throat}`);
     assert(registry.vowels.oh === `${vowelMarker}${nasal}`);
     assert(registry.vowels.u === `${vowelMarker}${lips}`);
   });
@@ -152,8 +152,8 @@ export function runTests(options) {
   t('composite vowels composed from recipes', () => {
     assert(registry.vowels.eye === `${vowelMarker}${throat}${glide}${back}`);
     assert(registry.vowels.ow === `${vowelMarker}${throat}${glide}${lips}`);
-    assert(registry.vowels.oy === `${vowelMarker}${back}${glide}${back}`);
-    assert(registry.vowels.ay === `${vowelMarker}${voice}${glide}${back}`);
+    assert(registry.vowels.oy === `${vowelMarker}${lips}${glide}${back}`);
+    assert(registry.vowels.ay === `${vowelMarker}${middle}${glide}${back}`);
     assert(registry.vowels.eye !== registry.vowels.oy);
     assert(registry.vowels.oy !== `${vowelMarker}${back}${glide}${middle}`);
   });
@@ -232,8 +232,8 @@ export function runTests(options) {
     assert(decodeToPhonemeKeys(boyLike, rules).phonemeKeys === 'b oy');
   });
 
-  t('schwa vowel encodes as ⚬⊃', () => assert(enc('a', rules).symbols === vowelSym(rules, 'a')));
-  t('FLEECE vowel encodes as ⚬∩', () => assert(enc('ee', rules).symbols === vowelSym(rules, 'ee')));
+  t('schwa vowel encodes as ⚬∪', () => assert(enc('a', rules).symbols === vowelSym(rules, 'a')));
+  t('FLEECE vowel encodes as ⚬⌇', () => assert(enc('ee', rules).symbols === vowelSym(rules, 'ee')));
   t('pa uses lips + schwa', () => assert(enc('pa', rules).symbols === `${lips}${vowelSym(rules, 'a')}`));
   t('pee uses lips + FLEECE', () => assert(enc('pee', rules).symbols === `${lips}${vowelSym(rules, 'ee')}`));
 
