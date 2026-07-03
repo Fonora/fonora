@@ -1,3 +1,9 @@
+---
+status: Superseded
+date: 2026-06-24
+phase: phase-2
+---
+
 # Meaning from coordinates: the Gen 3 DDA experiment
 
 ## Research Question

@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-07-03
+phase: phase-1
+---
+
 # Vowel+Glide Phantom Diphthongs
 
 ## Research Question

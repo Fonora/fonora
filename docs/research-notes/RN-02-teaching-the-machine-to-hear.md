@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-06-21
+phase: phase-1
+---
+
 # Teaching the machine to hear
 
 ## Research Question

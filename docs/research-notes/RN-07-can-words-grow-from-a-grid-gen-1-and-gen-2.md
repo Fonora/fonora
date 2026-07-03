@@ -1,3 +1,9 @@
+---
+status: Superseded
+date: 2026-06-24
+phase: phase-2
+---
+
 # Can words grow from a grid? (Gen 1 and Gen 2)
 
 ## Research Question

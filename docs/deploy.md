@@ -154,13 +154,9 @@ See [platform-overview.md](platform-overview.md) for the data architecture overv
 
 ### Research notes (markdown)
 
-**Git canonical source (main repo):** [`docs/research-notes/RN-XX-slug.md`](research-notes/RN-01-writing-sound-instead-of-spelling.md) — one markdown file per published note. Commit the MD file and deploy; no Postgres sync required.
+**Source of truth:** [`docs/research-notes/RN-XX-slug.md`](research-notes/RN-01-writing-sound-instead-of-spelling.md) — one markdown file per note. Optional YAML frontmatter for `status`, `date`, and `phase`.
 
-Optional metadata overlay (SEO fields, tool links, richer `related` lists): [`data/research-notes-store.json`](../data/research-notes-store.json) locally, or `external/fonora-data/data/research-notes-store.json` on Heroku (after `fonoran-data-fetch.js`).
-
-At **runtime**, the server reads markdown from `docs/research-notes/`, warms an in-memory cache at startup, and embeds the index (and note body on `/research/notes/:slug`) in the research HTML shell.
-
-The Tools → Research Notes editor is **deprecated and disabled** by default. To re-enable (not recommended): set `RESEARCH_NOTES_EDITOR_ENABLED=1` on the server and flip `EDITOR_ENABLED` in [`js/research-notes-editor.js`](../js/research-notes-editor.js).
+At **runtime**, the server reads those files at startup, caches them in memory, and embeds the index in the research HTML shell. No Postgres, no fonora-data, no deploy sync step.
 
 Verify before merge:
 
@@ -168,15 +164,7 @@ Verify before merge:
 npm run research:verify-md
 ```
 
-After deploy, verify:
-
-- `GET /api/research/notes` returns exactly one entry per code (RN-01 through RN-23)
-- `/research` and `/research/timeline` show each note once
-- `/research/timeline` HTML source includes `research-notes-bootstrap` JSON with canonical filename slugs
-
-**Not required for research notes:** pushing to [fonora-data](https://github.com/Fonora/fonora-data). LLM/playtest blobs still use that repo; the notebook does not.
-
-See [research-notes-authoring.md](research-notes-authoring.md) for the full workflow.
+See [research-notes-authoring.md](research-notes-authoring.md).
 
 ## Static hosting alternatives
 

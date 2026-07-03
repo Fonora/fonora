@@ -15,12 +15,11 @@ import {
   validateNoteMetadata,
 } from '../js/research-note-meta.js';
 import { normalizeNoteMetadata, resolveNotePhase } from '../js/research-notes.js';
-import { resolveResearchNotesCatalogPath } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const STORE_PATH =
   process.env.RESEARCH_NOTES_STORE_PATH?.trim() ||
-  resolveResearchNotesCatalogPath();
+  join(ROOT, 'data/research-notes-store.json');
 
 let schemaReady = false;
 let pool = null;

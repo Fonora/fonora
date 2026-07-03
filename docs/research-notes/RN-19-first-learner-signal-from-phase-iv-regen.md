@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-07-02
+phase: phase-4
+---
+
 # First learner signal from Phase IV regen
 
 ## Research Question

@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-06-28
+phase: phase-3
+---
+
 # Concepts are canonical, sounds are editorial proposals
 
 ## Research Question

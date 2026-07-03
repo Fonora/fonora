@@ -1,3 +1,9 @@
+---
+status: Foundational
+date: 2026-06-20
+phase: phase-1
+---
+
 # Writing sound instead of spelling
 
 ## Research Question

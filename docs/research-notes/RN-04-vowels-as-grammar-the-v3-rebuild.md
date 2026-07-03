@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-06-22
+phase: phase-1
+---
+
 # Vowels as grammar: the v3 rebuild
 
 ## Research Question

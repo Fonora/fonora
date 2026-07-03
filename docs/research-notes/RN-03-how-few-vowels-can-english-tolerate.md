@@ -1,3 +1,9 @@
+---
+status: Superseded
+date: 2026-06-21
+phase: phase-1
+---
+
 # How few vowels can English tolerate?
 
 ## Research Question

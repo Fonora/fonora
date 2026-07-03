@@ -1,3 +1,9 @@
+---
+status: Foundational
+date: 2026-07-03
+phase: phase-1
+---
+
 # Mouth-intuitive Vowel Glyphs (Iteration)
 
 ## Research Question

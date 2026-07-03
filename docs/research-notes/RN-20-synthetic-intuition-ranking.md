@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-07-02
+phase: phase-4
+---
+
 # Synthetic intuition ranking (Compositional Intuition Battery v3)
 
 ## Research Question

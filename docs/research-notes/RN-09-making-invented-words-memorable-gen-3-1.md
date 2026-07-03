@@ -1,3 +1,9 @@
+---
+status: Superseded
+date: 2026-06-25
+phase: phase-2
+---
+
 # Making invented words memorable (Gen 3.1)
 
 ## Research Question

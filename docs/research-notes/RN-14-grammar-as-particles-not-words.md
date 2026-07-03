@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-06-29
+phase: phase-3
+---
+
 # Grammar as particles, not words
 
 ## Research Question

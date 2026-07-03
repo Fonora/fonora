@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-06-30
+phase: phase-3
+---
+
 # Typing an invented script
 
 ## Research Question

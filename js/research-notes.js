@@ -1,6 +1,6 @@
 /**
  * Research notebook phase definitions and shared types.
- * Published note metadata and bodies live in API storage (/api/research/notes).
+ * Published notes are markdown files in docs/research-notes/ (see research-notes-md-sync.js).
  */
 
 /** Display order + labels for the research notebook eras. */

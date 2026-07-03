@@ -1,3 +1,9 @@
+---
+status: Open
+date: 2026-06-22
+phase: phase-1
+---
+
 # Hunting ambiguity in the script
 
 ## Research Question

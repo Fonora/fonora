@@ -1,3 +1,9 @@
+---
+status: Open
+date: 2026-06-30
+phase: phase-3
+---
+
 # Can strangers recover meaning?
 
 ## Research Question

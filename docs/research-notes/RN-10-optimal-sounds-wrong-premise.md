@@ -1,3 +1,9 @@
+---
+status: Superseded
+date: 2026-06-27
+phase: phase-2
+---
+
 # Optimal sounds, wrong premise
 
 ## Research Question

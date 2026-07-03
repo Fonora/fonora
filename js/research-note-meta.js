@@ -211,6 +211,23 @@ export function nextResearchCode(codes) {
   return `RN-${String(max + 1).padStart(2, '0')}`;
 }
 
+/** @param {string} markdown @returns {{ meta: Record<string, string>, body: string }} */
+export function parseResearchNoteFrontmatter(markdown) {
+  const raw = String(markdown);
+  const match = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if (!match) return { meta: {}, body: raw };
+
+  /** @type {Record<string, string>} */
+  const meta = {};
+  for (const line of match[1].split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const kv = trimmed.match(/^([a-z_]+):\s*(.+)$/i);
+    if (kv) meta[kv[1].toLowerCase()] = kv[2].trim().replace(/^["']|["']$/g, '');
+  }
+  return { meta, body: match[2] };
+}
+
 /**
  * @param {object} metadata
  * @param {object} [opts]

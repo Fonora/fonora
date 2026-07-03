@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-07-03
+phase: phase-4
+---
+
 # Remediating the beginner core
 
 ## Research Question

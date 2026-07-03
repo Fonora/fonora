@@ -1,3 +1,9 @@
+---
+status: Foundational
+date: 2026-06-30
+phase: phase-3
+---
+
 # The campfire test (communication over correctness)
 
 ## Research Question

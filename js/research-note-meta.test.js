@@ -8,6 +8,7 @@ import {
   extractTldr,
   formatNoteMarkdownExport,
   nextResearchCode,
+  parseResearchNoteFrontmatter,
   NEW_NOTE_STUB_TEMPLATE,
   RESEARCH_NOTE_SECTIONS,
   researchNoteBodyTemplate,
@@ -57,6 +58,13 @@ export function runResearchNoteMetaTests() {
     test('extractDescription prefers TL;DR', () => {
       const md = '# Title\n\n> **TL;DR.** Summary line.\n\nBody paragraph.';
       assert(extractDescription(md) === 'Summary line.');
+    }),
+    test('parseResearchNoteFrontmatter reads status and date', () => {
+      const md = '---\nstatus: Superseded\ndate: 2026-06-21\n---\n\n# Title\n\nBody.';
+      const { meta, body } = parseResearchNoteFrontmatter(md);
+      assert(meta.status === 'Superseded');
+      assert(meta.date === '2026-06-21');
+      assert(body.includes('# Title'));
     }),
     test('extractRelatedSlugs finds research links', () => {
       const md = 'See [RN-02](/research/notes/teaching-the-machine-to-hear) and /research/notes/foo';

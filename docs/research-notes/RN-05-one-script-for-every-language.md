@@ -1,3 +1,9 @@
+---
+status: Active
+date: 2026-06-23
+phase: phase-1
+---
+
 # One script for every language
 
 ## Research Question
