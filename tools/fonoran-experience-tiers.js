@@ -54,6 +54,7 @@ const EXPERIENCE_BY_ID = {
   hand: 'survival_body', eye: 'survival_body', skin: 'survival_body', bone: 'survival_body',
   head: 'survival_body', heart: 'survival_body', mouth: 'survival_body', need: 'survival_body',
   hold: 'survival_body', do: 'survival_body', make: 'survival_body', use: 'survival_body',
+  food: 'survival_body', sick: 'survival_body',
 
   // Space & motion
   move: 'space_motion', up: 'space_motion', down: 'space_motion', inside: 'space_motion',
@@ -63,10 +64,12 @@ const EXPERIENCE_BY_ID = {
   air: 'space_motion', sky: 'space_motion', light: 'space_motion', dark: 'space_motion',
   stone: 'space_motion', plant: 'space_motion', tree: 'space_motion', animal: 'space_motion',
   metal: 'space_motion', fast: 'space_motion', flow: 'space_motion', wave: 'space_motion',
+  wait: 'space_motion',
 
   // Social
   give: 'social', take: 'social', help: 'social', collective: 'social', bond: 'social',
   conflict: 'social', parent: 'social', addressee: 'social', name: 'social', mark: 'social',
+  child: 'social',
 
   // Emotion
   love: 'emotion', fear: 'emotion', feel: 'emotion', want: 'emotion', good: 'emotion',
@@ -77,7 +80,7 @@ const EXPERIENCE_BY_ID = {
   before: 'time', after: 'time', now: 'time', time: 'time',
 
   // Thinking
-  know: 'thinking', think: 'thinking', will: 'thinking',
+  know: 'thinking', think: 'thinking', will: 'thinking', understand: 'thinking',
 
   // Abstract (admitted last)
   thing: 'abstract', substance: 'abstract', form: 'abstract', change: 'abstract',
@@ -94,19 +97,21 @@ const EXPERIENCE_BY_ID = {
  */
 const COMMUNICATIVE_CORE = new Set([
   // survival & body
-  'person', 'self', 'body', 'eat', 'drink', 'sleep', 'pain', 'hot', 'cold', 'see', 'hear',
-  'speak', 'hand', 'eye', 'mouth',
+  'person', 'self', 'addressee', 'body', 'eat', 'drink', 'food', 'sleep', 'pain', 'sick',
+  'hot', 'cold', 'see', 'hear', 'speak', 'touch', 'hand', 'head', 'need',
+  // reference & naming
+  'thing', 'name',
   // space & motion
-  'move', 'up', 'down', 'inside', 'outside', 'near', 'far', 'left', 'right', 'water', 'fire',
-  'earth', 'sky', 'tree', 'animal',
-  // social
-  'give', 'take', 'help', 'collective',
+  'move', 'here', 'there', 'place', 'path', 'inside', 'outside', 'near', 'far', 'up', 'down',
+  'water', 'fire',
+  // social & action
+  'give', 'take', 'help', 'collective', 'make', 'use',
   // emotion
-  'love', 'fear', 'feel', 'want', 'good', 'bad', 'happy', 'angry', 'calm', 'trust', 'hope',
+  'feel', 'want', 'good', 'bad', 'same', 'fear',
   // time
-  'before', 'after', 'now',
+  'before', 'now',
   // thinking
-  'know', 'think',
+  'know', 'understand',
 ]);
 
 /**
@@ -116,8 +121,7 @@ const COMMUNICATIVE_CORE = new Set([
  */
 const COMPLETE_ONLY = new Set([
   'pulse', 'wave', 'flow', 'source', 'substance', 'form', 'will', 'cause', 'equal', 'mark',
-  'reach', 'still', 'strong', 'same', 'part', 'surface', 'bound', 'center', 'change', 'empty',
-  'true', 'thing',
+  'reach', 'still', 'strong', 'part', 'surface', 'bound', 'center', 'change', 'empty',
 ]);
 
 const CAMPFIRE_REASONS = {

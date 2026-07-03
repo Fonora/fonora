@@ -1,8 +1,8 @@
 blank_issues_enabled: true
 contact_links:
   - name: Contributing guide
-    url: https://github.com/jamesc137/fonora/blob/main/CONTRIBUTING.md
+    url: https://github.com/Fonora/fonora/blob/main/CONTRIBUTING.md
     about: Setup, tests, and how to open a pull request
   - name: Open Problems (docs)
-    url: https://github.com/jamesc137/fonora/blob/main/docs/open-problems.md
+    url: https://github.com/Fonora/fonora/blob/main/docs/open-problems.md
     about: Known limitations and research areas

@@ -8,7 +8,7 @@ body:
     attributes:
       value: |
         Report cases where two different phoneme sequences produce identical symbols, or greedy decode fails without spacing.
-        See [FONORA_COLLISION_AUDIT.md](https://github.com/jamesc137/fonora/blob/main/docs/FONORA_COLLISION_AUDIT.md).
+        See [FONORA_COLLISION_AUDIT.md](https://github.com/Fonora/fonora/blob/main/docs/FONORA_COLLISION_AUDIT.md).
 
   - type: textarea
     id: sequences

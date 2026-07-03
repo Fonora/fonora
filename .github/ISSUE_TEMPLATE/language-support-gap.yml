@@ -8,7 +8,7 @@ body:
     attributes:
       value: |
         Describe a phoneme or word that Fonora encodes incorrectly or cannot represent.
-        See [multilingual-support.md](https://github.com/jamesc137/fonora/blob/main/docs/multilingual-support.md) and [open-problems.md](https://github.com/jamesc137/fonora/blob/main/docs/open-problems.md).
+        See [multilingual-support.md](https://github.com/Fonora/fonora/blob/main/docs/multilingual-support.md) and [open-problems.md](https://github.com/Fonora/fonora/blob/main/docs/open-problems.md).
 
   - type: input
     id: language

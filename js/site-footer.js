@@ -10,7 +10,7 @@ const FOOTER_LINKS = [
   { href: '/learn', label: 'Learn' },
   { href: '/tools', label: 'Tools' },
   { href: '/#docs', label: 'Docs' },
-  { href: 'https://github.com/jamesc137/fonora', label: 'GitHub', external: true },
+  { href: 'https://github.com/Fonora/fonora', label: 'GitHub', external: true },
 ];
 
 function renderFooterLinks() {
@@ -30,7 +30,7 @@ export function renderSiteFooterHtml() {
     <div class="site-footer-inner">
       <p class="site-footer-copy">
         © 2026 <a href="https://jamescalhoun.co" target="_blank" rel="noopener noreferrer">James Calhoun</a>.
-        Released under the <a href="https://github.com/jamesc137/fonora/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>.
+        Released under the <a href="https://github.com/Fonora/fonora/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>.
       </p>
       <p class="site-footer-links">
         ${renderFooterLinks()}

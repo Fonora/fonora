@@ -24,7 +24,12 @@ reports/
 # Fonoran snapshot backups (use git-tracked data/ for milestones)
 backups/
 
-# Fonoran runtime data (lab bucket + auto-built lexicon)
+# External research data (canonical copy in Fonora/fonora-data submodule)
+data/fonoran-llm-evaluations.json
+data/fonoran-playtests.json
+data/fonoran-translation-test-latest.json
+data/research-notes-store.json
+
 data/fonoran-sound-bucket.json
 data/fonoran-english-lexicon.json
 data/fonoran-stress-test-report.json

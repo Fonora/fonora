@@ -149,8 +149,9 @@ Distinctiveness, collision, and boundary scores plus any warnings are surfaced p
 | `data/fonoran-root-candidates.json` | Proposed spellings + scores + warnings + review status + tier metadata |
 | `data/fonoran-approved-roots.json` | Canonical approved roots (with experience/language tier + campfire pass) |
 | `data/fonoran-compounds.json` | Curated compounds as ranked meaning-attempts: a `preferred` form + `alternates[]` with advisory `understandability` (see [constitution](fonoran-constitution.md)) |
-| `data/fonoran-playtests.json` | Guess-the-meaning playtest rounds — the human authority that decides preferred forms |
-| `data/fonoran-llm-evaluations.json` | v3 intuition battery rounds + `intuition_weight` aggregates (advisory) |
+| `data/fonoran-playtests.json` | Guess-the-meaning playtest rounds — human authority ([Fonora/fonora-data](https://github.com/Fonora/fonora-data)) |
+| `data/fonoran-llm-evaluations.json` | v3 intuition battery rounds + aggregates — advisory ([Fonora/fonora-data](https://github.com/Fonora/fonora-data)) |
+| `data/fonora-data.manifest.json` | Pin of external data repo commit/tag |
 | `data/fonoran-primitive-roots-config.json` | Phonetics rules + active `collision_profile` |
 | `data/fonoran-collision-profiles/` | Editorial collision profiles (default `en.json`) |
 | `data/fonoran-sound-bucket.json` | Runtime lab: sounds, compounds, history (seed + snapshot format) |

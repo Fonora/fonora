@@ -1135,6 +1135,44 @@
         "right side",
         "rightward"
       ]
+    },
+    "sick": {
+      "label": "sick",
+      "aliases": [
+        "ill",
+        "illness",
+        "unwell",
+        "disease",
+        "sickness"
+      ]
+    },
+    "understand": {
+      "label": "understand",
+      "aliases": [
+        "understanding",
+        "understood",
+        "comprehend",
+        "grasp"
+      ]
+    },
+    "child": {
+      "label": "child",
+      "aliases": [
+        "kid",
+        "young one",
+        "baby",
+        "son",
+        "daughter"
+      ]
+    },
+    "wait": {
+      "label": "wait",
+      "aliases": [
+        "waiting",
+        "stay",
+        "pause",
+        "hold on"
+      ]
     }
   },
   "version": "1.0-localization",

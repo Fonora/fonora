@@ -10,10 +10,11 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { translateEnglish, resetTranslatorCache } from './fonoran-translator.js';
+import { resolveDataPath } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS_PATH = join(ROOT, 'data/fonoran-translation-tests.json');
-const LATEST_PATH = join(ROOT, 'data/fonoran-translation-test-latest.json');
+const LATEST_PATH = () => resolveDataPath('translation_test_latest');
 
 /** Load the phrase corpus from disk. */
 export async function loadTranslationCorpus() {
@@ -63,7 +64,7 @@ export async function updateGoldenCorpus({ lab = null } = {}) {
 /** Read the most recent saved full-corpus gap report (null if none yet). */
 export async function loadLatestGapReport() {
   try {
-    return JSON.parse(await readFile(LATEST_PATH, 'utf8'));
+    return JSON.parse(await readFile(LATEST_PATH(), 'utf8'));
   } catch {
     return null;
   }
@@ -71,7 +72,7 @@ export async function loadLatestGapReport() {
 
 /** Persist a full-corpus gap report as the "latest" snapshot. */
 export async function saveLatestGapReport(report) {
-  await writeFile(LATEST_PATH, `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  await writeFile(LATEST_PATH(), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   return report;
 }
 

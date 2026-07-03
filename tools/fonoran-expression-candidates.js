@@ -78,7 +78,6 @@ export const ASSOCIATION_SEEDS = {
   death: [['bound', 'life'], ['no', 'life'], ['end', 'life']],
   birth: [['source', 'life'], ['new', 'life'], ['life', 'before']],
   breath: [['air', 'flow'], ['flow', 'air'], ['air', 'inside']],
-  food: [['eat', 'thing'], ['eat', 'plant'], ['good', 'eat']],
   joy: [['good', 'feel'], ['happy', 'strong'], ['feel', 'good']],
   sad: [['bad', 'feel'], ['no', 'happy'], ['feel', 'bad']],
   teach: [['make', 'know'], ['give', 'know'], ['person', 'know', 'give']],
@@ -94,7 +93,6 @@ export const ASSOCIATION_SEEDS = {
   leader: [['head', 'person'], ['strong', 'person'], ['speak', 'person']],
   helper: [['help', 'person'], ['person', 'help'], ['good', 'person', 'help']],
   student: [['learn', 'person'], ['person', 'learn'], ['take', 'know', 'person']],
-  child: [['small', 'person'], ['new', 'person'], ['person', 'small']],
   giant: [['big', 'body'], ['big', 'person'], ['body', 'big']],
   mind: [['think', 'center'], ['think', 'inside'], ['inside', 'think']],
   wisdom: [['know', 'strong'], ['strong', 'know'], ['know', 'much']],
@@ -143,6 +141,29 @@ export const ASSOCIATION_SEEDS = {
   danger: [['fear', 'place'], ['bad', 'near'], ['near', 'pain']],
   question: [['speak', 'know', 'empty'], ['want', 'know'], ['speak', 'want', 'know']],
   answer: [['speak', 'knowledge'], ['give', 'know'], ['speak', 'know']],
+
+  // --- retired-to-compound roots (vocabulary remediation): formerly primitive roots,
+  // now expressed compositionally so the ~50 core can carry the practical load ---
+  pulse: [['heart', 'move'], ['body', 'move'], ['move', 'move']],
+  wave: [['water', 'move'], ['move', 'water'], ['water', 'up', 'down']],
+  flow: [['water', 'path'], ['water', 'move'], ['water', 'move', 'path']],
+  source: [['before', 'place'], ['place', 'before'], ['before', 'water']],
+  substance: [['thing', 'body'], ['thing', 'inside'], ['body', 'thing']],
+  form: [['thing', 'outside'], ['outside', 'thing'], ['see', 'thing']],
+  will: [['want', 'before'], ['want', 'strong'], ['self', 'want']],
+  cause: [['before', 'make'], ['make', 'before'], ['thing', 'make']],
+  equal: [['same', 'more'], ['same', 'same'], ['same', 'thing']],
+  mark: [['name', 'thing'], ['thing', 'name'], ['see', 'name']],
+  reach: [['hand', 'far'], ['far', 'hand'], ['hand', 'move', 'far']],
+  strong: [['body', 'good'], ['good', 'body'], ['body', 'more']],
+  part: [['thing', 'inside'], ['inside', 'thing'], ['thing', 'small']],
+  change: [['before', 'same'], ['no', 'same'], ['thing', 'before', 'same']],
+
+  // --- new gap compounds surfaced by the beginner-conversation simulation ---
+  come: [['move', 'here'], ['here', 'move'], ['move', 'near']],
+  later: [['after', 'now'], ['now', 'after'], ['after', 'time']],
+  own: [['self', 'take'], ['self', 'thing'], ['take', 'self']],
+  safe: [['trust', 'good'], ['good', 'no', 'fear'], ['no', 'fear']],
 };
 
 function compositionKey(comp) {

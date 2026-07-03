@@ -16,7 +16,7 @@ The included [`server.js`](../server.js) is a small static file server. Heroku, 
 ### Prerequisites
 
 - [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli)
-- GitHub repo pushed to `github.com/jamesc137/fonora` (or your fork)
+- GitHub repo pushed to `github.com/Fonora/fonora` (or your fork)
 - Domain `fonora.org` configured in Heroku + DNS
 
 ### Deploy
@@ -137,6 +137,15 @@ npm run fonoran:export   # lab bucket PostgreSQL → JSON only
 
 Without `DATABASE_URL`, storage falls back to JSON files under `data/`. Use snapshot export/import to sync between JSON mode and a local Postgres instance.
 
+**External research data:** LLM evaluations, playtests, translation snapshots, and the research-notes JSON store live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data), checked out as `external/fonora-data` (git submodule). After clone:
+
+```bash
+git submodule update --init
+npm run fonoran:data:status
+```
+
+Optional `.env`: `FONORAN_DATA_DIR=external/fonora-data`. The main repo pins the data version in `data/fonora-data.manifest.json`.
+
 See [platform-overview.md](platform-overview.md) for the data architecture overview.
 
 **Fonoran vocabulary pipeline (optimize → build → Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md). On Heroku after deploy, use **Advanced → Regenerate dictionary from git seeds** at `/language#advanced` (admin sign-in required).
@@ -145,7 +154,7 @@ See [platform-overview.md](platform-overview.md) for the data architecture overv
 
 Published research notes are **not** read from `docs/research-notes/*.md` at runtime. The live `/research` notebook and Tools → Research Notes editor load from the `research_notes` PostgreSQL table when `DATABASE_URL` is set.
 
-Git canonical source: [`data/research-notes-store.json`](../data/research-notes-store.json) (published + draft bodies). Markdown files under `docs/research-notes/` are optional mirrors for git history.
+Git canonical source: [`Fonora/fonora-data`](https://github.com/Fonora/fonora-data) → `data/research-notes-store.json` (published + draft bodies). Markdown files under `docs/research-notes/` are optional mirrors for git history.
 
 **On deploy** (Heroku release phase), published notes from the git seed file are upserted into Postgres via `scripts/research-notes-sync-deploy.js` (`Procfile` `release:` hook). Prod-only drafts in Postgres are left untouched; git does not delete notes missing from the seed file.
 

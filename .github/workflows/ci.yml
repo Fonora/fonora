@@ -16,6 +16,8 @@ jobs:
       FONORAN_STORAGE: json
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - uses: actions/setup-node@v4
         with:

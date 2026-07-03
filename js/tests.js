@@ -459,7 +459,7 @@ const fonoranTranslatorResult = await (async () => {
 
     const seafoodA = await translateEnglish('I want to eat seafood.');
     const seafoodB = await translateEnglish('I want to eat sea food.');
-    assert(seafoodA.surface.roman === 'mi sak tel yemelfel telto', `seafood roman: ${seafoodA.surface.roman}`);
+    assert(seafoodA.surface.roman === 'mi sak tel yemelto tel', `seafood roman: ${seafoodA.surface.roman}`);
     assert(seafoodB.surface.roman === seafoodA.surface.roman, `sea food diverged: ${seafoodB.surface.roman}`);
     assert(!seafoodA.tokens.some(t => t.interpret_reason?.includes('hypernym:eat')), 'seafood must not collapse to eat');
 
