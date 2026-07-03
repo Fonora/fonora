@@ -2,7 +2,7 @@
 
 ## Research Question
 
-[RN-11](/research/notes/semantic-foundation) answered a structural question: could Fonoran freeze meaning before anyone touched phonetics? The semantic foundation shipped ~99 primitive dimensions, a closed grammar-particle proposal, and fifty demo compounds as concept trees, all deliberately phonetics-free. Its closing section, though, left a sharper question unresolved:
+[RN-11](/research/notes/the-irreducible-dimensions-of-meaning) answered a structural question: could Fonoran freeze meaning before anyone touched phonetics? The semantic foundation shipped ~99 primitive dimensions, a closed grammar-particle proposal, and fifty demo compounds as concept trees, all deliberately phonetics-free. Its closing section, though, left a sharper question unresolved:
 
 **Is Fonoran an ontologically correct decomposition system, or a communication experiment where multiple compound strategies for the same idea are valid if meaning is recoverable?**
 

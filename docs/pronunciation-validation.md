@@ -1,5 +1,5 @@
 # Pronunciation Validation Mode
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-02 · Teaching the machine to hear](/research/notes/ipa-pipeline).
+> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-02 · Teaching the machine to hear](/research/notes/teaching-the-machine-to-hear).
 
 
 Pronunciation Validation Mode is a **testing tool** that checks whether Fonora preserves pronunciation through the full encode/decode pipeline. It does not modify symbol mappings, vowels, diphthongs, derived sounds, or language rules.

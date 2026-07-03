@@ -2,7 +2,7 @@
 
 ## Research Question
 
-[RN-01](/research/notes/articulation-grid) established that Fonora symbols could be *assembled* from place and manner primitives, but it left a practical gap: users type ordinary text, not phoneme keys. English spelling is a poor guide to pronunciation; the same letter sequence can encode different sounds, and the same sound can be written many ways. RN-01 already flagged the Legacy Encoder (a spelling-to-symbol path working directly from English orthography) as a dead end for anything beyond comparison. The question this note addresses is the one RN-01 explicitly deferred:
+[RN-01](/research/notes/writing-sound-instead-of-spelling) established that Fonora symbols could be *assembled* from place and manner primitives, but it left a practical gap: users type ordinary text, not phoneme keys. English spelling is a poor guide to pronunciation; the same letter sequence can encode different sounds, and the same sound can be written many ways. RN-01 already flagged the Legacy Encoder (a spelling-to-symbol path working directly from English orthography) as a dead end for anything beyond comparison. The question this note addresses is the one RN-01 explicitly deferred:
 
 **How should arbitrary text, any word, in any language, from any speaker, be reliably mapped onto the articulation grid without hand-writing spelling rules for every word?**
 

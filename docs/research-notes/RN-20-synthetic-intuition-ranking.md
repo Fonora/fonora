@@ -2,7 +2,7 @@
 
 ## Research Question
 
-[RN-17](/research/notes/puzzle-conversation) established human Puzzle Conversation as the constitutional test for recoverable meaning. [RN-19](/research/notes/phase-iv-first-learner-signal) showed early learner signal after Phase IV regen: dictionary clustering, translator compilation, and ~98% puzzle recovery at small scale, but only **61** of **111** concepts had any human playtest data, and each concept carries multiple seed candidates competing for preferred form.
+[RN-17](/research/notes/can-strangers-recover-meaning) established human Puzzle Conversation as the constitutional test for recoverable meaning. [RN-19](/research/notes/first-learner-signal-from-phase-iv-regen) showed early learner signal after Phase IV regen: dictionary clustering, translator compilation, and ~98% puzzle recovery at small scale, but only **61** of **111** concepts had any human playtest data, and each concept carries multiple seed candidates competing for preferred form.
 
 Heuristic understandability ([`tools/fonoran-understandability.js`](../tools/fonoran-understandability.js)) ranks candidates by length, collision, and experience tiers. It does not simulate root-knower listening. v2 LLM playtests copied the Puzzle MC UI and failed: a shared answer key let every candidate pass after repair.
 
@@ -115,7 +115,7 @@ Per-concept reports: `node tools/fonoran-llm-aggregate.js --report <concept>`
 - **Docs:** [`docs/fonoran-llm-playtest-experiment.md`](../fonoran-llm-playtest-experiment.md) (protocol + results), [`docs/research-notes-authoring.md`](../research-notes-authoring.md) (RN expansion workflow).
 - **Legacy:** v2 runner (`npm run fonoran:llm-playtest`) retained for comparison only; do not use for promotion.
 
-Human Puzzle Conversation ([RN-19](/research/notes/phase-iv-first-learner-signal)) remains the gate for whether promoted spellings actually teach.
+Human Puzzle Conversation ([RN-19](/research/notes/first-learner-signal-from-phase-iv-regen)) remains the gate for whether promoted spellings actually teach.
 
 ## Open Questions
 
@@ -134,4 +134,4 @@ Human Puzzle Conversation ([RN-19](/research/notes/phase-iv-first-learner-signal
 
 **Source:** [`data/fonoran-llm-evaluations.json`](../data/fonoran-llm-evaluations.json), [`data/fonoran-compounds.json`](../data/fonoran-compounds.json), [`scripts/fonoran-llm-intuition.js`](../scripts/fonoran-llm-intuition.js), [`tools/fonoran-llm-aggregate.js`](../tools/fonoran-llm-aggregate.js)
 
-**Prior notes:** [RN-19 · First learner signal](/research/notes/phase-iv-first-learner-signal), [RN-17 · Puzzle conversation](/research/notes/puzzle-conversation), [RN-18 · Compound reconstruction](/research/notes/compound-reconstruction)
+**Prior notes:** [RN-19 · First learner signal](/research/notes/first-learner-signal-from-phase-iv-regen), [RN-17 · Puzzle conversation](/research/notes/can-strangers-recover-meaning), [RN-18 · Compound reconstruction](/research/notes/reconstructing-compounds-under-the-constitution)

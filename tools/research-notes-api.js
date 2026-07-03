@@ -9,6 +9,7 @@ import {
   createDraft,
   deleteDraft,
   exportMarkdown,
+  isResearchNotesEditorEnabled,
   listEditor,
   listPublished,
   publishNote,
@@ -72,6 +73,12 @@ export async function handleResearchApi(req, res, pathname, method) {
     }
 
     if (pathname.startsWith('/api/research/editor')) {
+      if (!isResearchNotesEditorEnabled()) {
+        return done(503, {
+          error: 'Research notes editor is disabled. Author notes in docs/research-notes/*.md instead.',
+        });
+      }
+
       const user = requireWriteUser(req, res);
       if (!user) return true;
 

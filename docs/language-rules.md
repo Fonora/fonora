@@ -1,5 +1,5 @@
 # Language Rules
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-01 · Writing sound instead of spelling](/research/notes/articulation-grid).
+> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-01 · Writing sound instead of spelling](/research/notes/writing-sound-instead-of-spelling).
 
 
 These are the authoritative **encoding rules** for the Fonora phonetic script (Script Layer). The experimental **Fonoran** language is written using this script, see [platform-overview.md](platform-overview.md) and [fonoran.md](fonoran.md) for the language and builder tools.

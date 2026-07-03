@@ -2,7 +2,7 @@
 
 ## Research Question
 
-By late June 2026, Phase III had closed most of the *consumption* side of literacy. Learners could decode composed symbols (RN-01), hear arbitrary text mapped through the IPA pipeline (RN-02), and compile English into nearest approved Fonoran concepts with honest red gaps ([RN-15](/research/notes/interpretive-translator)). [RN-12](/research/notes/the-constitution) had reframed success around recoverable meaning between root-knowers, but the puzzle-conversation protocol it defined assumes participants can eventually *produce* expressions, not only read them.
+By late June 2026, Phase III had closed most of the *consumption* side of literacy. Learners could decode composed symbols (RN-01), hear arbitrary text mapped through the IPA pipeline (RN-02), and compile English into nearest approved Fonoran concepts with honest red gaps ([RN-15](/research/notes/concepts-are-canonical-sounds-are-editorial-proposals)). [RN-12](/research/notes/compiling-english-into-meaning) had reframed success around recoverable meaning between root-knowers, but the puzzle-conversation protocol it defined assumes participants can eventually *produce* expressions, not only read them.
 
 The gap was practical and obvious in daily use: every prior tool showed Fonora script as output. The old Keyboard tab let you click primitive place and manner glyphs or use number-key shortcuts, but it did not behave like typing. You inserted ○ or ⌔ one at a time and assembled words manually, closer to a symbol palette than to literacy. RN-15 closed by naming the problem directly:
 

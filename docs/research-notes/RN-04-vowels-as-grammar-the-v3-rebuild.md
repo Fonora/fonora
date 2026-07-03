@@ -2,7 +2,7 @@
 
 ## Research Question
 
-[RN-03](/research/notes/vowel-mergers-v2) tested how far English vowels could be compressed into thirteen phoneme keys with the v2 double-vowel marker (`⚬⚬`). Cross-key distinctions held, *cat*, *cot*, and *cut* encoded differently, but within-key mergers produced high-frequency homographs: *bed* / *bird*, *now* / *go*, and *hot* / *caught* / *father* / *car* shared symbols inside merged keys. The decision report written that evening recommended deferring any mapping change until stakeholders chose between inventory size, phonetic precision, and learner readability.
+[RN-03](/research/notes/how-few-vowels-can-english-tolerate) tested how far English vowels could be compressed into thirteen phoneme keys with the v2 double-vowel marker (`⚬⚬`). Cross-key distinctions held, *cat*, *cot*, and *cut* encoded differently, but within-key mergers produced high-frequency homographs: *bed* / *bird*, *now* / *go*, and *hot* / *caught* / *father* / *car* shared symbols inside merged keys. The decision report written that evening recommended deferring any mapping change until stakeholders chose between inventory size, phonetic precision, and learner readability.
 
 The question this note addresses is the one RN-03 left open when splitting keys one at a time looked possible but inelegant:
 

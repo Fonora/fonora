@@ -1,5 +1,5 @@
 # Fonoran generator archive (historical)
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-07 · Can words grow from a grid?](/research/notes/roots-from-grammar).
+> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-07 · Can words grow from a grid?](/research/notes/can-words-grow-from-a-grid-gen-1-and-gen-2).
 
 
 > **Archive.** Retired bulk generators. Active workflow: [fonoran.md](../fonoran.md); direction set by the [Fonoran Constitution](../fonoran-constitution.md).

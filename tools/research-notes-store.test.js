@@ -28,7 +28,7 @@ export async function runResearchNotesStoreTests() {
   process.env.FONORAN_SKIP_JSON_MIRROR = '1';
   process.env.RESEARCH_NOTES_STORE_PATH = join(dir, 'research-notes-store.json');
 
-  const { saveDraft, publishNote, readPublished, listPublished, syncResearchNotesFromSeed, publishedNotesFromSeed, warmPublishedCache } = await import(
+  const { saveDraft, publishNote, readForEditor, readPublished, listPublished, syncResearchNotesFromSeed, publishedNotesFromSeed, warmPublishedCache, findSupersededPublishedSlugs } = await import(
     `./research-notes-store.js?test=${Date.now()}`
   );
 
@@ -36,7 +36,7 @@ export async function runResearchNotesStoreTests() {
 
   try {
     results.push(
-      await test('saveDraft and publishNote round-trip', async () => {
+      await test('saveDraft and publishNote round-trip (editor store)', async () => {
         await saveDraft(
           'test-note',
           {
@@ -59,10 +59,9 @@ export async function runResearchNotesStoreTests() {
           'test@local',
         );
         await publishNote('test-note', 'test@local');
-        const pub = await readPublished('test-note');
-        assert(pub?.body.includes('Test Note'));
-        const list = await listPublished();
-        assert(list.some((n) => n.slug === 'test-note'));
+        const row = await readForEditor('test-note');
+        assert(row?.workflow === 'published');
+        assert(row?.body.includes('Test Note'));
       }),
     );
 
@@ -95,21 +94,67 @@ export async function runResearchNotesStoreTests() {
     );
 
     results.push(
-      await test('syncResearchNotesFromSeed skips in json mode', async () => {
-        const result = await syncResearchNotesFromSeed();
-        assert(result.skipped === true);
-        assert(result.reason === 'json mode');
+      await test('findSupersededPublishedSlugs prunes legacy slugs with same code', async () => {
+        const canonicalByCode = new Map([
+          ['RN-04', 'vowels-as-grammar-the-v3-rebuild'],
+          ['RN-06', 'hunting-ambiguity-in-the-script'],
+        ]);
+        const rows = [
+          {
+            slug: 'vowel-grammar-v3',
+            workflow: 'published',
+            metadata: { code: 'RN-04' },
+          },
+          {
+            slug: 'vowels-as-grammar-the-v3-rebuild',
+            workflow: 'published',
+            metadata: { code: 'RN-04' },
+          },
+          {
+            slug: 'collision-audit',
+            workflow: 'published',
+            metadata: { code: 'RN-06' },
+          },
+          {
+            slug: 'prod-only-draft',
+            workflow: 'draft',
+            metadata: { code: 'RN-99' },
+          },
+          {
+            slug: 'legacy-no-markdown',
+            workflow: 'published',
+            metadata: { code: 'RN-88' },
+          },
+        ];
+        const pruned = findSupersededPublishedSlugs(rows, canonicalByCode);
+        assert(pruned.length === 2);
+        assert(pruned.includes('vowel-grammar-v3'));
+        assert(pruned.includes('collision-audit'));
+        assert(!pruned.includes('vowels-as-grammar-the-v3-rebuild'));
+        assert(!pruned.includes('legacy-no-markdown'));
       }),
     );
 
     results.push(
-      await test('warmPublishedCache loads published notes into memory', async () => {
+      await test('syncResearchNotesFromSeed is deprecated (markdown canonical)', async () => {
+        const result = await syncResearchNotesFromSeed();
+        assert(result.skipped === true);
+        assert(result.reason.includes('deprecated'));
+      }),
+    );
+
+    results.push(
+      await test('warmPublishedCache loads published notes from markdown', async () => {
         const warmed = await warmPublishedCache();
-        assert(warmed.count >= 1);
+        assert(warmed.count >= 23);
         const list = await listPublished();
-        assert(list.some((n) => n.slug === 'test-note'));
-        const pub = await readPublished('test-note');
-        assert(pub?.body.includes('Test Note'));
+        assert(list.length >= 23);
+        const codes = new Set(list.map((n) => n.code));
+        assert(codes.size === list.length, 'each code appears once');
+        const rn03 = list.find((n) => n.code === 'RN-03');
+        assert(rn03?.status === 'Superseded');
+        const pub = await readPublished('writing-sound-instead-of-spelling');
+        assert(pub?.body.includes('Writing sound'));
       }),
     );
   } finally {

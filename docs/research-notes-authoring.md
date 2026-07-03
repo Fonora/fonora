@@ -14,12 +14,12 @@ Fonora research notes are engineering/research notebook entries, not marketing a
 
 | Form | Purpose | Where it lives |
 | --- | --- | --- |
-| **Stub** | Seed arc: question → hypothesis → constraints → built → happened → next question | New draft in Tools → Research Notes (`NEW_NOTE_STUB_TEMPLATE`) |
+| **Stub** | Seed arc: question → hypothesis → constraints → built → happened → next question | `NEW_NOTE_STUB_TEMPLATE` in [`js/research-note-meta.js`](../js/research-note-meta.js), or copy an existing note |
 | **Expanded** | Long-form RN-01 structure for publication | **`docs/research-notes/RN-XX-slug.md`** (canonical) + optional metadata in `data/research-notes-store.json` |
 
-**Production:** When `DATABASE_URL` is set (Heroku), the **release phase** upserts every `docs/research-notes/RN-*.md` file into PostgreSQL via `scripts/research-notes-sync-deploy.js`. Commit the markdown file in the main repo and deploy — no fonora-data push required for the notebook.
+**Production:** Commit the markdown file in the main repo and deploy. The server reads `docs/research-notes/RN-*.md` at startup — no PostgreSQL sync.
 
-Prod-only drafts created in Tools stay in Postgres until published or removed.
+The Tools → Research Notes editor is deprecated and disabled. Author notes directly in the repo.
 
 The editor inserts the **long-form** template by default (`NEW_NOTE_TEMPLATE`). Use the **stub** template when you only have the arc and plan to expand later.
 
@@ -58,7 +58,7 @@ Replace `<SLUG>` with the note slug (e.g. `synthetic-intuition-ranking`).
 ```
 Write the next Fonora Research Note by expanding an existing stub into the same long-form structure used for RN-01 (docs/research-notes/RN-01-writing-sound-instead-of-spelling.md).
 
-Source: draft for slug `<SLUG>` in data/research-notes-store.json (Tools → Research Notes editor), or a stub using NEW_NOTE_STUB_TEMPLATE in js/research-note-meta.js.
+Source: metadata for slug `<SLUG>` in data/research-notes-store.json (optional overlay), or a stub using NEW_NOTE_STUB_TEMPLATE in js/research-note-meta.js.
 
 Look up code, title, date, status, phase, description, abstract, related, docs, tools, and source in:
 - data/research-notes-store.json (search for slug `<SLUG>`)
@@ -102,8 +102,8 @@ References subsections:
 - Future research notes (real codes/titles of following notes in sequence)
 
 Output:
-- Update the note body in the Research Notes editor / store, and
-- Save mirror copy to docs/research-notes/<CODE>-<kebab-case-title>.md
+- Save the note to docs/research-notes/<CODE>-<kebab-case-title>.md
+- Optionally update metadata overlay in data/research-notes-store.json
 
 Match the style, heading structure, and tone of RN-01. Do not use a TL;DR blockquote in the body — use metadata abstract for one-line summary.
 
@@ -112,7 +112,7 @@ After polish (optional): node scripts/polish-research-notes-md.js
 
 ---
 
-## Metadata (store / editor)
+## Metadata (optional overlay)
 
 | Field | Values |
 | --- | --- |

@@ -1,5 +1,5 @@
 # Interpretive Translator
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-15 · Compiling English into meaning](/research/notes/interpretive-translator).
+> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-15 · Compiling English into meaning](/research/notes/concepts-are-canonical-sounds-are-editorial-proposals).
 
 
 > **Status**: Active. Compiles English into **nearest approved Fonoran concepts** — not word-for-word glosses.

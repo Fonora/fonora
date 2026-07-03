@@ -1,7 +1,7 @@
 {
   "notes": [
     {
-      "slug": "articulation-grid",
+      "slug": "writing-sound-instead-of-spelling",
       "code": "RN-01",
       "title": "Writing sound instead of spelling",
       "status": "Foundational",
@@ -9,8 +9,8 @@
       "description": "How Fonora began: a writing system that encodes where and how a sound is produced — a composable grid of place and manner — instead of inheriting an alphabet.",
       "abstract": "The founding question — can a script encode articulation (place x manner + a vowel marker) rather than orthography?",
       "related": [
-        "ipa-pipeline",
-        "vowel-grammar-v3"
+        "teaching-the-machine-to-hear",
+        "vowels-as-grammar-the-v3-rebuild"
       ],
       "docs": [
         {
@@ -41,7 +41,7 @@
       "phase": "phase-1"
     },
     {
-      "slug": "ipa-pipeline",
+      "slug": "teaching-the-machine-to-hear",
       "code": "RN-02",
       "title": "Teaching the machine to hear",
       "status": "Active",
@@ -49,9 +49,9 @@
       "description": "Turning arbitrary text into Fonora symbols with a phonetic pipeline: Text -> eSpeak NG -> IPA -> normalize -> encode -> decode, and the source-of-truth debt it created.",
       "abstract": "A phonetic pipeline (eSpeak -> IPA -> normalize -> encode) beats spelling rules — but leaves a split source of truth.",
       "related": [
-        "articulation-grid",
-        "vowel-mergers-v2",
-        "multilingual-script"
+        "writing-sound-instead-of-spelling",
+        "how-few-vowels-can-english-tolerate",
+        "one-script-for-every-language"
       ],
       "docs": [
         {
@@ -86,7 +86,7 @@
       "phase": "phase-1"
     },
     {
-      "slug": "vowel-mergers-v2",
+      "slug": "how-few-vowels-can-english-tolerate",
       "code": "RN-03",
       "title": "How few vowels can English tolerate?",
       "status": "Superseded",
@@ -94,9 +94,9 @@
       "description": "The v2 double-vowel experiment: how a compact vowel inventory that merged lexical sets within a key produced 100% round-trips but high-impact homographs like bed/bird.",
       "abstract": "A compact 13-key vowel inventory merged lexical sets within keys — round-trips passed, but bed/bird collided.",
       "related": [
-        "vowel-grammar-v3",
-        "collision-audit",
-        "ipa-pipeline"
+        "vowels-as-grammar-the-v3-rebuild",
+        "hunting-ambiguity-in-the-script",
+        "teaching-the-machine-to-hear"
       ],
       "docs": [
         {
@@ -119,7 +119,7 @@
       "phase": "phase-1"
     },
     {
-      "slug": "vowel-grammar-v3",
+      "slug": "vowels-as-grammar-the-v3-rebuild",
       "code": "RN-04",
       "title": "Vowels as grammar: the v3 rebuild",
       "status": "Active",
@@ -127,9 +127,9 @@
       "description": "Replacing merged double-vowels with a fixed symbol grammar (simple vowel = two symbols, diphthong = four) that resolves the worst v2 homographs without exploding the symbol count.",
       "abstract": "Vowels become a fixed symbol grammar instead of merged keys, splitting MOUTH from GOAT and retiring the v2 marker.",
       "related": [
-        "vowel-mergers-v2",
-        "multilingual-script",
-        "collision-audit"
+        "how-few-vowels-can-english-tolerate",
+        "one-script-for-every-language",
+        "hunting-ambiguity-in-the-script"
       ],
       "docs": [
         {
@@ -152,7 +152,7 @@
       "phase": "phase-1"
     },
     {
-      "slug": "collision-audit",
+      "slug": "hunting-ambiguity-in-the-script",
       "code": "RN-06",
       "title": "Hunting ambiguity in the script",
       "status": "Open",
@@ -160,8 +160,8 @@
       "description": "An exhaustive audit of where Fonora symbol composition produces collisions and greedy-decoder hazards — and the design decisions it surfaced but did not make.",
       "abstract": "Exhaustive inventory + concatenation analysis: zero exact collisions, but real homograph hazards await design calls.",
       "related": [
-        "vowel-mergers-v2",
-        "vowel-grammar-v3"
+        "how-few-vowels-can-english-tolerate",
+        "vowels-as-grammar-the-v3-rebuild"
       ],
       "docs": [
         {
@@ -188,7 +188,7 @@
       "phase": "phase-1"
     },
     {
-      "slug": "multilingual-script",
+      "slug": "one-script-for-every-language",
       "code": "RN-05",
       "title": "One script for every language",
       "status": "Active",
@@ -196,8 +196,8 @@
       "description": "Encoding many languages from a shared IPA pipeline, and the Spanish \"perro\" vowel bug that proved English vowel rules must be scoped per language.",
       "abstract": "A shared pipeline plus an English-only vowel overlay — discovered by fixing a Spanish vowel bug.",
       "related": [
-        "ipa-pipeline",
-        "collision-audit"
+        "teaching-the-machine-to-hear",
+        "hunting-ambiguity-in-the-script"
       ],
       "docs": [
         {
@@ -224,7 +224,7 @@
       "phase": "phase-1"
     },
     {
-      "slug": "roots-from-grammar",
+      "slug": "can-words-grow-from-a-grid-gen-1-and-gen-2",
       "code": "RN-07",
       "title": "Can words grow from a grid? (Gen 1 and Gen 2)",
       "status": "Superseded",
@@ -232,8 +232,8 @@
       "description": "The first two generations of Fonoran vocabulary: hand roots with grammar-vowel inflection, then coordinate-driven roots with Indo-European collision repair.",
       "abstract": "Gen 1 grew word families from grammar-vowels; Gen 2 added collision repair — both stayed concept-first and English-adjacent.",
       "related": [
-        "dda-coordinates",
-        "huffman-roots"
+        "meaning-from-coordinates-the-gen-3-dda-experiment",
+        "optimal-sounds-wrong-premise"
       ],
       "docs": [
         {
@@ -256,7 +256,7 @@
       "phase": "phase-2"
     },
     {
-      "slug": "dda-coordinates",
+      "slug": "meaning-from-coordinates-the-gen-3-dda-experiment",
       "code": "RN-08",
       "title": "Meaning from coordinates: the Gen 3 DDA experiment",
       "status": "Superseded",
@@ -264,9 +264,9 @@
       "description": "Gen 3 inverted the problem: meaning as a position in <Depth, Mode, Aspect>, with familiar concepts like \"river\" appearing only as derivations, never primitives.",
       "abstract": "Gen 3 treated meaning as a coordinate in the articulation grid — river = flow + path = \"xaeli\".",
       "related": [
-        "roots-from-grammar",
-        "distinctiveness-gen31",
-        "the-constitution"
+        "can-words-grow-from-a-grid-gen-1-and-gen-2",
+        "making-invented-words-memorable-gen-3-1",
+        "compiling-english-into-meaning"
       ],
       "docs": [
         {
@@ -289,7 +289,7 @@
       "phase": "phase-2"
     },
     {
-      "slug": "distinctiveness-gen31",
+      "slug": "making-invented-words-memorable-gen-3-1",
       "code": "RN-09",
       "title": "Making invented words memorable (Gen 3.1)",
       "status": "Superseded",
@@ -297,8 +297,8 @@
       "description": "Gen 3.1 improved learnability while leaving DDA coordinates unchanged, spreading phonetic vowels within native pools to raise memorability from 70 to 85.",
       "abstract": "A distinctiveness layer over Gen 3: memorability 70 -> 85 and 100% parseable, at a 31% grid-repair cost.",
       "related": [
-        "dda-coordinates",
-        "huffman-roots"
+        "meaning-from-coordinates-the-gen-3-dda-experiment",
+        "optimal-sounds-wrong-premise"
       ],
       "docs": [
         {
@@ -321,7 +321,7 @@
       "phase": "phase-2"
     },
     {
-      "slug": "huffman-roots",
+      "slug": "optimal-sounds-wrong-premise",
       "code": "RN-10",
       "title": "Optimal sounds, wrong premise",
       "status": "Superseded",
@@ -329,8 +329,8 @@
       "description": "A Huffman-like allocation gave ~200 ranked human primitives optimal syllables — and revealed that optimizing sound before agreeing on meaning was the wrong order.",
       "abstract": "200 primitives got phonetically optimal syllables, but grammar leaked into roots and compounds were flat and unteachable.",
       "related": [
-        "distinctiveness-gen31",
-        "semantic-foundation"
+        "making-invented-words-memorable-gen-3-1",
+        "the-irreducible-dimensions-of-meaning"
       ],
       "docs": [
         {
@@ -353,7 +353,7 @@
       "phase": "phase-2"
     },
     {
-      "slug": "semantic-foundation",
+      "slug": "the-irreducible-dimensions-of-meaning",
       "code": "RN-11",
       "title": "The irreducible dimensions of meaning",
       "status": "Active",
@@ -361,9 +361,9 @@
       "description": "Asking what ~100 dimensions of reality (not English words) let compounds write themselves, using the \"fundamental experience test\" and deferring phonetics entirely.",
       "abstract": "Meaning first: ~99 primitive dimensions chosen by a fundamental-experience test, with sounds deliberately deferred.",
       "related": [
-        "huffman-roots",
-        "the-constitution",
-        "grammar-particles"
+        "optimal-sounds-wrong-premise",
+        "compiling-english-into-meaning",
+        "grammar-as-particles-not-words"
       ],
       "docs": [
         {
@@ -390,7 +390,7 @@
       "phase": "phase-3"
     },
     {
-      "slug": "editorial-pipeline",
+      "slug": "the-campfire-test-communication-over-correctness",
       "code": "RN-13",
       "title": "Concepts are canonical, sounds are editorial proposals",
       "status": "Active",
@@ -398,9 +398,9 @@
       "description": "The converged CV/CVC pipeline: priority-driven sound assignment with collision and boundary scoring as aids, human review as the gate, and approved roots locked through every rebuild.",
       "abstract": "A converged concept -> root -> compound -> lab pipeline where scoring advises and humans decide; all 118 roots approved.",
       "related": [
-        "the-constitution",
-        "grammar-particles",
-        "interpretive-translator"
+        "compiling-english-into-meaning",
+        "grammar-as-particles-not-words",
+        "concepts-are-canonical-sounds-are-editorial-proposals"
       ],
       "docs": [
         {
@@ -431,7 +431,7 @@
       "phase": "phase-3"
     },
     {
-      "slug": "interpretive-translator",
+      "slug": "concepts-are-canonical-sounds-are-editorial-proposals",
       "code": "RN-15",
       "title": "Compiling English into meaning",
       "status": "Active",
@@ -439,9 +439,9 @@
       "description": "An English -> Fonoran compiler that resolves to the nearest approved concepts rather than word-for-word glosses, with a resolution cascade and honest red tokens for gaps.",
       "abstract": "A three-layer compiler resolves English to the nearest approved concepts and shows unresolved words honestly in red.",
       "related": [
-        "grammar-particles",
-        "editorial-pipeline",
-        "typing-and-keyboard"
+        "grammar-as-particles-not-words",
+        "the-campfire-test-communication-over-correctness",
+        "typing-an-invented-script"
       ],
       "docs": [
         {
@@ -464,7 +464,7 @@
       "phase": "phase-3"
     },
     {
-      "slug": "grammar-particles",
+      "slug": "grammar-as-particles-not-words",
       "code": "RN-14",
       "title": "Grammar as particles, not words",
       "status": "Active",
@@ -472,9 +472,9 @@
       "description": "Deciding which relationships — tense, logic, deixis, pronouns — belong in a closed grammatical class rather than the root lexicon, and reaching 100% translation coverage.",
       "abstract": "Tense, logic, and deixis become closed-class particles, not roots — moving causation out of the lexicon.",
       "related": [
-        "semantic-foundation",
-        "editorial-pipeline",
-        "interpretive-translator"
+        "the-irreducible-dimensions-of-meaning",
+        "the-campfire-test-communication-over-correctness",
+        "concepts-are-canonical-sounds-are-editorial-proposals"
       ],
       "docs": [
         {
@@ -497,7 +497,7 @@
       "phase": "phase-3"
     },
     {
-      "slug": "the-constitution",
+      "slug": "compiling-english-into-meaning",
       "code": "RN-12",
       "title": "The campfire test: communication over correctness",
       "status": "Foundational",
@@ -505,9 +505,9 @@
       "description": "The pivot that reframed everything: Fonoran as a cross-lingual communication experiment where success is recoverable meaning, judged by the campfire test and human playtests.",
       "abstract": "Fonoran is an experiment in recoverable meaning, not a perfect ontology — generators propose, humans approve.",
       "related": [
-        "semantic-foundation",
-        "editorial-pipeline",
-        "puzzle-conversation"
+        "the-irreducible-dimensions-of-meaning",
+        "the-campfire-test-communication-over-correctness",
+        "can-strangers-recover-meaning"
       ],
       "docs": [
         {
@@ -530,7 +530,7 @@
       "phase": "phase-3"
     },
     {
-      "slug": "typing-and-keyboard",
+      "slug": "typing-an-invented-script",
       "code": "RN-16",
       "title": "Typing an invented script",
       "status": "Active",
@@ -538,8 +538,8 @@
       "description": "Closing the read-write loop with a visual QWERTY IME, keyboard testing, and spelling practice so learners can physically produce Fonora symbols.",
       "abstract": "A visual QWERTY IME plus spelling and typing practice let learners produce — not just read — the script.",
       "related": [
-        "interpretive-translator",
-        "puzzle-conversation"
+        "concepts-are-canonical-sounds-are-editorial-proposals",
+        "can-strangers-recover-meaning"
       ],
       "docs": [],
       "tools": [
@@ -557,7 +557,7 @@
       "phase": "phase-3"
     },
     {
-      "slug": "puzzle-conversation",
+      "slug": "can-strangers-recover-meaning",
       "code": "RN-17",
       "title": "Can strangers recover meaning?",
       "status": "Open",
@@ -565,8 +565,8 @@
       "description": "The current frontier: a puzzle-conversation protocol and playtests that measure recoverable meaning between two root-knowers better than any automated score.",
       "abstract": "The live edge of the notebook — testing whether two root-knowers can recover each other’s intended meaning.",
       "related": [
-        "the-constitution",
-        "typing-and-keyboard"
+        "compiling-english-into-meaning",
+        "typing-an-invented-script"
       ],
       "docs": [
         {
@@ -589,7 +589,7 @@
       "phase": "phase-3"
     },
     {
-      "slug": "compound-reconstruction",
+      "slug": "reconstructing-compounds-under-the-constitution",
       "code": "RN-18",
       "title": "Reconstructing compounds under the constitution",
       "status": "Active",
@@ -597,8 +597,8 @@
       "description": "Phase IV kickoff: rebuild the compound inventory as teaching trees and meaning-attempts under the constitution.",
       "abstract": "The Phase IV frontier — reconstructing compounds as communicative strategies, not canonical answers.",
       "related": [
-        "puzzle-conversation",
-        "the-constitution"
+        "can-strangers-recover-meaning",
+        "compiling-english-into-meaning"
       ],
       "docs": [
         {
@@ -621,7 +621,7 @@
       "phase": "phase-4"
     },
     {
-      "slug": "phase-iv-first-learner-signal",
+      "slug": "first-learner-signal-from-phase-iv-regen",
       "code": "RN-19",
       "title": "First learner signal from Phase IV regen",
       "status": "Active",
@@ -629,8 +629,8 @@
       "description": "Phase IV regen learner signal: dictionary clustering, translator compilation, 129/132 puzzle recovery; LLM promotions await Session 4 validation.",
       "abstract": "Post-regen inventory teaches in the ear and sentence at small scale; human playtests remain authority over 22 LLM promotions.",
       "related": [
-        "compound-reconstruction",
-        "puzzle-conversation",
+        "reconstructing-compounds-under-the-constitution",
+        "can-strangers-recover-meaning",
         "compiling-english-into-meaning",
         "synthetic-intuition-ranking"
       ],
@@ -679,9 +679,9 @@
       "description": "v3 Compositional Intuition Battery complete: 2,432 rounds, 88/111 Task B spread, 22 conservative LLM promotions.",
       "abstract": "Synthetic root-knower intuition ranks seed candidates; Task B discriminates; humans validate via Puzzle Conversation.",
       "related": [
-        "phase-iv-first-learner-signal",
-        "puzzle-conversation",
-        "compound-reconstruction"
+        "first-learner-signal-from-phase-iv-regen",
+        "can-strangers-recover-meaning",
+        "reconstructing-compounds-under-the-constitution"
       ],
       "docs": [
         {

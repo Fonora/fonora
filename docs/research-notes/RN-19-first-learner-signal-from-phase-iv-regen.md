@@ -2,7 +2,7 @@
 
 ## Research Question
 
-[RN-18](/research/notes/compound-reconstruction) rebuilt the compound inventory as teaching trees and meaning-attempts under the constitution. That answered *how* to regenerate vocabulary: `ASSOCIATION_SEEDS`, migration scripts, audit tooling, and a path from heuristic alternates to playtest authority.
+[RN-18](/research/notes/reconstructing-compounds-under-the-constitution) rebuilt the compound inventory as teaching trees and meaning-attempts under the constitution. That answered *how* to regenerate vocabulary: `ASSOCIATION_SEEDS`, migration scripts, audit tooling, and a path from heuristic alternates to playtest authority.
 
 RN-18 closed with success criteria still open: transparent trees, rising playtest coverage, and measured divergence between heuristic rank and human recovery. Phase IV regen shipped 111 compounds with fresh root spellings after `npm run fonoran:reset`. The question this note addresses is the one RN-18 deferred until someone actually used the lab:
 
@@ -122,4 +122,4 @@ Prior notes this work builds on:
 
 **Source:** [`data/fonoran-compounds.json`](../data/fonoran-compounds.json), [`data/fonoran-playtests.json`](../data/fonoran-playtests.json), [`tools/fonoran-compound-audit.js`](../tools/fonoran-compound-audit.js), [`scripts/fonoran-playtest-baseline.js`](../scripts/fonoran-playtest-baseline.js)
 
-**Prior notes:** [RN-18 · Reconstructing compounds](/research/notes/compound-reconstruction), [RN-17 · Puzzle conversation](/research/notes/puzzle-conversation), [RN-15 · Compiling English into meaning](/research/notes/compiling-english-into-meaning)
+**Prior notes:** [RN-18 · Reconstructing compounds](/research/notes/reconstructing-compounds-under-the-constitution), [RN-17 · Puzzle conversation](/research/notes/can-strangers-recover-meaning), [RN-15 · Compiling English into meaning](/research/notes/compiling-english-into-meaning)

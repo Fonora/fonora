@@ -2,9 +2,9 @@
 
 ## Research Question
 
-[RN-16](/research/notes/typing-and-keyboard) closed the last prerequisite loop. Learners could read Fonora symbols, hear them, translate English into approved concepts, and type them back through a visual QWERTY IME with scored spelling and keyboard drills. The read-write cycle was no longer hypothetical.
+[RN-16](/research/notes/typing-an-invented-script) closed the last prerequisite loop. Learners could read Fonora symbols, hear them, translate English into approved concepts, and type them back through a visual QWERTY IME with scored spelling and keyboard drills. The read-write cycle was no longer hypothetical.
 
-That left the question the entire Phase III arc had been deferring since [RN-12](/research/notes/the-constitution):
+That left the question the entire Phase III arc had been deferring since [RN-12](/research/notes/compiling-english-into-meaning):
 
 **Does the whole system pass its own test? Can two root-knowers, with no shared native language, recover each other's intended meaning from compounds neither of them rehearsed?**
 

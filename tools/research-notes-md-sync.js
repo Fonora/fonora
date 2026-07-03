@@ -13,10 +13,11 @@ import {
   validateNoteMetadata,
 } from '../js/research-note-meta.js';
 import { inferPhaseFromCode, normalizeNoteMetadata } from '../js/research-notes.js';
+import { resolveResearchNotesCatalogPath } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const RESEARCH_NOTES_MD_DIR = join(ROOT, 'docs/research-notes');
-export const METADATA_CATALOG_PATH = join(ROOT, 'data/research-notes-store.json');
+export const METADATA_CATALOG_PATH = resolveResearchNotesCatalogPath();
 
 export const RESEARCH_NOTE_FILENAME_RE = /^RN-(\d+)-([a-z0-9-]+)\.md$/i;
 
@@ -76,7 +77,7 @@ async function fileDateIso(absPath) {
  */
 export async function buildPublishedNotesFromMarkdown(options = {}) {
   const mdDir = options.mdDir || RESEARCH_NOTES_MD_DIR;
-  const catalog = await loadMetadataCatalog(options.catalogPath);
+  const catalog = await loadMetadataCatalog(options.catalogPath ?? resolveResearchNotesCatalogPath());
 
   const files = (await readdir(mdDir))
     .filter((name) => RESEARCH_NOTE_FILENAME_RE.test(name))

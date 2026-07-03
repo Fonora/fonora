@@ -2,7 +2,7 @@
 
 ## Research Question
 
-[RN-08](/research/notes/dda-coordinates) inverted the vocabulary pipeline: instead of assigning sounds to English concepts, Gen 3 treated meaning as a coordinate in ⟨Depth, Mode, Aspect⟩ on the Fonora articulation grid. Familiar words like *river* appeared only as derivations, flow + path, never as primitives. The inversion was demonstrable: coordinates were explainable without English glosses, and example compounds assembled from grid-native roots.
+[RN-08](/research/notes/meaning-from-coordinates-the-gen-3-dda-experiment) inverted the vocabulary pipeline: instead of assigning sounds to English concepts, Gen 3 treated meaning as a coordinate in ⟨Depth, Mode, Aspect⟩ on the Fonora articulation grid. Familiar words like *river* appeared only as derivations, flow + path, never as primitives. The inversion was demonstrable: coordinates were explainable without English glosses, and example compounds assembled from grid-native roots.
 
 It also produced a predictable phonetic side effect. Gen 3 mapped the **focal** aspect class to roman vowel `ee`, and seven of thirty-six primitives landed on `-ee` endings: `pee`, `wee`, `tee`, `see`, `lee`, `kee`, `dee`. Roots that were semantically distinct rhymed by construction. The readability audit in [`tools/fonoran-gen3-readability.js`](../tools/fonoran-gen3-readability.js) flagged this as a high-severity `phonetic_cluster` warning, discrimination among focal roots relied almost entirely on onset consonants. Prefix pairs like `le`/`lee` and `de`/`dee` added segmentation risk when roots concatenated into compounds.
 

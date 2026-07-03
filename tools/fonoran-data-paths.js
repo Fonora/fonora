@@ -13,6 +13,11 @@ const MANIFEST_PATH = join(ROOT, 'data/fonora-data.manifest.json');
 
 /** Metadata overlay for research notes (bodies live in docs/research-notes/*.md). */
 export function resolveResearchNotesCatalogPath() {
+  const dataDir = resolveDataDir();
+  if (dataDir) {
+    const external = join(dataDir, 'data/research-notes-store.json');
+    if (existsSync(external)) return external;
+  }
   return join(ROOT, 'data/research-notes-store.json');
 }
 

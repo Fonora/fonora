@@ -39,7 +39,7 @@ const SAMPLE_NOTE_METADATA = {
   date: '2026-06-20',
   description: 'How Fonora encodes articulation instead of orthography.',
   abstract: 'How Fonora encodes articulation instead of orthography.',
-  related: ['ipa-pipeline'],
+  related: ['teaching-the-machine-to-hear'],
   docs: [{ label: 'language-rules.md', path: 'docs/language-rules.md' }],
   tools: [{ label: 'Sound Grid', href: '/script#grid' }],
   source: [{ label: 'rules.js', path: 'js/rules.js' }],
@@ -59,9 +59,9 @@ export function runResearchNoteMetaTests() {
       assert(extractDescription(md) === 'Summary line.');
     }),
     test('extractRelatedSlugs finds research links', () => {
-      const md = 'See [RN-02](/research/notes/ipa-pipeline) and /research/notes/foo';
+      const md = 'See [RN-02](/research/notes/teaching-the-machine-to-hear) and /research/notes/foo';
       const related = extractRelatedSlugs(md);
-      assert(related.includes('ipa-pipeline'));
+      assert(related.includes('teaching-the-machine-to-hear'));
       assert(related.includes('foo'));
     }),
     test('deriveMetadataFromBody fills title and abstract', () => {

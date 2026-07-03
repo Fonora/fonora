@@ -1,5 +1,6 @@
 /**
  * Research Notes editor (Tools → /tools#research-notes).
+ * Disabled by default — published notes are authored as markdown in docs/research-notes/.
  */
 
 import { escapeHtml, errorMessage } from './utils.js';
@@ -18,6 +19,23 @@ import {
 
 const ROOT_ID = 'research-notes-editor-root';
 const FONT_SIZES = ['sm', 'md', 'lg'];
+
+/** Match server default; set RESEARCH_NOTES_EDITOR_ENABLED=1 on server to re-enable. */
+const EDITOR_ENABLED = false;
+
+function renderDisabledHtml() {
+  return `
+    <div class="rn-editor-disabled content-section">
+      <p class="section-desc">
+        Research notes are authored directly in the repository as markdown files under
+        <code>docs/research-notes/</code>. The in-app editor is deprecated and disabled.
+      </p>
+      <p>
+        See the <a href="/docs/research-notes-authoring.md">authoring guide</a> for workflow,
+        or browse published notes on the <a href="/research">public Research site</a>.
+      </p>
+    </div>`;
+}
 
 /** @type {'list' | 'edit'} */
 let view = 'list';
@@ -467,6 +485,10 @@ let wired = false;
 
 export function initResearchNotesEditor() {
   if (!root()) return;
+  if (!EDITOR_ENABLED) {
+    root().innerHTML = renderDisabledHtml();
+    return;
+  }
   if (!wired) {
     wired = true;
   }

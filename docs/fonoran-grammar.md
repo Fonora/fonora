@@ -1,6 +1,6 @@
 # Grammar
 
-> **Read the research.** Why grammar lives in closed-class particles instead of the lexicon is told in the research notebook: [RN-14 · Grammar as particles, not words](/research/notes/grammar-particles).
+> **Read the research.** Why grammar lives in closed-class particles instead of the lexicon is told in the research notebook: [RN-14 · Grammar as particles, not words](/research/notes/grammar-as-particles-not-words).
 
 > **Status**: Living specification. This is the authoritative reference for humans and the future Fonoran Translator. Sections marked *Under Development* are intentional placeholders, not omissions.
 >
@@ -603,7 +603,7 @@ This architecture allows multiple English expressions to converge into the **sam
 
 Each word may carry internal **depth**, **mode**, and **aspect** coordinates — a compact address in semantic space. They are assigned automatically (**DDA inference**) from sound shape and English gloss match, blended for compounds, with status `pending | inferred | confirmed | stale`. You do not edit them in normal workflow; re-run DDA from the Advanced tab when coordinates go stale after a meaning or recipe change. The word detail view shows the three values plus how they were inferred.
 
-Experiment history: [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates) · [fonoran-gen3.md](archive/fonoran-gen3.md).
+Experiment history: [RN-08 · Meaning from coordinates](/research/notes/meaning-from-coordinates-the-gen-3-dda-experiment) · [fonoran-gen3.md](archive/fonoran-gen3.md).
 
 ## Future Work
 

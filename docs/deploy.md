@@ -152,17 +152,15 @@ See [platform-overview.md](platform-overview.md) for the data architecture overv
 
 **Fonoran vocabulary pipeline (optimize → build → Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md). On Heroku after deploy, use **Advanced → Regenerate dictionary from git seeds** at `/language#advanced` (admin sign-in required).
 
-### Research notes (PostgreSQL)
+### Research notes (markdown)
 
-**Git canonical source (main repo):** [`docs/research-notes/RN-XX-slug.md`](research-notes/RN-01-writing-sound-instead-of-spelling.md) — one markdown file per published note. Commit the MD file; deploy publishes it.
+**Git canonical source (main repo):** [`docs/research-notes/RN-XX-slug.md`](research-notes/RN-01-writing-sound-instead-of-spelling.md) — one markdown file per published note. Commit the MD file and deploy; no Postgres sync required.
 
-Optional metadata overlay (SEO fields, tool links, richer `related` lists): [`data/research-notes-store.json`](../data/research-notes-store.json), keyed by `slug`. Bodies always come from markdown on deploy.
+Optional metadata overlay (SEO fields, tool links, richer `related` lists): [`data/research-notes-store.json`](../data/research-notes-store.json) locally, or `external/fonora-data/data/research-notes-store.json` on Heroku (after `fonoran-data-fetch.js`).
 
-At **runtime**, the live `/research` notebook loads from the `research_notes` PostgreSQL table when `DATABASE_URL` is set (not from markdown files directly).
+At **runtime**, the server reads markdown from `docs/research-notes/`, warms an in-memory cache at startup, and embeds the index (and note body on `/research/notes/:slug`) in the research HTML shell.
 
-**On deploy** (Heroku `release:` in `Procfile`), every `docs/research-notes/RN-*.md` file is upserted into Postgres via `scripts/research-notes-sync-deploy.js` → `buildPublishedNotesFromMarkdown()`. Prod-only drafts in Postgres are left untouched; notes removed from git are not deleted from Postgres automatically.
-
-**At web startup**, the server warms an in-memory cache and embeds the index (and note body on `/research/notes/:slug`) in the research HTML shell.
+The Tools → Research Notes editor is **deprecated and disabled** by default. To re-enable (not recommended): set `RESEARCH_NOTES_EDITOR_ENABLED=1` on the server and flip `EDITOR_ENABLED` in [`js/research-notes-editor.js`](../js/research-notes-editor.js).
 
 Verify before merge:
 
@@ -170,16 +168,11 @@ Verify before merge:
 npm run research:verify-md
 ```
 
-Manual deploy sync (requires `DATABASE_URL`):
-
-```bash
-node scripts/research-notes-sync-deploy.js
-```
-
 After deploy, verify:
 
-- `GET /api/research/notes` includes new codes (e.g. RN-22, RN-23)
-- `/research/timeline` HTML source includes `research-notes-bootstrap` JSON with the new slugs
+- `GET /api/research/notes` returns exactly one entry per code (RN-01 through RN-23)
+- `/research` and `/research/timeline` show each note once
+- `/research/timeline` HTML source includes `research-notes-bootstrap` JSON with canonical filename slugs
 
 **Not required for research notes:** pushing to [fonora-data](https://github.com/Fonora/fonora-data). LLM/playtest blobs still use that repo; the notebook does not.
 
