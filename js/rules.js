@@ -95,23 +95,42 @@ export function getQuizEntries(r) {
   return getEncodableEntries(r).filter((c) => c.sound && c.sound !== '?');
 }
 
-function phonemeInventoryRow(cell, category) {
+function phonemeInventoryRow(cell, category, options = {}) {
+  const gridNa = 'N/A';
+  if (options.reserved || cell.status === 'reserved') {
+    return {
+      key: cell.sound || gridNa,
+      symbols: cell.symbols || '',
+      ipa: cell.ipa || gridNa,
+      notes: cell.explanation || '',
+      category: 'reserved',
+      reserved: true,
+    };
+  }
   return {
     key: cell.sound || cell.key || '',
     symbols: cell.symbols || '',
     ipa: cell.ipa || '',
     notes: cell.explanation || cell.lexicalSet || cell.example || '',
     category,
+    reserved: false,
   };
 }
 
-/** Grouped phoneme inventory for the Alphabet tab (consonants, derived, vowels). */
+/** Grouped phoneme inventory for the Alphabet tab (consonants, derived, vowels, reserved). */
 export function buildPhonemeInventory(r) {
   const encodable = getEncodableEntries(r).filter((c) => c.sound && c.sound !== '?');
 
   const consonants = [];
   const derived = [];
   const vowelCells = [];
+  const reserved = [];
+
+  for (const cell of r.soundGrid || []) {
+    if (cell.status === 'reserved') {
+      reserved.push(phonemeInventoryRow(cell, 'reserved', { reserved: true }));
+    }
+  }
 
   for (const cell of encodable) {
     if (cell.modifierId && cell.placeId) {
@@ -145,7 +164,9 @@ export function buildPhonemeInventory(r) {
     }
   }
 
-  return { consonants, derived, vowels };
+  reserved.sort((a, b) => a.symbols.localeCompare(b.symbols));
+
+  return { consonants, derived, vowels, reserved };
 }
 
 export function buildSoundToSymbolsMap(r) {

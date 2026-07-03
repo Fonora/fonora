@@ -66,6 +66,7 @@
   --color-label-muted: #94a3b8;
   --color-text-secondary: #64748b;
   --color-text-tertiary: #555;
+  --font-ipa: 'Charis SIL', 'Lucida Sans Unicode', 'Arial Unicode MS', sans-serif;
   --color-tts-active-bg: #fef08a;
   --color-tts-active-ring: #facc15;
   --color-tts-done-bg: #dcfce7;
@@ -2694,6 +2695,27 @@ html[data-fonora-tab='docs'] .main-content {
   color: var(--color-text-tertiary);
 }
 
+.section-desc .symbol-text {
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.link-btn {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: inherit;
+  color: var(--color-link);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-btn:hover {
+  color: var(--color-link-hover);
+}
+
 .symbol-input {
   width: 100%;
   padding: 0.75rem;
@@ -2835,6 +2857,15 @@ a.btn:hover {
   font-size: 0.875rem;
 }
 
+.sound-grid {
+  table-layout: fixed;
+}
+
+.sound-grid th:first-child,
+.sound-grid td:first-child {
+  width: 5.25rem;
+}
+
 .data-table th,
 .data-table td,
 .sound-grid th,
@@ -2850,6 +2881,13 @@ a.btn:hover {
   background: var(--color-table-header-bg);
   font-weight: 600;
   color: var(--color-heading);
+  vertical-align: bottom;
+}
+
+.sound-grid tbody th {
+  vertical-align: middle;
+  font-weight: 600;
+  background: var(--color-table-header-bg);
 }
 
 .data-table td,
@@ -2886,8 +2924,11 @@ a.btn:hover {
 }
 
 .sound-grid .grid-cell {
-  min-width: 7rem;
+  min-width: 0;
+  height: 6.75rem;
+  box-sizing: border-box;
   cursor: default;
+  overflow: hidden;
 }
 
 .grid-cell--defined {
@@ -2928,15 +2969,35 @@ a.btn:hover {
   margin-top: 0.25rem;
 }
 
+.grid-cell-sound--na,
+.grid-cell-ipa--na {
+  color: var(--color-text-subtle);
+  font-weight: 400;
+}
+
 .grid-cell-ipa {
+  font-family: var(--font-ipa);
   font-size: 0.8rem;
   color: var(--color-text-tertiary);
+  font-feature-settings: 'liga' 0;
+  letter-spacing: 0.02em;
+}
+
+.ipa-text {
+  font-family: var(--font-ipa);
+  font-feature-settings: 'liga' 0;
+  letter-spacing: 0.02em;
 }
 
 .grid-cell-explanation {
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
+  line-height: 1.35;
   color: var(--color-text-muted);
   margin-top: 0.25rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
 
 .grid-cell-status {
@@ -4787,6 +4848,22 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 .alphabet-inventory-notes {
   font-size: 0.85rem;
   color: var(--color-text-tertiary);
+}
+
+.alphabet-inventory-table .alphabet-inventory-row--reserved td {
+  background: var(--color-table-subtle-bg);
+  color: var(--color-text-muted);
+}
+
+.alphabet-inventory-key--na,
+.alphabet-inventory-ipa--na {
+  font-weight: 400;
+  color: var(--color-text-subtle);
+}
+
+.alphabet-inventory-table .ipa-text {
+  font-family: var(--font-ipa);
+  font-feature-settings: 'liga' 0;
 }
 
 .keyboard-mapping-table {

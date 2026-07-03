@@ -25,6 +25,9 @@
   <script src="/js/theme-boot.js"></script>
   <script src="/js/learn-routing-data.js"></script>
   <script src="/js/nav-boot.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/app.css">
   <link rel="prefetch" href="/language">
 </head>
@@ -746,7 +749,7 @@
 
       <div id="vowels-section" hidden>
         <h3>Vowels</h3>
-        <p class="section-desc">Vowels use v3 grammar: simple vowels are <span class="symbol-text">⚬X</span> (2 symbols); diphthongs are <span class="symbol-text">⚬XᵔY</span> (4 symbols). Recipes combine the vowel indicator <span class="symbol-text">⚬</span>, place or manner glyphs, and glide <span class="symbol-text">ᵔ</span>.</p>
+        <p class="section-desc">Simple vowels are <span class="symbol-text">⚬X</span> (2 symbols). Diphthongs are <span class="symbol-text">⚬XᵔY</span> (4 symbols): vowel indicator <span class="symbol-text">⚬</span>, a place or manner glyph, approximant <span class="symbol-text">ᵔ</span>, and a destination place.</p>
 
         <h4 class="examples-heading">Vowel mapping</h4>
         <div class="table-wrap">
@@ -927,7 +930,8 @@
     <section class="panel tab-panel" id="tab-alphabet" data-tab-panel="alphabet" hidden>
       <h2>Alphabet</h2>
       <p class="section-desc">
-        Language-agnostic sound to symbol mapping. Composed from the nine primary symbols and vowel indicator <span class="symbol-text">⚬</span>.
+        Sound-to-symbol reference for consonants, derived sounds, and vowels. Grid consonants match the
+        <button type="button" class="link-btn" data-tab="grid">Sound Grid</button>; reserved throat slots have no encoder key yet.
       </p>
 
       <div class="alphabet-inventory-group">
@@ -943,6 +947,23 @@
               </tr>
             </thead>
             <tbody id="alphabet-inventory-consonants"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="alphabet-inventory-group" id="alphabet-inventory-reserved-section" hidden>
+        <h4 class="examples-heading">Reserved</h4>
+        <div class="table-wrap">
+          <table class="data-table alphabet-inventory-table">
+            <thead>
+              <tr>
+                <th>Phoneme key</th>
+                <th>Symbol</th>
+                <th>IPA</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="alphabet-inventory-reserved"></tbody>
           </table>
         </div>
       </div>

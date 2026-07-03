@@ -1,6 +1,6 @@
 # Fonora Collision Audit
 
-Generated: 2026-07-03T16:06:12.609Z
+Generated: 2026-07-03T19:11:49.279Z
 Rules version: v3
 
 ## Executive summary
@@ -20,8 +20,8 @@ The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-tr
 
 | key | type | IPA | symbols | source | status | notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| ? | grid | ? | `⏌⊃` | sound grid (nasal+throat) | reserved | Open research gap |
-| ? | grid | ? | `ᵔ⊃` | sound grid (glide+throat) | reserved | Open research gap |
+| ? | grid |  | `⏌⊃` | sound grid (nasal+throat) | reserved | No attested glottal nasal. Reserved for  |
+| ? | grid | /ʕ/ | `ᵔ⊃` | sound grid (glide+throat) | reserved | Voiced pharyngeal approximant (research  |
 | a | vowel | ʌ, ə, ɐ, a | `⚬∪` | vowel recipe | defined | CUP / schwa / open |
 | ae | vowel | æ | `⚬⌀` | vowel recipe | defined | TRAP |
 | ay | vowel | eɪ | `⚬⌓ᵔ∪` | vowel recipe | defined | FACE |
@@ -39,8 +39,8 @@ The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-tr
 | i | vowel | ɪ | `⚬∩` | vowel recipe | defined | KIT |
 | j | grid | /dʒ/ | `⌇⌓` | sound grid (voice+middle_tongue) | defined | Voiced middle tongue sound |
 | k | grid | /k/ | `∪` | sound grid (plain+back_tongue) | defined | Plain back tongue stop |
-| kh | grid | /χ/ | `⌀⊃` | sound grid (friction+throat) | defined | Friction throat sound (deeper throat fri |
-| l | grid | /l/ | `ᵔ∩` | sound grid (glide+front_tongue) | defined | Glide front tongue sound (alveolar /l/) |
+| kh | grid | /χ/ | `⌀⊃` | sound grid (friction+throat) | defined | Voiceless uvular/pharyngeal-region frica |
+| l | grid | /l/ | `ᵔ∩` | sound grid (glide+front_tongue) | defined | Approximant front tongue sound (alveolar |
 | m | grid | /m/ | `⏌∋` | sound grid (nasal+lips) | defined | Nasal lips sound |
 | n | grid | /n/ | `⏌∩` | sound grid (nasal+front_tongue) | defined | Nasal front tongue sound |
 | ñ | grid | /ɲ/ | `⏌⌓` | sound grid (nasal+middle_tongue) | defined | Nasal middle tongue sound |
@@ -50,16 +50,16 @@ The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-tr
 | ow | vowel | aʊ | `⚬⊃ᵔ∋` | vowel recipe | defined | MOUTH |
 | oy | vowel | ɔɪ | `⚬∋ᵔ∪` | vowel recipe | defined | CHOICE |
 | p | grid | /p/ | `∋` | sound grid (plain+lips) | defined | Plain lips stop |
-| r | grid | /r/ | `ᵔ⌓` | sound grid (glide+middle_tongue) | defined | Glide middle tongue sound |
+| r | grid | /r/ | `ᵔ⌓` | sound grid (glide+middle_tongue) | defined | Approximant middle tongue sound |
 | s | grid | /s/ | `⌀∩` | sound grid (friction+front_tongue) | defined | Friction front tongue sound |
 | sh | grid | /ʃ/ | `⌀⌓` | sound grid (friction+middle_tongue) | defined | Friction middle tongue sound |
 | t | grid | /t/ | `∩` | sound grid (plain+front_tongue) | defined | Plain front tongue stop |
 | th | derived | /θ/ | `∩⌀` | derived (reverse_front_tongue_friction) | defined | Voiceless dental fricative |
 | u | vowel | ʊ, u, uː, ʉ, ɯ | `⚬∋` | vowel recipe | defined | FOOT / GOOSE |
 | v | derived | /v/ | `∋⌇` | derived (reverse_lips_voice) | defined | Reversed lips+voice ordering |
-| w | grid | /w/ | `ᵔ∋` | sound grid (glide+lips) | defined | Glide lips sound |
-| x | grid | /x/ | `⌀∪` | sound grid (friction+back_tongue) | defined | Friction back tongue sound (German Bach, |
-| y | grid | /j/ | `ᵔ∪` | sound grid (glide+back_tongue) | defined | Glide back tongue sound (/j/ without ton |
+| w | grid | /w/ | `ᵔ∋` | sound grid (glide+lips) | defined | Approximant lips sound |
+| x | grid | /x/ | `⌀∪` | sound grid (friction+back_tongue) | defined | Voiceless velar fricative (German Bach,  |
+| y | grid | /j/ | `ᵔ∪` | sound grid (glide+back_tongue) | defined | Approximant back tongue sound (/j/ witho |
 | z | derived | /z/ | `⌀⌇` | derived (reverse_friction_voice) | defined | Voiced counterpart of /s/ |
 
 _Full inventory: 71 rows (including 30 IPA map entries)._

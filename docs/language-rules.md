@@ -33,7 +33,7 @@ The **4 manner modifiers** plus the **vowel indicator** (keyboard **0**).
 | voice | ⌇ | 6 | b | Voice | Adds voicing to a place sound |
 | friction | ⌀ | 7 | d | Friction | Adds friction/fricative quality |
 | nasal | ⏌ | 8 | j | Nasal | Adds nasal airflow |
-| glide | ᵔ | 9 | g | Glide | Transition between vowel positions; used in diphthongs and grid glide consonants |
+| glide | ᵔ | 9 | g | Approximant | Transition between vowel positions; used in diphthongs and grid approximant consonants |
 
 ## Sound Grid
 
@@ -54,25 +54,25 @@ Symbols are **composed** from Places + Modifiers at load time (`modifier + place
 | friction | lips | f | /f/ | defined | Friction lips sound |
 | friction | front_tongue | s | /s/ | defined | Friction front tongue sound |
 | friction | middle_tongue | sh | /ʃ/ | defined | Friction middle tongue sound |
-| friction | back_tongue | x | /x/ | defined | Friction back tongue sound (German Bach, Scottish loch) |
-| friction | throat | kh | /χ/ | defined | Friction throat sound (deeper throat friction; Arabic خ) |
+| friction | back_tongue | x | /x/ | defined | Voiceless velar fricative |
+| friction | throat | kh | /χ/ | defined | Voiceless uvular fricative |
 | nasal | lips | m | /m/ | defined | Nasal lips sound |
 | nasal | front_tongue | n | /n/ | defined | Nasal front tongue sound |
 | nasal | middle_tongue | ñ | /ɲ/ | defined | Nasal middle tongue sound |
 | nasal | back_tongue | ng | /ŋ/ | defined | Nasal back tongue sound |
-| nasal | throat | ? | ? | reserved | Open research gap |
-| glide | lips | w | /w/ | defined | Glide lips sound |
-| glide | front_tongue | l | /l/ | defined | Glide front tongue sound (alveolar /l/) |
-| glide | middle_tongue | r | /r/ | defined | Glide middle tongue sound |
-| glide | back_tongue | y | /j/ | defined | Glide back tongue sound (/j/ without tongue-tip contact) |
-| glide | throat | ? | ? | reserved | Open research gap |
+| nasal | throat | | | reserved | No glottal nasal. Reserved for research. |
+| glide | lips | w | /w/ | defined | Approximant lips sound |
+| glide | front_tongue | l | /l/ | defined | Approximant front tongue sound |
+| glide | middle_tongue | r | /r/ | defined | Approximant middle tongue sound |
+| glide | back_tongue | y | /j/ | defined | Approximant back tongue sound |
+| glide | throat | | /ʕ/ | reserved | Pharyngeal approximant. Research candidate. |
 
 ## Vowels
 
 Vowels use a fixed **v3 grammar** (no double-vowel marker):
 
 * **Simple vowel:** `⚬X`, exactly 2 symbols (`X` = vowel class: place or manner glyph)
-* **Diphthong:** `⚬XᵔY`, exactly 4 symbols (`ᵔ` = glide; `Y` = destination articulation place)
+* **Diphthong:** `⚬XᵔY`, exactly 4 symbols (`ᵔ` = approximant; `Y` = destination articulation place)
 
 Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction`, `nasal`) compose `X`; `glide` → **ᵔ**; trailing place id → `Y`.
 
@@ -80,7 +80,7 @@ Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction
 
 * **Simple** (`a`, `e`, `i`, `o`, `u`): place glyphs, back → front — `a` ∪, `e` ⌓, `i` ∩, `o` ⊃, `u` ∋
 * **Long** (`ae`, `ee`, `oh`): manner glyphs — `ae` ⌀, `ee` ⌇, `oh` ⏌
-* **Diphthongs**: nucleus and offglide use the simple-vowel place glyphs (e.g. `ay` = `e` + glide + `a`)
+* **Diphthongs**: nucleus and offglide use the simple-vowel place glyphs (e.g. `ay` = `e` + approximant + `a`)
 
 **Mapping rule:** IPA tokens in each table are authoritative. English words in *Example* are teaching aids only.
 

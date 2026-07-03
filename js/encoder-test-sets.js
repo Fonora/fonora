@@ -84,7 +84,7 @@ export const TEST_CATEGORIES = [
   },
   {
     id: 'glide-words',
-    label: 'Glide words',
+    label: 'Approximant words',
     words: ['way', 'we', 'you', 'yes', 'law', 'low', 'lay', 'ray', 'row', 'real', 'wheel', 'year'],
   },
   {
