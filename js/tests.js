@@ -19,6 +19,7 @@ import { runKeyboardTestWordsTests } from './keyboard-test-words.test.js';
 import { runResearchNoteMetaTests } from './research-note-meta.test.js';
 import { runResearchNotesStoreTests } from '../tools/research-notes-store.test.js';
 import { runFonoranAuthTests } from '../tools/fonoran-auth.test.js';
+import { runFonoranLabSearchTests } from '../tools/fonoran-lab-search.test.js';
 import { initEspeak, textToIpa } from './ipa.js';
 import { normalizeIpa } from './ipa-normalize.js';
 import { encodeFromIpa } from './ipa-encode-helper.js';
@@ -425,6 +426,10 @@ const fonoranTranslatorResult = await (async () => {
     const youTok = youSleep.tokens.find(t => t.english === 'you');
     assert(youTok?.concept_id === 'addressee' && youTok?.fonoran === 'be', `you token: ${JSON.stringify(youTok)}`);
 
+    const doYouWant = await translateEnglish('do you want to eat in the city');
+    const doYouTok = doYouWant.tokens.find(t => t.english === 'you');
+    assert(doYouTok?.concept_id === 'addressee' && doYouTok?.fonoran === 'be', `do-you token: ${JSON.stringify(doYouTok)}`);
+
     // Regression: `from` carries origin meaning and resolves to the `source`
     // root (bel) instead of being silently dropped as a function word.
     const fromRiver = await translateEnglish('I come from the river.');
@@ -504,6 +509,13 @@ const researchStorePassed = researchStoreResults.length - researchStoreFailed.le
 const authResults = await runFonoranAuthTests();
 const authFailed = authResults.filter((r) => !r.ok);
 const authPassed = authResults.length - authFailed.length;
+
+let labSearchResult = { ok: true, name: 'fonoran lab search' };
+try {
+  runFonoranLabSearchTests();
+} catch (e) {
+  labSearchResult = { ok: false, name: 'fonoran lab search', error: e.message };
+}
 
 async function runCorpusIpaTests() {
   const bundle = loadActiveRulesFixture();
@@ -719,6 +731,7 @@ const allFailed = [
   ...(boundaryPassResult.ok ? [] : [boundaryPassResult]),
   ...(boundaryMultiResult.ok ? [] : [boundaryMultiResult]),
   ...(boundaryDigraphResult.ok ? [] : [boundaryDigraphResult]),
+  ...(labSearchResult.ok ? [] : [labSearchResult]),
 ];
 const allPassed =
   passed
@@ -749,8 +762,9 @@ const allPassed =
   + (boundaryPassResult.ok ? 1 : 0)
   + (boundaryMultiResult.ok ? 1 : 0)
   + (boundaryDigraphResult.ok ? 1 : 0)
-  + (rootWorkflowResult.ok ? 1 : 0);
-const allTotal = total + keyboardTotal + keyboardTestWordsTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + corpusResults.length + 22;
+  + (rootWorkflowResult.ok ? 1 : 0)
+  + (labSearchResult.ok ? 1 : 0);
+const allTotal = total + keyboardTotal + keyboardTestWordsTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + corpusResults.length + 23;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

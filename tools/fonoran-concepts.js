@@ -319,13 +319,9 @@ export function buildConceptAliasIndex(concepts, lab = null, locData = {}, { lab
   // shadow the real concept (e.g. "time" inside before's description).
   const strongAliases = (c) => {
     const out = [c.id, c.id.replace(/_/g, ' ')];
-    const stored = c.stored_aliases;
-    if (Array.isArray(stored) && stored.length) {
-      out.push(...stored.map(a => String(a).toLowerCase()));
-    } else {
-      out.push(...(locData[c.id]?.aliases ?? []).map(a => a.toLowerCase()));
-    }
-    return out;
+    // Curated locale aliases only — never lab gloss dumps (surface's leaked "you", etc.).
+    out.push(...(locData[c.id]?.aliases ?? []).map(a => String(a).toLowerCase()));
+    return [...new Set(out.filter(Boolean))];
   };
   // Weak aliases derived from the description text: only fill gaps left by strong ones.
   const weakAliases = (c) => {

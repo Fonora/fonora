@@ -105,6 +105,20 @@ const PRONOUN_WORDS = new Set([
   'i', 'me', 'you', 'we', 'us', 'they', 'them', 'he', 'him', 'she', 'her', 'it',
 ]);
 
+function subjectSlot(english) {
+  const surface = String(english ?? '').trim();
+  const p = surface.toLowerCase();
+  if (PRONOUNS[p]) {
+    return { english: surface, role: 'subject', particle: PRONOUNS[p] };
+  }
+  const conceptHint = PRONOUN_CONCEPTS[p];
+  return {
+    english: surface,
+    role: 'subject',
+    ...(conceptHint ? { concept_hint: conceptHint, interpret_reason: 'pronoun' } : {}),
+  };
+}
+
 const TENSE_AUX = {
   is: 'present',
   am: 'present',
@@ -322,17 +336,7 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
   const questionPeel = peelQuestionAuxiliary(tokens, { pronounWords: PRONOUN_WORDS });
   tokens = questionPeel.tokens;
   if (questionPeel.peeled && questionPeel.subjectWord && !subject.length) {
-    const p = questionPeel.subjectWord.toLowerCase();
-    if (PRONOUNS[p]) {
-      subject.push({ english: questionPeel.subjectWord, role: 'subject', particle: PRONOUNS[p] });
-    } else {
-      const conceptHint = PRONOUN_CONCEPTS[p];
-      subject.push({
-        english: questionPeel.subjectWord,
-        role: 'subject',
-        ...(conceptHint ? { concept_hint: conceptHint, interpret_reason: 'pronoun' } : {}),
-      });
-    }
+    subject.push(subjectSlot(questionPeel.subjectWord));
   }
 
   const timeHit = matchLeadingTimeAdverbial(tokens);
@@ -342,17 +346,7 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
   }
 
   if (tokens.length && PRONOUN_WORDS.has(tokens[0]?.toLowerCase())) {
-    const p = tokens[0].toLowerCase();
-    if (PRONOUNS[p]) {
-      subject.push({ english: tokens[0], role: 'subject', particle: PRONOUNS[p] });
-    } else {
-      const conceptHint = PRONOUN_CONCEPTS[p];
-      subject.push({
-        english: tokens[0],
-        role: 'subject',
-        ...(conceptHint ? { concept_hint: conceptHint, interpret_reason: 'pronoun' } : {}),
-      });
-    }
+    subject.push(subjectSlot(tokens[0]));
     tokens = tokens.slice(1);
   }
 
@@ -437,7 +431,7 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
 
   const desireInf = matchDesireInfinitive(patternTokens, rules);
   if (desireInf) {
-    if (desireInf.subject && !subject.length) subject.push(desireInf.subject);
+    if (desireInf.subject && !subject.length) subject.push(subjectSlot(desireInf.subject.english));
     event.push(desireInf.event);
     object.push(desireInf.object);
     modifiers.push(...desireInf.modifiers);
@@ -517,7 +511,7 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
   if (!subject.length && working.length >= 4) {
     const phraseAfterSubject = matchVerbSpatialLandmark(working.slice(1), rules);
     if (phraseAfterSubject) {
-      subject.push({ english: working[0], role: 'subject' });
+      subject.push(subjectSlot(working[0]));
       event.push(phraseAfterSubject.event);
       path.push(phraseAfterSubject.path);
       object.push(phraseAfterSubject.object);
@@ -567,7 +561,7 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
       modifiers.push(...trailing.modifiers);
       return slots;
     }
-    subject.push({ english: working[0], role: 'subject' });
+    subject.push(subjectSlot(working[0]));
     working = working.slice(1);
   }
 

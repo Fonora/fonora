@@ -9,7 +9,7 @@ import {
   englishGuide,
   compoundEnglishGuide,
 } from './fonoran-pronunciation.js';
-import { buildConceptAliasIndex, loadRuntimeConceptInventory, buildRootById } from './fonoran-concepts.js';
+import { buildConceptAliasIndex, loadRuntimeConceptInventory, buildRootById, loadLocalization } from './fonoran-concepts.js';
 import { expandWord, pickHypernymConcept } from './fonoran-semantic-lookup.js';
 import { getLab } from './fonoran-sound-bucket.js';
 import {
@@ -329,7 +329,8 @@ export async function buildResolveContext(lab = null) {
   const liveLab = lab ?? await getLab();
   const inventory = await loadRuntimeConceptInventory({ lab: liveLab });
   const rules = await loadInterpretationRules().catch(() => null);
-  const aliasIndex = buildConceptAliasIndex(inventory.concepts, liveLab, {}, { labFirst: true });
+  const locData = await loadLocalization('en');
+  const aliasIndex = buildConceptAliasIndex(inventory.concepts, liveLab, locData, { labFirst: true });
 
   for (const compound of liveLab?.compounds ?? []) {
     const meaning = String(compound.meaning ?? '').trim().toLowerCase();
