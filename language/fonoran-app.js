@@ -8,6 +8,7 @@
     import { mountSiteFooter } from '../js/site-footer.js';
     import { createPuzzlePage } from './pages/puzzle-page.js';
     import { buildComposeScenesFromLab, mountComposeShowcase } from './compose-showcase.js';
+    import { labEntryMatchesQuery } from '../tools/fonoran-lab-search.js';
     import { bindModalDismiss, setModalBackdropOpen } from '../js/modal-dismiss.js';
     import { extractMarkdownHeadings, normalizeGrammarSource, renderMarkdown } from '../js/markdown-render.js';
     import { getStoredTheme } from '../js/theme.js';
@@ -446,40 +447,23 @@
     function hasMeaning(item) {
       return Boolean(item?.meaning?.trim());
     }
-    /** Search haystack for lab roots — matches Dictionary scope (aliases, gloss, concept id). */
-    function labSoundSearchHay(s) {
-      return [
-        s.spelling,
-        s.meaning,
-        s.legacy_label,
-        s.gloss,
-        s.concept_id,
-        ...(s.aliases ?? []),
-      ].filter(Boolean).join(' ').toLowerCase();
-    }
-    /** Search haystack for lab compounds — matches Dictionary scope. */
-    function labCompoundSearchHay(c) {
-      return [
-        c.spelling,
-        c.meaning,
-        c.gloss,
-        c.concept_id,
-        ...(c.aliases ?? []),
-        c.composition_readable,
-        c.generator_hint,
-        ...(c.parts ?? []),
-      ].filter(Boolean).join(' ').toLowerCase();
-    }
     function pickableRoots(query, { omit = [], showUnnamed = false } = {}) {
-      const q = (query ?? '').trim().toLowerCase();
+      const q = (query ?? '').trim();
       const skip = new Set(omit);
       return STATE.lab.sounds.filter(s => s.state !== 'rejected' && !skip.has(s.spelling))
         .filter(s => showUnnamed || hasMeaning(s))
-        .filter(s => !q || labSoundSearchHay(s).includes(q))
+        .filter(s => labEntryMatchesQuery(q, {
+          spelling: s.spelling,
+          meaning: s.meaning,
+          legacy_label: s.legacy_label,
+          gloss: s.gloss,
+          concept_id: s.concept_id,
+          aliases: s.aliases ?? [],
+        }))
         .sort((a, b) => (a.meaning || a.spelling).localeCompare(b.meaning || b.spelling));
     }
     function pickableWords(query, { omitIds = [], showUnnamed = false } = {}) {
-      const q = (query ?? '').trim().toLowerCase();
+      const q = (query ?? '').trim();
       const skip = new Set(omitIds);
       let list = userWords().filter(c => !skip.has(c.id));
       if (STATE.showUnapprovedWords) {
@@ -487,7 +471,16 @@
       }
       return list
         .filter(c => showUnnamed || hasMeaning(c))
-        .filter(c => !q || labCompoundSearchHay(c).includes(q))
+        .filter(c => labEntryMatchesQuery(q, {
+          spelling: c.spelling,
+          meaning: c.meaning,
+          gloss: c.gloss,
+          concept_id: c.concept_id,
+          aliases: c.aliases ?? [],
+          composition_readable: c.composition_readable,
+          generator_hint: c.generator_hint,
+          parts: c.parts ?? [],
+        }))
         .sort((a, b) => (a.meaning || a.spelling).localeCompare(b.meaning || b.spelling));
     }
     function wordCellBodyHtml(c) {
@@ -2483,7 +2476,7 @@
     }
 
     function reviewPickableCandidates() {
-      const q = (STATE.reviewFilter ?? '').trim().toLowerCase();
+      const q = (STATE.reviewFilter ?? '').trim();
       let list = rootReviewList();
       if (STATE.reviewShowRejected) list = list.filter(c => c.status === 'rejected');
       else {
@@ -2491,7 +2484,12 @@
         if (STATE.reviewNeedsReviewOnly) list = list.filter(c => c.status === 'pending');
       }
       if (!q) return list;
-      return list.filter(c => `${c.id} ${c.spelling} ${c.concept} ${c.domain}`.toLowerCase().includes(q));
+      return list.filter(c => labEntryMatchesQuery(q, {
+        spelling: c.spelling,
+        concept_id: c.id,
+        english: c.concept,
+        gloss: c.domain,
+      }));
     }
 
     function queuedCandidateConceptIds() {
@@ -2504,7 +2502,7 @@
 
     function reviewPickableLabSounds() {
       if (!STATE.lab) return [];
-      const q = (STATE.reviewFilter ?? '').trim().toLowerCase();
+      const q = (STATE.reviewFilter ?? '').trim();
       const queued = queuedCandidateConceptIds();
       let list;
       if (STATE.reviewShowRejected) {
@@ -2518,12 +2516,16 @@
         if (STATE.reviewNeedsReviewOnly) list = list.filter(s => isOpen(s.state));
       }
       if (!q) return list;
-      return list.filter(s => `${s.spelling} ${s.meaning ?? ''} ${s.legacy_label ?? ''}`.toLowerCase().includes(q));
+      return list.filter(s => labEntryMatchesQuery(q, {
+        spelling: s.spelling,
+        meaning: s.meaning,
+        legacy_label: s.legacy_label,
+      }));
     }
 
     function reviewPickableLabCompounds() {
       if (!STATE.lab) return [];
-      const q = (STATE.reviewFilter ?? '').trim().toLowerCase();
+      const q = (STATE.reviewFilter ?? '').trim();
       let list;
       if (STATE.reviewShowRejected) {
         list = STATE.lab.compounds
@@ -2534,12 +2536,16 @@
         if (STATE.reviewNeedsReviewOnly) list = list.filter(c => isOpen(c.state));
       }
       if (!q) return list;
-      return list.filter(c => `${c.spelling} ${c.meaning ?? ''} ${c.generator_hint ?? ''}`.toLowerCase().includes(q));
+      return list.filter(c => labEntryMatchesQuery(q, {
+        spelling: c.spelling,
+        meaning: c.meaning,
+        generator_hint: c.generator_hint,
+      }));
     }
 
     function reviewPickableGeneratedCompounds() {
       if (!STATE.lab) return [];
-      const q = (STATE.reviewFilter ?? '').trim().toLowerCase();
+      const q = (STATE.reviewFilter ?? '').trim();
       let list;
       if (STATE.reviewShowRejected) {
         list = STATE.lab.compounds
@@ -2550,7 +2556,11 @@
         if (STATE.reviewNeedsReviewOnly) list = list.filter(c => isOpen(c.state));
       }
       if (!q) return list;
-      return list.filter(c => `${c.spelling} ${c.meaning ?? ''} ${c.generator_hint ?? ''}`.toLowerCase().includes(q));
+      return list.filter(c => labEntryMatchesQuery(q, {
+        spelling: c.spelling,
+        meaning: c.meaning,
+        generator_hint: c.generator_hint,
+      }));
     }
 
     function reviewSelectionKey(sel) {
@@ -3344,13 +3354,15 @@
 
     function conceptEditorFilteredList() {
       const concepts = conceptList();
-      const q = (STATE.conceptEditorFilter ?? '').trim().toLowerCase();
+      const q = (STATE.conceptEditorFilter ?? '').trim();
       if (!q) return concepts;
-      const tokens = q.split(/[\s-]+/).filter(Boolean);
-      return concepts.filter(c => {
-        const hay = `${c.id} ${c.concept} ${c.domain} ${c.spelling} ${(c.aliases ?? []).join(' ')}`.toLowerCase();
-        return hay.includes(q) || tokens.every(t => hay.includes(t));
-      });
+      return concepts.filter(c => labEntryMatchesQuery(q, {
+        spelling: c.spelling,
+        concept_id: c.id,
+        english: c.concept,
+        gloss: c.domain,
+        aliases: c.aliases ?? [],
+      }));
     }
 
     function conceptEditorStatusBadge(status) {
@@ -3787,8 +3799,15 @@
       // Communicative-core view: only the ~50 core roots (the set the experiment measures).
       if (STATE.dictCoreOnly) {
         list = list.filter(e => e.kind === 'sound' && tierFor(e.concept_id)?.language_tier === 'communicative_core');
-        const q0 = STATE.dictQuery.trim().toLowerCase();
-        if (q0) list = list.filter(e => `${e.word} ${e.english} ${e.gloss} ${e.aliases} ${e.concept_id} ${e.hint}`.toLowerCase().includes(q0));
+        const q0 = STATE.dictQuery.trim();
+        if (q0) list = list.filter(e => labEntryMatchesQuery(q0, {
+          word: e.word,
+          english: e.english,
+          gloss: e.gloss,
+          aliases: e.aliases,
+          concept_id: e.concept_id,
+          hint: e.hint,
+        }));
         return list.sort((a, b) => a.word.localeCompare(b.word));
       }
 
@@ -3796,8 +3815,15 @@
       const particles = dictParticleEntries();
       list = [...list, ...particles];
 
-      const q = STATE.dictQuery.trim().toLowerCase();
-      if (q) list = list.filter(e => `${e.word} ${e.english} ${e.gloss} ${e.aliases} ${e.concept_id} ${e.hint}`.toLowerCase().includes(q));
+      const q = STATE.dictQuery.trim();
+      if (q) list = list.filter(e => labEntryMatchesQuery(q, {
+        word: e.word,
+        english: e.english,
+        gloss: e.gloss,
+        aliases: e.aliases,
+        concept_id: e.concept_id,
+        hint: e.hint,
+      }));
       return list.sort((a, b) => a.word.localeCompare(b.word));
     }
 

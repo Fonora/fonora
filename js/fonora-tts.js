@@ -1,6 +1,7 @@
 /**
  * Fonora text-to-speech, decode symbols and speak Fonora phonetics via Piper or eSpeak IPA.
  */
+import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { decodeToPhonemeKeys } from './decode.js';
 import { getAllSymbols } from './rules.js';
 import { phonemeKeysToRecoveredIpa } from './pronunciation-validation.js';
@@ -221,4 +222,68 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
   }
 
   return { words, spoken, skipped, cancelled: false };
+}
+
+const SLOW_PLAYBACK_RATE = 0.72;
+const SLOW_SYLLABLE_GAP_MS = 480;
+
+/**
+ * Slow playback for hearing practice — one syllable/part at a time when possible.
+ * @param {string} text Fonora script for the full word
+ * @param {object} rules
+ * @param {object} [options]
+ * @param {string[]} [options.parts] Roman syllable/morpheme parts from lexicon
+ * @param {'piper'|'espeak'|'auto'} [options.engine='auto']
+ */
+export async function speakFonoraSlow(text, rules, options = {}) {
+  const {
+    parts = [],
+    engine = 'auto',
+    playbackRate = SLOW_PLAYBACK_RATE,
+    syllableGapMs = SLOW_SYLLABLE_GAP_MS,
+    shouldCancel = () => false,
+    ...rest
+  } = options;
+
+  cancelSpeech();
+
+  /** @type {string[]} */
+  const chunks = [];
+  if (parts.length > 1) {
+    for (const part of parts) {
+      const { phrase } = romanToFonoraScript([part], rules);
+      if (phrase) chunks.push(phrase);
+    }
+  }
+
+  const script = String(text || '').trim();
+  if (!chunks.length && script) {
+    chunks.push(script);
+  }
+
+  if (!chunks.length) {
+    return { spoken: 0, cancelled: false };
+  }
+
+  let spoken = 0;
+  for (let i = 0; i < chunks.length; i++) {
+    if (shouldCancel()) {
+      return { spoken, cancelled: true };
+    }
+
+    await speakFonoraPhrase(chunks[i], rules, {
+      engine,
+      playbackRate,
+      wordGapMs: 0,
+      shouldCancel,
+      ...rest,
+    });
+    spoken += 1;
+
+    if (i < chunks.length - 1) {
+      await sleep(syllableGapMs);
+    }
+  }
+
+  return { spoken, cancelled: shouldCancel() };
 }

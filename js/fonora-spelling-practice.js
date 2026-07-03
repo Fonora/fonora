@@ -22,6 +22,9 @@ const SPELLING_IDS = {
 /** @type {ReturnType<typeof createTypingPractice> | null} */
 let spellingPractice = null;
 
+/** @type {ReturnType<typeof import('./learn-session-ui.js').createLearnSession> | null} */
+let sharedSession = null;
+
 /**
  * @param {object} lab
  * @param {object} rules
@@ -75,6 +78,17 @@ async function loadPracticeWords(rules) {
 }
 
 /**
+ * @param {ReturnType<typeof import('./learn-session-ui.js').createLearnSession>} session
+ */
+export function bindSpellingSession(session) {
+  sharedSession = session;
+}
+
+export function getSpellingPractice() {
+  return spellingPractice;
+}
+
+/**
  * @param {object} rules
  */
 export async function setupSpellingPractice(rules) {
@@ -86,6 +100,8 @@ export async function setupSpellingPractice(rules) {
     loadWords: loadPracticeWords,
     emptyMessage:
       'No practice words loaded. Run the dev server so /api/fonoran/bootstrap can supply the lab dictionary.',
+    getSession: () => sharedSession,
+    continueButtonId: 'spelling-practice-continue',
   });
   await spellingPractice.setup();
 }

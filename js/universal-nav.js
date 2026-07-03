@@ -4,25 +4,9 @@
  */
 
 import { docViewerHref, isDocsRoute } from './doc-urls.js';
-import { LEARN_SKILL_ORDER } from './learn-routing.js';
+import { learnTrackForTab } from './learn-routing.js';
 import { pageTitle, PLATFORM_HOME_TITLE, PLATFORM_PAGE_TITLE, SITE_NAME } from './site-copy.js';
 import { cycleTheme, getStoredTheme } from './theme.js';
-
-const LEARN_TAB_LABELS = {
-  writing: 'Writing',
-  reading: 'Reading',
-  breakdown: 'Breakdown',
-  listening: 'Listening',
-};
-
-const LEARN_LINK_TABS = [
-  { id: 'puzzle', label: 'Puzzle Conversation', href: '/language#puzzle' },
-];
-
-const LEARN_TABS = LEARN_SKILL_ORDER.map((id) => ({
-  id,
-  label: LEARN_TAB_LABELS[id] ?? id,
-}));
 
 const SCRIPT_TABS = [
   { id: 'home', label: 'About', primary: true },
@@ -41,11 +25,15 @@ const BUILDER_TABS = [
 ];
 
 const LEARN_TITLES = {
-  writing: 'Writing',
-  reading: 'Reading',
-  breakdown: 'Breakdown',
-  listening: 'Listening',
   'learn-home': 'Learn',
+  'script-writing': 'Script · Writing',
+  'script-sounds': 'Script · Symbol Sounds',
+  'script-words': 'Script · Read Words',
+  'fonoran-reading': 'Fonoran · Reading',
+  'fonoran-writing': 'Fonoran · Writing',
+  'fonoran-hearing': 'Fonoran · Hearing',
+  'fonoran-grammar': 'Fonoran · Grammar',
+  'fonoran-speaking': 'Fonoran · Speaking',
 };
 
 const SCRIPT_TITLES = {
@@ -78,6 +66,8 @@ const TOOLS_TITLES = {
   keyboard: 'Keyboard Testing',
   reverse: 'Reverse Lookup',
   symbols: 'Symbols',
+  breakdown: 'Breakdown',
+  samples: 'Samples',
   'encoder-testing': 'Pronunciation Testing',
   'pronunciation-validation': 'Pronunciation Validation',
   'research-notes': 'Research Notes',
@@ -88,6 +78,8 @@ const TOOLS_ROW_TABS = [
   { id: 'research-notes', label: 'Research Notes' },
   { id: 'keyboard', label: 'Keyboard' },
   { id: 'reverse', label: 'Reverse' },
+  { id: 'breakdown', label: 'Breakdown' },
+  { id: 'samples', label: 'Samples' },
   { id: 'symbols', label: 'Symbols' },
   { id: 'encoder-testing', label: 'Pronunciation Testing' },
   { id: 'pronunciation-validation', label: 'Validation' },
@@ -263,23 +255,10 @@ function renderBuilderRow2(activeTab) {
     </div>`;
 }
 
-function renderLearnRow2(activeTab) {
-  const tabs = LEARN_TABS.map(
-    (t) => `
-      <button type="button" class="tab-btn${t.id === activeTab ? ' tab-btn--active' : ''}" data-learn-tab="${t.id}"${
-        t.id === activeTab ? ' aria-current="page"' : ''
-      }>${t.label}</button>`,
-  ).join('');
-  const links = LEARN_LINK_TABS.map(
-    (t) => `<a href="${t.href}" class="tab-btn tab-btn--link">${t.label}</a>`,
-  ).join('');
-
-  return `
-    <div class="app-header__row app-header__row--tools" data-nav-row="learn-tools">
-      <nav class="main-nav" aria-label="Learn">
-        <div class="main-nav-primary">${tabs}${links}</div>
-      </nav>
-    </div>`;
+function renderLearnRow2() {
+  // The Learn platform tab is its own section (the skill hub); no sub-nav row is
+  // rendered. In-lesson navigation is handled by the sticky session bar.
+  return '';
 }
 
 function renderToolsRow2(activeTab) {
@@ -330,10 +309,16 @@ function syncBootAttributes() {
   if (state.context === 'language') {
     html.setAttribute('data-fonora-tab', state.activeTab);
     html.setAttribute('data-fonora-page', state.activeTab);
+    html.removeAttribute('data-learn-track');
     return;
   }
   html.setAttribute('data-fonora-tab', state.activeTab);
   html.removeAttribute('data-fonora-page');
+  if (state.context === 'learn') {
+    html.setAttribute('data-learn-track', learnTrackForTab(state.activeTab));
+  } else {
+    html.removeAttribute('data-learn-track');
+  }
 }
 
 function wireThemeToggle(authSlot) {

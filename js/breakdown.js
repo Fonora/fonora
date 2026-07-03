@@ -207,6 +207,32 @@ export function buildWordBreakdown(wordResult, rules) {
   };
 }
 
+/** Build teaching breakdown from a known sound-grid cell (symbol quiz, drills). */
+export function buildCellBreakdown(cell, rules) {
+  return buildWordBreakdown(
+    {
+      original: cell.sound,
+      symbols: cell.symbols,
+      ipa: cell.ipa || '',
+    },
+    rules,
+  );
+}
+
+/** Render breakdown HTML for a single sound-grid cell (phoneme sound, not letter name). */
+export function renderCellBreakdownHtml(cell, rules) {
+  if (!cell?.symbols) return '';
+  const word = buildCellBreakdown(cell, rules);
+  return renderBreakdownHtml(
+    {
+      original: cell.sound,
+      words: [word],
+      warnings: word.warnings || [],
+    },
+    rules,
+  );
+}
+
 /** Run the IPA pipeline and segment into teaching chunks. */
 export async function analyzeBreakdown(text, rules, lang, pipelineOptions = {}) {
   const trimmed = text.trim();

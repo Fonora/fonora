@@ -206,11 +206,11 @@
       "phrases": [
         {
           "en": "Where are you?",
-          "fon": "wo zis lel"
+          "fon": "wo zis be"
         },
         {
           "en": "Who are you?",
-          "fon": "wo zas lel"
+          "fon": "wo zas be"
         },
         {
           "en": "What is this?",
@@ -222,11 +222,11 @@
         },
         {
           "en": "When will you return?",
-          "fon": "wo zes sa lel gi"
+          "fon": "wo zes sa be gi"
         },
         {
           "en": "How do you know?",
-          "fon": "wo zus lel hu"
+          "fon": "wo zus be hu"
         },
         {
           "en": "Is the food ready?",
@@ -239,7 +239,7 @@
         },
         {
           "en": "Did you see it?",
-          "fon": "lel ta wi to"
+          "fon": "be ta wi to"
         },
         {
           "en": "Will it rain?",
@@ -385,7 +385,7 @@
         },
         {
           "en": "If you help me, we will finish today.",
-          "fon": "von sa lel kas mi dan tem gem"
+          "fon": "von sa be kas mi dan tem gem"
         },
         {
           "en": "We rested before continuing our journey.",
@@ -399,8 +399,7 @@
       "phrases": [
         {
           "en": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
-          "fon": "di ta dan gi nan yetasnan ye kekshu ta ta mak guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan",
-          "note": "walked to river surfaces path (nan); but-clause splits coordinated discourse"
+          "fon": "di ta dan gi nan yetasnan ye kekshu ta ta mak guwi dan ta kel gen dat kel telto shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan"
         }
       ]
     },
@@ -426,7 +425,7 @@
         },
         {
           "en": "Everyone knows something.",
-          "fon": "mel ba hu wa"
+          "fon": "mel ba hu tem"
         },
         {
           "en": "Nobody knows everything.",
@@ -479,7 +478,7 @@
       "phrases": [
         {
           "en": "If you had not helped us, we would not have finished the bridge.",
-          "fon": "von no lel kas dan dan tem nanye"
+          "fon": "von no be kas dan dan tem nanye"
         },
         {
           "en": "The woman who taught me said that the river had changed.",
@@ -517,12 +516,12 @@
         },
         {
           "en": "I am going to the city.",
-          "fon": "mi gi nan lekche",
-          "note": "going-to-place: present motion, not future sa"
+          "fon": "mi gi nan lekche"
         },
         {
           "en": "He went to the store.",
-          "fon": "ba ta gi nan hugatmes"
+          "fon": "ba ta gi nan hugatmes",
+          "note": "review: store→hugatmes(semantic)"
         },
         {
           "en": "The dog ran away.",
@@ -544,13 +543,12 @@
       "phrases": [
         {
           "en": "They ran toward us from the river.",
-          "fon": "dan ta ginek nan yetasnan",
-          "note": "compound path toward + from"
+          "fon": "dan ta ginek nan yetasnan"
         },
         {
           "en": "Are you going to the market tomorrow?",
           "fon": "shu be gi nan mo",
-          "note": "question subject preserved; tomorrow trailing time"
+          "note": "review: market→mo(semantic)"
         },
         {
           "en": "Come here quickly.",
@@ -558,28 +556,24 @@
         },
         {
           "en": "The hunter followed the animal into the forest.",
-          "fon": "lakalba ta gi mes kal lekshe",
-          "note": "transitive motion + into path"
+          "fon": "lakalba ta gi mes kal lekshe"
         },
         {
           "en": "We should not go there at night.",
-          "fon": "dan no gi nan tak",
-          "note": "negation on motion frame"
+          "fon": "dan no gi nan tak"
         },
         {
           "en": "Go away and leave me alone.",
           "fon": "gi gi fet mi [alone]",
-          "note": "coordinated motion clauses; alone gap"
+          "note": "gap: alone (needs a root)"
         },
         {
           "en": "I want to go to the city but I am afraid of the dark.",
-          "fon": "mi gi nan lekche gan",
-          "note": "but-clause split; want omitted (no obligation grammar)"
+          "fon": "mi gi nan lekche gan"
         },
         {
           "en": "The bird flew over the lake and landed near the trees.",
-          "fon": "kal gi ra yeti",
-          "note": "over path; second clause partially compiled"
+          "fon": "kal gi ra yeti"
         },
         {
           "en": "He said he would return home after the sun set.",
@@ -614,7 +608,8 @@
         },
         {
           "en": "Bring me water.",
-          "fon": "la mi ye"
+          "fon": "la mi ye",
+          "note": "review: bring→la(semantic)"
         },
         {
           "en": "We ran through the forest toward the river.",
@@ -635,7 +630,7 @@
         {
           "en": "The old king ruled the city for many years.",
           "fon": "di ta ru [ruled] lekche lek kekdi",
-          "note": "gap: ruled (needs a root)"
+          "note": "gap: ruled (needs a root) | review: king→ru(semantic), years→kekdi(semantic)"
         }
       ]
     }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-02T23:07:07.881Z",
+  "generated_at": "2026-07-03T00:00:15.346Z",
   "corpus_version": "2.0",
   "total_phrases": 131,
   "clean_phrases": 124,
@@ -463,6 +463,17 @@
       ]
     },
     {
+      "root": "tem",
+      "words": [
+        "finish",
+        "finished",
+        "something"
+      ],
+      "concepts": [
+        "bound"
+      ]
+    },
+    {
       "root": "kas",
       "words": [
         "friends help",
@@ -612,16 +623,6 @@
       ],
       "concepts": [
         "rain"
-      ]
-    },
-    {
-      "root": "tem",
-      "words": [
-        "finish",
-        "finished"
-      ],
-      "concepts": [
-        "bound"
       ]
     },
     {
@@ -1703,7 +1704,7 @@
     {
       "level": 5,
       "phrase": "Where are you?",
-      "roman": "wo zis lel",
+      "roman": "wo zis be",
       "unresolved": [],
       "counts": {
         "direct": 3,
@@ -1721,12 +1722,12 @@
       "review": [],
       "gaps": [],
       "expected": "wo zis lel",
-      "matches_golden": true
+      "matches_golden": false
     },
     {
       "level": 5,
       "phrase": "Who are you?",
-      "roman": "wo zas lel",
+      "roman": "wo zas be",
       "unresolved": [],
       "counts": {
         "direct": 3,
@@ -1744,7 +1745,7 @@
       "review": [],
       "gaps": [],
       "expected": "wo zas lel",
-      "matches_golden": true
+      "matches_golden": false
     },
     {
       "level": 5,
@@ -1795,7 +1796,7 @@
     {
       "level": 5,
       "phrase": "When will you return?",
-      "roman": "wo zes sa lel gi",
+      "roman": "wo zes sa be gi",
       "unresolved": [],
       "counts": {
         "direct": 5,
@@ -1813,12 +1814,12 @@
       "review": [],
       "gaps": [],
       "expected": "wo zes sa lel gi",
-      "matches_golden": true
+      "matches_golden": false
     },
     {
       "level": 5,
       "phrase": "How do you know?",
-      "roman": "wo zus lel hu",
+      "roman": "wo zus be hu",
       "unresolved": [],
       "counts": {
         "direct": 4,
@@ -1836,7 +1837,7 @@
       "review": [],
       "gaps": [],
       "expected": "wo zus lel hu",
-      "matches_golden": true
+      "matches_golden": false
     },
     {
       "level": 5,
@@ -1895,11 +1896,11 @@
     {
       "level": 5,
       "phrase": "Did you see it?",
-      "roman": "lel ta wi to",
+      "roman": "be ta wi to",
       "unresolved": [],
       "counts": {
-        "direct": 4,
-        "interpreted": 0,
+        "direct": 3,
+        "interpreted": 1,
         "semantic": 0,
         "alias_weak": 0,
         "unknown": 0
@@ -1913,7 +1914,7 @@
       "review": [],
       "gaps": [],
       "expected": "lel ta wi to",
-      "matches_golden": true
+      "matches_golden": false
     },
     {
       "level": 5,
@@ -1921,8 +1922,8 @@
       "roman": "to sa samye",
       "unresolved": [],
       "counts": {
-        "direct": 3,
-        "interpreted": 0,
+        "direct": 2,
+        "interpreted": 1,
         "semantic": 0,
         "alias_weak": 0,
         "unknown": 0
@@ -2655,7 +2656,7 @@
     {
       "level": 8,
       "phrase": "If you help me, we will finish today.",
-      "roman": "von sa lel kas mi dan tem gem",
+      "roman": "von sa be kas mi dan tem gem",
       "unresolved": [],
       "counts": {
         "direct": 8,
@@ -2673,7 +2674,7 @@
       "review": [],
       "gaps": [],
       "expected": "von sa lel kas mi dan tem gem",
-      "matches_golden": true
+      "matches_golden": false
     },
     {
       "level": 8,
@@ -2817,7 +2818,7 @@
     {
       "level": 10,
       "phrase": "Everyone knows something.",
-      "roman": "mel ba hu wa",
+      "roman": "mel ba hu tem",
       "unresolved": [],
       "counts": {
         "direct": 4,
@@ -2835,7 +2836,7 @@
       "review": [],
       "gaps": [],
       "expected": "mel ba hu wa",
-      "matches_golden": true
+      "matches_golden": false
     },
     {
       "level": 10,
@@ -3112,7 +3113,7 @@
     {
       "level": 11,
       "phrase": "If you had not helped us, we would not have finished the bridge.",
-      "roman": "von no lel kas dan dan tem nanye",
+      "roman": "von no be kas dan dan tem nanye",
       "unresolved": [],
       "counts": {
         "direct": 8,
@@ -3130,7 +3131,7 @@
       "review": [],
       "gaps": [],
       "expected": "von no lel kas dan dan tem nanye",
-      "matches_golden": true
+      "matches_golden": false
     },
     {
       "level": 11,

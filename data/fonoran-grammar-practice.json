@@ -1,0 +1,25 @@
+{
+  "exercises": [
+    {
+      "id": "greeting",
+      "promptLang": "I am here.",
+      "answerRoman": "mi le",
+      "promptFonoran": "mi le",
+      "answerLang": "I am here."
+    },
+    {
+      "id": "want-food",
+      "promptLang": "I want food.",
+      "answerRoman": "mi sak telto",
+      "promptFonoran": "mi sak telto",
+      "answerLang": "I want food."
+    },
+    {
+      "id": "many-people",
+      "promptLang": "Many people.",
+      "answerRoman": "lek ka",
+      "promptFonoran": "lek ka",
+      "answerLang": "Many people."
+    }
+  ]
+}
