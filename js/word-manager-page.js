@@ -67,6 +67,7 @@ async function ensureLab() {
 }
 
 export async function onWordManagerTabActivated() {
+  lab = null;
   await ensureLab();
   if (!manager) {
     manager = createWordManager({

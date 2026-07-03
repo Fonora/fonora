@@ -528,7 +528,7 @@
               <label class="wm-label" for="wc-meaning">Meaning <span class="wm-tip" aria-hidden="true" data-tip="The primary English meaning of this compound word. Used in search and the dictionary.">i</span></label>
               <input type="text" id="wc-meaning" placeholder="e.g. river, friendship, color…" aria-label="Meaning">
               <div id="wc-dupe"></div>
-              <label class="wm-label">Recipe <span class="wm-tip" aria-hidden="true" data-tip="The sequence of roots and words that build this compound. Click picker items to add, click a token to remove.">i</span></label>
+              <label class="wm-label">Recipe <span class="wm-tip" aria-hidden="true" data-tip="The roots and words that build this compound. Click Edit to change the recipe; picker clicks add components only while editing.">i</span></label>
               <div class="wm-recipe" id="wc-recipe-pick"></div>
               <div id="wc-match"></div>
               <div id="wc-boundary"></div>
@@ -536,7 +536,8 @@
               <textarea id="wc-aliases" rows="3" placeholder="synonym&#10;related phrase&#10;another meaning"></textarea>
               <div class="wm-form__actions">
                 <button type="button" class="btn btn--primary" id="wc-save" disabled>Save compound</button>
-                <button type="button" class="btn" id="wc-clear">Clear</button>
+                <button type="button" class="btn" id="wc-edit" hidden>Edit</button>
+                <button type="button" class="btn" id="wc-clear">Cancel</button>
                 <button type="button" class="btn" id="wc-cancel" hidden>Cancel</button>
               </div>
             </div>

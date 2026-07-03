@@ -1,6 +1,6 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-07-03T03:40:59.752Z",
+  "updated_at": "2026-07-03T22:45:58.912Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
   "root_count": 101,
   "roots": [
@@ -674,7 +674,7 @@
       "id": "skin",
       "spelling": "tat",
       "ipa": "/tʌt/",
-      "concept": "your skin",
+      "concept": "skin",
       "domain": "body",
       "reason": "your skin — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"

@@ -3646,7 +3646,13 @@
       transition:border-color 0.1s, background 0.1s;
     }
     .wm-recipe .tok:hover { border-color:var(--reject); background:var(--reject-bg); }
+    .wm-recipe .tok--readonly { cursor:default; }
+    .wm-recipe .tok--readonly:hover { border-color:var(--border); background:var(--surface); }
     .wm-recipe .tok .mono { font-family:var(--font-mono); }
+    .wm-tools-page input[readonly],
+    .wm-tools-page textarea[readonly] {
+      background:var(--bg); color:var(--text); cursor:default;
+    }
     /* Dupe warning */
     .wm-tools-page .dupe { margin-top:0.4rem; }
     /* Boundary + match warnings */

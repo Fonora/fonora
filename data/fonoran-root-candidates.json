@@ -3058,9 +3058,9 @@
     },
     {
       "id": "skin",
-      "concept": "your skin",
+      "concept": "skin",
       "domain": "body",
-      "plain_description": "your skin",
+      "plain_description": "skin",
       "primitive_test_note": null,
       "suggested_status": "primitive",
       "priority_class": "common",
@@ -3077,7 +3077,7 @@
       "review": {
         "approved_at": "2026-07-02T00:49:33.288Z",
         "rejected_at": null,
-        "edited_at": null,
+        "edited_at": "2026-07-03T22:45:58.890Z",
         "note": null
       },
       "generation": {
