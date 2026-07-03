@@ -1,5 +1,5 @@
 ---
-status: Open
+status: Superseded
 date: 2026-06-22
 phase: phase-1
 ---
@@ -68,25 +68,35 @@ The sequence-equals-sequence class is dominated by **derived reverse orderings**
 
 **Word round-trips:** After v3, *bar*, *boy*, and *bor* round-trip cleanly; v2 had four boundary failures on *bar* / *car* / *far* / *for*. Stress tokens *tht*, *ts*, *pb* still mismatch because eSpeak letter-name pronunciations hit sequence collisions, edge cases that prove round-trip success on a curated list does not make the script self-delimiting.
 
-**Test metric clarified** (`fd89860`): `test:minimal-pairs` checks five groups / thirteen words only; `audit:collisions` is the exhaustive check. No boundary markers or recipe changes were applied, human design calls remain open per the report's fix order.
+**Test metric clarified** (`fd89860`): `test:minimal-pairs` checks five groups / thirteen words only; `audit:collisions` is the exhaustive check. No boundary markers or recipe changes were applied; design calls on the flagged hazards are ratified in **Ratified Decisions** below.
 
 ## What Changed
 
-The audit became a permanent diagnostic layer: `npm run audit:collisions`, Pronunciation Validation warnings, and unit tests that document hazard classes without hiding them. Open hazards remain as flagged: four vowel+glide pairs, fifteen derived-order collisions, no script-level boundary marker.
+The audit became a permanent diagnostic layer: `npm run audit:collisions`, Pronunciation Validation warnings, and unit tests that document hazard classes without hiding them.
+
+**This note is closed (Jul 2026).** The core research question is answered: ambiguities are discoverable systematically, and exact symbol duplicates are zero under v3. The collision audit remains a permanent diagnostic layer. All remaining design calls are ratified below or handed to successor notes. Status `Superseded` reflects those successor threads — not obsolescence of the audit tooling.
 
 Later notes:
 
-- **RN-05: One script for every language** (parallel work Jun 22–23; deferred per-language collision analysis)
+- **RN-05: One script for every language** (parallel work Jun 22–23; per-language collision surface deferred here, owned by RN-05)
 - **RN-07: Can words grow from a grid? (Gen 1 and Gen 2)** (Phase II: what language sits on a script that can write sounds, and can vocabulary be generated?)
 - **RN-08: Meaning from coordinates: the Gen 3 DDA experiment** (coordinate-driven roots; compound-boundary scoring applies a separate collision concept at morpheme joins)
+- **RN-23: Vowel-glide phantom diphthongs** (successor for the four vowel+glide vs diphthong homographs)
 
-## Open Questions
+## Ratified Decisions
 
-The audit answered "can we find ambiguities?" and "are there zero exact duplicates?", yes to both for v3. It did not answer "which ambiguities should we accept?", hence this note remains *Open*.
+The audit answered "can we find ambiguities?" and "are there zero exact duplicates?" — yes to both for v3. The design calls below are now recorded.
 
-Unresolved design calls: vowel+glide vs diphthong homographs; whether derived reverse orderings are worth their sequence collisions; whether pipeline spacing conventions apply to human-written contiguous text; CI failure policy; per-language collision surface (RN-05 added seven languages without extending the word-risk list).
+| Hazard class | Verdict | Notes |
+| --- | --- | --- |
+| Exact symbol collisions | **Resolved** | Zero under v3; no two distinct encodable keys share one symbol string. |
+| Vowel+glide vs diphthong homographs (`o+y`/`e+y`/`a+y`/`a+w`) | **Handed off** | Continued in [RN-23](/research/notes/vowel-glide-phantom-diphthongs) (phantom diphthongs). |
+| Derived reverse orderings (15 sequence-equals-sequence, e.g. `th+t` ↔ `t+s`) | **Accepted trade-off** | Visually distinct derived glyphs preferred over prefix-free codes; no boundary marker introduced. |
+| Pipeline spacing in human-written contiguous text | **Recorded** | Spacing (`o y` vs `oy`) is a pipeline/segmentation convention; contiguous human text relies on context; v3 ships no script-level boundary marker. |
+| CI failure policy | **Recorded** | Only exact duplicates are fatal; sequence and greedy-decode hazards remain documented warnings via `npm run audit:collisions` and Pronunciation Validation. |
+| Per-language collision surface | **Deferred** | Owned by [RN-05](/research/notes/one-script-for-every-language) (multilingual scope). |
 
-The stub's follow-up question; once the script could be audited, what *language* should sit on top, and could vocabulary be generated rather than borrowed?, became **RN-07**.
+The stub's follow-up question — once the script could be audited, what *language* should sit on top, and could vocabulary be generated rather than borrowed? — became **RN-07**.
 
 ## References
 
