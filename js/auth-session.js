@@ -18,7 +18,7 @@ export function getAuthState() {
 }
 
 export function canAccessTools() {
-  return !authState.toolsGated || authState.authenticated;
+  return !authState.toolsGated || authState.isAdmin;
 }
 
 export function canAccessWordManager() {

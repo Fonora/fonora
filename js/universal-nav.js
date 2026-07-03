@@ -101,10 +101,10 @@ let state = {
 let fonoranAuthState = null;
 
 function shouldHideToolsPlatformTab() {
-  // Hide until session confirms the user is signed in (avoids flashing Tools for guests).
+  // Hide Tools tab for everyone except admins when auth is enabled.
   if (!fonoranAuthState) return true;
   if (!fonoranAuthState.toolsGated) return false;
-  return !fonoranAuthState.authenticated;
+  return !fonoranAuthState.isAdmin;
 }
 
 function escapeAttr(s) {

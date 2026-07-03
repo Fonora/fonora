@@ -48,7 +48,7 @@
     }
 
     function writeLocked() {
-      return AUTH.required && !AUTH.authenticated;
+      return AUTH.required && !AUTH.isAdmin;
     }
 
     function writeDisabled(...reasons) {
@@ -3007,6 +3007,19 @@
       sheet.hidden = true;
     }
 
+    function openAuthModal() {
+      const modal = $('auth-sign-in-modal');
+      const googleLink = $('auth-sign-in-google');
+      if (googleLink) googleLink.href = AUTH.loginUrls?.google ?? AUTH.loginUrl;
+      modal?.removeAttribute('hidden');
+      document.documentElement.classList.add('modal-open');
+    }
+
+    function closeAuthModal() {
+      $('auth-sign-in-modal')?.setAttribute('hidden', '');
+      document.documentElement.classList.remove('modal-open');
+    }
+
     function openChain(kind, id) {
       openExplorer(kind === 'sound' ? 'root' : 'word', kind === 'sound' ? id : id);
     }
@@ -3666,30 +3679,31 @@
           panel.querySelector('.dict-detail-stack')?.appendChild(bar)
             ?? panel.appendChild(bar);
         }
-        const googleUrl = escapeHtml(AUTH.loginUrls?.google ?? AUTH.loginUrl);
         const upCount = data.up ?? 0;
         const downCount = data.down ?? 0;
         const total = upCount + downCount;
         const upPct = total > 0 ? Math.round((upCount / total) * 100) : 50;
         const sentiment = total === 0 ? '' : upPct > 50 ? ' vote-meter--up' : upPct < 50 ? ' vote-meter--down' : '';
-        const isAuth = AUTH.authenticated;
         const downPressed = data.userVote === -1;
         const upPressed = data.userVote === 1;
         bar.innerHTML = `<p class="vote-meter__label">Community</p>
           <div class="vote-meter${sentiment}" role="meter" aria-valuenow="${upPct}" aria-valuemin="0" aria-valuemax="100" aria-label="Approval: ${upPct}%">
             <button type="button" class="vote-meter__btn vote-meter__btn--down" data-dict-vote="-1"
-              aria-pressed="${downPressed}"${!isAuth ? ' disabled title="Sign in to vote"' : ''}
+              aria-pressed="${downPressed}"
               aria-label="Downvote (${downCount})"><span class="vote-meter__btn-num">${downCount}</span><span class="vote-meter__btn-arrow" aria-hidden="true">↓</span></button>
             <div class="vote-meter__track">
               <div class="vote-meter__fill" style="width:${upPct}%" aria-hidden="true"></div>
             </div>
             <button type="button" class="vote-meter__btn vote-meter__btn--up" data-dict-vote="1"
-              aria-pressed="${upPressed}"${!isAuth ? ' disabled title="Sign in to vote"' : ''}
+              aria-pressed="${upPressed}"
               aria-label="Upvote (${upCount})"><span class="vote-meter__btn-arrow" aria-hidden="true">↑</span><span class="vote-meter__btn-num">${upCount}</span></button>
-          </div>
-          ${!isAuth ? `<p class="vote-meter__sign-in sans">Sign in to vote — <a href="${googleUrl}">Google</a></p>` : ''}`;
+          </div>`;
         bar.querySelectorAll('[data-dict-vote]').forEach((btn) => {
           btn.addEventListener('click', async () => {
+            if (!AUTH.authenticated) {
+              openAuthModal();
+              return;
+            }
             const clicked = Number(btn.dataset.dictVote);
             const vote = data.userVote === clicked ? 0 : clicked;
             try {
@@ -4543,6 +4557,10 @@
         goWordManager();
         return;
       }
+      if (name === 'advanced' && AUTH.required && !AUTH.isAdmin) {
+        switchPage('dictionary');
+        return;
+      }
       STATE.page = name;
       setActiveTab(name);
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -4707,6 +4725,12 @@
       panel: $('sheet'),
       close: closeSheet,
       isOpen: () => $('sheet')?.classList.contains('open'),
+    });
+    bindModalDismiss({
+      backdrop: $('auth-sign-in-backdrop'),
+      panel: $('auth-sign-in-modal'),
+      close: closeAuthModal,
+      isOpen: () => !$('auth-sign-in-modal')?.hasAttribute('hidden'),
     });
     $('adv-regenerate')?.addEventListener('click', async () => {
       const applyLlm = $('adv-regen-apply-llm')?.checked !== false;
@@ -4963,7 +4987,10 @@
     mountSiteFooter();
     initUniversalNav({ context: 'language', activeTab: initialPage });
     document.querySelectorAll('.page').forEach((p) => p.classList.remove('active'));
-    $(`page-${initialPage}`)?.classList.add('active');
+    // Write-protected pages are activated inside boot() after auth is verified
+    if (!WRITE_PAGES.has(initialPage)) {
+      $(`page-${initialPage}`)?.classList.add('active');
+    }
 
     async function boot() {
       STATE.page = initialPage;
@@ -4972,6 +4999,12 @@
       await refreshAuth();
       handleAuthUrlErrors();
       updateAuthGate();
+      if (STATE.page === 'advanced' && AUTH.required && !AUTH.isAdmin) {
+        switchPage('dictionary');
+      } else if (WRITE_PAGES.has(STATE.page)) {
+        // Auth confirmed — now safe to reveal the write-protected page
+        $(`page-${STATE.page}`)?.classList.add('active');
+      }
       window.addEventListener('hashchange', () => {
         let hashPage = parseHashPage();
         if (isWordManagerPage(hashPage)) {

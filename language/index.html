@@ -606,6 +606,20 @@
 
   <div id="site-footer-root"></div>
 
+  <div id="auth-sign-in-modal" class="wm-modal" hidden role="dialog" aria-modal="true" aria-labelledby="auth-sign-in-title">
+    <div class="wm-modal__backdrop" id="auth-sign-in-backdrop"></div>
+    <div class="wm-modal__box">
+      <div class="wm-modal__head">
+        <span class="wm-modal__title" id="auth-sign-in-title">Sign in to vote</span>
+        <button type="button" class="wm-modal__close" data-modal-close aria-label="Close">✕</button>
+      </div>
+      <div class="wm-modal__body">
+        <p class="sans">Sign in with Google to vote on community words.</p>
+        <a href="/auth/google" class="btn btn--primary auth-gate__sign-in" id="auth-sign-in-google">Continue with Google</a>
+      </div>
+    </div>
+  </div>
+
   <div id="sheet-backdrop" class="modal-backdrop" hidden aria-hidden="true"></div>
   <div id="sheet" class="sheet explorer-sheet" role="dialog" aria-modal="true" aria-label="Word explorer" hidden>
     <div class="sheet__chrome">
