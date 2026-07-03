@@ -13,6 +13,7 @@
       "label": "up",
       "aliases": [
         "above",
+        "high",
         "higher",
         "rise",
         "rises",
@@ -52,7 +53,9 @@
         "big",
         "large",
         "size",
-        "tall"
+        "tall",
+        "wide",
+        "wider"
       ]
     },
     "eat": {
@@ -301,7 +304,9 @@
         "carries",
         "carried",
         "protect",
-        "protects"
+        "protects",
+        "guard",
+        "guards"
       ]
     },
     "know": {
@@ -413,7 +418,8 @@
       "label": "near",
       "aliases": [
         "close",
-        "nearby"
+        "nearby",
+        "beside"
       ]
     },
     "pain": {
@@ -479,14 +485,19 @@
       "label": "take",
       "aliases": [
         "taking",
-        "receive"
+        "receive",
+        "bring",
+        "brings",
+        "brought"
       ]
     },
     "time": {
       "label": "time",
       "aliases": [
         "while",
-        "duration"
+        "duration",
+        "year",
+        "years"
       ]
     },
     "true": {
@@ -626,7 +637,17 @@
         "spot",
         "somewhere",
         "city",
-        "town"
+        "town",
+        "house",
+        "houses",
+        "home",
+        "homes",
+        "store",
+        "stores",
+        "shop",
+        "shops",
+        "market",
+        "markets"
       ]
     },
     "plant": {
@@ -637,7 +658,9 @@
         "trees",
         "grass",
         "leaf",
-        "leaves"
+        "leaves",
+        "flower",
+        "flowers"
       ]
     },
     "pulse": {
@@ -725,7 +748,9 @@
         "item",
         "this",
         "that",
-        "it"
+        "it",
+        "toy",
+        "toys"
       ]
     },
     "think": {
@@ -813,7 +838,21 @@
         "she",
         "he",
         "parents",
-        "parent"
+        "parent",
+        "king",
+        "kings",
+        "queen",
+        "queens",
+        "chief",
+        "chiefs",
+        "leader",
+        "leaders",
+        "ruler",
+        "rulers",
+        "traveler",
+        "travelers",
+        "traveller",
+        "travellers"
       ]
     },
     "source": {
@@ -1000,7 +1039,9 @@
       "label": "door",
       "aliases": [
         "door",
-        "doors"
+        "doors",
+        "doorway",
+        "doorways"
       ]
     },
     "campfire": {
@@ -1162,7 +1203,9 @@
         "young one",
         "baby",
         "son",
-        "daughter"
+        "daughter",
+        "young",
+        "younger"
       ]
     },
     "wait": {

@@ -14,11 +14,22 @@
  *   node scripts/fonoran-translation-gaps.js --level 7    # one level only
  *   node scripts/fonoran-translation-gaps.js --assert     # FAIL (exit 1) on any
  *                                                         #   drift from golden
+ *                                                         #   or any NEW gap
+ *                                                         #   beyond the baseline
  *   node scripts/fonoran-translation-gaps.js --update-golden  # accept current
  *                                                         #   output as the new
- *                                                         #   golden baseline
+ *                                                         #   golden + gap baseline
+ *   node scripts/fonoran-translation-gaps.js --update-gap-baseline # accept the
+ *                                                         #   current honest gaps
+ *                                                         #   as the new baseline
  */
-import { runTranslationGapReport, updateGoldenCorpus } from '../tools/fonoran-translation-gaps.js';
+import {
+  runTranslationGapReport,
+  updateGoldenCorpus,
+  loadGapBaseline,
+  saveGapBaseline,
+  diffGapsAgainstBaseline,
+} from '../tools/fonoran-translation-gaps.js';
 import { closeStore } from '../tools/fonoran-store.js';
 
 const argv = process.argv.slice(2);
@@ -26,6 +37,7 @@ const gapsOnly = argv.includes('--gaps');
 const asJson = argv.includes('--json');
 const doAssert = argv.includes('--assert');
 const doUpdate = argv.includes('--update-golden');
+const doUpdateBaseline = argv.includes('--update-gap-baseline');
 const levelIdx = argv.indexOf('--level');
 const onlyLevel = levelIdx !== -1 ? Number(argv[levelIdx + 1]) : null;
 
@@ -41,15 +53,33 @@ async function runAssert() {
   const graded = report.phrases.filter(p => typeof p.expected === 'string');
   const mismatches = graded.filter(p => !p.matches_golden);
 
+  // Gap-baseline regression: fail on any NEW honest gap beyond the tracked
+  // baseline (curation may only shrink it). Skipped if no baseline exists yet.
+  const baseline = await loadGapBaseline();
+  const gapDiff = baseline ? diffGapsAgainstBaseline(report, baseline) : null;
+  const newGaps = gapDiff?.new ?? [];
+  const ok = mismatches.length === 0 && newGaps.length === 0;
+
   if (asJson) {
     console.log(JSON.stringify({
-      ok: mismatches.length === 0,
+      ok,
       total: graded.length,
       mismatches: mismatches.map(p => ({ phrase: p.phrase, expected: p.expected, got: p.roman })),
+      new_gaps: newGaps,
+      resolved_gaps: gapDiff?.resolved ?? [],
       quality: report.quality,
       collapses: report.collapses,
     }, null, 2));
-    return mismatches.length === 0;
+    return ok;
+  }
+
+  if (newGaps.length) {
+    console.log(color(C.red + C.bold, `✗ New translation gap(s) beyond baseline`) +
+      ` — ${newGaps.length}: ${newGaps.join(', ')}`);
+    console.log(color(C.dim, 'If intended, accept them with: node scripts/fonoran-translation-gaps.js --update-gap-baseline\n'));
+  } else if (baseline && gapDiff.resolved.length) {
+    console.log(color(C.green, `✓ ${gapDiff.resolved.length} gap(s) newly resolved: ${gapDiff.resolved.join(', ')}`) +
+      color(C.dim, ' — shrink the baseline with --update-gap-baseline\n'));
   }
 
   if (!graded.length) {
@@ -84,19 +114,28 @@ async function runAssert() {
       console.log(`  ${color(C.bold, c.root)} ← ${c.words.join(', ')}`);
     }
   }
-
-  return mismatches.length === 0;
+  return ok;
 }
 
 async function runUpdate() {
-  const { updated, levels } = await updateGoldenCorpus();
+  const { updated, levels, gaps } = await updateGoldenCorpus();
   console.log(color(C.green + C.bold, `Updated golden corpus`) +
     ` — ${updated} phrases across ${levels} levels rewritten from current output.`);
+  console.log(color(C.dim, `Gap baseline refreshed — ${gaps} distinct honest gap(s).`));
+  console.log(color(C.dim, 'Review the git diff to confirm the new baseline is intended.'));
+}
+
+async function runUpdateBaseline() {
+  const report = await runTranslationGapReport({ level: onlyLevel, resetCache: true });
+  const words = (report.gaps ?? []).map(g => g.word);
+  const gaps = await saveGapBaseline(words);
+  console.log(color(C.green + C.bold, `Updated gap baseline`) +
+    ` — ${gaps.length} distinct honest gap(s) accepted.`);
   console.log(color(C.dim, 'Review the git diff to confirm the new baseline is intended.'));
 }
 
 async function runReport() {
-  const report = await runTranslationGapReport({ level: onlyLevel, resetCache: true });
+  const report = await runTranslationGapReport({ level: onlyLevel, resetCache: true, suggest: true });
 
   if (asJson) {
     console.log(JSON.stringify(report, null, 2));
@@ -143,9 +182,16 @@ async function runReport() {
     console.log(color(C.green, '  No gaps — every phrase fully resolved.'));
   } else {
     for (const g of report.gaps) {
-      console.log(`  ${color(C.red, String(g.count).padStart(2))}×  ${color(C.bold, g.word)}`);
+      console.log(`  ${color(C.red, String(g.count).padStart(2))}×  ${color(C.bold, g.word)} ${color(C.dim, `(${g.role})`)}`);
       console.log(`        ${color(C.dim, g.samples[0] ?? '')}`);
+      if (g.suggestions?.length) {
+        const s = g.suggestions
+          .map(x => `${x.fonoran}=${x.concept_id} ${color(C.dim, `(${x.reason})`)}`)
+          .join(', ');
+        console.log(`        ${color(C.cyan, 'suggest:')} ${s}`);
+      }
     }
+    console.log(color(C.dim, '\n  Suggestions are WordNet proposals for human review — approve into localizations/en.json.'));
   }
 
   if (report.collapses.length) {
@@ -166,6 +212,7 @@ async function runReport() {
 
 async function main() {
   if (doUpdate) return runUpdate();
+  if (doUpdateBaseline) return runUpdateBaseline();
   if (doAssert) {
     const ok = await runAssert();
     if (!ok) process.exitCode = 1;

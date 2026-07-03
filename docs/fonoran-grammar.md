@@ -447,13 +447,36 @@ flowchart TD
   EN --> ME --> SG --> PC --> CC --> GP --> FO
 ```
 
-**Current implementation (slot-filling compiler).** The live translator in
-`tools/fonoran-translator.js` implements an earlier stage of this pipeline: English
-→ **grammar slots** (Actor · Action · Target · Place · Time; Place covers spatial/motion landmarks) →
-resolution cascade → surface. It does **not** yet build a full semantic graph.
-Motion frames are matched programmatically (`matchMotionPhrase` in
+**Current implementation (concept-first, slot-filling compiler).** The live
+translator in `tools/fonoran-translator.js` compiles English → **grammar slots**
+(Actor · Action · Target · Place · Time; Place covers spatial/motion landmarks) →
+scored resolution → a language-neutral **semantic frame** → surface. Motion
+frames are matched programmatically (`matchMotionPhrase` in
 `tools/fonoran-interpretation.js`) from declarative rules in
-`data/fonoran-interpretation-rules.json` — not per-phrase hard-coded glosses.
+`data/fonoran-interpretation-rules.json` — not per-phrase hard-coded glosses. It
+does **not** yet build a full semantic *graph* (relations between frames), but
+the per-sentence frame below is now a real object, not just an intermediate.
+
+**The semantic frame is a real pivot object.** Between the parse and the surface,
+`translateEnglish` builds an explicit, language-neutral frame:
+
+```json
+{
+  "actor":  [{ "concept_id": "person", "english": "man", "fonoran": "ba",
+               "resolution_kind": "direct", "confidence": "high" }],
+  "action": [{ "concept_id": "move",   "english": "jumped", "fonoran": "gi",
+               "resolution_kind": "interpreted", "confidence": "medium" }],
+  "target": [], "place": [], "time": [], "modifiers": [],
+  "particles": [{ "role": "time", "english": "past", "form": "ta" }],
+  "gaps": []
+}
+```
+
+Every filled role references a **`concept_id` + provenance** (never a raw English
+token). Every unresolved element is a first-class **gap** `{ role, english,
+reason }` that renders as `[english]` in the surface and flows to the gap report.
+The Fonoran surface is generated purely from the resolved tokens, so the frame is
+a faithful description of what the surface actually says — it never fabricates.
 
 **Multi-path motion** (direction in the Path slot, multiple entries allowed):
 
@@ -505,30 +528,57 @@ The translator should function as a **language development tool**, not just a tr
 
 ### Resolution cascade & honest gaps
 
-Each English token is resolved through an ordered cascade. The first legitimate
-match wins; if none matches, the token is an **honest gap** (red) — the
-translator never fabricates a spelling.
+Each English token is resolved through an **ordered, scored cascade with a hard
+confidence floor**. The first legitimate match at or above the floor wins; below
+the floor the token is an **honest gap** (red) — the translator never fabricates
+a spelling and **never consults WordNet at runtime**.
 
-| Tier | `resolution_kind` | Quality | Notes |
-| --- | --- | --- | --- |
-| Curated alias | `direct` | pass | Concept id, localized alias, or lab meaning/alias. |
-| Interpretation rule | `interpreted` | pass | Tense lemmas, idioms, spatial/relational frames, pronoun hints. |
-| Nearest existing root | `semantic` | review | A real WordNet hypernym that already has a root. Single concept only. |
-| Weak (gloss) alias | `alias_weak` | review | Alias derived from a concept's *description* text (low confidence). |
-| Unresolved | `unknown` | gap | No legitimate match — surfaces in red for the designer to grow a root. |
+| Tier | Confidence | `resolution_kind` | Quality | Notes |
+| --- | --- | --- | --- | --- |
+| Curated strong alias / concept id / lemma / phrase | high | `direct` | pass | Concept id, localized alias, or lab meaning/curated alias. |
+| Curated interpretation | medium | `interpreted` | pass | Tense lemmas, idioms, spatial/relational rules, concept hints/bridges, head-noun of a phrase, transparent compound assembly (over strong aliases only). |
+| **Below floor** | low | `unknown` | gap | No confident concept — surfaces in red for the designer to grow a root. A demoted weak (gloss) alias is carried as a non-authoritative `suggestion` for the curation queue but is **never emitted**. |
 
 **Strong vs weak aliases.** An alias is **strong** when it comes from a curated
 source: the concept id, its localized aliases, or a lab sound's meaning/curated
 aliases. An alias is **weak** when it is merely a token from a concept's
 *description gloss* (e.g. `dark`'s gloss "no light" leaks the token `light`).
-Weak aliases can **never shadow** a strong root, regardless of registration
-order, and they resolve as `alias_weak` (low confidence) so the quality gate can
-flag mismatches like the old `travel → path` and `light → dark` errors.
+Weak aliases can **never shadow** a strong root, and — unlike earlier versions —
+they **no longer surface as output**: a weak-only match is an honest gap that
+carries the weak alias as a review `suggestion`. This kills silent mismatches
+like the old `travel → path`, `light → dark`, and `high → fast` errors.
 
-**No generated guesses.** The translator does not invent multi-root compounds
-for unknown words. The standalone Word Generator has been removed; the only
-non-curated tier is the single-concept `semantic` fallback to an *existing*
-root. Anything else is an honest gap.
+**No runtime guessing (Design Rule 0).** The translator does not invent
+multi-root compounds, and it does not run WordNet synonym/hypernym lookups or a
+"nearest concept" guess. This eliminates the fabrication class that produced
+`behind → ja` (WordNet flattened `behind`'s noun sense *buttocks* → `can` →
+`metal` → `ja`). Unknown words are honest gaps so the language can be grown
+deliberately.
+
+**WordNet is an offline curation assistant.** `tools/fonoran-semantic-lookup.js`
+still uses WordNet, but only offline: it proposes ranked alias/concept
+candidates — disambiguated by the slot's part of speech (WSD) and ranked by
+sense frequency — for a **human** to approve into
+[../data/localizations/en.json](../data/localizations/en.json). Suggestions
+appear in the gap report (`suggestGapConcepts`) and the concept editor; they are
+never authoritative runtime output.
+
+**Curated relational vocabulary.** Spatial/relational words are added
+deliberately, not guessed. `beside → near` is a curated interpretation rule;
+`behind`, `front`, and `between` have no Fonoran root yet and remain **tracked
+honest gaps** until one is grown through the normal root pipeline.
+
+**Locative predicates keep the relation.** In a static locative predicate
+(`the cat is behind the tree`) the parser routes the leading spatial preposition
+into the **Place** slot instead of collapsing the predicate to its head noun. A
+relation that has a concept resolves there (`above → up`, `under → down`,
+`beside → near`, so `the bird is above the tree → kal ra tet`); a concept-less
+relation surfaces as an honest Place gap (`the cat is behind the tree →
+kal [behind] tet`, gap `{role: 'path', english: 'behind'}`). The old parser
+silently dropped the preposition and produced just "cat tree" — the exact
+failure this construction fixes. Concept-less relational preps are enumerated in
+`LOCATIVE_GAP_PREPS` (`behind`, `between`, `among`, `beyond`, `around`);
+contentless containment preps (`in`/`at`/`on`) stay skipped.
 
 **Meaningful function words.** Relational words that carry meaning are not
 blanket-skipped: e.g. `from` resolves to the `source` root rather than being
@@ -556,10 +606,19 @@ known gaps/decisions. It is the permanent regression snapshot — run it on ever
 grammar, root, or rule change:
 
 ```bash
-npm run test:translator          # assert: FAIL on any drift or new gap
-npm run test:translator:update   # accept current output as the new golden baseline
-node scripts/fonoran-translation-gaps.js   # full human report (coverage, gaps, collapses)
+npm run test:translator            # assert: FAIL on any golden drift OR new gap
+npm run test:translator:update     # accept current output as the new golden + gap baseline
+node scripts/fonoran-translation-gaps.js                    # full human report (coverage, gaps + suggestions, collapses)
+node scripts/fonoran-translation-gaps.js --update-gap-baseline  # accept current honest gaps as the new baseline
 ```
+
+**Gap baseline — the growth backbone.**
+[../data/fonoran-translation-gap-baseline.json](../data/fonoran-translation-gap-baseline.json)
+tracks the set of English words the language does not yet express (honest gaps).
+`--assert` fails on any **new** gap beyond the baseline, so curation is
+measurable and regressions are caught while the baseline can only shrink as roots
+are grown. `--update-golden` refreshes it automatically; the human report annotates
+each gap with WordNet curation **suggestions**.
 
 The runner also grades resolution quality (pass / review / gap) and reports
 **concept collapses** — distinct English words sharing one root (e.g.

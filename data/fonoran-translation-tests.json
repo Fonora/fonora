@@ -62,8 +62,7 @@
         },
         {
           "en": "We build a house.",
-          "fon": "dan kel che",
-          "note": "review: house→che(semantic)"
+          "fon": "dan kel che"
         },
         {
           "en": "The child sees the dog.",
@@ -125,18 +124,15 @@
         },
         {
           "en": "The red flower grows.",
-          "fon": "datwi ba fomas",
-          "note": "review: flower→ba(semantic)"
+          "fon": "datwi tet fomas"
         },
         {
           "en": "The river is wide.",
-          "fon": "yenanye melto",
-          "note": "review: wide→melto(semantic)"
+          "fon": "yenanye ni"
         },
         {
           "en": "The mountain is high.",
-          "fon": "fenra nek",
-          "note": "review: high→nek(alias_weak)"
+          "fon": "fenra ra"
         },
         {
           "en": "The food tastes good.",
@@ -166,8 +162,7 @@
         },
         {
           "en": "We built a house.",
-          "fon": "dan ta kel che",
-          "note": "review: house→che(semantic)"
+          "fon": "dan ta kel che"
         },
         {
           "en": "We will build a bridge.",
@@ -221,8 +216,8 @@
         },
         {
           "en": "Is the food ready?",
-          "fon": "tel kel ?",
-          "note": "review: ready→kel(semantic)"
+          "fon": "tel [ready] ?",
+          "note": "gap: ready (needs a root)"
         },
         {
           "en": "Can you help me?",
@@ -261,8 +256,7 @@
         },
         {
           "en": "The king trusts the guard.",
-          "fon": "femgu kam mo",
-          "note": "review: king→femgu(semantic), guard→mo(semantic)"
+          "fon": "ba kam gat"
         },
         {
           "en": "The hunter follows the animal.",
@@ -278,8 +272,7 @@
         },
         {
           "en": "The traveler finds a river.",
-          "fon": "ba wi yenanye",
-          "note": "review: traveler→ba(semantic)"
+          "fon": "ba wi yenanye"
         },
         {
           "en": "The group builds together.",
@@ -321,8 +314,7 @@
         },
         {
           "en": "The doorway is open.",
-          "fon": "nantem kelnan",
-          "note": "review: doorway→nantem(semantic)"
+          "fon": "nantem kelnan"
         },
         {
           "en": "The raindrops fall quietly.",
@@ -432,13 +424,11 @@
         },
         {
           "en": "The child made the toy.",
-          "fon": "re ta hutam kel",
-          "note": "review: toy→kel(semantic)"
+          "fon": "re ta hutam to"
         },
         {
           "en": "The toy was made by the child.",
-          "fon": "kel ta hutam re",
-          "note": "review: toy→kel(semantic)"
+          "fon": "to ta hutam re"
         },
         {
           "en": "I think he knows that she left.",
@@ -446,8 +436,7 @@
         },
         {
           "en": "The old man's young son.",
-          "fon": "di ba re re",
-          "note": "review: young→re(alias_weak)"
+          "fon": "di ba re re"
         },
         {
           "en": "They can fish.",
@@ -511,8 +500,7 @@
         },
         {
           "en": "He went to the store.",
-          "fon": "ba ta gi nan hugatmes",
-          "note": "review: store→hugatmes(semantic)"
+          "fon": "ba ta gi nan che"
         },
         {
           "en": "The dog ran away.",
@@ -538,8 +526,7 @@
         },
         {
           "en": "Are you going to the market tomorrow?",
-          "fon": "shu be gi nan mo ?",
-          "note": "review: market→mo(semantic)"
+          "fon": "shu be gi nan che ?"
         },
         {
           "en": "Come here quickly.",
@@ -599,8 +586,7 @@
         },
         {
           "en": "Bring me water.",
-          "fon": "la mi ye",
-          "note": "review: bring→la(semantic)"
+          "fon": "la mi ye"
         },
         {
           "en": "We ran through the forest toward the river.",
@@ -620,8 +606,8 @@
         },
         {
           "en": "The old king ruled the city for many years.",
-          "fon": "di ta femgu [ruled] lekche lek kekdi",
-          "note": "gap: ruled (needs a root) | review: king→femgu(semantic), years→kekdi(semantic)"
+          "fon": "di ta ba [ruled] lekche lek kan",
+          "note": "gap: ruled (needs a root)"
         }
       ]
     }

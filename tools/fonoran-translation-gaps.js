@@ -10,11 +10,46 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { translateEnglish, resetTranslatorCache } from './fonoran-translator.js';
+import { buildResolveContext, suggestGapConcepts } from './fonoran-english-resolve.js';
 import { resolveDataPath } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS_PATH = join(ROOT, 'data/fonoran-translation-tests.json');
+const GAP_BASELINE_PATH = join(ROOT, 'data/fonoran-translation-gap-baseline.json');
 const LATEST_PATH = () => resolveDataPath('translation_test_latest');
+
+/**
+ * The gap baseline is the tracked set of English words the language does not yet
+ * express (honest gaps). It is the growth backbone: curation shrinks it, and the
+ * strict runner can fail on any NEW gap that appears beyond it.
+ */
+export async function loadGapBaseline() {
+  try {
+    const data = JSON.parse(await readFile(GAP_BASELINE_PATH, 'utf8'));
+    return Array.isArray(data.gaps) ? data.gaps : [];
+  } catch {
+    return null;
+  }
+}
+
+export async function saveGapBaseline(words) {
+  const gaps = [...new Set(words.map(w => String(w).toLowerCase()))].sort();
+  await writeFile(
+    GAP_BASELINE_PATH,
+    `${JSON.stringify({ generated_at: new Date().toISOString(), count: gaps.length, gaps }, null, 2)}\n`,
+    'utf8',
+  );
+  return gaps;
+}
+
+/** Compare a report's distinct gaps to the baseline: { new, resolved, baseline }. */
+export function diffGapsAgainstBaseline(report, baseline) {
+  const current = new Set((report.gaps ?? []).map(g => String(g.word).toLowerCase()));
+  const base = new Set((baseline ?? []).map(w => String(w).toLowerCase()));
+  const newGaps = [...current].filter(w => !base.has(w)).sort();
+  const resolved = [...base].filter(w => !current.has(w)).sort();
+  return { new: newGaps, resolved, baseline: [...base].sort() };
+}
 
 /** Load the phrase corpus from disk. */
 export async function loadTranslationCorpus() {
@@ -36,6 +71,7 @@ export async function updateGoldenCorpus({ lab = null } = {}) {
   const corpus = await loadTranslationCorpus();
   resetTranslatorCache();
   let updated = 0;
+  const allGaps = new Set();
   for (const lvl of corpus.levels) {
     const next = [];
     for (const entry of lvl.phrases) {
@@ -46,6 +82,7 @@ export async function updateGoldenCorpus({ lab = null } = {}) {
       const rec = { en, fon: roman };
       const notes = [];
       if (grade.gaps.length) {
+        for (const g of grade.gaps) allGaps.add(String(g.english).toLowerCase());
         notes.push(`gap: ${[...new Set(grade.gaps.map(g => g.english))].join(', ')} (needs a root)`);
       }
       if (grade.review.length) {
@@ -58,7 +95,9 @@ export async function updateGoldenCorpus({ lab = null } = {}) {
     lvl.phrases = next;
   }
   await saveTranslationCorpus(corpus);
-  return { updated, levels: corpus.levels.length };
+  // The accepted baseline of honest gaps moves with the golden corpus.
+  const gaps = await saveGapBaseline([...allGaps]);
+  return { updated, levels: corpus.levels.length, gaps: gaps.length };
 }
 
 /** Read the most recent saved full-corpus gap report (null if none yet). */
@@ -149,7 +188,13 @@ export function gradePhrase(tokens) {
     if (extra.length && tier === 'pass') tier = 'soft';
     if (tier === 'hard') {
       hard += 1;
-      gaps.push({ english: t.english, kind });
+      gaps.push({
+        english: t.english,
+        kind,
+        role: t.role ?? 'concept',
+        reason: t.gap_reason ?? null,
+        ...(t.suggestion ? { suggestion: t.suggestion } : {}),
+      });
     } else if (tier === 'soft') {
       soft += 1;
       review.push({
@@ -175,12 +220,13 @@ export function gradePhrase(tokens) {
  * @param {object|null} [options.lab]   - warm lab bucket (server passes getLab())
  * @param {boolean} [options.resetCache] - reset translator cache first (CLI)
  */
-export async function runTranslationGapReport({ level = null, lab = null, resetCache = false } = {}) {
+export async function runTranslationGapReport({ level = null, lab = null, resetCache = false, suggest = false } = {}) {
   const corpus = await loadTranslationCorpus();
   if (resetCache) resetTranslatorCache();
 
   const gap = new Map();
   const gapPhrases = new Map();
+  const gapRole = new Map();
   const levelStats = [];
   const phraseResults = [];
   // root spelling -> { words:Set<english>, concepts:Set<concept_id> } for the
@@ -220,6 +266,10 @@ export async function runTranslationGapReport({ level = null, lab = null, resetC
       }
 
       const quality = gradePhrase(tokens);
+      for (const g of quality.gaps) {
+        const key = String(g.english).toLowerCase();
+        if (!gapRole.has(key)) gapRole.set(key, g.role ?? 'concept');
+      }
       qualityTotals.pass += quality.pass;
       qualityTotals.soft += quality.soft;
       qualityTotals.hard += quality.hard;
@@ -263,9 +313,25 @@ export async function runTranslationGapReport({ level = null, lab = null, resetC
     });
   }
 
-  const gaps = [...gap.entries()]
+  let gaps = [...gap.entries()]
     .sort((a, b) => b[1] - a[1])
-    .map(([word, count]) => ({ word, count, samples: gapPhrases.get(word) ?? [] }));
+    .map(([word, count]) => ({
+      word,
+      count,
+      role: gapRole.get(word) ?? 'concept',
+      samples: gapPhrases.get(word) ?? [],
+    }));
+
+  // Offline curation assistant: attach ranked, human-reviewable concept
+  // suggestions (WordNet WSD + POS) to each distinct gap. Off by default so the
+  // strict/CI paths stay fast; enabled for the human-facing report.
+  if (suggest && gaps.length) {
+    const ctx = await buildResolveContext(lab);
+    gaps = await Promise.all(gaps.map(async (g) => ({
+      ...g,
+      suggestions: await suggestGapConcepts(g.word, g.role, ctx).catch(() => []),
+    })));
+  }
 
   const collapses = [...collapseByRoot.entries()]
     .filter(([, v]) => v.words.size >= 2)

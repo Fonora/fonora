@@ -268,6 +268,7 @@ function applyIdiomToSlots(idiomMatch, slots, rules) {
   else if (slotKey === 'path') slots.path.push(entry);
 
   const trailing = parseTrailingPhrase(after, { skip: SKIP });
+  slots.path.push(...(trailing.path ?? []));
   slots.object.push(...trailing.object);
   slots.modifiers.push(...trailing.modifiers);
 }
@@ -328,6 +329,9 @@ function applyBeConstruction(beHit, slots, rules) {
   const trailingTokens = beHit.trailingTokens ?? [];
   if (trailingTokens.length) {
     const trailing = parseTrailingPhrase(trailingTokens, { skip: SKIP });
+    // Locative predicate ("cat is behind/above the tree"): the relation lands in
+    // the Place slot (concept or honest gap), no longer silently dropped.
+    slots.path.push(...(trailing.path ?? []));
     for (const obj of trailing.object) {
       const parts = obj.english.split(/\s+and\s+/i).map(s => s.trim()).filter(Boolean);
       if (parts.length > 1) {
@@ -829,6 +833,64 @@ async function slotsToTokens(ctx, slots) {
   return out;
 }
 
+// Internal slot role -> language-neutral frame role. Actor=subject, Action=event,
+// Target=object, Place=path, Time=time (docs/fonoran-grammar.md Rule 4/7).
+const ROLE_TO_FRAME = {
+  subject: 'actor',
+  event: 'action',
+  concept: 'action',
+  object: 'target',
+  path: 'place',
+  time: 'time',
+  modifier: 'modifiers',
+};
+
+/**
+ * Build the language-neutral semantic frame (docs/fonoran-grammar.md Rule 7):
+ * the pivot between the English parse and the Fonoran surface. Every filled role
+ * references a concept_id + provenance (resolution_kind, confidence); every
+ * unresolved element becomes a first-class gap {role, english, reason}. The
+ * Fonoran surface is generated from the resolved tokens, so this object is a
+ * faithful description of what the surface actually says (never fabricates).
+ */
+function buildFrame(tokens) {
+  const frame = {
+    actor: [],
+    action: [],
+    target: [],
+    place: [],
+    time: [],
+    modifiers: [],
+    particles: [],
+    gaps: [],
+  };
+  for (const t of tokens) {
+    if (!t) continue;
+    if (t.kind === 'particle' || t.kind === 'punctuation') {
+      frame.particles.push({ role: t.role, english: t.english, form: t.fonoran });
+      continue;
+    }
+    if (!t.resolved) {
+      frame.gaps.push({
+        role: t.role,
+        english: t.english,
+        reason: t.gap_reason ?? 'no confident concept',
+        ...(t.suggestion ? { suggestion: t.suggestion } : {}),
+      });
+      continue;
+    }
+    const frameRole = ROLE_TO_FRAME[t.role] ?? 'modifiers';
+    frame[frameRole].push({
+      concept_id: t.concept_id ?? null,
+      english: t.english,
+      fonoran: t.fonoran,
+      resolution_kind: t.resolution_kind,
+      confidence: t.confidence,
+    });
+  }
+  return frame;
+}
+
 function buildSurface(tokens) {
   const romanWords = tokens.map(t => (t.resolved ? t.fonoran : `[${t.english}]`));
   const allParts = tokens.flatMap(t => (t.resolved ? t.parts : []));
@@ -864,6 +926,7 @@ export async function translateEnglish(text, options = {}) {
       tokens: [],
       surface: { roman: '', parts: [], pronunciation: { sayLine: '', englishLine: '' } },
       semantic: null,
+      frame: null,
       interpretations: [],
       unresolved: [],
     };
@@ -909,6 +972,7 @@ export async function translateEnglish(text, options = {}) {
         skeleton: GRAMMAR_SKELETON,
         slots: mergedSlots,
       },
+      frame: buildFrame(tokens),
       interpretations,
       unresolved,
     };
@@ -948,6 +1012,7 @@ export async function translateEnglish(text, options = {}) {
         modifiers: semantic.modifiers,
       },
     },
+    frame: buildFrame(tokens),
     interpretations,
     unresolved,
   };

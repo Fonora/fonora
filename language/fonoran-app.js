@@ -4353,6 +4353,9 @@
                   <span class="gap-item__count">${g.count}×</span>
                   <span class="gap-item__word">${escapeHtml(g.word)}</span>
                   <span class="gap-item__sample">${escapeHtml(g.samples[0] ?? '')}</span>
+                  ${(g.suggestions ?? []).length
+                    ? `<span class="gap-item__suggest" title="WordNet curation suggestions — approve into localizations/en.json">↳ ${g.suggestions.map(s => `${escapeHtml(s.fonoran)}=${escapeHtml(s.concept_id)}`).join(', ')}</span>`
+                    : ''}
                 </div>`).join('')}</div>`}
         </section>`;
 
