@@ -2,9 +2,9 @@
 > **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-09 · Making invented words memorable](/research/notes/distinctiveness-gen31).
 
 
-> **Archive — superseded direction.** Experimental generator, not the active workflow. See [fonoran.md](fonoran.md).
+> **Archive — superseded direction.** Experimental generator, not the active workflow. See [fonoran.md](../fonoran.md).
 >
-> Built on the Gen 3 coordinate track, which the [Fonoran Constitution](fonoran-constitution.md)
+> Built on the Gen 3 coordinate track, which the [Fonoran Constitution](../fonoran-constitution.md)
 > demotes in favor of a human-experience root organization and a communication-first success
 > metric. Retained for reference only.
 

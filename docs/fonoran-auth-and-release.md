@@ -15,7 +15,7 @@ For deployment mechanics, see [deploy.md](deploy.md). For vocabulary model and A
 | **Fonora script** stays open | Public read + GitHub PRs for `language-rules.md` and encoder changes |
 | **Fonoran language** edits are controlled | Google OAuth for builder write access; public read-only dictionary |
 | **Contributor intake** | Google Form (Workspace), no in-app form, no admin panel |
-| **Admin workflow** | You sign in with Google, use existing builder tabs (Root Creator, Review, etc.) |
+| **Admin workflow** | You sign in with Google, use existing builder tabs (Concept Editor, Review, etc.) |
 | **Open source repo** | Auth middleware and docs in git; secrets and live vocabulary stay out of git |
 
 ---
@@ -49,7 +49,7 @@ Public (no login)
 Admin (@fonora.org Google session)
   POST /api/fonoran/*         , create roots, compounds, review, DDA, undo
   PATCH /api/fonoran/*        , edit sounds, compounds, review state
-  /fonoran/ builder tabs      , Root Creator, Word Creator, Review, Advanced
+  /fonoran/ builder tabs      , Concept Editor, Word Creator, Review, Advanced
 ```
 
 ### Implementation sketch

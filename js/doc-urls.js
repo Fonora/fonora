@@ -43,6 +43,29 @@ const SLUG_TO_ROOT_DOC = Object.fromEntries(
   Object.entries(ROOT_DOC_SLUGS).map(([path, slug]) => [slug, path]),
 );
 
+/**
+ * Docs moved into docs/archive/. Old flat paths (from stored links, legacy
+ * /docs/<slug> URLs, and markdown cross-links) resolve to their new location
+ * so nothing 404s after the physical move.
+ * @type {Record<string, string>}
+ */
+const DOC_PATH_ALIASES = {
+  'docs/fonoran-gen3.md': 'docs/archive/fonoran-gen3.md',
+  'docs/fonoran-gen3-1.md': 'docs/archive/fonoran-gen3-1.md',
+  'docs/fonoran-generator-archive.md': 'docs/archive/fonoran-generator-archive.md',
+  'docs/fonoran-semantic-foundation.md': 'docs/archive/fonoran-semantic-foundation.md',
+  'docs/fonoran-primitive-roots-report.md': 'docs/archive/fonoran-primitive-roots-report.md',
+  'docs/FONORA_CLEANUP_AUDIT.md': 'docs/archive/FONORA_CLEANUP_AUDIT.md',
+  'docs/FONORA_COLLISION_AUDIT.md': 'docs/archive/FONORA_COLLISION_AUDIT.md',
+  'docs/IPA_VOWEL_NORMALIZATION_AUDIT.md': 'docs/archive/IPA_VOWEL_NORMALIZATION_AUDIT.md',
+  'docs/FONORA_VOWEL_DECISION_REPORT.md': 'docs/archive/FONORA_VOWEL_DECISION_REPORT.md',
+};
+
+/** @param {string} path */
+function resolveDocRepoPath(path) {
+  return DOC_PATH_ALIASES[path] ?? path;
+}
+
 /** Display order for grouped docs sidebar. */
 export const DOC_LAYER_ORDER = [
   { id: 'essential', label: 'Essential' },
@@ -85,15 +108,15 @@ function buildDocCatalog() {
 
     ...RESEARCH_DOC_ENTRIES,
 
-    { path: 'docs/fonoran-gen3.md', label: 'DDA Gen 3 (archive)', layer: 'archive' },
-    { path: 'docs/fonoran-gen3-1.md', label: 'Gen 3.1 phonetic layer', layer: 'archive' },
-    { path: 'docs/fonoran-generator-archive.md', label: 'Generator archive', layer: 'archive' },
-    { path: 'docs/fonoran-semantic-foundation.md', label: 'Semantic foundation', layer: 'archive' },
-    { path: 'docs/fonoran-primitive-roots-report.md', label: 'Primitive roots report', layer: 'archive' },
-    { path: 'docs/FONORA_CLEANUP_AUDIT.md', label: 'Cleanup audit (2026)', layer: 'archive' },
-    { path: 'docs/FONORA_COLLISION_AUDIT.md', label: 'Collision audit', layer: 'archive' },
-    { path: 'docs/IPA_VOWEL_NORMALIZATION_AUDIT.md', label: 'Vowel normalization audit', layer: 'archive' },
-    { path: 'docs/FONORA_VOWEL_DECISION_REPORT.md', label: 'Vowel decision report (v2)', layer: 'archive' },
+    { path: 'docs/archive/fonoran-gen3.md', label: 'DDA Gen 3 (archive)', layer: 'archive' },
+    { path: 'docs/archive/fonoran-gen3-1.md', label: 'Gen 3.1 phonetic layer', layer: 'archive' },
+    { path: 'docs/archive/fonoran-generator-archive.md', label: 'Generator archive', layer: 'archive' },
+    { path: 'docs/archive/fonoran-semantic-foundation.md', label: 'Semantic foundation', layer: 'archive' },
+    { path: 'docs/archive/fonoran-primitive-roots-report.md', label: 'Primitive roots report', layer: 'archive' },
+    { path: 'docs/archive/FONORA_CLEANUP_AUDIT.md', label: 'Cleanup audit (2026)', layer: 'archive' },
+    { path: 'docs/archive/FONORA_COLLISION_AUDIT.md', label: 'Collision audit', layer: 'archive' },
+    { path: 'docs/archive/IPA_VOWEL_NORMALIZATION_AUDIT.md', label: 'Vowel normalization audit', layer: 'archive' },
+    { path: 'docs/archive/FONORA_VOWEL_DECISION_REPORT.md', label: 'Vowel decision report (v2)', layer: 'archive' },
   ];
 }
 
@@ -137,7 +160,7 @@ export function splitDocRef(repoPath) {
   const hashIdx = raw.indexOf('#');
   const pathPart = hashIdx >= 0 ? raw.slice(0, hashIdx) : raw;
   const anchor = hashIdx >= 0 ? raw.slice(hashIdx + 1) : '';
-  return { path: normalizeDocPath(pathPart), anchor };
+  return { path: resolveDocRepoPath(normalizeDocPath(pathPart)), anchor };
 }
 
 /**
@@ -160,7 +183,7 @@ export function slugToRepoPath(slug) {
   if (!clean) return DEFAULT_DOC_PATH;
   if (SLUG_TO_ROOT_DOC[clean]) return SLUG_TO_ROOT_DOC[clean];
   const candidate = clean.endsWith('.md') ? clean : `docs/${clean}.md`;
-  return normalizeDocPath(candidate);
+  return resolveDocRepoPath(normalizeDocPath(candidate));
 }
 
 /**

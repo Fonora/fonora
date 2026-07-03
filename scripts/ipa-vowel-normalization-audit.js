@@ -1,6 +1,6 @@
 /**
  * Audit IPA token coverage for eSpeak en-us output over the encoder test corpus.
- * Output: docs/IPA_VOWEL_NORMALIZATION_AUDIT.md
+ * Output: docs/archive/IPA_VOWEL_NORMALIZATION_AUDIT.md
  */
 import { writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -15,7 +15,7 @@ import {
 } from '../js/ipa-normalization-audit.js';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const outPath = join(root, 'docs', 'IPA_VOWEL_NORMALIZATION_AUDIT.md');
+const outPath = join(root, 'docs', 'archive', 'IPA_VOWEL_NORMALIZATION_AUDIT.md');
 
 const EXTENDED_VOWEL_PROBE_WORDS = [
   'bird', 'her', 'word', 'nurse', 'church', 'journey', 'earth', 'girl', 'world', 'learn',

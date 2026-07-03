@@ -129,7 +129,7 @@ The grammar question is the most immediate bridge: with roots locked, the next b
 
 **Documentation:** [`docs/fonoran.md`](../docs/fonoran.md)
 
-**Interactive demo:** [Root Creator](/language#roots), [Review](/language#review), [Concept Editor](/language#concepts)
+**Interactive demo:** [Concept Editor](/language#concepts), [Review](/language#review)
 
 **Source:** [`tools/fonoran-root-sound-assign.js`](../tools/fonoran-root-sound-assign.js), [`tools/fonoran-build.js`](../tools/fonoran-build.js)
 

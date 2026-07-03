@@ -1,14 +1,14 @@
 # Fonoran primitive roots — generation report
 
-> **Archive — auto-generated report (2026-06-27).** Primary source for [RN-10 · Optimal sounds, wrong premise](/research/notes/huffman-roots). Superseded by the editorial pipeline in [fonoran.md](fonoran.md); not committed as canonical vocabulary.
+> **Archive — auto-generated report (2026-06-27).** Primary source for [RN-10 · Optimal sounds, wrong premise](/research/notes/huffman-roots). Superseded by the editorial pipeline in [fonoran.md](../fonoran.md); not committed as canonical vocabulary.
 
 >
 > **Archive — superseded direction.** This ~200-primitive algorithmic run predates the
-> [Fonoran Constitution](fonoran-constitution.md), which reorients the language around a small,
+> [Fonoran Constitution](../fonoran-constitution.md), which reorients the language around a small,
 > human-experience root set (the tiered model: ~50 communicative core → ~100 extended →
 > unlimited) gated by the campfire test. Kept for reference, not as the production inventory.
 
-Algorithmic assignment of ~200 semantic primitives to phonetically ranked syllables, following [fonoran-grammar.md](fonoran-grammar.md).
+Algorithmic assignment of ~200 semantic primitives to phonetically ranked syllables, following [fonoran-grammar.md](../fonoran-grammar.md).
 
 ## Summary
 
@@ -615,4 +615,4 @@ npm run fonoran:primitive-roots:gen        # generate JSON only
 npm run fonoran:primitive-roots:import     # import existing JSON → Dictionary
 ```
 
-*Related: [fonoran-grammar.md](fonoran-grammar.md) · [fonoran-generator-archive.md](fonoran-generator-archive.md)*
+*Related: [fonoran-grammar.md](../fonoran-grammar.md) · [fonoran-generator-archive.md](fonoran-generator-archive.md)*

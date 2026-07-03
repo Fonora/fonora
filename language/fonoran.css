@@ -425,32 +425,7 @@
       overflow:hidden;
     }
 
-    /* syllable picker */
-    .syl-builder { margin:0.75rem 0; }
-    .syl-row { margin-bottom:0.85rem; }
-    .syl-label { font-family:var(--font-serif); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.04em; color:var(--muted); margin:0 0 0.35rem; }
-    .syl-label em { font-weight:500; text-transform:none; letter-spacing:0; font-style:normal; color:var(--review); }
-    .syl-chips { display:flex; flex-wrap:wrap; gap:0.35rem; }
-    .syl-chip { font-family:var(--font-serif); font-size:0.78rem; padding:0.4rem 0.55rem; border:1px solid var(--border); border-radius:8px; background:var(--surface); cursor:pointer; text-align:center; min-width:2.75rem; }
-    .syl-chip:hover { border-color:var(--accent); }
-    .syl-chip.picked { background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:600; }
-    .syl-chip .syl-glyph { display:block; font-family:"Noto Sans Symbols 2","Noto Sans Symbols","Segoe UI Symbol","Apple Symbols",sans-serif; font-size:1.2rem; line-height:1.15; margin-bottom:0.12rem; color:var(--text); font-variant-ligatures:none; letter-spacing:0; }
-    .syl-chip.picked .syl-glyph { color:var(--word); }
-    .syl-chip .mono { font-family:var(--font-mono); font-weight:700; display:block; color:var(--word); }
-    .syl-chip.picked .mono { color:var(--accent); }
-    .syl-chip .hint { font-size:0.65rem; color:var(--muted); display:block; margin-top:0.1rem; }
-    .syl-chip.none { min-width:auto; font-weight:500; color:var(--muted); }
     .syl-invalid { font-family:var(--font-serif); font-size:0.84rem; color:#8a2a1f; background:#fef3f2; border:1px solid #f3c0bb; border-radius:8px; padding:0.55rem 0.75rem; margin-top:0.5rem; }
-    .root-preview-card { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:1rem 0.9rem 0.85rem; text-align:center; min-height:11.75rem; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.1rem; }
-    .root-preview-roman { width:100%; border:none; background:transparent; text-align:center; font-family:var(--font-mono); font-size:1.75rem; font-weight:700; color:var(--word); padding:0.1rem 0; margin:0; line-height:1.2; }
-    .root-preview-roman:focus { outline:none; box-shadow:none; }
-    .root-preview-roman::placeholder { color:#d4cfc8; opacity:1; }
-    .root-preview-glyphs { font-size:2.15rem; line-height:1.35; min-height:2.9rem; display:flex; align-items:center; justify-content:center; width:100%; color:var(--text); }
-    .root-preview-card.is-empty .root-preview-glyphs { opacity:0.22; }
-    .root-preview-pron { width:100%; min-height:3.3rem; margin:0.15rem 0 0; }
-    .root-preview-pron .pron-line { margin:0; }
-    .root-preview-card.is-empty .root-preview-pron strong,
-    .root-preview-card.is-empty .root-preview-pron #new-root-like { color:#d4cfc8; font-weight:500; }
     .lex-pick { margin:0.35rem 0 0.75rem; }
     .lex-pick .lex-label { display:block; font-family:var(--font-serif); font-size:0.72rem; font-weight:600; color:var(--muted); margin:0 0 0.35rem; }
     .lex-row { display:flex; flex-wrap:wrap; gap:0.5rem; }
@@ -631,14 +606,6 @@
       width:100%;
       max-width:none;
       margin:0;
-    }
-    /* root creator: sticky preview panel while sound picker scrolls */
-    #page-roots .fonoran-split-picker { position:static; }
-    #page-roots .fonoran-split-workspace {
-      position:sticky;
-      top:var(--fonoran-split-chrome-offset, 9rem);
-      z-index:10;
-      align-self:start;
     }
     /* dictionary + concept editor: sticky preview panel while list scrolls */
     #page-dictionary .fonoran-split-picker,
@@ -928,35 +895,6 @@
       text-align:center;
     }
 
-    .roots-sound-picker .syl-builder { margin:0; }
-    .roots-sound-picker .syl-row:last-child { margin-bottom:0; }
-    .roots-sound-picker .syl-chips {
-      display:grid;
-      grid-template-columns:repeat(4,minmax(0,1fr));
-      gap:0.45rem;
-    }
-    .roots-sound-picker .syl-chip {
-      min-width:0;
-      width:100%;
-      padding:0.55rem 0.35rem 0.5rem;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      gap:0.1rem;
-      min-height:4.75rem;
-    }
-    .roots-sound-picker .syl-chip .syl-glyph { font-size:1.35rem; margin-bottom:0.08rem; line-height:1.15; min-height:1.35rem; }
-    .roots-sound-picker .syl-chip .syl-glyph--empty { visibility:hidden; }
-    .roots-sound-picker .syl-chip .mono { font-size:0.82rem; line-height:1.2; }
-    .roots-sound-picker .syl-chip .hint { font-size:0.68rem; line-height:1.2; min-height:0.85rem; }
-    .roots-sound-picker .syl-chip .syl-hint--empty { visibility:hidden; }
-    .roots-sound-picker .syl-chip.none { min-width:0; width:100%; font-weight:inherit; color:inherit; }
-    .roots-sound-picker .syl-chip.none .mono { font-weight:700; color:var(--word); font-size:0.95rem; }
-    .roots-sound-picker .syl-chip.none.picked .mono { color:var(--accent); }
-    .root-create-panel .root-preview-card { margin-bottom:0.75rem; }
-    .root-create-panel .hear-min { margin:0 0 1.25rem; }
-    .root-create-panel .fld { margin-top:0; }
     @media (max-width:768px){
       .fonoran-split-shell { position:static; margin-top:0; padding-top:0; margin-bottom:0.65rem; border-bottom:none; box-shadow:none; }
       .fonoran-split-shell::before { display:none; }
@@ -964,7 +902,6 @@
       .fonoran-split-grid { grid-template-columns:1fr; }
       .fonoran-split-picker { position:static; padding:0.65rem; }
       .fonoran-split-workspace { position:static; min-height:200px; }
-      .roots-sound-picker .syl-chips { grid-template-columns:repeat(3,minmax(0,1fr)); }
     }
 
     /* legacy composer (root builder, edit panels) */

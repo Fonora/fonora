@@ -65,7 +65,7 @@ Phase IV has just begun. Success criteria:
 
 ## References
 
-**Documentation:** [`docs/fonoran-constitution.md`](../docs/fonoran-constitution.md), [`docs/fonoran-semantic-foundation.md`](../docs/fonoran-semantic-foundation.md) (Phase 4 semantic hierarchy)
+**Documentation:** [`docs/fonoran-constitution.md`](../docs/fonoran-constitution.md), [`docs/fonoran-semantic-foundation.md`](../archive/fonoran-semantic-foundation.md) (Phase 4 semantic hierarchy)
 
 **Interactive demo:** [Language lab](/language#dictionary), [Puzzle Conversation](/language#puzzle)
 

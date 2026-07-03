@@ -74,7 +74,7 @@ ye (water)
 primitive
 ```
 
-The full proposed primitive inventory lives in [fonoran-semantic-foundation.md](fonoran-semantic-foundation.md).
+The full proposed primitive inventory lives in [fonoran-semantic-foundation.md](archive/fonoran-semantic-foundation.md).
 
 Read the examples first. You can already start understanding this language.
 
@@ -603,7 +603,7 @@ This architecture allows multiple English expressions to converge into the **sam
 
 Each word may carry internal **depth**, **mode**, and **aspect** coordinates — a compact address in semantic space. They are assigned automatically (**DDA inference**) from sound shape and English gloss match, blended for compounds, with status `pending | inferred | confirmed | stale`. You do not edit them in normal workflow; re-run DDA from the Advanced tab when coordinates go stale after a meaning or recipe change. The word detail view shows the three values plus how they were inferred.
 
-Experiment history: [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates) · [fonoran-gen3.md](fonoran-gen3.md).
+Experiment history: [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates) · [fonoran-gen3.md](archive/fonoran-gen3.md).
 
 ## Future Work
 
@@ -627,4 +627,4 @@ The following topics extend this specification without breaking Rules 1 through 
 
 Contributions should preserve: invariant words, particle-based grammar, fixed default order, visible semantic compounding, and semantic economy in compounds.
 
-*Related: [Fonoran language lab](fonoran.md) · [Semantic foundation](fonoran-semantic-foundation.md) · [Dictionary](/language#dictionary) · [Learn Fonoran](/language)*
+*Related: [Fonoran language lab](fonoran.md) · [Semantic foundation](archive/fonoran-semantic-foundation.md) · [Dictionary](/language#dictionary) · [Learn Fonoran](/language)*

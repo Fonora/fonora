@@ -33,7 +33,7 @@ The morning commit (`5e33e8f`, "Fonora v2: markdown-driven rules, vowel planes")
 
 Seven hours later, commit `e957ff2` ("refactor: continue markdown-driven v2 language rules") replaced the plane system with **recipe-composed vowels**. A single `vowel` token renders as `⚬`; repeating it yields `⚬⚬` for merged slots. Vowels became rows in markdown tables with `key`, `recipe`, `ipa`, `lexical_set`, and `example` columns, thirteen keys total, built into `ipaVowelMap` at runtime by `buildIpaVowelMapFromVowels()` in [`js/load-language-rules.js`](../js/load-language-rules.js). The Sound Grid and Alphabet views regenerated from those tables.
 
-The v2 system analyzed in [`docs/FONORA_VOWEL_DECISION_REPORT.md`](../docs/FONORA_VOWEL_DECISION_REPORT.md) is this recipe-composed design (`ipa_vowel_mode: v2`), not the morning plane experiment. Commit `e29501a` ("Save pre-v3 vowel system baseline before architecture migration") froze that rules file and added the decision report eleven minutes before v3 replaced it.
+The v2 system analyzed in [`docs/FONORA_VOWEL_DECISION_REPORT.md`](../archive/FONORA_VOWEL_DECISION_REPORT.md) is this recipe-composed design (`ipa_vowel_mode: v2`), not the morning plane experiment. Commit `e29501a` ("Save pre-v3 vowel system baseline before architecture migration") froze that rules file and added the decision report eleven minutes before v3 replaced it.
 
 ### Design constraints that shaped what "passing" meant
 
@@ -55,7 +55,7 @@ There was no formal user study. Evaluation was engineering-driven: automated tes
 
 **Pronunciation validation** (22-word IPA round-trip set, documented in the decision report): source IPA matched recovered IPA at 100% for the test corpus. Round-trip integrity and readability are different metrics; the pipeline could be perfectly reversible while distinct words shared spellings.
 
-**Vowel decision report** ([`docs/FONORA_VOWEL_DECISION_REPORT.md`](../docs/FONORA_VOWEL_DECISION_REPORT.md), added `e29501a`, dated 2026-06-22 in its header): systematic analysis of all four multi-family keys. For each key it documented IPA tokens, collapsed contrasts, real pipeline examples from eSpeak en-us, acceptability against four criteria (human readability, phonetic precision, cross-dialect tolerance, minimal symbol count), split options, and impact on existing test suites. The report explicitly made **no mapping changes**: it laid out a stakeholder decision matrix and waited for a priority call.
+**Vowel decision report** ([`docs/FONORA_VOWEL_DECISION_REPORT.md`](../archive/FONORA_VOWEL_DECISION_REPORT.md), added `e29501a`, dated 2026-06-22 in its header): systematic analysis of all four multi-family keys. For each key it documented IPA tokens, collapsed contrasts, real pipeline examples from eSpeak en-us, acceptability against four criteria (human readability, phonetic precision, cross-dialect tolerance, minimal symbol count), split options, and impact on existing test suites. The report explicitly made **no mapping changes**: it laid out a stakeholder decision matrix and waited for a priority call.
 
 ## Findings
 
@@ -123,7 +123,7 @@ Secondary questions left open:
 - `f361984`: harden IPA vowel normalization; add vowel token audit tooling
 - `35ec0ea`: migrate to v3 vowel architecture (supersedes v2 mergers)
 
-**Documentation:** [`docs/FONORA_VOWEL_DECISION_REPORT.md`](../docs/FONORA_VOWEL_DECISION_REPORT.md)
+**Documentation:** [`docs/FONORA_VOWEL_DECISION_REPORT.md`](../archive/FONORA_VOWEL_DECISION_REPORT.md)
 
 **Interactive demo:** Sound Grid (`/script#grid`)
 

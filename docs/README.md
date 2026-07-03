@@ -71,15 +71,15 @@ Historical experiments and audits, preserved as primary sources for the research
 
 | Document | Notes |
 | --- | --- |
-| [fonoran-gen3.md](fonoran-gen3.md) | DDA Gen 3 experiment |
-| [fonoran-gen3-1.md](fonoran-gen3-1.md) | Gen 3.1 phonetic layer |
-| [fonoran-generator-archive.md](fonoran-generator-archive.md) | Retired bulk generators |
-| [fonoran-semantic-foundation.md](fonoran-semantic-foundation.md) | Semantic proposal (reference) |
-| [fonoran-primitive-roots-report.md](fonoran-primitive-roots-report.md) | Auto-generated roots report |
-| [FONORA_CLEANUP_AUDIT.md](FONORA_CLEANUP_AUDIT.md) | June 2026 cleanup audit |
-| [FONORA_COLLISION_AUDIT.md](FONORA_COLLISION_AUDIT.md) | Collision audit |
-| [IPA_VOWEL_NORMALIZATION_AUDIT.md](IPA_VOWEL_NORMALIZATION_AUDIT.md) | Vowel normalization audit |
-| [FONORA_VOWEL_DECISION_REPORT.md](FONORA_VOWEL_DECISION_REPORT.md) | Vowel decision report (v2) |
+| [fonoran-gen3.md](archive/fonoran-gen3.md) | DDA Gen 3 experiment |
+| [fonoran-gen3-1.md](archive/fonoran-gen3-1.md) | Gen 3.1 phonetic layer |
+| [fonoran-generator-archive.md](archive/fonoran-generator-archive.md) | Retired bulk generators |
+| [fonoran-semantic-foundation.md](archive/fonoran-semantic-foundation.md) | Semantic proposal (reference) |
+| [fonoran-primitive-roots-report.md](archive/fonoran-primitive-roots-report.md) | Auto-generated roots report |
+| [FONORA_CLEANUP_AUDIT.md](archive/FONORA_CLEANUP_AUDIT.md) | June 2026 cleanup audit |
+| [FONORA_COLLISION_AUDIT.md](archive/FONORA_COLLISION_AUDIT.md) | Collision audit |
+| [IPA_VOWEL_NORMALIZATION_AUDIT.md](archive/IPA_VOWEL_NORMALIZATION_AUDIT.md) | Vowel normalization audit |
+| [FONORA_VOWEL_DECISION_REPORT.md](archive/FONORA_VOWEL_DECISION_REPORT.md) | Vowel decision report (v2) |
 
 **Not in sidebar:** [fonoran-root-workflow.md](fonoran-root-workflow.md) is a stub redirecting to [fonoran.md#pipeline](fonoran.md#pipeline).
 

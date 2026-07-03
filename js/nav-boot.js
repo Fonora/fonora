@@ -7,15 +7,11 @@
     'translator',
     'grid',
     'alphabet',
-    'breakdown',
     'samples',
-    'keyboard',
     'spelling-practice',
-    'reverse',
     'quiz',
     'encoder-testing',
     'pronunciation-validation',
-    'symbols',
     'docs',
   ]);
 
@@ -29,13 +25,9 @@
 
   const TOOLS_TABS = new Set([
     'tools-home',
-    'keyboard',
-    'reverse',
     'encoder-testing',
     'pronunciation-validation',
-    'symbols',
     'research-notes',
-    'breakdown',
     'samples',
   ]);
 
@@ -44,7 +36,6 @@
     'root-review',
     'concepts',
     'translator',
-    'roots',
     'create',
     'review',
     'dictionary',

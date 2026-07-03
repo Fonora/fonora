@@ -20,7 +20,7 @@ From that premise:
 - A compound is a **path through coordinate space**, composed by concatenating roots general → specific.
 - Familiar glosses (*river*, *planet*, *speaker*) appear **only at the derivation layer**, as reviewer annotations on compositions that a coordinate-literate reader could parse without consulting English.
 
-The hypothesis was not that the grid would magically produce one correct ontology. [`docs/fonoran-gen3.md`](../fonoran-gen3.md) §1.5 lists several articulation→meaning guesses (does throat imply abstraction? does front-of-mouth imply nearness?) as **design questions with partial answers**, not axioms. Gen 3 was an experiment in whether a coherent primitive inventory could be *justified from coordinates alone*, with **no Indo-European lexicon repair**: the hygiene layer Gen 2 had relied on.
+The hypothesis was not that the grid would magically produce one correct ontology. [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) §1.5 lists several articulation→meaning guesses (does throat imply abstraction? does front-of-mouth imply nearness?) as **design questions with partial answers**, not axioms. Gen 3 was an experiment in whether a coherent primitive inventory could be *justified from coordinates alone*, with **no Indo-European lexicon repair**: the hygiene layer Gen 2 had relied on.
 
 ## Approach
 
@@ -66,7 +66,7 @@ river = flow + path                    → xaeli
 
 *River* is not a primitive. The English label is annotation; the compound gloss is "continuous change along directed passage."
 
-**[`docs/fonoran-gen3.md`](../fonoran-gen3.md)** (~460 lines) is the primary theory document: semantic manifold, primitive inventory by depth, derivation walkthroughs, and an explicit statement that all prior Fonoran work (Gen 1 inventory, Gen 2 primitives, English-adjacent roots) is **disposable** relative to this rebase. Gen 3 intentionally did **not** modify the Fonora translator, phoneme pipeline, or `language-rules.md`; it sat on top of Phase I's sound grid as a separate vocabulary experiment.
+**[`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md)** (~460 lines) is the primary theory document: semantic manifold, primitive inventory by depth, derivation walkthroughs, and an explicit statement that all prior Fonoran work (Gen 1 inventory, Gen 2 primitives, English-adjacent roots) is **disposable** relative to this rebase. Gen 3 intentionally did **not** modify the Fonora translator, phoneme pipeline, or `language-rules.md`; it sat on top of Phase I's sound grid as a separate vocabulary experiment.
 
 The language lab at `/fonoran/` shipped the same week (`d2e6315`), with DDA inference (`tools/fonoran-dda-infer.js`) wired in as batch metadata on user-built syllables, coordinates as invisible semantic infrastructure, not as the authoritative lexicon source.
 
@@ -119,7 +119,7 @@ Nothing here proved that articulatory topology *is* semantic topology, only that
 
 ## What Changed
 
-Gen 3 did not survive as the production design. Commit `5cfe28a` (constitution / campfire-test pivot) **demoted the entire Gen 3/DDA track** to archive reference: roots reorganized by **human experience** tiers, compounds judged by whether another root-knower would recover meaning, not by coordinate correctness. [`docs/fonoran-gen3.md`](../fonoran-gen3.md) now opens with that demotion notice.
+Gen 3 did not survive as the production design. Commit `5cfe28a` (constitution / campfire-test pivot) **demoted the entire Gen 3/DDA track** to archive reference: roots reorganized by **human experience** tiers, compounds judged by whether another root-knower would recover meaning, not by coordinate correctness. [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) now opens with that demotion notice.
 
 What persisted:
 
@@ -158,14 +158,14 @@ A parallel thread asked whether optimal syllable allocation over a larger primit
 
 **Related commits**
 - `5b6bc58`: Add Fonoran language tools, API, and PostgreSQL-backed storage (Gen 3 generator, config, roots JSON, DDA inference, readability audit tooling)
-- `14d5d84`: Document platform layers and Fonoran guides; [`docs/fonoran-gen3.md`](../fonoran-gen3.md) theory write-up
+- `14d5d84`: Document platform layers and Fonoran guides; [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) theory write-up
 - `d2e6315`: Add Fonoran language builder web app at `/fonoran/`
 - `52b2a1a`: Add Fonoran Grammar spec and example-first language documentation
 - `262ea23`: Add semantic coordinates visual chart and improve DDA UX language
 - `5cfe28a`: Reorient Fonoran around the communication experiment; demote Gen 3/DDA track; add [`docs/fonoran-constitution.md`](../fonoran-constitution.md)
 - `b9a306f`: Cross-link archive docs and doc viewer to research notebook
 
-**Documentation:** [`docs/fonoran-gen3.md`](../fonoran-gen3.md) (DDA Gen 3 archive, primary theory source)
+**Documentation:** [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) (DDA Gen 3 archive, primary theory source)
 
 **Interactive demo:** [Dictionary](/language#dictionary) (early consumer of generated inventory; current lab bucket at `/language/` is authoritative for live work)
 

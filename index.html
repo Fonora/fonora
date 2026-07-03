@@ -74,11 +74,7 @@
         <div class="main-nav-primary">
           <button type="button" class="tab-btn" data-tab="tools-home">Home</button>
           <button type="button" class="tab-btn" data-tab="research-notes">Research Notes</button>
-          <button type="button" class="tab-btn" data-tab="keyboard">Keyboard</button>
-          <button type="button" class="tab-btn" data-tab="reverse">Reverse</button>
-          <button type="button" class="tab-btn" data-tab="breakdown">Breakdown</button>
           <button type="button" class="tab-btn" data-tab="samples">Samples</button>
-          <button type="button" class="tab-btn" data-tab="symbols">Symbols</button>
           <button type="button" class="tab-btn" data-tab="encoder-testing">Pronunciation Testing</button>
           <button type="button" class="tab-btn" data-tab="pronunciation-validation">Validation</button>
         </div>
@@ -354,7 +350,7 @@
             These experimental tools power the research behind the project.
           </p>
           <p>
-            Explore the script editor, transliterator, sound grid, language builder, root explorer, derivation graphs, corpus analysis, and other utilities used to design and evaluate both the writing system and the language.
+            Explore the language builder, pronunciation testing and validation, multilingual samples, research notes, and other utilities used to design and evaluate both the writing system and the language.
           </p>
           <p>
             These tools are intended for researchers, contributors, and anyone interested in language creation. If you're looking to learn the script itself, start with the <strong>Learn</strong> section.
@@ -365,30 +361,6 @@
       <section class="home-section home-section--layers content-section" aria-labelledby="tools-script-heading">
         <h2 id="tools-script-heading">Script Tools</h2>
         <div class="home-layer-cards">
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Practice</p>
-            <h3>Keyboard Testing</h3>
-            <p>Type Fonora phonemes directly using the on-screen keyboard layout.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-tab="keyboard">Test Keyboard</button>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Lookup</p>
-            <h3>Reverse Lookup</h3>
-            <p>Type a sound (e.g. sh, ng) to find its symbol combination.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-tab="reverse">Reverse Lookup</button>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Debug &amp; QA</p>
-            <h3>Symbols</h3>
-            <p>Experiment with primary symbols and apply overrides for this session.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-tab="symbols">Edit Symbols</button>
-            </div>
-          </article>
           <article class="home-layer-card">
             <p class="home-layer-card__tag">Debug &amp; QA</p>
             <h3>Pronunciation Testing</h3>
@@ -403,14 +375,6 @@
             <p>Validate that Fonora preserves pronunciation through the full encode/decode pipeline.</p>
             <div class="home-layer-card__actions">
               <button type="button" class="btn" data-tab="pronunciation-validation">Open Validation</button>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Analysis</p>
-            <h3>Breakdown</h3>
-            <p>See how spoken words break down into Fonora symbols, sound by sound.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-tab="breakdown">Open Breakdown</button>
             </div>
           </article>
           <article class="home-layer-card">
@@ -442,14 +406,6 @@
             <p>Test whether two people can communicate using only the Communicative Core.</p>
             <div class="home-layer-card__actions">
               <a href="/language#puzzle" class="btn btn--primary">Open Puzzle Conversation</a>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Vocabulary</p>
-            <h3>Root Creator</h3>
-            <p>Create and define Fonoran roots.</p>
-            <div class="home-layer-card__actions">
-              <a href="/language#roots" class="btn">Open Root Creator</a>
             </div>
           </article>
           <article class="home-layer-card">
@@ -667,38 +623,6 @@
       </div>
     </section>
 
-    <!-- Keyboard Testing -->
-    <section class="panel tab-panel" id="tab-keyboard" data-tab-panel="keyboard" hidden>
-      <h2>Keyboard Testing</h2>
-      <p class="section-desc">Each prompt lists Fonora phonemes to type (e.g. <strong>p · e · ñ · a</strong>). Type them on the keyboard, then press <kbd>↵</kbd> check. Words are nonsense — only the sounds matter.</p>
-
-      <p id="keyboard-testing-status" class="typing-practice__status section-desc" hidden></p>
-
-      <div class="typing-practice">
-        <div class="typing-practice__prompt">
-          <div class="typing-practice__word-col">
-            <div class="typing-practice__verdict-slot">
-              <span id="keyboard-testing-verdict" class="typing-practice__verdict-badge" aria-live="polite"></span>
-            </div>
-            <p class="typing-practice__word" id="keyboard-testing-prompt-word">—</p>
-            <div id="keyboard-testing-answer-compare" class="typing-practice__compare" aria-hidden="true">
-              <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--yours symbol-text" id="keyboard-testing-user-glyphs"></span>
-              <span class="typing-practice__compare-arrow" aria-hidden="true">→</span>
-              <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--correct symbol-text" id="keyboard-testing-expected-glyphs"></span>
-            </div>
-          </div>
-          <p class="typing-practice__meaning" id="keyboard-testing-prompt-meaning"></p>
-        </div>
-
-        <textarea id="keyboard-testing-input" class="symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
-
-        <p class="typing-practice__tab-hint">Press <kbd>Tab</kbd> for next word</p>
-
-        <div id="keyboard-testing-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
-        <div id="keyboard-testing-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
-      </div>
-    </section>
-
     <!-- Spelling Practice (Fonoran Writing — script mode) -->
     <section class="panel tab-panel learn-exercise learn-exercise--fonoran-writing learn-exercise--language" id="tab-spelling-practice" data-tab-panel="spelling-practice" hidden>
       <div id="fonoran-writing-mode" class="learn-exercise__mode-row" aria-label="Display mode">
@@ -840,17 +764,6 @@
           </table>
         </div>
       </div>
-    </section>
-
-    <!-- Reverse Lookup -->
-    <section class="panel tab-panel" id="tab-reverse" data-tab-panel="reverse" hidden>
-      <h2>Reverse Lookup</h2>
-      <p class="section-desc">Type a sound (e.g. p, sh, ng) to find its symbol combination.</p>
-      <div class="inline-form">
-        <input type="text" id="reverse-input" class="text-input" placeholder="Sound, e.g. sh">
-        <button type="button" id="reverse-btn" class="btn">Look up</button>
-      </div>
-      <div id="reverse-output" class="reverse-output"></div>
     </section>
 
     <!-- Pronunciation Testing -->
@@ -1075,65 +988,6 @@
         <p class="section-desc">Draft and publish research notebook articles. Published notes appear on the public <a href="/research">Research</a> site immediately.</p>
       </header>
       <div id="research-notes-editor-root" class="rn-editor-root"></div>
-    </section>
-
-    <!-- Symbol editor -->
-    <section class="panel tab-panel" id="tab-symbols" data-tab-panel="symbols" hidden>
-      <h2>Symbols</h2>
-      <p class="section-desc">
-        Experiment with primary symbols (5 places, vowel indicator <span class="symbol-text">⚬</span>, 4 manner modifiers).
-        Apply to update the whole app for this browser session, or edit <code>docs/language-rules.md</code> and reload.
-      </p>
-
-      <div id="symbols-status" class="alphabet-status" hidden></div>
-
-      <div class="alphabet-actions button-row">
-        <button type="button" id="symbols-apply" class="btn btn--primary">Apply to app</button>
-        <button type="button" id="symbols-reset-draft" class="btn">Reset draft</button>
-        <button type="button" id="symbols-clear" class="btn">Clear overrides (use markdown)</button>
-      </div>
-
-      <h3 class="examples-heading">Primary symbols</h3>
-      <div id="symbols-primary-grid" class="alphabet-primary-grid"></div>
-    </section>
-
-    <!-- Breakdown -->
-    <section class="panel tab-panel" id="tab-breakdown" data-tab-panel="breakdown" hidden>
-      <h2>Fonora Breakdown</h2>
-
-        <p class="section-desc">Learn how spoken sounds become Fonora symbols: see pronunciation, symbol components, and how each sound is physically produced. Hover or tap to link sounds across the word.</p>
-
-      <div class="translate-controls">
-        <div class="translate-control">
-          <label for="breakdown-lang">Language</label>
-          <select id="breakdown-lang" class="text-input text-input--full">
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="de">German</option>
-            <option value="ja">Japanese</option>
-            <option value="ar">Arabic</option>
-            <option value="zh">Mandarin</option>
-          </select>
-        </div>
-        <div class="translate-control" id="breakdown-dialect-wrap">
-          <label for="breakdown-dialect">English dialect</label>
-          <select id="breakdown-dialect" class="text-input text-input--full"></select>
-        </div>
-      </div>
-
-      <label for="breakdown-input">Text</label>
-      <textarea id="breakdown-input" class="text-input text-input--full" rows="3" placeholder="e.g. human, all, hola, la maison" autocomplete="off"></textarea>
-
-      <div class="button-row">
-        <button type="button" id="breakdown-analyze" class="btn btn--primary">Analyze</button>
-      </div>
-
-      <div id="breakdown-status" class="tts-status" hidden></div>
-
-      <div id="breakdown-legend" class="breakdown-legend" aria-label="Chunk color key"></div>
-
-      <div id="breakdown-output" class="breakdown-output" aria-live="polite"></div>
     </section>
 
     <!-- Language Samples -->

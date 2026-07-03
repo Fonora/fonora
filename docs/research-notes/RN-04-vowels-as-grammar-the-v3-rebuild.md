@@ -25,7 +25,7 @@ Some intentional merges, STRUT/schwa in `a`, LOT/THOUGHT/PALM in `o`, were expec
 
 ### Timing: report baseline, then immediate rebuild
 
-On Jun 21, 2026, the v2 experiment closed in a tight sequence. Commit `e29501a` (18:17) froze the v2 rules and added [`docs/FONORA_VOWEL_DECISION_REPORT.md`](../docs/FONORA_VOWEL_DECISION_REPORT.md). Eleven minutes later, `35ec0ea` (18:28) replaced v2 entirely; the report's "defer mapping changes" recommendation was bypassed in favor of a grammar rebuild. Follow-up commits the same evening refined symbols (`274e005`: glide `⌣` → `ᵔ`, middle tongue `◠` → `⌓`) and added `ENGLISH_IPA_VOWEL_NORMALIZATION` (`f361984`) so NURSE vowels mapped to key `a` after removal from the `e` row. The note date (Jun 22) reflects when the architecture stabilized.
+On Jun 21, 2026, the v2 experiment closed in a tight sequence. Commit `e29501a` (18:17) froze the v2 rules and added [`docs/FONORA_VOWEL_DECISION_REPORT.md`](../archive/FONORA_VOWEL_DECISION_REPORT.md). Eleven minutes later, `35ec0ea` (18:28) replaced v2 entirely; the report's "defer mapping changes" recommendation was bypassed in favor of a grammar rebuild. Follow-up commits the same evening refined symbols (`274e005`: glide `⌣` → `ᵔ`, middle tongue `◠` → `⌓`) and added `ENGLISH_IPA_VOWEL_NORMALIZATION` (`f361984`) so NURSE vowels mapped to key `a` after removal from the `e` row. The note date (Jun 22) reflects when the architecture stabilized.
 
 ### Fixed grammar in `language-rules.md`
 
@@ -49,7 +49,7 @@ There was no formal user study. Evaluation was engineering-driven: load-time gra
 
 **Round-trip integrity.** The architecture set uses the RN-02 pipeline (eSpeak → normalize → encode → decode). Primary success remains source IPA == recovered IPA; grammar pass is a secondary gate on vowel shape.
 
-**Collision audit.** Commits `35ec0ea` and `274e005` regenerated [`docs/FONORA_COLLISION_AUDIT.md`](../docs/FONORA_COLLISION_AUDIT.md). Exact symbol collisions remained zero; concatenation hazards were flagged for human review.
+**Collision audit.** Commits `35ec0ea` and `274e005` regenerated [`docs/FONORA_COLLISION_AUDIT.md`](../archive/FONORA_COLLISION_AUDIT.md). Exact symbol collisions remained zero; concatenation hazards were flagged for human review.
 
 **Informal questions the team was asking:** Do *now* and *go* encode differently? Does every markdown vowel row conform to `⚬X` or `⚬XᵔY`? Does the Sound Grid regenerate cleanly? After removing NURSE from `e`, does *bird* encode without `?` fallbacks (requiring the overlay from `f361984`)? The v2 readability suite was not redesigned for v3 within-key metrics.
 
@@ -101,7 +101,7 @@ Sub-questions left open: Should LOT/THOUGHT/PALM ever split? Is NURSE → `a` vi
 - `f361984`: `ENGLISH_IPA_VOWEL_NORMALIZATION`; NURSE mapping without `?` fallbacks
 - `82ac10e`: English overlay restricted to `lang === 'en'`
 
-**Documentation:** [`docs/language-rules.md`](../docs/language-rules.md), [`docs/pronunciation-validation.md`](../docs/pronunciation-validation.md), [`docs/FONORA_VOWEL_DECISION_REPORT.md`](../docs/FONORA_VOWEL_DECISION_REPORT.md) (superseded)
+**Documentation:** [`docs/language-rules.md`](../docs/language-rules.md), [`docs/pronunciation-validation.md`](../docs/pronunciation-validation.md), [`docs/FONORA_VOWEL_DECISION_REPORT.md`](../archive/FONORA_VOWEL_DECISION_REPORT.md) (superseded)
 
 **Interactive demo:** Sound Grid (`/script#grid`)
 

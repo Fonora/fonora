@@ -1,7 +1,6 @@
 import {
   MODIFIER_ROW_ORDER,
   GRID_PLACE_IDS,
-  getPrimarySymbolEntries,
   modifierSymbol,
 } from './symbol-compose.js';
 import {
@@ -38,19 +37,13 @@ import {
   onFonoranGrammarTabActivated,
 } from './fonoran-grammar-practice.js';
 import {
-  setupKeyboardTesting,
-  onKeyboardTestingTabActivated,
-} from './fonora-keyboard-testing.js';
-import {
   loadLanguageRulesFromString,
   buildKeyboardMap,
   findGridCell,
-  reverseLookup,
 } from './rules.js';
 import { setActiveLanguageRulesBundle, LANGUAGE_RULES_PATH } from './fonora-config.js';
 import { registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules } from './ipa-normalize.js';
-import { loadAlphabetOverrides } from './alphabet-overrides.js';
-import { setupAlphabetLab } from './alphabet-lab.js';
+import { renderAlphabetInventory } from './alphabet-inventory.js';
 import { normalizeSymbolInput, decodeToPhonemeKeys } from './decode.js';
 import { translateIpaPhrase } from './ipa-pipeline.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
@@ -61,7 +54,6 @@ import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
 import { setupTranslatePlayback, setTranslateSymbols } from './fonora-tts-ui.js';
-import { setupBreakdown, prefillBreakdownFromWordSources } from './breakdown-ui.js';
 import { setupSamples, setupHomeSample, ensureSamplesLoaded } from './samples.js';
 import { setupDocsViewer, onDocsTabActivated } from './docs-viewer-ui.js';
 import { onResearchNotesTabActivated } from './research-notes-editor.js';
@@ -104,34 +96,15 @@ import {
 
 let rules = null;
 let usingFallback = false;
-/** @type {string | null} */
-let markdownSource = null;
 
 function showFallbackBanner() {
   const banner = document.getElementById('fallback-banner');
   if (!banner) return;
-  banner.hidden = !usingFallback && !window.__fonoraAlphabetActive;
-}
-
-function updateAlphabetBanner(active) {
-  window.__fonoraAlphabetActive = active;
-  const banner = document.getElementById('fallback-banner');
-  if (!banner || usingFallback) return;
-  if (active) {
-    banner.hidden = false;
-    banner.textContent =
-      'Alphabet overrides active. language-rules.md provides defaults only; primaries come from your saved Alphabet experiment.';
-  } else {
-    banner.hidden = true;
-  }
+  banner.hidden = !usingFallback;
 }
 
 function getSymbolInsertTarget() {
   return document.getElementById('symbol-input');
-}
-
-function renderKeyboardSection() {
-  setupKeyboardTesting(rules);
 }
 
 function bindInsertableRow(tr, symbols) {
@@ -492,24 +465,6 @@ function setupTranslator() {
   dialectEl?.addEventListener('change', applyTranslate);
 }
 
-function setupReverseLookup() {
-  const input = document.getElementById('reverse-input');
-  const output = document.getElementById('reverse-output');
-  const run = () => {
-    const matches = reverseLookup(input.value, rules);
-    output.innerHTML = matches
-      ? matches
-          .map(
-            (m) =>
-              `<div class="reverse-result"><span class="symbol-text">${escapeHtml(m.symbols)}</span><span class="reverse-meta">${escapeHtml(m.sound)} · ${escapeHtml(m.ipa || '-')} · ${escapeHtml(m.explanation || '')}${m.experimental ? ' · experimental' : ''}</span></div>`
-          )
-          .join('')
-      : '<em>No defined mapping for this sound.</em>';
-  };
-  input.addEventListener('input', run);
-  document.getElementById('reverse-btn').addEventListener('click', run);
-}
-
 function migrateLegacyUrl() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
   const hash = window.location.hash.replace(/^#/, '');
@@ -566,13 +521,9 @@ function normalizeLearnTab(tabId) {
 
 const BUILDER_TOOLS_TAB_IDS = new Set([
   'tools-home',
-  'keyboard',
-  'reverse',
   'encoder-testing',
   'pronunciation-validation',
-  'symbols',
   'research-notes',
-  'breakdown',
   'samples',
 ]);
 
@@ -762,17 +713,6 @@ function showTab(tabId) {
     ensureSamplesLoaded().catch(() => {});
   }
 
-  if (panelId === 'breakdown') {
-    const input = document.getElementById('breakdown-input');
-    if (input && !input.value.trim()) {
-      prefillBreakdownFromWordSources();
-    }
-  }
-
-  if (panelId === 'keyboard') {
-    onKeyboardTestingTabActivated();
-  }
-
   if (panelId === 'spelling-practice') {
     onFonoranWritingTabActivated();
   }
@@ -868,22 +808,13 @@ function setupTabs() {
   window.addEventListener('popstate', () => showTab(getTabFromHash()));
 }
 
-/** @type {Record<string, string>}, primary symbols from language-rules.md before overrides */
-let markdownPrimarySymbols = {};
-
 async function initApp() {
   let loaded;
   try {
     const res = await fetch(LANGUAGE_RULES_PATH);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    markdownSource = await res.text();
-    const baseBundle = loadLanguageRulesFromString(markdownSource, { primaryOverrides: {} });
-    markdownPrimarySymbols = Object.fromEntries(
-      getPrimarySymbolEntries(baseBundle.rules).map((e) => [e.id, e.symbol]),
-    );
-    loaded = loadLanguageRulesFromString(markdownSource, {
-      primaryOverrides: loadAlphabetOverrides(),
-    });
+    const markdownSource = await res.text();
+    loaded = loadLanguageRulesFromString(markdownSource);
     loaded.usingFallback = false;
     loaded.loadError = null;
   } catch (err) {
@@ -917,21 +848,16 @@ function applyRulesBundle(loaded) {
   }
 
   showFallbackBanner();
-  updateAlphabetBanner(loaded.symbolsFromOverrides);
   setupTabs();
   renderPlatformShowcase();
   renderHomeHowItWorks();
-  renderKeyboardSection();
-  setupKeyboardTesting(rules);
   renderSoundGrid();
   renderSupplementalSoundTables();
   setupUtilityButtons();
-  setupReverseLookup();
   setupScriptSounds(rules);
   setupEncoderTesting(rules);
   setupPronunciationValidation(rules);
   setupTranslatePlayback(rules);
-  setupBreakdown(rules);
   setupSamples(rules);
   setupHomeSample(rules);
   void setupScriptWriting(rules);
@@ -946,16 +872,7 @@ function applyRulesBundle(loaded) {
   });
   setupDocsViewer();
   setupTranslator();
-  setupAlphabetLab({
-    getRules: () => rules,
-    getMarkdownPrimarySymbols: () => markdownPrimarySymbols,
-    onApplyOverrides: (overrides) => {
-      if (!markdownSource) return;
-      const bundle = loadLanguageRulesFromString(markdownSource, { primaryOverrides: overrides });
-      applyRulesBundle(bundle);
-      updateAlphabetBanner(Object.keys(overrides).length > 0);
-    },
-  });
+  renderAlphabetInventory(rules);
 
   initEspeak().then((result) => {
     if (!result.ok) {

@@ -20,7 +20,7 @@ This was a hypothesis about diagnosability, not a claim that every hazard would 
 
 ## Approach
 
-The audit did not arrive after the script was "finished." Commit `e29501a` (Jun 21, 18:17) introduced [`js/collision-audit.js`](../js/collision-audit.js), [`scripts/collision-audit.js`](../scripts/collision-audit.js), and the first [`docs/FONORA_COLLISION_AUDIT.md`](../docs/FONORA_COLLISION_AUDIT.md) in the same changeset that froze the v2 baseline and added Pronunciation Validation. Eleven minutes later, `35ec0ea` migrated to v3 and regenerated the report. The module loads the active bundle from [`js/load-rules-fixture.js`](../js/load-rules-fixture.js), composes symbols at load time, then analyzes, rules-version-agnostic by design.
+The audit did not arrive after the script was "finished." Commit `e29501a` (Jun 21, 18:17) introduced [`js/collision-audit.js`](../js/collision-audit.js), [`scripts/collision-audit.js`](../scripts/collision-audit.js), and the first [`docs/FONORA_COLLISION_AUDIT.md`](../archive/FONORA_COLLISION_AUDIT.md) in the same changeset that froze the v2 baseline and added Pronunciation Validation. Eleven minutes later, `35ec0ea` migrated to v3 and regenerated the report. The module loads the active bundle from [`js/load-rules-fixture.js`](../js/load-rules-fixture.js), composes symbols at load time, then analyzes, rules-version-agnostic by design.
 
 [`runFullCollisionAudit()`](../js/collision-audit.js) runs four passes:
 
@@ -29,7 +29,7 @@ The audit did not arrive after the script was "finished." Commit `e29501a` (Jun 
 3. **Concatenation collisions**: phoneme sequences up to length two whose joined symbols match a single key (`sequence-equals-single`) or another sequence (`sequence-equals-sequence`).
 4. **Greedy decode + word round-trips**: unsegmented strings through `decodeSymbols()` vs space-aware `decodeToPhonemeKeys()`, plus a fixed word list (*bar* / *boy* / *bor* and stress tokens *tht*, *ts*, *pb*) through the full eSpeak pipeline.
 
-A companion review, [`docs/FONORA_CLEANUP_AUDIT.md`](../docs/FONORA_CLEANUP_AUDIT.md) (Jun 21), surveyed wider architecture the same week and flagged overlapping test fixtures; the collision report's section 6 documents what `test:minimal-pairs` does *not* cover.
+A companion review, [`docs/FONORA_CLEANUP_AUDIT.md`](../archive/FONORA_CLEANUP_AUDIT.md) (Jun 21), surveyed wider architecture the same week and flagged overlapping test fixtures; the collision report's section 6 documents what `test:minimal-pairs` does *not* cover.
 
 The audit is read-only: [`npm run audit:collisions`](../package.json) writes markdown; it does not mutate rules. Pronunciation Validation reuses `findConcatenationCollisions()` for warnings ([`docs/pronunciation-validation.md`](../docs/pronunciation-validation.md)). Tests in [`js/tests-core.js`](../js/tests-core.js) lock in known hazard classes without pretending they are fixed.
 
@@ -93,7 +93,7 @@ The stub's follow-up question; once the script could be audited, what *language*
 - `fd89860`: docs alignment; test-suite scope clarification; consonant map from markdown
 - `4a342c1`: throat fricatives `kh`/`gh`; Reader language selection; audit refresh
 
-**Documentation:** [`docs/FONORA_COLLISION_AUDIT.md`](../docs/FONORA_COLLISION_AUDIT.md), [`docs/FONORA_CLEANUP_AUDIT.md`](../docs/FONORA_CLEANUP_AUDIT.md), [`docs/pronunciation-validation.md`](../docs/pronunciation-validation.md)
+**Documentation:** [`docs/FONORA_COLLISION_AUDIT.md`](../archive/FONORA_COLLISION_AUDIT.md), [`docs/FONORA_CLEANUP_AUDIT.md`](../archive/FONORA_CLEANUP_AUDIT.md), [`docs/pronunciation-validation.md`](../docs/pronunciation-validation.md)
 
 **Interactive demo:** Pronunciation Validation ([`/tools#pronunciation-validation`](/tools#pronunciation-validation))
 

@@ -129,8 +129,8 @@ Reading, writing, translation, and typing were all in place by Jun 30. The natur
 
 **Documentation:** [`docs/language-rules.md`](../language-rules.md) (phoneme inventory the keyboard encodes)
 
-**Interactive demo:** [Keyboard Testing](/tools#keyboard), [Spelling Practice](/learn#writing)
+**Interactive demo:** [Spelling Practice](/learn#writing)
 
-**Source:** [`js/fonora-keyboard-ui.js`](../js/fonora-keyboard-ui.js), [`js/fonora-keyboard-compose.js`](../js/fonora-keyboard-compose.js), [`js/fonora-keyboard-layout.js`](../js/fonora-keyboard-layout.js), [`js/fonora-keyboard-testing.js`](../js/fonora-keyboard-testing.js), [`js/fonora-spelling-practice.js`](../js/fonora-spelling-practice.js), [`js/fonora-typing-practice.js`](../js/fonora-typing-practice.js), [`js/keyboard-test-words.js`](../js/keyboard-test-words.js)
+**Source:** [`js/fonora-keyboard-ui.js`](../js/fonora-keyboard-ui.js), [`js/fonora-keyboard-compose.js`](../js/fonora-keyboard-compose.js), [`js/fonora-keyboard-layout.js`](../js/fonora-keyboard-layout.js), [`js/fonora-spelling-practice.js`](../js/fonora-spelling-practice.js), [`js/fonora-typing-practice.js`](../js/fonora-typing-practice.js)
 
 **Future research notes:** RN-17 (puzzle conversation / recoverable meaning)

@@ -552,13 +552,9 @@ html[data-fonora-tab='home'] #tab-home,
 html[data-fonora-tab='translator'] #tab-translator,
 html[data-fonora-tab='grid'] #tab-grid,
 html[data-fonora-tab='alphabet'] #tab-alphabet,
-html[data-fonora-tab='symbols'] #tab-symbols,
-html[data-fonora-tab='breakdown'] #tab-breakdown,
 html[data-fonora-tab='samples'] #tab-samples,
-html[data-fonora-tab='keyboard'] #tab-keyboard,
 html[data-fonora-tab='spelling-practice'] #tab-spelling-practice,
 html[data-fonora-tab='script-writing'] #tab-script-writing,
-html[data-fonora-tab='reverse'] #tab-reverse,
 html[data-fonora-tab='quiz'] #tab-quiz,
 html[data-fonora-tab='script-sounds'] #tab-quiz,
 html[data-fonora-tab='script-words'] #tab-script-reading-words,
@@ -588,11 +584,6 @@ html[data-fonora-tab='script-words'] #tab-script-reading-words {
   display: block !important;
 }
 
-html[data-fonora-tab='keyboard'] #tab-keyboard {
-  display: flex !important;
-  flex-direction: column;
-}
-
 html[data-fonora-tab='script-writing'] [data-learn-tab='script-writing'].tab-btn,
 html[data-fonora-tab='script-sounds'] [data-learn-tab='script-sounds'].tab-btn,
 html[data-fonora-tab='script-words'] [data-learn-tab='script-words'].tab-btn,
@@ -607,15 +598,11 @@ html[data-fonora-tab='home'] [data-tab='home'].tab-btn,
 html[data-fonora-tab='translator'] [data-tab='translator'].tab-btn,
 html[data-fonora-tab='grid'] [data-tab='grid'].tab-btn,
 html[data-fonora-tab='alphabet'] [data-tab='alphabet'].tab-btn,
-html[data-fonora-tab='breakdown'] [data-tab='breakdown'].tab-btn,
 html[data-fonora-tab='samples'] [data-tab='samples'].tab-btn,
-html[data-fonora-tab='keyboard'] [data-tab='keyboard'].tab-btn,
 html[data-fonora-tab='spelling-practice'] [data-tab='spelling-practice'].tab-btn,
-html[data-fonora-tab='reverse'] [data-tab='reverse'].tab-btn,
 html[data-fonora-tab='quiz'] [data-tab='quiz'].tab-btn,
 html[data-fonora-tab='encoder-testing'] [data-tab='encoder-testing'].tab-btn,
 html[data-fonora-tab='pronunciation-validation'] [data-tab='pronunciation-validation'].tab-btn,
-html[data-fonora-tab='symbols'] [data-tab='symbols'].tab-btn,
 html[data-fonora-tab='platform'] [data-platform-tab='platform'].tab-btn,
 html[data-fonora-tab='docs'] [data-tab='docs'].tab-btn,
 html[data-fonora-tab='docs'] [data-platform-tab='docs'].tab-btn,
@@ -624,7 +611,6 @@ html[data-fonora-tab='translator'] [data-fonoran-page='translator'].tab-btn,
 html[data-fonora-tab='dictionary'] [data-fonoran-page='dictionary'].tab-btn,
 html[data-fonora-tab='grammar'] [data-fonoran-page='grammar'].tab-btn,
 html[data-fonora-tab='puzzle'] [data-fonoran-page='puzzle'].tab-btn,
-html[data-fonora-tab='roots'] [data-fonoran-page='roots'].tab-btn,
 html[data-fonora-tab='create'] [data-fonoran-page='create'].tab-btn,
 html[data-fonora-tab='review'] [data-fonoran-page='review'].tab-btn,
 html[data-fonora-tab='concepts'] [data-fonoran-page='concepts'].tab-btn,
@@ -3113,7 +3099,6 @@ a.btn:hover {
   box-sizing: border-box;
 }
 
-.reverse-output,
 .translate-result {
   padding: 0.75rem;
   background: var(--color-inset-bg);
@@ -3121,17 +3106,6 @@ a.btn:hover {
   border-radius: 4px;
   min-height: 2rem;
   color: var(--color-text);
-}
-
-.reverse-result {
-  margin-bottom: 0.5rem;
-}
-
-.reverse-meta {
-  display: block;
-  font-size: 0.85rem;
-  color: #555;
-  margin-top: 0.25rem;
 }
 
 .quiz-stats {
@@ -4236,16 +4210,11 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   margin: 0 0 0.35rem;
 }
 
-#tab-quiz label:not(.learn-mode-pill),
-#tab-breakdown > label {
+#tab-quiz label:not(.learn-mode-pill) {
   display: block;
   font-size: 0.85rem;
   color: var(--color-text-tertiary);
   margin: 0.75rem 0 0.35rem;
-}
-
-#tab-breakdown > label:first-of-type {
-  margin-top: 0;
 }
 
 #tab-translator > label,
@@ -4785,32 +4754,6 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   }
 }
 
-/* Alphabet lab */
-.alphabet-status {
-  padding: 0.6rem 0.85rem;
-  border-radius: 6px;
-  margin-bottom: 1rem;
-  font-size: 0.875rem;
-  background: #eff6ff;
-  color: #1e40af;
-}
-
-.alphabet-status[data-kind="success"] {
-  background: #dcfce7;
-  color: #15803d;
-}
-
-.alphabet-actions {
-  margin-bottom: 1.25rem;
-}
-
-.alphabet-primary-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
 .alphabet-inventory-group {
   margin-bottom: 1.5rem;
 }
@@ -4843,13 +4786,6 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   font-size: 0.85rem;
   color: #666;
   font-style: italic;
-}
-
-#tab-keyboard {
-  overflow: visible;
-  display: flex;
-  flex-direction: column;
-  min-height: calc(100dvh - var(--app-header-offset, 7.5rem));
 }
 
 .typing-practice {
@@ -5355,18 +5291,6 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 }
 
 @media (max-width: 640px) {
-  #tab-keyboard.panel {
-    padding: 1rem 0.65rem;
-  }
-
-  #tab-keyboard .symbol-input {
-    padding: 0.65rem;
-  }
-
-  #tab-keyboard .typing-practice__input {
-    min-height: 2.75rem;
-  }
-
   .typing-practice__word {
     font-size: 1.65rem;
   }
@@ -5480,57 +5404,6 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   .fonora-key__label {
     font-size: 0.5rem;
   }
-}
-
-.alphabet-card {
-  border: 1px solid var(--color-table-border);
-  border-radius: 8px;
-  padding: 0.75rem;
-  background: var(--layout-surface);
-  position: relative;
-}
-
-.alphabet-card--vowel_plane {
-  border-color: var(--color-accent-tint-border);
-  background: var(--color-accent-tint-bg);
-}
-
-.alphabet-card-head {
-  margin-bottom: 0.35rem;
-}
-
-.alphabet-card-label {
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-
-.alphabet-card-markdown {
-  font-size: 0.75rem;
-  color: var(--color-text-muted);
-  margin-bottom: 0.5rem;
-}
-
-.alphabet-symbol-input {
-  width: 100%;
-  font-size: 1.75rem;
-  text-align: center;
-  padding: 0.35rem;
-  border: 1px solid var(--color-input-border);
-  border-radius: 4px;
-  background: var(--color-input-bg);
-  color: var(--color-text);
-}
-
-.alphabet-changed-badge {
-  position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  background: #fef3c7;
-  color: #92400e;
-  padding: 0.1rem 0.35rem;
-  border-radius: 3px;
 }
 
 .alphabet-preview-stack {

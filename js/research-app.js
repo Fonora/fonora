@@ -358,7 +358,7 @@ function renderOpen() {
       <section class="research-open-threads" aria-label="Outstanding threads">
         <h2 class="research-open-threads__title">Outstanding threads</h2>
         <ul class="research-thread-list">
-          <li><strong>Script collisions awaiting a design call</strong> — vowel+glide vs diphthong homographs and greedy-decoder hazards (<a href="${escapeHtml(researchHref('collision-audit'))}">RN-06</a>, <a href="${escapeHtml(docViewerHref('docs/FONORA_COLLISION_AUDIT.md'))}">collision audit</a>).</li>
+          <li><strong>Script collisions awaiting a design call</strong> — vowel+glide vs diphthong homographs and greedy-decoder hazards (<a href="${escapeHtml(researchHref('collision-audit'))}">RN-06</a>, <a href="${escapeHtml(docViewerHref('docs/archive/FONORA_COLLISION_AUDIT.md'))}">collision audit</a>).</li>
           <li><strong>Two reserved throat grid slots</strong> — nasal+throat and glide+throat remain open in the encoding rules (<a href="${escapeHtml(docViewerHref('docs/language-rules.md'))}">language-rules.md</a>).</li>
           <li><strong>Per-language vowel and consonant tables</strong> — non-English vowels still ride an English overlay (<a href="${escapeHtml(researchHref('multilingual-script'))}">RN-05</a>, <a href="${escapeHtml(docViewerHref('docs/multilingual-support.md'))}">multilingual support</a>).</li>
           <li><strong>Translator compound assembly</strong> — assembling new compounds from approved roots and more coordinated-clause patterns (<a href="${escapeHtml(researchHref('interpretive-translator'))}">RN-15</a>).</li>
