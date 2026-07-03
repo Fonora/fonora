@@ -16,7 +16,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "postinstall": "node scripts/copy-espeak.js && node scripts/copy-espeak-audio.js && node scripts/copy-onnx-wasm.js && node scripts/copy-piper.js",
+    "postinstall": "node scripts/copy-espeak.js && node scripts/copy-espeak-audio.js && node scripts/copy-onnx-wasm.js && node scripts/copy-piper.js && node scripts/fonoran-data-fetch.js",
     "start": "node server.js",
     "test": "node js/tests.js && npm run test:translator",
     "test:translator": "node scripts/fonoran-translation-gaps.js --assert && node scripts/fonoran-translation-probes.js --assert",
@@ -46,6 +46,7 @@
     "fonoran:snapshot:export": "node scripts/fonoran-snapshot-export.js",
     "fonoran:snapshot:import": "node scripts/fonoran-snapshot-import.js",
     "fonoran:data:init": "git submodule update --init --recursive",
+    "fonoran:data:fetch": "node scripts/fonoran-data-fetch.js",
     "fonoran:data:status": "node scripts/fonoran-data-status.js",
     "fonoran:roots": "node tools/fonoran-english-roots-build.js",
     "fonoran:lexicon": "node -e \"import('./tools/fonoran-english-lexicon.js').then(m => m.writeEnglishLexicon().then(l => console.log('Lexicon:', l.word_count, 'words')))\"",
