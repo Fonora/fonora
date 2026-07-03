@@ -88,7 +88,7 @@ export function soundGridVowelRowHtml(cell, escapeHtml) {
     `<td>${escapeHtml(key)}</td>`,
     `<td>${escapeHtml(cell.lexicalSet || cell.description || '')}</td>`,
     `<td class="recipe-cell">${escapeHtml(cell.recipe || '')}</td>`,
-    `<td>${escapeHtml(cell.ipa || '')}</td>`,
+    `<td class="ipa-text">${escapeHtml(cell.ipa || '')}</td>`,
     `<td>${escapeHtml(cell.example || '')}</td>`,
   ];
 }

@@ -51,17 +51,17 @@ These IPA tokens appear in the Sound Grid or Derived Sounds tables. They are **b
 | f | f | grid friction lips |
 | s | s | grid friction front_tongue |
 | ʃ | sh | grid friction middle_tongue |
-| x | x | grid friction back_tongue |
-| χ | kh | grid friction throat |
+| x | x | grid friction back_tongue (voiceless velar fricative) |
+| χ | kh | grid friction throat (voiceless uvular/pharyngeal-region fricative) |
 | gh | gh | grid voice throat |
 | m | m | grid nasal lips |
 | n | n | grid nasal front_tongue |
 | ɲ | ñ | grid nasal middle_tongue |
 | ŋ | ng | grid nasal back_tongue |
-| w | w | grid glide lips |
-| j | y | grid glide back_tongue |
-| r | r | grid glide middle_tongue |
-| l | l | grid glide front_tongue |
+| w | w | grid approximant lips |
+| j | y | grid approximant back_tongue |
+| r | r | grid approximant middle_tongue |
+| l | l | grid approximant front_tongue |
 | θ | th | derived th |
 | ð | dh | derived dh |
 | v | v | derived v |

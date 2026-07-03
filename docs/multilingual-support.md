@@ -92,16 +92,23 @@ For best multilingual playback, use **Read in Reader** from the Translator so re
 
 | Symbol | Phoneme | IPA | Typical use |
 | --- | --- | --- | --- |
-| `⌀∪` | `x` | `/x/` | German *Bach*, Scottish *loch* |
-| `⌀⊃` | `kh` | `/χ/` | Deeper throat friction; Arabic خ when eSpeak emits `χ` |
+| `⌀∪` | `x` | `/x/` | Voiceless velar fricative — German *Bach*, Scottish *loch* |
+| `⌀⊃` | `kh` | `/χ/` | Voiceless uvular/pharyngeal-region fricative — Arabic خ when eSpeak emits `χ` |
 | `⌇⊃` | `gh` | `/ɣ/` | Arabic غ when eSpeak emits `ɣ` |
 
 Note: eSpeak often transcribes Arabic **خ** as `x` (→ `⌀∪`), not `χ` (→ `⌀⊃`).
 
+## Throat-column reserved cells
+
+| Symbol | Status | Notes |
+| --- | --- | --- |
+| `⏌⊃` | reserved | No attested glottal nasal — human vocal tract anatomy does not support a true glottal nasal consonant |
+| `ᵔ⊃` | reserved | Voiced pharyngeal approximant `/ʕ/` (research candidate; no encoder key yet) |
+
 ## Known limitations
 
 - **Experimental**: non-English mappings may change; Samples mark non-English excerpts as experimental.
-- **Unmapped IPA**: Arabic (`ʔ`, `ħ`, `ʕ`), tones, emphatics, and other inventory gaps still fall back to `?` or default vowel `a`. See [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md).
+- **Unmapped IPA**: Arabic (`ʔ`, `ħ`), tones, emphatics, and other inventory gaps still fall back to `?` or default vowel `a`. Arabic **ʕ** is documented on reserved grid cell **ᵔ⊃** but has no encoder key yet. See [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md).
 - **CJK**: Japanese Samples disable audio; Chinese is split into clauses for rendering. Native-script IPA quality varies.
 - **No per-language vowel tables**: only English has an engineering overlay; other languages rely on shared rules.
 - **Internal helpers**: `encodeFromIpa()` and the English lexicon builder omit `lang` and default to English normalization (tests/tools only).

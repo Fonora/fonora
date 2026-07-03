@@ -16,7 +16,7 @@ Fonora's starting premise, from the very first commit ("Fonora phonetic symbol r
 
 ## Hypothesis
 
-The working hypothesis: speech could be described as a small, composable grid rather than an open-ended alphabet. If **place of articulation** (lips, front tongue, middle tongue, back tongue, throat) and **manner of articulation** (plain, voiced, frictive, nasal, glide) are treated as independent axes, a consonant is just a coordinate, and its symbol can be *assembled* from a place glyph plus a manner glyph rather than memorized. A separate marker could reuse the same primitives to build vowels, keeping the whole system compact.
+The working hypothesis: speech could be described as a small, composable grid rather than an open-ended alphabet. If **place of articulation** (lips, front tongue, middle tongue, back tongue, throat) and **manner of articulation** (plain, voiced, frictive, nasal, approximant) are treated as independent axes, a consonant is just a coordinate, and its symbol can be *assembled* from a place glyph plus a manner glyph rather than memorized. A separate marker could reuse the same primitives to build vowels, keeping the whole system compact.
 
 This was documented as a hypothesis, not a settled design; the original `language-rules.md` marks the vowel table and several derived sounds as "experimental," "draft," or "provisional," and states plainly that undefined grid cells are "intentional research gaps." Nothing in the record claims this approach was proven; only that it was worth building enough to find out whether pronunciation could become more intuitive than rote memorization.
 
@@ -44,7 +44,7 @@ The prototype was built to answer questions like:
 
 ## Findings
 
-The articulatory grid held up as a foundation. Composing manner + place reliably produced legible, distinct consonants for stops, fricatives, nasals, and glides across the four non-throat places, usable enough to build the rest of the app on.
+The articulatory grid held up as a foundation. Composing manner + place reliably produced legible, distinct consonants for stops, fricatives, nasals, and approximants across the four non-throat places, usable enough to build the rest of the app on.
 
 Limitations were documented alongside successes, not discovered later. The throat column couldn't hold a full parallel consonant set and was left with open gaps from day one. The vowel system was the weakest part and was labeled as such throughout, vowels reused the throat symbol as a marker plus a place glyph, long and short vowels were deliberately collapsed ("long vowels are not currently distinguished"), and the section carried a disclaimer that it existed to test readability, not phonetic precision.
 
@@ -54,7 +54,7 @@ Simplicity was chosen over completeness explicitly, not accidentally. It was als
 
 The core composition principle survived intact: current encoding rules still describe five places and four manner modifiers composing at load time as `modifier + place`, generated from a single markdown source of truth; the same idea present in the original file.
 
-What evolved is mostly at the edges the first version flagged as unfinished. The vowel marker was originally the throat consonant symbol doing double duty; it's since become a dedicated vowel indicator (⚬), removing the ambiguity between "throat as place" and "throat as vowel prefix." Three of the five original throat-column gaps (plain, voiced, fricative) were later filled with real glottal/velar-fricative/uvular-fricative sounds; two, nasal+throat and glide+throat, remain open, unchanged.
+What evolved is mostly at the edges the first version flagged as unfinished. The vowel marker was originally the throat consonant symbol doing double duty; it's since become a dedicated vowel indicator (⚬), removing the ambiguity between "throat as place" and "throat as vowel prefix." Three of the five original throat-column gaps (plain, voiced, fricative) were later filled with real glottal/velar-fricative/uvular-fricative sounds. Throat nasal (**⏌⊃**) remains reserved — no attested glottal nasal. Throat approximant (**ᵔ⊃**) is documented as a research candidate for voiced pharyngeal approximant `/ʕ/` but has no encoder key yet.
 
 Later notes trace what this foundation made possible: RN-02: Teaching the machine to hear · RN-03: How few vowels can English tolerate? · RN-04: Vowels as grammar: the v3 rebuild · RN-06: Hunting ambiguity in the script.
 

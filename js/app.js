@@ -128,7 +128,7 @@ const HOME_MANNER_ROWS = [
   { id: 'voice', label: 'Voice' },
   { id: 'friction', label: 'Friction' },
   { id: 'nasal', label: 'Nasal' },
-  { id: 'glide', label: 'Glide', note: 'X → Y transition' },
+  { id: 'glide', label: 'Approximant', note: 'X → Y transition' },
 ];
 
 let platformShowcaseCleanup = null;
@@ -189,11 +189,13 @@ function renderSoundGrid() {
   }
   thead.appendChild(headerRow);
 
-  const labels = { plain: 'Plain', voice: 'Voice', friction: 'Friction', nasal: 'Nasal', glide: 'Glide' };
+  const labels = { plain: 'Plain', voice: 'Voice', friction: 'Friction', nasal: 'Nasal', glide: 'Approx.' };
 
   for (const modId of MODIFIER_ROW_ORDER) {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<th>${labels[modId] || modId}</th>`;
+    const rowLabel = labels[modId] || modId;
+    const titleAttr = modId === 'glide' ? ' title="Approximant"' : '';
+    tr.innerHTML = `<th${titleAttr}>${rowLabel}</th>`;
     for (const place of gridPlaces) {
       const cell = findGridCell(rules, modId, place.id);
       const td = document.createElement('td');
@@ -209,12 +211,22 @@ function renderSoundGrid() {
               ? 'grid-cell--defined'
               : 'grid-cell--undefined';
         td.className = `grid-cell ${statusClass}`;
+        const gridNa = 'N/A';
+        const soundLabel = cell.sound || (cell.status === 'reserved' ? gridNa : '');
+        const ipaLabel = cell.ipa || (cell.status === 'reserved' ? gridNa : '');
+        const soundHtml = soundLabel
+          ? `<div class="grid-cell-sound${soundLabel === gridNa ? ' grid-cell-sound--na' : ''}">${escapeHtml(soundLabel)}</div>`
+          : '';
+        const ipaHtml = ipaLabel
+          ? `<div class="grid-cell-ipa ipa-text${ipaLabel === gridNa ? ' grid-cell-ipa--na' : ''}">${escapeHtml(ipaLabel)}</div>`
+          : '';
+        const showStatus = !ok && cell.status !== 'reserved';
         td.innerHTML = `
           <div class="grid-cell-symbols symbol-text">${cell.symbols}</div>
-          <div class="grid-cell-sound">${cell.sound}</div>
-          <div class="grid-cell-ipa">${cell.ipa}</div>
-          <div class="grid-cell-explanation">${cell.explanation}</div>
-          ${ok ? '' : `<div class="grid-cell-status">${escapeHtml(cell.status || 'undefined')}</div>`}`;
+          ${soundHtml}
+          ${ipaHtml}
+          <div class="grid-cell-explanation"${cell.explanation ? ` title="${escapeHtml(cell.explanation)}"` : ''}>${escapeHtml(cell.explanation)}</div>
+          ${showStatus ? `<div class="grid-cell-status">${escapeHtml(cell.status || 'undefined')}</div>` : ''}`;
         if (ok) {
           td.tabIndex = 0;
           td.setAttribute('role', 'button');
@@ -275,7 +287,7 @@ function renderSupplementalSoundTables() {
   renderDerivedTable('derived-sounds-section', 'derived-sounds-body', getDerivedDisplayEntries(), (c) => [
     `<td class="symbol-text">${escapeHtml(c.symbols)}</td>`,
     `<td>${escapeHtml(c.sound)}</td>`,
-    `<td>${escapeHtml(c.ipa)}</td>`,
+    `<td class="ipa-text">${escapeHtml(c.ipa)}</td>`,
     `<td>${formatDerivedStatus(c.status)}</td>`,
     `<td>${escapeHtml(c.explanation)}</td>`,
   ]);

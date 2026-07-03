@@ -44,7 +44,7 @@ See [espeak-integration.md](espeak-integration.md) for setup and voice codes.
 Vowels use recipe-composed symbols from `language-rules.md`:
 
 - Simple vowels: `⚬X` (vowel indicator + place or manner glyph)
-- Diphthongs: `⚬XᵔY` (includes glide modifier `ᵔ`)
+- Diphthongs: `⚬XᵔY` (includes approximant modifier `ᵔ`)
 
 The legacy v2 double-vowel marker `⚬⚬` is retired. See [FONORA_VOWEL_DECISION_REPORT.md](archive/FONORA_VOWEL_DECISION_REPORT.md) for historical v2 analysis only.
 
@@ -57,7 +57,7 @@ The legacy v2 double-vowel marker `⚬⚬` is retired. See [FONORA_VOWEL_DECISIO
 
 ## Unmapped IPA phonemes
 
-Retroflexes, tones, Arabic emphatics, uvulars, and other sounds outside the Fonora inventory map to `?` fallback. Vowels map to v3 phoneme keys defined in `language-rules.md`, not English orthography.
+Retroflexes, tones, Arabic emphatics, and other sounds outside the Fonora inventory map to `?` fallback. Arabic **ʕ** is documented on reserved grid cell **ᵔ⊃** (`/ʕ/`) but has no encoder phoneme key yet. Throat nasal **⏌⊃** is intentionally undefined — no attested glottal nasal. Vowels map to v3 phoneme keys defined in `language-rules.md`, not English orthography.
 
 ## Split source of truth (documented gaps)
 

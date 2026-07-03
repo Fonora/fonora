@@ -1,4 +1,4 @@
-import { getEncodableEntries, getQuizEntries, getVowelPhonemeKeys, vowelSymbolForKey, buildPhonemeInventory } from './rules.js';
+import { getEncodableEntries, getQuizEntries, getVowelPhonemeKeys, vowelSymbolForKey, buildPhonemeInventory, findGridCell } from './rules.js';
 import { encodeSounds } from './encode.js';
 import { decodeSymbols, decodeText, decodeToPhonemeKeys, normalizeSymbolInput } from './decode.js';
 import { normalizeIpa, registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules, findConsonantMapSyncIssues, buildConsonantMapFromRules } from './ipa-normalize.js';
@@ -136,6 +136,23 @@ export function runTests(options) {
     assert(eeRow, 'ee vowel row missing');
     assert(eeRow.symbols === `${vowelMarker}${voice}`);
     assert(eeRow.symbols.length === 2, 'ee should be 2-symbol vowel spelling');
+
+    const xRow = inventory.consonants.find((r) => r.key === 'x');
+    assert(xRow?.ipa === '/x/');
+    assert(/velar/i.test(xRow.notes));
+
+    const khRow = inventory.consonants.find((r) => r.key === 'kh');
+    assert(khRow?.ipa === '/χ/');
+    assert(/uvular/i.test(khRow.notes));
+
+    assert(inventory.reserved.length === 2);
+    const nasalReserved = inventory.reserved.find((r) => r.symbols.includes('⏌'));
+    assert(nasalReserved?.key === 'N/A' && nasalReserved?.ipa === 'N/A');
+    assert(/glottal nasal/i.test(nasalReserved.notes));
+
+    const approxReserved = inventory.reserved.find((r) => r.symbols.includes('ᵔ'));
+    assert(approxReserved?.key === 'N/A' && approxReserved?.ipa === '/ʕ/');
+    assert(/pharyngeal approximant/i.test(approxReserved.notes));
   });
 
   t('core vowels composed from recipes', () => {
@@ -207,6 +224,37 @@ export function runTests(options) {
     const kha = encodeFromIpa('χa', rulesBundle);
     assert(kha.symbols.includes(frictionThroat));
     assert(kha.decoded === 'kh a');
+  });
+
+  t('approximant modifier label and friction cell metadata', () => {
+    const approximantMod = rules.modifiers.find((m) => m.id === 'glide');
+    assert(approximantMod?.label === 'Approximant', `expected Approximant label, got ${approximantMod?.label}`);
+
+    const backFriction = findGridCell(rules, 'friction', 'back_tongue');
+    assert(backFriction.symbols === `${friction}${back}`);
+    assert(backFriction.ipa === '/x/');
+    assert(/velar/i.test(backFriction.explanation), backFriction.explanation);
+
+    const throatFriction = findGridCell(rules, 'friction', 'throat');
+    assert(throatFriction.symbols === `${friction}${throat}`);
+    assert(throatFriction.ipa === '/χ/');
+    assert(/uvular|pharyngeal/i.test(throatFriction.explanation), throatFriction.explanation);
+  });
+
+  t('throat reserved cells documented without encoder keys', () => {
+    const nasalThroat = findGridCell(rules, 'nasal', 'throat');
+    assert(nasalThroat.status === 'reserved');
+    assert(!nasalThroat.sound);
+    assert(!nasalThroat.ipa);
+    assert(/glottal nasal/i.test(nasalThroat.explanation));
+    assert(/reserved for research/i.test(nasalThroat.explanation));
+
+    const approxThroat = findGridCell(rules, 'glide', 'throat');
+    assert(approxThroat.status === 'reserved');
+    assert(!approxThroat.sound);
+    assert(approxThroat.ipa === '/ʕ/');
+    assert(/pharyngeal approximant/i.test(approxThroat.explanation));
+    assert(/research candidate/i.test(approxThroat.explanation));
   });
 
   t('symbol round-trip recovers phoneme keys without English spelling confusion', () => {

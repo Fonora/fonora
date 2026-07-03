@@ -173,7 +173,7 @@ export const ONSET_GROUPS = [
   { label: 'Stops', items: ['p', 'b', 't', 'd', 'k', 'g', 'ch', 'j'] },
   { label: 'Hiss & breath', items: ['f', 's', 'sh', 'th', 'dh', 'v', 'z', 'x', 'kh', 'gh', 'h'] },
   { label: 'Nasals', items: ['m', 'n', 'ñ', 'ng'] },
-  { label: 'Glides', items: ['w', 'l', 'r', 'y'] },
+  { label: 'Approximants', items: ['w', 'l', 'r', 'y'] },
 ];
 
 export const CODA_DISPLAY = ['p', 't', 'k', 'h', 'm', 'n', 's', 'd', 'b', 'g', 'v', 'z', 'l', 'r', 'ch', 'sh', 'th', 'dh', 'ng', 'kh', 'gh', 'x'];
