@@ -32,9 +32,14 @@ export function applyTheme(theme = getStoredTheme()) {
 
 /** @returns {'system' | 'light' | 'dark'} */
 export function cycleTheme() {
-  const order = ['system', 'light', 'dark'];
   const current = getStoredTheme();
-  const next = order[(order.indexOf(current) + 1) % order.length];
+  let next;
+  if (current === 'system') {
+    next = isDarkTheme() ? 'light' : 'dark';
+  } else {
+    const order = ['system', 'light', 'dark'];
+    next = order[(order.indexOf(current) + 1) % order.length];
+  }
   localStorage.setItem(STORAGE_KEY, next);
   applyTheme(next);
   return next;
