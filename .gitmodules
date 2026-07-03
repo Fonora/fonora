@@ -1,0 +1,3 @@
+[submodule "external/fonora-data"]
+	path = external/fonora-data
+	url = git@github.com:Fonora/fonora-data.git

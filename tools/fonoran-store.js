@@ -9,6 +9,7 @@ import '../load-env.js';
 import { readFile, writeFile, access, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { editorialSeedPath, resolveDataDir } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const BUCKET_PATH = join(ROOT, 'data/fonoran-sound-bucket.json');
@@ -149,7 +150,7 @@ function bucketFromRow(row) {
 export function docSeedPath(key) {
   const rel = EDITORIAL_DOCS[key];
   if (!rel) throw new Error(`Unknown editorial doc key: ${key}`);
-  return join(ROOT, rel);
+  return editorialSeedPath(key, rel, ROOT);
 }
 
 async function fileExists(path) {
@@ -447,7 +448,8 @@ export async function writeSnapshotToSeedPaths(baseDir = ROOT) {
   const { bucket, docs } = await readAllSnapshotDocs();
   await writeJsonFile(join(baseDir, 'data/fonoran-sound-bucket.json'), bucket);
   for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
-    await writeJsonFile(join(baseDir, rel), docs[key]);
+    if (!docs[key]) continue;
+    await writeJsonFile(editorialSeedPath(key, rel, baseDir), docs[key]);
   }
   return {
     sounds: bucket.sounds?.length ?? 0,
@@ -464,8 +466,11 @@ export async function readSnapshotFromSeedPaths(baseDir = ROOT) {
 
   const docs = {};
   for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
-    const body = await readJsonFile(join(baseDir, rel));
-    if (!body) throw new Error(`Missing or unreadable ${rel}`);
+    const body = await readJsonFile(editorialSeedPath(key, rel, baseDir));
+    if (!body) {
+      if (OPTIONAL_EDITORIAL_DOCS.has(key)) continue;
+      throw new Error(`Missing or unreadable ${rel}`);
+    }
     docs[key] = body;
   }
 
@@ -479,7 +484,7 @@ export async function readEditorialSeedsFromPaths(baseDir = ROOT) {
   const docs = {};
   const missing = [];
   for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
-    const body = await readJsonFile(join(baseDir, rel));
+    const body = await readJsonFile(editorialSeedPath(key, rel, baseDir));
     if (!body) {
       if (OPTIONAL_EDITORIAL_DOCS.has(key)) continue;
       missing.push(rel);
@@ -548,10 +553,13 @@ export async function markEditorialSeedsImported() {
 export async function readSeedFileStatus(baseDir = ROOT) {
   const status = {};
   for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
-    const body = await readJsonFile(join(baseDir, rel));
+    const body = await readJsonFile(editorialSeedPath(key, rel, baseDir));
     status[key] = body
-      ? { present: true, counts: docCounts(key, body) }
-      : { present: false, counts: {} };
+      ? { present: true, counts: docCounts(key, body), path: editorialSeedPath(key, rel, baseDir) }
+      : { present: false, counts: {}, path: editorialSeedPath(key, rel, baseDir) };
+  }
+  if (resolveDataDir()) {
+    status._data_dir = resolveDataDir();
   }
   return status;
 }
