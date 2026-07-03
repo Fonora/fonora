@@ -27,6 +27,7 @@ export async function runFonoranAuthTests() {
     __testCreateOAuthState,
     __testConsumeOAuthState,
     __testSanitizeReturnTo,
+    __testResolveRole,
   } = await import(`./fonoran-auth.js?test=${Date.now()}`);
 
   const results = [];
@@ -65,6 +66,7 @@ export async function runFonoranAuthTests() {
         assert(typeof state === 'string' && state.length > 10, 'expected oauth state id');
         const opened = __testConsumeOAuthState(state);
         assert(opened?.returnTo === '/language', 'returnTo mismatch');
+        assert(opened?.provider === 'google', 'provider mismatch');
         assert(__testConsumeOAuthState(state) === null, 'oauth state must be single-use');
       }),
     );
@@ -77,6 +79,16 @@ export async function runFonoranAuthTests() {
         assert(__testSanitizeReturnTo('/evil') === '/language', 'unknown path');
         assert(__testSanitizeReturnTo('/tools') === '/tools', 'allowed root');
         assert(__testSanitizeReturnTo('/research/notes/foo') === '/research/notes/foo', 'allowed subpath');
+      }),
+    );
+    results.push(
+      await test('resolveRole treats ADMIN_EMAILS as admin tier', async () => {
+        const prev = process.env.ADMIN_EMAILS;
+        process.env.ADMIN_EMAILS = 'info@fonora.org';
+        assert(__testResolveRole('info@fonora.org') === 'admin', 'admin email');
+        assert(__testResolveRole('user@example.com') === 'community', 'community email');
+        if (prev === undefined) delete process.env.ADMIN_EMAILS;
+        else process.env.ADMIN_EMAILS = prev;
       }),
     );
   } finally {

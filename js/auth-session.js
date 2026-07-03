@@ -1,13 +1,16 @@
 import { setFonoranAuth } from './universal-nav.js';
 
-/** @type {{ required: boolean, configured: boolean, toolsGated: boolean, authenticated: boolean, email: string | null, loginUrl: string }} */
+/** @type {{ required: boolean, configured: boolean, toolsGated: boolean, authenticated: boolean, isAdmin: boolean, email: string | null, userId: string | null, loginUrl: string, loginUrls: { google?: string | null, github?: string | null, primary: string } }} */
 let authState = {
   required: false,
   configured: false,
   toolsGated: false,
   authenticated: false,
+  isAdmin: false,
   email: null,
+  userId: null,
   loginUrl: '/auth/google',
+  loginUrls: { primary: '/auth/google', google: '/auth/google', github: null },
 };
 
 export function getAuthState() {
@@ -16,6 +19,11 @@ export function getAuthState() {
 
 export function canAccessTools() {
   return !authState.toolsGated || authState.authenticated;
+}
+
+export function canAccessWordManager() {
+  if (!authState.toolsGated) return true;
+  return authState.isAdmin;
 }
 
 export function authReturnPath() {
@@ -31,11 +39,17 @@ function applyAuthState(data) {
     configured: Boolean(data.authConfigured),
     toolsGated: Boolean(data.toolsGated ?? data.learnToolsGated),
     authenticated: Boolean(data.authenticated),
+    isAdmin: Boolean(data.isAdmin),
     email: data.email ?? null,
+    userId: data.userId ?? null,
     loginUrl: data.loginUrl ?? '/auth/google',
+    loginUrls: data.loginUrls ?? { primary: data.loginUrl ?? '/auth/google' },
   };
   setFonoranAuth(authState);
   syncToolsAuthGateLink();
+  if (authState.authenticated && authState.userId) {
+    void syncLearnProgressFromServer();
+  }
 }
 
 function syncToolsAuthGateLink() {
@@ -55,9 +69,21 @@ export async function refreshAuth() {
       authConfigured: false,
       toolsGated: false,
       authenticated: true,
+      isAdmin: true,
       email: null,
+      userId: null,
       loginUrl: '/auth/google',
+      loginUrls: { primary: '/auth/google' },
     });
+  }
+}
+
+async function syncLearnProgressFromServer() {
+  try {
+    const { mergeLearnProgressOnLogin } = await import('./learn-gamification.js');
+    await mergeLearnProgressOnLogin();
+  } catch {
+    /* learn bundle may not be loaded on all pages */
   }
 }
 

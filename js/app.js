@@ -82,10 +82,13 @@ import {
 import { mountSiteFooter } from './site-footer.js';
 import {
   canAccessTools,
+  canAccessWordManager,
   refreshAuth,
   signOut,
   handleAuthUrlErrors,
+  getAuthState,
 } from './auth-session.js';
+import { onWordManagerTabActivated, migrateWordManagerHash } from './word-manager-page.js';
 import { setReaderWordSources } from './fonora-tts.js';
 import { refreshLearnHomeProgress } from './learn-home-progress.js';
 import { syncLearnSessionBar, saveLearnHomeScroll, restoreLearnHomeScroll } from './learn-session-ui.js';
@@ -501,6 +504,14 @@ function migrateLegacyUrl() {
     }
     return;
   }
+  if (path === '/language' || path.startsWith('/language/')) {
+    const hash = window.location.hash.replace(/^#/, '').split('?')[0];
+    const legacy = new Set(['words', 'concepts', 'create', 'review', 'roots', 'root-review']);
+    if (legacy.has(hash)) {
+      history.replaceState(null, '', `/tools#word-manager${window.location.search}`);
+      return;
+    }
+  }
   if (path === '/tools') {
     if (hash && LEARN_REDIRECT_HASHES.includes(hash)) {
       const navTab =
@@ -533,6 +544,7 @@ function normalizeLearnTab(tabId) {
 
 const BUILDER_TOOLS_TAB_IDS = new Set([
   'tools-home',
+  'word-manager',
   'encoder-testing',
   'pronunciation-validation',
   'research-notes',
@@ -663,6 +675,9 @@ function isGatedToolsTab(tabId) {
 }
 
 function resolveTabForAuth(tabId) {
+  if (tabId === 'word-manager' && !canAccessWordManager()) {
+    return 'tools-auth-gate';
+  }
   if (isToolsPath() && !canAccessTools() && (isGatedToolsTab(tabId) || tabId === 'tools-home')) {
     return 'tools-auth-gate';
   }
@@ -719,6 +734,10 @@ function showTab(tabId) {
     if (!returningFromLesson) {
       scrollLearnHomeToSection();
     }
+  }
+
+  if (panelId === 'word-manager') {
+    void onWordManagerTabActivated();
   }
 
   if (panelId === 'samples') {
@@ -812,12 +831,22 @@ function setupTabs() {
   });
 
   refreshAuth().then(() => {
+    syncWordManagerNav();
+    migrateWordManagerHash();
     showTab(getTabFromHash());
   });
   handleAuthUrlErrors();
 
   window.addEventListener('hashchange', () => showTab(getTabFromHash()));
   window.addEventListener('popstate', () => showTab(getTabFromHash()));
+}
+
+function syncWordManagerNav() {
+  const btn = document.getElementById('nav-word-manager');
+  if (!btn) return;
+  const show = canAccessWordManager();
+  btn.hidden = !show;
+  btn.removeAttribute('aria-hidden');
 }
 
 async function initApp() {

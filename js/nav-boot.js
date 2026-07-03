@@ -25,6 +25,7 @@
 
   const TOOLS_TABS = new Set([
     'tools-home',
+    'word-manager',
     'encoder-testing',
     'pronunciation-validation',
     'research-notes',
@@ -33,18 +34,24 @@
 
   const FONORAN_PAGES = new Set([
     'home',
-    'root-review',
-    'concepts',
     'translator',
-    'create',
-    'review',
     'dictionary',
     'grammar',
+    'puzzle',
     'health',
     'gaps',
     'progress',
     'advanced',
   ]);
+
+  /** Legacy Language builder hashes → admin Word Manager under Tools. */
+  const WORD_MANAGER_ALIASES = new Set(['words', 'roots', 'concepts', 'create', 'review', 'root-review']);
+
+  function resolveLanguagePage(rawHash) {
+    if (!rawHash) return 'home';
+    const page = rawHash.split('?')[0];
+    return FONORAN_PAGES.has(page) ? page : 'home';
+  }
 
   const html = document.documentElement;
   html.setAttribute('data-fonora-tools-nav', 'hidden');
@@ -54,11 +61,15 @@
   const isDocsRoute = path === '/docs' || path.startsWith('/docs/') || hasDocPath || hash === 'docs';
 
   if (path === '/language' || path.startsWith('/language/')) {
-    const page = hash && FONORAN_PAGES.has(hash) ? hash : 'home';
-    const tab = page === 'root-review' ? 'review' : page;
+    const page = hash.split('?')[0];
+    if (WORD_MANAGER_ALIASES.has(page)) {
+      window.location.replace(`/tools#word-manager${window.location.search}`);
+      return;
+    }
+    const resolved = resolveLanguagePage(hash);
     html.setAttribute('data-fonora-nav', 'language');
-    html.setAttribute('data-fonora-tab', tab);
-    html.setAttribute('data-fonora-page', page);
+    html.setAttribute('data-fonora-tab', resolved);
+    html.setAttribute('data-fonora-page', resolved);
     return;
   }
 

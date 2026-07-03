@@ -1,12 +1,54 @@
 # Fonoran auth, contributions, and release plan
 
-> **Status:** implemented, Google OAuth for Fonoran write access.
+> **Status:** implemented — dual-tier OAuth (community + admin).
 
-This document covers how to protect live Fonoran vocabulary in production, how contributors apply to help, and what must be true before merging `feature/fonoran-language-experiment` and deploying to [fonora.org](https://fonora.org).
-
-For deployment mechanics, see [deploy.md](deploy.md). For vocabulary model and API surface, see [fonoran.md](fonoran.md).
+This document covers authentication, community features (progress sync, votes, proposals), and admin vocabulary editing.
 
 ---
+
+## Auth tiers
+
+| Tier | Sign-in | Capabilities |
+| --- | --- | --- |
+| **Public** | none | Read dictionary, learn (local progress), browse vote tallies |
+| **Community** | Google or GitHub (any verified email) | Sync Learn progress, vote on words, submit proposals |
+| **Admin** | Google (`ADMIN_EMAILS`, default `info@fonora.org`) | Word Manager canon edits, approve/reject lab, promote proposals |
+
+### Routes
+
+```
+GET  /auth/session
+GET  /auth/google → /auth/callback
+GET  /auth/github → /auth/github/callback
+POST /auth/logout
+
+GET  /api/fonoran/words              public inventory
+GET  /api/fonoran/words/:id          public detail + vote tallies
+POST /api/fonoran/analyze/word       public analysis preview
+POST /api/fonoran/words/:id/vote     community session
+GET/PUT /api/fonoran/me/progress     community session
+POST /api/fonoran/proposals          community session
+POST /api/fonoran/proposals/:id/vote community session
+POST /api/fonoran/proposals/:id/resolve  admin only
+
+POST/PATCH lab + concepts routes     admin only
+```
+
+### Env vars
+
+| Variable | Purpose |
+| --- | --- |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | GitHub OAuth (community) |
+| `SESSION_SECRET` | Required to enable auth |
+| `ADMIN_EMAILS` | Comma-separated admin allowlist (default `info@fonora.org`) |
+| `DATABASE_URL` | Recommended for user/progress/vote persistence |
+
+Community data is stored in `fonoran_users`, `fonoran_learn_progress`, `fonoran_proposals`, `fonoran_votes` (Postgres) or `data/fonoran-community.json` (JSON mode).
+
+---
+
+## Legacy notes (pre–Word Manager)
 
 ## Goals
 

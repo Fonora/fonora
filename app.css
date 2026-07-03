@@ -578,6 +578,7 @@ html[data-fonora-tab='fonoran-speaking'] #tab-fonoran-speaking,
 html[data-fonora-tab='encoder-testing'] #tab-encoder-testing,
 html[data-fonora-tab='pronunciation-validation'] #tab-pronunciation-validation,
 html[data-fonora-tab='research-notes'] #tab-research-notes,
+html[data-fonora-tab='word-manager'] #tab-word-manager,
 html[data-fonora-tab='docs'] #tab-docs {
   display: block !important;
 }
@@ -616,6 +617,7 @@ html[data-fonora-tab='spelling-practice'] [data-tab='spelling-practice'].tab-btn
 html[data-fonora-tab='quiz'] [data-tab='quiz'].tab-btn,
 html[data-fonora-tab='encoder-testing'] [data-tab='encoder-testing'].tab-btn,
 html[data-fonora-tab='pronunciation-validation'] [data-tab='pronunciation-validation'].tab-btn,
+html[data-fonora-tab='word-manager'] [data-tab='word-manager'].tab-btn,
 html[data-fonora-tab='platform'] [data-platform-tab='platform'].tab-btn,
 html[data-fonora-tab='docs'] [data-tab='docs'].tab-btn,
 html[data-fonora-tab='docs'] [data-platform-tab='docs'].tab-btn,
@@ -648,15 +650,10 @@ html[data-fonora-page] .page {
 }
 
 html[data-fonora-page='home'] #page-home,
-html[data-fonora-page='root-review'] #page-review,
-html[data-fonora-page='review'] #page-review,
 html[data-fonora-page='translator'] #page-translator,
-html[data-fonora-page='roots'] #page-roots,
-html[data-fonora-page='create'] #page-create,
 html[data-fonora-page='dictionary'] #page-dictionary,
 html[data-fonora-page='grammar'] #page-grammar,
 html[data-fonora-page='puzzle'] #page-puzzle,
-html[data-fonora-page='concepts'] #page-concepts,
 html[data-fonora-page='health'] #page-health,
 html[data-fonora-page='gaps'] #page-gaps,
 html[data-fonora-page='progress'] #page-progress,

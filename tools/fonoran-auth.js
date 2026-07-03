@@ -1,17 +1,22 @@
 /**
- * Google OAuth session auth for Fonoran write access.
- * Zero extra dependencies: uses Node crypto + fetch.
+ * OAuth session auth: community users (Google or GitHub) + admin tier for vocabulary writes.
  */
 
 import { randomBytes } from 'node:crypto';
+import { upsertUser } from './fonoran-community-store.js';
 
 const SESSION_COOKIE = 'fonoran_session';
-const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14; // 14 days
+const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14;
 const OAUTH_STATE_TTL_SEC = 600;
 
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://openidconnect.googleapis.com/v1/userinfo';
+
+const GITHUB_AUTH_URL = 'https://github.com/login/oauth/authorize';
+const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
+const GITHUB_USER_URL = 'https://api.github.com/user';
+const GITHUB_EMAILS_URL = 'https://api.github.com/user/emails';
 
 const AUTH_ERROR_CODES = new Set([
   'invalid_state',
@@ -19,12 +24,13 @@ const AUTH_ERROR_CODES = new Set([
   'domain',
   'denied',
   'auth_failed',
+  'not_configured',
 ]);
 
-/** @type {Map<string, { email: string, name?: string, exp: number }>} */
+/** @type {Map<string, { email: string, name?: string, userId?: string, role: string, provider?: string, exp: number }>} */
 const sessions = new Map();
 
-/** @type {Map<string, { returnTo: string, exp: number }>} */
+/** @type {Map<string, { returnTo: string, provider: string, exp: number }>} */
 const oauthStates = new Map();
 
 function envFlag(name) {
@@ -36,28 +42,42 @@ export function isAuthExplicitlyOff() {
   return envFlag('FONORAN_AUTH_OFF') || process.env.FONORAN_AUTH?.trim().toLowerCase() === 'off';
 }
 
-export function isAuthConfigured() {
+export function isGoogleConfigured() {
   return Boolean(
     process.env.GOOGLE_CLIENT_ID?.trim()
-    && process.env.GOOGLE_CLIENT_SECRET?.trim()
+    && process.env.GOOGLE_CLIENT_SECRET?.trim(),
+  );
+}
+
+export function isGitHubConfigured() {
+  return Boolean(
+    process.env.GITHUB_CLIENT_ID?.trim()
+    && process.env.GITHUB_CLIENT_SECRET?.trim(),
+  );
+}
+
+export function isAuthConfigured() {
+  return Boolean(
+    (isGoogleConfigured() || isGitHubConfigured())
     && process.env.SESSION_SECRET?.trim(),
   );
 }
 
-/** When true, mutating Fonoran API routes require a valid session. */
 export function isAuthEnabled() {
   if (isAuthExplicitlyOff()) return false;
   return isAuthConfigured();
 }
 
-function allowedDomain() {
-  return (process.env.ALLOWED_DOMAIN ?? 'fonora.org').trim().toLowerCase();
+function adminEmails() {
+  const raw = process.env.ADMIN_EMAILS?.trim();
+  if (!raw) return new Set(['info@fonora.org']);
+  return new Set(raw.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean));
 }
 
-function allowedEmails() {
-  const raw = process.env.ADMIN_EMAILS?.trim();
-  if (!raw) return null;
-  return new Set(raw.split(',').map((e) => e.trim().toLowerCase()).filter(Boolean));
+function resolveRole(email) {
+  const normalized = email?.trim().toLowerCase();
+  if (normalized && adminEmails().has(normalized)) return 'admin';
+  return 'community';
 }
 
 function requestOrigin(req) {
@@ -69,10 +89,16 @@ function requestOrigin(req) {
   return `${proto}://${host}`;
 }
 
-function redirectUri(req) {
+function googleRedirectUri(req) {
   const override = process.env.AUTH_CALLBACK_URL?.trim();
   if (override) return override;
   return `${requestOrigin(req)}/auth/callback`;
+}
+
+function githubRedirectUri(req) {
+  const override = process.env.GITHUB_CALLBACK_URL?.trim();
+  if (override) return override;
+  return `${requestOrigin(req)}/auth/github/callback`;
 }
 
 function parseCookies(req) {
@@ -128,11 +154,12 @@ function destroySession(id) {
   if (id) sessions.delete(id);
 }
 
-function createOAuthState(returnTo) {
+function createOAuthState(returnTo, provider) {
   purgeExpired(oauthStates);
   const id = newOpaqueId(24);
   oauthStates.set(id, {
     returnTo: sanitizeReturnTo(returnTo),
+    provider,
     exp: Math.floor(Date.now() / 1000) + OAUTH_STATE_TTL_SEC,
   });
   return id;
@@ -152,7 +179,6 @@ function cookieSecure(req) {
   return true;
 }
 
-/** Set HttpOnly session cookie (opaque id only — no PII in the cookie value). */
 function setSessionCookie(res, sessionId, maxAge, req) {
   const parts = [`${SESSION_COOKIE}=${encodeURIComponent(sessionId)}`];
   if (maxAge != null) parts.push(`Max-Age=${maxAge}`);
@@ -207,14 +233,6 @@ function redirectToAuthError(res, code, details = {}) {
   redirect302(res, target);
 }
 
-function redirectToGoogleOAuth(res, params) {
-  const googleUrl = new URL(GOOGLE_AUTH_URL);
-  for (const [key, value] of params.entries()) {
-    googleUrl.searchParams.set(key, value);
-  }
-  redirect302(res, googleUrl.toString());
-}
-
 function sanitizeReturnTo(raw) {
   if (!raw || typeof raw !== 'string') return '/language';
   let path = raw.trim();
@@ -247,38 +265,92 @@ function normalizeAuthErrorCode(raw) {
   return 'auth_failed';
 }
 
-function emailAllowed(email) {
-  const normalized = email?.trim().toLowerCase();
-  if (!normalized || !normalized.includes('@')) return false;
-  const allowlist = allowedEmails();
-  if (allowlist) return allowlist.has(normalized);
-  const domain = allowedDomain();
-  return normalized.endsWith(`@${domain}`);
+function loginUrls(returnTo) {
+  const q = new URLSearchParams({ returnTo: sanitizeReturnTo(returnTo) });
+  return {
+    google: isGoogleConfigured() ? `/auth/google?${q}` : null,
+    github: isGitHubConfigured() ? `/auth/github?${q}` : null,
+    primary: isGoogleConfigured()
+      ? `/auth/google?${q}`
+      : isGitHubConfigured()
+        ? `/auth/github?${q}`
+        : '/auth/google',
+  };
+}
+
+async function finishOAuthLogin(req, res, returnTo, profile) {
+  const email = profile.email?.trim().toLowerCase();
+  if (!email || profile.emailVerified === false) {
+    redirectToAuthError(res, 'email_unverified');
+    return;
+  }
+
+  const user = await upsertUser({
+    provider: profile.provider,
+    providerSub: profile.providerSub,
+    email,
+    name: profile.name ?? email,
+  });
+  const role = resolveRole(email);
+
+  const sessionId = createSession({
+    email,
+    name: profile.name ?? email,
+    userId: user.id,
+    role,
+    provider: profile.provider,
+    exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE_SEC,
+  });
+  setSessionCookie(res, sessionId, SESSION_MAX_AGE_SEC, req);
+  redirectToLocalPath(res, returnTo);
 }
 
 /**
  * @param {import('node:http').IncomingMessage} req
- * @returns {{ email: string, name?: string } | null}
+ * @returns {{ email: string, name?: string, userId?: string, role: string, provider?: string } | null}
  */
 export function getAuthenticatedUser(req) {
   if (!isAuthConfigured()) return null;
   const cookies = parseCookies(req);
   const payload = readSession(cookies[SESSION_COOKIE]);
-  if (!payload?.email || !emailAllowed(payload.email)) return null;
-  return { email: payload.email, name: payload.name ?? payload.email };
+  if (!payload?.email) return null;
+  return {
+    email: payload.email,
+    name: payload.name ?? payload.email,
+    userId: payload.userId ?? null,
+    role: payload.role ?? 'community',
+    provider: payload.provider ?? null,
+  };
 }
 
 /**
  * @param {import('node:http').IncomingMessage} req
- * @returns {{ email: string, name?: string } | null}
  */
 export function getSessionUser(req) {
-  if (!isAuthEnabled()) return { email: 'dev@local', name: 'Dev' };
+  if (!isAuthEnabled()) {
+    return {
+      email: 'dev@local',
+      name: 'Dev',
+      userId: 'dev-local',
+      role: 'admin',
+      provider: 'dev',
+    };
+  }
   return getAuthenticatedUser(req);
 }
 
-/** Preview graph POST does not mutate lab data. */
-export function isWriteAuthRequired(pathname, method) {
+export function isCommunityUser(req) {
+  return Boolean(getSessionUser(req));
+}
+
+export function isAdminUser(req) {
+  if (!isAuthEnabled()) return true;
+  const user = getSessionUser(req);
+  return user?.role === 'admin';
+}
+
+/** Lab/editorial writes require admin, not merely authenticated community users. */
+export function isAdminWriteRequired(pathname, method) {
   if (!isAuthEnabled()) return false;
   const m = method.toUpperCase();
   if (m === 'GET' || m === 'HEAD' || m === 'OPTIONS') return false;
@@ -289,17 +361,29 @@ export function isWriteAuthRequired(pathname, method) {
   if (m === 'POST' && pathname === '/api/fonoran/puzzle/guess') return false;
   if (m === 'POST' && pathname === '/api/fonoran/puzzle/feedback') return false;
   if (m === 'POST' && pathname === '/api/fonoran/expressions/candidates') return false;
+  if (m === 'POST' && pathname === '/api/fonoran/analyze/word') return false;
+  if (pathname.startsWith('/api/fonoran/me/')) return false;
+  if (pathname.startsWith('/api/fonoran/proposals')) {
+    if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/resolve$/) && m === 'POST') return true;
+    return false;
+  }
+  if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
 }
 
-/** Snapshot export/import requires admin when ADMIN_EMAILS is set. */
-export function isAdminUser(req) {
-  if (!isAuthEnabled()) return true;
-  const user = getSessionUser(req);
-  if (!user) return false;
-  const allowlist = allowedEmails();
-  if (allowlist) return allowlist.has(user.email.toLowerCase());
-  return true;
+/** @deprecated use isAdminWriteRequired */
+export function isWriteAuthRequired(pathname, method) {
+  return isAdminWriteRequired(pathname, method);
+}
+
+export function isCommunityWriteRequired(pathname, method) {
+  const m = method.toUpperCase();
+  if (m !== 'POST' && m !== 'PUT' && m !== 'PATCH' && m !== 'DELETE') return false;
+  if (pathname === '/api/fonoran/me/progress' && m === 'PUT') return true;
+  if (pathname === '/api/fonoran/proposals' && m === 'POST') return true;
+  if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/vote$/) && m === 'POST') return true;
+  if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return true;
+  return false;
 }
 
 export function isSnapshotAdminRequired(pathname, method) {
@@ -309,7 +393,6 @@ export function isSnapshotAdminRequired(pathname, method) {
   return pathname.startsWith('/api/fonoran/snapshot/');
 }
 
-/** Regeneration pipeline mutates editorial + lab state — admin on prod. */
 export function isRegenAdminRequired(pathname, method) {
   const m = method.toUpperCase();
   if (pathname === '/api/fonoran/lab/regen/status' && m === 'GET') return false;
@@ -322,7 +405,7 @@ export function isRegenAdminRequired(pathname, method) {
 export function adminRequiredResponse(res) {
   jsonResponse(res, 403, {
     error: 'Admin access required',
-    hint: 'Set ADMIN_EMAILS on the server or sign in with an listed account.',
+    hint: 'Only the Fonora vocabulary admin can edit canon. Sign in with the admin account.',
   });
 }
 
@@ -330,22 +413,24 @@ export function unauthorizedResponse(res) {
   jsonResponse(res, 401, {
     error: 'Authentication required',
     loginUrl: '/auth/google',
+    loginUrls: loginUrls('/language'),
   });
 }
 
-function loginUrl(returnTo) {
-  const q = new URLSearchParams({ returnTo: sanitizeReturnTo(returnTo) });
-  return `/auth/google?${q}`;
+export function communityRequiredResponse(res) {
+  jsonResponse(res, 401, {
+    error: 'Sign in required',
+    hint: 'Use Google or GitHub to vote, propose words, or sync learn progress.',
+    loginUrls: loginUrls('/language'),
+  });
 }
 
-async function exchangeCode(code, req) {
-  const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
+async function exchangeGoogleCode(code, req) {
   const body = new URLSearchParams({
     code,
-    client_id: clientId ?? '',
-    client_secret: clientSecret ?? '',
-    redirect_uri: redirectUri(req),
+    client_id: process.env.GOOGLE_CLIENT_ID?.trim() ?? '',
+    client_secret: process.env.GOOGLE_CLIENT_SECRET?.trim() ?? '',
+    redirect_uri: googleRedirectUri(req),
     grant_type: 'authorization_code',
   });
   const res = await fetch(GOOGLE_TOKEN_URL, {
@@ -357,18 +442,68 @@ async function exchangeCode(code, req) {
   if (!res.ok) {
     throw new Error(data.error_description || data.error || 'Token exchange failed');
   }
-  return data;
+  const profileRes = await fetch(GOOGLE_USERINFO_URL, {
+    headers: { Authorization: `Bearer ${data.access_token}` },
+  });
+  const profile = await profileRes.json().catch(() => ({}));
+  if (!profileRes.ok) {
+    throw new Error(profile.error?.message || 'Could not load Google profile');
+  }
+  return {
+    provider: 'google',
+    providerSub: String(profile.sub),
+    email: profile.email,
+    emailVerified: profile.email_verified !== false,
+    name: profile.name ?? profile.email,
+  };
 }
 
-async function fetchGoogleUser(accessToken) {
-  const res = await fetch(GOOGLE_USERINFO_URL, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+async function exchangeGitHubCode(code, req) {
+  const body = new URLSearchParams({
+    code,
+    client_id: process.env.GITHUB_CLIENT_ID?.trim() ?? '',
+    client_secret: process.env.GITHUB_CLIENT_SECRET?.trim() ?? '',
+    redirect_uri: githubRedirectUri(req),
   });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(data.error?.message || 'Could not load Google profile');
+  const tokenRes = await fetch(GITHUB_TOKEN_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json',
+    },
+    body,
+  });
+  const tokenData = await tokenRes.json().catch(() => ({}));
+  if (!tokenRes.ok || !tokenData.access_token) {
+    throw new Error(tokenData.error_description || tokenData.error || 'GitHub token exchange failed');
   }
-  return data;
+  const headers = {
+    Authorization: `Bearer ${tokenData.access_token}`,
+    Accept: 'application/vnd.github+json',
+    'User-Agent': 'Fonora-Community-Auth',
+  };
+  const userRes = await fetch(GITHUB_USER_URL, { headers });
+  const user = await userRes.json().catch(() => ({}));
+  if (!userRes.ok) throw new Error('Could not load GitHub profile');
+
+  let email = user.email?.trim().toLowerCase();
+  let emailVerified = Boolean(email);
+  if (!email) {
+    const emailsRes = await fetch(GITHUB_EMAILS_URL, { headers });
+    const emails = await emailsRes.json().catch(() => []);
+    const primary = emails.find(e => e.primary && e.verified)
+      ?? emails.find(e => e.verified);
+    email = primary?.email?.trim().toLowerCase();
+    emailVerified = Boolean(primary?.verified);
+  }
+
+  return {
+    provider: 'github',
+    providerSub: String(user.id),
+    email,
+    emailVerified,
+    name: user.name ?? user.login ?? email,
+  };
 }
 
 /**
@@ -384,15 +519,22 @@ export async function handleAuthRoutes(req, res, url, method) {
   if (pathname === '/auth/session' && method === 'GET') {
     const user = getAuthenticatedUser(req);
     const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
-    const configured = isAuthConfigured();
+    const urls = loginUrls(returnTo);
     jsonResponse(res, 200, {
       authRequired: isAuthEnabled(),
-      authConfigured: configured,
-      toolsGated: configured,
+      authConfigured: isAuthConfigured(),
+      toolsGated: isAuthConfigured(),
       authenticated: Boolean(user),
       email: user?.email ?? null,
       name: user?.name ?? null,
-      loginUrl: loginUrl(returnTo),
+      userId: user?.userId ?? null,
+      role: user?.role ?? null,
+      isAdmin: user?.role === 'admin',
+      provider: user?.provider ?? null,
+      loginUrl: urls.primary,
+      loginUrls: urls,
+      googleLoginUrl: urls.google,
+      githubLoginUrl: urls.github,
     });
     return true;
   }
@@ -410,23 +552,39 @@ export async function handleAuthRoutes(req, res, url, method) {
   }
 
   if (pathname === '/auth/google' && method === 'GET') {
-    if (!isAuthConfigured()) {
+    if (!isGoogleConfigured()) {
       jsonResponse(res, 503, { error: 'Google OAuth is not configured on this server' });
       return true;
     }
     const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
-    const state = createOAuthState(returnTo);
-
+    const state = createOAuthState(returnTo, 'google');
     const params = new URLSearchParams({
       client_id: process.env.GOOGLE_CLIENT_ID?.trim() ?? '',
-      redirect_uri: redirectUri(req),
+      redirect_uri: googleRedirectUri(req),
       response_type: 'code',
       scope: 'openid email profile',
       state,
       prompt: 'select_account',
       access_type: 'online',
     });
-    redirectToGoogleOAuth(res, params);
+    redirect302(res, `${GOOGLE_AUTH_URL}?${params}`);
+    return true;
+  }
+
+  if (pathname === '/auth/github' && method === 'GET') {
+    if (!isGitHubConfigured()) {
+      jsonResponse(res, 503, { error: 'GitHub OAuth is not configured on this server' });
+      return true;
+    }
+    const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
+    const state = createOAuthState(returnTo, 'github');
+    const params = new URLSearchParams({
+      client_id: process.env.GITHUB_CLIENT_ID?.trim() ?? '',
+      redirect_uri: githubRedirectUri(req),
+      scope: 'read:user user:email',
+      state,
+    });
+    redirect302(res, `${GITHUB_AUTH_URL}?${params}`);
     return true;
   }
 
@@ -436,40 +594,41 @@ export async function handleAuthRoutes(req, res, url, method) {
       redirectToAuthError(res, normalizeAuthErrorCode(err));
       return true;
     }
-
     const code = url.searchParams.get('code');
     const state = url.searchParams.get('state');
     const statePayload = consumeOAuthState(state);
-
-    if (!code || !state || !statePayload) {
+    if (!code || !state || !statePayload || statePayload.provider !== 'google') {
       redirectToAuthError(res, 'invalid_state');
       return true;
     }
-
-    const returnTo = statePayload.returnTo ?? '/language';
-
     try {
-      const tokens = await exchangeCode(code, req);
-      const profile = await fetchGoogleUser(tokens.access_token);
-      const email = profile.email?.trim().toLowerCase();
-      if (!email || profile.email_verified === false) {
-        redirectToAuthError(res, 'email_unverified');
-        return true;
-      }
-      if (!emailAllowed(email)) {
-        redirectToAuthError(res, 'domain', { email });
-        return true;
-      }
-
-      const sessionId = createSession({
-        email,
-        name: profile.name ?? email,
-        exp: Math.floor(Date.now() / 1000) + SESSION_MAX_AGE_SEC,
-      });
-      setSessionCookie(res, sessionId, SESSION_MAX_AGE_SEC, req);
-      redirectToLocalPath(res, returnTo);
+      const profile = await exchangeGoogleCode(code, req);
+      await finishOAuthLogin(req, res, statePayload.returnTo ?? '/language', profile);
     } catch (e) {
-      console.error('OAuth callback failed:', e);
+      console.error('Google OAuth callback failed:', e);
+      redirectToAuthError(res, 'auth_failed');
+    }
+    return true;
+  }
+
+  if (pathname === '/auth/github/callback' && method === 'GET') {
+    const err = url.searchParams.get('error');
+    if (err) {
+      redirectToAuthError(res, normalizeAuthErrorCode(err));
+      return true;
+    }
+    const code = url.searchParams.get('code');
+    const state = url.searchParams.get('state');
+    const statePayload = consumeOAuthState(state);
+    if (!code || !state || !statePayload || statePayload.provider !== 'github') {
+      redirectToAuthError(res, 'invalid_state');
+      return true;
+    }
+    try {
+      const profile = await exchangeGitHubCode(code, req);
+      await finishOAuthLogin(req, res, statePayload.returnTo ?? '/language', profile);
+    } catch (e) {
+      console.error('GitHub OAuth callback failed:', e);
       redirectToAuthError(res, 'auth_failed');
     }
     return true;
@@ -484,19 +643,21 @@ export function logAuthStatus() {
     return;
   }
   if (isAuthConfigured()) {
-    const domain = allowedDomain();
-    const allowlist = allowedEmails();
+    const admins = adminEmails();
+    const providers = [
+      isGoogleConfigured() ? 'Google' : null,
+      isGitHubConfigured() ? 'GitHub' : null,
+    ].filter(Boolean).join(' + ');
     console.log(
-      `Fonoran auth: enabled: ${allowlist ? `allowlist (${allowlist.size} emails)` : `@${domain} only`}`,
+      `Fonoran auth: enabled (${providers}); admin: ${[...admins].join(', ')}`,
     );
     return;
   }
   console.warn(
-    'Fonoran auth: not configured: write API is open. Set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and SESSION_SECRET to enable.',
+    'Fonoran auth: not configured — write API is open in dev. Set OAuth credentials and SESSION_SECRET to enable.',
   );
 }
 
-/** @internal Test helpers */
 export function __testCreateSession(payload) {
   return createSession(payload);
 }
@@ -505,8 +666,8 @@ export function __testReadSession(id) {
   return readSession(id);
 }
 
-export function __testCreateOAuthState(returnTo) {
-  return createOAuthState(returnTo);
+export function __testCreateOAuthState(returnTo, provider = 'google') {
+  return createOAuthState(returnTo, provider);
 }
 
 export function __testConsumeOAuthState(id) {
@@ -515,4 +676,8 @@ export function __testConsumeOAuthState(id) {
 
 export function __testSanitizeReturnTo(raw) {
   return sanitizeReturnTo(raw);
+}
+
+export function __testResolveRole(email) {
+  return resolveRole(email);
 }
