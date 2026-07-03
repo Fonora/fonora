@@ -1,8 +1,6 @@
 /**
  * Tests for research note metadata helpers.
  */
-import { readFileSync } from 'node:fs';
-import { resolveResearchNotesCatalogPath } from '../tools/fonoran-data-paths.js';
 import {
   deriveMetadataFromBody,
   extractDescription,
@@ -32,10 +30,22 @@ function test(name, fn) {
   }
 }
 
-export function runResearchNoteMetaTests() {
-  const sampleMd = readFileSync(resolveResearchNotesCatalogPath(), 'utf8');
-  const firstNote = JSON.parse(sampleMd).notes[0];
+const SAMPLE_NOTE_METADATA = {
+  slug: 'articulation-grid',
+  code: 'RN-01',
+  title: 'Writing sound instead of spelling',
+  status: 'Foundational',
+  phase: 'phase-1',
+  date: '2026-06-20',
+  description: 'How Fonora encodes articulation instead of orthography.',
+  abstract: 'How Fonora encodes articulation instead of orthography.',
+  related: ['ipa-pipeline'],
+  docs: [{ label: 'language-rules.md', path: 'docs/language-rules.md' }],
+  tools: [{ label: 'Sound Grid', href: '/script#grid' }],
+  source: [{ label: 'rules.js', path: 'js/rules.js' }],
+};
 
+export function runResearchNoteMetaTests() {
   return [
     test('slugifyTitle produces kebab-case', () => {
       assert(slugifyTitle('Writing Sound Instead!') === 'writing-sound-instead');
@@ -79,7 +89,7 @@ export function runResearchNoteMetaTests() {
     }),
     test('formatNoteMarkdownExport includes frontmatter', () => {
       const out = formatNoteMarkdownExport({
-        metadata: { ...firstNote.metadata, git_commit: 'abc1234def' },
+        metadata: { ...SAMPLE_NOTE_METADATA, git_commit: 'abc1234def' },
         body: '# Hello\n',
         published_at: '2026-06-20T12:00:00Z',
       });
