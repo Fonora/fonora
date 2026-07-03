@@ -31,8 +31,6 @@ async function countJson(path, key) {
       return { rounds: body.rounds?.length ?? 0 };
     case 'translation_test_latest':
       return { phrases: body.phrases?.length ?? body.results?.length ?? 0 };
-    case 'research_notes_store':
-      return { notes: body.notes?.length ?? 0 };
     default:
       return {};
   }

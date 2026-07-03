@@ -15,12 +15,12 @@ import {
   validateNoteMetadata,
 } from '../js/research-note-meta.js';
 import { normalizeNoteMetadata, resolveNotePhase } from '../js/research-notes.js';
-import { resolveDataPath } from './fonoran-data-paths.js';
+import { resolveResearchNotesCatalogPath } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 export const STORE_PATH =
   process.env.RESEARCH_NOTES_STORE_PATH?.trim() ||
-  resolveDataPath('research_notes_store');
+  resolveResearchNotesCatalogPath();
 
 let schemaReady = false;
 let pool = null;
@@ -522,8 +522,9 @@ export function publishedNotesFromSeed(notes) {
 }
 
 /**
- * Upsert published research notes from git seed into PostgreSQL.
- * Git is canonical for published notes; prod-only drafts are untouched.
+ * Upsert published research notes into PostgreSQL from main-repo markdown.
+ * Git canonical: docs/research-notes/RN-XX-slug.md (bodies) + optional metadata overlay
+ * in data/research-notes-store.json. Prod-only drafts in Postgres are untouched.
  */
 export async function syncResearchNotesFromSeed() {
   if (resolveStorageMode() !== 'postgres' || !process.env.DATABASE_URL) {
@@ -531,10 +532,10 @@ export async function syncResearchNotesFromSeed() {
   }
 
   await ensureSchemaOnce();
-  const seedNotes = await readJsonStore();
-  const published = publishedNotesFromSeed(seedNotes);
+  const { buildPublishedNotesFromMarkdown } = await import('./research-notes-md-sync.js');
+  const published = await buildPublishedNotesFromMarkdown();
   if (!published.length) {
-    return { skipped: true, reason: 'no published seed notes' };
+    return { skipped: true, reason: 'no published markdown notes' };
   }
 
   let synced = 0;
@@ -544,7 +545,7 @@ export async function syncResearchNotesFromSeed() {
   }
 
   clearPublishedCache();
-  return { synced, total: published.length };
+  return { synced, total: published.length, source: 'docs/research-notes' };
 }
 
 /** @deprecated Use syncResearchNotesFromSeed at deploy time instead of web boot. */
