@@ -4,11 +4,12 @@
 import {
   loadFonoranPracticeEntries,
   meaningChoicesForEntry,
-  shuffleEntries,
 } from './fonoran-practice-words.js';
+import { createCurriculum } from './fonoran-learn-curriculum.js';
 import { loadFonoranDisplayMode, setupFonoranDisplayModeToggle } from './learning-display-mode.js';
 import {
   createLearnSession,
+  finishMcqAnswer,
   learnChoiceHtml,
   markChoiceStates,
 } from './learn-session-ui.js';
@@ -16,6 +17,10 @@ import { escapeHtml } from './utils.js';
 
 /** @type {import('./fonoran-practice-words.js').PracticeEntry[]} */
 let entries = [];
+/** @type {import('./fonoran-practice-words.js').PracticeEntry[]} */
+let pool = [];
+/** @type {ReturnType<typeof createCurriculum> | null} */
+let curriculum = null;
 let currentIndex = 0;
 /** @type {string[]} */
 let currentChoices = [];
@@ -41,13 +46,10 @@ function renderPrompt() {
 function renderChoices() {
   const entry = entries[currentIndex];
   const container = document.getElementById('fonoran-reading-choices');
-  const feedback = document.getElementById('fonoran-reading-feedback');
   if (!entry || !container) return;
 
-  currentChoices = meaningChoicesForEntry(entry, entries);
+  currentChoices = meaningChoicesForEntry(entry, pool.length ? pool : entries);
   answered = false;
-  feedback.textContent = '';
-  feedback.className = 'learn-exercise__feedback quiz-feedback';
   session?.setContinueVisible('fonoran-reading-next', false);
 
   container.innerHTML = currentChoices
@@ -65,20 +67,23 @@ function nextQuestion() {
 function onChoice(index) {
   if (answered || session?.isComplete) return;
   const entry = entries[currentIndex];
-  const feedback = document.getElementById('fonoran-reading-feedback');
-  if (!entry || !feedback) return;
+  if (!entry) return;
 
   const choice = currentChoices[index];
   const correct = choice === entry.meaning;
   answered = true;
 
-  feedback.className = correct
-    ? 'learn-exercise__feedback quiz-feedback quiz-feedback--ok'
-    : 'learn-exercise__feedback quiz-feedback quiz-feedback--miss';
-  feedback.textContent = correct ? 'Correct!' : `Expected: ${entry.meaning}`;
-
-  markChoiceStates('.learn-choice', currentChoices, entry.meaning, index);
-  session?.afterAnswer('fonoran-reading-next', { correct, autoAdvanceMs: 800 });
+  curriculum?.recordResult(entry, correct);
+  markChoiceStates('#fonoran-reading-choices .learn-choice', currentChoices, entry.meaning, index);
+  if (session) {
+    finishMcqAnswer(session, {
+      continueButtonId: 'fonoran-reading-next',
+      correct,
+      beforeAdvance: () => {
+        answered = false;
+      },
+    });
+  }
 }
 
 /**
@@ -94,10 +99,13 @@ export async function setupFonoranReading(rules) {
   session = createLearnSession('fonoran-reading', {
     panelId: 'tab-fonoran-reading',
     answerType: 'mcq',
+    lessonLabel: () => curriculum?.lessonLabel() ?? '',
+    onComplete: (stats) => curriculum?.complete(stats) ?? {},
     onQuestionStart: () => {
       if (entries.length) nextQuestion();
     },
     onSessionReset: () => {
+      entries = curriculum?.currentLessonEntries() ?? entries;
       currentIndex = 0;
       renderPrompt();
       renderChoices();
@@ -108,8 +116,12 @@ export async function setupFonoranReading(rules) {
   });
 
   try {
-    entries = shuffleEntries(await loadFonoranPracticeEntries(rules, { coreOnly: true }));
+    curriculum = createCurriculum('fonoran-reading', await loadFonoranPracticeEntries(rules));
+    pool = curriculum.ordered;
+    entries = curriculum.currentLessonEntries();
   } catch {
+    curriculum = null;
+    pool = [];
     entries = [];
   }
 

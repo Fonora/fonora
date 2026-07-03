@@ -5,7 +5,11 @@ import { getQuizEntries, buildKeyboardMap } from './rules.js';
 import { findVowelForCell, isVowelQuizCell } from './vowel-display.js';
 import { normalizeSymbolInput } from './decode.js';
 import { showBreakdownFeedback, hideBreakdownFeedback } from './breakdown-feedback.js';
-import { createLearnSession, setLearnVerdict } from './learn-session-ui.js';
+import {
+  createLearnSession,
+  finishTypingAnswer,
+  setLearnVerdict,
+} from './learn-session-ui.js';
 import { escapeHtml, insertAtCursor } from './utils.js';
 
 /** @type {object | null} */
@@ -144,12 +148,9 @@ function startQuiz(type) {
   currentQuiz = { type, cell: pickRandomQuizCell(), answered: false };
   setLearnVerdict('quiz-verdict', null);
   session?.setContinueVisible('quiz-next', false);
+  const checkBtn = document.getElementById('quiz-check');
+  if (checkBtn) checkBtn.hidden = false;
 
-  const fb = document.getElementById('quiz-feedback');
-  if (fb) {
-    fb.textContent = '';
-    fb.className = 'learn-exercise__feedback quiz-feedback';
-  }
   hideBreakdownFeedback(document.getElementById('quiz-symbol-breakdown'));
   document.getElementById('quiz-answer-decode').value = '';
   document.getElementById('quiz-answer-construct').value = '';
@@ -190,18 +191,6 @@ function checkQuizAnswer() {
   currentQuiz.answered = true;
   setLearnVerdict('quiz-verdict', correct);
 
-  const fb = document.getElementById('quiz-feedback');
-  if (fb) {
-    fb.className = correct
-      ? 'learn-exercise__feedback quiz-feedback quiz-feedback--ok'
-      : 'learn-exercise__feedback quiz-feedback quiz-feedback--miss';
-    fb.innerHTML = correct
-      ? ''
-      : currentQuiz.type === 'decode'
-        ? `Expected: ${currentQuiz.cell.sound}`
-        : `Expected: <span class="symbol-text">${escapeHtml(currentQuiz.cell.symbols)}</span>`;
-  }
-
   const breakdownEl = document.getElementById('quiz-symbol-breakdown');
   if (correct) {
     hideBreakdownFeedback(breakdownEl);
@@ -211,7 +200,16 @@ function checkQuizAnswer() {
     hideBreakdownFeedback(breakdownEl);
   }
 
-  session?.afterAnswer('quiz-next', { correct });
+  if (session) {
+    finishTypingAnswer(session, {
+      checkButtonId: 'quiz-check',
+      continueButtonId: 'quiz-next',
+      correct,
+      beforeAdvance: () => {
+        currentQuiz = null;
+      },
+    });
+  }
 }
 
 /**
@@ -239,13 +237,20 @@ export function setupScriptSounds(rules) {
   if (!wired) {
     wired = true;
     const constructInput = document.getElementById('quiz-answer-construct');
+    const decodeInput = document.getElementById('quiz-answer-decode');
     renderSymbolButtons(document.getElementById('quiz-keyboard'), constructInput);
     attachKeyboardShortcuts(constructInput);
 
     document.getElementById('quiz-show-hints')?.addEventListener('change', updateQuizHints);
     document.getElementById('quiz-check')?.addEventListener('click', checkQuizAnswer);
-    document.getElementById('quiz-answer-decode')?.addEventListener('keydown', (event) => {
+    decodeInput?.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') checkQuizAnswer();
+    });
+    constructInput?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        checkQuizAnswer();
+      }
     });
   }
 

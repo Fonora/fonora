@@ -2,38 +2,50 @@
  * Shared Fonoran practice vocabulary from the lab bootstrap (communicative core by default).
  */
 import { buildMeaningChoices } from '../tools/fonoran-meaning-choices.js';
-import { experienceMetaFor } from '../tools/fonoran-experience-tiers.js';
+import { experienceMetaFor, LANGUAGE_TIERS } from '../tools/fonoran-experience-tiers.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 
-/** @typedef {{ spelling: string, meaning: string, parts: string[], script: string, conceptId?: string }} PracticeEntry */
+/** @typedef {{ spelling: string, meaning: string, parts: string[], script: string, conceptId?: string, languageTier: string, tierRank: number }} PracticeEntry */
+
+/** communicative_core = 0, extended_core = 1, complete = 2. */
+function tierRank(languageTier) {
+  const rank = LANGUAGE_TIERS.indexOf(languageTier);
+  return rank < 0 ? LANGUAGE_TIERS.length - 1 : rank;
+}
 
 function meaningOf(item) {
   return (item.meaning ?? item.concept_id ?? item.gloss ?? '').toString().trim();
 }
 
-function isCoreSound(sound) {
+function soundTierRank(sound) {
   const conceptId = sound?.concept_id;
-  if (!conceptId) return false;
-  return experienceMetaFor(conceptId).language_tier === 'communicative_core';
+  if (!conceptId) return LANGUAGE_TIERS.length - 1;
+  return tierRank(experienceMetaFor(conceptId).language_tier);
 }
 
-function isCoreCompound(compound, soundBySpelling) {
+/** A compound is as advanced as its most advanced part. */
+function compoundTierRank(compound, soundBySpelling) {
   const parts = compound.parts ?? [];
-  if (!parts.length) return false;
-  return parts.every((spelling) => {
+  if (!parts.length) return LANGUAGE_TIERS.length - 1;
+  let rank = 0;
+  for (const spelling of parts) {
     const snd = soundBySpelling.get(spelling);
-    if (!snd?.concept_id) return false;
-    return experienceMetaFor(snd.concept_id).language_tier === 'communicative_core';
-  });
+    rank = Math.max(rank, snd ? soundTierRank(snd) : LANGUAGE_TIERS.length - 1);
+  }
+  return rank;
 }
 
 /**
+ * Build practice entries from the lab dictionary. By default every non-rejected,
+ * script-encodable root and compound is included so the Learn curriculum can walk
+ * the full vocabulary from simple to complex. Pass `maxTierRank` to cap difficulty.
  * @param {object} lab
  * @param {object} rules
- * @param {{ coreOnly?: boolean }} [opts]
+ * @param {{ coreOnly?: boolean, maxTierRank?: number }} [opts]
  * @returns {PracticeEntry[]}
  */
-export function buildFonoranPracticeEntries(lab, rules, { coreOnly = true } = {}) {
+export function buildFonoranPracticeEntries(lab, rules, { coreOnly = false, maxTierRank = Infinity } = {}) {
+  const cap = coreOnly ? 0 : maxTierRank;
   const sounds = lab?.sounds ?? [];
   const compounds = lab?.compounds ?? [];
   const soundBySpelling = new Map(sounds.map((s) => [s.spelling, s]));
@@ -41,7 +53,8 @@ export function buildFonoranPracticeEntries(lab, rules, { coreOnly = true } = {}
 
   for (const sound of sounds) {
     if (!sound.spelling || sound.state === 'rejected') continue;
-    if (coreOnly && !isCoreSound(sound)) continue;
+    const rank = soundTierRank(sound);
+    if (rank > cap) continue;
     const meaning = meaningOf(sound);
     if (!meaning) continue;
     const { phrase } = romanToFonoraScript([sound.spelling], rules);
@@ -52,12 +65,15 @@ export function buildFonoranPracticeEntries(lab, rules, { coreOnly = true } = {}
       parts: [sound.spelling],
       script: phrase,
       conceptId: sound.concept_id,
+      languageTier: LANGUAGE_TIERS[rank],
+      tierRank: rank,
     });
   }
 
   for (const compound of compounds) {
     if (!compound.spelling || compound.state === 'rejected') continue;
-    if (coreOnly && !isCoreCompound(compound, soundBySpelling)) continue;
+    const rank = compoundTierRank(compound, soundBySpelling);
+    if (rank > cap) continue;
     const meaning = meaningOf(compound);
     if (!meaning) continue;
     const parts = compound.parts?.length ? compound.parts : [compound.spelling];
@@ -69,6 +85,8 @@ export function buildFonoranPracticeEntries(lab, rules, { coreOnly = true } = {}
       parts,
       script: phrase,
       conceptId: compound.concept_id,
+      languageTier: LANGUAGE_TIERS[rank],
+      tierRank: rank,
     });
   }
 

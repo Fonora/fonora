@@ -10,7 +10,11 @@ import {
   updateLearningLanguageNote,
 } from './learning-language-select.js';
 import { showBreakdownFeedback, hideBreakdownFeedback } from './breakdown-feedback.js';
-import { createLearnSession, setLearnVerdict } from './learn-session-ui.js';
+import {
+  createLearnSession,
+  finishTypingAnswer,
+  setLearnVerdict,
+} from './learn-session-ui.js';
 import { escapeHtml } from './utils.js';
 
 /** @typedef {{ text: string, accept: string[], symbols: string }} ScriptReadingWord */
@@ -25,6 +29,10 @@ let rulesRef = null;
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
 let checked = false;
+
+function resetAnswerState() {
+  checked = false;
+}
 
 async function loadWordBank() {
   const res = await fetch('/data/fonora-script-practice-words.json');
@@ -41,20 +49,17 @@ function showWordPrompt() {
   const word = readingWords[currentIndex];
   const prompt = document.getElementById('script-reading-word-prompt');
   const input = document.getElementById('script-reading-word-answer');
-  const feedback = document.getElementById('script-reading-word-feedback');
+  const checkBtn = document.getElementById('script-reading-word-check');
   const breakdown = document.getElementById('script-reading-word-breakdown');
   if (!word || !prompt || !input) return;
 
   prompt.innerHTML = `<span class="symbol-text learn-exercise__prompt-glyphs">${escapeHtml(word.symbols)}</span>`;
   input.value = '';
-  checked = false;
+  resetAnswerState();
   input.disabled = false;
   setLearnVerdict('script-reading-word-verdict', null);
   session?.setContinueVisible('script-reading-word-next', false);
-  if (feedback) {
-    feedback.textContent = '';
-    feedback.className = 'learn-exercise__feedback quiz-feedback';
-  }
+  if (checkBtn) checkBtn.hidden = false;
   hideBreakdownFeedback(breakdown);
   input.focus();
 }
@@ -69,9 +74,8 @@ function checkWordAnswer() {
   if (checked || session?.isComplete) return;
   const word = readingWords[currentIndex];
   const input = document.getElementById('script-reading-word-answer');
-  const feedback = document.getElementById('script-reading-word-feedback');
   const breakdown = document.getElementById('script-reading-word-breakdown');
-  if (!word || !input || !feedback || !rulesRef) return;
+  if (!word || !input || !rulesRef || !session) return;
 
   const answer = normalizeAnswer(input.value);
   const accepted = (word.accept ?? [word.text]).map(normalizeAnswer);
@@ -80,10 +84,6 @@ function checkWordAnswer() {
   input.disabled = true;
 
   setLearnVerdict('script-reading-word-verdict', correct);
-  feedback.className = correct
-    ? 'learn-exercise__feedback quiz-feedback quiz-feedback--ok'
-    : 'learn-exercise__feedback quiz-feedback quiz-feedback--miss';
-  feedback.textContent = correct ? '' : `Expected: ${word.accept?.[0] || word.text}`;
 
   if (correct) {
     hideBreakdownFeedback(breakdown);
@@ -91,7 +91,12 @@ function checkWordAnswer() {
     void showBreakdownFeedback(breakdown, word.text, rulesRef);
   }
 
-  session?.afterAnswer('script-reading-word-next', { correct });
+  finishTypingAnswer(session, {
+    checkButtonId: 'script-reading-word-check',
+    continueButtonId: 'script-reading-word-next',
+    correct,
+    beforeAdvance: resetAnswerState,
+  });
 }
 
 async function reloadScriptReadingWords(rules) {
@@ -140,7 +145,7 @@ export async function setupScriptReadingWords(rules) {
     },
   });
   session.bindContinue('script-reading-word-next', () => {
-    checked = false;
+    resetAnswerState();
   });
 
   const label = document.getElementById('script-reading-word-label');
@@ -151,7 +156,8 @@ export async function setupScriptReadingWords(rules) {
   if (!wired) {
     wired = true;
     document.getElementById('script-reading-word-check')?.addEventListener('click', checkWordAnswer);
-    document.getElementById('script-reading-word-answer')?.addEventListener('keydown', (event) => {
+    const readingInput = document.getElementById('script-reading-word-answer');
+    readingInput?.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') checkWordAnswer();
     });
     setupLearningLanguageSelect('script-reading-language', async () => {

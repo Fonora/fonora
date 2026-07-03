@@ -3,9 +3,9 @@
  */
 import {
   loadFonoranPracticeEntries,
-  shuffleEntries,
   spellingMatchesEntry,
 } from './fonoran-practice-words.js';
+import { createCurriculum } from './fonoran-learn-curriculum.js';
 import { setupFonoranDisplayModeToggle, loadFonoranDisplayMode } from './learning-display-mode.js';
 import {
   onSpellingPracticeTabActivated,
@@ -13,10 +13,18 @@ import {
   bindSpellingSession,
   getSpellingPractice,
 } from './fonora-spelling-practice.js';
-import { createLearnSession, setLearnVerdict } from './learn-session-ui.js';
+import {
+  createLearnSession,
+  finishTypingAnswer,
+  setLearnVerdict,
+} from './learn-session-ui.js';
 
 /** @type {import('./fonoran-practice-words.js').PracticeEntry[]} */
 let entries = [];
+/** @type {import('./fonoran-practice-words.js').PracticeEntry[]} */
+let pool = [];
+/** @type {ReturnType<typeof createCurriculum> | null} */
+let curriculum = null;
 let currentIndex = 0;
 /** @type {'roman' | 'script'} */
 let displayMode = 'roman';
@@ -25,22 +33,23 @@ let displayMode = 'roman';
 let session = null;
 let checked = false;
 
+function resetAnswerState() {
+  checked = false;
+}
+
 function showRomanPrompt() {
   const entry = entries[currentIndex];
   const meaningEl = document.getElementById('fonoran-writing-roman-meaning');
   const input = document.getElementById('fonoran-writing-roman-input');
-  const feedback = document.getElementById('fonoran-writing-roman-feedback');
+  const checkBtn = document.getElementById('fonoran-writing-roman-check');
   if (!entry || !meaningEl || !input) return;
 
   meaningEl.textContent = entry.meaning;
   input.value = '';
-  checked = false;
+  resetAnswerState();
   setLearnVerdict('fonoran-writing-roman-verdict', null);
   session?.setContinueVisible('fonoran-writing-roman-next', false);
-  if (feedback) {
-    feedback.textContent = '';
-    feedback.className = 'learn-exercise__feedback quiz-feedback';
-  }
+  if (checkBtn) checkBtn.hidden = false;
   input.disabled = false;
   input.focus();
 }
@@ -55,20 +64,22 @@ function checkRomanAnswer() {
   if (checked || session?.isComplete) return;
   const entry = entries[currentIndex];
   const input = document.getElementById('fonoran-writing-roman-input');
-  const feedback = document.getElementById('fonoran-writing-roman-feedback');
-  if (!entry || !input || !feedback) return;
+  if (!entry || !input) return;
 
-  const correct = spellingMatchesEntry(input.value, entry, entries);
+  const correct = spellingMatchesEntry(input.value, entry, pool.length ? pool : entries);
   checked = true;
   input.disabled = true;
 
+  curriculum?.recordResult(entry, correct);
   setLearnVerdict('fonoran-writing-roman-verdict', correct);
-  feedback.className = correct
-    ? 'learn-exercise__feedback quiz-feedback quiz-feedback--ok'
-    : 'learn-exercise__feedback quiz-feedback quiz-feedback--miss';
-  feedback.textContent = correct ? '' : `Expected: ${entry.spelling}`;
-
-  session?.afterAnswer('fonoran-writing-roman-next', { correct });
+  if (session) {
+    finishTypingAnswer(session, {
+      checkButtonId: 'fonoran-writing-roman-check',
+      continueButtonId: 'fonoran-writing-roman-next',
+      correct,
+      beforeAdvance: resetAnswerState,
+    });
+  }
 }
 
 function syncPanelVisibility(mode) {
@@ -92,11 +103,14 @@ export async function setupFonoranWriting(rules) {
   session = createLearnSession('fonoran-writing', {
     panelId: 'tab-spelling-practice',
     answerType: 'typing',
+    lessonLabel: () => curriculum?.lessonLabel() ?? '',
+    onComplete: (stats) => curriculum?.complete(stats) ?? {},
     onQuestionStart: () => {
       if (displayMode === 'roman' && entries.length) nextRomanWord();
       else getSpellingPractice()?.advanceWord();
     },
     onSessionReset: () => {
+      entries = curriculum?.currentLessonEntries() ?? entries;
       currentIndex = 0;
       if (displayMode === 'roman') showRomanPrompt();
       else getSpellingPractice()?.restartWords();
@@ -104,15 +118,19 @@ export async function setupFonoranWriting(rules) {
   });
   bindSpellingSession(session);
   session.bindContinue('fonoran-writing-roman-next', () => {
-    checked = false;
+    resetAnswerState();
   });
   session.bindContinue('spelling-practice-continue', () => {});
 
   setupFonoranDisplayModeToggle('fonoran-writing-mode', applyDisplayMode, 'fonoran-writing-display-mode');
 
   try {
-    entries = shuffleEntries(await loadFonoranPracticeEntries(rules, { coreOnly: true }));
+    curriculum = createCurriculum('fonoran-writing', await loadFonoranPracticeEntries(rules));
+    pool = curriculum.ordered;
+    entries = curriculum.currentLessonEntries();
   } catch {
+    curriculum = null;
+    pool = [];
     entries = [];
   }
 
@@ -125,7 +143,8 @@ export async function setupFonoranWriting(rules) {
   }
 
   document.getElementById('fonoran-writing-roman-check')?.addEventListener('click', checkRomanAnswer);
-  document.getElementById('fonoran-writing-roman-input')?.addEventListener('keydown', (event) => {
+  const romanInput = document.getElementById('fonoran-writing-roman-input');
+  romanInput?.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') checkRomanAnswer();
   });
 

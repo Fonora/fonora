@@ -3,10 +3,14 @@
  */
 import {
   getDailyGoalProgress,
+  getMasteryStats,
+  getSkillCurriculumMeta,
+  getSkillLesson,
   getSkillLevel,
   getSkillProgress,
   getTotalLevel,
   loadProgress,
+  SKILL_TRACK,
 } from './learn-gamification.js';
 import { icon } from './learn-icons.js';
 
@@ -43,13 +47,31 @@ export function refreshLearnHomeProgress() {
     const skillId = card.getAttribute('data-skill');
     if (!skillId) return;
 
-    const skill = getSkillProgress(/** @type {import('./learn-gamification.js').LearnSkillId} */ (skillId));
-    const lvl = getSkillLevel(skill.xp);
-    const withinLevel = skill.xp % XP_PER_LEVEL;
-    const pct = Math.round((withinLevel / XP_PER_LEVEL) * 100);
+    const typedSkillId = /** @type {import('./learn-gamification.js').LearnSkillId} */ (skillId);
+    const skill = getSkillProgress(typedSkillId);
+    const meta = getSkillCurriculumMeta(typedSkillId);
+    const isCurriculum = SKILL_TRACK[typedSkillId] === 'language' && meta.total > 0;
+
+    let pct;
+    let levelText;
+    if (isCurriculum) {
+      const { mastered } = getMasteryStats(typedSkillId);
+      const lessonIndex = getSkillLesson(typedSkillId);
+      const lessonNumber = Math.min(lessonIndex + 1, meta.totalLessons);
+      pct = meta.total ? Math.round((mastered / meta.total) * 100) : 0;
+      const ring = meta.ring ? `${meta.ring} · ` : '';
+      levelText = lessonIndex >= meta.totalLessons
+        ? `${ring}Review · ${mastered}/${meta.total} words`
+        : `${ring}Lesson ${lessonNumber}/${meta.totalLessons}`;
+    } else {
+      const lvl = getSkillLevel(skill.xp);
+      const withinLevel = skill.xp % XP_PER_LEVEL;
+      pct = Math.round((withinLevel / XP_PER_LEVEL) * 100);
+      levelText = `Level ${lvl} · ${withinLevel}/${XP_PER_LEVEL} XP`;
+    }
 
     const levelEl = card.querySelector('.learn-skill-card__level');
-    if (levelEl) levelEl.textContent = `Level ${lvl} · ${withinLevel}/${XP_PER_LEVEL} XP`;
+    if (levelEl) levelEl.textContent = levelText;
 
     const bar = card.querySelector('.learn-skill-card__progress');
     const fill = card.querySelector('.learn-skill-card__progress-fill');

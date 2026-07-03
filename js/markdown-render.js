@@ -20,12 +20,13 @@ function inlineFormat(text, docPath, options = {}) {
     const resolved = resolveMarkdownHref(href, docPath);
     const docPathAttr = repoPathFromViewerHref(resolved);
     const isDoc = Boolean(docPathAttr) || (href.endsWith('.md') && !/^https?:\/\//i.test(href));
+    // Label may already contain safe inline HTML (<code>, <strong>, <em>) from steps above.
     if (isDoc && !/^https?:\/\//i.test(resolved)) {
-      return `<a href="${escapeHtml(resolved)}" class="doc-internal-link" data-doc-path="${escapeHtml(docPathAttr ?? href)}">${escapeHtml(label)}</a>`;
+      return `<a href="${escapeHtml(resolved)}" class="doc-internal-link" data-doc-path="${escapeHtml(docPathAttr ?? href)}">${label}</a>`;
     }
     const external = /^https?:\/\//i.test(resolved);
     const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
-    return `<a href="${escapeHtml(resolved)}"${attrs}>${escapeHtml(label)}</a>`;
+    return `<a href="${escapeHtml(resolved)}"${attrs}>${label}</a>`;
   });
   if (options.grammar) {
     out = out.replace(/\[([^\]/\[]+)\](?!\()/g, '<span class="grammar-missing">$1</span>');

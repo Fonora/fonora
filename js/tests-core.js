@@ -623,6 +623,12 @@ export function runTests(options) {
     assert(!html.includes('*italic*'));
   });
 
+  t('markdown renderer keeps inline code inside link labels', () => {
+    const html = renderMarkdown('[`tools/foo.js`](../tools/foo.js)', { docPath: 'research/test' });
+    assert(html.includes('<a href="../tools/foo.js"><code>tools/foo.js</code></a>'));
+    assert(!html.includes('&lt;code&gt;'));
+  });
+
   t('markdown renderer emits mermaid containers', () => {
     const html = renderMarkdown('```mermaid\nflowchart TD\n  A --> B\n```', { docPath: 'docs/README.md' });
     assert(html.includes('class="mermaid-pan-zoom'));

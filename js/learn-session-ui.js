@@ -141,6 +141,8 @@ export function xpForAnswer(type, correct) {
  * @property {LearnAnswerType} [answerType='typing']
  * @property {() => void} [onQuestionStart] — called when a new question begins
  * @property {() => void} [onSessionReset] — called when session restarts after summary
+ * @property {() => string} [lessonLabel] — optional lesson/ring label for the session bar
+ * @property {(stats: { correct: number, attempts: number }) => { primaryLabel?: string, note?: string }} [onComplete] — called when the 10th question is answered; result customizes the summary
  */
 
 /**
@@ -148,7 +150,7 @@ export function xpForAnswer(type, correct) {
  * @param {LearnSessionOptions} options
  */
 export function createLearnSession(skillId, options) {
-  const { panelId, answerType = 'typing', onQuestionStart, onSessionReset } = options;
+  const { panelId, answerType = 'typing', onQuestionStart, onSessionReset, lessonLabel, onComplete } = options;
   const panel = document.getElementById(panelId);
 
   const sessionBar = document.getElementById('learn-session-bar');
@@ -169,6 +171,8 @@ export function createLearnSession(skillId, options) {
   let sessionXp = 0;
   let currentAnswered = false;
   let summaryVisible = false;
+  /** @type {{ primaryLabel?: string, note?: string } | null} */
+  let completion = null;
 
   function updateBar() {
     const pct = summaryVisible
@@ -179,7 +183,10 @@ export function createLearnSession(skillId, options) {
       progressBar.setAttribute('aria-valuenow', String(summaryVisible ? SESSION_LENGTH : questionIndex));
       progressBar.setAttribute('aria-valuemax', String(SESSION_LENGTH));
     }
-    if (lessonEl) lessonEl.textContent = lessonTitle;
+    if (lessonEl) {
+      const label = lessonLabel?.();
+      lessonEl.textContent = label ? `${lessonTitle} (${label})` : lessonTitle;
+    }
     if (questionEl) {
       questionEl.textContent = summaryVisible
         ? 'Complete'
@@ -210,6 +217,10 @@ export function createLearnSession(skillId, options) {
     summaryEl.hidden = false;
     panel?.classList.add('learn-exercise--session-complete');
     sessionBar?.classList.add('learn-session--complete');
+    const primaryLabel = completion?.primaryLabel ?? 'Practice again';
+    const note = completion?.note
+      ? `<p class="learn-session-summary__note">${escapeHtml(completion.note)}</p>`
+      : '';
     summaryEl.innerHTML = `
       <div class="learn-session-summary__card">
         <span class="learn-session-summary__seal">${icon('award')}</span>
@@ -219,8 +230,9 @@ export function createLearnSession(skillId, options) {
           <div><dt>XP earned</dt><dd>+${sessionXp}</dd></div>
           <div><dt>Streak</dt><dd>${streak} day${streak === 1 ? '' : 's'}</dd></div>
         </dl>
+        ${note}
         <div class="button-row learn-session-summary__actions">
-          <button type="button" class="btn btn--primary learn-session-summary__continue">Practice again</button>
+          <button type="button" class="btn btn--primary learn-session-summary__continue">${escapeHtml(primaryLabel)}</button>
           <button type="button" class="btn learn-session-summary__home">Back to Learn</button>
         </div>
       </div>`;
@@ -241,6 +253,7 @@ export function createLearnSession(skillId, options) {
     sessionAttempts = 0;
     sessionXp = 0;
     currentAnswered = false;
+    completion = null;
     hideSummary();
     updateBar();
     onSessionReset?.();
@@ -278,6 +291,7 @@ export function createLearnSession(skillId, options) {
     if (questionIndex >= SESSION_LENGTH) {
       const bonus = recordSessionComplete(skillId);
       sessionXp += bonus;
+      completion = onComplete?.({ correct: sessionCorrect, attempts: sessionAttempts }) ?? null;
       renderSummary();
       return true;
     }
@@ -367,6 +381,51 @@ export function createLearnSession(skillId, options) {
     afterAnswer,
     updateBar,
   };
+}
+
+/**
+ * After a typed answer: auto-advance when correct; hide Check and show Continue on the right when wrong.
+ * @param {ReturnType<typeof createLearnSession>} session
+ * @param {{ checkButtonId: string, continueButtonId: string, correct: boolean, beforeAdvance?: () => void }} opts
+ */
+export function finishTypingAnswer(session, { checkButtonId, continueButtonId, correct, beforeAdvance }) {
+  session.onAnswer({ correct });
+  const checkBtn = document.getElementById(checkButtonId);
+  if (checkBtn) checkBtn.hidden = true;
+
+  if (correct) {
+    session.setContinueVisible(continueButtonId, false);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(() => {
+      if (session.canAdvance()) {
+        beforeAdvance?.();
+        session.advance();
+      }
+    }, reducedMotion ? 0 : 800);
+  } else {
+    session.setContinueVisible(continueButtonId, true);
+  }
+}
+
+/**
+ * After an MCQ answer: auto-advance when correct; Continue on the right when wrong.
+ * @param {ReturnType<typeof createLearnSession>} session
+ * @param {{ continueButtonId: string, correct: boolean, beforeAdvance?: () => void }} opts
+ */
+export function finishMcqAnswer(session, { continueButtonId, correct, beforeAdvance }) {
+  session.onAnswer({ correct });
+  if (correct) {
+    session.setContinueVisible(continueButtonId, false);
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(() => {
+      if (session.canAdvance()) {
+        beforeAdvance?.();
+        session.advance();
+      }
+    }, reducedMotion ? 0 : 800);
+  } else {
+    session.setContinueVisible(continueButtonId, true);
+  }
 }
 
 /**

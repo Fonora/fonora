@@ -9,9 +9,10 @@
     import { createPuzzlePage } from './pages/puzzle-page.js';
     import { buildComposeScenesFromLab, mountComposeShowcase } from './compose-showcase.js';
     import { labEntryMatchesQuery } from '../tools/fonoran-lab-search.js';
+    import { experienceMetaFor } from '../tools/fonoran-experience-tiers.js';
     import { bindModalDismiss, setModalBackdropOpen } from '../js/modal-dismiss.js';
     import { extractMarkdownHeadings, normalizeGrammarSource, renderMarkdown } from '../js/markdown-render.js';
-    import { getStoredTheme } from '../js/theme.js';
+    import { getStoredTheme, isDarkTheme } from '../js/theme.js';
 
     const AUTH = {
       required: false,
@@ -677,17 +678,118 @@
     }
 
     function tierFor(conceptId) {
-      return STATE.conceptTiers?.get(conceptId) ?? null;
+      if (!conceptId) return null;
+      const cached = STATE.conceptTiers?.get(conceptId);
+      if (cached?.language_tier) return cached;
+      const meta = experienceMetaFor(conceptId);
+      return {
+        experience_tier: meta.experience_tier,
+        language_tier: meta.language_tier,
+        campfire_pass: meta.campfire.pass,
+      };
     }
 
-    function tierBadgeHtml(conceptId) {
+    function buildTierPlacementHtml(conceptId) {
       const t = tierFor(conceptId);
       if (!t?.language_tier) return '';
-      const cls = t.language_tier === 'communicative_core' ? 'tier-badge--core'
-        : t.language_tier === 'extended_core' ? 'tier-badge--extended' : 'tier-badge--complete';
-      const exp = t.experience_tier ? EXPERIENCE_TIER_LABELS[t.experience_tier] ?? t.experience_tier : '';
-      const fire = t.campfire_pass ? ' · campfire ✓' : '';
-      return `<span class="tier-badge ${cls}" title="${escapeHtml(exp)}${escapeHtml(fire)}">${escapeHtml(LANGUAGE_TIER_LABELS[t.language_tier] ?? t.language_tier)}${exp ? ` · ${escapeHtml(exp)}` : ''}</span>`;
+      const lang = LANGUAGE_TIER_LABELS[t.language_tier] ?? t.language_tier;
+      const exp = t.experience_tier
+        ? (EXPERIENCE_TIER_LABELS[t.experience_tier] ?? t.experience_tier)
+        : '';
+      const campfire = t.campfire_pass
+        ? '<span class="wp-placement__campfire"><span class="wp-placement__mark" aria-hidden="true">✓</span> Campfire</span>'
+        : '';
+      return `<div class="wp-placement">
+        <span class="wp-placement__tier">${escapeHtml(lang)}</span>
+        ${exp ? `<span class="wp-placement__experience">${escapeHtml(exp)}</span>` : ''}
+        ${campfire}
+      </div>`;
+    }
+
+    function buildDictionarySideActionsHtml({ hasMermaid, alternatesCount, spelling }) {
+      const buttons = [];
+      if (spelling?.trim()) {
+        buttons.push(`<button type="button" class="hear-min word-preview__hear" aria-label="Listen to ${escapeHtml(spelling)}">Listen</button>`);
+      }
+      buttons.push(`<button type="button" class="btn wp-side-btn" data-open-graph${hasMermaid ? '' : ' disabled'}>Tree</button>`);
+      buttons.push(`<button type="button" class="btn wp-side-btn" data-open-dda title="Semantic coordinates">DDA</button>`);
+      if (alternatesCount > 0) {
+        buttons.push(`<button type="button" class="btn wp-side-btn wp-side-btn--subtle" data-open-alternates>Alternates</button>`);
+      }
+      return `<div class="word-preview__sound-actions">${buttons.join('')}</div>`;
+    }
+
+    function buildDictAlternateBreakdownHtml(alt) {
+      const parts = alt.parts ?? [];
+      const composition = alt.composition ?? [];
+      if (!parts.length) {
+        const gloss = composition.join(' + ');
+        return gloss
+          ? `<span class="dict-alt__breakdown-gloss">${escapeHtml(gloss)}</span>`
+          : '';
+      }
+      return parts.map((part, i) => {
+        const op = i > 0 ? '<span class="dict-alt__op">+</span>' : '';
+        const gloss = composition[i]
+          ? `<span class="dict-alt__piece-gloss">${escapeHtml(composition[i])}</span>`
+          : '';
+        return `${op}<span class="dict-alt__piece"><span class="mono dict-alt__piece-sp">${escapeHtml(part)}</span>${gloss}</span>`;
+      }).join('');
+    }
+
+    function dictAltStatusPillClass(status) {
+      if (status === 'confirmed' || status === 'playtested') return 'dict-alt__pill dict-alt__pill--confirmed';
+      if (status === 'plausible') return 'dict-alt__pill';
+      return 'dict-alt__pill dict-alt__pill--low';
+    }
+
+    function buildDictAlternatesPanelHtml(entryKind, id) {
+      if (entryKind !== 'compound') return '';
+      const compound = STATE.lab?.compounds?.find(c => c.id === id);
+      if (!compound) return '';
+      const alts = compound.alternate_forms ?? [];
+      const score = compound.understandability;
+      const meaning = compound.meaning && compound.meaning !== '(unnamed)' ? compound.meaning : '';
+      if (!alts.length && score == null) {
+        return `<div class="dict-alternates-panel dict-alternates-panel--empty">
+          <h4>Alternates</h4>
+          <p class="sans dict-alternates-panel__empty">No alternates recorded yet.</p>
+        </div>`;
+      }
+      const items = alts.map((a) => {
+        const pct = a.understandability != null ? Math.round(a.understandability * 100) : null;
+        const breakdown = buildDictAlternateBreakdownHtml(a);
+        return `<li class="dict-alt">
+            <div class="dict-alt__main">
+              <span class="dict-alt__spelling mono">${escapeHtml(a.spelling)}</span>
+              ${breakdown ? `<div class="dict-alt__breakdown">${breakdown}</div>` : ''}
+            </div>
+            <div class="dict-alt__meta">
+              ${pct != null ? `<div class="dict-alt__score-row" title="Understandability (advisory)">
+                  <span class="dict-alt__bar" aria-hidden="true"><span style="width:${pct}%"></span></span>
+                  <span class="dict-alt__score">${pct}%</span>
+                </div>` : ''}
+              ${a.status ? `<span class="${dictAltStatusPillClass(a.status)}">${escapeHtml(a.status)}</span>` : ''}
+            </div>
+          </li>`;
+      }).join('');
+      const preferredPct = score != null ? Math.round(score * 100) : null;
+      const footer = preferredPct != null || alts.length
+        ? `<footer class="dict-alternates-panel__footer">
+            ${preferredPct != null ? `<span class="dict-alt__pill dict-alt__pill--preferred">Preferred · ${preferredPct}%</span>` : ''}
+            <a class="dict-alternates-panel__cta" href="#puzzle">Try in Puzzle Conversation</a>
+          </footer>`
+        : '';
+      return `<div class="dict-alternates-panel">
+          <header class="dict-alternates-panel__head">
+            <h4>Alternates</h4>
+            <p class="dict-alternates-panel__focus mono">${escapeHtml(compound.spelling)}</p>
+            ${meaning ? `<p class="dict-alternates-panel__meaning">${escapeHtml(meaning)}</p>` : ''}
+          </header>
+          <p class="dict-alternates-panel__hint sans graph-hint">Other transparent ways to express the same idea — ranked by understandability (advisory).</p>
+          ${items ? `<ul class="dict-alternates-list">${items}</ul>` : '<p class="sans dict-alternates-panel__empty">No alternates recorded yet.</p>'}
+          ${footer}
+        </div>`;
     }
 
     function conceptList() {
@@ -1660,9 +1762,14 @@
       lines.push(`  Word --> D["Depth: ${esc(dda.D ?? '?')}"]`);
       lines.push(`  Word --> M["Mode: ${esc(dda.M ?? '?')}"]`);
       lines.push(`  Word --> A["Aspect: ${esc(dda.A ?? '?')}"]`);
-      lines.push('  classDef coord fill:#ede7f6,stroke:#c5b8f0,color:#4527a0');
+      if (isDarkTheme()) {
+        lines.push('  classDef coord fill:#2a241c,stroke:#8a7355,color:#f0ede8');
+        lines.push('  classDef part fill:#142b20,stroke:#1f4a32,color:#8fd4ad');
+      } else {
+        lines.push('  classDef coord fill:#f5edd9,stroke:#dcc9a8,color:#2c2418');
+        lines.push('  classDef part fill:#dcfce7,stroke:#86efac,color:#166534');
+      }
       if (parts.length) {
-        lines.push('  classDef part fill:#e8f5e9,stroke:#a5d6a7,color:#1b5e20');
         lines.push(`  class ${parts.join(',')} part`);
       }
       lines.push('  class D,M,A coord');
@@ -1752,6 +1859,7 @@
 
     function buildWordPreviewSoundBlockHtml(focus, pron, {
       showHear = false,
+      sideActionsHtml = '',
       hearId = '',
       meaningHtml = '',
       meaningClass = '',
@@ -1759,11 +1867,12 @@
     } = {}) {
       const hasSpelling = Boolean(focus.spelling);
       const ipa = pron ? previewIpaForFocus(focus) : '';
-      const hearBtn = showHear && hasSpelling
+      const hearBtn = !sideActionsHtml && showHear && hasSpelling
         ? `<div class="word-preview__sound-actions">
             <button type="button" class="hear-min word-preview__hear"${hearId ? ` id="${hearId}"` : ''} aria-label="Listen to ${escapeHtml(focus.spelling)}">▶ Listen</button>
           </div>`
         : '';
+      const actionsColumn = sideActionsHtml || hearBtn;
       const hasPronContent = Boolean(pron && (pron.sayLine || pron.englishLine || ipa));
       const pronDetails = hasPronContent
         ? (() => {
@@ -1782,14 +1891,14 @@
       const meaningBlock = meaningHtml
         ? `<p class="word-preview__meaning-line"><span class="review-meaning ${meaningClass}">${meaningHtml}</span></p>`
         : '';
-      if (!pronDetails && !hearBtn && !meaningBlock && !contextHtml) return '';
+      if (!pronDetails && !actionsColumn && !meaningBlock && !contextHtml) return '';
       return `<div class="word-preview__sound-block">
         <div class="word-preview__sound-pron">
           ${pronDetails}
           ${meaningBlock}
           ${contextHtml}
         </div>
-        ${hearBtn}
+        ${actionsColumn}
       </div>`;
     }
 
@@ -1806,6 +1915,7 @@
       builtFromHideBadges = false,
       unnamedStyle = 'default',
       showHear = true,
+      sideActionsHtml = '',
       footerHtml = '',
       descriptionHtml = '',
     } = {}) {
@@ -1830,6 +1940,7 @@
       const wordmarkHtml = buildWordPreviewWordmarkHtml(focus, pron);
       const soundBlockHtml = buildWordPreviewSoundBlockHtml(focus, pron, {
         showHear,
+        sideActionsHtml,
         hearId,
         meaningHtml: hasSpelling ? meaningHtml : '',
         meaningClass,
@@ -1981,6 +2092,8 @@
       includeGraph = true,
       layout = 'default',
       modalActions = false,
+      ref = null,
+      entryKind = null,
     } = {}) {
       const f = data.focus;
       const kind = explorerKind === 'root' ? 'root' : 'word';
@@ -1989,7 +2102,22 @@
       const isDictionary = layout === 'dictionary';
       const showInlineGraph = includeGraph && !isDictionary;
       let descriptionHtml = '';
-      if (kind === 'root' && f.spelling) {
+      let sideActionsHtml = '';
+      if (isDictionary && ref != null && entryKind) {
+        let conceptId = null;
+        if (kind === 'root' && f.spelling) {
+          conceptId = STATE.lab?.sounds?.find(s => s.spelling === f.spelling)?.concept_id ?? null;
+        } else if (entryKind === 'compound') {
+          conceptId = STATE.lab?.compounds?.find(c => c.id === ref)?.concept_id ?? null;
+        }
+        if (conceptId) descriptionHtml = buildTierPlacementHtml(conceptId);
+        const compound = entryKind === 'compound' ? STATE.lab?.compounds?.find(c => c.id === ref) : null;
+        sideActionsHtml = buildDictionarySideActionsHtml({
+          hasMermaid: Boolean(data.mermaid),
+          alternatesCount: compound?.alternate_forms?.length ?? 0,
+          spelling: displayFocus.spelling,
+        });
+      } else if (kind === 'root' && f.spelling) {
         const sound = STATE.lab?.sounds?.find(s => s.spelling === f.spelling);
         const concept = sound ? conceptForLabItem(sound) : null;
         if (concept?.reason) {
@@ -1997,9 +2125,9 @@
         }
       }
 
-      const actionButtons = (isDictionary || modalActions)
+      const actionButtons = !isDictionary && (modalActions || !showInlineGraph)
         ? buildExplorerActionsHtml({
-          graph: isDictionary || !showInlineGraph,
+          graph: !showInlineGraph,
           dda: true,
           hasMermaid: Boolean(data.mermaid),
           compact: true,
@@ -2010,7 +2138,8 @@
         kind,
         speakParts,
         previewNote: preview ? 'Preview: save the word to explore downstream links. Tap nodes in the graph to jump to saved roots and words.' : '',
-        showHear: true,
+        showHear: !sideActionsHtml,
+        sideActionsHtml,
         descriptionHtml,
       });
 
@@ -2022,11 +2151,7 @@
         ? `<div class="word-preview-actions">${actionButtons}</div>`
         : '';
 
-      const dictActions = isDictionary && actionButtons
-        ? `<div class="word-preview-actions word-preview-actions--explorer">${actionButtons}</div>`
-        : '';
-
-      const body = `${previewHtml}${graphSection}${trailingActions}${dictActions}`;
+      const body = `${previewHtml}${graphSection}${trailingActions}`;
 
       const html = isDictionary
         ? `<div class="dict-detail-stack word-preview-panel">${body}</div>`
@@ -3249,6 +3374,7 @@
       includeGraph = true,
       layout = 'default',
       modalActions = false,
+      entryKind = null,
     } = {}) {
       const data = await fetchExplorerData(kind, id, preview);
       const explorerKind = preview?.preview ? 'word' : kind;
@@ -3258,6 +3384,8 @@
         includeGraph,
         layout,
         modalActions,
+        ref: id,
+        entryKind: entryKind ?? (explorerKind === 'root' ? 'sound' : 'compound'),
       });
       containerEl.innerHTML = html;
       containerEl.querySelector('.word-preview__hear, .word-preview-actions .hear-min')?.addEventListener('click', () => speakNeural(speakParts));
@@ -3271,8 +3399,21 @@
         containerEl.querySelector('[data-open-dda]')?.addEventListener('click', () => {
           openDdaSheet(data, explorerKind, id);
         });
+        containerEl.querySelector('[data-open-alternates]')?.addEventListener('click', () => {
+          const panelKind = entryKind ?? (explorerKind === 'root' ? 'sound' : 'compound');
+          openAlternatesSheet(panelKind, id);
+        });
       }
       return data;
+    }
+
+    function openAlternatesSheet(entryKind, id) {
+      const body = $('sheet-body');
+      body.innerHTML = buildDictAlternatesPanelHtml(entryKind, id) || `<div class="dict-alternates-panel dict-alternates-panel--empty">
+        <h4>Alternates</h4>
+        <p class="sans dict-alternates-panel__empty">No alternates recorded yet.</p>
+      </div>`;
+      openSheet();
     }
 
     async function openDdaSheet(data, explorerKind, ref) {
@@ -3282,12 +3423,8 @@
       openSheet();
       const mermaidEl = body.querySelector('.mermaid');
       if (mermaidEl && window.mermaid) {
-        window.mermaid.initialize({
-          startOnLoad: false,
-          theme: 'base',
-          themeVariables: { fontFamily: 'ui-monospace, Menlo, monospace', lineColor: '#a89f95' },
-          securityLevel: 'loose',
-        });
+        const { getMermaidInit } = await import('../js/mermaid-theme.js');
+        window.mermaid.initialize(getMermaidInit());
         await new Promise(resolve => requestAnimationFrame(resolve));
         try {
           await window.mermaid.run({ nodes: [mermaidEl] });
@@ -3854,7 +3991,7 @@
     }
 
     function dictDetailEmptyHtml() {
-      return `<div class="fonoran-split-empty"><p>Select a word or root on the left to preview it, then open the Word Tree or DDA from the card.</p></div>`;
+      return `<div class="fonoran-split-empty"><p>Select a word or root on the left to preview it.</p></div>`;
     }
 
     function showDictDetailEmpty() {
@@ -3862,30 +3999,99 @@
       if (panel) panel.innerHTML = dictDetailEmptyHtml();
     }
 
+    function particleGroupPillClass(group) {
+      if (group === 'tense') return 'particle-panel__pill particle-panel__pill--tense';
+      if (group === 'interrogative') return 'particle-panel__pill particle-panel__pill--query';
+      if (group === 'logical') return 'particle-panel__pill particle-panel__pill--logic';
+      return 'particle-panel__pill';
+    }
+
+    function particleCompositionExamples(p) {
+      const rows = {
+        logic_not: [
+          { parts: ['no', 'true'], gloss: 'false' },
+          { parts: ['no', 'same'], gloss: 'different' },
+        ],
+        logic_yes: [{ text: 'Standalone affirmative answer' }],
+        query_marker: [{ text: 'Clause-initial flag when a question word is present' }],
+      }[p.id];
+      if (rows?.length) return rows;
+      if (p.note) return [{ text: p.note }];
+      return null;
+    }
+
+    function buildParticleCompositionHtml(examples) {
+      if (!examples?.length) return '';
+      const items = examples.map((ex) => {
+        if (ex.text) {
+          return `<li class="particle-panel__compose-item"><span class="particle-panel__compose-text">${escapeHtml(ex.text)}</span></li>`;
+        }
+        const breakdown = (ex.parts ?? []).map((part, i) => {
+          const op = i > 0 ? '<span class="particle-panel__op">+</span>' : '';
+          return `${op}<span class="particle-panel__piece"><span class="mono">${escapeHtml(part)}</span></span>`;
+        }).join('');
+        const gloss = ex.gloss ? `<span class="particle-panel__compose-eq">=</span><span class="particle-panel__compose-gloss">${escapeHtml(ex.gloss)}</span>` : '';
+        return `<li class="particle-panel__compose-item"><div class="particle-panel__compose-row">${breakdown}${gloss}</div></li>`;
+      }).join('');
+      return `<div class="particle-panel__section">
+          <p class="particle-panel__label">Composition</p>
+          <ul class="particle-panel__compose-list">${items}</ul>
+        </div>`;
+    }
+
     function particleDetailHtml(p) {
       const triggers = (p.triggers ?? []).filter(Boolean);
-      const triggerHtml = triggers.length
-        ? triggers.map(t => `<code>${escapeHtml(t)}</code>`).join(' ')
-        : '<span class="muted">handled structurally / emitted by the grammar</span>';
-      const examples = {
-        logic_not: 'no + true = false · no + same = different',
-        logic_yes: 'affirmative answer',
-        query_marker: 'clause-initial flag for questions',
-      }[p.id];
+      const gloss = p.gloss || p.id;
+      const group = p.group || '';
+      const role = p.role || '—';
+      const script = p.form ? rootScriptPhrase(p.form) : '';
+      const triggerChips = triggers.length
+        ? triggers.map(t => `<span class="particle-panel__chip mono">${escapeHtml(t)}</span>`).join('')
+        : '<span class="particle-panel__empty-hint">Emitted by grammar rules — no English trigger word</span>';
+      const compositionHtml = buildParticleCompositionHtml(particleCompositionExamples(p));
+      const groupPill = group
+        ? `<span class="${particleGroupPillClass(group)}">${escapeHtml(group)}</span>`
+        : '';
+      const listenBtn = p.form
+        ? `<button type="button" class="hear-min word-preview__hear" aria-label="Listen to ${escapeHtml(p.form)}">Listen</button>`
+        : '';
+      const wordmark = p.form
+        ? `<div class="particle-panel__wordmark">
+            <span class="particle-panel__form mono">${escapeHtml(p.form)}</span>${script ? `<span class="particle-panel__dash" aria-hidden="true"> - </span><span class="particle-panel__script symbol-text" aria-hidden="true">${escapeHtml(script)}</span>` : ''}
+          </div>`
+        : '';
       return `
-        <div class="fonoran-split-workspace-inner particle-detail">
-          <div class="particle-detail__head">
-            ${typeBadge('particle')}
-            <span class="particle-detail__form">${escapeHtml(p.form)}</span>
+        <div class="dict-detail-stack word-preview-panel">
+          <div class="particle-panel">
+            <header class="particle-panel__head">
+              <div class="particle-panel__title-row">
+                <h4>Particle</h4>
+                ${groupPill}
+              </div>
+              ${wordmark}
+              <p class="particle-panel__gloss">${escapeHtml(gloss)}</p>
+              ${listenBtn ? `<div class="particle-panel__actions">${listenBtn}</div>` : ''}
+            </header>
+            <div class="particle-panel__axes">
+              <div class="particle-panel__axis">
+                <span class="particle-panel__axis-key">Role</span>
+                <span class="particle-panel__axis-val">${escapeHtml(role)}</span>
+              </div>
+              <div class="particle-panel__axis">
+                <span class="particle-panel__axis-key">Group</span>
+                <span class="particle-panel__axis-val">${escapeHtml(group || '—')}</span>
+              </div>
+            </div>
+            <div class="particle-panel__section">
+              <p class="particle-panel__label">English triggers</p>
+              <div class="particle-panel__chips">${triggerChips}</div>
+            </div>
+            ${compositionHtml}
+            <footer class="particle-panel__footer sans">
+              Invariant grammar marker — never fused into lexical spellings.
+              <a class="particle-panel__link" href="#grammar">See grammar</a>
+            </footer>
           </div>
-          <p class="particle-detail__gloss">${escapeHtml(p.gloss || p.id)}</p>
-          <dl class="particle-detail__meta">
-            <div><dt>Role</dt><dd>${escapeHtml(p.role || '—')}</dd></div>
-            <div><dt>Group</dt><dd>${escapeHtml(p.group || '—')}</dd></div>
-            <div><dt>English triggers</dt><dd>${triggerHtml}</dd></div>
-            ${examples ? `<div><dt>Composition</dt><dd>${escapeHtml(examples)}</dd></div>` : ''}
-          </dl>
-          <p class="particle-detail__note sans">Grammar particle: invariant, never fused into spellings (see <a href="#grammar">grammar</a>).</p>
         </div>`;
     }
 
@@ -3896,6 +4102,9 @@
       panel.innerHTML = p
         ? particleDetailHtml(p)
         : '<div class="fonoran-split-empty"><p>Particle not found.</p></div>';
+      if (p?.form) {
+        panel.querySelector('.word-preview__hear')?.addEventListener('click', () => speakNeural(p.form));
+      }
     }
 
     let dictDetailToken = 0;
@@ -3913,6 +4122,7 @@
           layout: 'dictionary',
           includeGraph: false,
           modalActions: true,
+          entryKind,
           onNavigate: (navKind, ref) => {
             const kind = navKind === 'root' ? 'sound' : 'compound';
             STATE.dictSelection = { kind, id: ref };
@@ -3921,44 +4131,10 @@
           },
         });
         if (token !== dictDetailToken) return;
-        const extras = dictDetailExtrasHtml(entryKind, id);
-        if (extras) panel.insertAdjacentHTML('beforeend', extras);
       } catch (e) {
         if (token !== dictDetailToken) return;
         panel.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`;
       }
-    }
-
-    /** Extra dictionary panel: experience tier (roots) + alternate understandable forms (words). */
-    function dictDetailExtrasHtml(entryKind, id) {
-      if (entryKind === 'sound') {
-        const sound = STATE.lab?.sounds?.find(s => s.spelling === id);
-        const badge = sound ? tierBadgeHtml(sound.concept_id) : '';
-        if (!badge) return '';
-        return `<div class="dict-alternates"><p class="dict-alternates__title">Where it sits</p><p>${badge}</p></div>`;
-      }
-      const compound = STATE.lab?.compounds?.find(c => c.id === id);
-      if (!compound) return '';
-      const alts = compound.alternate_forms ?? [];
-      const score = compound.understandability;
-      const scoreLine = score != null
-        ? `<p class="sans dict-alt__readable">Preferred form understandability: ${Math.round(score * 100)}% (advisory — playtests decide). Try it in <a href="#puzzle">Puzzle Conversation</a>.</p>`
-        : '';
-      if (!alts.length && score == null) return '';
-      const items = alts.map(a => {
-        const pct = a.understandability != null ? Math.round(a.understandability * 100) : null;
-        return `<div class="dict-alt">
-            <span class="dict-alt__spelling">${escapeHtml(a.spelling)}</span>
-            <span class="dict-alt__readable">${escapeHtml((a.composition ?? []).join(' + '))}</span>
-            ${pct != null ? `<span class="dict-alt__bar"><span style="width:${pct}%"></span></span><span class="dict-alt__score">${pct}%</span>` : ''}
-            ${a.status ? `<span class="dict-alt__status">${escapeHtml(a.status)}</span>` : ''}
-          </div>`;
-      }).join('');
-      return `<div class="dict-alternates">
-          <p class="dict-alternates__title">Other understandable ways to say this</p>
-          ${scoreLine}
-          ${items || '<p class="sans dict-alt__readable">No alternates recorded yet.</p>'}
-        </div>`;
     }
 
     function selectDictionaryEntry(entryKind, id) {
@@ -3996,8 +4172,6 @@
         spelling: entry.word,
         meaning: dictPickerMeaning(entry),
         type,
-        glyphs: entry.kind === 'particle' ? '' : null,
-        showTypeBadge: entry.kind === 'particle',
         selected,
         attrs: { 'data-kind': entry.kind, 'data-id': entry.id },
       });
