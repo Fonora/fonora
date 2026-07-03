@@ -11,7 +11,7 @@ This document covers authentication, community features (progress sync, votes, p
 | Tier | Sign-in | Capabilities |
 | --- | --- | --- |
 | **Public** | none | Read dictionary, learn (local progress), browse vote tallies |
-| **Community** | Google or GitHub (any verified email) | Sync Learn progress, vote on words, submit proposals |
+| **Community** | Google (any verified email) | Sync Learn progress, vote on words, submit proposals |
 | **Admin** | Google (`ADMIN_EMAILS`, default `info@fonora.org`) | Word Manager canon edits, approve/reject lab, promote proposals |
 
 ### Routes
@@ -19,7 +19,6 @@ This document covers authentication, community features (progress sync, votes, p
 ```
 GET  /auth/session
 GET  /auth/google → /auth/callback
-GET  /auth/github → /auth/github/callback
 POST /auth/logout
 
 GET  /api/fonoran/words              public inventory
@@ -39,7 +38,6 @@ POST/PATCH lab + concepts routes     admin only
 | Variable | Purpose |
 | --- | --- |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Google OAuth |
-| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | GitHub OAuth (community) |
 | `SESSION_SECRET` | Required to enable auth |
 | `ADMIN_EMAILS` | Comma-separated admin allowlist (default `info@fonora.org`) |
 | `DATABASE_URL` | Recommended for user/progress/vote persistence |

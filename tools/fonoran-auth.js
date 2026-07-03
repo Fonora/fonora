@@ -1,5 +1,5 @@
 /**
- * OAuth session auth: community users (Google or GitHub) + admin tier for vocabulary writes.
+ * OAuth session auth: community users (Google) + admin tier for vocabulary writes.
  */
 
 import { randomBytes } from 'node:crypto';
@@ -12,11 +12,6 @@ const OAUTH_STATE_TTL_SEC = 600;
 const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 const GOOGLE_USERINFO_URL = 'https://openidconnect.googleapis.com/v1/userinfo';
-
-const GITHUB_AUTH_URL = 'https://github.com/login/oauth/authorize';
-const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
-const GITHUB_USER_URL = 'https://api.github.com/user';
-const GITHUB_EMAILS_URL = 'https://api.github.com/user/emails';
 
 const AUTH_ERROR_CODES = new Set([
   'invalid_state',
@@ -49,16 +44,9 @@ export function isGoogleConfigured() {
   );
 }
 
-export function isGitHubConfigured() {
-  return Boolean(
-    process.env.GITHUB_CLIENT_ID?.trim()
-    && process.env.GITHUB_CLIENT_SECRET?.trim(),
-  );
-}
-
 export function isAuthConfigured() {
   return Boolean(
-    (isGoogleConfigured() || isGitHubConfigured())
+    isGoogleConfigured()
     && process.env.SESSION_SECRET?.trim(),
   );
 }
@@ -93,12 +81,6 @@ function googleRedirectUri(req) {
   const override = process.env.AUTH_CALLBACK_URL?.trim();
   if (override) return override;
   return `${requestOrigin(req)}/auth/callback`;
-}
-
-function githubRedirectUri(req) {
-  const override = process.env.GITHUB_CALLBACK_URL?.trim();
-  if (override) return override;
-  return `${requestOrigin(req)}/auth/github/callback`;
 }
 
 function parseCookies(req) {
@@ -267,14 +249,10 @@ function normalizeAuthErrorCode(raw) {
 
 function loginUrls(returnTo) {
   const q = new URLSearchParams({ returnTo: sanitizeReturnTo(returnTo) });
+  const google = isGoogleConfigured() ? `/auth/google?${q}` : null;
   return {
-    google: isGoogleConfigured() ? `/auth/google?${q}` : null,
-    github: isGitHubConfigured() ? `/auth/github?${q}` : null,
-    primary: isGoogleConfigured()
-      ? `/auth/google?${q}`
-      : isGitHubConfigured()
-        ? `/auth/github?${q}`
-        : '/auth/google',
+    google,
+    primary: google ?? '/auth/google',
   };
 }
 
@@ -420,7 +398,7 @@ export function unauthorizedResponse(res) {
 export function communityRequiredResponse(res) {
   jsonResponse(res, 401, {
     error: 'Sign in required',
-    hint: 'Use Google or GitHub to vote, propose words, or sync learn progress.',
+    hint: 'Use Google to vote, propose words, or sync learn progress.',
     loginUrls: loginUrls('/language'),
   });
 }
@@ -458,54 +436,6 @@ async function exchangeGoogleCode(code, req) {
   };
 }
 
-async function exchangeGitHubCode(code, req) {
-  const body = new URLSearchParams({
-    code,
-    client_id: process.env.GITHUB_CLIENT_ID?.trim() ?? '',
-    client_secret: process.env.GITHUB_CLIENT_SECRET?.trim() ?? '',
-    redirect_uri: githubRedirectUri(req),
-  });
-  const tokenRes = await fetch(GITHUB_TOKEN_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
-    },
-    body,
-  });
-  const tokenData = await tokenRes.json().catch(() => ({}));
-  if (!tokenRes.ok || !tokenData.access_token) {
-    throw new Error(tokenData.error_description || tokenData.error || 'GitHub token exchange failed');
-  }
-  const headers = {
-    Authorization: `Bearer ${tokenData.access_token}`,
-    Accept: 'application/vnd.github+json',
-    'User-Agent': 'Fonora-Community-Auth',
-  };
-  const userRes = await fetch(GITHUB_USER_URL, { headers });
-  const user = await userRes.json().catch(() => ({}));
-  if (!userRes.ok) throw new Error('Could not load GitHub profile');
-
-  let email = user.email?.trim().toLowerCase();
-  let emailVerified = Boolean(email);
-  if (!email) {
-    const emailsRes = await fetch(GITHUB_EMAILS_URL, { headers });
-    const emails = await emailsRes.json().catch(() => []);
-    const primary = emails.find(e => e.primary && e.verified)
-      ?? emails.find(e => e.verified);
-    email = primary?.email?.trim().toLowerCase();
-    emailVerified = Boolean(primary?.verified);
-  }
-
-  return {
-    provider: 'github',
-    providerSub: String(user.id),
-    email,
-    emailVerified,
-    name: user.name ?? user.login ?? email,
-  };
-}
-
 /**
  * @param {import('node:http').IncomingMessage} req
  * @param {import('node:http').ServerResponse} res
@@ -534,7 +464,6 @@ export async function handleAuthRoutes(req, res, url, method) {
       loginUrl: urls.primary,
       loginUrls: urls,
       googleLoginUrl: urls.google,
-      githubLoginUrl: urls.github,
     });
     return true;
   }
@@ -571,23 +500,6 @@ export async function handleAuthRoutes(req, res, url, method) {
     return true;
   }
 
-  if (pathname === '/auth/github' && method === 'GET') {
-    if (!isGitHubConfigured()) {
-      jsonResponse(res, 503, { error: 'GitHub OAuth is not configured on this server' });
-      return true;
-    }
-    const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
-    const state = createOAuthState(returnTo, 'github');
-    const params = new URLSearchParams({
-      client_id: process.env.GITHUB_CLIENT_ID?.trim() ?? '',
-      redirect_uri: githubRedirectUri(req),
-      scope: 'read:user user:email',
-      state,
-    });
-    redirect302(res, `${GITHUB_AUTH_URL}?${params}`);
-    return true;
-  }
-
   if (pathname === '/auth/callback' && method === 'GET') {
     const err = url.searchParams.get('error');
     if (err) {
@@ -611,29 +523,6 @@ export async function handleAuthRoutes(req, res, url, method) {
     return true;
   }
 
-  if (pathname === '/auth/github/callback' && method === 'GET') {
-    const err = url.searchParams.get('error');
-    if (err) {
-      redirectToAuthError(res, normalizeAuthErrorCode(err));
-      return true;
-    }
-    const code = url.searchParams.get('code');
-    const state = url.searchParams.get('state');
-    const statePayload = consumeOAuthState(state);
-    if (!code || !state || !statePayload || statePayload.provider !== 'github') {
-      redirectToAuthError(res, 'invalid_state');
-      return true;
-    }
-    try {
-      const profile = await exchangeGitHubCode(code, req);
-      await finishOAuthLogin(req, res, statePayload.returnTo ?? '/language', profile);
-    } catch (e) {
-      console.error('GitHub OAuth callback failed:', e);
-      redirectToAuthError(res, 'auth_failed');
-    }
-    return true;
-  }
-
   return false;
 }
 
@@ -644,12 +533,8 @@ export function logAuthStatus() {
   }
   if (isAuthConfigured()) {
     const admins = adminEmails();
-    const providers = [
-      isGoogleConfigured() ? 'Google' : null,
-      isGitHubConfigured() ? 'GitHub' : null,
-    ].filter(Boolean).join(' + ');
     console.log(
-      `Fonoran auth: enabled (${providers}); admin: ${[...admins].join(', ')}`,
+      `Fonoran auth: enabled (Google); admin: ${[...admins].join(', ')}`,
     );
     return;
   }
