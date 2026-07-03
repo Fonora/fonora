@@ -11,12 +11,16 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DEFAULT_SUBMODULE_DIR = join(ROOT, 'external/fonora-data');
 const MANIFEST_PATH = join(ROOT, 'data/fonora-data.manifest.json');
 
+/** Metadata overlay for research notes (bodies live in docs/research-notes/*.md). */
+export function resolveResearchNotesCatalogPath() {
+  return join(ROOT, 'data/research-notes-store.json');
+}
+
 /** Relative paths inside the data repo (or legacy in-repo data/). */
 export const EXTERNAL_DATA_REL = {
   llm_evaluations: 'data/fonoran-llm-evaluations.json',
   playtests: 'data/fonoran-playtests.json',
   translation_test_latest: 'data/fonoran-translation-test-latest.json',
-  research_notes_store: 'data/research-notes-store.json',
 };
 
 /** Editorial doc keys stored in fonora-data when external dir is active. */

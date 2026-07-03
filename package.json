@@ -43,6 +43,7 @@
     "fonoran:import": "node scripts/fonoran-import-json.js",
     "fonoran:export": "node scripts/fonoran-export-json.js",
     "research:import": "node scripts/research-notes-import-static.js",
+    "research:verify-md": "node scripts/research-notes-verify-md.js",
     "fonoran:snapshot:export": "node scripts/fonoran-snapshot-export.js",
     "fonoran:snapshot:import": "node scripts/fonoran-snapshot-import.js",
     "fonoran:data:init": "git submodule update --init --recursive",

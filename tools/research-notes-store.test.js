@@ -79,6 +79,22 @@ export async function runResearchNotesStoreTests() {
     );
 
     results.push(
+      await test('buildPublishedNotesFromMarkdown includes RN-22 and RN-23', async () => {
+        const { buildPublishedNotesFromMarkdown } = await import('./research-notes-md-sync.js');
+        const notes = await buildPublishedNotesFromMarkdown();
+        assert(notes.length >= 23);
+        const slugs = notes.map((n) => n.slug);
+        assert(slugs.includes('mouth-intuitive-vowel-glyphs'));
+        assert(slugs.includes('vowel-glide-phantom-diphthongs'));
+        assert(slugs.includes('beginner-core-remediation'));
+        for (const note of notes) {
+          assert(note.workflow === 'published');
+          assert(note.body.trim().length > 100);
+        }
+      }),
+    );
+
+    results.push(
       await test('syncResearchNotesFromSeed skips in json mode', async () => {
         const result = await syncResearchNotesFromSeed();
         assert(result.skipped === true);

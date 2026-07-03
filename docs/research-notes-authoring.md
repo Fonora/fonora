@@ -15,9 +15,11 @@ Fonora research notes are engineering/research notebook entries, not marketing a
 | Form | Purpose | Where it lives |
 | --- | --- | --- |
 | **Stub** | Seed arc: question → hypothesis → constraints → built → happened → next question | New draft in Tools → Research Notes (`NEW_NOTE_STUB_TEMPLATE`) |
-| **Expanded** | Long-form RN-01 structure for publication | `data/research-notes-store.json` (live) + optional mirror `docs/research-notes/<CODE>-<kebab-title>.md` |
+| **Expanded** | Long-form RN-01 structure for publication | **`docs/research-notes/RN-XX-slug.md`** (canonical) + optional metadata in `data/research-notes-store.json` |
 
-**Production:** When `DATABASE_URL` is set (Heroku), the release phase upserts **published** notes from `data/research-notes-store.json` into PostgreSQL. Committing MD mirrors alone does not update the live site. Prod-only drafts created in Tools stay in Postgres until published or removed.
+**Production:** When `DATABASE_URL` is set (Heroku), the **release phase** upserts every `docs/research-notes/RN-*.md` file into PostgreSQL via `scripts/research-notes-sync-deploy.js`. Commit the markdown file in the main repo and deploy — no fonora-data push required for the notebook.
+
+Prod-only drafts created in Tools stay in Postgres until published or removed.
 
 The editor inserts the **long-form** template by default (`NEW_NOTE_TEMPLATE`). Use the **stub** template when you only have the arc and plan to expand later.
 

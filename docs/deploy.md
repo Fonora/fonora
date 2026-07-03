@@ -154,15 +154,23 @@ See [platform-overview.md](platform-overview.md) for the data architecture overv
 
 ### Research notes (PostgreSQL)
 
-Published research notes are **not** read from `docs/research-notes/*.md` at runtime. The live `/research` notebook and Tools → Research Notes editor load from the `research_notes` PostgreSQL table when `DATABASE_URL` is set.
+**Git canonical source (main repo):** [`docs/research-notes/RN-XX-slug.md`](research-notes/RN-01-writing-sound-instead-of-spelling.md) — one markdown file per published note. Commit the MD file; deploy publishes it.
 
-Git canonical source: [`Fonora/fonora-data`](https://github.com/Fonora/fonora-data) → `data/research-notes-store.json` (published + draft bodies). Markdown files under `docs/research-notes/` are optional mirrors for git history.
+Optional metadata overlay (SEO fields, tool links, richer `related` lists): [`data/research-notes-store.json`](../data/research-notes-store.json), keyed by `slug`. Bodies always come from markdown on deploy.
 
-**On deploy** (Heroku release phase), published notes from the git seed file are upserted into Postgres via `scripts/research-notes-sync-deploy.js` (`Procfile` `release:` hook). Prod-only drafts in Postgres are left untouched; git does not delete notes missing from the seed file.
+At **runtime**, the live `/research` notebook loads from the `research_notes` PostgreSQL table when `DATABASE_URL` is set (not from markdown files directly).
 
-**At web startup**, the server warms an in-memory cache of published notes and embeds the index (and note body when viewing `/research/notes/:slug`) in the research HTML shell. The public notebook does not wait on `/api/research/notes` on first paint.
+**On deploy** (Heroku `release:` in `Procfile`), every `docs/research-notes/RN-*.md` file is upserted into Postgres via `scripts/research-notes-sync-deploy.js` → `buildPublishedNotesFromMarkdown()`. Prod-only drafts in Postgres are left untouched; notes removed from git are not deleted from Postgres automatically.
 
-Manual sync (local or CI):
+**At web startup**, the server warms an in-memory cache and embeds the index (and note body on `/research/notes/:slug`) in the research HTML shell.
+
+Verify before merge:
+
+```bash
+npm run research:verify-md
+```
+
+Manual deploy sync (requires `DATABASE_URL`):
 
 ```bash
 node scripts/research-notes-sync-deploy.js
@@ -170,11 +178,10 @@ node scripts/research-notes-sync-deploy.js
 
 After deploy, verify:
 
-- `GET /api/research/notes` returns the expected note count (including Phase IV entries)
-- `/research/timeline` HTML source includes `research-notes-bootstrap` JSON
-- `/research/timeline` shows current phases without a slow API wait
+- `GET /api/research/notes` includes new codes (e.g. RN-22, RN-23)
+- `/research/timeline` HTML source includes `research-notes-bootstrap` JSON with the new slugs
 
-To author locally: edit in Tools → Research Notes or update the store JSON, commit, merge to staging/main, redeploy (release sync applies published notes).
+**Not required for research notes:** pushing to [fonora-data](https://github.com/Fonora/fonora-data). LLM/playtest blobs still use that repo; the notebook does not.
 
 See [research-notes-authoring.md](research-notes-authoring.md) for the full workflow.
 

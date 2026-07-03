@@ -12,7 +12,7 @@ try {
     console.log(`Research notes deploy sync skipped: ${result.reason}`);
     process.exit(0);
   }
-  console.log(`Research notes deploy sync: upserted ${result.synced} published note(s)`);
+  console.log(`Research notes deploy sync: upserted ${result.synced} published note(s) from ${result.source || 'seed'}`);
   process.exit(0);
 } catch (err) {
   console.error('Research notes deploy sync failed:', err instanceof Error ? err.message : err);
