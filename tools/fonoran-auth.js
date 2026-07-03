@@ -340,11 +340,8 @@ export function isAdminWriteRequired(pathname, method) {
   if (m === 'POST' && pathname === '/api/fonoran/puzzle/feedback') return false;
   if (m === 'POST' && pathname === '/api/fonoran/expressions/candidates') return false;
   if (m === 'POST' && pathname === '/api/fonoran/analyze/word') return false;
-  if (pathname.startsWith('/api/fonoran/me/')) return false;
-  if (pathname.startsWith('/api/fonoran/proposals')) {
-    if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/resolve$/) && m === 'POST') return true;
-    return false;
-  }
+  // Vote endpoints are community-only (handled by isCommunityWriteRequired); everything else requires admin
+  if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/vote$/) && m === 'POST') return false;
   if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
 }
@@ -356,9 +353,7 @@ export function isWriteAuthRequired(pathname, method) {
 
 export function isCommunityWriteRequired(pathname, method) {
   const m = method.toUpperCase();
-  if (m !== 'POST' && m !== 'PUT' && m !== 'PATCH' && m !== 'DELETE') return false;
-  if (pathname === '/api/fonoran/me/progress' && m === 'PUT') return true;
-  if (pathname === '/api/fonoran/proposals' && m === 'POST') return true;
+  if (m !== 'POST') return false;
   if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/vote$/) && m === 'POST') return true;
   if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return true;
   return false;

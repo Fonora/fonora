@@ -3,7 +3,6 @@
  */
 
 import { readJsonBody } from './fonoran-api.js';
-import { safeApiError } from '../js/utils.js';
 import { getSessionUser, isAuthEnabled, unauthorizedResponse } from './fonoran-auth.js';
 import {
   createDraft,
@@ -128,8 +127,7 @@ export async function handleResearchApi(req, res, pathname, method) {
     return false;
   } catch (err) {
     console.error('Research API error:', err);
-    const status = err.status || 500;
-    const message = status >= 500 ? 'Internal server error' : safeApiError(err);
-    return done(status, { error: message });
+    const status = err?.status >= 400 && err?.status < 600 ? err.status : 500;
+    return done(status, { error: status >= 500 ? 'Internal server error' : 'Request failed' });
   }
 }
