@@ -15,8 +15,30 @@ import { decodeSymbols, decodeToPhonemeKeys } from './decode.js';
 import { encodeSounds } from './encode.js';
 import { escapeMarkdownTableCell } from './utils.js';
 import { V2_COLLISION_GROUPS } from './vowel-v2-collision-groups.js';
+import { validateVowelSymbolString } from './vowel-grammar.js';
 
 const CONCAT_MAX_LEN = 2;
+
+/** Simple-vowel nuclei for vowel+glide matrix (Sound Grid tier). */
+export const VOWEL_GLIDE_NUCLEUS_SIMPLE = ['a', 'e', 'i', 'o', 'u'];
+
+/** Long-vowel nuclei for vowel+glide matrix (Sound Grid tier). */
+export const VOWEL_GLIDE_NUCLEUS_LONG = ['ae', 'ee', 'oh'];
+
+/** Glide consonants that share ᵔY with diphthong offglides. */
+export const VOWEL_GLIDE_KEYS = ['w', 'l', 'r', 'y'];
+
+/** Teaching notes for high-salience unregistered vowel-shaped sequences. */
+const UNREGISTERED_VOWEL_SHAPE_NOTES = {
+  '⚬⊃ᵔ∩': 'Phantom diphthong: o + l (*all*, *walk*)',
+  '⚬⊃ᵔ⌓': 'Phantom diphthong: o + r (*car*, *for*, *bar*)',
+  '⚬⏌ᵔ⌓': 'Phantom diphthong: oh + r (*core*, *bor*)',
+  '⚬∪ᵔ⌓': 'Phantom diphthong: a + r (NURSE/STRUT r-coloring)',
+  '⚬⌓ᵔ⌓': 'Phantom diphthong: e + r (*her*, *err*)',
+  '⚬∩ᵔ∪': 'Centring-diphthong candidate: i + y (ɪə, NEAR)',
+  '⚬∪ᵔ∪': 'Centring-diphthong candidate: a + y (eə, SQUARE)',
+  '⚬∋ᵔ⌓': 'Centring-diphthong candidate: u + r (ʊə, CURE)',
+};
 
 function sameLengthSequences(seqs, len) {
   return seqs.filter((s) => s.length === len);
@@ -210,6 +232,55 @@ function dedupeConcatHits(hits) {
   });
 }
 
+/**
+ * Enumerate vowel + glide pairs whose concatenation matches v3 diphthong shape (⚬XᵔY).
+ * Registered diphthong keys share symbols with their decomposed sequence (Category A);
+ * all other valid shapes are unregistered phantom diphthongs (Category B/C).
+ * @param {object} rules
+ */
+export function findUnregisteredVowelShapedSequences(rules) {
+  const map = buildSoundToSymbolsMap(rules);
+  const vowelKeyBySym = new Map();
+
+  for (const v of rules.vowels || []) {
+    const key = v.key || v.vowel || v.sound;
+    if (key && v.symbols) vowelKeyBySym.set(v.symbols, key);
+  }
+
+  /** @type {ReturnType<typeof findUnregisteredVowelShapedSequences>} */
+  const rows = [];
+
+  function scanTier(tier, nucleusKeys) {
+    for (const nucleusKey of nucleusKeys) {
+      for (const glideKey of VOWEL_GLIDE_KEYS) {
+        const seq = [nucleusKey, glideKey];
+        const symbols = seq.map((k) => map[k]).join('');
+        const grammar = validateVowelSymbolString(symbols);
+        const registeredVowelKey = vowelKeyBySym.get(symbols) || null;
+        const category = registeredVowelKey ? 'registered-diphthong' : 'unregistered';
+
+        rows.push({
+          tier,
+          nucleusKey,
+          glideKey,
+          sequence: seq.join(' + '),
+          symbols,
+          registeredVowelKey,
+          category,
+          grammarOk: grammar.ok,
+          grammarKind: grammar.kind || null,
+          notes: UNREGISTERED_VOWEL_SHAPE_NOTES[symbols] || '',
+        });
+      }
+    }
+  }
+
+  scanTier('simple', VOWEL_GLIDE_NUCLEUS_SIMPLE);
+  scanTier('long', VOWEL_GLIDE_NUCLEUS_LONG);
+
+  return rows;
+}
+
 /** @param {object} rules */
 export function findGreedyDecoderHazards(rules) {
   const map = buildSoundToSymbolsMap(rules);
@@ -343,6 +414,7 @@ export async function runFullCollisionAudit(options = {}) {
   const inventory = buildSymbolInventory(rules);
   const exact = findExactCollisions(inventory);
   const concatenation = findConcatenationCollisions(rules);
+  const vowelShaped = findUnregisteredVowelShapedSequences(rules);
   const greedy = findGreedyDecoderHazards(rules);
   const testGaps = analyzeTestSuiteGaps();
 
@@ -368,23 +440,34 @@ export async function runFullCollisionAudit(options = {}) {
     inventory,
     exact,
     concatenation,
+    vowelShaped,
     greedy,
     wordRows,
     wordIssues,
     testGaps,
-    summary: buildExecutiveSummary({ exact, concatenation, greedy, wordIssues, testGaps }),
+    summary: buildExecutiveSummary({
+      exact, concatenation, vowelShaped, greedy, wordIssues, testGaps,
+    }),
   };
 }
 
-function buildExecutiveSummary({ exact, concatenation, greedy, wordIssues, testGaps }) {
+function buildExecutiveSummary({
+  exact, concatenation, vowelShaped, greedy, wordIssues, testGaps,
+}) {
   const seqVsSingle = concatenation.filter((c) => c.collisionType === 'sequence-equals-single');
   const seqVsSeq = concatenation.filter((c) => c.collisionType === 'sequence-equals-sequence');
   const boundaryWords = wordIssues.filter((w) => w.issues.includes('boundary-dependent'));
+  const registeredVowelShape = vowelShaped.filter((r) => r.category === 'registered-diphthong');
+  const unregisteredVowelShape = vowelShaped.filter((r) => r.category === 'unregistered');
 
   return {
     exactCollisionCount: exact.length,
     concatenationSingleCount: seqVsSingle.length,
     concatenationSequenceCount: seqVsSeq.length,
+    vowelShapedRegisteredCount: registeredVowelShape.length,
+    vowelShapedUnregisteredCount: unregisteredVowelShape.length,
+    vowelShapedSimpleUnregisteredCount: unregisteredVowelShape.filter((r) => r.tier === 'simple').length,
+    vowelShapedLongUnregisteredCount: unregisteredVowelShape.filter((r) => r.tier === 'long').length,
     greedyHazardCount: greedy.length,
     wordIssueCount: wordIssues.length,
     boundaryDependentWords: boundaryWords.map((w) => w.word),
@@ -412,6 +495,8 @@ export function formatCollisionAuditMarkdown(audit) {
   lines.push(`- **Exact symbol collisions:** ${s.exactCollisionCount}`);
   lines.push(`- **Concatenation → single-key collisions:** ${s.concatenationSingleCount}`);
   lines.push(`- **Concatenation → sequence collisions:** ${s.concatenationSequenceCount}`);
+  lines.push(`- **Vowel-shaped sequences (registered diphthongs):** ${s.vowelShapedRegisteredCount}`);
+  lines.push(`- **Vowel-shaped sequences (unregistered phantom diphthongs):** ${s.vowelShapedUnregisteredCount} (${s.vowelShapedSimpleUnregisteredCount} simple + ${s.vowelShapedLongUnregisteredCount} long)`);
   lines.push(`- **Greedy decoder hazards:** ${s.greedyHazardCount}`);
   lines.push(`- **Word-level boundary issues:** ${s.wordIssueCount} (${s.boundaryDependentWords.join(', ') || 'none'})`);
   lines.push(`- **v2 collision test scope:** ${s.v2TestScope}`);
@@ -473,7 +558,47 @@ export function formatCollisionAuditMarkdown(audit) {
   );
   lines.push('');
 
-  lines.push('## 4. Greedy decoder hazards');
+  lines.push('## 4. Unregistered vowel-shaped sequences');
+  lines.push('');
+  lines.push('Every simple or long vowel followed by a glide consonant (`w`, `l`, `r`, `y`) concatenates to v3 diphthong shape `⚬XᵔY`. Four pairs are registered diphthong keys (Category A, also listed in §3). The remainder are **phantom diphthongs**: valid vowel grammar, decode as two phonemes, but look like single vowel tokens in unsegmented text.');
+  lines.push('');
+  lines.push('See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phantom-diphthongs) for the full matrix and phonetic expansion analysis.');
+  lines.push('');
+
+  const registeredRows = audit.vowelShaped.filter((r) => r.category === 'registered-diphthong');
+  lines.push('### Category A — registered (sequence equals diphthong key)');
+  lines.push('');
+  lines.push(
+    mdTable(
+      ['sequence', 'symbols', 'vowel key', 'notes'],
+      registeredRows.map((r) => [
+        r.sequence,
+        `\`${r.symbols}\``,
+        r.registeredVowelKey || '',
+        r.notes || 'intentional vowel+glide homograph',
+      ]),
+    ),
+  );
+  lines.push('');
+
+  const unregisteredRows = audit.vowelShaped.filter((r) => r.category === 'unregistered');
+  lines.push('### Category B/C — unregistered (phantom diphthong shape)');
+  lines.push('');
+  lines.push(
+    mdTable(
+      ['tier', 'sequence', 'symbols', 'grammar', 'notes'],
+      unregisteredRows.map((r) => [
+        r.tier,
+        r.sequence,
+        `\`${r.symbols}\``,
+        r.grammarOk ? r.grammarKind || 'valid' : 'invalid',
+        r.notes || 'decodes as vowel + glide; not a vowel inventory key',
+      ]),
+    ),
+  );
+  lines.push('');
+
+  lines.push('## 5. Greedy decoder hazards');
   lines.push('');
   lines.push('`decodeSymbols()` uses longest-match on unsegmented symbol strings. `decodeToPhonemeKeys()` uses space boundaries when present.');
   lines.push('');
@@ -492,7 +617,7 @@ export function formatCollisionAuditMarkdown(audit) {
   );
   lines.push('');
 
-  lines.push('## 5. Real word round-trip risks');
+  lines.push('## 6. Real word round-trip risks');
   lines.push('');
   if (!audit.wordIssues.length) {
     lines.push('No issues in the tested word set.');
@@ -529,7 +654,7 @@ export function formatCollisionAuditMarkdown(audit) {
   );
   lines.push('');
 
-  lines.push('## 6. Test suite review');
+  lines.push('## 7. Test suite review');
   lines.push('');
   lines.push('### What `npm run test:minimal-pairs` actually tests');
   lines.push('');
@@ -546,7 +671,7 @@ export function formatCollisionAuditMarkdown(audit) {
   for (const item of audit.testGaps.recommendedReports) lines.push(`- ${item}`);
   lines.push('');
 
-  lines.push('## 7. Recommended fix order (no language redesign yet)');
+  lines.push('## 8. Recommended fix order (no language redesign yet)');
   lines.push('');
   lines.push('1. **Documentation / UI (done partially):** Label recovered output as phoneme keys, not English spellings.');
   lines.push('2. **Boundary convention (done in pipeline):** Space-separated symbol groups in IPA pipeline output; preserve boundaries in normalize.');
@@ -557,7 +682,7 @@ export function formatCollisionAuditMarkdown(audit) {
   lines.push('5. **Do not yet:** invent new symbols or remove mappings without explicit design approval.');
   lines.push('');
 
-  lines.push('## 8. Issue classification');
+  lines.push('## 9. Issue classification');
   lines.push('');
   lines.push(
     mdTable(
@@ -566,6 +691,7 @@ export function formatCollisionAuditMarkdown(audit) {
         ['Recovered keys looked like English (boy)', 'code bug / display', 'no, fixed'],
         ['o+r symbol sequence equals oy', 'language-design collision', 'yes'],
         ['Vowel+glide sequences equal diphthongs (eye/ow/oy/ay)', 'language-design collision', 'yes, homograph note exists'],
+        ['Unregistered ⚬XᵔY phantom diphthongs (o+l, o+r, …)', 'compositional readability', 'documented in RN-23; optional new keys'],
         ['th+t equals t+s symbol strings', 'language-design collision', 'yes'],
         ['Unspaced greedy decode mis-recovery', 'decoder + boundary issue', 'partially mitigated by spacing'],
         ['v2 test "0 collisions" wording', 'test/documentation bug', 'no, rename/clarify'],

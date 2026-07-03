@@ -1,6 +1,6 @@
 # Fonora Collision Audit
 
-Generated: 2026-07-03T07:39:38.838Z
+Generated: 2026-07-03T16:06:12.609Z
 Rules version: v3
 
 ## Executive summary
@@ -8,6 +8,8 @@ Rules version: v3
 - **Exact symbol collisions:** 0
 - **Concatenation → single-key collisions:** 4
 - **Concatenation → sequence collisions:** 15
+- **Vowel-shaped sequences (registered diphthongs):** 4
+- **Vowel-shaped sequences (unregistered phantom diphthongs):** 28 (16 simple + 12 long)
 - **Greedy decoder hazards:** 20
 - **Word-level boundary issues:** 3 (none)
 - **v2 collision test scope:** 5 minimal-pair groups / 13 words, symbol distinctness only
@@ -90,7 +92,55 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 | v + k | p + g | `∋⌇∪` | sequence-equals-sequence | vk vs pg share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
 | v + h | p + gh | `∋⌇⊃` | sequence-equals-sequence | vh vs pgh share symbols | Language-design decision, distinct phoneme sequences indistinguishable without boundaries |
 
-## 4. Greedy decoder hazards
+## 4. Unregistered vowel-shaped sequences
+
+Every simple or long vowel followed by a glide consonant (`w`, `l`, `r`, `y`) concatenates to v3 diphthong shape `⚬XᵔY`. Four pairs are registered diphthong keys (Category A, also listed in §3). The remainder are **phantom diphthongs**: valid vowel grammar, decode as two phonemes, but look like single vowel tokens in unsegmented text.
+
+See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phantom-diphthongs) for the full matrix and phonetic expansion analysis.
+
+### Category A — registered (sequence equals diphthong key)
+
+| sequence | symbols | vowel key | notes |
+| --- | --- | --- | --- |
+| e + y | `⚬⌓ᵔ∪` | ay | intentional vowel+glide homograph |
+| o + w | `⚬⊃ᵔ∋` | ow | intentional vowel+glide homograph |
+| o + y | `⚬⊃ᵔ∪` | eye | intentional vowel+glide homograph |
+| u + y | `⚬∋ᵔ∪` | oy | intentional vowel+glide homograph |
+
+### Category B/C — unregistered (phantom diphthong shape)
+
+| tier | sequence | symbols | grammar | notes |
+| --- | --- | --- | --- | --- |
+| simple | a + w | `⚬∪ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | a + l | `⚬∪ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | a + r | `⚬∪ᵔ⌓` | diphthong | Phantom diphthong: a + r (NURSE/STRUT r-coloring) |
+| simple | a + y | `⚬∪ᵔ∪` | diphthong | Centring-diphthong candidate: a + y (eə, SQUARE) |
+| simple | e + w | `⚬⌓ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | e + l | `⚬⌓ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | e + r | `⚬⌓ᵔ⌓` | diphthong | Phantom diphthong: e + r (*her*, *err*) |
+| simple | i + w | `⚬∩ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | i + l | `⚬∩ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | i + r | `⚬∩ᵔ⌓` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | i + y | `⚬∩ᵔ∪` | diphthong | Centring-diphthong candidate: i + y (ɪə, NEAR) |
+| simple | o + l | `⚬⊃ᵔ∩` | diphthong | Phantom diphthong: o + l (*all*, *walk*) |
+| simple | o + r | `⚬⊃ᵔ⌓` | diphthong | Phantom diphthong: o + r (*car*, *for*, *bar*) |
+| simple | u + w | `⚬∋ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | u + l | `⚬∋ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| simple | u + r | `⚬∋ᵔ⌓` | diphthong | Centring-diphthong candidate: u + r (ʊə, CURE) |
+| long | ae + w | `⚬⌀ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | ae + l | `⚬⌀ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | ae + r | `⚬⌀ᵔ⌓` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | ae + y | `⚬⌀ᵔ∪` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | ee + w | `⚬⌇ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | ee + l | `⚬⌇ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | ee + r | `⚬⌇ᵔ⌓` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | ee + y | `⚬⌇ᵔ∪` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | oh + w | `⚬⏌ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | oh + l | `⚬⏌ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+| long | oh + r | `⚬⏌ᵔ⌓` | diphthong | Phantom diphthong: oh + r (*core*, *bor*) |
+| long | oh + y | `⚬⏌ᵔ∪` | diphthong | decodes as vowel + glide; not a vowel inventory key |
+
+## 5. Greedy decoder hazards
 
 `decodeSymbols()` uses longest-match on unsegmented symbol strings. `decodeToPhonemeKeys()` uses space boundaries when present.
 
@@ -117,7 +167,7 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 | `⚬⊃ᵔ∋` | o w | ow | o w | yes | phoneme keys [o w] |
 | `⚬⌓ᵔ∪` | e y | ay | e y | yes | phoneme keys [e y] |
 
-## 5. Real word round-trip risks
+## 6. Real word round-trip risks
 
 | word | phoneme keys | recovered | unspaced recover | issues |
 | --- | --- | --- | --- | --- |
@@ -168,7 +218,7 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 | ts | tˌiːˈɛs | a ee e a | `⚬⌀⚬⌇⚬∪` | ae ee a | ae ee a | recovered-keys-mismatch |
 | pb | pˌiːbˈiː | a ee a ee | `⚬⌀⚬⌓⚬⌀⚬⌓` | ae e ae e | ae e ae e | recovered-keys-mismatch |
 
-## 6. Test suite review
+## 7. Test suite review
 
 ### What `npm run test:minimal-pairs` actually tests
 
@@ -192,7 +242,7 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 - boundary-dependent round-trip failures
 - word-level phoneme-key recovery mismatches
 
-## 7. Recommended fix order (no language redesign yet)
+## 8. Recommended fix order (no language redesign yet)
 
 1. **Documentation / UI (done partially):** Label recovered output as phoneme keys, not English spellings.
 2. **Boundary convention (done in pipeline):** Space-separated symbol groups in IPA pipeline output; preserve boundaries in normalize.
@@ -202,13 +252,14 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 4. **Test suite:** Add `npm run audit:collisions` to CI; extend word-risk list; rename v2 collision test.
 5. **Do not yet:** invent new symbols or remove mappings without explicit design approval.
 
-## 8. Issue classification
+## 9. Issue classification
 
 | issue | class | needs human decision? |
 | --- | --- | --- |
 | Recovered keys looked like English (boy) | code bug / display | no, fixed |
 | o+r symbol sequence equals oy | language-design collision | yes |
 | Vowel+glide sequences equal diphthongs (eye/ow/oy/ay) | language-design collision | yes, homograph note exists |
+| Unregistered ⚬XᵔY phantom diphthongs (o+l, o+r, …) | compositional readability | documented in RN-23; optional new keys |
 | th+t equals t+s symbol strings | language-design collision | yes |
 | Unspaced greedy decode mis-recovery | decoder + boundary issue | partially mitigated by spacing |
 | v2 test "0 collisions" wording | test/documentation bug | no, rename/clarify |

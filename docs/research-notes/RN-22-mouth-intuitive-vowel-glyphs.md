@@ -97,6 +97,7 @@ No formal learner study was run for this change; evaluation is engineering-drive
 
 - Do strangers recover vowel **place** faster on the Sound Grid than the old manner mix (RN-17-style playtest)?
 - Should RN-06 concatenation hazards get explicit boundary policy now that diphthong nuclei align with simple vowels?
+- [RN-23](/research/notes/vowel-glide-phantom-diphthongs) catalogs 28 unregistered vowel-shaped sequences; should any become inventory keys?
 - When saved puzzle/script content is migrated, do we batch-re-encode from IPA or version-stamp glyph strings?
 - Does Gen 3 aspect→vowel metaphor (`focal` → `ee`, `struct` → `i`) need a successor note now that DDA UI is retired?
 
