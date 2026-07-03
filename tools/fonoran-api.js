@@ -44,13 +44,31 @@ import {
 } from './fonoran-concept-store.js';
 import {
   getSessionUser,
-  isWriteAuthRequired,
+  isAdminWriteRequired,
+  isCommunityWriteRequired,
   isAdminUser,
+  isCommunityUser,
   isSnapshotAdminRequired,
   isRegenAdminRequired,
   adminRequiredResponse,
   unauthorizedResponse,
+  communityRequiredResponse,
 } from './fonoran-auth.js';
+import {
+  getLearnProgress,
+  saveLearnProgress,
+  mergeLearnProgress,
+  createProposal,
+  listProposals,
+  getProposal,
+  resolveProposal,
+  setVote,
+  getVoteAggregate,
+  getUserVote,
+  checkRateLimit,
+} from './fonoran-community-store.js';
+import { analyzeWord, analysisDelta } from './fonoran-word-analysis.js';
+import { listWordInventory, getWordDetail, acceptProposal } from './fonoran-word-manager.js';
 import {
   createSnapshotZipStream,
   getSnapshotStatus,
@@ -134,8 +152,16 @@ export async function handleFonoranApi(req, res, pathname, method) {
     jsonResponse(res, status, body);
     return true;
   };
-  if (isWriteAuthRequired(pathname, method) && !getSessionUser(req)) {
-    unauthorizedResponse(res);
+  if (isCommunityWriteRequired(pathname, method) && !isCommunityUser(req)) {
+    communityRequiredResponse(res);
+    return true;
+  }
+  if (isAdminWriteRequired(pathname, method) && !isAdminUser(req)) {
+    if (!isCommunityUser(req)) {
+      unauthorizedResponse(res);
+    } else {
+      adminRequiredResponse(res);
+    }
     return true;
   }
   if (isSnapshotAdminRequired(pathname, method) && !isAdminUser(req)) {
@@ -197,6 +223,138 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const preview = previewSnapshotZip(zip);
       const result = await importSnapshotZip(zip);
       return done(200, { imported: true, preview: preview.summary, ...result });
+    }
+    if (pathname === '/api/fonoran/me/progress' && method === 'GET') {
+      const user = getSessionUser(req);
+      if (!user?.userId) return done(401, { error: 'Sign in required' });
+      const { progress, updated_at } = await getLearnProgress(user.userId);
+      return done(200, { progress, updated_at });
+    }
+    if (pathname === '/api/fonoran/me/progress' && method === 'PUT') {
+      const user = getSessionUser(req);
+      if (!user?.userId) return done(401, { error: 'Sign in required' });
+      checkRateLimit(`progress:${user.userId}`, { max: 60 });
+      const body = await readJsonBody(req);
+      const remote = (await getLearnProgress(user.userId)).progress;
+      const merged = mergeLearnProgress(body.progress ?? body, remote);
+      const saved = await saveLearnProgress(user.userId, merged);
+      return done(200, { progress: merged, updated_at: saved.updated_at });
+    }
+    if (pathname === '/api/fonoran/words' && method === 'GET') {
+      const url = new URL(req.url ?? '', 'http://localhost');
+      return done(200, await listWordInventory({
+        filter: url.searchParams.get('filter') ?? 'all',
+        query: url.searchParams.get('q') ?? '',
+      }));
+    }
+    const wordDetailMatch = pathname.match(/^\/api\/fonoran\/words\/([^/]+)$/);
+    if (wordDetailMatch && method === 'GET') {
+      const ref = decodeURIComponent(wordDetailMatch[1]);
+      const url = new URL(req.url ?? '', 'http://localhost');
+      return done(200, await getWordDetail(ref, { kind: url.searchParams.get('kind') }));
+    }
+    const wordVoteMatch = pathname.match(/^\/api\/fonoran\/words\/([^/]+)\/vote$/);
+    if (wordVoteMatch && method === 'GET') {
+      const ref = decodeURIComponent(wordVoteMatch[1]);
+      const aggregate = await getVoteAggregate('word', ref);
+      const user = getSessionUser(req);
+      const userVote = user?.userId ? await getUserVote(user.userId, 'word', ref) : 0;
+      return done(200, { ...aggregate, userVote });
+    }
+    if (wordVoteMatch && method === 'POST') {
+      const user = getSessionUser(req);
+      if (!user?.userId) return done(401, { error: 'Sign in required' });
+      checkRateLimit(`vote:${user.userId}`, { max: 120 });
+      const ref = decodeURIComponent(wordVoteMatch[1]);
+      const body = await readJsonBody(req);
+      const vote = body.vote === 0 || body.vote == null ? 0 : body.vote > 0 ? 1 : -1;
+      await setVote(user.userId, 'word', ref, vote);
+      return done(200, { ...(await getVoteAggregate('word', ref)), userVote: vote });
+    }
+    if (pathname === '/api/fonoran/analyze/word' && method === 'POST') {
+      const body = await readJsonBody(req);
+      const lab = await getLab();
+      const current = body.compare_ref
+        ? analyzeWord({ ...body, lab })
+        : null;
+      const analysis = analyzeWord({ ...body, lab });
+      let delta = null;
+      if (body.compare_ref) {
+        try {
+          const existing = await getWordDetail(body.compare_ref);
+          const baseline = analyzeWord({
+            type: existing.kind === 'root' ? 'root' : 'compound',
+            spelling: existing.spelling,
+            components: existing.parts ?? existing.compound?.parts,
+            meaning: existing.meaning,
+            lab,
+            candidate: existing.candidate,
+          });
+          delta = analysisDelta(baseline, analysis);
+        } catch {
+          /* ignore missing compare target */
+        }
+      }
+      return done(200, { analysis, delta, current });
+    }
+    if (pathname === '/api/fonoran/proposals' && method === 'GET') {
+      const url = new URL(req.url ?? '', 'http://localhost');
+      return done(200, {
+        proposals: await listProposals({
+          status: url.searchParams.get('status') ?? 'open',
+          limit: Number(url.searchParams.get('limit') ?? 100),
+        }),
+      });
+    }
+    if (pathname === '/api/fonoran/proposals' && method === 'POST') {
+      const user = getSessionUser(req);
+      if (!user?.userId) return done(401, { error: 'Sign in required' });
+      checkRateLimit(`proposal:${user.userId}`, { max: 30 });
+      const body = await readJsonBody(req);
+      if (!body.target_type || !body.target_ref || !body.kind) {
+        return done(400, { error: 'target_type, target_ref, and kind are required' });
+      }
+      const proposal = await createProposal(user.userId, body);
+      return done(201, proposal);
+    }
+    const proposalMatch = pathname.match(/^\/api\/fonoran\/proposals\/([^/]+)$/);
+    if (proposalMatch && method === 'GET') {
+      const proposal = await getProposal(decodeURIComponent(proposalMatch[1]));
+      if (!proposal) return done(404, { error: 'Proposal not found' });
+      const votes = await getVoteAggregate('proposal', proposal.id);
+      return done(200, { proposal, votes });
+    }
+    const proposalVoteMatch = pathname.match(/^\/api\/fonoran\/proposals\/([^/]+)\/vote$/);
+    if (proposalVoteMatch && method === 'POST') {
+      const user = getSessionUser(req);
+      if (!user?.userId) return done(401, { error: 'Sign in required' });
+      checkRateLimit(`vote:${user.userId}`, { max: 120 });
+      const id = decodeURIComponent(proposalVoteMatch[1]);
+      const body = await readJsonBody(req);
+      const vote = body.vote === 0 || body.vote == null ? 0 : body.vote > 0 ? 1 : -1;
+      await setVote(user.userId, 'proposal', id, vote);
+      return done(200, { ...(await getVoteAggregate('proposal', id)), userVote: vote });
+    }
+    const proposalResolveMatch = pathname.match(/^\/api\/fonoran\/proposals\/([^/]+)\/resolve$/);
+    if (proposalResolveMatch && method === 'POST') {
+      const user = getSessionUser(req);
+      if (!isAdminUser(req)) {
+        adminRequiredResponse(res);
+        return true;
+      }
+      const id = decodeURIComponent(proposalResolveMatch[1]);
+      const body = await readJsonBody(req);
+      const proposal = await getProposal(id);
+      if (!proposal) return done(404, { error: 'Proposal not found' });
+      if (body.action === 'accept') {
+        await acceptProposal(proposal, user.email);
+        return done(200, { ok: true, status: 'accepted' });
+      }
+      if (body.action === 'reject') {
+        await resolveProposal(id, { status: 'rejected', resolvedBy: user.email });
+        return done(200, { ok: true, status: 'rejected' });
+      }
+      return done(400, { error: 'action must be accept or reject' });
     }
     if (pathname === '/api/fonoran/bootstrap' && method === 'GET') {
       return done(200, await getBootstrap());

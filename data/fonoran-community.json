@@ -1,0 +1,134 @@
+{
+  "version": "1.0-community",
+  "users": [
+    {
+      "id": "usr-mr5bnmik-a2214bda",
+      "provider": "google",
+      "provider_sub": "117420963868823621247",
+      "email": "info@fonora.org",
+      "name": "James Calhoun",
+      "created_at": "2026-07-03T19:24:02.107Z",
+      "last_login": "2026-07-03T20:22:55.204Z"
+    }
+  ],
+  "learn_progress": {
+    "dev-local": {
+      "payload": {
+        "totalXp": 785,
+        "streak": 1,
+        "lastPracticeDate": "2026-07-03",
+        "dailyGoalXp": 50,
+        "dailyXpEarned": 785,
+        "dailyXpDate": "2026-07-03",
+        "skills": {
+          "script-sounds": {
+            "xp": 535,
+            "sessions": 4,
+            "lastPlayed": "2026-07-03",
+            "lessonIndex": 0,
+            "mastery": {},
+            "curriculum": {
+              "total": 0,
+              "totalLessons": 0,
+              "ring": ""
+            }
+          },
+          "script-writing": {
+            "xp": 30,
+            "sessions": 0,
+            "lastPlayed": "2026-07-03",
+            "lessonIndex": 0,
+            "mastery": {},
+            "curriculum": {
+              "total": 0,
+              "totalLessons": 0,
+              "ring": ""
+            }
+          },
+          "script-words": {
+            "xp": 190,
+            "sessions": 1,
+            "lastPlayed": "2026-07-03",
+            "lessonIndex": 0,
+            "mastery": {},
+            "curriculum": {
+              "total": 0,
+              "totalLessons": 0,
+              "ring": ""
+            }
+          },
+          "fonoran-reading": {
+            "xp": 30,
+            "sessions": 0,
+            "lastPlayed": "2026-07-03",
+            "lessonIndex": 0,
+            "mastery": {
+              "ba": {
+                "seen": 2,
+                "correct": 2
+              },
+              "be": {
+                "seen": 1,
+                "correct": 1
+              }
+            },
+            "curriculum": {
+              "total": 231,
+              "totalLessons": 24,
+              "ring": "Communicative core"
+            }
+          },
+          "fonoran-writing": {
+            "xp": 0,
+            "sessions": 0,
+            "lastPlayed": null,
+            "lessonIndex": 0,
+            "mastery": {
+              "ba": {
+                "seen": 1,
+                "correct": 0
+              }
+            },
+            "curriculum": {
+              "total": 231,
+              "totalLessons": 24,
+              "ring": "Communicative core"
+            }
+          },
+          "fonoran-hearing": {
+            "xp": 0,
+            "sessions": 0,
+            "lastPlayed": null,
+            "lessonIndex": 0,
+            "mastery": {},
+            "curriculum": {
+              "total": 231,
+              "totalLessons": 24,
+              "ring": "Communicative core"
+            }
+          },
+          "fonoran-grammar": {
+            "xp": 0,
+            "sessions": 0,
+            "lastPlayed": null,
+            "lessonIndex": 0,
+            "mastery": {
+              "gen-15": {
+                "seen": 1,
+                "correct": 0
+              }
+            },
+            "curriculum": {
+              "total": 61,
+              "totalLessons": 7,
+              "ring": "Communicative core"
+            }
+          }
+        }
+      },
+      "updated_at": "2026-07-03T20:28:50.194Z"
+    }
+  },
+  "proposals": [],
+  "votes": []
+}

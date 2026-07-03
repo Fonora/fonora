@@ -17,14 +17,34 @@
     const AUTH = {
       required: false,
       authenticated: true,
+      isAdmin: true,
       email: null,
+      userId: null,
+      role: null,
       loginUrl: '/auth/google?returnTo=/language',
+      loginUrls: { google: '/auth/google', github: '/auth/github', primary: '/auth/google' },
     };
-    const WRITE_PAGES = new Set(['create', 'review', 'root-review', 'concepts', 'advanced']);
-    const SPLIT_WRITE_PAGES = new Set(['create', 'review', 'concepts']);
+    const WRITE_PAGES = new Set(['advanced']);
+    const LEGACY_WORD_PAGES = new Set(['words', 'create', 'review', 'concepts', 'roots', 'root-review']);
+
+    function goWordManager() {
+      window.location.href = `/tools#word-manager${window.location.search}`;
+    }
+
+    function isWordManagerPage(name) {
+      return LEGACY_WORD_PAGES.has(name);
+    }
+
+    function isAdmin() {
+      return AUTH.isAdmin;
+    }
+
+    function isSignedIn() {
+      return AUTH.authenticated;
+    }
 
     function canWrite() {
-      return !AUTH.required || AUTH.authenticated;
+      return !AUTH.required || AUTH.isAdmin;
     }
 
     function writeLocked() {
@@ -116,8 +136,12 @@
         data = await res.json();
         AUTH.required = Boolean(data.authRequired);
         AUTH.authenticated = Boolean(data.authenticated);
+        AUTH.isAdmin = Boolean(data.isAdmin);
         AUTH.email = data.email ?? null;
+        AUTH.userId = data.userId ?? null;
+        AUTH.role = data.role ?? null;
         AUTH.loginUrl = data.loginUrl ?? '/auth/google?returnTo=/language';
+        AUTH.loginUrls = data.loginUrls ?? { primary: AUTH.loginUrl };
       } catch {
         AUTH.required = false;
         AUTH.authenticated = true;
@@ -127,8 +151,10 @@
         configured: Boolean(data?.authConfigured),
         toolsGated: Boolean(data?.toolsGated ?? data?.learnToolsGated),
         authenticated: AUTH.authenticated,
+        isAdmin: AUTH.isAdmin,
         email: AUTH.email,
         loginUrl: AUTH.loginUrl,
+        loginUrls: AUTH.loginUrls,
       });
       applyWriteAccessUI();
       if (STATE.lab && WRITE_PAGES.has(STATE.page)) renderActivePage();
@@ -161,7 +187,7 @@
 
     function updateAuthGate() {
       const main = document.querySelector('main');
-      const show = !canWrite() && WRITE_PAGES.has(STATE.page);
+      const show = AUTH.required && !AUTH.isAdmin && WRITE_PAGES.has(STATE.page);
       let gate = $('auth-gate');
 
       if (!show) {
@@ -175,11 +201,15 @@
         gate.id = 'auth-gate';
       }
       gate.className = 'auth-gate sans';
-      gate.innerHTML = `<p>Sign in with your <strong>@fonora.org</strong> Google account to edit Fonoran vocabulary.</p>
-        <a href="${escapeHtml(AUTH.loginUrl)}" class="btn btn--primary auth-gate__sign-in">Sign in with Google</a>`;
-      const host = SPLIT_WRITE_PAGES.has(STATE.page)
-        ? $(`page-${STATE.page}`)?.querySelector('.fonoran-split-chrome')
-        : main;
+      const googleUrl = escapeHtml(AUTH.loginUrls?.google ?? AUTH.loginUrl);
+      const githubUrl = escapeHtml(AUTH.loginUrls?.github ?? '/auth/github?returnTo=/language');
+      gate.innerHTML = `<p>Sign in with the <strong>admin</strong> account to edit Fonoran canon in Advanced settings.</p>
+        <p class="sans">Community sign-in (Google or GitHub) works for voting on the Dictionary without admin access.</p>
+        <div class="auth-gate__buttons">
+          ${googleUrl ? `<a href="${googleUrl}" class="btn btn--primary auth-gate__sign-in">Continue with Google</a>` : ''}
+          ${githubUrl ? `<a href="${githubUrl}" class="btn auth-gate__sign-in">Continue with GitHub</a>` : ''}
+        </div>`;
+      const host = main;
       if (host && gate.parentElement !== host) host.prepend(gate);
       requestAnimationFrame(syncSplitStickyOffsets);
     }
@@ -939,7 +969,7 @@
         meaning: c.meaning ?? '',
         aliases: (c.aliases ?? []).join('\n'),
       };
-      switchPage('create');
+      goWordManager();
     }
 
     function clearWordComposer({ keepReturnPage = false } = {}) {
@@ -1930,7 +1960,7 @@
       STATE.conceptEditorPendingId = conceptId;
       const c = conceptList().find(x => x.id === conceptId);
       STATE.conceptEditorDraft = c ? conceptEditorDraftFrom(c) : null;
-      switchPage('concepts');
+      goWordManager();
     }
 
     function openConceptEditorForSound(s, { returnPage = null } = {}) {
@@ -1943,7 +1973,7 @@
         concept: s.meaning ?? '',
         spelling: s.spelling ?? '',
       };
-      switchPage('concepts');
+      goWordManager();
     }
 
     function reviewItemScriptParts(item, isSound) {
@@ -3273,7 +3303,7 @@
         if (returnPage === 'review') {
           STATE.conceptEditorReturnPage = null;
           STATE.conceptEditorPendingId = null;
-          switchPage('review');
+          goWordManager();
           return;
         }
         if (STATE.conceptEditorIsNew) {
@@ -3349,7 +3379,7 @@
           } else {
             STATE.reviewSelection = { type: 'candidate', ref: id };
           }
-          switchPage('review');
+          goWordManager();
         } else {
           await load();
           const c = conceptList().find(x => x.id === id);
@@ -3623,6 +3653,52 @@
     }
 
     let dictDetailToken = 0;
+
+    async function appendDictVoteBar(panel, entryKind, id) {
+      if (entryKind === 'particle') return;
+      const sound = entryKind === 'sound' ? STATE.lab?.sounds?.find(s => s.spelling === id) : null;
+      const compound = entryKind === 'compound' ? STATE.lab?.compounds?.find(c => c.id === id) : null;
+      const voteRef = sound?.concept_id ?? compound?.id ?? id;
+      try {
+        const data = await api(`/api/fonoran/words/${encodeURIComponent(voteRef)}/vote`);
+        let bar = panel.querySelector('.dict-votes');
+        if (!bar) {
+          bar = document.createElement('div');
+          bar.className = 'wm-votes dict-votes sans';
+          panel.querySelector('.dict-detail-stack')?.appendChild(bar)
+            ?? panel.appendChild(bar);
+        }
+        const googleUrl = escapeHtml(AUTH.loginUrls?.google ?? AUTH.loginUrl);
+        const githubUrl = escapeHtml(AUTH.loginUrls?.github ?? '/auth/github?returnTo=/language');
+        bar.innerHTML = `<p class="wm-votes__tally">Community: ${data.up ?? 0} ↑ · ${data.down ?? 0} ↓</p>
+          ${AUTH.authenticated ? `<div class="wm-votes__actions">
+            <button type="button" class="btn btn--sm" data-dict-vote="1"${data.userVote === 1 ? ' aria-pressed="true"' : ''}>Upvote</button>
+            <button type="button" class="btn btn--sm" data-dict-vote="-1"${data.userVote === -1 ? ' aria-pressed="true"' : ''}>Downvote</button>
+            <button type="button" class="btn btn--sm" data-dict-vote="0">Clear</button>
+          </div>` : `<p class="sans">Sign in to vote.</p>
+          <div class="auth-gate__buttons">
+            ${googleUrl ? `<a href="${googleUrl}" class="btn btn--primary btn--sm">Google</a>` : ''}
+            ${githubUrl ? `<a href="${githubUrl}" class="btn btn--sm">GitHub</a>` : ''}
+          </div>`}`;
+        bar.querySelectorAll('[data-dict-vote]').forEach((btn) => {
+          btn.addEventListener('click', async () => {
+            const vote = Number(btn.dataset.dictVote);
+            try {
+              await api(`/api/fonoran/words/${encodeURIComponent(voteRef)}/vote`, {
+                method: 'POST',
+                body: JSON.stringify({ vote }),
+              });
+              await appendDictVoteBar(panel, entryKind, id);
+            } catch (err) {
+              toast(err.message);
+            }
+          });
+        });
+      } catch {
+        /* votes optional */
+      }
+    }
+
     async function loadDictionaryDetail(entryKind, id) {
       if (entryKind === 'particle') {
         showParticleDetail(id);
@@ -3646,6 +3722,7 @@
           },
         });
         if (token !== dictDetailToken) return;
+        void appendDictVoteBar(panel, entryKind, id);
       } catch (e) {
         if (token !== dictDetailToken) return;
         panel.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`;
@@ -4427,8 +4504,8 @@
     }
 
     /* ---------- nav ---------- */
-    const MAIN_PAGES = new Set(['create', 'review', 'dictionary', 'translator']);
-    const ALL_PAGES = new Set(['home', 'root-review', 'create', 'review', 'dictionary', 'grammar', 'translator', 'puzzle', 'health', 'gaps', 'progress', 'advanced', 'concepts']);
+    const MAIN_PAGES = new Set(['dictionary', 'translator']);
+    const ALL_PAGES = new Set(['home', 'create', 'review', 'dictionary', 'grammar', 'translator', 'puzzle', 'health', 'gaps', 'progress', 'advanced', 'concepts']);
 
     function confirmDangerAction({ title, message, typeToConfirm }) {
       if (!confirm(`${title}\n\n${message}\n\nAre you sure you want to continue?`)) return false;
@@ -4451,15 +4528,11 @@
     function rememberMainPage() {
       if (MAIN_PAGES.has(STATE.page)) STATE.toolReturnPage = STATE.page;
     }
+
     function switchPage(name) {
-      if (name === 'roots') {
-        name = 'concepts';
-      }
-      if (name === 'root-review') {
-        STATE.rootReviewFocusPending = true;
-        name = 'review';
-      } else if (name === 'review' && STATE.page !== 'review') {
-        STATE.reviewFocusPending = true;
+      if (isWordManagerPage(name)) {
+        goWordManager();
+        return;
       }
       STATE.page = name;
       setActiveTab(name);
@@ -4485,7 +4558,7 @@
       scrollPageTop();
       requestAnimationFrame(() => {
         scrollPageTop();
-        if (name === 'dictionary' || name === 'create' || name === 'grammar' || name === 'concepts' || name === 'review') {
+        if (name === 'dictionary' || name === 'grammar') {
           syncSplitStickyOffsets();
           requestAnimationFrame(syncSplitStickyOffsets);
         }
@@ -4560,7 +4633,7 @@
     $('wc-cancel')?.addEventListener('click', () => {
       const returnPage = STATE.wordComposerReturnPage;
       clearWordComposer();
-      if (returnPage === 'review') switchPage('review');
+      if (returnPage === 'review') goWordManager();
     });
     $('wc-save').addEventListener('click', async () => {
       const meaning = $('wc-meaning').value.trim();
@@ -4614,7 +4687,7 @@
         clearWordComposer();
         await load({ skipRender: true });
         if (returnPage === 'review') {
-          switchPage('review');
+          goWordManager();
         } else {
           renderWordComposer();
         }
@@ -4866,11 +4939,14 @@
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
     const hashOnLoadRaw = window.location.hash.replace(/^#/, '').split('?')[0];
-    const hashOnLoad = hashOnLoadRaw === 'roots' ? 'concepts' : hashOnLoadRaw;
+    if (isWordManagerPage(hashOnLoadRaw)) {
+      goWordManager();
+    }
+    const hashOnLoad = hashOnLoadRaw;
     const initialPageRaw = (hashOnLoad && ALL_PAGES.has(hashOnLoad) ? hashOnLoad : null)
       || document.documentElement.getAttribute('data-fonora-page')
       || 'home';
-    const initialPage = initialPageRaw === 'root-review' ? 'review' : initialPageRaw;
+    const initialPage = isWordManagerPage(initialPageRaw) ? 'home' : initialPageRaw;
     setNavSelectHandlers({
       onPage: (page) => switchPage(page),
       onSignOut: () => { signOut(); },
@@ -4889,12 +4965,11 @@
       updateAuthGate();
       window.addEventListener('hashchange', () => {
         let hashPage = parseHashPage();
-        if (hashPage === 'roots') hashPage = 'concepts';
-        let page = hashPage && ALL_PAGES.has(hashPage) ? hashPage : 'home';
-        if (hashPage === 'root-review') {
-          STATE.rootReviewFocusPending = true;
-          page = 'review';
+        if (isWordManagerPage(hashPage)) {
+          goWordManager();
+          return;
         }
+        const page = hashPage && ALL_PAGES.has(hashPage) ? hashPage : 'home';
         if (page !== STATE.page) switchPage(page);
       });
       wireLander();

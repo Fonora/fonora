@@ -158,6 +158,82 @@ export function saveProgress(state) {
   } catch {
     /* ignore quota errors */
   }
+  void pushProgressToServer(state);
+}
+
+let pushTimer = null;
+
+async function pushProgressToServer(state) {
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(async () => {
+    try {
+      const res = await fetch('/auth/session', { credentials: 'include' });
+      const auth = await res.json();
+      if (!auth.authenticated || !auth.userId) return;
+      await fetch('/api/fonoran/me/progress', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ progress: state }),
+      });
+    } catch {
+      /* offline or auth off */
+    }
+  }, 800);
+}
+
+/** Merge server progress after sign-in (max-xp strategy). */
+export async function mergeLearnProgressOnLogin() {
+  try {
+    const res = await fetch('/api/fonoran/me/progress', { credentials: 'include' });
+    if (!res.ok) return loadProgress();
+    const data = await res.json();
+    const local = loadProgress();
+    if (!data.progress) {
+      await fetch('/api/fonoran/me/progress', {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ progress: local }),
+      });
+      return local;
+    }
+    const merged = mergeProgressLocal(local, data.progress);
+    saveProgress(merged);
+    return merged;
+  } catch {
+    return loadProgress();
+  }
+}
+
+/** @param {LearnProgress} local @param {LearnProgress} remote */
+function mergeProgressLocal(local, remote) {
+  const out = { ...remote };
+  if ((local.totalXp ?? 0) > (out.totalXp ?? 0)) out.totalXp = local.totalXp;
+  if ((local.streak ?? 0) > (out.streak ?? 0)) out.streak = local.streak;
+  out.skills = out.skills && typeof out.skills === 'object' ? { ...out.skills } : {};
+  for (const id of LEARN_SKILL_IDS) {
+    const ls = local.skills?.[id];
+    const rs = out.skills[id] ?? defaultSkill();
+    if (!ls) {
+      out.skills[id] = rs;
+      continue;
+    }
+    const merged = { ...rs };
+    merged.xp = Math.max(ls.xp ?? 0, rs.xp ?? 0);
+    merged.sessions = Math.max(ls.sessions ?? 0, rs.sessions ?? 0);
+    merged.lessonIndex = Math.max(ls.lessonIndex ?? 0, rs.lessonIndex ?? 0);
+    merged.mastery = { ...(rs.mastery ?? {}) };
+    for (const [key, ms] of Object.entries(ls.mastery ?? {})) {
+      const rm = merged.mastery[key] ?? { seen: 0, correct: 0 };
+      merged.mastery[key] = {
+        seen: Math.max(ms.seen ?? 0, rm.seen ?? 0),
+        correct: Math.max(ms.correct ?? 0, rm.correct ?? 0),
+      };
+    }
+    out.skills[id] = merged;
+  }
+  return normalizeProgress(out);
 }
 
 /** @param {LearnProgress} state */

@@ -46,12 +46,8 @@ const SCRIPT_TITLES = {
 
 const BUILDER_TITLES = {
   home: 'About',
-  'root-review': 'Root Review',
-  concepts: 'Concept Editor',
   translator: 'Translator',
   puzzle: 'Puzzle Conversation',
-  create: 'Word Creator',
-  review: 'Word Review',
   dictionary: 'Dictionary',
   grammar: 'Grammar',
   health: 'Health',
@@ -62,15 +58,15 @@ const BUILDER_TITLES = {
 
 const TOOLS_TITLES = {
   'tools-home': 'Tools',
+  'word-manager': 'Word Manager',
   samples: 'Samples',
   'encoder-testing': 'Pronunciation Testing',
   'pronunciation-validation': 'Pronunciation Validation',
-  'research-notes': 'Research Notes',
 };
 
 const TOOLS_ROW_TABS = [
   { id: 'tools-home', label: 'Home' },
-  { id: 'research-notes', label: 'Research Notes' },
+  { id: 'word-manager', label: 'Word Manager', adminOnly: true },
   { id: 'samples', label: 'Samples' },
   { id: 'encoder-testing', label: 'Pronunciation Testing' },
   { id: 'pronunciation-validation', label: 'Validation' },

@@ -77,11 +77,15 @@ export function buildRootIndex(inventory) {
 }
 
 export function sortedRoots(inventory) {
-  return [...inventory].sort((a, b) => b.root.length - a.root.length);
+  return [...inventory].sort((a, b) => {
+    const aLen = (typeof a === 'string' ? a : (a.root ?? '')).length;
+    const bLen = (typeof b === 'string' ? b : (b.root ?? '')).length;
+    return bLen - aLen;
+  });
 }
 
 export function segmentCompound(compound, inventory) {
-  const roots = sortedRoots(inventory).map(r => r.root);
+  const roots = sortedRoots(inventory).map(r => typeof r === 'string' ? r : r.root);
   const results = [];
 
   function walk(remaining, path) {

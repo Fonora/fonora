@@ -29,6 +29,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/language/fonoran.css">
   <link rel="prefetch" href="/language">
 </head>
 <body>
@@ -76,7 +77,7 @@
       <nav class="main-nav" aria-label="Tools">
         <div class="main-nav-primary">
           <button type="button" class="tab-btn" data-tab="tools-home">Home</button>
-          <button type="button" class="tab-btn tab-btn--deprecated" data-tab="research-notes" title="Deprecated — edit markdown in repo">Research Notes</button>
+          <button type="button" class="tab-btn" data-tab="word-manager" id="nav-word-manager" hidden>Word Manager</button>
           <button type="button" class="tab-btn" data-tab="samples">Samples</button>
           <button type="button" class="tab-btn" data-tab="encoder-testing">Pronunciation Testing</button>
           <button type="button" class="tab-btn" data-tab="pronunciation-validation">Validation</button>
@@ -414,26 +415,18 @@
           </article>
           <article class="home-layer-card">
             <p class="home-layer-card__tag">Vocabulary</p>
-            <h3>Word Creator</h3>
-            <p>Compose Fonoran words from roots.</p>
+            <h3>Word Manager</h3>
+            <p>Stack roots and words, build compounds, and save to the lab (admin only).</p>
             <div class="home-layer-card__actions">
-              <a href="/language#create" class="btn">Open Word Creator</a>
+              <a href="/tools#word-manager" class="btn btn--primary">Open Word Manager</a>
             </div>
           </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Vocabulary</p>
-            <h3>Concept Editor</h3>
-            <p>Manage the concept inventory that roots and words are built from.</p>
+          <article class="home-layer-card home-layer-card--muted">
+            <p class="home-layer-card__tag">Community</p>
+            <h3>Vote &amp; propose</h3>
+            <p>Community members vote and propose alternates on the public Language dictionary — not in Tools.</p>
             <div class="home-layer-card__actions">
-              <a href="/language#concepts" class="btn">Open Concept Editor</a>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Review</p>
-            <h3>Review</h3>
-            <p>Review and approve pending roots and words.</p>
-            <div class="home-layer-card__actions">
-              <a href="/language#review" class="btn">Open Review</a>
+              <a href="/language#dictionary" class="btn">Open Dictionary</a>
             </div>
           </article>
           <article class="home-layer-card">
@@ -470,6 +463,140 @@
           </article>
         </div>
       </section>
+    </section>
+
+    <!-- Admin: Word Manager -->
+    <section class="tab-panel fonoran-split-page wm-tools-page" id="tab-word-manager" data-tab-panel="word-manager" hidden aria-labelledby="word-manager-title">
+      <h1 id="word-manager-title" hidden>Word Manager</h1>
+      <div class="fonoran-split-shell" data-split-shell>
+        <div class="fonoran-split-chrome wm-chrome">
+          <div class="wm-chrome__search-row">
+            <input type="search" id="wc-filter" class="search-bar" placeholder="Search by spelling, meaning, alias, or concept…" autocomplete="off">
+          </div>
+          <div class="wm-chrome__filter-row">
+            <div class="toolbar" id="wc-filters">
+              <button type="button" class="chip active" data-wc-filter="roots">Roots</button>
+              <button type="button" class="chip active" data-wc-filter="words">Words</button>
+              <button type="button" class="chip" data-wc-filter="unapproved">Unapproved</button>
+              <button type="button" class="chip" data-wc-filter="unnamed">Unnamed</button>
+            </div>
+            <div class="wm-chrome__new">
+              <button type="button" class="btn btn--primary btn--sm" id="wc-new-compound">+ New compound</button>
+              <button type="button" class="btn btn--sm" id="wc-new-root">+ New root</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fonoran-split-grid">
+        <aside class="fonoran-split-picker wm-picker" aria-label="Roots and words">
+          <p class="empty sans wm-picker__empty" id="wc-picker-empty" hidden>Turn on <strong>Roots</strong> or <strong>Words</strong> above to browse.</p>
+          <h4 class="wm-picker__section-h" id="wc-roots-h">Roots</h4>
+          <div class="sound-grid" id="wc-roots"></div>
+          <h4 class="wm-picker__section-h" id="wc-words-h">Words</h4>
+          <div class="sound-grid" id="wc-words"></div>
+        </aside>
+        <div class="fonoran-split-workspace wm-workspace" id="word-create">
+
+          <div id="wc-empty-state" class="wm-empty-state">
+            <div class="wm-empty-state__body">
+              <p class="wm-empty-state__lead">Nothing selected</p>
+              <p class="wm-empty-state__hint">Pick a root or compound from the list, or create a new one.</p>
+            </div>
+          </div>
+
+          <div class="wm-editor-topbar" id="wc-detail-head" hidden>
+            <div class="wm-editor-topbar__left">
+              <span id="wc-state-badge"></span>
+              <span id="wc-kind-label" class="wm-editor-topbar__kind sans"></span>
+            </div>
+            <div class="wm-editor-topbar__right" id="wc-review-actions">
+              <button type="button" class="btn btn--sm wm-btn--analysis" id="wc-analysis-btn" hidden>Analysis…</button>
+              <button type="button" class="btn btn--sm" id="wc-approve">Approve</button>
+              <button type="button" class="btn btn--sm wm-btn--reject" id="wc-reject">Reject</button>
+              <button type="button" class="btn btn--sm" id="wc-reopen" hidden>Reopen</button>
+              <button type="button" class="btn btn--sm" id="wc-approve-candidate" hidden>Approve candidate</button>
+            </div>
+          </div>
+
+          <div class="wm-script-line" id="wc-script-display" hidden></div>
+
+          <div id="wc-compound-panel" hidden>
+            <div class="word-preview-panel wm-preview-panel">
+              <div id="wc-live-pron"></div>
+            </div>
+            <div class="wm-form">
+              <label class="wm-label" for="wc-meaning">Meaning <span class="wm-tip" aria-hidden="true" data-tip="The primary English meaning of this compound word. Used in search and the dictionary.">i</span></label>
+              <input type="text" id="wc-meaning" placeholder="e.g. river, friendship, color…" aria-label="Meaning">
+              <div id="wc-dupe"></div>
+              <label class="wm-label">Recipe <span class="wm-tip" aria-hidden="true" data-tip="The sequence of roots and words that build this compound. Click picker items to add, click a token to remove.">i</span></label>
+              <div class="wm-recipe" id="wc-recipe-pick"></div>
+              <div id="wc-match"></div>
+              <div id="wc-boundary"></div>
+              <label class="wm-label" for="wc-aliases">Word bank <span class="wm-tip" aria-hidden="true" data-tip="English synonyms used for search and learning. One phrase per line — include alternate spellings, related terms, and common translations.">i</span></label>
+              <textarea id="wc-aliases" rows="3" placeholder="synonym&#10;related phrase&#10;another meaning"></textarea>
+              <div class="wm-form__actions">
+                <button type="button" class="btn btn--primary" id="wc-save" disabled>Save compound</button>
+                <button type="button" class="btn" id="wc-clear">Clear</button>
+                <button type="button" class="btn" id="wc-cancel" hidden>Cancel</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="wc-root-panel" hidden>
+            <div class="word-preview-panel wm-preview-panel">
+              <div id="wc-root-live-pron"></div>
+            </div>
+            <div class="wm-form">
+              <div class="wm-field-pair">
+                <div class="wm-field">
+                  <label class="wm-label" for="wc-concept-id">Concept ID <span class="wm-tip" aria-hidden="true" data-tip="Stable unique identifier for this root concept. Cannot be changed once saved — renaming it would break references throughout the language.">i</span></label>
+                  <input type="text" id="wc-concept-id" class="mono" placeholder="concept-id" autocomplete="off">
+                </div>
+                <div class="wm-field">
+                  <label class="wm-label" for="wc-spelling">Fonoran sound <span class="wm-tip" aria-hidden="true" data-tip="The phonetic syllable this root represents, e.g. 'be', 'ges'. Must be a valid Fonoran syllable.">i</span></label>
+                  <div class="concept-editor__sound-row">
+                    <input type="text" id="wc-spelling" class="mono" autocomplete="off">
+                    <button type="button" class="btn" id="wc-root-hear" disabled>▶ Hear</button>
+                  </div>
+                  <p class="syl-invalid" id="wc-spelling-invalid" hidden></p>
+                </div>
+              </div>
+              <div class="wm-field-pair">
+                <div class="wm-field">
+                  <label class="wm-label" for="wc-gloss">Gloss <span class="wm-tip" aria-hidden="true" data-tip="A short human-readable label for admin reference. The root's true meaning is its sound — the gloss is just a note.">i</span></label>
+                  <input type="text" id="wc-gloss" autocomplete="off">
+                </div>
+                <div class="wm-field">
+                  <label class="wm-label" for="wc-domain">Domain <span class="wm-tip" aria-hidden="true" data-tip="Semantic category this root belongs to, e.g. body, time, emotion, place. Groups related roots together.">i</span></label>
+                  <select id="wc-domain" autocomplete="off">
+                    <option value="">Select domain…</option>
+                  </select>
+                  <input type="text" id="wc-domain-custom" class="mono" placeholder="Custom domain…" hidden autocomplete="off">
+                </div>
+              </div>
+              <label class="wm-label" for="wc-root-aliases">Word bank <span class="wm-tip" aria-hidden="true" data-tip="English synonyms used for search and learning. One phrase per line — include alternate meanings, related words, and common translations.">i</span></label>
+              <textarea id="wc-root-aliases" rows="3" placeholder="one phrase per line"></textarea>
+              <div class="wm-form__actions">
+                <button type="button" class="btn btn--primary" id="wc-save-root">Save root</button>
+                <button type="button" class="btn" id="wc-clear-root">Cancel</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Analysis modal -->
+      <div id="wm-analysis-modal" class="wm-modal" hidden role="dialog" aria-modal="true" aria-labelledby="wm-analysis-title">
+        <div class="wm-modal__backdrop" id="wm-analysis-backdrop"></div>
+        <div class="wm-modal__box">
+          <div class="wm-modal__head">
+            <span class="wm-modal__title" id="wm-analysis-title">Analysis</span>
+            <button type="button" class="wm-modal__close" id="wm-analysis-close" aria-label="Close">✕</button>
+          </div>
+          <div class="wm-modal__body" id="wm-analysis-content"></div>
+        </div>
+      </div>
     </section>
 
     <!-- Script home -->
