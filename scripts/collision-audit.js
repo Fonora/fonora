@@ -26,6 +26,8 @@ console.log('Fonora collision audit complete');
 console.log(`  Exact symbol collisions: ${audit.summary.exactCollisionCount}`);
 console.log(`  Concatenation → single: ${audit.summary.concatenationSingleCount}`);
 console.log(`  Concatenation → sequence: ${audit.summary.concatenationSequenceCount}`);
+console.log(`  Vowel-shaped registered diphthongs: ${audit.summary.vowelShapedRegisteredCount}`);
+console.log(`  Vowel-shaped unregistered (phantom): ${audit.summary.vowelShapedUnregisteredCount}`);
 console.log(`  Greedy decoder hazards: ${audit.summary.greedyHazardCount}`);
 console.log(`  Word boundary issues: ${audit.summary.wordIssueCount}`);
 console.log(`\nReport written to ${outPath}`);

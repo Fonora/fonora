@@ -5,7 +5,7 @@ import { normalizeIpa, registerIpaVowelMap, setActiveIpaVowelMap, registerConson
 import { applyPrimarySymbols } from './symbol-compose.js';
 import { encodeFromIpa } from './ipa-encode-helper.js';
 import { ipaPhonemesToFonora } from './ipa-to-fonora.js';
-import { findConcatenationCollisions } from './collision-audit.js';
+import { findConcatenationCollisions, findUnregisteredVowelShapedSequences } from './collision-audit.js';
 import { resolvePipelineOptions, setActiveLanguageRulesBundle } from './fonora-config.js';
 import {
   groupsToIpa,
@@ -380,6 +380,19 @@ export function runTests(options) {
     const sym = enc('tht', rules).symbols;
     const hits = findConcatenationCollisions(rules).filter((h) => h.symbols === sym);
     assert(hits.some((h) => h.sequenceA === 'th + t' && h.sequenceB === 't + s'));
+  });
+
+  t('collision audit: vowel+glide matrix has 4 registered and 28 unregistered shapes', () => {
+    const rows = findUnregisteredVowelShapedSequences(rules);
+    assert(rows.length === 32);
+    assert(rows.filter((r) => r.category === 'registered-diphthong').length === 4);
+    assert(rows.filter((r) => r.category === 'unregistered').length === 28);
+    assert(rows.filter((r) => r.tier === 'simple' && r.category === 'unregistered').length === 16);
+    assert(rows.filter((r) => r.tier === 'long' && r.category === 'unregistered').length === 12);
+    assert(rows.every((r) => r.grammarOk));
+    const allLike = rows.find((r) => r.symbols === vowelSym(rules, 'o') + enc('l', rules).symbols);
+    assert(allLike?.sequence === 'o + l');
+    assert(allLike?.category === 'unregistered');
   });
 
   t('IPA normalization maps TRAP vowel to ae phoneme', () => {
