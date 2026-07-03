@@ -26,7 +26,7 @@ The work shipped across four commits on Jun 30, 2026, replacing the symbol-palet
 
 ### What existed before
 
-From the initial commit (`63b79cf`) through Jun 29, the Keyboard tab was a **primitive picker**: nine place and manner buttons, a mapping table of number keys (1–9) and letter shortcuts to individual glyphs, and direct cursor insertion. [`renderSymbolButtons`](https://github.com/jamesc137/fonora/blob/main/js/app.js) in the pre-IME `app.js` built buttons from `rules.places` and `rules.modifiers`; `attachKeyboardShortcuts` mapped digits and letters to those same primitives. Composing a consonant meant clicking or typing two primitives in sequence yourself. The decode quiz reused the same button strip. This was adequate for researchers testing composition rules; it was not a typing interface.
+From the initial commit (`63b79cf`) through Jun 29, the Keyboard tab was a **primitive picker**: nine place and manner buttons, a mapping table of number keys (1–9) and letter shortcuts to individual glyphs, and direct cursor insertion. [`renderSymbolButtons`](https://github.com/Fonora/fonora/blob/main/js/app.js) in the pre-IME `app.js` built buttons from `rules.places` and `rules.modifiers`; `attachKeyboardShortcuts` mapped digits and letters to those same primitives. Composing a consonant meant clicking or typing two primitives in sequence yourself. The decode quiz reused the same button strip. This was adequate for researchers testing composition rules; it was not a typing interface.
 
 ### Visual QWERTY IME (`0305077`)
 

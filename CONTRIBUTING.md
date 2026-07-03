@@ -3,7 +3,7 @@
 Thank you for helping improve Fonora. This project is an experimental open-source phonetic writing system and research platform.
 
 **Live site:** [https://fonora.org](https://fonora.org)  
-**Source:** [https://github.com/jamesc137/fonora](https://github.com/jamesc137/fonora)
+**Source:** [https://github.com/Fonora/fonora](https://github.com/Fonora/fonora)
 
 ## Ways to contribute
 
@@ -32,7 +32,7 @@ You can always **browse** the public dictionary and read the docs ([fonoran.md](
 ## Development setup
 
 ```bash
-git clone https://github.com/jamesc137/fonora.git
+git clone https://github.com/Fonora/fonora.git
 cd fonora
 npm install
 ./scripts/install-git-hooks.sh   # strips Cursor co-author trailers from commits
@@ -93,4 +93,4 @@ Be respectful and constructive. Fonora is a research project; disagree about lin
 
 ## Questions
 
-Open a [GitHub discussion or issue](https://github.com/jamesc137/fonora/issues) for design questions before large refactors.
+Open a [GitHub discussion or issue](https://github.com/Fonora/fonora/issues) for design questions before large refactors.

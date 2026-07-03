@@ -569,7 +569,7 @@ export function runTests(options) {
   });
 
   t('doc viewer builds GitHub and in-app URLs', () => {
-    assert(githubDocUrl('docs/foo.md').includes('github.com/jamesc137/fonora/blob/main/docs/foo.md'));
+    assert(githubDocUrl('docs/foo.md').includes('github.com/Fonora/fonora/blob/main/docs/foo.md'));
     assert(docViewerHref('docs/foo.md') === '/?path=docs%2Ffoo.md');
     assert(docViewerHref('docs/foo.md#section') === '/?path=docs%2Ffoo.md#section');
     assert(docViewerHref('docs/platform-overview.md') === '/#docs');

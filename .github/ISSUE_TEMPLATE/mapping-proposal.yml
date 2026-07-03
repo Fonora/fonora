@@ -8,7 +8,7 @@ body:
     attributes:
       value: |
         Propose a change to IPA→Fonora mappings or `language-rules.md` symbol grammar.
-        Include linguistic motivation and test cases. See [CONTRIBUTING.md](https://github.com/jamesc137/fonora/blob/main/CONTRIBUTING.md).
+        Include linguistic motivation and test cases. See [CONTRIBUTING.md](https://github.com/Fonora/fonora/blob/main/CONTRIBUTING.md).
 
   - type: dropdown
     id: scope

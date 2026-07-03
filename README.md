@@ -70,11 +70,14 @@ CLI: `npm run fonoran:build`, `fonoran:root-candidates`. See [docs/fonoran.md](d
 ### Run locally
 
 ```bash
-git clone https://github.com/jamesc137/fonora.git
+git clone https://github.com/Fonora/fonora.git
 cd fonora
+git submodule update --init   # research data → external/fonora-data
 npm install
 npm start
 ```
+
+Research datasets (LLM evaluations, playtests, translation snapshots, research notes) live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data). After clone, run `npm run fonoran:data:status` to verify paths.
 
 Open [http://localhost:8000](http://localhost:8000). Browsers block `fetch()` and WASM over `file://` — always use the HTTP server.
 

@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes apply to the latest release on the `main` branch of [github.com/jamesc137/fonora](https://github.com/jamesc137/fonora).
+Security fixes apply to the latest release on the `main` branch of [https://github.com/Fonora/fonora](https://https://github.com/Fonora/fonora).
 
 ## Reporting a vulnerability
 

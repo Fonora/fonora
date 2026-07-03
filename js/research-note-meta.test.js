@@ -92,7 +92,7 @@ export function runResearchNoteMetaTests() {
       assert(out.includes('# Hello'));
     }),
     test('githubCommitUrl links to repo commit', () => {
-      assert(githubCommitUrl('abc1234') === 'https://github.com/jamesc137/fonora/commit/abc1234');
+      assert(githubCommitUrl('abc1234') === 'https://github.com/Fonora/fonora/commit/abc1234');
     }),
     test('researchNoteBodyTemplate includes RN-01 sections', () => {
       const body = researchNoteBodyTemplate('Test');

@@ -1,6 +1,6 @@
 /** GitHub blob URLs and in-app docs viewer routing. */
 
-export const GITHUB_REPO = 'https://github.com/jamesc137/fonora';
+export const GITHUB_REPO = 'https://github.com/Fonora/fonora';
 export const GITHUB_BLOB_BASE = `${GITHUB_REPO}/blob/main/`;
 
 /** @param {string} sha */

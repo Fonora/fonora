@@ -2,7 +2,7 @@
   "name": "Fonora",
   "description": "Open-source research exploring phonetic writing and constructed language design",
   "website": "https://fonora.org",
-  "repository": "https://github.com/jamesc137/fonora",
+  "repository": "https://github.com/Fonora/fonora",
   "keywords": ["fonora", "open research", "conlang", "phonetic writing", "language design"],
   "stack": "heroku-24",
   "buildpacks": [
