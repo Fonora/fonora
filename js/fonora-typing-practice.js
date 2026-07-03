@@ -215,9 +215,11 @@ export function createTypingPractice({
 
     const session = getSession?.();
     if (session && continueButtonId) {
-      session.afterAnswer(continueButtonId, { correct: match });
+      session.onAnswer({ correct: match });
       if (promptActionButton) {
         setPromptActionMode('next');
+      } else {
+        session.setContinueVisible(continueButtonId, true);
       }
     }
   }

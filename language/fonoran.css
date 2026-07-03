@@ -802,7 +802,7 @@
       width:5.75rem;
       padding:0.65rem 0.75rem;
       border-left:1px solid var(--border);
-      background:var(--bg);
+      background:var(--surface);
     }
     .word-preview-panel .word-preview__sound-actions .hear-min,
     .word-preview-panel .word-preview__sound-actions .wp-side-btn {
