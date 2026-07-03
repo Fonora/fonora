@@ -25,7 +25,6 @@ Rules version: **v3** ([`docs/language-rules.md`](docs/language-rules.md), vowel
 | [Sound Grid](https://fonora.org/script#grid) | Place × manner reference |
 | [Alphabet](https://fonora.org/script#alphabet) | Primary symbols + phoneme inventory |
 | [Transliterate](https://fonora.org/script#translator) | Text → IPA → Fonora |
-| [Breakdown](https://fonora.org/learn#breakdown) | Per-word phonetic analysis |
 | [Samples](https://fonora.org/learn#listening) | Multilingual paragraph demos |
 | [Quiz](https://fonora.org/learn#reading) | Decode / construct practice |
 | [Spelling practice](https://fonora.org/learn#writing) | Type words in Fonora script |

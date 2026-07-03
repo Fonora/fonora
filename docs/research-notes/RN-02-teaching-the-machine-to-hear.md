@@ -65,7 +65,7 @@ There was no formal user study. Evaluation was engineering-driven: unit tests, a
 The questions being asked were concrete:
 
 - **End-to-end round-trip:** does text → IPA → phonemes → symbols → decode → recovered IPA preserve pronunciation for a test word set?
-- **Coverage:** what fraction of eSpeak en-us IPA tokens map cleanly vs. hit fallback? The [`IPA_VOWEL_NORMALIZATION_AUDIT.md`](../docs/IPA_VOWEL_NORMALIZATION_AUDIT.md) (generated Jun 22 from 263 corpus words, 46 unique tokens) found four tokens unmapped before the engineering table and zero after, for English, at that snapshot.
+- **Coverage:** what fraction of eSpeak en-us IPA tokens map cleanly vs. hit fallback? The [`IPA_VOWEL_NORMALIZATION_AUDIT.md`](../archive/IPA_VOWEL_NORMALIZATION_AUDIT.md) (generated Jun 22 from 263 corpus words, 46 unique tokens) found four tokens unmapped before the engineering table and zero after, for English, at that snapshot.
 - **Consonant sync:** does the active consonant map match what `language-rules.md` declares? Test `consonant map is built from language rules` in `js/tests-core.js` fails if markdown IPA tokens are missing from the map.
 - **Regression traps:** American intervocalic flaps (`ɾ`) were initially mapped to glide `r`; commit `d02f3fe` changed them to `t` so *dignity* and *water* encode with plain `t` rather than a glide. English `t+s` sequences (e.g. *outside*) must tokenize as separate `t` and `s`, not merge into an affricate, commit `6e49cf1` added a regression test for this.
 

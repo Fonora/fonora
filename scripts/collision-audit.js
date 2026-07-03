@@ -11,7 +11,7 @@ import { setActiveLanguageRulesBundle } from '../js/fonora-config.js';
 import { runFullCollisionAudit, formatCollisionAuditMarkdown } from '../js/collision-audit.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const outPath = join(__dirname, '..', 'docs', 'FONORA_COLLISION_AUDIT.md');
+const outPath = join(__dirname, '..', 'docs', 'archive', 'FONORA_COLLISION_AUDIT.md');
 
 const bundle = loadActiveRulesFixture();
 applyIpaVowelMap(bundle);

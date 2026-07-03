@@ -33,8 +33,6 @@
 
   /** Hashes that redirect from /learn to /tools */
   const LEARN_TO_TOOLS_REDIRECT = {
-    breakdown: 'breakdown',
-    speaking: 'breakdown',
     listening: 'samples',
     samples: 'samples',
   };
@@ -47,10 +45,8 @@
     'script-reading': 'script-sounds',
     writing: 'fonoran-writing',
     'spelling-practice': 'fonoran-writing',
-    breakdown: 'breakdown',
     listening: 'samples',
     samples: 'samples',
-    speaking: 'breakdown',
   };
 
   const LEARN_LEGACY_HASHES = Object.keys(LEGACY_LEARN_HASH);

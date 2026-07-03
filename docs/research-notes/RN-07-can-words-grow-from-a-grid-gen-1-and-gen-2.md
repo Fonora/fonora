@@ -26,7 +26,7 @@ Both approaches assumed a **concept-first** direction: pick a meaning (water, pe
 
 ### Gen 1: hand roots and grammar vowels
 
-Gen 1 was documented retrospectively in [`docs/fonoran-generator-archive.md`](../fonoran-generator-archive.md), added in commit `14d5d84` (Jun 24, 2026). By then, Gen 1 code and data had already been removed during a lab-first cleanup; the document preserves the design from work that predates the first committed Fonoran toolchain snapshot in this repository.
+Gen 1 was documented retrospectively in [`docs/fonoran-generator-archive.md`](../archive/fonoran-generator-archive.md), added in commit `14d5d84` (Jun 24, 2026). By then, Gen 1 code and data had already been removed during a lab-first cleanup; the document preserves the design from work that predates the first committed Fonoran toolchain snapshot in this repository.
 
 The data model was two JSON files:
 
@@ -68,7 +68,7 @@ Approximately forty human primitives expanded to a full inventory JSON via `npm 
 
 ### What shipped on Jun 24 instead
 
-The same day the archive was written, commit `5b6bc58` landed Gen 3 tooling (`tools/fonoran-gen3.js`, config and roots JSON, derivation helpers, DDA inference) and commit `d2e6315` shipped the language builder web app at `/fonoran/`. Gen 1 and Gen 2 were already gone from the tree; Gen 3 replaced them as the experimental vocabulary layer. [`docs/fonoran-gen3.md`](../fonoran-gen3.md) (same documentation pass) states plainly that all prior Fonoran work (Gen 1 inventory, Gen 2 primitives, English-adjacent roots, is **disposable** relative to the grid-native rebase documented in RN-08.
+The same day the archive was written, commit `5b6bc58` landed Gen 3 tooling (`tools/fonoran-gen3.js`, config and roots JSON, derivation helpers, DDA inference) and commit `d2e6315` shipped the language builder web app at `/fonoran/`. Gen 1 and Gen 2 were already gone from the tree; Gen 3 replaced them as the experimental vocabulary layer. [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) (same documentation pass) states plainly that all prior Fonoran work (Gen 1 inventory, Gen 2 primitives, English-adjacent roots, is **disposable** relative to the grid-native rebase documented in RN-08.
 
 ## Evaluation
 
@@ -80,7 +80,7 @@ There was no formal user study, memorability battery, or cross-linguistic compre
 
 The archive doc records the honest assessment at retirement time: Gen 1 roots were largely English/Latin cognates (`wa` = water, `ter` = earth, `man` = person, `lum` = light). Good for UI prototyping; poor for the archaeology goal. Gen 2's collision repair reduced accidental borrowing but did not eliminate concept-first design; you still began with *water* and *person*, not with unnamed grid coordinates.
 
-A later retrospective ([`docs/fonoran-primitive-roots-report.md`](../fonoran-primitive-roots-report.md), RN-10) rated Gen 1 **No: violates invariant-word grammar** and Gen 2 **No: concept-first, not grid-native**; a failure mode already visible when inflection vowels were compared to [`docs/fonoran-grammar.md`](../fonoran-grammar.md)'s invariant-concept model.
+A later retrospective ([`docs/fonoran-primitive-roots-report.md`](../archive/fonoran-primitive-roots-report.md), RN-10) rated Gen 1 **No: violates invariant-word grammar** and Gen 2 **No: concept-first, not grid-native**; a failure mode already visible when inflection vowels were compared to [`docs/fonoran-grammar.md`](../fonoran-grammar.md)'s invariant-concept model.
 
 ## Findings
 
@@ -115,7 +115,7 @@ Later notes in sequence:
 - **RN-10: Optimal sounds, wrong premise** (200-primitive Huffman-like allocation; still concept-first, still superseded)
 - **RN-12: The campfire test** (constitution and communication-first metric that ultimately demoted all bulk generators)
 
-[`docs/fonoran-gen3.md`](../fonoran-gen3.md) §8.1 still listed "grammar-vowel inflection (from Gen 1 mechanism, reconnected to Gen 3 roots)" as a research backlog item at Gen 3 launch. That reconnection never shipped; the constitution and grammar spec moved role-marking to invariant particles instead.
+[`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) §8.1 still listed "grammar-vowel inflection (from Gen 1 mechanism, reconnected to Gen 3 roots)" as a research backlog item at Gen 3 launch. That reconnection never shipped; the constitution and grammar spec moved role-marking to invariant particles instead.
 
 ## Open Questions
 
@@ -130,13 +130,13 @@ That question became **RN-08**. A secondary thread, whether phonetic distinctive
 ## References
 
 **Related commits**
-- `14d5d84`: Document platform layers, Fonoran guides, and deployment options; first committed [`docs/fonoran-generator-archive.md`](../fonoran-generator-archive.md) chronicling Gen 1 and Gen 2
+- `14d5d84`: Document platform layers, Fonoran guides, and deployment options; first committed [`docs/fonoran-generator-archive.md`](../archive/fonoran-generator-archive.md) chronicling Gen 1 and Gen 2
 - `5b6bc58`: Add Fonoran language tools, API, and PostgreSQL-backed storage (Gen 3 toolchain; Gen 1/2 already removed)
 - `d2e6315`: Add Fonoran language builder web app at `/fonoran/`
 - `07591f8`: Merge `feature/fonoran-language-experiment` into staging
 - `5cfe28a`: Reorient Fonoran around the communication experiment; demote Gen 3/DDA track; add constitution (later supersession of all bulk-generator framing)
 
-**Documentation:** [`docs/fonoran-generator-archive.md`](../fonoran-generator-archive.md), [`docs/fonoran-gen3.md`](../fonoran-gen3.md) (§0 rebasing, §8 scale notes), [`docs/fonoran-primitive-roots-report.md`](../fonoran-primitive-roots-report.md) (prior-generator evaluation table)
+**Documentation:** [`docs/fonoran-generator-archive.md`](../archive/fonoran-generator-archive.md), [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) (§0 rebasing, §8 scale notes), [`docs/fonoran-primitive-roots-report.md`](../archive/fonoran-primitive-roots-report.md) (prior-generator evaluation table)
 
 **Interactive demo:** [Dictionary](/language#dictionary) (early consumer of generated inventory; current lab bucket is authoritative)
 

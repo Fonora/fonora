@@ -39,7 +39,7 @@ The pivot shipped as a single coordinated commit (`5cfe28a`, Jun 30, 2026) rathe
 
 The document defines the one question, the tiered language model (~50 communicative core → ~100 extended → unlimited complete language), the campfire test, puzzle conversation as the repair protocol, and working principles for contributors and generators. [`docs/fonoran-grammar.md`](../docs/fonoran-grammar.md) and [`docs/fonoran.md`](../docs/fonoran.md) were updated in the same commit to point at the constitution as the arbiter when design decisions conflict.
 
-Archive docs were explicitly demoted, not deleted. [`docs/fonoran-gen3.md`](../docs/fonoran-gen3.md), [`docs/fonoran-gen3-1.md`](../docs/fonoran-gen3-1.md), and [`docs/fonoran-primitive-roots-report.md`](../docs/fonoran-primitive-roots-report.md) each gained a banner stating that the Gen 3/DDA coordinate track and the Huffman ~200-primitive run are reference material under the new constitution, not production design.
+Archive docs were explicitly demoted, not deleted. [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md), [`docs/fonoran-gen3-1.md`](../archive/fonoran-gen3-1.md), and [`docs/fonoran-primitive-roots-report.md`](../archive/fonoran-primitive-roots-report.md) each gained a banner stating that the Gen 3/DDA coordinate track and the Huffman ~200-primitive run are reference material under the new constitution, not production design.
 
 ### Experience tiers and the campfire test
 

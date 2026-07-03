@@ -119,7 +119,7 @@ Walks resolved tokens in slot order. Grammar particles (`mi`, `ta`, `sa`) emit a
 Translator tab: `language/index.html` + `language/fonoran-app.js`.
 
 - Color tiers on tokens (interpreted / semantic / alias_weak / unknown)
-- Unresolved tokens render in red as honest gaps — add a root/compound in the Root Creator or Word Creator
+- Unresolved tokens render in red as honest gaps — add a concept/compound in the Concept Editor or Word Creator
 - Example chips use sentences that resolve cleanly (e.g. *All men are created equal*)
 
 ## Data files

@@ -1,6 +1,6 @@
-    import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, parseSyllable, buildSyllable, isValidSyllable, pieceHint, ONSET_GROUPS, VOWEL_DISPLAY, CODA_DISPLAY, romanToIpa } from '../tools/fonoran-pronunciation.js';
+    import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, isValidSyllable, romanToIpa } from '../tools/fonoran-pronunciation.js';
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
-    import { romanToFonoraScript, pieceToFonoraSymbols } from '../tools/fonoran-fonora-bridge.js';
+    import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech } from '../js/fonora-tts.js';
     import { primeAudioContext } from '../js/espeak-audio.js';
@@ -20,8 +20,8 @@
       email: null,
       loginUrl: '/auth/google?returnTo=/language',
     };
-    const WRITE_PAGES = new Set(['roots', 'create', 'review', 'root-review', 'concepts', 'advanced']);
-    const SPLIT_WRITE_PAGES = new Set(['roots', 'create', 'review', 'concepts']);
+    const WRITE_PAGES = new Set(['create', 'review', 'root-review', 'concepts', 'advanced']);
+    const SPLIT_WRITE_PAGES = new Set(['create', 'review', 'concepts']);
 
     function canWrite() {
       return !AUTH.required || AUTH.authenticated;
@@ -207,7 +207,6 @@
       lab: null, page: 'home', rules: null,
       wordCursor: 0,
       reviewFocusPending: false,
-      rootsFilter: '',
       justSaved: null,
       dictQuery: '', dictSelection: null,
       dictShowRoots: true,
@@ -227,14 +226,10 @@
       wordComposerShowWords: true,
       showUnapprovedWords: false,
       showUnnamed: false,
-      rootDraft: { onset: '', vowel: '', coda: '' },
-      rootComposerEditingSpelling: null,
-      rootComposerReturnPage: null,
-      rootComposerPendingFields: null,
       lexicon: null,
       health: null,
       healthKey: null,
-      toolReturnPage: 'roots',
+      toolReturnPage: 'create',
       translatorInput: '',
       translatorResult: null,
       translatorBusy: false,
@@ -321,23 +316,6 @@
         speak(Array.isArray(parts) ? compoundSpeakable(parts) : toSpeakable(parts));
       }
     }
-    async function speakPiece(kind, value) {
-      if (!value) return;
-      try {
-        const rules = await ensureRules();
-        const glyph = pieceToFonoraSymbols(value, rules);
-        if (glyph) {
-          cancelSpeech();
-          await speakFonoraPhrase(glyph, rules, { engine: 'auto', lang: 'en' });
-          return;
-        }
-      } catch { /* fallback below */ }
-      const sp = kind === 'vowel' ? value
-        : kind === 'onset' ? buildSyllable(value, 'a', '')
-          : buildSyllable('', 'a', value);
-      if (isValidSyllable(sp)) speakNeural(sp);
-    }
-
     function wordPreviewPron(parts) {
       const list = Array.isArray(parts) ? parts : [parts];
       return {
@@ -555,7 +533,6 @@
       else if (STATE.page === 'create') renderWordComposer();
       else if (STATE.page === 'review') renderUnifiedReview();
       else if (STATE.page === 'concepts') renderConceptEditor();
-      else if (STATE.page === 'roots') renderRoots();
       else if (STATE.page === 'dictionary') renderDictionary();
       else if (STATE.page === 'grammar') renderGrammar();
       else if (STATE.page === 'translator') renderTranslator();
@@ -861,50 +838,6 @@
       });
     }
 
-    function soundPieceMatches(kind, value, query) {
-      const q = (query ?? '').trim().toLowerCase();
-      if (!q) return true;
-      const hint = value ? pieceHint(value) : '';
-      const hay = `${kind} ${value || '-'} ${hint} none`.toLowerCase();
-      const tokens = q.split(/[\s-]+/).filter(Boolean);
-      return hay.includes(q) || tokens.every(t => hay.includes(t));
-    }
-
-    function renderFilteredSyllableBuilderMarkup(prefix = 'root', query = '') {
-      const show = (kind, val) => soundPieceMatches(kind, val, query);
-      const onsetChips = [
-        ...(show('onset', '') ? [syllableChip('onset', '')] : []),
-        ...ONSET_GROUPS.flatMap(g => g.items.filter(v => show('onset', v)).map(v => syllableChip('onset', v))),
-      ];
-      const onsetGrid = onsetChips.length ? `<div class="syl-chips">${onsetChips.join('')}</div>` : '';
-      const vowels = VOWEL_DISPLAY.filter(v => show('vowel', v)).map(v => syllableChip('vowel', v)).join('');
-      const codas = [
-        ...(show('coda', '') ? [syllableChip('coda', '')] : []),
-        ...CODA_DISPLAY.filter(v => show('coda', v)).map(v => syllableChip('coda', v)),
-      ].join('');
-      const hasOnset = onsetGrid.length > 0;
-      const hasVowel = vowels.length > 0;
-      const hasCoda = codas.length > 0;
-      if (!hasOnset && !hasVowel && !hasCoda) {
-        return `<div class="syl-builder" id="${prefix}-syl-builder"><p class="empty" style="margin:0">No sounds match.</p></div>`;
-      }
-      return `
-        <div class="syl-builder" id="${prefix}-syl-builder">
-          ${hasOnset ? `<div class="syl-row">
-            <div class="syl-label">Start <span style="font-weight:400;text-transform:none">(consonant, optional)</span></div>
-            ${onsetGrid}
-          </div>` : ''}
-          ${hasVowel ? `<div class="syl-row">
-            <div class="syl-label">Vowel <em>required</em></div>
-            <div class="syl-chips">${vowels}</div>
-          </div>` : ''}
-          ${hasCoda ? `<div class="syl-row">
-            <div class="syl-label">End <span style="font-weight:400;text-transform:none">(consonant, optional)</span></div>
-            <div class="syl-chips">${codas}</div>
-          </div>` : ''}
-        </div>`;
-    }
-
     function userSounds() {
       return STATE.lab.sounds.filter(s => s.state !== 'rejected');
     }
@@ -923,140 +856,6 @@
         ...userSounds().map(s => ({ ...s, reviewKind: 'sound' })),
         ...userWords().map(c => ({ ...c, reviewKind: 'compound' })),
       ];
-    }
-
-    function rootDraftSpelling() {
-      return buildSyllable(STATE.rootDraft.onset, STATE.rootDraft.vowel, STATE.rootDraft.coda);
-    }
-
-    function syncRootDraftFromSpelling(sp) {
-      const s = parseSyllable(sp);
-      if (s && !s.unparsed && s.vowel) {
-        STATE.rootDraft = { onset: s.onset || '', vowel: s.vowel, coda: s.coda || '' };
-        return true;
-      }
-      return false;
-    }
-
-    function syllableChip(kind, value) {
-      const picked = STATE.rootDraft[kind] === value;
-      const mono = value || '-';
-      const hint = value ? pieceHint(value) : '';
-      const glyph = value && STATE.rules ? pieceToFonoraSymbols(value, STATE.rules) : '';
-      if (!value) {
-        return `<button type="button" class="syl-chip none${picked ? ' picked' : ''}" data-piece="${kind}" data-val="" data-write>
-        <span class="syl-glyph syl-glyph--empty symbol-text" aria-hidden="true">&nbsp;</span>
-        <span class="mono">${escapeHtml(mono)}</span>
-        <span class="hint syl-hint--empty" aria-hidden="true">&nbsp;</span></button>`;
-      }
-      return `<button type="button" class="syl-chip${picked ? ' picked' : ''}" data-piece="${kind}" data-val="${escapeHtml(value)}" data-write>
-        ${glyph ? `<span class="syl-glyph symbol-text">${escapeHtml(glyph)}</span>` : ''}
-        <span class="mono">${escapeHtml(mono)}</span>${hint ? `<span class="hint">${escapeHtml(hint)}</span>` : ''}</button>`;
-    }
-
-    function updateRootCreatePreview() {
-      const spellInp = $('new-root-spelling');
-      const typed = spellInp?.value.trim().toLowerCase() ?? '';
-      const sp = rootDraftSpelling();
-      const valid = isValidSyllable(sp);
-      const editingSpelling = STATE.rootComposerEditingSpelling;
-      const exists = valid && STATE.lab?.sounds?.some(s => s.spelling === sp && s.spelling !== editingSpelling);
-
-      if (spellInp && document.activeElement !== spellInp && valid) spellInp.value = sp;
-
-      const card = $('new-root-preview-card');
-      const glyphsEl = $('new-root-glyphs');
-      const sayEl = $('new-root-say');
-      const likeEl = $('new-root-like');
-      const invalidEl = $('new-root-invalid');
-      const hintEl = $('new-root-hint');
-      const hearBtn = $('new-root-hear');
-
-      card?.classList.toggle('is-valid', valid);
-      card?.classList.toggle('is-empty', !valid && !typed);
-
-      if (valid) {
-        const script = STATE.rules ? romanToFonoraScript([sp], STATE.rules).phrase : '';
-        if (glyphsEl) glyphsEl.textContent = script || '\u00a0';
-        if (sayEl) sayEl.textContent = phoneticKeyBold(sp);
-        if (likeEl) likeEl.textContent = englishGuide(sp) || '-';
-        if (invalidEl) { invalidEl.hidden = true; invalidEl.innerHTML = ''; }
-      } else if (typed) {
-        if (glyphsEl) glyphsEl.textContent = '\u00a0';
-        if (sayEl) sayEl.textContent = '-';
-        if (likeEl) likeEl.textContent = '-';
-        if (invalidEl) {
-          invalidEl.hidden = false;
-          invalidEl.innerHTML = `“${escapeHtml(typed)}” isn’t a valid Fonoran syllable. Pick sounds from the builder, or try <button type="button" class="linkish" data-try-spell="a">a</button> (vowel only) or <button type="button" class="linkish" data-try-spell="sa">sa</button> (s + a).`;
-        }
-      } else {
-        if (glyphsEl) glyphsEl.textContent = '\u00a0';
-        if (sayEl) sayEl.textContent = '-';
-        if (likeEl) likeEl.textContent = '-';
-        if (invalidEl) { invalidEl.hidden = true; invalidEl.innerHTML = ''; }
-      }
-
-      if (hintEl) {
-        hintEl.innerHTML = exists
-          ? `<div class="syl-invalid">Root <strong>${escapeHtml(sp)}</strong> already exists.</div>`
-          : '';
-      }
-      if (hearBtn) hearBtn.disabled = !valid;
-
-      $('root-syl-builder')?.querySelectorAll('.syl-chip[data-piece]').forEach(chip => {
-        chip.classList.toggle('picked', STATE.rootDraft[chip.dataset.piece] === (chip.dataset.val ?? ''));
-      });
-      syncRootComposerControls();
-    }
-
-    function syncRootComposerControls() {
-      const editingSpelling = STATE.rootComposerEditingSpelling;
-      const sp = rootDraftSpelling();
-      const valid = isValidSyllable(sp);
-      const exists = valid && STATE.lab?.sounds?.some(s => s.spelling === sp && s.spelling !== editingSpelling);
-      setWriteButton($('new-root-save'), !valid || exists);
-      const saveBtn = $('new-root-save');
-      if (saveBtn) saveBtn.textContent = editingSpelling ? 'Save changes' : 'Add root';
-      const cancelBtn = $('new-root-cancel');
-      if (cancelBtn) cancelBtn.hidden = !STATE.rootComposerReturnPage;
-      const intro = $('roots-intro');
-      if (intro) {
-        intro.textContent = editingSpelling
-          ? 'Editing an existing root — adjust the syllable or meaning, then save.'
-          : 'Create primitive syllables and browse every root in the language.';
-      }
-      const meaning = $('new-root-meaning')?.value ?? '';
-      renderEditDupe('sound', editingSpelling ?? sp, meaning, 'new-root');
-    }
-
-    function wireRootCreatePanel() {
-      $('root-syl-builder')?.querySelectorAll('.syl-chip[data-piece]').forEach(chip => {
-        chip.addEventListener('click', () => {
-          const kind = chip.dataset.piece;
-          const val = chip.dataset.val ?? '';
-          speakPiece(kind, val);
-          STATE.rootDraft[kind] = val;
-          updateRootCreatePreview();
-        });
-      });
-      const spellInp = $('new-root-spelling');
-      spellInp?.addEventListener('input', () => {
-        const sp = spellInp.value.trim().toLowerCase();
-        if (!sp) STATE.rootDraft = { onset: '', vowel: '', coda: '' };
-        else if (!syncRootDraftFromSpelling(sp)) STATE.rootDraft = { onset: '', vowel: '', coda: '' };
-        updateRootCreatePreview();
-      });
-      $('new-root-invalid')?.addEventListener('click', e => {
-        const b = e.target.closest('[data-try-spell]');
-        if (!b || !spellInp) return;
-        spellInp.value = b.dataset.trySpell;
-        syncRootDraftFromSpelling(b.dataset.trySpell);
-        updateRootCreatePreview();
-      });
-      $('new-root-hear')?.addEventListener('click', () => {
-        const sp = rootDraftSpelling();
-        if (isValidSyllable(sp)) speakNeural(sp);
-      });
     }
 
     function rootScriptPhrase(spelling) {
@@ -1116,138 +915,6 @@
       return sounds.length ? sounds.map(s => `
         <button type="button" class="root-cell" data-add="${escapeHtml(s.spelling)}" data-write>${rootCellBodyHtml(s)}</button>`).join('')
         : '<p class="empty" style="grid-column:1/-1">No match.</p>';
-    }
-
-    function renderRootsSoundPicker() {
-      const pickerEl = $('roots-sound-picker');
-      if (!pickerEl) return;
-      pickerEl.innerHTML = renderFilteredSyllableBuilderMarkup('root', STATE.rootsFilter);
-      wireRootCreatePanel();
-      updateRootCreatePreview();
-    }
-
-    function updateRootsSoundFilter() {
-      renderRootsSoundPicker();
-    }
-
-    function renderRootsCreateHtml() {
-      return `
-        <div class="root-create-panel">
-          <div class="root-preview-card is-empty" id="new-root-preview-card">
-            <input type="text" id="new-root-spelling" class="root-preview-roman" placeholder="-" autocomplete="off" spellcheck="false" aria-label="Roman spelling" data-write-input>
-            <div class="root-preview-glyphs fonora-script symbol-text" id="new-root-glyphs" aria-hidden="true">&nbsp;</div>
-            <div class="pron-block root-preview-pron">
-              <div class="pron-line">Say: <strong id="new-root-say">-</strong></div>
-              <div class="pron-english" id="new-root-like-wrap">Sounds like: <span id="new-root-like">-</span></div>
-            </div>
-          </div>
-          <div class="syl-invalid" id="new-root-invalid" hidden></div>
-          <div id="new-root-hint"></div>
-          <button type="button" class="hear-min" id="new-root-hear" disabled aria-label="Listen to this syllable">▶ Listen</button>
-          <label class="fld" for="new-root-meaning">Meaning <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
-          ${meaningPickerHtml('new-root')}
-          <input type="text" id="new-root-meaning" placeholder="Type or pick from English list…" data-write-input>
-          <div id="new-root-dupe"></div>
-          <div class="actions" style="margin-top:0.7rem">
-            <button type="button" class="btn btn--primary" id="new-root-save" disabled data-write>Add root</button>
-            <button type="button" class="btn" id="new-root-cancel" hidden data-write>Cancel</button>
-          </div>
-        </div>`;
-    }
-
-    function wireRootsCreate() {
-      const spellInp = $('new-root-spelling');
-      const meaningInp = $('new-root-meaning');
-      wireRootCreatePanel();
-      wireMeaningPicker('new-root', 'new-root-meaning');
-
-      if (STATE.rootComposerPendingFields) {
-        if (meaningInp) meaningInp.value = STATE.rootComposerPendingFields.meaning;
-        STATE.rootComposerPendingFields = null;
-      }
-
-      updateRootCreatePreview();
-      meaningInp?.addEventListener('input', () => syncRootComposerControls());
-      meaningInp?.addEventListener('keydown', e => { if (e.key === 'Enter') $('new-root-save').click(); });
-      $('new-root-cancel')?.addEventListener('click', () => {
-        const returnPage = STATE.rootComposerReturnPage;
-        clearRootComposer();
-        if (returnPage === 'review') switchPage('review');
-      });
-      $('new-root-save')?.addEventListener('click', async () => {
-        const spelling = rootDraftSpelling();
-        const meaning = meaningInp.value.trim();
-        if (!isValidSyllable(spelling)) { toast('Pick a valid syllable first.'); return; }
-        const editingSpelling = STATE.rootComposerEditingSpelling;
-        const returnPage = STATE.rootComposerReturnPage;
-        try {
-          if (editingSpelling) {
-            const existing = STATE.lab.sounds.find(s => s.spelling === editingSpelling);
-            const spellingChanged = spelling !== editingSpelling;
-            if (spellingChanged) {
-              await api(`/api/fonoran/lab/sounds/${encodeURIComponent(editingSpelling)}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ spelling, meaning: meaning || undefined }),
-              });
-              if (returnPage === 'review') {
-                STATE.reviewSelection = { type: 'sound', ref: spelling };
-              }
-            } else {
-              const changed = meaning !== (existing?.meaning ?? '');
-              await api(`/api/fonoran/lab/sounds/${encodeURIComponent(editingSpelling)}`, {
-                method: 'PATCH',
-                body: JSON.stringify({
-                  meaning: meaning || undefined,
-                  state: changed && existing?.meaning ? 'revised' : undefined,
-                }),
-              });
-            }
-            toast(`Saved ${spelling}`);
-          } else {
-            const res = await api('/api/fonoran/lab/sounds', { method: 'POST', body: JSON.stringify({ spelling, meaning: meaning || undefined }) });
-            toast(`Added root ${res.spelling}`);
-          }
-          clearRootComposer();
-          await load({ skipRender: true });
-          if (returnPage === 'review') {
-            switchPage('review');
-          } else {
-            renderRoots();
-          }
-        } catch (e) { toast(e.message); }
-      });
-    }
-
-    function openRootInCreator(s, { returnPage = null } = {}) {
-      STATE.rootComposerEditingSpelling = s.spelling;
-      STATE.rootComposerReturnPage = returnPage;
-      syncRootDraftFromSpelling(s.spelling);
-      STATE.rootComposerPendingFields = { meaning: s.meaning ?? '' };
-      switchPage('roots');
-    }
-
-    function clearRootComposer({ keepReturnPage = false } = {}) {
-      STATE.rootDraft = { onset: '', vowel: '', coda: '' };
-      if (!keepReturnPage) STATE.rootComposerReturnPage = null;
-      STATE.rootComposerEditingSpelling = null;
-      STATE.rootComposerPendingFields = null;
-      if ($('new-root-spelling')) $('new-root-spelling').value = '';
-      if ($('new-root-meaning')) $('new-root-meaning').value = '';
-      syncRootComposerControls();
-    }
-
-    function renderRoots() {
-      if (!STATE.lab || !$('roots-workspace')) return;
-      ensureSplitStickyObserver();
-      const preservedMeaning = $('new-root-meaning')?.value;
-      renderRootsSoundPicker();
-      $('roots-workspace').innerHTML = renderRootsCreateHtml();
-      wireRootsCreate();
-      if (preservedMeaning != null && $('new-root-meaning') && !STATE.rootComposerPendingFields) {
-        $('new-root-meaning').value = preservedMeaning;
-      }
-      syncRootComposerControls();
-      requestAnimationFrame(syncSplitStickyOffsets);
     }
 
     function composerFromCompound(c) {
@@ -2266,6 +1933,19 @@
       switchPage('concepts');
     }
 
+    function openConceptEditorForSound(s, { returnPage = null } = {}) {
+      STATE.conceptEditorReturnPage = returnPage;
+      STATE.conceptEditorIsNew = true;
+      STATE.conceptEditorSelected = null;
+      STATE.conceptEditorPendingId = null;
+      STATE.conceptEditorDraft = {
+        ...conceptEditorEmptyDraft(),
+        concept: s.meaning ?? '',
+        spelling: s.spelling ?? '',
+      };
+      switchPage('concepts');
+    }
+
     function reviewItemScriptParts(item, isSound) {
       if (isSound) return [item.spelling];
       return compoundSpeakParts(item);
@@ -2943,7 +2623,7 @@
           if (conceptId) {
             openConceptInEditor(conceptId, { returnPage: 'review' });
           } else {
-            openRootInCreator(item, { returnPage: 'review' });
+            openConceptEditorForSound(item, { returnPage: 'review' });
           }
         } else {
           openWordInCreator(item, { returnPage: 'review' });
@@ -4745,8 +4425,8 @@
     }
 
     /* ---------- nav ---------- */
-    const MAIN_PAGES = new Set(['roots', 'create', 'review', 'dictionary', 'translator']);
-    const ALL_PAGES = new Set(['home', 'root-review', 'roots', 'create', 'review', 'dictionary', 'grammar', 'translator', 'puzzle', 'health', 'gaps', 'progress', 'advanced', 'concepts']);
+    const MAIN_PAGES = new Set(['create', 'review', 'dictionary', 'translator']);
+    const ALL_PAGES = new Set(['home', 'root-review', 'create', 'review', 'dictionary', 'grammar', 'translator', 'puzzle', 'health', 'gaps', 'progress', 'advanced', 'concepts']);
 
     function confirmDangerAction({ title, message, typeToConfirm }) {
       if (!confirm(`${title}\n\n${message}\n\nAre you sure you want to continue?`)) return false;
@@ -4770,6 +4450,9 @@
       if (MAIN_PAGES.has(STATE.page)) STATE.toolReturnPage = STATE.page;
     }
     function switchPage(name) {
+      if (name === 'roots') {
+        name = 'concepts';
+      }
       if (name === 'root-review') {
         STATE.rootReviewFocusPending = true;
         name = 'review';
@@ -4800,7 +4483,7 @@
       scrollPageTop();
       requestAnimationFrame(() => {
         scrollPageTop();
-        if (name === 'dictionary' || name === 'create' || name === 'roots' || name === 'grammar' || name === 'concepts' || name === 'review') {
+        if (name === 'dictionary' || name === 'create' || name === 'grammar' || name === 'concepts' || name === 'review') {
           syncSplitStickyOffsets();
           requestAnimationFrame(syncSplitStickyOffsets);
         }
@@ -4819,7 +4502,6 @@
       }
     });
     $('dict-search').addEventListener('input', e => { STATE.dictQuery = e.target.value; renderDictionary(); });
-    $('roots-filter')?.addEventListener('input', e => { STATE.rootsFilter = e.target.value; updateRootsSoundFilter(); });
     $('dict-filters')?.addEventListener('click', e => {
       const chip = e.target.closest('[data-dict-filter]');
       if (!chip) return;
@@ -5181,7 +4863,8 @@
 
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 
-    const hashOnLoad = window.location.hash.replace(/^#/, '').split('?')[0];
+    const hashOnLoadRaw = window.location.hash.replace(/^#/, '').split('?')[0];
+    const hashOnLoad = hashOnLoadRaw === 'roots' ? 'concepts' : hashOnLoadRaw;
     const initialPageRaw = (hashOnLoad && ALL_PAGES.has(hashOnLoad) ? hashOnLoad : null)
       || document.documentElement.getAttribute('data-fonora-page')
       || 'home';
@@ -5203,7 +4886,8 @@
       handleAuthUrlErrors();
       updateAuthGate();
       window.addEventListener('hashchange', () => {
-        const hashPage = parseHashPage();
+        let hashPage = parseHashPage();
+        if (hashPage === 'roots') hashPage = 'concepts';
         let page = hashPage && ALL_PAGES.has(hashPage) ? hashPage : 'home';
         if (hashPage === 'root-review') {
           STATE.rootReviewFocusPending = true;

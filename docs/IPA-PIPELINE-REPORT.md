@@ -46,7 +46,7 @@ Vowels use recipe-composed symbols from `language-rules.md`:
 - Simple vowels: `⚬X` (vowel indicator + place or manner glyph)
 - Diphthongs: `⚬XᵔY` (includes glide modifier `ᵔ`)
 
-The legacy v2 double-vowel marker `⚬⚬` is retired. See [FONORA_VOWEL_DECISION_REPORT.md](FONORA_VOWEL_DECISION_REPORT.md) for historical v2 analysis only.
+The legacy v2 double-vowel marker `⚬⚬` is retired. See [FONORA_VOWEL_DECISION_REPORT.md](archive/FONORA_VOWEL_DECISION_REPORT.md) for historical v2 analysis only.
 
 ## Browser compatibility
 
@@ -66,7 +66,7 @@ Retroflexes, tones, Arabic emphatics, uvulars, and other sounds outside the Fono
 | Places, modifiers, grid, vowels, derived sounds | `language-rules.md` |
 | Consonant IPA→phoneme map | Built from grid + derived at load; supplemental variants in `SUPPLEMENTAL_CONSONANT_MAP` | See [ipa-normalize.md](ipa-normalize.md) |
 | Throat `/h/` encoding | Grid documents plain `⊃`; unit tests expect `h` ↔ `⊃` |
-| Alphabet primary experiments | Browser `localStorage` via `js/alphabet-overrides.js` |
+| Alphabet primaries | Defined in `language-rules.md`; rendered read-only in the Alphabet tab (localStorage override experiment retired) |
 
 ## Recommendations (future work)
 

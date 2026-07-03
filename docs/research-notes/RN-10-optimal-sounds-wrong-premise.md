@@ -44,7 +44,7 @@ The experiment shipped in commit `e8f81f1` (Jun 27, 2026), the same morning as t
 | [`tools/fonoran-primitive-roots.js`](../tools/fonoran-primitive-roots.js) | Generator CLI (`npm run fonoran:primitive-roots`) |
 | [`data/fonoran-primitive-roots-config.json`](../data/fonoran-primitive-roots-config.json) | Phonotactics, reserved particles, excluded syllables, embedded concept list (later moved to `fonoran-concept-inventory.json`) |
 | [`data/fonoran-primitive-roots.json`](../data/fonoran-primitive-roots.json) | Generated inventory JSON |
-| [`docs/fonoran-primitive-roots-report.md`](../docs/fonoran-primitive-roots-report.md) | Auto-generated metrics report, dated 2026-06-27 |
+| [`docs/fonoran-primitive-roots-report.md`](../archive/fonoran-primitive-roots-report.md) | Auto-generated metrics report, dated 2026-06-27 |
 
 The config's stated philosophy pointed at [`docs/fonoran-grammar.md`](../docs/fonoran-grammar.md): invariant concept roots, grammar via particles, transparent compound trees, with phonetic strategy described as "Huffman-like: higher fundamentality → lower phonetic cost."
 
@@ -134,7 +134,7 @@ The experiment failed on **premise and inventory design**, not on arithmetic.
 
 **2. Compounds were flat and unteachable at scale.** Transparent concatenation produced forms like **`lobawi`** (collective + person + conflict) for "war" and **`senfakdaga`** for "language." The semantic tree is visible if you already know every piece, but the character of the failure is **depth without hierarchy**: intermediate concepts are not grouped; everything is one string. The semantic foundation doc (written the next day) explicitly prefers hierarchical compounding (`community + identity → tribe`) over flattening.
 
-**3. Sounds were assigned before meanings were approved.** This was the structural mistake. Two hundred English glosses received phonetic forms in one deterministic pass from a curated priority list nobody had signed off on as *the* primitive set. The generator could not know that **`cause`**, **`effect`**, and **`void`** would later be demoted, or that **`walk`** and **`useful`** were poor primitives, because semantic review had not happened yet. [`docs/fonoran-semantic-foundation.md`](../docs/fonoran-semantic-foundation.md) opens by superseding this tooling for exactly that reason: "That tooling assigned phonetic forms before semantic approval. **This foundation starts from concepts only.**"
+**3. Sounds were assigned before meanings were approved.** This was the structural mistake. Two hundred English glosses received phonetic forms in one deterministic pass from a curated priority list nobody had signed off on as *the* primitive set. The generator could not know that **`cause`**, **`effect`**, and **`void`** would later be demoted, or that **`walk`** and **`useful`** were poor primitives, because semantic review had not happened yet. [`docs/fonoran-semantic-foundation.md`](../archive/fonoran-semantic-foundation.md) opens by superseding this tooling for exactly that reason: "That tooling assigned phonetic forms before semantic approval. **This foundation starts from concepts only.**"
 
 ### Provisional verdict
 
@@ -166,7 +166,7 @@ Several mechanisms survived; the inventory and workflow did not.
 - **RN-14: Grammar as particles, not words** (Jun 29): evicted `because`, `with`, and similar items from the root lexicon into closed-class particles; reached 100% translator coverage once grammar was factored out.
 - **RN-12: The campfire test (communication over correctness)** (Jun 30): reframed success as recoverable meaning, demoting generators (including this one) to advisors rather than oracles.
 
-The generator archive ([`docs/fonoran-generator-archive.md`](../docs/fonoran-generator-archive.md)) now lists this run as **superseded** between Gen 3.1 and the lab-first / editorial model documented in [`docs/fonoran.md`](../docs/fonoran.md).
+The generator archive ([`docs/fonoran-generator-archive.md`](../archive/fonoran-generator-archive.md)) now lists this run as **superseded** between Gen 3.1 and the lab-first / editorial model documented in [`docs/fonoran.md`](../docs/fonoran.md).
 
 ## Open Questions
 
@@ -187,7 +187,7 @@ The Huffman experiment answered its narrow coding question and disqualified its 
 - `d31ae25`: restructure primitives around grammar particles and transparent compounds
 - `5cfe28a`: reorient Fonoran around the communication experiment (Constitution)
 
-**Documentation:** [`docs/fonoran-primitive-roots-report.md`](../docs/fonoran-primitive-roots-report.md), [`docs/fonoran-grammar.md`](../docs/fonoran-grammar.md), [`docs/fonoran-generator-archive.md`](../docs/fonoran-generator-archive.md)
+**Documentation:** [`docs/fonoran-primitive-roots-report.md`](../archive/fonoran-primitive-roots-report.md), [`docs/fonoran-grammar.md`](../docs/fonoran-grammar.md), [`docs/fonoran-generator-archive.md`](../archive/fonoran-generator-archive.md)
 
 **Interactive demo:** [Dictionary](/language#dictionary) (lab bucket; Huffman output importable for comparison only)
 

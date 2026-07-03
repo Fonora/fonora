@@ -43,8 +43,8 @@ A **Vowel design** note under `## Vowels` documents the tier rule for future edi
 - **Compose at load:** [`js/symbol-compose.js`](../js/symbol-compose.js) `composeVowelFromRecipe()` — no code change required when recipes change in markdown.
 - **Validate:** [`js/vowel-grammar.js`](../js/vowel-grammar.js) still enforces `⚬X` / `⚬XᵔY` shape; [`js/load-language-rules.js`](../js/load-language-rules.js) asserts inventory grammar on startup.
 - **Tests:** [`js/tests-core.js`](../js/tests-core.js), [`js/tests.js`](../js/tests.js) — symbol expectations updated; prefer `vowelSym(rules, key)` over literals where practical.
-- **Collision audit:** `npm run audit:collisions` regenerated [`docs/FONORA_COLLISION_AUDIT.md`](../docs/FONORA_COLLISION_AUDIT.md). The `e + y` ↔ `ay` hazard now shares `⚬⌓ᵔ∪` (was `⚬⌇ᵔ∪`); exact symbol collisions remain **zero**.
-- **Gen 3 archive (glyph strings only):** [`tools/fonoran-gen3-readability.js`](../tools/fonoran-gen3-readability.js) `ASPECT_FONORA`, [`data/fonoran-gen3-config.json`](../data/fonoran-gen3-config.json) and [`data/fonoran-gen3-1-config.json`](../data/fonoran-gen3-1-config.json) `vowel_roles.classes`, [`docs/fonoran-gen3.md`](../docs/fonoran-gen3.md) §2.3 — roman aspect→key mapping unchanged; noted as archived reference.
+- **Collision audit:** `npm run audit:collisions` regenerated [`docs/FONORA_COLLISION_AUDIT.md`](../archive/FONORA_COLLISION_AUDIT.md). The `e + y` ↔ `ay` hazard now shares `⚬⌓ᵔ∪` (was `⚬⌇ᵔ∪`); exact symbol collisions remain **zero**.
+- **Gen 3 archive (glyph strings only):** [`tools/fonoran-gen3-readability.js`](../tools/fonoran-gen3-readability.js) `ASPECT_FONORA`, [`data/fonoran-gen3-config.json`](../data/fonoran-gen3-config.json) and [`data/fonoran-gen3-1-config.json`](../data/fonoran-gen3-1-config.json) `vowel_roles.classes`, [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) §2.3 — roman aspect→key mapping unchanged; noted as archived reference.
 
 ### DDA UI deprecation (same release)
 
@@ -85,11 +85,11 @@ No formal learner study was run for this change; evaluation is engineering-drive
 **Live (v3 rules bundle):**
 - [`docs/language-rules.md`](../docs/language-rules.md) — Option 2 recipes + vowel design note
 - [`js/vowel-display.js`](../js/vowel-display.js), [`js/app.js`](../js/app.js) — Sound Grid tier headers
-- Tests and [`docs/FONORA_COLLISION_AUDIT.md`](../docs/FONORA_COLLISION_AUDIT.md)
+- Tests and [`docs/FONORA_COLLISION_AUDIT.md`](../archive/FONORA_COLLISION_AUDIT.md)
 
 **Archive / docs only:**
-- Gen 3 glyph strings in config and [`docs/fonoran-gen3.md`](../docs/fonoran-gen3.md)
-- DDA removed from Language Lab UI; documented in [`docs/fonoran.md`](../docs/fonoran.md), [`docs/fonoran-generator-archive.md`](../docs/fonoran-generator-archive.md)
+- Gen 3 glyph strings in config and [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md)
+- DDA removed from Language Lab UI; documented in [`docs/fonoran.md`](../docs/fonoran.md), [`docs/fonoran-generator-archive.md`](../archive/fonoran-generator-archive.md)
 
 **Supersedes:** Informal “Option 2” plan notes; partially supersedes the glyph assignment table implied by RN-04’s manner-heavy simple vowels while **keeping** RN-04’s `⚬X` / `⚬XᵔY` grammar and load-time enforcement.
 
@@ -102,7 +102,7 @@ No formal learner study was run for this change; evaluation is engineering-drive
 
 ## References
 
-**Documentation:** [`docs/language-rules.md`](../docs/language-rules.md), [`docs/FONORA_COLLISION_AUDIT.md`](../docs/FONORA_COLLISION_AUDIT.md), [`docs/pronunciation-validation.md`](../docs/pronunciation-validation.md)
+**Documentation:** [`docs/language-rules.md`](../docs/language-rules.md), [`docs/FONORA_COLLISION_AUDIT.md`](../archive/FONORA_COLLISION_AUDIT.md), [`docs/pronunciation-validation.md`](../docs/pronunciation-validation.md)
 
 **Interactive demo:** [Sound Grid](/script#grid), [Pronunciation Validation](/script#validate)
 

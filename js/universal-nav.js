@@ -50,7 +50,6 @@ const BUILDER_TITLES = {
   concepts: 'Concept Editor',
   translator: 'Translator',
   puzzle: 'Puzzle Conversation',
-  roots: 'Root Creator',
   create: 'Word Creator',
   review: 'Word Review',
   dictionary: 'Dictionary',
@@ -63,10 +62,6 @@ const BUILDER_TITLES = {
 
 const TOOLS_TITLES = {
   'tools-home': 'Tools',
-  keyboard: 'Keyboard Testing',
-  reverse: 'Reverse Lookup',
-  symbols: 'Symbols',
-  breakdown: 'Breakdown',
   samples: 'Samples',
   'encoder-testing': 'Pronunciation Testing',
   'pronunciation-validation': 'Pronunciation Validation',
@@ -76,11 +71,7 @@ const TOOLS_TITLES = {
 const TOOLS_ROW_TABS = [
   { id: 'tools-home', label: 'Home' },
   { id: 'research-notes', label: 'Research Notes' },
-  { id: 'keyboard', label: 'Keyboard' },
-  { id: 'reverse', label: 'Reverse' },
-  { id: 'breakdown', label: 'Breakdown' },
   { id: 'samples', label: 'Samples' },
-  { id: 'symbols', label: 'Symbols' },
   { id: 'encoder-testing', label: 'Pronunciation Testing' },
   { id: 'pronunciation-validation', label: 'Validation' },
 ];

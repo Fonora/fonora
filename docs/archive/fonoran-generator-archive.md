@@ -2,7 +2,7 @@
 > **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-07 · Can words grow from a grid?](/research/notes/roots-from-grammar).
 
 
-> **Archive.** Retired bulk generators. Active workflow: [fonoran.md](fonoran.md); direction set by the [Fonoran Constitution](fonoran-constitution.md).
+> **Archive.** Retired bulk generators. Active workflow: [fonoran.md](../fonoran.md); direction set by the [Fonoran Constitution](../fonoran-constitution.md).
 
 > **Status:** archival reference only, code and data for Gen 1 and Gen 2 were removed during the lab-first cleanup.
 
@@ -181,7 +181,7 @@ These were removed during cleanup. Passage/feedback JSON lived in `data/fonoran-
 
 The English picker loads **`fonoran-english-lexicon.json`** (auto-built from gen3.1 primitive glosses + stress-test concept words). It suggests English glosses only; it does not assign Fonoran forms.
 
-See [fonoran.md](fonoran.md) for the current app guide.
+See [fonoran.md](../fonoran.md) for the current app guide.
 
 ---
 

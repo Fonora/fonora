@@ -410,16 +410,12 @@
       ],
       "tools": [
         {
-          "label": "Root Creator",
-          "href": "/language#roots"
+          "label": "Concept Editor",
+          "href": "/language#concepts"
         },
         {
           "label": "Review",
           "href": "/language#review"
-        },
-        {
-          "label": "Concept Editor",
-          "href": "/language#concepts"
         }
       ],
       "source": [
@@ -547,10 +543,6 @@
       ],
       "docs": [],
       "tools": [
-        {
-          "label": "Keyboard Testing",
-          "href": "/tools#keyboard"
-        },
         {
           "label": "Spelling Practice",
           "href": "/learn#writing"

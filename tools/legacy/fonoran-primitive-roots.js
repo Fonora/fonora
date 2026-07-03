@@ -24,7 +24,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const CONFIG_PATH = join(ROOT, 'data/fonoran-primitive-roots-config.json');
 const COMPOUNDS_PATH = join(ROOT, 'data/fonoran-stress-test-concepts.json');
 const OUTPUT_PATH = join(ROOT, 'data/fonoran-primitive-roots.json');
-const REPORT_PATH = join(ROOT, 'docs/fonoran-primitive-roots-report.md');
+const REPORT_PATH = join(ROOT, 'docs/archive/fonoran-primitive-roots-report.md');
 
 /** Compounds required by grammar examples but absent from stress-test. */
 const GRAMMAR_COMPOUNDS = [

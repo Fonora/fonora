@@ -31,7 +31,7 @@ The hypothesis was not that 99 is the mathematically correct ontology. It was th
 
 ### Reversing the pipeline order
 
-The semantic foundation shipped in the same week as RN-10's Huffman generator, in fact, in the same commit (`e8f81f1`, Jun 27, 2026) that added `tools/fonoran-primitive-roots.js` and its 200-primitive output. The contrast was intentional. [`docs/fonoran-semantic-foundation.md`](../fonoran-semantic-foundation.md) opens by superseding that tooling: phonetic forms assigned before semantic approval are archive-only; canonical work starts from concepts only.
+The semantic foundation shipped in the same week as RN-10's Huffman generator, in fact, in the same commit (`e8f81f1`, Jun 27, 2026) that added `tools/fonoran-primitive-roots.js` and its 200-primitive output. The contrast was intentional. [`docs/fonoran-semantic-foundation.md`](../archive/fonoran-semantic-foundation.md) opens by superseding that tooling: phonetic forms assigned before semantic approval are archive-only; canonical work starts from concepts only.
 
 The deliverables were deliberately phonetics-free:
 
@@ -40,7 +40,7 @@ The deliverables were deliberately phonetics-free:
 | [`data/fonoran-semantic-primitives.json`](../data/fonoran-semantic-primitives.json) | 99 primitive dimensions with language-neutral descriptions and domain tags |
 | [`data/fonoran-grammar-particles.json`](../data/fonoran-grammar-particles.json) | Proposed closed-class particles (32 roles in v1.2; forms reserved, not finalized) |
 | [`data/fonoran-semantic-demo-compounds.json`](../data/fonoran-semantic-demo-compounds.json) | 50 demonstration compounds as concept trees only, no roman spellings |
-| [`docs/fonoran-semantic-foundation.md`](../fonoran-semantic-foundation.md) | Human-readable proposal: design principles, irreducibility rationales, Mermaid hierarchy diagrams |
+| [`docs/fonoran-semantic-foundation.md`](../archive/fonoran-semantic-foundation.md) | Human-readable proposal: design principles, irreducibility rationales, Mermaid hierarchy diagrams |
 
 [`docs/fonoran-grammar.md`](../docs/fonoran-grammar.md) was updated in the same push to embed the fundamental experience test and point at the semantic inventory as the authoritative primitive list.
 
@@ -85,7 +85,7 @@ There was no formal user study or automated ontology validator. Evaluation was e
 - **Irreducibility review**: argument-by-argument application of the fundamental experience test, with demotions documented in JSON.
 - **Compound-tree inspection**: the 50 demo compounds and Mermaid diagrams as test corpus: could `government`, `religion`, `document` be reached through taught intermediates?
 - **Failure-mode checklist**: the proposal doc's table mapping RN-10 symptoms (English-ranked lemmas, Huffman-first ordering, flat compounds, grammar-as-roots) against new constraints.
-- **Side-by-side with Huffman output**: [`docs/fonoran-primitive-roots-report.md`](../docs/fonoran-primitive-roots-report.md): `lobawi` versus `tribe + conflict`, `do` for *because* versus a grammar particle.
+- **Side-by-side with Huffman output**: [`docs/fonoran-primitive-roots-report.md`](../archive/fonoran-primitive-roots-report.md): `lobawi` versus `tribe + conflict`, `do` for *because* versus a grammar particle.
 
 No score was computed for ontology correctness. Approval was qualitative.
 
@@ -151,7 +151,7 @@ The last question, ontology versus communication, is the bridge to RN-12's Resea
 - `80162e7` / `79baa18`: Grammar particles as first-class category; trim to rule-compliant core
 - `5cfe28a`: Communication experiment pivot; add constitution
 
-**Documentation:** [`docs/fonoran-semantic-foundation.md`](../fonoran-semantic-foundation.md), [`docs/fonoran-grammar.md`](../docs/fonoran-grammar.md)
+**Documentation:** [`docs/fonoran-semantic-foundation.md`](../archive/fonoran-semantic-foundation.md), [`docs/fonoran-grammar.md`](../docs/fonoran-grammar.md)
 
 **Interactive demo:** [Concept Editor](/language#concepts)
 

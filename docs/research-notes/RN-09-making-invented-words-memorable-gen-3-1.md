@@ -20,7 +20,7 @@ Constraints carried forward from Gen 3: still **no Indo-European lexicon repair*
 
 ## Approach
 
-Gen 3.1 shipped alongside the Gen 3 toolchain in commit `5b6bc58` (Jun 24, 2026). The generator is [`tools/fonoran-gen3-1.js`](../tools/fonoran-gen3-1.js); scoring utilities live in [`tools/fonoran-gen3-distinctiveness.js`](../tools/fonoran-gen3-distinctiveness.js). Configuration, including the eight aspect vowel pools, distinctiveness weights, and the unchanged 36-primitive inventory, is in [`data/fonoran-gen3-1-config.json`](../data/fonoran-gen3-1-config.json). The design is documented in [`docs/fonoran-gen3-1.md`](../docs/fonoran-gen3-1.md), first committed in `14d5d84`.
+Gen 3.1 shipped alongside the Gen 3 toolchain in commit `5b6bc58` (Jun 24, 2026). The generator is [`tools/fonoran-gen3-1.js`](../tools/fonoran-gen3-1.js); scoring utilities live in [`tools/fonoran-gen3-distinctiveness.js`](../tools/fonoran-gen3-distinctiveness.js). Configuration, including the eight aspect vowel pools, distinctiveness weights, and the unchanged 36-primitive inventory, is in [`data/fonoran-gen3-1-config.json`](../data/fonoran-gen3-1-config.json). The design is documented in [`docs/fonoran-gen3-1.md`](../archive/fonoran-gen3-1.md), first committed in `14d5d84`.
 
 ### Candidate enumeration
 
@@ -97,7 +97,7 @@ The distinctiveness layer worked on its own terms. Running `npm run fonoran:gen3
 
 **Compounds remained parseable.** All eight `example_derivations` in the config still produce exactly one segmentation, 100% parseability on the worked examples. Compounds grew slightly longer on average (7 → 8 characters) because spread and occasional CVC codas (`xaeli` → `xaechlik` for *river*, `keede` → `kuda` for *speaker*) traded brevity for distinct boundaries.
 
-**The cost was real and measurable.** Grid repair rate rose from 22% to **31%**: eleven of thirty-six roots moved off their first-choice place or manner cell. [`docs/fonoran-gen3-1.md`](../docs/fonoran-gen3-1.md) documents this as an intentional tradeoff: distinctiveness sometimes requires manner or place rotation at reserved throat cells. Roots like `threshold` (`wee` → `che`, three grid-repair steps) and `envelope` (`mu` → `ngu`, three steps) illustrate the tension between coordinate fidelity and ear-level discrimination.
+**The cost was real and measurable.** Grid repair rate rose from 22% to **31%**: eleven of thirty-six roots moved off their first-choice place or manner cell. [`docs/fonoran-gen3-1.md`](../archive/fonoran-gen3-1.md) documents this as an intentional tradeoff: distinctiveness sometimes requires manner or place rotation at reserved throat cells. Roots like `threshold` (`wee` → `che`, three grid-repair steps) and `envelope` (`mu` → `ngu`, three steps) illustrate the tension between coordinate fidelity and ear-level discrimination.
 
 **Pronounceability did not improve.** Mean root pronounceability stayed at 96. The layer addressed confusability among roots, not ease of articulation. Digraph vowels (`ae`, `oh`, `ee`) and `ñ` onsets remain documented risks in the readability report.
 
@@ -111,7 +111,7 @@ Gen 3.1 did not become the authoritative Fonoran workflow. The [Fonoran Constitu
 
 What survived into later architecture:
 
-- **`distinctivenessPenalty` scoring**: reused almost unchanged in [`tools/fonoran-primitive-roots.js`](../tools/fonoran-primitive-roots.js) (RN-10's Huffman-like allocation) and [`tools/fonoran-root-sound-assign.js`](../tools/fonoran-root-sound-assign.js) (the editorial root workflow). [`docs/fonoran-primitive-roots-report.md`](../docs/fonoran-primitive-roots-report.md) lists Gen 3 / 3.1 as "partially adaptable" specifically because of this scorer.
+- **`distinctivenessPenalty` scoring**: reused almost unchanged in [`tools/fonoran-primitive-roots.js`](../tools/fonoran-primitive-roots.js) (RN-10's Huffman-like allocation) and [`tools/fonoran-root-sound-assign.js`](../tools/fonoran-root-sound-assign.js) (the editorial root workflow). [`docs/fonoran-primitive-roots-report.md`](../archive/fonoran-primitive-roots-report.md) lists Gen 3 / 3.1 as "partially adaptable" specifically because of this scorer.
 - **The phonetic-spread-before-grid-repair priority**: informally preserved as "prefer the smallest sound change that breaks a collision" in later assignment tooling, even though the DDA coordinate story was dropped.
 - **Hard caps on rhyme classes and prefix pairs**: echoed in distribution-cap logic in the 200-primitive generator and in editorial collision scoring.
 
@@ -154,7 +154,7 @@ A secondary open question, implied by the 31% grid-repair rate: **when phonetic 
 - `5cfe28a`: Reorient Fonoran around the communication experiment; demote Gen 3/DDA track; add constitution
 - `b9a306f`: Cross-link archive docs and doc viewer to research notebook
 
-**Documentation:** [`docs/fonoran-gen3-1.md`](../fonoran-gen3-1.md), [`docs/fonoran-gen3.md`](../fonoran-gen3.md) (Gen 3 baseline), [`docs/fonoran-generator-archive.md`](../fonoran-generator-archive.md) (§ Gen 3 / 3.1)
+**Documentation:** [`docs/fonoran-gen3-1.md`](../archive/fonoran-gen3-1.md), [`docs/fonoran-gen3.md`](../archive/fonoran-gen3.md) (Gen 3 baseline), [`docs/fonoran-generator-archive.md`](../archive/fonoran-generator-archive.md) (§ Gen 3 / 3.1)
 
 **Interactive demo:** [Dictionary](/language#dictionary)
 

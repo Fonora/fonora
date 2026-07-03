@@ -20,11 +20,11 @@ Fonora has three projects plus a public research notebook, surfaced as four top-
 The **Fonora** sub-nav links to **About**, **Research**, **Timeline**, **Open Questions**, and **Docs**. The research notebook is the narrative layer of the project: each major experiment is written up as a standalone research note (question → hypothesis → constraints → implementation → outcome → next question), with a [visual timeline](/research/timeline) connecting them. The docs in this folder are the *reference* layer the notebook links to.
 
 [`/learn`](/learn) is public learner-facing practice (Learn the Sounds, Breakdown, Samples,
-Spelling Practice). [`/tools`](/tools) is QA/debugging (Keyboard Testing, Reverse Lookup,
-Symbols, Pronunciation Testing/Validation, plus cards linking into the `/language` builder
+Spelling Practice). [`/tools`](/tools) is QA/debugging (Pronunciation Testing/Validation,
+Samples, Research Notes, plus cards linking into the `/language` builder
 tools). `/script`, `/learn`, and `/tools` are served by the same front-end bundle and reuse
 the same panels — there is no duplicated tool logic. `/language` is a separate app (the
-Fonoran vocabulary builder); Tools links directly into its pages (Root Creator, Word Creator,
+Fonoran vocabulary builder); Tools links directly into its pages (Word Creator, Concept Editor,
 Review, Health, ...) rather than duplicating them.
 
 ```mermaid
@@ -43,8 +43,8 @@ flowchart TB
     end
     subgraph tools [Tools]
       Learn["Learn\n(Learn the Sounds, Breakdown, Samples, Spelling Practice)"]
-      ScriptTools["Tools: Script QA\n(Keyboard, Reverse Lookup, Symbols, Pronunciation)"]
-      LangTools["Tools: Language Tools\n(Root Creator, Word Creator, Review, Health, ...)"]
+      ScriptTools["Tools: Script QA\n(Pronunciation Testing, Validation, Samples)"]
+      LangTools["Tools: Language Tools\n(Word Creator, Concept Editor, Review, Health, ...)"]
     end
   end
   script -. "reused panels" .-> Learn
