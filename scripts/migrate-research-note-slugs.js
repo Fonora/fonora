@@ -49,8 +49,7 @@ function migrateText(text) {
     out = out.replaceAll(`researchHref('${oldSlug}')`, `researchHref('${newSlug}')`);
     out = out.replaceAll(`researchHref("${oldSlug}")`, `researchHref("${newSlug}")`);
     out = out.replaceAll(`"slug": "${oldSlug}"`, `"slug": "${newSlug}"`);
-    const re = new RegExp(`"${oldSlug.replace(/-/g, '\\-')}"`, 'g');
-    out = out.replace(re, `"${newSlug}"`);
+    out = out.replaceAll(`"${oldSlug}"`, `"${newSlug}"`);
   }
   return out;
 }
