@@ -35,14 +35,79 @@ function el(ids, suffix) {
  * @param {string} options.tabId
  * @param {() => Promise<PracticeWord[]> | PracticeWord[]} options.loadWords
  * @param {string} [options.emptyMessage]
+ * @param {(match: boolean, word: PracticeWord, user: string) => void} [options.onAnswer]
+ * @param {() => import('./learn-session-ui.js').createLearnSession extends Function ? ReturnType<import('./learn-session-ui.js').createLearnSession> : null} [options.getSession]
+ * @param {string} [options.continueButtonId]
+ * @param {boolean} [options.promptActionButton] — dual Check / Next prompt button
  */
-export function createTypingPractice({ rules, ids, tabId, loadWords, emptyMessage }) {
+export function createTypingPractice({
+  rules,
+  ids,
+  tabId,
+  loadWords,
+  emptyMessage,
+  onAnswer = null,
+  getSession = null,
+  continueButtonId = null,
+  promptActionButton = false,
+}) {
   /** @type {PracticeWord[]} */
   let practiceWords = [];
   let currentIndex = 0;
   /** @type {ReturnType<typeof createFonoraKeyboard> | null} */
   let practiceKeyboard = null;
   let rulesRef = rules;
+  let answerLocked = false;
+  let promptActionWired = false;
+
+  function setPromptActionMode(mode) {
+    if (!promptActionButton || !continueButtonId) return;
+    const btn = document.getElementById(continueButtonId);
+    if (!btn) return;
+    const label = btn.querySelector('.learn-exercise__next-label');
+    const kbd = btn.querySelector('.learn-exercise__next-kbd');
+    if (mode === 'check') {
+      btn.hidden = false;
+      btn.dataset.action = 'check';
+      btn.setAttribute('aria-label', 'Check answer');
+      if (label) label.textContent = 'Check';
+      if (kbd) {
+        kbd.textContent = '↵';
+        kbd.hidden = false;
+      }
+      return;
+    }
+    if (mode === 'next') {
+      btn.hidden = false;
+      btn.dataset.action = 'next';
+      btn.setAttribute('aria-label', 'Next word');
+      if (label) label.textContent = 'Next';
+      if (kbd) {
+        kbd.textContent = 'Tab →';
+        kbd.hidden = false;
+      }
+      return;
+    }
+    btn.hidden = true;
+  }
+
+  function wirePromptActionButton() {
+    if (!promptActionButton || !continueButtonId || promptActionWired) return;
+    const btn = document.getElementById(continueButtonId);
+    if (!btn) return;
+    promptActionWired = true;
+    btn.addEventListener('click', () => {
+      const session = getSession?.();
+      if (btn.dataset.action === 'next' && session?.canAdvance?.()) {
+        session.advance();
+        setPromptActionMode('check');
+        return;
+      }
+      if (btn.dataset.action === 'check' && !answerLocked) {
+        checkAnswer();
+      }
+    });
+  }
 
   function setStatus(message) {
     const status = el(ids, 'status');
@@ -70,7 +135,7 @@ export function createTypingPractice({ rules, ids, tabId, loadWords, emptyMessag
     }
 
     badge.className = `typing-practice__verdict-badge typing-practice__verdict-badge--${match ? 'ok' : 'miss'}`;
-    badge.textContent = match ? 'Correct' : 'Incorrect';
+    badge.textContent = match ? 'Correct!' : 'Not quite';
     prompt.classList.toggle('typing-practice__prompt--ok', match);
     prompt.classList.toggle('typing-practice__prompt--miss', !match);
   }
@@ -106,8 +171,14 @@ export function createTypingPractice({ rules, ids, tabId, loadWords, emptyMessag
     }
 
     input.value = '';
+    answerLocked = false;
     hideResult();
     practiceKeyboard?.clearCompose();
+    if (promptActionButton) {
+      setPromptActionMode('check');
+    } else if (continueButtonId) {
+      getSession?.()?.setContinueVisible(continueButtonId, false);
+    }
     input.focus();
   }
 
@@ -130,18 +201,58 @@ export function createTypingPractice({ rules, ids, tabId, loadWords, emptyMessag
   }
 
   function checkAnswer() {
+    if (answerLocked) return;
     const word = practiceWords[currentIndex];
     const input = el(ids, 'input');
     if (!word || !input || !rulesRef) return;
 
     practiceKeyboard?.flushToTarget();
     const user = normalizeSymbolInput(input.value, rulesRef);
-    renderResult(user === word.expected, user, word.expected);
+    const match = user === word.expected;
+    renderResult(match, user, word.expected);
+    answerLocked = true;
+    onAnswer?.(match, word, user);
+
+    const session = getSession?.();
+    if (session && continueButtonId) {
+      session.afterAnswer(continueButtonId, { correct: match });
+      if (promptActionButton) {
+        setPromptActionMode('next');
+      }
+    }
   }
 
   function nextWord() {
+    if (answerLocked) return;
     if (practiceWords.length === 0) return;
     currentIndex = (currentIndex + 1) % practiceWords.length;
+    showCurrentWord();
+  }
+
+  /** Tab: advance the session if an answer was checked, else skip to next word. */
+  function onTabPressed() {
+    const session = getSession?.();
+    if (session && continueButtonId && session.canAdvance?.()) {
+      if (promptActionButton) {
+        session.advance();
+        setPromptActionMode('check');
+      } else {
+        document.getElementById(continueButtonId)?.click();
+      }
+      return;
+    }
+    nextWord();
+  }
+
+  function advanceWord() {
+    if (practiceWords.length === 0) return;
+    currentIndex = (currentIndex + 1) % practiceWords.length;
+    showCurrentWord();
+  }
+
+  function restartWords() {
+    if (practiceWords.length === 0) return;
+    currentIndex = 0;
     showCurrentWord();
   }
 
@@ -164,10 +275,10 @@ export function createTypingPractice({ rules, ids, tabId, loadWords, emptyMessag
       tabId,
       isActive: isPracticePanelActive,
       layout: 'practice',
-      enterKeyLabel: 'check',
-      onEnter: checkAnswer,
-      onTab: nextWord,
-    });
+    enterKeyLabel: 'check',
+    onEnter: checkAnswer,
+    onTab: onTabPressed,
+  });
 
     setStatus('');
     practiceWords = await loadWords(rulesRef);
@@ -182,6 +293,11 @@ export function createTypingPractice({ rules, ids, tabId, loadWords, emptyMessag
 
     if (isPracticePanelActive()) {
       practiceKeyboard.activate();
+    }
+
+    wirePromptActionButton();
+    if (promptActionButton) {
+      setPromptActionMode('check');
     }
   }
 
@@ -208,6 +324,9 @@ export function createTypingPractice({ rules, ids, tabId, loadWords, emptyMessag
     refresh,
     onTabActivated,
     destroy,
+    advanceWord,
+    showCurrentWord,
+    restartWords,
     get wordCount() {
       return practiceWords.length;
     },

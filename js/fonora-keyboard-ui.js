@@ -166,6 +166,10 @@ export function createFonoraKeyboard(options) {
       return;
     }
 
+    if (vowelPopup.parentElement !== document.body) {
+      document.body.appendChild(vowelPopup);
+    }
+
     popupOptions = candidates.slice(0, 9).map((phoneme) => ({
       phoneme,
       symbols: composer.soundToSymbols[phoneme] ?? '',
