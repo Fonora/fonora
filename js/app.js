@@ -5,7 +5,7 @@ import {
   modifierSymbol,
 } from './symbol-compose.js';
 import {
-  getVowelEntries,
+  getSoundGridVowelGroups,
   soundGridVowelRowHtml,
 } from './vowel-display.js';
 import { notifyFonoraTabChange } from './fonora-keyboard-ui.js';
@@ -309,20 +309,28 @@ function renderSupplementalSoundTables() {
 
   const vowelSection = document.getElementById('vowels-section');
   const vowelsBody = document.getElementById('vowels-body');
-  const vowels = getVowelEntries(rules);
+  const vowelGroups = getSoundGridVowelGroups(rules);
+  const vowelCount = vowelGroups.reduce((n, g) => n + g.entries.length, 0);
 
-  if (!vowelSection || !vowelsBody || !vowels.length) {
+  if (!vowelSection || !vowelsBody || !vowelCount) {
     if (vowelSection) vowelSection.hidden = true;
   } else {
     vowelSection.hidden = false;
 
     vowelsBody.innerHTML = '';
-    for (const cell of vowels) {
-      const tr = document.createElement('tr');
-      tr.className = 'derived-row derived-row--defined vowel-table-row';
-      tr.innerHTML = soundGridVowelRowHtml(cell, escapeHtml).join('');
-      bindInsertableRow(tr, cell.symbols);
-      vowelsBody.appendChild(tr);
+    for (const group of vowelGroups) {
+      const header = document.createElement('tr');
+      header.className = 'vowel-table-group';
+      header.innerHTML = `<td colspan="6">${escapeHtml(group.label)}</td>`;
+      vowelsBody.appendChild(header);
+
+      for (const cell of group.entries) {
+        const tr = document.createElement('tr');
+        tr.className = 'derived-row derived-row--defined vowel-table-row';
+        tr.innerHTML = soundGridVowelRowHtml(cell, escapeHtml).join('');
+        bindInsertableRow(tr, cell.symbols);
+        vowelsBody.appendChild(tr);
+      }
     }
   }
 }

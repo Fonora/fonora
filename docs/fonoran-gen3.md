@@ -1,10 +1,12 @@
 # Fonoran Gen 3: Grid-Native Language Architecture
 
-> **Archive — superseded direction.** Primary source for [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates). The Gen 3 / DDA coordinate track is **demoted** under the [Fonoran Constitution](fonoran-constitution.md): roots are organized by **human experience** and the **campfire test**; compounds are judged by recoverable meaning, not coordinate correctness. Kept for reference and DDA inference in the lab Advanced tab — not the production design. Active workflow: [fonoran.md](fonoran.md) at `/language`.
+> **Archive — superseded direction.** Primary source for [RN-08 · Meaning from coordinates](/research/notes/dda-coordinates). The Gen 3 / DDA coordinate track is **demoted** under the [Fonoran Constitution](fonoran-constitution.md): roots are organized by **human experience** and the **campfire test**; compounds are judged by recoverable meaning, not coordinate correctness. Kept for reference only — not the production design. Active workflow: [fonoran.md](fonoran.md) at `/language`.
+
+**Vowel glyphs** in §2.3 follow the mouth-intuitive tiers in [language-rules.md](language-rules.md) (simple = place, long = manner).
 
 **On this page:** [Rebasing](#0-the-rebasing) · [Semantic theory](#1-semantic-theory) · [Articulation map](#2-articulation-meaning-map) · [Coordinate system](#3-coordinate-system-dda) · [Root generation](#4-root-generation-system) · [Running the generator](#9-running-the-generator)
 
-For the live vocabulary you build by hand, use the [Fonoran language lab](fonoran.md). Gen 3 JSON here is **reference semantics** for DDA inference and the English meaning picker, not your working dictionary.
+For the live vocabulary you build by hand, use the [Fonoran language lab](fonoran.md). Gen 3 JSON here is **historical reference** for archived generators, not your working dictionary.
 
 ---
 
@@ -121,11 +123,11 @@ Vowel (⚬) marks that a consonant skeleton is **qualified**. The qualifying gly
 | Aspect | Fonora | Roman | Semantic quality |
 | --- | --- | --- | --- |
 | contact | ⚬∋ | u | surface-touch; tactile presence |
-| focal | ⚬∩ | ee | particular; indexed; this-one |
-| struct | ⚬⌓ | i | relational; patterned; compositional |
-| field | ⚬∪ | o | extended; distributed; spreading |
-| source | ⚬⊃ | a | originary; potential; pre-formed |
-| animated | ⚬⌇ | e | activated; will-bearing |
+| focal | ⚬⌇ | ee | particular; indexed; this-one |
+| struct | ⚬∩ | i | relational; patterned; compositional |
+| field | ⚬⊃ | o | extended; distributed; spreading |
+| source | ⚬∪ | a | originary; potential; pre-formed |
+| animated | ⚬⌓ | e | activated; will-bearing |
 | turbulent | ⚬⌀ | ae | continuously changing |
 | resonant | ⚬⏌ | oh | collective; cavity-resonating |
 

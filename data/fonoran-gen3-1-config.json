@@ -92,11 +92,11 @@
       "description": "Vowel class (⚬X) qualifies the consonant skeleton, what KIND of presence the coordinate has.",
       "classes": {
         "contact": { "fonora": "⚬∋", "roman": "u", "meaning": "surface-touch quality; tactile presence" },
-        "focal": { "fonora": "⚬∩", "roman": "ee", "meaning": "particular, indexed, this-one quality" },
-        "struct": { "fonora": "⚬⌓", "roman": "i", "meaning": "relational, patterned, compositional quality" },
-        "field": { "fonora": "⚬∪", "roman": "o", "meaning": "extended, distributed, spreading quality" },
-        "source": { "fonora": "⚬⊃", "roman": "a", "meaning": "originary, potential, pre-formed quality" },
-        "animated": { "fonora": "⚬⌇", "roman": "e", "meaning": "activated, will-bearing quality" },
+        "focal": { "fonora": "⚬⌇", "roman": "ee", "meaning": "particular, indexed, this-one quality" },
+        "struct": { "fonora": "⚬∩", "roman": "i", "meaning": "relational, patterned, compositional quality" },
+        "field": { "fonora": "⚬⊃", "roman": "o", "meaning": "extended, distributed, spreading quality" },
+        "source": { "fonora": "⚬∪", "roman": "a", "meaning": "originary, potential, pre-formed quality" },
+        "animated": { "fonora": "⚬⌓", "roman": "e", "meaning": "activated, will-bearing quality" },
         "turbulent": { "fonora": "⚬⌀", "roman": "ae", "meaning": "continuously changing quality" },
         "resonant": { "fonora": "⚬⏌", "roman": "oh", "meaning": "collective, cavity-resonant quality" }
       }

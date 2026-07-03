@@ -227,7 +227,6 @@
       wordComposerShowWords: true,
       showUnapprovedWords: false,
       showUnnamed: false,
-      showDebugDda: false,
       rootDraft: { onset: '', vowel: '', coda: '' },
       rootComposerEditingSpelling: null,
       rootComposerReturnPage: null,
@@ -712,7 +711,6 @@
         buttons.push(`<button type="button" class="hear-min word-preview__hear" aria-label="Listen to ${escapeHtml(spelling)}">Listen</button>`);
       }
       buttons.push(`<button type="button" class="btn wp-side-btn" data-open-graph${hasMermaid ? '' : ' disabled'}>Tree</button>`);
-      buttons.push(`<button type="button" class="btn wp-side-btn" data-open-dda title="Semantic coordinates">DDA</button>`);
       if (alternatesCount > 0) {
         buttons.push(`<button type="button" class="btn wp-side-btn wp-side-btn--subtle" data-open-alternates>Alternates</button>`);
       }
@@ -1713,69 +1711,6 @@
       });
     }
 
-    function labItemDda(type, ref) {
-      if (type === 'root') {
-        return STATE.lab.sounds.find(s => s.spelling === ref)?.dda ?? null;
-      }
-      return STATE.lab.compounds.find(c => c.id === ref)?.dda ?? null;
-    }
-
-    function ddaNotation(dda) {
-      if (!dda?.D && !dda?.M && !dda?.A) return null;
-      return `⟨ ${dda.D ?? '?'} · ${dda.M ?? '?'} · ${dda.A ?? '?'} ⟩`;
-    }
-
-    function ddaMethodLabel(dda) {
-      if (!dda) return null;
-      const sources = dda.sources ?? [];
-      if (sources.includes('compound_blend')) return 'blended from parts';
-      if (sources.includes('meaning')) return 'matched by meaning';
-      if (sources.includes('meaning_partial')) return 'partial meaning match';
-      if (sources.includes('phonetic')) return 'inferred from sound';
-      if (dda.status === 'confirmed') return 'confirmed';
-      return null;
-    }
-
-    function buildDdaMermaidSource(spelling, meaning, dda, components) {
-      if (!dda?.D && !dda?.M && !dda?.A) return null;
-      const esc = s => (s ?? '').replace(/"/g, '#quot;').replace(/[[\]{}|]/g, '').slice(0, 36);
-      const wordLabel = meaning ? `${esc(spelling)} · ${esc(meaning)}` : esc(spelling || '?');
-      const lines = ['graph TD'];
-      const parts = (components ?? []).map((c, i) => {
-        const sp = c.type === 'root'
-          ? c.ref
-          : (STATE.lab.compounds.find(x => x.id === c.ref)?.spelling ?? c.ref);
-        const m = c.type === 'root'
-          ? soundMeaning(c.ref)
-          : (STATE.lab.compounds.find(x => x.id === c.ref)?.meaning ?? '');
-        const label = m ? `${esc(sp)} · ${esc(m)}` : esc(sp);
-        lines.push(`  P${i}["${label}"]`);
-        return `P${i}`;
-      });
-      if (parts.length > 1) {
-        lines.push(`  ${parts.join(' & ')} --> Word["${wordLabel}"]`);
-      } else if (parts.length === 1) {
-        lines.push(`  ${parts[0]} --> Word["${wordLabel}"]`);
-      } else {
-        lines.push(`  Word["${wordLabel}"]`);
-      }
-      lines.push(`  Word --> D["Depth: ${esc(dda.D ?? '?')}"]`);
-      lines.push(`  Word --> M["Mode: ${esc(dda.M ?? '?')}"]`);
-      lines.push(`  Word --> A["Aspect: ${esc(dda.A ?? '?')}"]`);
-      if (isDarkTheme()) {
-        lines.push('  classDef coord fill:#2a241c,stroke:#8a7355,color:#f0ede8');
-        lines.push('  classDef part fill:#142b20,stroke:#1f4a32,color:#8fd4ad');
-      } else {
-        lines.push('  classDef coord fill:#f5edd9,stroke:#dcc9a8,color:#2c2418');
-        lines.push('  classDef part fill:#dcfce7,stroke:#86efac,color:#166534');
-      }
-      if (parts.length) {
-        lines.push(`  class ${parts.join(',')} part`);
-      }
-      lines.push('  class D,M,A coord');
-      return lines.join('\n');
-    }
-
     function componentMeta(c) {
       const w = c.type === 'word' ? STATE.lab.compounds.find(x => x.id === c.ref) : null;
       return {
@@ -1970,72 +1905,6 @@
       </div>`;
     }
 
-    function buildDdaPanelHtml(wordDda, components, focus = null) {
-      if (!wordDda?.D && !wordDda?.M && !wordDda?.A) {
-        return `<div class="showcase-dda showcase-dda--empty">
-          <h4>Semantic coordinates</h4>
-          <p class="sans showcase-dda__empty">Every word carries three semantic coordinates — depth, mode, and aspect — assigned automatically when you build. Run DDA in Advanced to generate them.</p>
-        </div>`;
-      }
-      const axes = [
-        { key: 'Depth', val: wordDda.D, hint: 'how abstract or concrete' },
-        { key: 'Mode', val: wordDda.M, hint: 'how the concept moves or acts' },
-        { key: 'Aspect', val: wordDda.A, hint: 'how it relates to its context' },
-      ];
-      const axisHtml = axes.map(a => `
-        <div class="showcase-dda__axis" title="${escapeHtml(a.hint)}">
-          <span class="showcase-dda__axis-key">${a.key}</span>
-          <span class="showcase-dda__axis-val">${escapeHtml(a.val ?? '?')}</span>
-        </div>`).join('');
-      const blendRows = (components ?? []).map(c => {
-        const sp = c.type === 'root' ? c.ref : (STATE.lab.compounds.find(x => x.id === c.ref)?.spelling ?? c.ref);
-        const m = c.type === 'root' ? soundMeaning(c.ref) : (STATE.lab.compounds.find(x => x.id === c.ref)?.meaning ?? '?');
-        const dda = labItemDda(c.type === 'root' ? 'root' : 'word', c.ref);
-        const note = ddaNotation(dda);
-        if (!note) return '';
-        return `<div class="showcase-dda__blend-row">
-          <span class="mono">${escapeHtml(sp)}</span>
-          <span class="showcase-dda__blend-note">${escapeHtml(note)}</span>
-          <span class="showcase-dda__blend-meaning">${escapeHtml(m)}</span>
-        </div>`;
-      }).filter(Boolean).join('');
-      const conf = wordDda.confidence != null ? wordDda.confidence : null;
-      const confPct = conf != null ? Math.round(conf * 100) : null;
-      const isLowConf = conf != null && conf < 0.6;
-      const method = ddaMethodLabel(wordDda);
-      const statusPillClass = wordDda.status === 'confirmed'
-        ? 'showcase-dda__pill showcase-dda__pill--confirmed'
-        : wordDda.status === 'stale'
-          ? 'showcase-dda__pill showcase-dda__pill--stale'
-          : (isLowConf ? 'showcase-dda__pill showcase-dda__pill--low' : 'showcase-dda__pill');
-      const methodBadge = method
-        ? `<span class="showcase-dda__method">${escapeHtml(method)}</span>`
-        : '';
-      const statusPill = wordDda.status
-        ? `<span class="${statusPillClass}">${escapeHtml(wordDda.status)}</span>`
-        : '';
-      const confBadge = confPct != null
-        ? `<span class="showcase-dda__conf${isLowConf ? ' showcase-dda__conf--low' : ''}">${confPct}%</span>`
-        : '';
-      const mermaidSrc = focus?.spelling
-        ? buildDdaMermaidSource(focus.spelling, focus.meaning, wordDda, components)
-        : null;
-      const chartHtml = mermaidSrc
-        ? `<div class="dda-chart">
-            <p class="showcase-dda__blend-label">Semantic relationship</p>
-            <div class="mermaid-wrap dda-chart__wrap"><div class="mermaid">${escapeHtml(mermaidSrc)}</div></div>
-          </div>`
-        : '';
-      return `<div class="showcase-dda">
-        <h4>Semantic coordinates</h4>
-        <p class="showcase-dda__notation">${escapeHtml(ddaNotation(wordDda))}</p>
-        <div class="showcase-dda__axes">${axisHtml}</div>
-        ${blendRows ? `<div class="showcase-dda__blend"><p class="showcase-dda__blend-label">Blended from</p>${blendRows}</div>` : ''}
-        <div class="showcase-dda__footer">${methodBadge}${statusPill}${confBadge}</div>
-        ${chartHtml}
-      </div>`;
-    }
-
     function buildUsedInChipsHtml(usedIn) {
       if (!usedIn?.length) return '';
       const chips = usedIn.slice(0, 6).map(u => `
@@ -2065,13 +1934,10 @@
       </div>`;
     }
 
-    function buildExplorerActionsHtml({ graph = false, dda = true, hasMermaid = false, compact = false } = {}) {
-      if (!graph && !dda) return '';
-      const ddaLabel = compact ? 'Coordinates' : 'Semantic coordinates';
-      const ddaTitle = compact ? 'Semantic coordinates' : '';
+    function buildExplorerActionsHtml({ graph = false, hasMermaid = false } = {}) {
+      if (!graph) return '';
       return `<div class="explorer-actions">
-        ${graph ? `<button type="button" class="btn" data-open-graph ${hasMermaid ? '' : 'disabled'}>Word Tree</button>` : ''}
-        ${dda ? `<button type="button" class="btn" data-open-dda${ddaTitle ? ` title="${ddaTitle}"` : ''}>${ddaLabel}</button>` : ''}
+        <button type="button" class="btn" data-open-graph ${hasMermaid ? '' : 'disabled'}>Word Tree</button>
       </div>`;
     }
 
@@ -2128,9 +1994,7 @@
       const actionButtons = !isDictionary && (modalActions || !showInlineGraph)
         ? buildExplorerActionsHtml({
           graph: !showInlineGraph,
-          dda: true,
           hasMermaid: Boolean(data.mermaid),
-          compact: true,
         })
         : '';
 
@@ -2322,7 +2186,7 @@
           <div class="lander-health__metrics">${metrics}</div>
           <h4 class="lander-health__method-subhead">Secondary metrics</h4>
           <div class="lander-health__method-grid lander-health__method-grid--secondary">${metricMethods}</div>
-          <p class="lander-health__footnote">Warnings include look-alike sounds, prefix overlap, rhyming clusters, segmentation ambiguity, and pronunciation difficulty. Semantic coordinates (DDA) are analysed separately and surface through the explorer and health detail view.</p>
+          <p class="lander-health__footnote">Warnings include look-alike sounds, prefix overlap, rhyming clusters, segmentation ambiguity, and pronunciation difficulty.</p>
         </div>`;
     }
 
@@ -2994,12 +2858,6 @@
           if (data.mermaid) openFamilyGraphSheet(data, reviewExplorerNavigate);
         } catch (e) { toast(e.message); }
       });
-      rootEl.querySelector('[data-open-dda]')?.addEventListener('click', async () => {
-        try {
-          const data = await dataPromise;
-          openDdaSheet(data, kind, id);
-        } catch (e) { toast(e.message); }
-      });
     }
 
     function renderLabReviewWorkspace(c) {
@@ -3396,9 +3254,6 @@
         containerEl.querySelector('[data-open-graph]')?.addEventListener('click', () => {
           openFamilyGraphSheet(data, onNavigate ?? null);
         });
-        containerEl.querySelector('[data-open-dda]')?.addEventListener('click', () => {
-          openDdaSheet(data, explorerKind, id);
-        });
         containerEl.querySelector('[data-open-alternates]')?.addEventListener('click', () => {
           const panelKind = entryKind ?? (explorerKind === 'root' ? 'sound' : 'compound');
           openAlternatesSheet(panelKind, id);
@@ -3414,25 +3269,6 @@
         <p class="sans dict-alternates-panel__empty">No alternates recorded yet.</p>
       </div>`;
       openSheet();
-    }
-
-    async function openDdaSheet(data, explorerKind, ref) {
-      const dda = labItemDda(explorerKind, ref);
-      const body = $('sheet-body');
-      body.innerHTML = buildDdaPanelHtml(dda, data.focus.components, data.focus);
-      openSheet();
-      const mermaidEl = body.querySelector('.mermaid');
-      if (mermaidEl && window.mermaid) {
-        const { getMermaidInit } = await import('../js/mermaid-theme.js');
-        window.mermaid.initialize(getMermaidInit());
-        await new Promise(resolve => requestAnimationFrame(resolve));
-        try {
-          await window.mermaid.run({ nodes: [mermaidEl] });
-        } catch (err) {
-          console.warn('DDA chart render failed:', err);
-          body.querySelector('.dda-chart')?.remove();
-        }
-      }
     }
 
     async function openExplorer(kind, id, preview = null) {
@@ -5237,9 +5073,6 @@
 
     async function renderAdvanced() {
       try {
-        const h = await fetchHealth();
-        const d = h.dda ?? {};
-        $('adv-dda-status').textContent = `DDA: ${d.pending ?? 0} pending · ${d.stale ?? 0} stale · ${d.inferred ?? 0} inferred · ${d.confirmed ?? 0} confirmed`;
         try {
           const status = await api('/api/fonoran/lab/regen/status');
           const regenEl = $('adv-regen-status');
@@ -5264,33 +5097,8 @@
           if ($('adv-storage-status')) $('adv-storage-status').textContent = '';
         }
         void renderAdvancedMermaid();
-        if (STATE.showDebugDda && STATE.lab) {
-          const debug = {
-            sounds: STATE.lab.sounds.map(s => ({ spelling: s.spelling, dda: s.dda })),
-            compounds: STATE.lab.compounds.map(c => ({ spelling: c.spelling, dda: c.dda })),
-          };
-          $('adv-debug-panel').textContent = JSON.stringify(debug, null, 2);
-          $('adv-debug-panel').hidden = false;
-        } else if ($('adv-debug-panel')) {
-          $('adv-debug-panel').hidden = true;
-        }
-      } catch {
-        $('adv-dda-status').textContent = '';
-      }
+      } catch { /* ignore */ }
     }
-
-    $('adv-run-dda').addEventListener('click', async () => {
-      try {
-        const r = await api('/api/fonoran/lab/run-dda', { method: 'POST', body: JSON.stringify({ scope: 'pending' }) });
-        toast(`DDA: ${r.processed} processed (${r.confirmed} confirmed, ${r.inferred} inferred)`);
-        await load({ skipRender: true });
-        renderAdvanced();
-      } catch (e) { toast(e.message); }
-    });
-    $('adv-debug-dda')?.addEventListener('change', e => {
-      STATE.showDebugDda = e.target.checked;
-      renderAdvanced();
-    });
 
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {

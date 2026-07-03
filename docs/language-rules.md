@@ -76,29 +76,35 @@ Vowels use a fixed **v3 grammar** (no double-vowel marker):
 
 Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction`, `nasal`) compose `X`; `glide` → **ᵔ**; trailing place id → `Y`.
 
+**Vowel design (mouth-intuitive tiers):**
+
+* **Simple** (`a`, `e`, `i`, `o`, `u`): place glyphs, back → front — `a` ∪, `e` ⌓, `i` ∩, `o` ⊃, `u` ∋
+* **Long** (`ae`, `ee`, `oh`): manner glyphs — `ae` ⌀, `ee` ⌇, `oh` ⏌
+* **Diphthongs**: nucleus and offglide use the simple-vowel place glyphs (e.g. `ay` = `e` + glide + `a`)
+
 **Mapping rule:** IPA tokens in each table are authoritative. English words in *Example* are teaching aids only.
 
 ### Simple Vowels (⚬X)
 
 | key | recipe | ipa | lexical_set | example |
 | --- | --- | --- | --- | --- |
-| ee | vowel, front_tongue | i, iː | FLEECE | see |
-| i | vowel, middle_tongue | ɪ | KIT | sit |
-| e | vowel, voice | ɛ, e, eː | DRESS / FACE base | bed |
-| a | vowel, throat | ʌ, ə, ɐ, a | CUP / schwa / open | cup |
-| ae | vowel, friction | æ | TRAP | cat |
-| o | vowel, back_tongue | ɑ, ɒ, ɔ, ɑː, ɔː | LOT / THOUGHT | father |
-| oh | vowel, nasal | o, oː, oʊ, əʊ | GOAT | go |
+| a | vowel, back_tongue | ʌ, ə, ɐ, a | CUP / schwa / open | cup |
+| e | vowel, middle_tongue | ɛ, e, eː | DRESS / FACE base | bed |
+| i | vowel, front_tongue | ɪ | KIT | sit |
+| o | vowel, throat | ɑ, ɒ, ɔ, ɑː, ɔː | LOT / THOUGHT | father |
 | u | vowel, lips | ʊ, u, uː, ʉ, ɯ | FOOT / GOOSE | book / boot |
+| ae | vowel, friction | æ | TRAP | cat |
+| ee | vowel, voice | i, iː | FLEECE | see |
+| oh | vowel, nasal | o, oː, oʊ, əʊ | GOAT | go |
 
 ### Diphthongs (⚬XᵔY)
 
 | key | recipe | ipa | lexical_set | example |
 | --- | --- | --- | --- | --- |
+| ay | vowel, middle_tongue, glide, back_tongue | eɪ | FACE | say |
 | eye | vowel, throat, glide, back_tongue | aɪ | PRICE | pie |
 | ow | vowel, throat, glide, lips | aʊ | MOUTH | now |
-| oy | vowel, back_tongue, glide, back_tongue | ɔɪ | CHOICE | boy |
-| ay | vowel, voice, glide, back_tongue | eɪ | FACE | say |
+| oy | vowel, lips, glide, back_tongue | ɔɪ | CHOICE | boy |
 
 Phoneme keys (`ee`, `i`, `ae`, …) are encoder identifiers. Sound Grid and Alphabet UIs are generated from these tables at load time.
 
