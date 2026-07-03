@@ -1,0 +1,24 @@
+{
+  "words": [
+    { "text": "cat", "accept": ["cat"] },
+    { "text": "dog", "accept": ["dog"] },
+    { "text": "sun", "accept": ["sun"] },
+    { "text": "run", "accept": ["run"] },
+    { "text": "fish", "accept": ["fish"] },
+    { "text": "book", "accept": ["book"] },
+    { "text": "tree", "accept": ["tree"] },
+    { "text": "hand", "accept": ["hand"] },
+    { "text": "water", "accept": ["water"] },
+    { "text": "house", "accept": ["house", "home"] },
+    { "text": "hello", "accept": ["hello", "hi"] },
+    { "text": "good", "accept": ["good"] },
+    { "text": "food", "accept": ["food"] },
+    { "text": "love", "accept": ["love"] },
+    { "text": "time", "accept": ["time"] },
+    { "text": "color", "accept": ["color", "colour"] },
+    { "text": "night", "accept": ["night"] },
+    { "text": "light", "accept": ["light"] },
+    { "text": "world", "accept": ["world"] },
+    { "text": "people", "accept": ["people"] }
+  ]
+}
