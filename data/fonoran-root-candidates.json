@@ -1,7 +1,7 @@
 {
   "version": "2.0-editorial-workflow",
   "status": "proposal",
-  "generated_at": "2026-07-02T21:20:35.773Z",
+  "generated_at": "2026-07-03T03:40:59.765Z",
   "collision_profile": "en",
   "philosophy": {
     "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
@@ -9,9 +9,9 @@
     "source_concepts": "data/fonoran-concept-inventory.json"
   },
   "summary": {
-    "total": 110,
+    "total": 101,
     "pending": 0,
-    "approved": 110,
+    "approved": 101,
     "rejected": 0
   },
   "candidates": [
@@ -50,7 +50,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "self",
@@ -87,7 +91,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "collective",
@@ -124,7 +132,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "body",
@@ -161,7 +173,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "life",
@@ -198,7 +214,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "move",
@@ -235,7 +255,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "give",
@@ -272,7 +296,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "take",
@@ -309,7 +337,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "hold",
@@ -346,7 +378,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "use",
@@ -383,7 +419,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "help",
@@ -420,7 +460,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "make",
@@ -457,7 +501,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "do",
@@ -494,7 +542,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "speak",
@@ -531,7 +583,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "see",
@@ -568,7 +624,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "hear",
@@ -605,7 +665,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "touch",
@@ -642,7 +706,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "smell",
@@ -679,7 +747,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "taste",
@@ -716,7 +788,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "know",
@@ -753,7 +829,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "thinking",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "think",
@@ -790,7 +870,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "thinking",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "feel",
@@ -827,7 +911,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "want",
@@ -864,7 +952,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "eat",
@@ -901,7 +993,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "sleep",
@@ -938,7 +1034,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "thing",
@@ -975,118 +1075,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "substance",
-      "concept": "stuff things are made of",
-      "domain": "ontology",
-      "plain_description": "stuff things are made of",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59974,
-      "spelling": "ken",
-      "ipa": "/kɛn/",
-      "reason": "stuff things are made of — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 55.4,
-        "template": "CVC",
-        "tier": "cvc",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "form",
-      "concept": "shape; how something looks",
-      "domain": "ontology",
-      "plain_description": "shape; how something looks",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59973,
-      "spelling": "das",
-      "ipa": "/dʌs/",
-      "reason": "shape — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 51.6,
-        "template": "CVC",
-        "tier": "cvc",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "change",
-      "concept": "to become different",
-      "domain": "ontology",
-      "plain_description": "to become different",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "essential",
-      "priority_weight": 100,
-      "priority": 99972,
-      "spelling": "cha",
-      "ipa": "/tʃʌ/",
-      "reason": "to become different — shows up a lot in compounds, so it needs its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 36,
-        "template": "CV",
-        "tier": "tertiary-cv",
-        "eligible": true,
-        "distinctiveness_score": 87,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "empty",
@@ -1123,7 +1116,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "water",
@@ -1160,7 +1157,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "fire",
@@ -1197,7 +1198,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "earth",
@@ -1234,7 +1239,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "air",
@@ -1271,7 +1280,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "light",
@@ -1308,7 +1321,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "dark",
@@ -1345,7 +1362,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "hot",
@@ -1382,7 +1403,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "cold",
@@ -1419,7 +1444,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "stone",
@@ -1456,7 +1485,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "plant",
@@ -1493,7 +1526,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "animal",
@@ -1530,7 +1567,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "inside",
@@ -1567,7 +1608,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "outside",
@@ -1604,7 +1649,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "here",
@@ -1641,7 +1690,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "there",
@@ -1678,7 +1731,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "near",
@@ -1715,7 +1772,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "far",
@@ -1752,7 +1813,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "up",
@@ -1789,7 +1854,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "down",
@@ -1826,7 +1895,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "path",
@@ -1863,7 +1936,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "place",
@@ -1900,7 +1977,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "surface",
@@ -1937,7 +2018,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "bound",
@@ -1974,7 +2059,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "center",
@@ -2011,7 +2100,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "before",
@@ -2048,7 +2141,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "after",
@@ -2085,7 +2182,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "time",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "now",
@@ -2122,7 +2223,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "time",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "time",
@@ -2159,7 +2264,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "time",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "one",
@@ -2196,7 +2305,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "many",
@@ -2233,7 +2346,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "all",
@@ -2270,7 +2387,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "some",
@@ -2307,7 +2428,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "more",
@@ -2344,7 +2469,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "less",
@@ -2381,7 +2510,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "fast",
@@ -2418,7 +2551,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "love",
@@ -2455,7 +2592,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "fear",
@@ -2492,7 +2633,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "pain",
@@ -2529,7 +2674,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "good",
@@ -2566,7 +2715,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "bad",
@@ -2603,7 +2756,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "true",
@@ -2640,44 +2797,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "equal",
-      "concept": "the same amount; even and fair",
-      "domain": "evaluation",
-      "plain_description": "the same amount; even and fair",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59929,
-      "spelling": "mek",
-      "ipa": "/mɛk/",
-      "reason": "the same amount — shows up a lot in compounds, so it needs its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 58.1,
-        "template": "CVC",
-        "tier": "cvc",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "bond",
@@ -2714,7 +2838,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "conflict",
@@ -2751,7 +2879,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "same",
@@ -2788,192 +2920,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "part",
-      "concept": "a piece of something bigger",
-      "domain": "relationships",
-      "plain_description": "a piece of something bigger",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "common",
-      "priority_weight": 80,
-      "priority": 79925,
-      "spelling": "fel",
-      "ipa": "/fɛl/",
-      "reason": "a piece of something bigger — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 4,
-      "semantic_usefulness_label": "high",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 53.5,
-        "template": "CVC",
-        "tier": "cvc",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "mark",
-      "concept": "a mark, sign, or drawing",
-      "domain": "process",
-      "plain_description": "a mark, sign, or drawing",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59924,
-      "spelling": "wu",
-      "ipa": "/wʊ/",
-      "reason": "a mark, sign, or drawing — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 3,
-      "pronunciation_ease_label": "moderate",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 25,
-        "template": "CV",
-        "tier": "secondary-cv",
-        "eligible": true,
-        "distinctiveness_score": 7,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "source",
-      "concept": "where something comes from",
-      "domain": "process",
-      "plain_description": "where something comes from",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59923,
-      "spelling": "lo",
-      "ipa": "/lɑ/",
-      "reason": "where something comes from — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 4,
-      "pronunciation_ease_label": "easy",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 9,
-        "template": "CV",
-        "tier": "preferred-cv",
-        "eligible": true,
-        "distinctiveness_score": 8,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "flow",
-      "concept": "to flow",
-      "domain": "process",
-      "plain_description": "to flow",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59922,
-      "spelling": "tas",
-      "ipa": "/tʌs/",
-      "reason": "to flow — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 61.2,
-        "template": "CVC",
-        "tier": "cvc",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "pulse",
-      "concept": "a beat; a steady throb",
-      "domain": "process",
-      "plain_description": "a beat; a steady throb",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59921,
-      "spelling": "re",
-      "ipa": "/rɛ/",
-      "reason": "a beat — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 39,
-        "template": "CV",
-        "tier": "tertiary-cv",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "still",
@@ -3017,155 +2968,11 @@
           "message": "Strong English homophone (\"tea\")."
         }
       ],
-      "boundary_warnings": []
-    },
-    {
-      "id": "will",
-      "concept": "the drive or intent to do something",
-      "domain": "process",
-      "plain_description": "the drive or intent to do something",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59919,
-      "spelling": "nem",
-      "ipa": "/nɛm/",
-      "reason": "the drive or intent to do something — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 59.1,
-        "template": "CVC",
-        "tier": "cvc",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "strong",
-      "concept": "strong; powerful and hard to break",
-      "domain": "process",
-      "plain_description": "strong; powerful and hard to break",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "common",
-      "priority_weight": 80,
-      "priority": 79918,
-      "spelling": "ru",
-      "ipa": "/rʊ/",
-      "reason": "strong — shows up a lot in compounds, so it needs its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 5,
-      "semantic_usefulness_label": "very high",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 39,
-        "template": "CV",
-        "tier": "tertiary-cv",
-        "eligible": true,
-        "distinctiveness_score": 1,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "reach",
-      "concept": "to stretch out toward something",
-      "domain": "process",
-      "plain_description": "to stretch out toward something",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59917,
-      "spelling": "nak",
-      "ipa": "/nʌk/",
-      "reason": "to stretch out toward something — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 2,
-      "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 58.7,
-        "template": "CVC",
-        "tier": "cvc",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "wave",
-      "concept": "a wave",
-      "domain": "process",
-      "plain_description": "a wave",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59916,
-      "spelling": "yo",
-      "ipa": "/jɑ/",
-      "reason": "a wave — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 3,
-      "pronunciation_ease_label": "moderate",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 25,
-        "template": "CV",
-        "tier": "secondary-cv",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "complete",
+      "campfire_pass": false,
+      "campfire_reason": "Abstract or specialized; not something strangers reach for early."
     },
     {
       "id": "hand",
@@ -3202,7 +3009,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "eye",
@@ -3239,7 +3050,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "skin",
@@ -3276,7 +3091,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "bone",
@@ -3313,7 +3132,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "big",
@@ -3357,7 +3180,11 @@
           "message": "Strong English homophone (\"knee\")."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "small",
@@ -3394,7 +3221,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "head",
@@ -3431,7 +3262,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "heart",
@@ -3468,7 +3303,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "mouth",
@@ -3505,7 +3344,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "need",
@@ -3542,44 +3385,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
-    },
-    {
-      "id": "cause",
-      "concept": "to make something happen",
-      "domain": "relation",
-      "plain_description": "to make something happen",
-      "primitive_test_note": null,
-      "suggested_status": "primitive",
-      "priority_class": "useful",
-      "priority_weight": 60,
-      "priority": 59905,
-      "spelling": "wa",
-      "ipa": "/wʌ/",
-      "reason": "to make something happen — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 3,
-      "pronunciation_ease_label": "moderate",
-      "semantic_usefulness": 3,
-      "semantic_usefulness_label": "moderate",
-      "status": "approved",
-      "review": {
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null,
-        "edited_at": null,
-        "note": null
-      },
-      "generation": {
-        "phonetic_cost": 21,
-        "template": "CV",
-        "tier": "secondary-cv",
-        "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
-        "compound_flow_score": 100,
-        "collision_profile": "en"
-      },
-      "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "name",
@@ -3616,7 +3426,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "addressee",
@@ -3653,7 +3467,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "metal",
@@ -3690,7 +3508,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "parent",
@@ -3727,7 +3549,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "drink",
@@ -3764,7 +3590,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Two strangers would plausibly need this in their first week."
     },
     {
       "id": "sky",
@@ -3801,7 +3631,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "tree",
@@ -3838,7 +3672,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "left",
@@ -3875,7 +3713,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "right",
@@ -3912,7 +3754,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "happy",
@@ -3949,7 +3795,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "angry",
@@ -3986,7 +3836,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "calm",
@@ -4023,7 +3877,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "trust",
@@ -4060,7 +3918,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
     },
     {
       "id": "hope",
@@ -4090,6 +3952,195 @@
         "phonetic_cost": 57.9,
         "template": "CVC",
         "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": true,
+      "campfire_reason": "Useful for everyday fluency, but not first-week survival."
+    },
+    {
+      "id": "food",
+      "concept": "food; something to eat",
+      "domain": "being",
+      "plain_description": "food; something to eat",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "essential",
+      "priority_weight": 100,
+      "priority": 99904,
+      "spelling": "lo",
+      "ipa": "/lɑ/",
+      "reason": "food — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 4,
+      "pronunciation_ease_label": "easy",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-03T03:40:11.102Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 9,
+        "template": "CV",
+        "tier": "preferred-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "sick",
+      "concept": "sick; ill in the body",
+      "domain": "being",
+      "plain_description": "sick; ill in the body",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "essential",
+      "priority_weight": 100,
+      "priority": 99903,
+      "spelling": "wu",
+      "ipa": "/wʊ/",
+      "reason": "sick — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-03T03:40:11.102Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 25,
+        "template": "CV",
+        "tier": "secondary-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "understand",
+      "concept": "to understand; to grasp a meaning",
+      "domain": "action",
+      "plain_description": "to understand; to grasp a meaning",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "essential",
+      "priority_weight": 100,
+      "priority": 99902,
+      "spelling": "cha",
+      "ipa": "/tʃʌ/",
+      "reason": "to understand — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-03T03:40:11.102Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 36,
+        "template": "CV",
+        "tier": "tertiary-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "child",
+      "concept": "a child; a young person",
+      "domain": "being",
+      "plain_description": "a child; a young person",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79901,
+      "spelling": "re",
+      "ipa": "/rɛ/",
+      "reason": "a child — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-03T03:40:11.102Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 39,
+        "template": "CV",
+        "tier": "tertiary-cv",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
+    },
+    {
+      "id": "wait",
+      "concept": "to wait; to stay until later",
+      "domain": "action",
+      "plain_description": "to wait; to stay until later",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79900,
+      "spelling": "yo",
+      "ipa": "/jɑ/",
+      "reason": "to wait — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 3,
+      "pronunciation_ease_label": "moderate",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-03T03:40:11.102Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 25,
+        "template": "CV",
+        "tier": "secondary-cv",
         "eligible": true,
         "distinctiveness_score": 0,
         "editorial_collision_score": 100,

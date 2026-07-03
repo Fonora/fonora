@@ -12,6 +12,18 @@ function isIntuitionRound(round) {
   return round?.battery === 'cib-v3' || round?.task === 'A' || round?.task === 'B' || round?.task === 'C';
 }
 
+/** Read a weight override from the environment, falling back to the default. */
+function envWeight(name, def) {
+  const raw = process.env[name]?.trim();
+  const n = raw ? Number(raw) : NaN;
+  return Number.isFinite(n) ? n : def;
+}
+
+/**
+ * Composite ranking weight. Component weights default to the historical values so
+ * existing aggregates are unchanged, but each is overridable via env (e.g.
+ * LLM_WEIGHT_COLD) so a run can down-weight the known-saturated cold-recovery signal.
+ */
 export function computeIntuitionWeight(stats) {
   const cold = stats.cold_recovery_rate ?? 0;
   const nat = stats.mean_naturalness ?? 0;
@@ -20,7 +32,13 @@ export function computeIntuitionWeight(stats) {
   const n = Math.max(stats.n ?? 1, 1);
   const tooLong = (stats.tags?.too_long ?? 0) / n;
   const hardPronounce = (stats.tags?.hard_pronounce ?? 0) / n;
-  return 0.45 * cold + 0.30 * nat + 0.25 * pair - 0.15 * vag - 0.12 * tooLong - 0.08 * hardPronounce;
+  const wCold = envWeight('LLM_WEIGHT_COLD', 0.45);
+  const wNat = envWeight('LLM_WEIGHT_NATURALNESS', 0.30);
+  const wPair = envWeight('LLM_WEIGHT_PAIRWISE', 0.25);
+  const wVag = envWeight('LLM_WEIGHT_VAGUENESS', 0.15);
+  const wTooLong = envWeight('LLM_WEIGHT_TOO_LONG', 0.12);
+  const wHard = envWeight('LLM_WEIGHT_HARD_PRONOUNCE', 0.08);
+  return wCold * cold + wNat * nat + wPair * pair - wVag * vag - wTooLong * tooLong - wHard * hardPronounce;
 }
 
 export function compositionKey(comp) {
@@ -75,10 +93,18 @@ export function aggregateIntuitionRounds(rounds, options = {}) {
     };
     const slot = buckets[conceptId][key];
 
+    // The cross_lingual persona reasons in Spanish, but strictMeaningMatch only
+    // checks English tokens/synonyms — so its recovered/composition_recovery flags
+    // are systematically wrong. Exclude it from the strict-match recovery metrics
+    // (its naturalness/vagueness self-reports and raw reasoning are still kept).
+    const trustStrictMatch = round.persona !== 'cross_lingual';
+
     if (round.task === 'A') {
-      slot.coldN += 1;
-      if (round.recovered) slot.coldRecovered += 1;
-      if (typeof round.confidence === 'number') slot.confidenceSum += round.confidence;
+      if (trustStrictMatch) {
+        slot.coldN += 1;
+        if (round.recovered) slot.coldRecovered += 1;
+        if (typeof round.confidence === 'number') slot.confidenceSum += round.confidence;
+      }
     }
 
     if (round.task === 'B') {
@@ -87,8 +113,10 @@ export function aggregateIntuitionRounds(rounds, options = {}) {
       slot.naturalnessSum += Number(round.naturalness ?? 0);
       slot.vaguenessN += vagWeight;
       slot.vaguenessSum += Number(round.vagueness ?? 0) * vagWeight;
-      slot.compRecN += 1;
-      if (round.composition_recovery) slot.compRecovered += 1;
+      if (trustStrictMatch) {
+        slot.compRecN += 1;
+        if (round.composition_recovery) slot.compRecovered += 1;
+      }
     }
 
     for (const tag of round.tags ?? []) {

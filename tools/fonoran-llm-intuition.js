@@ -35,6 +35,31 @@ const CONCEPT_SYNONYMS = {
   memory: ['memory', 'remembering', 'what is remembered'],
   language: ['language', 'speech', 'shared words'],
   teacher: ['teacher', 'one who teaches', 'person who teaches'],
+
+  // --- vocabulary remediation: new primitives + retired-to-compound + gap concepts ---
+  food: ['food', 'something to eat', 'meal', 'nourishment', 'a thing to eat'],
+  sick: ['sick', 'ill', 'illness', 'unwell', 'disease', 'not healthy'],
+  understand: ['understand', 'understanding', 'comprehend', 'grasp', 'get the meaning'],
+  child: ['child', 'kid', 'young person', 'young one', 'offspring', 'small person'],
+  wait: ['wait', 'waiting', 'stay', 'pause', 'hold on', 'stay until later'],
+  pulse: ['pulse', 'beat', 'beating', 'heartbeat', 'rhythm', 'throb'],
+  wave: ['wave', 'moving water', 'ripple', 'swell', 'surge'],
+  flow: ['flow', 'flowing', 'current', 'stream', 'water moving'],
+  source: ['source', 'origin', 'beginning', 'where it begins', 'start'],
+  substance: ['substance', 'material', 'matter', 'what it is made of', 'stuff'],
+  form: ['form', 'shape', 'outward shape', 'outline', 'figure'],
+  will: ['will', 'intention', 'wanting', 'resolve', 'determination', 'future want'],
+  cause: ['cause', 'reason', 'what makes it happen', 'origin of the event'],
+  equal: ['equal', 'same amount', 'equality', 'even', 'the same'],
+  mark: ['mark', 'sign', 'label', 'symbol', 'name on a thing'],
+  reach: ['reach', 'reaching', 'extend', 'stretch to', 'extend the hand'],
+  strong: ['strong', 'powerful', 'strength', 'mighty', 'powerful body'],
+  part: ['part', 'piece', 'portion', 'a piece of', 'component'],
+  change: ['change', 'becoming different', 'transform', 'alter', 'not the same'],
+  come: ['come', 'coming', 'move here', 'approach', 'come here'],
+  later: ['later', 'after now', 'afterward', 'in a while', 'soon after'],
+  own: ['own', 'mine', 'possess', "one's own", 'belong to'],
+  safe: ['safe', 'safety', 'secure', 'no danger', 'protected'],
 };
 
 export const PERSONAS = {

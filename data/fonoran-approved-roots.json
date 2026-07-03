@@ -1,8 +1,8 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-07-02T21:20:35.759Z",
+  "updated_at": "2026-07-03T03:40:59.752Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
-  "root_count": 110,
+  "root_count": 101,
   "roots": [
     {
       "id": "person",
@@ -236,33 +236,6 @@
       "concept": "any object or item",
       "domain": "ontology",
       "reason": "any object or item — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "substance",
-      "spelling": "ken",
-      "ipa": "/kɛn/",
-      "concept": "stuff things are made of",
-      "domain": "ontology",
-      "reason": "stuff things are made of — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "form",
-      "spelling": "das",
-      "ipa": "/dʌs/",
-      "concept": "shape; how something looks",
-      "domain": "ontology",
-      "reason": "shape — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "change",
-      "spelling": "cha",
-      "ipa": "/tʃʌ/",
-      "concept": "to become different",
-      "domain": "ontology",
-      "reason": "to become different — shows up a lot in compounds, so it needs its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
@@ -644,15 +617,6 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "equal",
-      "spelling": "mek",
-      "ipa": "/mɛk/",
-      "concept": "the same amount; even and fair",
-      "domain": "evaluation",
-      "reason": "the same amount — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
       "id": "bond",
       "spelling": "kam",
       "ipa": "/kʌm/",
@@ -680,93 +644,12 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "part",
-      "spelling": "fel",
-      "ipa": "/fɛl/",
-      "concept": "a piece of something bigger",
-      "domain": "relationships",
-      "reason": "a piece of something bigger — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "mark",
-      "spelling": "wu",
-      "ipa": "/wʊ/",
-      "concept": "a mark, sign, or drawing",
-      "domain": "process",
-      "reason": "a mark, sign, or drawing — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "source",
-      "spelling": "lo",
-      "ipa": "/lɑ/",
-      "concept": "where something comes from",
-      "domain": "process",
-      "reason": "where something comes from — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "flow",
-      "spelling": "tas",
-      "ipa": "/tʌs/",
-      "concept": "to flow",
-      "domain": "process",
-      "reason": "to flow — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "pulse",
-      "spelling": "re",
-      "ipa": "/rɛ/",
-      "concept": "a beat; a steady throb",
-      "domain": "process",
-      "reason": "a beat — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
       "id": "still",
       "spelling": "ti",
       "ipa": "/tɪ/",
       "concept": "not moving; staying put",
       "domain": "process",
       "reason": "not moving — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "will",
-      "spelling": "nem",
-      "ipa": "/nɛm/",
-      "concept": "the drive or intent to do something",
-      "domain": "process",
-      "reason": "the drive or intent to do something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "strong",
-      "spelling": "ru",
-      "ipa": "/rʊ/",
-      "concept": "strong; powerful and hard to break",
-      "domain": "process",
-      "reason": "strong — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "reach",
-      "spelling": "nak",
-      "ipa": "/nʌk/",
-      "concept": "to stretch out toward something",
-      "domain": "process",
-      "reason": "to stretch out toward something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "wave",
-      "spelling": "yo",
-      "ipa": "/jɑ/",
-      "concept": "a wave",
-      "domain": "process",
-      "reason": "a wave — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
@@ -857,15 +740,6 @@
       "concept": "to need something",
       "domain": "cognition",
       "reason": "to need something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "cause",
-      "spelling": "wa",
-      "ipa": "/wʌ/",
-      "concept": "to make something happen",
-      "domain": "relation",
-      "reason": "to make something happen — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
@@ -993,6 +867,51 @@
       "domain": "emotion",
       "reason": "to wish and expect something good — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "food",
+      "spelling": "lo",
+      "ipa": "/lɑ/",
+      "concept": "food; something to eat",
+      "domain": "being",
+      "reason": "food — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-03T03:40:11.102Z"
+    },
+    {
+      "id": "sick",
+      "spelling": "wu",
+      "ipa": "/wʊ/",
+      "concept": "sick; ill in the body",
+      "domain": "being",
+      "reason": "sick — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-03T03:40:11.102Z"
+    },
+    {
+      "id": "understand",
+      "spelling": "cha",
+      "ipa": "/tʃʌ/",
+      "concept": "to understand; to grasp a meaning",
+      "domain": "action",
+      "reason": "to understand — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-03T03:40:11.102Z"
+    },
+    {
+      "id": "child",
+      "spelling": "re",
+      "ipa": "/rɛ/",
+      "concept": "a child; a young person",
+      "domain": "being",
+      "reason": "a child — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-03T03:40:11.102Z"
+    },
+    {
+      "id": "wait",
+      "spelling": "yo",
+      "ipa": "/jɑ/",
+      "concept": "to wait; to stay until later",
+      "domain": "action",
+      "reason": "to wait — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-03T03:40:11.102Z"
     }
   ]
 }

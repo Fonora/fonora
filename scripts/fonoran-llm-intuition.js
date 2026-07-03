@@ -79,11 +79,18 @@ function parseArgs(argv) {
     .map(t => t.trim().toUpperCase())
     .filter(t => ['A', 'B', 'C'].includes(t));
 
-  const flags = new Set(['--resume', '--dry-run', '--pilot', '--calibration', '--tasks']);
+  // --concepts=a,b,c  scopes the run to an explicit concept list (avoids 1 invocation per id).
+  const conceptsArg = argv.find(a => a.startsWith('--concepts='))
+    ?? (argv.includes('--concepts') ? `--concepts=${argv[argv.indexOf('--concepts') + 1]}` : null);
+  const conceptsList = conceptsArg
+    ? conceptsArg.split('=').slice(1).join('=').split(',').map(c => c.trim()).filter(Boolean)
+    : null;
+
   const conceptFilter = argv.find(a => !a.startsWith('--') && !tasks.includes(a.toUpperCase())) ?? null;
 
   let concepts = null;
-  if (conceptFilter) concepts = [conceptFilter];
+  if (conceptsList?.length) concepts = conceptsList;
+  else if (conceptFilter) concepts = [conceptFilter];
   else if (pilot) concepts = PILOT_CONCEPTS;
   else if (calibration) concepts = CALIBRATION_CONCEPTS;
 
