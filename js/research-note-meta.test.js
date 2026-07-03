@@ -2,8 +2,7 @@
  * Tests for research note metadata helpers.
  */
 import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { resolveDataPath } from '../tools/fonoran-data-paths.js';
 import {
   deriveMetadataFromBody,
   extractDescription,
@@ -34,10 +33,7 @@ function test(name, fn) {
 }
 
 export function runResearchNoteMetaTests() {
-  const sampleMd = readFileSync(
-    join(dirname(fileURLToPath(import.meta.url)), '..', 'data/research-notes-store.json'),
-    'utf8',
-  );
+  const sampleMd = readFileSync(resolveDataPath('research_notes_store'), 'utf8');
   const firstNote = JSON.parse(sampleMd).notes[0];
 
   return [
