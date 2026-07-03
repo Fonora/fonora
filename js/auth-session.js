@@ -1,6 +1,6 @@
 import { setFonoranAuth } from './universal-nav.js';
 
-/** @type {{ required: boolean, configured: boolean, toolsGated: boolean, authenticated: boolean, isAdmin: boolean, email: string | null, userId: string | null, loginUrl: string, loginUrls: { google?: string | null, github?: string | null, primary: string } }} */
+/** @type {{ required: boolean, configured: boolean, toolsGated: boolean, authenticated: boolean, isAdmin: boolean, email: string | null, userId: string | null, loginUrl: string, loginUrls: { google?: string | null, primary: string } }} */
 let authState = {
   required: false,
   configured: false,
@@ -10,7 +10,7 @@ let authState = {
   email: null,
   userId: null,
   loginUrl: '/auth/google',
-  loginUrls: { primary: '/auth/google', google: '/auth/google', github: null },
+  loginUrls: { primary: '/auth/google', google: '/auth/google' },
 };
 
 export function getAuthState() {

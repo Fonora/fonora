@@ -451,7 +451,7 @@ export function createWordComposer(ctx) {
   function renderScriptLine() {
     const el = $(`${PREFIX}-script-display`);
     if (!el) return;
-    if (state.mode === 'idle' || state.mode === 'compose') {
+    if (state.mode === 'idle') {
       el.hidden = true; el.innerHTML = ''; return;
     }
     let spelling = '';
@@ -461,10 +461,10 @@ export function createWordComposer(ctx) {
       parts = spelling ? [spelling] : [];
     } else {
       const c = lab()?.compounds?.find(x => x.id === state.editingId);
-      spelling = c?.spelling ?? '';
       parts = composerFlatSpellings(state.composer).length
         ? composerFlatSpellings(state.composer)
-        : (c?.parts ?? (spelling ? [spelling] : []));
+        : (c?.parts ?? (c?.spelling ? [c.spelling] : []));
+      spelling = parts.join('') || c?.spelling || '';
     }
     if (!spelling) { el.hidden = true; return; }
     const pron = wordPreviewPron(parts);

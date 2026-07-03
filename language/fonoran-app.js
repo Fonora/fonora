@@ -22,7 +22,7 @@
       userId: null,
       role: null,
       loginUrl: '/auth/google?returnTo=/language',
-      loginUrls: { google: '/auth/google', github: '/auth/github', primary: '/auth/google' },
+      loginUrls: { google: '/auth/google', primary: '/auth/google' },
     };
     const WRITE_PAGES = new Set(['advanced']);
     const LEGACY_WORD_PAGES = new Set(['words', 'create', 'review', 'concepts', 'roots', 'root-review']);
@@ -202,12 +202,10 @@
       }
       gate.className = 'auth-gate sans';
       const googleUrl = escapeHtml(AUTH.loginUrls?.google ?? AUTH.loginUrl);
-      const githubUrl = escapeHtml(AUTH.loginUrls?.github ?? '/auth/github?returnTo=/language');
       gate.innerHTML = `<p>Sign in with the <strong>admin</strong> account to edit Fonoran canon in Advanced settings.</p>
-        <p class="sans">Community sign-in (Google or GitHub) works for voting on the Dictionary without admin access.</p>
+        <p class="sans">Community sign-in with Google works for voting on the Dictionary without admin access.</p>
         <div class="auth-gate__buttons">
           ${googleUrl ? `<a href="${googleUrl}" class="btn btn--primary auth-gate__sign-in">Continue with Google</a>` : ''}
-          ${githubUrl ? `<a href="${githubUrl}" class="btn auth-gate__sign-in">Continue with GitHub</a>` : ''}
         </div>`;
       const host = main;
       if (host && gate.parentElement !== host) host.prepend(gate);
@@ -3669,20 +3667,31 @@
             ?? panel.appendChild(bar);
         }
         const googleUrl = escapeHtml(AUTH.loginUrls?.google ?? AUTH.loginUrl);
-        const githubUrl = escapeHtml(AUTH.loginUrls?.github ?? '/auth/github?returnTo=/language');
-        bar.innerHTML = `<p class="wm-votes__tally">Community: ${data.up ?? 0} ↑ · ${data.down ?? 0} ↓</p>
-          ${AUTH.authenticated ? `<div class="wm-votes__actions">
-            <button type="button" class="btn btn--sm" data-dict-vote="1"${data.userVote === 1 ? ' aria-pressed="true"' : ''}>Upvote</button>
-            <button type="button" class="btn btn--sm" data-dict-vote="-1"${data.userVote === -1 ? ' aria-pressed="true"' : ''}>Downvote</button>
-            <button type="button" class="btn btn--sm" data-dict-vote="0">Clear</button>
-          </div>` : `<p class="sans">Sign in to vote.</p>
-          <div class="auth-gate__buttons">
-            ${googleUrl ? `<a href="${googleUrl}" class="btn btn--primary btn--sm">Google</a>` : ''}
-            ${githubUrl ? `<a href="${githubUrl}" class="btn btn--sm">GitHub</a>` : ''}
-          </div>`}`;
+        const upCount = data.up ?? 0;
+        const downCount = data.down ?? 0;
+        const total = upCount + downCount;
+        const upPct = total > 0 ? Math.round((upCount / total) * 100) : 50;
+        const sentiment = total === 0 ? '' : upPct > 50 ? ' vote-meter--up' : upPct < 50 ? ' vote-meter--down' : '';
+        const isAuth = AUTH.authenticated;
+        const downPressed = data.userVote === -1;
+        const upPressed = data.userVote === 1;
+        bar.innerHTML = `<p class="vote-meter__label">Community</p>
+          <div class="vote-meter${sentiment}" role="meter" aria-valuenow="${upPct}" aria-valuemin="0" aria-valuemax="100" aria-label="Approval: ${upPct}%">
+            <button type="button" class="vote-meter__btn vote-meter__btn--down" data-dict-vote="-1"
+              aria-pressed="${downPressed}"${!isAuth ? ' disabled title="Sign in to vote"' : ''}
+              aria-label="Downvote (${downCount})"><span class="vote-meter__btn-num">${downCount}</span><span class="vote-meter__btn-arrow" aria-hidden="true">↓</span></button>
+            <div class="vote-meter__track">
+              <div class="vote-meter__fill" style="width:${upPct}%" aria-hidden="true"></div>
+            </div>
+            <button type="button" class="vote-meter__btn vote-meter__btn--up" data-dict-vote="1"
+              aria-pressed="${upPressed}"${!isAuth ? ' disabled title="Sign in to vote"' : ''}
+              aria-label="Upvote (${upCount})"><span class="vote-meter__btn-arrow" aria-hidden="true">↑</span><span class="vote-meter__btn-num">${upCount}</span></button>
+          </div>
+          ${!isAuth ? `<p class="vote-meter__sign-in sans">Sign in to vote — <a href="${googleUrl}">Google</a></p>` : ''}`;
         bar.querySelectorAll('[data-dict-vote]').forEach((btn) => {
           btn.addEventListener('click', async () => {
-            const vote = Number(btn.dataset.dictVote);
+            const clicked = Number(btn.dataset.dictVote);
+            const vote = data.userVote === clicked ? 0 : clicked;
             try {
               await api(`/api/fonoran/words/${encodeURIComponent(voteRef)}/vote`, {
                 method: 'POST',
