@@ -14,12 +14,19 @@ import {
   splitDocRef,
 } from './doc-urls.js';
 import {
-  extractMarkdownHeadings,
+  extractMarkdownLead,
   extractMarkdownTitle,
   normalizeGrammarSource,
   renderMarkdown,
 } from './markdown-render.js';
 import { renderMermaidIn } from './mermaid-render.js';
+import {
+  ensurePageChromeObserver,
+  scrollPageToTop,
+  syncPageChromeOffset,
+  scrollToPageAnchor,
+  setupContentAnchorHandlers,
+} from './markdown-doc-shell.js';
 
 const GRAMMAR_DOC_PATHS = new Set([
   'docs/fonoran-grammar.md',
@@ -28,9 +35,6 @@ const GRAMMAR_DOC_PATHS = new Set([
 
 let currentPath = null;
 let loadToken = 0;
-let docViewerToolbarObserver = null;
-/** @type {IntersectionObserver | null} */
-let tocScrollObserver = null;
 
 function isGrammarDoc(path) {
   return GRAMMAR_DOC_PATHS.has(path);
@@ -43,36 +47,8 @@ function prepareMarkdown(markdown, path) {
   return markdown;
 }
 
-function syncDocViewerToolbarOffset() {
-  const toolbar = document.querySelector('#tab-docs .doc-viewer-toolbar');
-  if (!toolbar) return;
-  document.documentElement.style.setProperty('--doc-viewer-toolbar-offset', `${toolbar.offsetHeight}px`);
-}
-
-function ensureDocViewerToolbarObserver() {
-  const toolbar = document.querySelector('#tab-docs .doc-viewer-toolbar');
-  if (!toolbar) return;
-
-  syncDocViewerToolbarOffset();
-  if (docViewerToolbarObserver) return;
-
-  docViewerToolbarObserver = new ResizeObserver(() => syncDocViewerToolbarOffset());
-  docViewerToolbarObserver.observe(toolbar);
-}
-
-function scrollDocToTop() {
-  const page = document.getElementById('tab-docs');
-  if (!page) return;
-  const headerOffset =
-    Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-offset')) || 112;
-  const top = page.getBoundingClientRect().top + window.scrollY - headerOffset - 8;
-  window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
-}
-
 function scrollToDocAnchor(anchor) {
-  const target = document.getElementById(anchor);
-  if (!target) return;
-  target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  scrollToPageAnchor(document.getElementById(anchor));
 }
 
 function updateDocAnchorInUrl(path, anchor) {
@@ -91,17 +67,18 @@ function renderSidebar(activePath) {
     const entries = getDocCatalog().filter((e) => e.layer === layer.id);
     if (!entries.length) return '';
     return `
-      <section class="doc-viewer-nav-group${layer.id === 'archive' ? ' doc-viewer-nav-group--archive' : ''}">
-        <h4 class="doc-viewer-nav-group-title">${escapeHtml(layer.label)}</h4>
-        <ul class="doc-viewer-nav-list">
+      <section class="page-doc-nav-group${layer.id === 'archive' ? ' page-doc-nav-group--archive' : ''}">
+        <h4 class="page-doc-nav-group-title">${escapeHtml(layer.label)}</h4>
+        <ul class="page-doc-nav-list">
           ${entries
             .map(
               (entry) => `
             <li>
               <a
                 href="${escapeHtml(docViewerHrefForContext(entry.path))}"
-                class="doc-viewer-nav-link${entry.path === activePath ? ' doc-viewer-nav-link--active' : ''}"
+                class="page-doc-nav-link${entry.path === activePath ? ' page-doc-nav-link--active' : ''}"
                 data-doc-path="${escapeHtml(entry.path)}"
+                ${entry.path === activePath ? ' aria-current="page"' : ''}
               >${escapeHtml(entry.label)}</a>
             </li>`,
             )
@@ -111,53 +88,30 @@ function renderSidebar(activePath) {
   }).join('');
 
   sidebar.innerHTML = `
-    <div class="doc-viewer-sidebar-panel">
-      <div class="doc-viewer-sidebar-head">
-        <h3 class="doc-viewer-sidebar-title">Docs</h3>
-        <button type="button" class="doc-viewer-sidebar-close" id="docs-viewer-sidebar-close" aria-label="Close docs list">×</button>
+    <div class="page-doc-sidebar-panel">
+      <div class="page-doc-sidebar-head">
+        <h3 class="page-doc-sidebar-title">Docs</h3>
+        <button type="button" class="page-doc-sidebar-close" id="docs-viewer-sidebar-close" aria-label="Close docs list">×</button>
       </div>
-      <nav class="doc-viewer-nav" aria-label="Documentation">
+      <nav class="page-doc-nav" aria-label="Documentation">
         ${sections}
       </nav>
     </div>
   `;
 }
 
-/**
- * @param {Array<{ level: number, title: string, id: string }>} headings
- */
-function renderDocToc(headings) {
-  const toc = document.getElementById('docs-viewer-toc');
-  if (!toc) return;
-
-  if (!headings.length) {
-    toc.hidden = true;
-    toc.innerHTML = '';
-    return;
-  }
-
-  toc.hidden = false;
-  toc.innerHTML = `
-    <details class="doc-viewer-toc-panel" open>
-      <summary class="doc-viewer-toc-title">On this page</summary>
-      <nav aria-label="On this page">
-        <ul class="doc-viewer-toc-list">
-          ${headings
-            .map(
-              (heading) => `
-            <li class="doc-viewer-toc-item doc-viewer-toc-item--h${heading.level}">
-              <a
-                href="#${escapeHtml(heading.id)}"
-                class="doc-viewer-toc-link"
-                data-doc-anchor="${escapeHtml(heading.id)}"
-              >${escapeHtml(heading.title)}</a>
-            </li>`,
-            )
-            .join('')}
-        </ul>
-      </nav>
-    </details>
-  `;
+function setSidebarActive(activePath) {
+  const sidebar = document.getElementById('docs-viewer-sidebar');
+  if (!sidebar) return;
+  sidebar.querySelectorAll('.page-doc-nav-link[data-doc-path]').forEach((link) => {
+    const isActive = link.getAttribute('data-doc-path') === activePath;
+    link.classList.toggle('page-doc-nav-link--active', isActive);
+    if (isActive) {
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.removeAttribute('aria-current');
+    }
+  });
 }
 
 function renderDocPager(path) {
@@ -182,109 +136,64 @@ function renderDocPager(path) {
 
   pager.hidden = false;
   pager.innerHTML = `
-    <div class="doc-viewer-pager-inner">
+    <div class="page-doc-pager-inner">
       ${
         prev
-          ? `<a href="${escapeHtml(docViewerHrefForContext(prev.path))}" class="doc-viewer-pager-link doc-viewer-pager-link--prev" data-doc-path="${escapeHtml(prev.path)}"><span class="doc-viewer-pager-label">Previous</span><span class="doc-viewer-pager-title">${escapeHtml(prev.label)}</span></a>`
-          : '<span class="doc-viewer-pager-spacer" aria-hidden="true"></span>'
+          ? `<a href="${escapeHtml(docViewerHrefForContext(prev.path))}" class="page-doc-pager-link page-doc-pager-link--prev" data-doc-path="${escapeHtml(prev.path)}"><span class="page-doc-pager-label">Previous</span><span class="page-doc-pager-title">${escapeHtml(prev.label)}</span></a>`
+          : '<span class="page-doc-pager-spacer" aria-hidden="true"></span>'
       }
       ${
         next
-          ? `<a href="${escapeHtml(docViewerHrefForContext(next.path))}" class="doc-viewer-pager-link doc-viewer-pager-link--next" data-doc-path="${escapeHtml(next.path)}"><span class="doc-viewer-pager-label">Next</span><span class="doc-viewer-pager-title">${escapeHtml(next.label)}</span></a>`
-          : '<span class="doc-viewer-pager-spacer" aria-hidden="true"></span>'
+          ? `<a href="${escapeHtml(docViewerHrefForContext(next.path))}" class="page-doc-pager-link page-doc-pager-link--next" data-doc-path="${escapeHtml(next.path)}"><span class="page-doc-pager-label">Next</span><span class="page-doc-pager-title">${escapeHtml(next.label)}</span></a>`
+          : '<span class="page-doc-pager-spacer" aria-hidden="true"></span>'
       }
     </div>
   `;
 }
 
-function disconnectTocScrollSpy() {
-  if (tocScrollObserver) {
-    tocScrollObserver.disconnect();
-    tocScrollObserver = null;
-  }
-}
-
-function setupTocScrollSpy(contentEl) {
-  disconnectTocScrollSpy();
-
-  const tocLinks = document.querySelectorAll('.doc-viewer-toc-link');
-  if (!tocLinks.length) return;
-
-  const headings = [...contentEl.querySelectorAll('h2[id], h3[id]')];
-  if (!headings.length) return;
-
-  tocScrollObserver = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
-      const activeId = visible[0]?.target.id || headings[0]?.id;
-      if (!activeId) return;
-      tocLinks.forEach((link) => {
-        link.classList.toggle('doc-viewer-toc-link--active', link.getAttribute('data-doc-anchor') === activeId);
-      });
-    },
-    { rootMargin: '-20% 0px -70% 0px', threshold: 0 },
-  );
-
-  headings.forEach((heading) => tocScrollObserver?.observe(heading));
-}
-
-function setupContentLinkHandlers(contentEl, path) {
-  contentEl.querySelectorAll('a[href^="#"]').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      const anchor = link.getAttribute('href')?.slice(1);
-      if (!anchor) return;
-      const target = document.getElementById(anchor);
-      if (!target) return;
-      event.preventDefault();
-      scrollToDocAnchor(anchor);
-      updateDocAnchorInUrl(path, anchor);
-    });
-  });
-}
-
-function setupTocClickHandlers(path) {
-  document.querySelectorAll('.doc-viewer-toc-link').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      const anchor = link.getAttribute('data-doc-anchor');
-      if (!anchor) return;
-      event.preventDefault();
-      scrollToDocAnchor(anchor);
-      updateDocAnchorInUrl(path, anchor);
-      const details = link.closest('details');
-      if (details && window.matchMedia('(max-width: 900px)').matches) {
-        details.open = false;
-      }
-    });
-  });
-}
-
 function setSidebarOpen(open) {
-  const layout = document.querySelector('.doc-viewer-layout');
+  const layout = document.querySelector('#tab-docs .page-doc-layout');
   if (!layout) return;
-  layout.classList.toggle('doc-viewer-layout--sidebar-open', open);
+  layout.classList.toggle('page-doc-layout--sidebar-open', open);
 }
 
-function setViewerState({ title, path, error = null }) {
+function updateViewerChrome({ title, lead, path }) {
   const titleEl = document.getElementById('docs-viewer-title');
+  const leadEl = document.getElementById('docs-viewer-lead');
   const githubEl = document.getElementById('docs-viewer-github');
-  const pathEl = document.getElementById('docs-viewer-path');
-  const contentEl = document.getElementById('docs-viewer-content');
 
   if (titleEl) titleEl.textContent = title;
-  if (pathEl) pathEl.textContent = path;
+  if (leadEl) leadEl.textContent = lead;
   if (githubEl) {
     githubEl.href = githubDocUrl(path);
     githubEl.hidden = false;
   }
-  if (contentEl && error) {
-    contentEl.innerHTML = `<p class="doc-viewer-error">${escapeHtml(error)}</p>`;
-    renderDocToc([]);
-    renderDocPager(path);
+  syncPageChromeOffset(document.getElementById('docs-viewer-toolbar-root'));
+}
+
+function setViewerLoading(loading) {
+  document.getElementById('docs-viewer-toolbar-root')?.classList.toggle('page-toolbar-shell--loading', loading);
+  document.getElementById('docs-viewer-content')?.classList.toggle('page-doc-content--loading', loading);
+}
+
+function hasRenderedDocContent(contentEl) {
+  return Boolean(contentEl?.querySelector('h2, h3, .mermaid, pre, table, ul, ol'));
+}
+
+function showViewerError(path, error) {
+  const contentEl = document.getElementById('docs-viewer-content');
+  if (contentEl) {
+    contentEl.innerHTML = `<p class="page-doc-error">${escapeHtml(error)}</p>`;
+    contentEl.classList.remove('page-doc-content--loading');
+    contentEl.removeAttribute('aria-busy');
   }
-  renderSidebar(path);
-  syncDocViewerToolbarOffset();
+  renderDocPager(path);
+  updateViewerChrome({
+    title: 'Error',
+    lead: '',
+    path,
+  });
+  setSidebarActive(path);
 }
 
 export async function loadDocViewer(repoPath) {
@@ -295,9 +204,11 @@ export async function loadDocViewer(repoPath) {
   const contentEl = document.getElementById('docs-viewer-content');
   if (!contentEl) return;
 
+  const previousPath = currentPath;
+  const switchingDoc = previousPath && previousPath !== path;
   currentPath = path;
   setSidebarOpen(false);
-  disconnectTocScrollSpy();
+  setSidebarActive(path);
 
   const url = docViewerHrefForContext(anchor ? `${path}#${anchor}` : path);
   const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
@@ -305,10 +216,11 @@ export async function loadDocViewer(repoPath) {
     history.replaceState(null, '', url);
   }
 
-  contentEl.innerHTML = '<p class="doc-viewer-loading">Loading…</p>';
-  renderDocToc([]);
-  renderDocPager(path);
-  setViewerState({ title: 'Loading…', path });
+  if (!hasRenderedDocContent(contentEl)) {
+    contentEl.innerHTML = '<p class="page-doc-loading">Loading…</p>';
+  }
+  contentEl.setAttribute('aria-busy', 'true');
+  setViewerLoading(true);
 
   try {
     const res = await fetch(path.startsWith('/') ? path : `/${path}`);
@@ -317,7 +229,7 @@ export async function loadDocViewer(repoPath) {
     if (token !== loadToken) return;
 
     const title = extractMarkdownTitle(markdown);
-    const headings = extractMarkdownHeadings(markdown, { minLevel: 2, maxLevel: 3 });
+    const lead = extractMarkdownLead(markdown);
     contentEl.innerHTML = renderMarkdown(markdown, {
       docPath: path,
       skipTitle: true,
@@ -329,29 +241,38 @@ export async function loadDocViewer(repoPath) {
     await renderMermaidIn(contentEl);
     if (token !== loadToken) return;
 
-    renderDocToc(headings);
     renderDocPager(path);
-    setViewerState({ title, path });
-    setupContentLinkHandlers(contentEl, path);
-    setupTocClickHandlers(path);
-    setupTocScrollSpy(contentEl);
+    updateViewerChrome({
+      title,
+      lead,
+      path,
+    });
+    setViewerLoading(false);
+    contentEl.removeAttribute('aria-busy');
+
+    const onAnchorNavigate = (anchorId) => {
+      scrollToDocAnchor(anchorId);
+      updateDocAnchorInUrl(path, anchorId);
+    };
+    setupContentAnchorHandlers(contentEl, onAnchorNavigate);
 
     if (anchor) {
       requestAnimationFrame(() => {
         if (token !== loadToken) return;
         scrollToDocAnchor(anchor);
       });
-    } else {
-      scrollDocToTop();
+    } else if (switchingDoc) {
+      scrollPageToTop(document.getElementById('tab-docs'));
     }
   } catch (err) {
     if (token !== loadToken) return;
-    setViewerState({ title: 'Error', path, error: errorMessage(err) });
+    setViewerLoading(false);
+    showViewerError(path, errorMessage(err));
   }
 }
 
 export function onDocsTabActivated() {
-  ensureDocViewerToolbarObserver();
+  ensurePageChromeObserver(document.getElementById('docs-viewer-toolbar-root'));
   const parsed = parseDocFromLocation();
   if (parsed) {
     if (new URLSearchParams(window.location.search).has('path')) {
@@ -387,8 +308,8 @@ function handleSidebarToggle(event) {
   const sidebar = event.target.closest('#docs-viewer-sidebar');
   if (toggle) {
     event.preventDefault();
-    const layout = document.querySelector('.doc-viewer-layout');
-    const open = !layout?.classList.contains('doc-viewer-layout--sidebar-open');
+    const layout = document.querySelector('#tab-docs .page-doc-layout');
+    const open = !layout?.classList.contains('page-doc-layout--sidebar-open');
     setSidebarOpen(open);
     toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     return;
@@ -417,6 +338,6 @@ export function setupDocsViewer() {
     }
   });
 
-  ensureDocViewerToolbarObserver();
+  ensurePageChromeObserver(document.getElementById('docs-viewer-toolbar-root'));
   renderSidebar(null);
 }

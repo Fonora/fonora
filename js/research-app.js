@@ -13,9 +13,21 @@
 import { escapeHtml, errorMessage } from './utils.js';
 import { initUniversalNav, setActiveTab, setNavSelectHandlers } from './universal-nav.js';
 import { refreshAuth, signOut, handleAuthUrlErrors } from './auth-session.js';
-import { renderMarkdown } from './markdown-render.js';
+import { renderMarkdown, extractMarkdownHeadings } from './markdown-render.js';
 import { resolveResearchNoteTitle } from './research-note-meta.js';
 import { renderMermaidIn } from './mermaid-render.js';
+import {
+  disconnectTocScrollSpy,
+  ensurePageChromeObserver,
+  mountDocToc,
+  renderPageToolbarShell,
+  scrollToPageAnchor,
+  setupContentAnchorHandlers,
+  setupTocClickHandlers,
+  setupTocScrollSpy,
+  syncPageChromeOffset,
+} from './markdown-doc-shell.js';
+import { researchHeroTagTone, researchNoteTagTone } from './page-tag-tone.js';
 import { SITE_ORIGIN } from './fonora-config.js';
 import {
   docViewerHref,
@@ -174,15 +186,15 @@ async function renderTimeline() {
 
   el.innerHTML = `
     <article class="research-page research-page--timeline content-page">
-      <header class="research-hero research-hero--compact">
-        <p class="research-hero__tag">How one experiment led to the next</p>
-        <h1 class="research-hero__title">Research Timeline</h1>
-        <p class="research-hero__lead">
-          The project unfolded in three phases: building the script, inventing the language,
-          then making communication work in practice. Each card is one research note. Read down
-          the spine in order, or open any entry that catches your eye.
-        </p>
-      </header>
+      ${renderPageToolbarShell({
+        compact: true,
+        sticky: false,
+        tag: 'How one experiment led to the next',
+        tagTone: researchHeroTagTone('timeline'),
+        title: 'Research Timeline',
+        lead:
+          'The project unfolded in three phases: building the script, inventing the language, then making communication work in practice. Each card is one research note. Read down the spine in order, or open any entry that catches your eye.',
+      })}
 
       <div class="tl-legend" aria-label="How to read this timeline">
         <span class="tl-legend__item">
@@ -234,10 +246,11 @@ function renderLoadError() {
   if (!el) return;
   el.innerHTML = `
     <article class="research-page content-page">
-      <header class="research-hero research-hero--compact">
-        <h1 class="research-hero__title">Research notebook unavailable</h1>
-        <p class="research-hero__lead">${escapeHtml(notesLoadError || 'Could not load research notes.')}</p>
-      </header>
+      ${renderPageToolbarShell({
+        compact: true,
+        title: 'Research notebook unavailable',
+        lead: notesLoadError || 'Could not load research notes.',
+      })}
     </article>`;
   setMeta({
     title: 'Fonora Research | Unavailable',
@@ -289,20 +302,16 @@ function renderIndex() {
 
   el.innerHTML = `
     <article class="research-page content-page">
-      <header class="research-hero">
-        <p class="research-hero__tag">Public laboratory notebook</p>
-        <h1 class="research-hero__title">Fonora Research</h1>
-        <p class="research-hero__lead">
-          Fonora is an open research project exploring written and spoken language through
-          open-source experiments. This is the lab notebook: each note records one experiment:
-          the question we asked, what we expected, the constraints, what we built, what happened,
-          and the question that followed. Dead ends are kept, not hidden.
-        </p>
-        <div class="research-hero__actions">
-          <a class="btn btn--primary" href="/research/timeline">See the timeline</a>
-          <a class="btn" href="/research#open">Open questions</a>
-        </div>
-      </header>
+      ${renderPageToolbarShell({
+        sticky: false,
+        tag: 'Public laboratory notebook',
+        tagTone: researchHeroTagTone('index'),
+        title: 'Fonora Research',
+        lead:
+          'Fonora is an open research project exploring written and spoken language through open-source experiments. This is the lab notebook: each note records one experiment: the question we asked, what we expected, the constraints, what we built, what happened, and the question that followed. Dead ends are kept, not hidden.',
+        actionsHtml:
+          '<a class="btn btn--primary" href="/research/timeline">See the timeline</a><a class="btn" href="/research#open">Open questions</a>',
+      })}
       ${phases}
     </article>`;
 
@@ -341,14 +350,15 @@ function renderOpen() {
 
   el.innerHTML = `
     <article class="research-page content-page">
-      <header class="research-hero research-hero--compact">
-        <p class="research-hero__tag">Live research frontier</p>
-        <h1 class="research-hero__title">Open Questions</h1>
-        <p class="research-hero__lead">
-          The experiments that are still in progress, plus the loose threads scattered across the
-          notebook and reference docs that we would pick up next.
-        </p>
-      </header>
+      ${renderPageToolbarShell({
+        compact: true,
+        sticky: false,
+        tag: 'Live research frontier',
+        tagTone: researchHeroTagTone('open'),
+        title: 'Open Questions',
+        lead:
+          'The experiments that are still in progress, plus the loose threads scattered across the notebook and reference docs that we would pick up next.',
+      })}
 
       <section class="research-phase" aria-label="Open research notes">
         <h2 class="research-phase__title">Open research notes</h2>
@@ -382,6 +392,83 @@ function renderOpen() {
 }
 
 /* ------------------------------- note view ------------------------------ */
+
+function researchPhaseLabel(note) {
+  return (
+    (RESEARCH_PHASES.find((p) => p.id === resolveNotePhase(note)) || {}).label || 'Research notebook'
+  );
+}
+
+function renderResearchSidebar(activeSlug) {
+  const grouped = notesByPhase(RESEARCH_PHASES);
+  const sections = grouped
+    .filter(({ notes }) => notes.length)
+    .map(
+      ({ phase, notes }) => `
+      <section class="page-doc-nav-group">
+        <h4 class="page-doc-nav-group-title">${escapeHtml(phase.label)}</h4>
+        <ul class="page-doc-nav-list">
+          ${notes
+            .map(
+              (entry) => `
+            <li>
+              <a
+                href="${escapeHtml(researchHref(entry.slug))}"
+                class="page-doc-nav-link${entry.slug === activeSlug ? ' page-doc-nav-link--active' : ''}"
+              >${escapeHtml(entry.code)} · ${escapeHtml(entry.title)}</a>
+            </li>`,
+            )
+            .join('')}
+        </ul>
+      </section>`,
+    )
+    .join('');
+
+  return `
+    <div class="page-doc-sidebar-panel">
+      <div class="page-doc-sidebar-head">
+        <h3 class="page-doc-sidebar-title">Research</h3>
+        <button type="button" class="page-doc-sidebar-close" id="research-note-sidebar-close" aria-label="Close notes list">×</button>
+      </div>
+      <nav class="page-doc-nav" aria-label="Research notes">
+        ${sections}
+      </nav>
+    </div>`;
+}
+
+function setResearchSidebarOpen(open) {
+  const layout = document.querySelector('.research-note-page .page-doc-layout');
+  if (!layout) return;
+  layout.classList.toggle('page-doc-layout--sidebar-open', open);
+}
+
+function wireResearchNoteChrome(slug) {
+  const layout = document.querySelector('.research-note-page .page-doc-layout');
+  const toggle = document.getElementById('research-note-sidebar-toggle');
+  const close = document.getElementById('research-note-sidebar-close');
+  const sidebar = document.getElementById('research-note-sidebar');
+
+  toggle?.addEventListener('click', (event) => {
+    event.preventDefault();
+    const open = !layout?.classList.contains('page-doc-layout--sidebar-open');
+    setResearchSidebarOpen(open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  close?.addEventListener('click', (event) => {
+    event.preventDefault();
+    setResearchSidebarOpen(false);
+    toggle?.setAttribute('aria-expanded', 'false');
+  });
+  sidebar?.addEventListener('click', (event) => {
+    if (event.target === sidebar) {
+      setResearchSidebarOpen(false);
+      toggle?.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  ensurePageChromeObserver(document.getElementById('research-note-toolbar'));
+  syncPageChromeOffset(document.getElementById('research-note-toolbar'));
+}
 
 function footerSection(label, links) {
   if (!links || !links.length) return '';
@@ -480,11 +567,12 @@ async function renderNote(slug) {
   if (!note) {
     el.innerHTML = `
       <article class="research-page content-page">
-        <header class="research-hero research-hero--compact">
-          <h1 class="research-hero__title">Note not found</h1>
-          <p class="research-hero__lead">There is no research note at this address.</p>
-          <div class="research-hero__actions"><a class="btn btn--primary" href="/research">Back to the notebook</a></div>
-        </header>
+        ${renderPageToolbarShell({
+          compact: true,
+          title: 'Note not found',
+          lead: 'There is no research note at this address.',
+          actionsHtml: '<a class="btn btn--primary" href="/research">Back to the notebook</a>',
+        })}
       </article>`;
     setMeta({
       title: 'Fonora Research | Not found',
@@ -497,37 +585,66 @@ async function renderNote(slug) {
   }
 
   el.innerHTML = '<p class="research-loading">Loading note…</p>';
+  disconnectTocScrollSpy();
 
   let bodyHtml = '';
   let pageTitle = note.title;
+  let headings = [];
   try {
     const payload = await loadPublishedNoteBody(slug);
     if (token !== loadToken) return;
     const markdown = payload.body || '';
     const meta = payload.metadata || note;
     pageTitle = resolveResearchNoteTitle(markdown, meta.title);
+    headings = extractMarkdownHeadings(markdown, { minLevel: 2, maxLevel: 3 });
     bodyHtml = renderMarkdown(markdown, { docPath: `research/${slug}`, skipTitle: true });
   } catch (err) {
     if (token !== loadToken) return;
     bodyHtml = `<p class="research-error">${escapeHtml(errorMessage(err))}</p>`;
   }
 
+  const ref = note.git_commit || 'main';
+  const primarySource = (note.source || [])[0];
+  const sourceHref = primarySource ? githubBlobUrl(primarySource.path, ref) : '';
+  const sourceLabel = primarySource?.label || 'View source ↗';
+  const sourceAction = sourceHref
+    ? `<a class="btn page-toolbar__action" href="${escapeHtml(sourceHref)}" target="_blank" rel="noopener noreferrer">${escapeHtml(sourceLabel)}</a>`
+    : '';
+
   el.innerHTML = `
-    <article class="research-page research-note content-page">
-      <nav class="research-breadcrumb" aria-label="Breadcrumb">
-        <a href="/research">Research</a> <span aria-hidden="true">/</span> <span>${escapeHtml(note.code)}</span>
-      </nav>
-      <header class="research-note__header">
-        <div class="research-note__meta">
-          <span class="research-note__code">${escapeHtml(note.code)}</span>
-          <span class="${statusClass(note.status)}">${escapeHtml(note.status)}</span>
-          <span class="research-note__date">${escapeHtml(formatDate(note.date))}</span>
+    <article class="page-doc-page research-note-page content-page">
+      <div class="page-doc-shell">
+        ${renderPageToolbarShell({
+          shellId: 'research-note-toolbar',
+          tag: researchPhaseLabel(note),
+          tagTone: researchNoteTagTone(note),
+          title: pageTitle,
+          lead: note.description || '',
+          actionsHtml: `<button type="button" class="btn page-doc-sidebar-toggle" id="research-note-sidebar-toggle" aria-expanded="false" aria-controls="research-note-sidebar">Browse notes</button>${sourceAction}`,
+        })}
+        <div class="page-doc-layout">
+          <aside class="page-doc-sidebar" id="research-note-sidebar" aria-label="Research notes">${renderResearchSidebar(slug)}</aside>
+          <div id="research-note-content" class="page-doc-content markdown-body">${bodyHtml}</div>
+          <aside id="research-note-toc" class="page-doc-toc" aria-label="On this page" hidden></aside>
         </div>
-        <h1 class="research-note__title">${escapeHtml(pageTitle)}</h1>
-      </header>
-      <div class="research-note__body markdown-body">${bodyHtml}</div>
-      ${continueThread(note)}
+        ${continueThread(note)}
+      </div>
     </article>`;
+
+  const contentEl = document.getElementById('research-note-content');
+  const tocEl = document.getElementById('research-note-toc');
+  mountDocToc(tocEl, headings);
+  wireResearchNoteChrome(slug);
+
+  if (contentEl && headings.length) {
+    const onAnchorNavigate = (anchorId) => {
+      scrollToPageAnchor(document.getElementById(anchorId));
+      history.replaceState(null, '', researchHref(slug));
+    };
+    setupContentAnchorHandlers(contentEl, onAnchorNavigate);
+    setupTocClickHandlers(onAnchorNavigate);
+    setupTocScrollSpy(contentEl);
+  }
 
   await renderMermaidIn(el);
   if (token !== loadToken) return;
@@ -545,9 +662,7 @@ async function renderNote(slug) {
       url: researchCanonical(note.slug, SITE_ORIGIN),
       datePublished: note.date,
       dateModified: note.date,
-      articleSection:
-        (RESEARCH_PHASES.find((p) => p.id === resolveNotePhase(note)) || {}).label ||
-        'Research',
+      articleSection: researchPhaseLabel(note),
       author: { '@type': 'Person', name: 'James Calhoun' },
       publisher: { '@type': 'Organization', name: 'Fonora', url: SITE_ORIGIN },
       isPartOf: {

@@ -24,16 +24,16 @@ function syncStickyOffsets() {
     document.documentElement.style.setProperty('--fonoran-header-offset', `${headerBottom}px`);
   }
   const root = TAB_ROOT();
-  const shell = root?.querySelector('[data-split-shell]');
-  if (shell) {
-    const grid = shell.nextElementSibling;
-    const gridGap = grid?.classList.contains('fonoran-split-grid')
-      ? parseFloat(getComputedStyle(grid).marginTop) || 0
-      : 0;
-    document.documentElement.style.setProperty(
-      '--fonoran-split-chrome-offset',
-      `${headerBottom + shell.offsetHeight + gridGap}px`,
-    );
+  const toolbar = root?.querySelector('.page-toolbar-shell');
+  const grid = root?.querySelector('.fonoran-split-grid');
+  const gridGap = grid ? parseFloat(getComputedStyle(grid).marginTop) || 0 : 0;
+  const toolbarHeight = toolbar?.offsetHeight || 0;
+  document.documentElement.style.setProperty(
+    '--fonoran-split-chrome-offset',
+    `${headerBottom + toolbarHeight + gridGap}px`,
+  );
+  if (toolbar) {
+    document.documentElement.style.setProperty('--page-chrome-offset', `${toolbarHeight}px`);
   }
 }
 
@@ -46,10 +46,10 @@ function ensureStickyObserver() {
     stickyObserver.observe(header);
     window.addEventListener('resize', syncStickyOffsets);
   }
-  root.querySelectorAll('[data-split-shell]').forEach((shell) => {
-    if (!shell.dataset.stickyObserved) {
-      shell.dataset.stickyObserved = '1';
-      stickyObserver.observe(shell);
+  root.querySelectorAll('.page-toolbar-shell').forEach((el) => {
+    if (!el.dataset.stickyObserved) {
+      el.dataset.stickyObserved = '1';
+      stickyObserver.observe(el);
     }
   });
   syncStickyOffsets();

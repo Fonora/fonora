@@ -275,6 +275,34 @@ export function extractMarkdownTitle(markdown) {
 }
 
 /**
+ * First plain paragraph after the document H1 (skips blank lines and headings).
+ * @param {string} markdown
+ */
+export function extractMarkdownLead(markdown) {
+  const lines = String(markdown).split('\n');
+  let passedTitle = false;
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!passedTitle) {
+      if (/^#\s+/.test(trimmed)) passedTitle = true;
+      continue;
+    }
+    if (!trimmed) continue;
+    if (/^#{1,6}\s+/.test(trimmed)) break;
+    if (/^[-*+]\s+/.test(trimmed) || /^\d+\.\s+/.test(trimmed)) break;
+    if (/^```/.test(trimmed)) break;
+    return trimmed
+      .replace(/\*\*(.+?)\*\*/g, '$1')
+      .replace(/\*(.+?)\*/g, '$1')
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\[(.+?)\]\([^)]+\)/g, '$1')
+      .replace(/^>\s?/, '')
+      .trim();
+  }
+  return '';
+}
+
+/**
  * @param {string} markdown
  * @param {{ minLevel?: number, maxLevel?: number }} [options]
  * @returns {Array<{ level: number, title: string, id: string }>}
