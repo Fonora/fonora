@@ -1,607 +1,3126 @@
 {
-  "version": "2.0",
-  "description": "Golden English->Fonoran regression corpus. Each phrase has an expected `fon` (roman) output the project commits to; the strict runner (scripts/fonoran-translation-gaps.js --assert) fails on any drift or hard gap. Regenerate intentional changes with --update-golden. `note` records known gaps / design decisions (e.g. second-person `you` has no root yet).",
+  "version": "3.0",
+  "description": "Golden English→Fonoran regression corpus (stranger-first, 1,000 phrases). Each phrase has expected `fon` where committed; honest gaps tracked in gap baseline. Source: external/fonora-data/data/fonoran-stranger-corpus.json",
+  "promoted_at": "2026-07-04T05:57:40.753Z",
+  "source": "fonoran-stranger-corpus.json",
   "levels": [
     {
       "level": 1,
-      "name": "Basic statements",
+      "name": "First contact & identity",
       "phrases": [
         {
-          "en": "I eat.",
-          "fon": "mi tel"
+          "en": "Hello."
         },
         {
-          "en": "You sleep.",
-          "fon": "be nal"
+          "en": "I am a person."
         },
         {
-          "en": "The child runs.",
-          "fon": "bagen ginek"
+          "en": "My name is this."
         },
         {
-          "en": "The dog drinks water.",
-          "fon": "kal ye ye"
+          "en": "I will not hurt you."
         },
         {
-          "en": "The bird flies.",
-          "fon": "kalsam kalsam"
+          "en": "You are safe here."
         },
         {
-          "en": "The sun rises.",
-          "fon": "samdat ra"
+          "en": "I am not dangerous."
         },
         {
-          "en": "The sun sets.",
-          "fon": "samdat ju"
+          "en": "What is your name?"
         },
         {
-          "en": "Fire is hot.",
-          "fon": "dat lem"
+          "en": "Are you alone?"
         },
         {
-          "en": "Water is cold.",
-          "fon": "ye mak"
+          "en": "I am alone too."
         },
         {
-          "en": "The tree is tall.",
-          "fon": "tetni ni"
+          "en": "I do not understand your words."
+        },
+        {
+          "en": "Please do not run away."
+        },
+        {
+          "en": "I mean no harm."
+        },
+        {
+          "en": "I am friendly."
+        },
+        {
+          "en": "Are you hurt?"
+        },
+        {
+          "en": "I feel afraid right now."
+        },
+        {
+          "en": "Do you feel afraid?"
+        },
+        {
+          "en": "I am not your enemy."
+        },
+        {
+          "en": "We can help each other."
+        },
+        {
+          "en": "Look at my hands."
+        },
+        {
+          "en": "My hands are empty."
+        },
+        {
+          "en": "I will stay still."
+        },
+        {
+          "en": "You can come closer."
+        },
+        {
+          "en": "I will not move toward you."
+        },
+        {
+          "en": "Can you hear me?"
+        },
+        {
+          "en": "I see you."
+        },
+        {
+          "en": "I am glad you are here."
+        },
+        {
+          "en": "We are both strangers here."
+        },
+        {
+          "en": "This is my name."
+        },
+        {
+          "en": "Please say your name again."
+        },
+        {
+          "en": "I will say my name slowly."
+        },
+        {
+          "en": "Are you a person like me?"
+        },
+        {
+          "en": "I am a stranger and I need help."
+        },
+        {
+          "en": "I am lost and I am alone."
+        },
+        {
+          "en": "Can we sit together?"
+        },
+        {
+          "en": "I will sit down now."
+        },
+        {
+          "en": "Do you want me to move back?"
+        },
+        {
+          "en": "I feel relieved to see you."
+        },
+        {
+          "en": "You do not need to be afraid."
+        },
+        {
+          "en": "I come in peace."
+        },
+        {
+          "en": "Can I speak to you?"
+        },
+        {
+          "en": "I do not know your language."
+        },
+        {
+          "en": "Can we try to understand each other?"
+        },
+        {
+          "en": "Point to yourself and say your name."
+        },
+        {
+          "en": "I am pointing to myself."
+        },
+        {
+          "en": "Are there other people near you?"
+        },
+        {
+          "en": "I have no weapon."
+        },
+        {
+          "en": "I am not following you."
+        },
+        {
+          "en": "We are in the same place now."
+        },
+        {
+          "en": "I feel nervous and unsure."
+        },
+        {
+          "en": "Can we start again?"
         }
       ]
     },
     {
       "level": 2,
-      "name": "Objects",
+      "name": "Immediate needs",
       "phrases": [
         {
-          "en": "I eat bread.",
-          "fon": "mi tel lo"
+          "en": "I am thirsty."
         },
         {
-          "en": "You drink water.",
-          "fon": "be ye ye"
+          "en": "I am hungry."
         },
         {
-          "en": "We build a house.",
-          "fon": "dan kel che"
+          "en": "I am cold."
         },
         {
-          "en": "The child sees the dog.",
-          "fon": "bagen wi kal"
+          "en": "I am tired."
         },
         {
-          "en": "The woman carries the baby.",
-          "fon": "ba gat bagen"
+          "en": "I need water."
         },
         {
-          "en": "The man opens the door.",
-          "fon": "ba tamtem temnan"
+          "en": "We need shelter."
         },
         {
-          "en": "The cat chases the bird.",
-          "fon": "kal gi kalsam"
+          "en": "There is water over there."
         },
         {
-          "en": "The teacher speaks.",
-          "fon": "kuhuba se"
+          "en": "Is that water safe?"
         },
         {
-          "en": "The student listens.",
-          "fon": "lahuba len"
+          "en": "We need fire."
         },
         {
-          "en": "The wind moves the leaves.",
-          "fon": "gesgi gesgi tet"
+          "en": "I can make fire."
         },
         {
-          "en": "I want to eat seafood.",
-          "fon": "mi sak tel yemelto tel"
+          "en": "Please drink this."
         },
         {
-          "en": "I want to eat sea food.",
-          "fon": "mi sak tel yemelto tel"
+          "en": "Do you want food?"
+        },
+        {
+          "en": "This food is safe."
+        },
+        {
+          "en": "Do not eat that."
+        },
+        {
+          "en": "Let us rest here."
+        },
+        {
+          "en": "I am cold and hungry."
+        },
+        {
+          "en": "We can sleep here tonight."
+        },
+        {
+          "en": "Are you thirsty?"
+        },
+        {
+          "en": "Are you hungry?"
+        },
+        {
+          "en": "Are you cold?"
+        },
+        {
+          "en": "This place is dry."
+        },
+        {
+          "en": "We can stay here."
+        },
+        {
+          "en": "I found food."
+        },
+        {
+          "en": "I found water."
+        },
+        {
+          "en": "Take this and eat."
+        },
+        {
+          "en": "The rain is coming."
+        },
+        {
+          "en": "We need to move now."
+        },
+        {
+          "en": "Is there more water?"
+        },
+        {
+          "en": "I need to sleep."
+        },
+        {
+          "en": "I am very weak."
+        },
+        {
+          "en": "Come and sit here."
+        },
+        {
+          "en": "The fire is warm."
+        },
+        {
+          "en": "Sit near the fire."
+        },
+        {
+          "en": "This water is not safe."
+        },
+        {
+          "en": "I am tired and cold."
+        },
+        {
+          "en": "We need more wood."
+        },
+        {
+          "en": "Can you carry this?"
+        },
+        {
+          "en": "I will carry the water."
+        },
+        {
+          "en": "Do not drink that water."
+        },
+        {
+          "en": "We must boil the water."
+        },
+        {
+          "en": "This food is not good."
+        },
+        {
+          "en": "I will find food for us."
+        },
+        {
+          "en": "Are you in pain?"
+        },
+        {
+          "en": "I am in pain."
+        },
+        {
+          "en": "We need to find shelter now."
+        },
+        {
+          "en": "I see a dry place."
+        },
+        {
+          "en": "Do you understand me?"
+        },
+        {
+          "en": "Please say that again."
+        },
+        {
+          "en": "We need food and water."
+        },
+        {
+          "en": "I will keep the fire burning."
         }
       ]
     },
     {
       "level": 3,
-      "name": "Descriptions",
+      "name": "Pain & injury",
       "phrases": [
         {
-          "en": "The large dog runs fast.",
-          "fon": "ni kal ginek nek"
+          "en": "I am hurt."
         },
         {
-          "en": "The small child is happy.",
-          "fon": "bagen nesgu"
+          "en": "My leg is broken."
         },
         {
-          "en": "The old tree is strong.",
-          "fon": "tetni femgu"
+          "en": "I feel sick."
         },
         {
-          "en": "The new house is beautiful.",
-          "fon": "che guwi"
+          "en": "Do you have medicine?"
         },
         {
-          "en": "The red flower grows.",
-          "fon": "datwi tetkek fomas"
+          "en": "I am bleeding."
         },
         {
-          "en": "The river is wide.",
-          "fon": "yenanye ni"
+          "en": "This wound is very deep."
         },
         {
-          "en": "The mountain is high.",
-          "fon": "fenra ra"
+          "en": "Please help me."
         },
         {
-          "en": "The food tastes good.",
-          "fon": "tel tel gu"
+          "en": "My arm hurts a lot."
         },
         {
-          "en": "The night is quiet.",
-          "fon": "gankan ti"
+          "en": "I cannot walk."
         },
         {
-          "en": "The morning is bright.",
-          "fon": "kekshu kek"
+          "en": "The cut is still bleeding."
+        },
+        {
+          "en": "I need clean water for this wound."
+        },
+        {
+          "en": "My head hurts."
+        },
+        {
+          "en": "Is your leg broken?"
+        },
+        {
+          "en": "I feel very weak."
+        },
+        {
+          "en": "Please press here to stop the bleeding."
+        },
+        {
+          "en": "This bone is broken."
+        },
+        {
+          "en": "I am sick and very tired."
+        },
+        {
+          "en": "Do you feel pain here?"
+        },
+        {
+          "en": "The wound needs to be covered."
+        },
+        {
+          "en": "I will wrap your wound."
+        },
+        {
+          "en": "My stomach hurts."
+        },
+        {
+          "en": "Are you bleeding?"
+        },
+        {
+          "en": "I cannot move my arm."
+        },
+        {
+          "en": "This plant may help the wound."
+        },
+        {
+          "en": "I feel hot and sick."
+        },
+        {
+          "en": "Do you have cloth for the wound?"
+        },
+        {
+          "en": "Let me look at your injury."
+        },
+        {
+          "en": "The swelling is getting larger."
+        },
+        {
+          "en": "I fell and hit my head."
+        },
+        {
+          "en": "Does this hurt?"
+        },
+        {
+          "en": "I need to rest."
+        },
+        {
+          "en": "The pain is very strong."
+        },
+        {
+          "en": "I am cold and I feel sick."
+        },
+        {
+          "en": "Is the wound getting better?"
+        },
+        {
+          "en": "Please do not touch that."
+        },
+        {
+          "en": "My foot is injured."
+        },
+        {
+          "en": "I cannot carry that, I am hurt."
+        },
+        {
+          "en": "Do you feel sick today?"
+        },
+        {
+          "en": "The bleeding has stopped."
+        },
+        {
+          "en": "I will help clean your wound."
+        },
+        {
+          "en": "This area is red and swollen."
+        },
+        {
+          "en": "I am getting better slowly."
+        },
+        {
+          "en": "Did you mean this place hurts?"
+        },
+        {
+          "en": "Show me where the pain is."
+        },
+        {
+          "en": "Is the pain here or there?"
+        },
+        {
+          "en": "I do not understand, show me again."
+        },
+        {
+          "en": "My back hurts and I cannot stand."
+        },
+        {
+          "en": "The wound is healing."
+        },
+        {
+          "en": "Are you feeling better now?"
+        },
+        {
+          "en": "I feel very sick."
         }
       ]
     },
     {
       "level": 4,
-      "name": "Time",
+      "name": "Fear & danger",
       "phrases": [
         {
-          "en": "I ate yesterday.",
-          "fon": "mi ta tel di"
+          "en": "I am afraid."
         },
         {
-          "en": "I will eat tomorrow.",
-          "fon": "mi sa tel shu"
+          "en": "There is danger here."
         },
         {
-          "en": "We built a house.",
-          "fon": "dan ta kel che"
+          "en": "We must run now."
         },
         {
-          "en": "We will build a bridge.",
-          "fon": "dan sa kel nanye"
+          "en": "An animal is near."
         },
         {
-          "en": "She came home.",
-          "fon": "ba gi nalche"
+          "en": "Hide behind that rock."
         },
         {
-          "en": "He will return.",
-          "fon": "ba sa giyinam"
+          "en": "Do not move."
         },
         {
-          "en": "The rain stopped.",
-          "fon": "yeju ta ti"
+          "en": "This place is not safe."
         },
         {
-          "en": "Winter will come.",
-          "fon": "makshu sa ginam"
+          "en": "I hear something moving."
         },
         {
-          "en": "They finished the work.",
-          "fon": "dan ta tem bakel"
+          "en": "Are you afraid?"
         },
         {
-          "en": "The child will learn.",
-          "fon": "bagen sa lahu"
+          "en": "We are safe here."
+        },
+        {
+          "en": "That animal is very large."
+        },
+        {
+          "en": "Be quiet and still."
+        },
+        {
+          "en": "I am very afraid right now."
+        },
+        {
+          "en": "Run to the trees."
+        },
+        {
+          "en": "Something is watching us."
+        },
+        {
+          "en": "Is it safe to go there?"
+        },
+        {
+          "en": "I see tracks on the ground."
+        },
+        {
+          "en": "That sound is dangerous."
+        },
+        {
+          "en": "We must hide now."
+        },
+        {
+          "en": "My heart is beating fast."
+        },
+        {
+          "en": "Do not go near that animal."
+        },
+        {
+          "en": "The animal is moving closer."
+        },
+        {
+          "en": "Is that animal dangerous?"
+        },
+        {
+          "en": "I feel very unsafe here."
+        },
+        {
+          "en": "Stay low and do not speak."
+        },
+        {
+          "en": "There is a large animal ahead."
+        },
+        {
+          "en": "We need to leave this area."
+        },
+        {
+          "en": "I am shaking with fear."
+        },
+        {
+          "en": "Did you see that?"
+        },
+        {
+          "en": "The danger is gone now."
+        },
+        {
+          "en": "Come with me to safety."
+        },
+        {
+          "en": "I see something in the dark."
+        },
+        {
+          "en": "Are we safe now?"
+        },
+        {
+          "en": "The animal has gone away."
+        },
+        {
+          "en": "I do not feel safe here."
+        },
+        {
+          "en": "That path is not safe."
+        },
+        {
+          "en": "Do you see any danger?"
+        },
+        {
+          "en": "We can rest here, it is safe."
+        },
+        {
+          "en": "I heard a loud noise nearby."
+        },
+        {
+          "en": "Wait here and do not move."
+        },
+        {
+          "en": "I think I said danger wrong."
+        },
+        {
+          "en": "Is there an animal near the water?"
+        },
+        {
+          "en": "I am afraid and I want to leave."
+        },
+        {
+          "en": "Do not make that sound."
+        },
+        {
+          "en": "The noise stopped."
+        },
+        {
+          "en": "I meant that, not this."
+        },
+        {
+          "en": "That animal is fast and large."
+        },
+        {
+          "en": "Can we go somewhere safer?"
+        },
+        {
+          "en": "I am cold and afraid."
+        },
+        {
+          "en": "We ran and now we are safe."
         }
       ]
     },
     {
       "level": 5,
-      "name": "Questions",
+      "name": "Basic emotions",
       "phrases": [
         {
-          "en": "Where are you?",
-          "fon": "no hu che be ?"
+          "en": "I am happy."
         },
         {
-          "en": "Who are you?",
-          "fon": "no hu ba be ?"
+          "en": "I feel sad."
         },
         {
-          "en": "What do you want?",
-          "fon": "no hu to be sak ?"
+          "en": "I am angry."
         },
         {
-          "en": "When will you return?",
-          "fon": "no hu kan sa be giyinam ?"
+          "en": "I feel calm now."
         },
         {
-          "en": "Is the food ready?",
-          "fon": "tel gatdimo ?"
+          "en": "I am lonely."
         },
         {
-          "en": "Can you help me?",
-          "fon": "be kas mi ?"
+          "en": "I feel relieved."
         },
         {
-          "en": "Did you see it?",
-          "fon": "be ta wi to ?"
+          "en": "I am worried."
         },
         {
-          "en": "Will it rain?",
-          "fon": "to sa yeju ?"
+          "en": "You look happy."
+        },
+        {
+          "en": "You look sad."
+        },
+        {
+          "en": "You seem angry."
+        },
+        {
+          "en": "Are you happy?"
+        },
+        {
+          "en": "Are you sad?"
+        },
+        {
+          "en": "Are you angry?"
+        },
+        {
+          "en": "Are you calm?"
+        },
+        {
+          "en": "Are you lonely?"
+        },
+        {
+          "en": "Are you worried?"
+        },
+        {
+          "en": "I am not angry now."
+        },
+        {
+          "en": "I am sad and lonely."
+        },
+        {
+          "en": "I am calm and relieved."
+        },
+        {
+          "en": "I am happy and calm."
+        },
+        {
+          "en": "I was worried, but I am calm now."
+        },
+        {
+          "en": "I feel worried about you."
+        },
+        {
+          "en": "I feel happy with you."
+        },
+        {
+          "en": "I do not feel calm."
+        },
+        {
+          "en": "I am very relieved."
+        },
+        {
+          "en": "This makes me happy."
+        },
+        {
+          "en": "This makes me sad."
+        },
+        {
+          "en": "This makes me angry."
+        },
+        {
+          "en": "I was very worried."
+        },
+        {
+          "en": "You are safe now."
+        },
+        {
+          "en": "Please be calm."
+        },
+        {
+          "en": "Please do not be angry."
+        },
+        {
+          "en": "I want you to be calm."
+        },
+        {
+          "en": "I want you to be happy."
+        },
+        {
+          "en": "You do not need to be sad."
+        },
+        {
+          "en": "You are not alone."
+        },
+        {
+          "en": "I am here with you."
+        },
+        {
+          "en": "I feel less lonely now."
+        },
+        {
+          "en": "I was angry, but I am calm now."
+        },
+        {
+          "en": "Do you feel lonely?"
+        },
+        {
+          "en": "Do you feel relieved?"
+        },
+        {
+          "en": "I do not want to be alone."
+        },
+        {
+          "en": "I am still worried."
+        },
+        {
+          "en": "I am not sad anymore."
+        },
+        {
+          "en": "Did I make you angry?"
+        },
+        {
+          "en": "Did that make you sad?"
+        },
+        {
+          "en": "I see that you are sad."
+        },
+        {
+          "en": "I think you are worried."
+        },
+        {
+          "en": "I am sad and worried."
+        },
+        {
+          "en": "I am angry but not at you."
         }
       ]
     },
     {
       "level": 6,
-      "name": "Relationships",
+      "name": "Social bond",
       "phrases": [
         {
-          "en": "I love my family.",
-          "fon": "mi san sanba"
+          "en": "Thank you."
         },
         {
-          "en": "Friends help each other.",
-          "fon": "kas ho"
+          "en": "I am sorry."
         },
         {
-          "en": "The teacher teaches the student.",
-          "fon": "kuhuba [teaches] lahuba",
-          "note": "gap: teaches (needs a root)"
+          "en": "I will help you."
         },
         {
-          "en": "Parents protect children.",
-          "fon": "ba gat bagen"
+          "en": "We can work together."
         },
         {
-          "en": "The king trusts the guard.",
-          "fon": "ba kam gat"
+          "en": "I trust you."
         },
         {
-          "en": "The hunter follows the animal.",
-          "fon": "lakalba gi kal"
+          "en": "Do you trust me?"
         },
         {
-          "en": "The doctor helps sick people.",
-          "fon": "kasfemba bakas femgam balek"
+          "en": "I promise."
         },
         {
-          "en": "The farmer grows food.",
-          "fon": "tetba fomas tel"
+          "en": "We are friends now."
         },
         {
-          "en": "The traveler finds a river.",
-          "fon": "ba wi yenanye"
+          "en": "Can I help you?"
         },
         {
-          "en": "The group builds together.",
-          "fon": "dan kel dan"
+          "en": "I did not mean to hurt you."
+        },
+        {
+          "en": "Please forgive me."
+        },
+        {
+          "en": "You helped me a lot."
+        },
+        {
+          "en": "Are you my friend?"
+        },
+        {
+          "en": "I will not leave you alone."
+        },
+        {
+          "en": "That was my mistake."
+        },
+        {
+          "en": "I feel safe with you."
+        },
+        {
+          "en": "Do you need help?"
+        },
+        {
+          "en": "I am thankful for your help."
+        },
+        {
+          "en": "Let us stay together."
+        },
+        {
+          "en": "You are a good person."
+        },
+        {
+          "en": "Did I do something wrong?"
+        },
+        {
+          "en": "I am sorry I took that."
+        },
+        {
+          "en": "I promise I will return."
+        },
+        {
+          "en": "Are you angry with me?"
+        },
+        {
+          "en": "I need your help today."
+        },
+        {
+          "en": "We are stronger together."
+        },
+        {
+          "en": "I will share with you."
+        },
+        {
+          "en": "Do you forgive me?"
+        },
+        {
+          "en": "I feel better near you."
+        },
+        {
+          "en": "That was not your fault."
+        },
+        {
+          "en": "I am here for you."
+        },
+        {
+          "en": "I did not want to fight."
+        },
+        {
+          "en": "You can trust me."
+        },
+        {
+          "en": "Is everything good between us?"
+        },
+        {
+          "en": "I am glad we are together."
+        },
+        {
+          "en": "Please do not go."
+        },
+        {
+          "en": "I made a mistake."
+        },
+        {
+          "en": "We can share this food."
+        },
+        {
+          "en": "Did I upset you?"
+        },
+        {
+          "en": "I will keep my promise."
+        },
+        {
+          "en": "I am not angry with you."
+        },
+        {
+          "en": "Let me carry that for you."
+        },
+        {
+          "en": "I feel lonely and scared."
+        },
+        {
+          "en": "I am cold and I need help."
+        },
+        {
+          "en": "We survived and I am grateful."
+        },
+        {
+          "en": "I am sorry for that."
+        },
+        {
+          "en": "We can do this together."
+        },
+        {
+          "en": "Can I help you with that?"
+        },
+        {
+          "en": "I promise I will not leave you."
+        },
+        {
+          "en": "Are we friends now?"
         }
       ]
     },
     {
       "level": 7,
-      "name": "Compound-word stress tests",
+      "name": "Refusal & boundaries",
       "phrases": [
         {
-          "en": "The sunrise is beautiful.",
-          "fon": "kekra guwi"
+          "en": "No."
         },
         {
-          "en": "The sunset is peaceful.",
-          "fon": "kekju ti"
+          "en": "Stop."
         },
         {
-          "en": "The moonlight shines on the river.",
-          "fon": "gankankek kek yenanye"
+          "en": "Do not touch that."
         },
         {
-          "en": "The campfire keeps us warm.",
-          "fon": "datdal gat dan lem"
+          "en": "This is mine."
         },
         {
-          "en": "The fisherman crossed the river.",
-          "fon": "kalyeba ta gi yenanye"
+          "en": "That is enough."
         },
         {
-          "en": "The blacksmith made a knife.",
-          "fon": "fendatsasba ta dalkel fendatsastem"
+          "en": "Leave me alone."
         },
         {
-          "en": "The grandmother tells stories.",
-          "fon": "dibadi se se"
+          "en": "Do not come closer."
         },
         {
-          "en": "The doorway is open.",
-          "fon": "temnan tamtem"
+          "en": "I do not want that."
         },
         {
-          "en": "The raindrops fall quietly.",
-          "fon": "yejugen jugi ti"
+          "en": "Step back, please."
         },
         {
-          "en": "The birdsong wakes everyone.",
-          "fon": "[birdsong] diho dan ba",
-          "note": "gap: birdsong (needs a root)"
+          "en": "Do not take my food."
+        },
+        {
+          "en": "This space is mine."
+        },
+        {
+          "en": "I said no."
+        },
+        {
+          "en": "Do not touch me."
+        },
+        {
+          "en": "That belongs to me."
+        },
+        {
+          "en": "I need you to stop now."
+        },
+        {
+          "en": "Do not go there."
+        },
+        {
+          "en": "I am not ready."
+        },
+        {
+          "en": "Please give that back."
+        },
+        {
+          "en": "Do not open that bag."
+        },
+        {
+          "en": "I feel uncomfortable right now."
+        },
+        {
+          "en": "Stay on your side."
+        },
+        {
+          "en": "Do not look at my things."
+        },
+        {
+          "en": "That water is mine."
+        },
+        {
+          "en": "I need space."
+        },
+        {
+          "en": "Do not do that again."
+        },
+        {
+          "en": "Is this yours or mine?"
+        },
+        {
+          "en": "Did you take my food?"
+        },
+        {
+          "en": "I will not share this."
+        },
+        {
+          "en": "Do not wake me."
+        },
+        {
+          "en": "That is too much."
+        },
+        {
+          "en": "I am angry and I need quiet."
+        },
+        {
+          "en": "Please do not shout."
+        },
+        {
+          "en": "This side is mine and that side is yours."
+        },
+        {
+          "en": "Are you taking my things?"
+        },
+        {
+          "en": "I do not agree."
+        },
+        {
+          "en": "I said stop."
+        },
+        {
+          "en": "That is not yours."
+        },
+        {
+          "en": "I will not go there."
+        },
+        {
+          "en": "Do not move my things."
+        },
+        {
+          "en": "I feel scared when you come close."
+        },
+        {
+          "en": "Did I say yes?"
+        },
+        {
+          "en": "Please stop and listen."
+        },
+        {
+          "en": "I need you to move back."
+        },
+        {
+          "en": "Do not touch my shelter."
+        },
+        {
+          "en": "That is not acceptable."
+        },
+        {
+          "en": "I am tired and I need rest."
+        },
+        {
+          "en": "Do you hear me?"
+        },
+        {
+          "en": "I will not do that."
+        },
+        {
+          "en": "Is this clear to you?"
+        },
+        {
+          "en": "Please do not come closer."
         }
       ]
     },
     {
       "level": 8,
-      "name": "Multi-clause sentences",
+      "name": "What questions",
       "phrases": [
         {
-          "en": "I ate because I was hungry.",
-          "fon": "mi ta saklo"
+          "en": "What is this?"
         },
         {
-          "en": "We stayed inside because it rained.",
-          "fon": "dan ta ti mes yeju"
+          "en": "What is that?"
         },
         {
-          "en": "The child laughed after the dog ran away.",
-          "fon": "bagen ta nesgubase shu kal ginek gifet"
+          "en": "What happened here?"
         },
         {
-          "en": "When the sun rose, we began walking.",
-          "fon": "gamtel samdat ra dan diye gifem"
+          "en": "What do you want?"
         },
         {
-          "en": "Although it was cold, they continued.",
-          "fon": "to ta gi"
+          "en": "What is in there?"
         },
         {
-          "en": "I know that you are here.",
-          "fon": "mi nam"
+          "en": "What is that sound?"
         },
         {
-          "en": "She said she would return tomorrow.",
-          "fon": "ba se ba giyinam shu"
+          "en": "What is that smell?"
         },
         {
-          "en": "The man who built the house is my friend.",
-          "fon": "che guba"
+          "en": "What do you need?"
         },
         {
-          "en": "If you help me, we will finish today.",
-          "fon": "von sa be kas mi dan tem gem"
+          "en": "What is happening?"
         },
         {
-          "en": "We rested before continuing our journey.",
-          "fon": "dan ta ti di gi fetgi"
+          "en": "What is that animal?"
+        },
+        {
+          "en": "What is that plant?"
+        },
+        {
+          "en": "What is that noise at night?"
+        },
+        {
+          "en": "What do you have there?"
+        },
+        {
+          "en": "What is this food?"
+        },
+        {
+          "en": "What is that mark on your arm?"
+        },
+        {
+          "en": "I do not know what this is."
+        },
+        {
+          "en": "I do not know what that is."
+        },
+        {
+          "en": "What is this liquid?"
+        },
+        {
+          "en": "What happened to your hand?"
+        },
+        {
+          "en": "What happened last night?"
+        },
+        {
+          "en": "What is that thing called?"
+        },
+        {
+          "en": "What is the name of this?"
+        },
+        {
+          "en": "What do you see over there?"
+        },
+        {
+          "en": "What is that light?"
+        },
+        {
+          "en": "What is this tool for?"
+        },
+        {
+          "en": "Something happened here."
+        },
+        {
+          "en": "I want to know what this is."
+        },
+        {
+          "en": "What is wrong with you?"
+        },
+        {
+          "en": "What is wrong with this?"
+        },
+        {
+          "en": "What do you want me to do?"
+        },
+        {
+          "en": "I do not understand what you want."
+        },
+        {
+          "en": "What is that over the water?"
+        },
+        {
+          "en": "What did you find?"
+        },
+        {
+          "en": "What did you eat?"
+        },
+        {
+          "en": "What is safe to eat here?"
+        },
+        {
+          "en": "I am not sure what that is."
+        },
+        {
+          "en": "What is that on the ground?"
+        },
+        {
+          "en": "What is that dark shape?"
+        },
+        {
+          "en": "I want to know what happened."
+        },
+        {
+          "en": "What is this white powder?"
+        },
+        {
+          "en": "What is that structure?"
+        },
+        {
+          "en": "What is in this bag?"
+        },
+        {
+          "en": "I feel afraid and I do not know what is there."
+        },
+        {
+          "en": "What do you want to show me?"
+        },
+        {
+          "en": "What is that color in the sky?"
+        },
+        {
+          "en": "Please show me what you mean."
+        },
+        {
+          "en": "I see something and I do not know what it is."
+        },
+        {
+          "en": "What is this word?"
+        },
+        {
+          "en": "What do you call this thing?"
+        },
+        {
+          "en": "What is that thing over there?"
         }
       ]
     },
     {
       "level": 9,
-      "name": "Story paragraph",
+      "name": "Who questions",
       "phrases": [
         {
-          "en": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
-          "fon": "di ta dan gi nan yenanye ye kekshu ta ta mak guwi dan ta kel gen dat datlo shu ta dan tel dan wi kekra gamfo fen shu ta dan gi nalche dan"
+          "en": "Who are you?"
+        },
+        {
+          "en": "Who is that person?"
+        },
+        {
+          "en": "Who is hurt?"
+        },
+        {
+          "en": "Who needs water?"
+        },
+        {
+          "en": "I do not know you."
+        },
+        {
+          "en": "Who is the child?"
+        },
+        {
+          "en": "That person is a stranger to me."
+        },
+        {
+          "en": "Who is sleeping over there?"
+        },
+        {
+          "en": "I am a stranger here."
+        },
+        {
+          "en": "Who needs food now?"
+        },
+        {
+          "en": "Who is the old person?"
+        },
+        {
+          "en": "Who is crying?"
+        },
+        {
+          "en": "Who is with you?"
+        },
+        {
+          "en": "I do not recognize that person."
+        },
+        {
+          "en": "Who is sick?"
+        },
+        {
+          "en": "Who can carry this?"
+        },
+        {
+          "en": "I feel afraid of that person."
+        },
+        {
+          "en": "Who is making that sound?"
+        },
+        {
+          "en": "That person is alone and looks lost."
+        },
+        {
+          "en": "Who is in danger?"
+        },
+        {
+          "en": "Who is the leader here?"
+        },
+        {
+          "en": "Please tell me who you are."
+        },
+        {
+          "en": "Who is bleeding?"
+        },
+        {
+          "en": "I am confused about who is here."
+        },
+        {
+          "en": "Who is that woman?"
+        },
+        {
+          "en": "Who is that man?"
+        },
+        {
+          "en": "Point to who needs help."
+        },
+        {
+          "en": "Who was here before us?"
+        },
+        {
+          "en": "I do not understand who that is."
+        },
+        {
+          "en": "That person is cold and shaking."
+        },
+        {
+          "en": "Who is coming toward us?"
+        },
+        {
+          "en": "Show me who needs medicine."
+        },
+        {
+          "en": "I feel uneasy about that person."
+        },
+        {
+          "en": "Who is the youngest person here?"
+        },
+        {
+          "en": "That person is watching us."
+        },
+        {
+          "en": "Who is not eating?"
+        },
+        {
+          "en": "I want to know who you are."
+        },
+        {
+          "en": "Who is standing guard tonight?"
+        },
+        {
+          "en": "That person is not moving."
+        },
+        {
+          "en": "Who is missing?"
+        },
+        {
+          "en": "Tell me your name if you can."
+        },
+        {
+          "en": "I feel glad you are here."
+        },
+        {
+          "en": "Who is the strongest person here?"
+        },
+        {
+          "en": "That person is a friend or an enemy."
+        },
+        {
+          "en": "Show me who you are."
+        },
+        {
+          "en": "I did not understand who you meant."
+        },
+        {
+          "en": "Who is able to walk?"
+        },
+        {
+          "en": "That person is hurt and needs us."
+        },
+        {
+          "en": "Who is that person over there?"
+        },
+        {
+          "en": "Who needs help right now?"
         }
       ]
     },
     {
       "level": 10,
-      "name": "Translator torture tests",
+      "name": "Where questions",
       "phrases": [
         {
-          "en": "I saw the red bird.",
-          "fon": "mi ta wi datwi kalsam"
+          "en": "Where is the water?"
         },
         {
-          "en": "The bird saw me.",
-          "fon": "kalsam ta wi mi"
+          "en": "Where are we?"
         },
         {
-          "en": "I almost fell.",
-          "fon": "mi dalfet ju"
+          "en": "Where is the food?"
         },
         {
-          "en": "I never said that.",
-          "fon": "mi no se"
+          "en": "The water is there."
         },
         {
-          "en": "Everyone knows something.",
-          "fon": "mel ba hu tem"
+          "en": "The water is far away."
         },
         {
-          "en": "Nobody knows everything.",
-          "fon": "no ba hu mel to"
+          "en": "Which way do we go?"
         },
         {
-          "en": "The door opened.",
-          "fon": "temnan ta tamtem"
+          "en": "I do not know where we are."
         },
         {
-          "en": "I opened the door.",
-          "fon": "mi ta tamtem temnan"
+          "en": "Where is the shelter?"
         },
         {
-          "en": "The child made the toy.",
-          "fon": "bagen ta dalkel to"
+          "en": "We are near the trees."
         },
         {
-          "en": "The toy was made by the child.",
-          "fon": "to ta dalkel bagen"
+          "en": "The shelter is over there."
         },
         {
-          "en": "I think he knows that she left.",
-          "fon": "mi ta met ba hu ba gi"
+          "en": "Where is the other person?"
         },
         {
-          "en": "The old man's young son.",
-          "fon": "di ba bagen bagen"
+          "en": "I am here."
         },
         {
-          "en": "They can fish.",
-          "fon": "dan kalye"
+          "en": "You are there."
         },
         {
-          "en": "Time flies.",
-          "fon": "kan kalsam"
+          "en": "The fire is close to us."
         },
         {
-          "en": "Light travels fast.",
-          "fon": "kek gi nek"
+          "en": "Where is the fire?"
+        },
+        {
+          "en": "Is the water near here?"
+        },
+        {
+          "en": "The river is below us."
+        },
+        {
+          "en": "We should go that way."
+        },
+        {
+          "en": "Where did you sleep?"
+        },
+        {
+          "en": "I slept near the big rock."
+        },
+        {
+          "en": "Point to where the water is."
+        },
+        {
+          "en": "The path goes to the left."
+        },
+        {
+          "en": "Is the village far from here?"
+        },
+        {
+          "en": "I feel lost."
+        },
+        {
+          "en": "Where is the path?"
+        },
+        {
+          "en": "The path is behind those trees."
+        },
+        {
+          "en": "Show me where the food is."
+        },
+        {
+          "en": "We are far from people."
+        },
+        {
+          "en": "I am scared of this place."
+        },
+        {
+          "en": "Where is the high ground?"
+        },
+        {
+          "en": "The high ground is that way."
+        },
+        {
+          "en": "Let us go toward the light."
+        },
+        {
+          "en": "Is there water in that direction?"
+        },
+        {
+          "en": "I do not see the path."
+        },
+        {
+          "en": "Stay here and wait for me."
+        },
+        {
+          "en": "Where is the old person?"
+        },
+        {
+          "en": "The old person is near the water."
+        },
+        {
+          "en": "I am not sure which way."
+        },
+        {
+          "en": "The sun is in that direction."
+        },
+        {
+          "en": "We came from over there."
+        },
+        {
+          "en": "Can you see water from here?"
+        },
+        {
+          "en": "The water and the food are there."
+        },
+        {
+          "en": "I am relieved to find water."
+        },
+        {
+          "en": "Where is the child?"
+        },
+        {
+          "en": "The child is near the big tree."
+        },
+        {
+          "en": "Come here and look at this."
+        },
+        {
+          "en": "I meant that place, not this one."
+        },
+        {
+          "en": "I am worried and I feel lost."
+        },
+        {
+          "en": "The dry land is to the right."
+        },
+        {
+          "en": "We go left and then up."
         }
       ]
     },
     {
       "level": 11,
-      "name": "Super-hard",
+      "name": "When questions",
       "phrases": [
         {
-          "en": "If you had not helped us, we would not have finished the bridge.",
-          "fon": "von no be kas dan dan tem nanye"
+          "en": "Is it time to eat now?"
         },
         {
-          "en": "The woman who taught me said that the river had changed.",
-          "fon": "ba ta badi kuhu mi se yenanye diho"
+          "en": "We should leave soon."
         },
         {
-          "en": "The old hunter gave the child his knife.",
-          "fon": "di ta lakalba nesguku bagen fendatsastem"
+          "en": "When do we go?"
         },
         {
-          "en": "Time heals all wounds, but memory keeps the pain alive.",
-          "fon": "kan kasfemba mel tesfem hugatmes gat tes fo"
+          "en": "I am ready now."
+        },
+        {
+          "en": "We will eat later."
+        },
+        {
+          "en": "Is it time to sleep?"
+        },
+        {
+          "en": "We must go before dark."
+        },
+        {
+          "en": "Wait here for now."
+        },
+        {
+          "en": "After the rain, we can move."
+        },
+        {
+          "en": "Is it morning or night now?"
+        },
+        {
+          "en": "I will return soon."
+        },
+        {
+          "en": "When will the rain stop?"
+        },
+        {
+          "en": "Not now, later."
+        },
+        {
+          "en": "We should rest before we walk."
+        },
+        {
+          "en": "Is it time to go now?"
+        },
+        {
+          "en": "I feel tired now."
+        },
+        {
+          "en": "We can talk later."
+        },
+        {
+          "en": "Before we sleep, we need water."
+        },
+        {
+          "en": "When does the sun rise here?"
+        },
+        {
+          "en": "Let us eat now."
+        },
+        {
+          "en": "I was afraid before, not now."
+        },
+        {
+          "en": "After we eat, we can rest."
+        },
+        {
+          "en": "Is it too late to move?"
+        },
+        {
+          "en": "We should do this now."
+        },
+        {
+          "en": "When did you last drink water?"
+        },
+        {
+          "en": "The fire was burning before."
+        },
+        {
+          "en": "I feel better now."
+        },
+        {
+          "en": "We will find food soon."
+        },
+        {
+          "en": "Can we leave after the rain?"
+        },
+        {
+          "en": "Not yet, wait a little more."
+        },
+        {
+          "en": "Before dark, we need shelter."
+        },
+        {
+          "en": "I will help you later."
+        },
+        {
+          "en": "When will it be light again?"
+        },
+        {
+          "en": "We move now and rest later."
+        },
+        {
+          "en": "After you sleep, I will watch."
+        },
+        {
+          "en": "I was not ready before."
+        },
+        {
+          "en": "Is it safe to go now?"
+        },
+        {
+          "en": "I feel hungry now."
+        },
+        {
+          "en": "We should eat before we walk."
+        },
+        {
+          "en": "Soon the sun will go down."
+        },
+        {
+          "en": "Did you sleep before?"
+        },
+        {
+          "en": "I mean later, not right now."
+        },
+        {
+          "en": "After I rest, I will help."
+        },
+        {
+          "en": "When will the water come back?"
+        },
+        {
+          "en": "I felt safe before, not now."
+        },
+        {
+          "en": "Let us decide later, not now."
+        },
+        {
+          "en": "The noise stopped just now."
+        },
+        {
+          "en": "Is it still night?"
+        },
+        {
+          "en": "We can try again soon."
+        },
+        {
+          "en": "Before we go, drink some water."
         }
       ]
     },
     {
       "level": 12,
-      "name": "Motion & direction",
+      "name": "Direction & motion",
       "phrases": [
         {
-          "en": "I go to the city.",
-          "fon": "mi gi nan lekche"
+          "en": "Come here."
         },
         {
-          "en": "I walk toward the city.",
-          "fon": "mi tigi nan lekche"
+          "en": "Stay here."
         },
         {
-          "en": "I will go to the city.",
-          "fon": "mi sa gi nan lekche"
+          "en": "Go there."
         },
         {
-          "en": "I am going to go to the city.",
-          "fon": "mi sa gi nan lekche"
+          "en": "Wait for me."
         },
         {
-          "en": "I am going to the city.",
-          "fon": "mi gi nan lekche"
+          "en": "Follow me."
         },
         {
-          "en": "He went to the store.",
-          "fon": "ba ta gi nan che"
+          "en": "I am leaving now."
         },
         {
-          "en": "The dog ran away.",
-          "fon": "kal ta ginek fet"
+          "en": "You must stay here."
         },
         {
-          "en": "I come from the river.",
-          "fon": "mi ginam diye yenanye"
+          "en": "I will wait here."
         },
         {
-          "en": "I go away from the city.",
-          "fon": "mi gi fet diye lekche"
+          "en": "Move away from there."
+        },
+        {
+          "en": "Are you coming with me?"
+        },
+        {
+          "en": "I am going to the water."
+        },
+        {
+          "en": "Please wait for me here."
+        },
+        {
+          "en": "Do not enter that place."
+        },
+        {
+          "en": "I will follow you."
+        },
+        {
+          "en": "We can go together."
+        },
+        {
+          "en": "You are moving too fast."
+        },
+        {
+          "en": "I feel afraid to go there."
+        },
+        {
+          "en": "Are you staying or leaving?"
+        },
+        {
+          "en": "Move slowly and carefully."
+        },
+        {
+          "en": "I do not want to go alone."
+        },
+        {
+          "en": "Come with me now."
+        },
+        {
+          "en": "I entered the shelter."
+        },
+        {
+          "en": "You can enter here."
+        },
+        {
+          "en": "I am going and coming back."
+        },
+        {
+          "en": "Do you want to follow me?"
+        },
+        {
+          "en": "I will stay and wait here."
+        },
+        {
+          "en": "We must leave this place."
+        },
+        {
+          "en": "That direction is not safe."
+        },
+        {
+          "en": "I am scared and I want to stay."
+        },
+        {
+          "en": "Can you come back soon?"
+        },
+        {
+          "en": "Do not leave me alone."
+        },
+        {
+          "en": "I will go and you stay."
+        },
+        {
+          "en": "Move closer to the fire."
+        },
+        {
+          "en": "Are you going to come back?"
+        },
+        {
+          "en": "I did not follow you on purpose."
+        },
+        {
+          "en": "Wait here until I return."
+        },
+        {
+          "en": "I feel relieved that you came back."
+        },
+        {
+          "en": "Do not move from that spot."
+        },
+        {
+          "en": "I am coming back soon."
+        },
+        {
+          "en": "You left and I was alone."
+        },
+        {
+          "en": "Can I enter this space?"
+        },
+        {
+          "en": "I meant to go the other way."
+        },
+        {
+          "en": "We should move together."
+        },
+        {
+          "en": "Is someone coming toward us?"
+        },
+        {
+          "en": "I feel tired but I must keep moving."
+        },
+        {
+          "en": "Do not follow that animal."
+        },
+        {
+          "en": "You went the wrong direction."
+        },
+        {
+          "en": "Are we moving toward the water?"
+        },
+        {
+          "en": "I stayed and waited for a long time."
+        },
+        {
+          "en": "Stay where you are."
         }
       ]
     },
     {
       "level": 13,
-      "name": "Complex motion & discourse",
+      "name": "Possession & trade",
       "phrases": [
         {
-          "en": "They ran toward us from the river.",
-          "fon": "dan ta ginek nan yenanye"
+          "en": "I have food."
         },
         {
-          "en": "Are you going to the market tomorrow?",
-          "fon": "shu be gi nan che ?"
+          "en": "Do you have water?"
         },
         {
-          "en": "Come here quickly.",
-          "fon": "ginam nan nam"
+          "en": "Take this."
         },
         {
-          "en": "The hunter followed the animal into the forest.",
-          "fon": "lakalba ta sogi mes kal lektetche"
+          "en": "Give me that."
         },
         {
-          "en": "We should not go there at night.",
-          "fon": "dan no gi nan tak"
+          "en": "I will return this to you."
         },
         {
-          "en": "Go away and leave me alone.",
-          "fon": "gi gi fet mi nesfa"
+          "en": "Can I borrow that tool?"
         },
         {
-          "en": "I want to go to the city but I am afraid of the dark.",
-          "fon": "mi gi nan lekche gan"
+          "en": "This belongs to me."
         },
         {
-          "en": "The bird flew over the lake and landed near the trees.",
-          "fon": "kalsam gi ra yegat"
+          "en": "I give you this cloth."
         },
         {
-          "en": "He said he would return home after the sun set.",
-          "fon": "ba se ba giyinam nalche shu samdat ju"
+          "en": "Do you have more of this?"
         },
         {
-          "en": "I have never been to the city before.",
-          "fon": "mi ta no lekche di"
+          "en": "I have no fire."
+        },
+        {
+          "en": "Take some of my food."
+        },
+        {
+          "en": "I feel glad to share."
+        },
+        {
+          "en": "This is yours now."
+        },
+        {
+          "en": "Can we exchange these things?"
+        },
+        {
+          "en": "I will give you this rope."
+        },
+        {
+          "en": "I have a knife and a rope."
+        },
+        {
+          "en": "Do you want to share this?"
+        },
+        {
+          "en": "I borrowed this from you."
+        },
+        {
+          "en": "Here, take this piece."
+        },
+        {
+          "en": "I do not have enough water."
+        },
+        {
+          "en": "I feel uneasy taking your food."
+        },
+        {
+          "en": "You can keep this."
+        },
+        {
+          "en": "I have water and you have food."
+        },
+        {
+          "en": "Let us share everything equally."
+        },
+        {
+          "en": "Can I take one of those?"
+        },
+        {
+          "en": "I will return your container soon."
+        },
+        {
+          "en": "I feel good giving this to you."
+        },
+        {
+          "en": "Do not take that."
+        },
+        {
+          "en": "I have a small amount of this."
+        },
+        {
+          "en": "Give me the large piece and take the small one."
+        },
+        {
+          "en": "Did you take my container?"
+        },
+        {
+          "en": "I want to exchange this for that."
+        },
+        {
+          "en": "This is not mine."
+        },
+        {
+          "en": "I feel worried that I have too little."
+        },
+        {
+          "en": "Can you give me a little water?"
+        },
+        {
+          "en": "I will share my shelter with you."
+        },
+        {
+          "en": "Take this and give me that one."
+        },
+        {
+          "en": "I gave you that already."
+        },
+        {
+          "en": "Do you have a container I can borrow?"
+        },
+        {
+          "en": "I am sorry, I took the wrong thing."
+        },
+        {
+          "en": "We each have enough food now."
+        },
+        {
+          "en": "I feel relieved that we can share."
+        },
+        {
+          "en": "Please return that to me."
+        },
+        {
+          "en": "I think I took yours by mistake."
+        },
+        {
+          "en": "Is there more food somewhere?"
+        },
+        {
+          "en": "I have fire and wood."
+        },
+        {
+          "en": "You can borrow this but please return it."
+        },
+        {
+          "en": "I have some food here."
+        },
+        {
+          "en": "I will give you some of this."
+        },
+        {
+          "en": "Can we share this food?"
         }
       ]
     },
     {
       "level": 14,
-      "name": "Advanced resolution & frames",
+      "name": "Food & eating",
       "phrases": [
         {
-          "en": "I want to sleep.",
-          "fon": "mi sak nal"
+          "en": "This food is good."
         },
         {
-          "en": "She wants to learn Fonoran.",
-          "fon": "ba husak lahu maldanse"
+          "en": "I am full."
         },
         {
-          "en": "Do not eat the fish.",
-          "fon": "no tel kalye"
+          "en": "This tastes bad."
         },
         {
-          "en": "The fish swims in the river.",
-          "fon": "kalye giye yenanye"
+          "en": "We must cook this meat."
         },
         {
-          "en": "Bring me water.",
-          "fon": "la mi ye"
+          "en": "That plant is poison."
         },
         {
-          "en": "We ran through the forest toward the river.",
-          "fon": "dan ta ginek nan yenanye"
+          "en": "This meat is raw."
         },
         {
-          "en": "Nobody went home after dark.",
-          "fon": "no ba gi nalche shu gan"
+          "en": "I will cook the food."
         },
         {
-          "en": "Tell the child a story about the sea.",
-          "fon": "se bagen se yemelto"
+          "en": "Can you eat this?"
         },
         {
-          "en": "I am afraid of the dark.",
-          "fon": "mi nespe gan"
+          "en": "I am very hungry."
         },
         {
-          "en": "The old king ruled the city for many years.",
-          "fon": "di ta ba [ruled] lekche lek kan",
-          "note": "gap: ruled (needs a root)"
+          "en": "This water is clean."
+        },
+        {
+          "en": "That fruit is not safe."
+        },
+        {
+          "en": "Please eat something."
+        },
+        {
+          "en": "I will share this food."
+        },
+        {
+          "en": "Is this safe to eat?"
+        },
+        {
+          "en": "This tastes very good."
+        },
+        {
+          "en": "I cannot eat raw fish."
+        },
+        {
+          "en": "We need to find water."
+        },
+        {
+          "en": "Do you want more food?"
+        },
+        {
+          "en": "I am not full yet."
+        },
+        {
+          "en": "This smell is bad."
+        },
+        {
+          "en": "Cook it over the fire."
+        },
+        {
+          "en": "This food is still raw."
+        },
+        {
+          "en": "I do not eat that animal."
+        },
+        {
+          "en": "That berry made me sick."
+        },
+        {
+          "en": "We can eat this together."
+        },
+        {
+          "en": "Is that water drinkable?"
+        },
+        {
+          "en": "I am hungry and thirsty."
+        },
+        {
+          "en": "This food is cooked enough."
+        },
+        {
+          "en": "Do not touch that plant."
+        },
+        {
+          "en": "I will boil the water."
+        },
+        {
+          "en": "This has a strange taste."
+        },
+        {
+          "en": "Take this food, please."
+        },
+        {
+          "en": "Did you eat today?"
+        },
+        {
+          "en": "I am full and satisfied."
+        },
+        {
+          "en": "That food is rotten."
+        },
+        {
+          "en": "We have very little food."
+        },
+        {
+          "en": "I tasted it and it is safe."
+        },
+        {
+          "en": "Do not eat that red berry."
+        },
+        {
+          "en": "This root is good to eat."
+        },
+        {
+          "en": "Can we cook this together?"
+        },
+        {
+          "en": "I do not know this food."
+        },
+        {
+          "en": "This meat smells bad."
+        },
+        {
+          "en": "This food tastes good."
+        },
+        {
+          "en": "I am full now."
+        },
+        {
+          "en": "That food may be poison."
+        },
+        {
+          "en": "This meat is still raw."
+        },
+        {
+          "en": "We must cook this first."
+        },
+        {
+          "en": "Do you want to eat now?"
+        },
+        {
+          "en": "Please drink some water."
+        },
+        {
+          "en": "This tastes very bad."
+        }
+      ]
+    },
+    {
+      "level": 15,
+      "name": "Weather & environment",
+      "phrases": [
+        {
+          "en": "It is raining."
+        },
+        {
+          "en": "The night is very cold."
+        },
+        {
+          "en": "It is dark here."
+        },
+        {
+          "en": "The wind is strong."
+        },
+        {
+          "en": "The sun is gone."
+        },
+        {
+          "en": "Is it going to rain more?"
+        },
+        {
+          "en": "The storm is coming closer."
+        },
+        {
+          "en": "Please help me make fire."
+        },
+        {
+          "en": "I am cold and wet."
+        },
+        {
+          "en": "The rain is very heavy."
+        },
+        {
+          "en": "Is the storm dangerous?"
+        },
+        {
+          "en": "We must stay near the fire."
+        },
+        {
+          "en": "The wind is getting stronger."
+        },
+        {
+          "en": "Do you see the dark clouds?"
+        },
+        {
+          "en": "The fire is going out."
+        },
+        {
+          "en": "I am afraid of the storm."
+        },
+        {
+          "en": "We need dry wood for fire."
+        },
+        {
+          "en": "The sun will come tomorrow."
+        },
+        {
+          "en": "Is the rain stopping?"
+        },
+        {
+          "en": "It is too dark to move."
+        },
+        {
+          "en": "The ground is wet and cold."
+        },
+        {
+          "en": "Come closer to the fire."
+        },
+        {
+          "en": "The sky is very dark."
+        },
+        {
+          "en": "Is it cold where you are?"
+        },
+        {
+          "en": "The storm is loud and strong."
+        },
+        {
+          "en": "I feel the cold wind."
+        },
+        {
+          "en": "We must not let the fire die."
+        },
+        {
+          "en": "The rain stopped."
+        },
+        {
+          "en": "Is the sun coming up?"
+        },
+        {
+          "en": "I do not understand the weather here."
+        },
+        {
+          "en": "The air is cold and wet."
+        },
+        {
+          "en": "Please move away from the wind."
+        },
+        {
+          "en": "The fire gives us warmth."
+        },
+        {
+          "en": "Is it safe to go outside now?"
+        },
+        {
+          "en": "I am very cold tonight."
+        },
+        {
+          "en": "The storm passed."
+        },
+        {
+          "en": "Can you see the sun?"
+        },
+        {
+          "en": "The wind is cold and sharp."
+        },
+        {
+          "en": "We need shelter from the rain."
+        },
+        {
+          "en": "I do not know this word."
+        },
+        {
+          "en": "The night is long and cold."
+        },
+        {
+          "en": "Is the wind stopping?"
+        },
+        {
+          "en": "I feel better near the fire."
+        },
+        {
+          "en": "The sun is warm today."
+        },
+        {
+          "en": "Give me wood for the fire."
+        },
+        {
+          "en": "Are those storm clouds?"
+        },
+        {
+          "en": "The darkness is frightening to me."
+        },
+        {
+          "en": "The rain and wind came together."
+        },
+        {
+          "en": "It is raining very hard now."
+        },
+        {
+          "en": "The night will be very cold."
+        }
+      ]
+    },
+    {
+      "level": 16,
+      "name": "Body & health",
+      "phrases": [
+        {
+          "en": "I cannot sleep."
+        },
+        {
+          "en": "I feel strong today."
+        },
+        {
+          "en": "Are you sick?"
+        },
+        {
+          "en": "My leg hurts."
+        },
+        {
+          "en": "Please breathe slowly."
+        },
+        {
+          "en": "I cannot breathe well."
+        },
+        {
+          "en": "Are you well?"
+        },
+        {
+          "en": "My arm is hurt."
+        },
+        {
+          "en": "I slept a little."
+        },
+        {
+          "en": "I did not sleep."
+        },
+        {
+          "en": "You look very tired."
+        },
+        {
+          "en": "My stomach hurts badly."
+        },
+        {
+          "en": "Can you walk?"
+        },
+        {
+          "en": "Please let me sleep."
+        },
+        {
+          "en": "My back hurts a lot."
+        },
+        {
+          "en": "I am not sick."
+        },
+        {
+          "en": "You should rest now."
+        },
+        {
+          "en": "Does your hand hurt?"
+        },
+        {
+          "en": "I am strong enough."
+        },
+        {
+          "en": "I need to breathe fresh air."
+        },
+        {
+          "en": "My eyes are very heavy."
+        },
+        {
+          "en": "I cannot stand up."
+        },
+        {
+          "en": "Are you breathing well?"
+        },
+        {
+          "en": "My foot is swollen."
+        },
+        {
+          "en": "I feel weak and sick."
+        },
+        {
+          "en": "This person needs rest."
+        },
+        {
+          "en": "I slept and feel better."
+        },
+        {
+          "en": "Do you feel pain?"
+        },
+        {
+          "en": "I mean I am unwell."
+        },
+        {
+          "en": "My chest feels tight."
+        },
+        {
+          "en": "I am not strong today."
+        },
+        {
+          "en": "Can you breathe deeply?"
+        },
+        {
+          "en": "My body is very sore."
+        },
+        {
+          "en": "I need more sleep."
+        },
+        {
+          "en": "The old person is sick."
+        },
+        {
+          "en": "I said sick, not tired."
+        },
+        {
+          "en": "Are you tired or sick?"
+        },
+        {
+          "en": "I feel pain in my side."
+        },
+        {
+          "en": "Please carry this for me."
+        },
+        {
+          "en": "I am well and strong."
+        },
+        {
+          "en": "My knee cannot bend."
+        },
+        {
+          "en": "Is the child well?"
+        },
+        {
+          "en": "I am tired but not sick."
+        },
+        {
+          "en": "I am very tired."
+        },
+        {
+          "en": "I feel weak and cold."
+        },
+        {
+          "en": "My leg is hurting."
+        },
+        {
+          "en": "I need to sleep now."
+        },
+        {
+          "en": "Can you breathe normally?"
+        },
+        {
+          "en": "My arm is injured."
+        },
+        {
+          "en": "I could not sleep last night."
+        }
+      ]
+    },
+    {
+      "level": 17,
+      "name": "Family & children",
+      "phrases": [
+        {
+          "en": "The baby is crying."
+        },
+        {
+          "en": "My child is missing."
+        },
+        {
+          "en": "Is your mother here?"
+        },
+        {
+          "en": "The old person needs help."
+        },
+        {
+          "en": "My baby is very hungry."
+        },
+        {
+          "en": "Is the child safe?"
+        },
+        {
+          "en": "I am looking for my father."
+        },
+        {
+          "en": "My mother is sick."
+        },
+        {
+          "en": "Please hold the baby."
+        },
+        {
+          "en": "I am worried about my child."
+        },
+        {
+          "en": "The child is sleeping."
+        },
+        {
+          "en": "Do you have children?"
+        },
+        {
+          "en": "My family is not here."
+        },
+        {
+          "en": "The baby needs water."
+        },
+        {
+          "en": "I miss my family."
+        },
+        {
+          "en": "Is the old person eating?"
+        },
+        {
+          "en": "Please watch the child."
+        },
+        {
+          "en": "My father is very weak."
+        },
+        {
+          "en": "The child is cold and scared."
+        },
+        {
+          "en": "Can you help the old person?"
+        },
+        {
+          "en": "The baby is not breathing well."
+        },
+        {
+          "en": "Is your father alive?"
+        },
+        {
+          "en": "I am the mother of this child."
+        },
+        {
+          "en": "The old person cannot walk far."
+        },
+        {
+          "en": "I feel afraid for my baby."
+        },
+        {
+          "en": "Do you have a mother here?"
+        },
+        {
+          "en": "Give food to the child first."
+        },
+        {
+          "en": "My child is very small."
+        },
+        {
+          "en": "The baby is sleeping now."
+        },
+        {
+          "en": "I do not understand you."
+        },
+        {
+          "en": "Is this child your child?"
+        },
+        {
+          "en": "My mother is old and tired."
+        },
+        {
+          "en": "Please stay near the child."
+        },
+        {
+          "en": "I am the father."
+        },
+        {
+          "en": "The child is hurt."
+        },
+        {
+          "en": "Are you the mother?"
+        },
+        {
+          "en": "I feel sad without my family."
+        },
+        {
+          "en": "The old person is in pain."
+        },
+        {
+          "en": "Can I carry the baby?"
+        },
+        {
+          "en": "My child is not eating."
+        },
+        {
+          "en": "Please say that again slowly."
+        },
+        {
+          "en": "The family is separated."
+        },
+        {
+          "en": "Is the baby a girl or boy?"
+        },
+        {
+          "en": "The child is tired and hungry."
+        },
+        {
+          "en": "I need to find my mother."
+        },
+        {
+          "en": "I feel alone without my child."
+        },
+        {
+          "en": "The old person needs rest."
+        },
+        {
+          "en": "Is your family near here?"
+        },
+        {
+          "en": "I am frightened for my family."
+        },
+        {
+          "en": "The child needs warmth and food."
+        }
+      ]
+    },
+    {
+      "level": 18,
+      "name": "Repair & clarification",
+      "phrases": [
+        {
+          "en": "I do not understand."
+        },
+        {
+          "en": "Say that again."
+        },
+        {
+          "en": "Please speak more slowly."
+        },
+        {
+          "en": "Do you mean this one?"
+        },
+        {
+          "en": "That is wrong."
+        },
+        {
+          "en": "Point to what you mean."
+        },
+        {
+          "en": "I did not hear you."
+        },
+        {
+          "en": "Please repeat that."
+        },
+        {
+          "en": "I understood you wrongly."
+        },
+        {
+          "en": "Can you show me again?"
+        },
+        {
+          "en": "That is not what I meant."
+        },
+        {
+          "en": "Do you mean that thing?"
+        },
+        {
+          "en": "I am confused."
+        },
+        {
+          "en": "Please say it one more time."
+        },
+        {
+          "en": "Point to it again."
+        },
+        {
+          "en": "Is this what you mean?"
+        },
+        {
+          "en": "No, that is not right."
+        },
+        {
+          "en": "I will say it again."
+        },
+        {
+          "en": "Do you mean the big one?"
+        },
+        {
+          "en": "Please speak slowly and clearly."
+        },
+        {
+          "en": "Did I do that wrong?"
+        },
+        {
+          "en": "You spoke too fast."
+        },
+        {
+          "en": "I am lost and confused."
+        },
+        {
+          "en": "Please point to it slowly."
+        },
+        {
+          "en": "Do you mean this or that?"
+        },
+        {
+          "en": "That word is not clear to me."
+        },
+        {
+          "en": "I do not understand this signal."
+        },
+        {
+          "en": "Let me try again."
+        },
+        {
+          "en": "Is that the wrong place?"
+        },
+        {
+          "en": "I think I understand now."
+        },
+        {
+          "en": "Please do that one more time."
+        },
+        {
+          "en": "I was wrong about that."
+        },
+        {
+          "en": "Do you understand this sign?"
+        },
+        {
+          "en": "I feel unsure and uncertain."
+        },
+        {
+          "en": "That is not what I wanted."
+        },
+        {
+          "en": "Can you point more clearly?"
+        },
+        {
+          "en": "Please show me the correct one."
+        },
+        {
+          "en": "I do not know that word."
+        },
+        {
+          "en": "Say the first part again."
+        },
+        {
+          "en": "Did you mean the small one?"
+        },
+        {
+          "en": "I understand a little now."
+        },
+        {
+          "en": "That action was not correct."
+        },
+        {
+          "en": "I do not understand and I am sorry."
+        },
+        {
+          "en": "Please slow down and repeat."
+        },
+        {
+          "en": "I was wrong and I will try again."
+        },
+        {
+          "en": "We do not understand each other yet."
+        },
+        {
+          "en": "Let us start that part again."
+        },
+        {
+          "en": "I did not understand that."
+        },
+        {
+          "en": "Can you say that again?"
+        },
+        {
+          "en": "Please repeat the last part."
+        }
+      ]
+    },
+    {
+      "level": 19,
+      "name": "Plans & intent",
+      "phrases": [
+        {
+          "en": "I want to leave this place."
+        },
+        {
+          "en": "We will rest here tonight."
+        },
+        {
+          "en": "Can you help me carry this?"
+        },
+        {
+          "en": "Maybe we can find water tomorrow."
+        },
+        {
+          "en": "I will try to start a fire."
+        },
+        {
+          "en": "Do you want to move now?"
+        },
+        {
+          "en": "I hope someone finds us soon."
+        },
+        {
+          "en": "We can sleep here and leave at light."
+        },
+        {
+          "en": "I plan to go up that hill."
+        },
+        {
+          "en": "Can you try to climb that tree?"
+        },
+        {
+          "en": "Maybe tomorrow will be better."
+        },
+        {
+          "en": "I want food and I want rest."
+        },
+        {
+          "en": "Will you stay here with me?"
+        },
+        {
+          "en": "I can carry that for you."
+        },
+        {
+          "en": "We will try to find the path."
+        },
+        {
+          "en": "Do you plan to go that way?"
+        },
+        {
+          "en": "I hope we find shelter before dark."
+        },
+        {
+          "en": "Maybe we should wait here."
+        },
+        {
+          "en": "I want to go toward the water."
+        },
+        {
+          "en": "Can we rest for a short time?"
+        },
+        {
+          "en": "I will not go there alone."
+        },
+        {
+          "en": "Do you want to come with me?"
+        },
+        {
+          "en": "I think I can fix this."
+        },
+        {
+          "en": "We will need more wood for the fire."
+        },
+        {
+          "en": "Can you try to signal for help?"
+        },
+        {
+          "en": "I hope the rain stops soon."
+        },
+        {
+          "en": "Maybe we can share the work."
+        },
+        {
+          "en": "I want to try a different path."
+        },
+        {
+          "en": "Will you watch while I sleep?"
+        },
+        {
+          "en": "I plan to gather food in the morning."
+        },
+        {
+          "en": "Can you show me what you plan?"
+        },
+        {
+          "en": "I will try and I will not stop."
+        },
+        {
+          "en": "We can go together or stay here."
+        },
+        {
+          "en": "I want to understand your plan."
+        },
+        {
+          "en": "Maybe we can build a shelter today."
+        },
+        {
+          "en": "Can we make a plan together?"
+        },
+        {
+          "en": "I hope we can find each other again."
+        },
+        {
+          "en": "Will you try to find more food?"
+        },
+        {
+          "en": "I want to rest and then move."
+        },
+        {
+          "en": "Maybe that path leads to people."
+        },
+        {
+          "en": "I can try to make a signal."
+        },
+        {
+          "en": "Do you want to stay or go?"
+        },
+        {
+          "en": "I will wait here for you."
+        },
+        {
+          "en": "We can try again tomorrow."
+        },
+        {
+          "en": "I hope this is the right way."
+        },
+        {
+          "en": "Can you wait for me here?"
+        },
+        {
+          "en": "I plan to watch through the night."
+        },
+        {
+          "en": "Maybe we can try a different way."
+        },
+        {
+          "en": "Will we find people near the water?"
+        },
+        {
+          "en": "I want to find higher ground."
+        }
+      ]
+    },
+    {
+      "level": 20,
+      "name": "Closure & gratitude",
+      "phrases": [
+        {
+          "en": "We are safe now."
+        },
+        {
+          "en": "That is enough for today."
+        },
+        {
+          "en": "Rest well."
+        },
+        {
+          "en": "I am grateful for your help."
+        },
+        {
+          "en": "We did enough today."
+        },
+        {
+          "en": "I will go now."
+        },
+        {
+          "en": "Sleep well tonight."
+        },
+        {
+          "en": "You helped me today."
+        },
+        {
+          "en": "We can stop now."
+        },
+        {
+          "en": "This day is finished."
+        },
+        {
+          "en": "Will you be here tomorrow?"
+        },
+        {
+          "en": "I will see you again."
+        },
+        {
+          "en": "Please rest now."
+        },
+        {
+          "en": "The work is done."
+        },
+        {
+          "en": "We are both tired."
+        },
+        {
+          "en": "Are you ready to stop?"
+        },
+        {
+          "en": "I feel peaceful now."
+        },
+        {
+          "en": "Thank you for staying with me."
+        },
+        {
+          "en": "We survived another day."
+        },
+        {
+          "en": "I am going to sleep now."
+        },
+        {
+          "en": "We have enough food and water."
+        },
+        {
+          "en": "Is this a good place to stop?"
+        },
+        {
+          "en": "I am no longer afraid."
+        },
+        {
+          "en": "That was hard but we finished."
+        },
+        {
+          "en": "I will not forget your help."
+        },
+        {
+          "en": "We can rest and then continue."
+        },
+        {
+          "en": "Do you want to stop here?"
+        },
+        {
+          "en": "This is a good place to sleep."
+        },
+        {
+          "en": "We worked well together today."
+        },
+        {
+          "en": "Did I understand you correctly?"
+        },
+        {
+          "en": "I am glad this day is over."
+        },
+        {
+          "en": "Let us not speak now."
+        },
+        {
+          "en": "You kept me warm and safe."
+        },
+        {
+          "en": "Are we finished for today?"
+        },
+        {
+          "en": "I will stay near you tonight."
+        },
+        {
+          "en": "Please show me that again."
+        },
+        {
+          "en": "We are both alive and well."
+        },
+        {
+          "en": "Thank you for the food today."
+        },
+        {
+          "en": "Is there more to do now?"
+        },
+        {
+          "en": "I am ready to sleep."
+        },
+        {
+          "en": "I see you and I am grateful."
+        },
+        {
+          "en": "Tomorrow we continue together."
+        },
+        {
+          "en": "You were good to me today."
+        },
+        {
+          "en": "We can stop working now."
+        },
+        {
+          "en": "I feel calm and at peace."
+        },
+        {
+          "en": "This is enough for now."
+        },
+        {
+          "en": "You did not leave me alone."
+        },
+        {
+          "en": "Are you going to sleep now?"
+        },
+        {
+          "en": "I will come back to this place."
+        },
+        {
+          "en": "We made it through this day."
         }
       ]
     }

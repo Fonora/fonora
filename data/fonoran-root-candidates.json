@@ -4185,6 +4185,6 @@
     "workflow": "meaning cleanup → primitive test → priority class → sound generation → distinctiveness + collision + boundary scoring → human approval → compounds",
     "source_concepts": "data/fonoran-concept-inventory.json"
   },
-  "generated_at": "2026-07-04T02:16:55.207Z",
+  "generated_at": "2026-07-04T14:49:48.241Z",
   "collision_profile": "en"
 }

@@ -4,6 +4,8 @@ date: 2026-06-24
 phase: phase-2
 ---
 
+> **Historical commands.** `npm run fonoran:gen3`, `fonoran:gen3:audit`, and `tools/fonoran-gen3-audit.js` were removed from the repo. The scoring libraries (`fonoran-gen3-readability.js`, `fonoran-gen3-distinctiveness.js`) are retained for the active boundary-check pipeline. See the [archive doc](../../docs/archive/fonoran-gen3.md) for the full historical record.
+
 # Meaning from coordinates: the Gen 3 DDA experiment
 
 ## Research Question

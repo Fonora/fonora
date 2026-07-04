@@ -73,7 +73,7 @@ Grammar-doc examples were rewritten to use real dictionary words (**ba**, **ben*
 
 ## Evaluation
 
-The primary evaluation instrument was the English→Fonoran regression corpus exercised by `npm run test:translator` ([`scripts/fonoran-translation-gaps.js`](../scripts/fonoran-translation-gaps.js) with `--assert`). Commit `80162e7` persisted the first full run to [`data/fonoran-translation-test-latest.json`](../data/fonoran-translation-test-latest.json) and surfaced it at `/language#gaps`.
+The primary evaluation instrument was the English→Fonoran regression corpus exercised by `npm run test:translator` ([`scripts/fonoran-translation-gaps.js`](../scripts/fonoran-translation-gaps.js) with `--assert`). Commit `80162e7` persisted the first full run to [`data/fonoran-translation-test-latest.json`](../data/fonoran-translation-test-latest.json) and surfaced it at `/tools#translation-test` (was `/language#gaps` at time of writing).
 
 At that moment, corpus version `1.0` contained **96 phrases across ten levels** (basic statements through negation and questions). **Coverage was 100% (96/96)**: every phrase resolved without a hard lexical gap. Commit `79baa18` refreshed the saved report at the same percentage after the inventory trim.
 

@@ -50,9 +50,9 @@ Live vocabulary: `data/fonoran-sound-bucket.json` (local runtime; gitignored).
 | --- | --- |
 | [Learn](https://fonora.org/learn) | Public script practice |
 | [Tools](https://fonora.org/tools) | QA and builder utilities (sign-in when OAuth configured) |
-| [Research notebook](https://fonora.org/research) | RN-01 through RN-17 experiment write-ups |
+| [Research notebook](https://fonora.org/research) | RN-01 through RN-27 experiment write-ups |
 
-CLI: `npm run fonoran:build`, `fonoran:root-candidates`. See [docs/fonoran.md](docs/fonoran.md#pipeline).
+CLI: `npm run fonoran:build`, `fonoran:root-candidates`, `fonoran:refine`. See [docs/fonoran-cli-tools.md](docs/fonoran-cli-tools.md) for the full operator reference.
 
 ## Live site
 

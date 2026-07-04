@@ -26,6 +26,34 @@ export function githubDocUrl(repoPath, ref = 'main') {
 
 export const DEFAULT_DOC_PATH = 'docs/platform-overview.md';
 
+/** Default doc when opening Docs from the Tools section. */
+export const TOOLS_DOCS_DEFAULT = 'docs/fonoran-cli-tools.md';
+
+/** @param {Pick<Location, 'pathname'>} [loc] */
+export function isToolsPath(loc = window.location) {
+  const path = loc.pathname.replace(/\/$/, '') || '/';
+  return path === '/tools';
+}
+
+/**
+ * @param {string} repoPath
+ */
+export function toolsDocViewerHref(repoPath) {
+  const { path, anchor } = splitDocRef(repoPath);
+  const params = new URLSearchParams({ path });
+  const base = `/tools?${params.toString()}`;
+  return anchor ? `${base}#${anchor}` : `${base}#docs`;
+}
+
+/**
+ * @param {string} repoPath
+ * @param {Pick<Location, 'pathname'>} [loc]
+ */
+export function docViewerHrefForContext(repoPath, loc = window.location) {
+  if (isToolsPath(loc)) return toolsDocViewerHref(repoPath);
+  return docViewerHref(repoPath);
+}
+
 /** Base path for the public research notebook (path-routed for SEO). */
 export const RESEARCH_BASE = '/research';
 
@@ -94,7 +122,7 @@ function buildDocCatalog() {
     { path: 'SECURITY.md', label: 'Security', layer: 'essential' },
     { path: 'CONTRIBUTING.md', label: 'Contributing', layer: 'essential' },
 
-    { path: 'docs/language-rules.md', label: 'Encoding rules', layer: 'script' },
+    { path: 'docs/language-rules.md', label: 'Language rules', layer: 'script' },
     { path: 'docs/multilingual-support.md', label: 'Multilingual support', layer: 'script' },
     { path: 'docs/IPA-PIPELINE-REPORT.md', label: 'IPA pipeline report', layer: 'script' },
     { path: 'docs/espeak-integration.md', label: 'eSpeak integration', layer: 'script' },
@@ -103,6 +131,8 @@ function buildDocCatalog() {
 
     { path: 'docs/fonoran-constitution.md', label: 'Fonoran constitution', layer: 'language' },
     { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
+    { path: 'docs/fonoran-compound-workflow.md', label: 'Compound workflow', layer: 'language' },
+    { path: 'docs/fonoran-cli-tools.md', label: 'CLI tools reference', layer: 'language' },
     { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
     { path: 'docs/fonoran-interpretive-translator.md', label: 'Interpretive translator', layer: 'language' },
 
@@ -300,7 +330,7 @@ export function resolveMarkdownHref(href, docPath) {
 
 export function openDocViewer(repoPath) {
   const { path } = splitDocRef(repoPath);
-  history.pushState(null, '', docViewerHref(repoPath));
+  history.pushState(null, '', docViewerHrefForContext(repoPath));
   if (typeof window.showTab === 'function') {
     window.showTab('docs');
   }

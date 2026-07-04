@@ -59,14 +59,14 @@ function extractJsonText(text) {
  * @param {number} [opts.temperature]
  * @returns {Promise<{ ok: true, data: object, raw: string, usage?: object } | { ok: false, error: string, status?: number }>}
  */
-export async function completeJson({ system, user, temperature = 0 }) {
+export async function completeJson({ system, user, temperature = 0, maxTokens: maxTokensOpt }) {
   if (!anthropicConfigured()) {
     return { ok: false, error: 'ANTHROPIC_API_KEY not set' };
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY.trim();
   const model = anthropicModel();
-  const maxTokens = anthropicMaxTokens();
+  const maxTokens = maxTokensOpt ?? anthropicMaxTokens();
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     await throttle();

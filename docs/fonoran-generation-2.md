@@ -1,6 +1,6 @@
 # Fonoran Generation 2 — Architecture Snapshot
 
-> This document records the decisions, structure, and workflow that produced the best Fonoran generation to date: **89 primitive roots, 455 compound words, 100/100/100/100 health score**.
+> **Historical snapshot.** This document records the decisions and structure of Generation 2 (89 primitives, 455 compounds). The active vocabulary is now **483+ compounds** built on the same editorial principles. The `tools/legacy/` directory referenced in the Deprecated section no longer exists. Active workflow: [fonoran.md](fonoran.md) · [fonoran-cli-tools.md](fonoran-cli-tools.md).
 
 ---
 

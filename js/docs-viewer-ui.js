@@ -1,12 +1,14 @@
 import { escapeHtml, errorMessage } from './utils.js';
 import {
   DEFAULT_DOC_PATH,
+  TOOLS_DOCS_DEFAULT,
   getDocCatalog,
   getNavigableDocCatalog,
   DOC_LAYER_ORDER,
-  docViewerHref,
+  docViewerHrefForContext,
   githubDocUrl,
   isDocsRoute,
+  isToolsPath,
   openDocViewer,
   parseDocFromLocation,
   splitDocRef,
@@ -74,7 +76,7 @@ function scrollToDocAnchor(anchor) {
 }
 
 function updateDocAnchorInUrl(path, anchor) {
-  const href = anchor ? docViewerHref(`${path}#${anchor}`) : docViewerHref(path);
+  const href = anchor ? docViewerHrefForContext(`${path}#${anchor}`) : docViewerHrefForContext(path);
   const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
   if (current !== href) {
     history.replaceState(null, '', href);
@@ -97,7 +99,7 @@ function renderSidebar(activePath) {
               (entry) => `
             <li>
               <a
-                href="${escapeHtml(docViewerHref(entry.path))}"
+                href="${escapeHtml(docViewerHrefForContext(entry.path))}"
                 class="doc-viewer-nav-link${entry.path === activePath ? ' doc-viewer-nav-link--active' : ''}"
                 data-doc-path="${escapeHtml(entry.path)}"
               >${escapeHtml(entry.label)}</a>
@@ -183,12 +185,12 @@ function renderDocPager(path) {
     <div class="doc-viewer-pager-inner">
       ${
         prev
-          ? `<a href="${escapeHtml(docViewerHref(prev.path))}" class="doc-viewer-pager-link doc-viewer-pager-link--prev" data-doc-path="${escapeHtml(prev.path)}"><span class="doc-viewer-pager-label">Previous</span><span class="doc-viewer-pager-title">${escapeHtml(prev.label)}</span></a>`
+          ? `<a href="${escapeHtml(docViewerHrefForContext(prev.path))}" class="doc-viewer-pager-link doc-viewer-pager-link--prev" data-doc-path="${escapeHtml(prev.path)}"><span class="doc-viewer-pager-label">Previous</span><span class="doc-viewer-pager-title">${escapeHtml(prev.label)}</span></a>`
           : '<span class="doc-viewer-pager-spacer" aria-hidden="true"></span>'
       }
       ${
         next
-          ? `<a href="${escapeHtml(docViewerHref(next.path))}" class="doc-viewer-pager-link doc-viewer-pager-link--next" data-doc-path="${escapeHtml(next.path)}"><span class="doc-viewer-pager-label">Next</span><span class="doc-viewer-pager-title">${escapeHtml(next.label)}</span></a>`
+          ? `<a href="${escapeHtml(docViewerHrefForContext(next.path))}" class="doc-viewer-pager-link doc-viewer-pager-link--next" data-doc-path="${escapeHtml(next.path)}"><span class="doc-viewer-pager-label">Next</span><span class="doc-viewer-pager-title">${escapeHtml(next.label)}</span></a>`
           : '<span class="doc-viewer-pager-spacer" aria-hidden="true"></span>'
       }
     </div>
@@ -297,7 +299,7 @@ export async function loadDocViewer(repoPath) {
   setSidebarOpen(false);
   disconnectTocScrollSpy();
 
-  const url = docViewerHref(anchor ? `${path}#${anchor}` : path);
+  const url = docViewerHrefForContext(anchor ? `${path}#${anchor}` : path);
   const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
   if (current !== url) {
     history.replaceState(null, '', url);
@@ -356,7 +358,7 @@ export function onDocsTabActivated() {
       history.replaceState(
         null,
         '',
-        docViewerHref(parsed.anchor ? `${parsed.path}#${parsed.anchor}` : parsed.path),
+        docViewerHrefForContext(parsed.anchor ? `${parsed.path}#${parsed.anchor}` : parsed.path),
       );
     }
     const ref = parsed.anchor ? `${parsed.path}#${parsed.anchor}` : parsed.path;
@@ -366,7 +368,7 @@ export function onDocsTabActivated() {
     return;
   }
   if (!currentPath) {
-    loadDocViewer(DEFAULT_DOC_PATH).catch(() => {});
+    loadDocViewer(isToolsPath() ? TOOLS_DOCS_DEFAULT : DEFAULT_DOC_PATH).catch(() => {});
   }
 }
 

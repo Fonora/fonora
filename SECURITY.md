@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes apply to the latest release on the `main` branch of [https://github.com/Fonora/fonora](https://https://github.com/Fonora/fonora).
+Security fixes apply to the latest release on the `main` branch of [https://github.com/Fonora/fonora](https://github.com/Fonora/fonora).
 
 ## Reporting a vulnerability
 
@@ -18,13 +18,17 @@ Instead, email the maintainers or open a private security advisory on GitHub if 
 
 ## Authentication model
 
-Fonoran **write** routes (`POST`/`PATCH`/`DELETE` on `/api/fonoran/*` and the research notes editor) require a valid Google OAuth session when these three vars are set:
+Fonoran uses a **two-tier auth model** when these three vars are set:
 
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `SESSION_SECRET`
 
+**Community tier** — any signed-in Google user may submit votes and proposals. **Admin tier** — full write access (`POST`/`PATCH`/`DELETE` on `/api/fonoran/*`) requires an email listed in `ADMIN_EMAILS`. The deprecated `ALLOWED_DOMAIN` variable is no longer used for community access control.
+
 `FONORAN_AUTH` is an **opt-out** flag only (`off` disables auth for local development). **Omit it in production.** If OAuth credentials are missing, writes are open (development mode only).
+
+See [docs/fonoran-auth-and-release.md](docs/fonoran-auth-and-release.md) for the complete tier breakdown.
 
 Intentionally public endpoints (research participation):
 
@@ -51,4 +55,4 @@ Set `FONORAN_AUTH=off` or `FONORAN_AUTH_OFF=1` only on a trusted development mac
 | Reference JSON, docs, builder UI, auth middleware | Live lab bucket, runtime lexicon, PostgreSQL rows |
 | Milestone snapshots (`fonoran-compounds.json`, `fonoran-llm-evaluations.json`, etc.) | `.env`, local backups |
 
-Security does not depend on hiding source code. Write access requires a valid session on an allowlisted Google account (`ALLOWED_DOMAIN` or `ADMIN_EMAILS`).
+Security does not depend on hiding source code. Admin write access requires a valid session on an `ADMIN_EMAILS`-listed Google account.

@@ -237,7 +237,8 @@
         "meal",
         "eat",
         "mana",
-        "bread"
+        "bread",
+        "this meat"
       ]
     },
     "form": {
@@ -360,7 +361,8 @@
       "aliases": [
         "multiple",
         "plenty",
-        "several"
+        "several",
+        "a lot"
       ]
     },
     "mark": {
@@ -456,7 +458,8 @@
       "label": "same",
       "aliases": [
         "identical",
-        "alike"
+        "alike",
+        "too"
       ]
     },
     "self": {
@@ -490,7 +493,8 @@
         "receive",
         "bring",
         "brings",
-        "brought"
+        "brought",
+        "getting"
       ]
     },
     "time": {
@@ -752,7 +756,8 @@
         "that",
         "it",
         "toy",
-        "toys"
+        "toys",
+        "things"
       ]
     },
     "think": {
@@ -952,7 +957,8 @@
       "label": "parent",
       "aliases": [
         "parent",
-        "parents"
+        "parents",
+        "father"
       ]
     },
     "grandparent": {
@@ -1217,6 +1223,117 @@
         "stay",
         "pause",
         "hold on"
+      ]
+    },
+    "teach": {
+      "label": "teach",
+      "aliases": [
+        "teaches"
+      ]
+    },
+    "teacher": {
+      "label": "teacher",
+      "aliases": [
+        "mentor"
+      ]
+    },
+    "laugh": {
+      "label": "laugh",
+      "aliases": [
+        "laughed",
+        "laughing",
+        "laughs"
+      ]
+    },
+    "meaning": {
+      "label": "meaning",
+      "aliases": [
+        "mean",
+        "meant"
+      ]
+    },
+    "small": {
+      "label": "small",
+      "aliases": [
+        "little"
+      ]
+    },
+    "breath": {
+      "label": "breath",
+      "aliases": [
+        "breathe"
+      ]
+    },
+    "doubt": {
+      "label": "doubt",
+      "aliases": [
+        "unsure"
+      ]
+    },
+    "wound": {
+      "label": "wound",
+      "aliases": [
+        "injured"
+      ]
+    },
+    "closer": {
+      "label": "closer",
+      "aliases": [
+        "closer"
+      ]
+    },
+    "breathe": {
+      "label": "breathe",
+      "aliases": [
+        "breathe"
+      ]
+    },
+    "certain": {
+      "label": "certain",
+      "aliases": [
+        "sure"
+      ]
+    },
+    "what": {
+      "label": "what",
+      "aliases": [
+        "which"
+      ]
+    },
+    "direction": {
+      "label": "direction",
+      "aliases": [
+        "direction"
+      ]
+    },
+    "raindrop": {
+      "label": "raindrop",
+      "aliases": [
+        "raindrops"
+      ]
+    },
+    "belong": {
+      "label": "belong",
+      "aliases": [
+        "belongs"
+      ]
+    },
+    "relieved": {
+      "label": "relieved",
+      "aliases": [
+        "relieved"
+      ]
+    },
+    "shake": {
+      "label": "shake",
+      "aliases": [
+        "shaking"
+      ]
+    },
+    "raw_food": {
+      "label": "raw food",
+      "aliases": [
+        "raw"
       ]
     }
   },

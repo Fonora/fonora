@@ -1,6 +1,6 @@
 # Phase IV playtest baseline
 
-> Generated: 2026-07-02T16:21:02.937Z
+> **Generated snapshot** — 2026-07-02. Run `npm run fonoran:playtest:baseline` to regenerate. This file is overwritten on each baseline run; do not edit manually.
 
 ## Smoke test
 

@@ -71,12 +71,12 @@ Use for uptime monitors.
 | `GOOGLE_CLIENT_ID` | - | Google OAuth client ID (Fonoran write auth) |
 | `GOOGLE_CLIENT_SECRET` | - | Google OAuth client secret |
 | `SESSION_SECRET` | - | Random secret for signing session cookies (32+ chars) |
-| `ALLOWED_DOMAIN` | `fonora.org` | Only `@domain` Google accounts may edit Fonoran |
-| `ADMIN_EMAILS` | - | Optional comma-separated allowlist instead of domain |
+| `ALLOWED_DOMAIN` | - | **Legacy** — no longer restricts community sign-in. Use `ADMIN_EMAILS` for admin-tier access. |
+| `ADMIN_EMAILS` | - | Comma-separated allowlist of Google emails with full admin write access |
 | `AUTH_CALLBACK_URL` | derived from request | OAuth redirect URI override |
 | `FONORAN_AUTH` | omit in production | Opt-out only: set to `off` locally to disable auth when OAuth is configured |
 
-No secrets are required for the **public script app** alone. When all three OAuth vars are set (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`), Fonoran **write** routes require a signed-in `@fonora.org` Google account. Omit `FONORAN_AUTH` in production; it is an opt-out flag only (`off` disables auth for local builder work). Copy [`.env.example`](../.env.example) for local testing.
+No secrets are required for the **public script app** alone. When all three OAuth vars are set (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`), Fonoran uses a two-tier auth model: any signed-in Google user may vote and submit proposals (community tier); admin writes require an email in `ADMIN_EMAILS`. Omit `FONORAN_AUTH` in production; it is an opt-out flag only (`off` disables auth for local builder work). Copy [`.env.example`](../.env.example) for local testing. See [fonoran-auth-and-release.md](fonoran-auth-and-release.md) for the full tier breakdown.
 
 ## PostgreSQL (Fonoran storage)
 
@@ -150,7 +150,7 @@ Optional `.env`: `FONORAN_DATA_DIR=external/fonora-data`. The main repo pins the
 
 See [platform-overview.md](platform-overview.md) for the data architecture overview.
 
-**Fonoran vocabulary pipeline (optimize → build → Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md). On Heroku after deploy, use **Advanced → Regenerate dictionary from git seeds** at `/language#advanced` (admin sign-in required).
+**Fonoran vocabulary pipeline (optimize → build → Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md). On Heroku after deploy, use **Advanced → Regenerate dictionary from git seeds** at `/tools#advanced` (admin sign-in required).
 
 ### Research notes (markdown)
 
@@ -190,15 +190,15 @@ Because WASM assets are large (~90 MB in `vendor/` after install), a Node static
 ### Fonoran (language builder)
 
 - [ ] Google Workspace + OAuth credentials configured ([fonoran-auth-and-release.md](fonoran-auth-and-release.md))
-- [ ] `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`, `ALLOWED_DOMAIN` set on Heroku
+- [ ] `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`, `ADMIN_EMAILS` set on Heroku
 - [ ] `FONORAN_AUTH` omitted in production (opt-out only; do not set to `off` on Heroku)
-- [ ] Write API requires `@fonora.org` session; unsigned users can browse dictionary only
+- [ ] Community users can vote/propose; admin writes require a listed `ADMIN_EMAILS` session
 - [ ] `DATABASE_URL` set; `FONORAN_SKIP_JSON_MIRROR=1` on Heroku
-- [ ] On first deploy: run `npm run fonoran:regenerate` (via Advanced → Regenerate, or Heroku one-off dyno) to populate Postgres from git seed data — `data/fonoran-compounds.json` + `data/fonoran-approved-roots.json` are the canonical sources
-- [ ] Verify dictionary count via `GET /api/fonoran/lab/compounds` (expect ~440 words)
-- [ ] Research notes: release sync populated Postgres (`GET /api/research/notes` count matches git store published count)
+- [ ] On first deploy: run `npm run fonoran:regenerate` (via **Advanced** at `/tools#advanced`, or Heroku one-off dyno) to populate Postgres from git seed data — `data/fonoran-compounds.json` + `data/fonoran-approved-roots.json` are the canonical sources
+- [ ] Verify dictionary via `GET /api/fonoran/lab/compounds` (run `npm run fonoran:compound-audit` for live count)
+- [ ] Research notes: served from `docs/research-notes/` markdown at runtime — no Postgres sync needed; verify with `npm run research:verify-md`
 - [ ] Contributor Google Form linked from `/language/` lander
-- [ ] Periodic backup: Advanced → Download snapshot, or `npm run fonoran:snapshot:export`
+- [ ] Periodic backup: **Advanced** at `/tools#advanced` → Download snapshot, or `npm run fonoran:snapshot:export`
 
 ## CI
 
