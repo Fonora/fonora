@@ -979,6 +979,186 @@ html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
   cursor: default;
 }
 
+/* Mobile nav — hamburger + slide-down panel (shown ≤768px) */
+.app-header__menu-btn {
+  display: none;
+}
+
+.app-header__mobile-title {
+  display: none;
+}
+
+.app-header__mobile-backdrop {
+  display: none;
+}
+
+html.app-header-menu-open {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .app-header__menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 2.35rem;
+    height: 2.35rem;
+    padding: 0;
+    margin-right: 0.35rem;
+    font-family: inherit;
+    border: 1px solid var(--layout-border);
+    border-radius: 8px;
+    background: var(--layout-surface);
+    color: var(--color-heading);
+    cursor: pointer;
+  }
+
+  .app-header__menu-btn:hover {
+    background: var(--color-btn-hover-bg);
+  }
+
+  .app-header__menu-icon {
+    display: block;
+  }
+
+  .app-header__menu-icon--close {
+    display: none;
+  }
+
+  .app-header--menu-open .app-header__menu-icon--open {
+    display: none;
+  }
+
+  .app-header--menu-open .app-header__menu-icon--close {
+    display: block;
+  }
+
+  .app-header__mobile-title {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-heading);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+    padding: 0.35rem 0;
+  }
+
+  .app-header__mobile-backdrop {
+    display: none;
+  }
+
+  html.app-header-menu-open .app-header__mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 19;
+    background: rgba(15, 23, 42, 0.35);
+  }
+
+  .app-header__row--platform {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .app-header:not(.app-header--menu-open) .app-header__start {
+    display: none;
+  }
+
+  .app-header:not(.app-header--menu-open) .app-header__row--tools:not(.learn-session-bar) {
+    display: none !important;
+  }
+
+  .app-header--menu-open .app-header__start {
+    display: block;
+    flex: 1 1 100%;
+    order: 10;
+    width: 100%;
+    padding-top: 0.35rem;
+    margin-top: 0.15rem;
+    border-top: 1px solid var(--layout-border);
+  }
+
+  .app-header--menu-open .platform-tabs {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.15rem;
+    overflow: visible;
+  }
+
+  .app-header--menu-open .platform-tab {
+    display: block;
+    margin-bottom: 0;
+    padding: 0.65rem 0.85rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: transparent;
+  }
+
+  .app-header--menu-open .platform-tab:hover {
+    background: var(--color-btn-hover-bg);
+  }
+
+  .app-header--menu-open .platform-tab--active {
+    color: var(--color-heading);
+    background: var(--color-accent-soft);
+    border: none;
+  }
+
+  .app-header--menu-open .app-header__row--tools:not([hidden]):not(.learn-session-bar) {
+    flex-direction: column;
+    border-bottom: none;
+    border-top: 1px solid var(--layout-border);
+  }
+
+  .app-header--menu-open .main-nav-primary {
+    flex-direction: column;
+    overflow: visible;
+    width: 100%;
+  }
+
+  .app-header--menu-open .tab-btn {
+    flex: none;
+    width: 100%;
+    justify-content: flex-start;
+    padding: 0.65rem var(--layout-gutter);
+    min-height: 2.75rem;
+    font-size: 0.92rem;
+    border-bottom: none;
+    border-left: 3px solid transparent;
+    margin-bottom: 0;
+  }
+
+  .app-header--menu-open .tab-btn.tab-btn--active,
+  html[data-fonora-nav] .app-header--menu-open .tab-btn.tab-btn--active {
+    border-bottom-color: transparent;
+    border-left-color: var(--color-tab-active);
+    background: var(--color-accent-soft);
+  }
+
+  .app-header__row--platform .app-header__global {
+    padding-bottom: 0;
+    margin-left: auto;
+  }
+
+  .fonoran-auth-user {
+    display: none;
+  }
+
+  .app-header--menu-open .fonoran-auth-user {
+    display: inline;
+    max-width: min(10rem, 40vw);
+  }
+}
+
 .btn-link {
   background: none;
   border: none;
@@ -1669,50 +1849,6 @@ html[data-edu-debug='true']::after {
 
   .home-tier-cards {
     grid-template-columns: 1fr;
-  }
-
-  .app-header__row--platform {
-    flex-wrap: nowrap;
-    align-items: flex-end;
-    gap: 0.5rem;
-  }
-
-  .app-header__start {
-    flex: 1 1 auto;
-    min-width: 0;
-    overflow: hidden;
-  }
-
-  .platform-tabs {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .platform-tabs::-webkit-scrollbar {
-    display: none;
-  }
-
-  .platform-tab {
-    padding: 0.5rem 0.85rem calc(0.55rem + 1px);
-    font-size: 0.95rem;
-  }
-
-  .app-header__global {
-    flex-shrink: 0;
-    width: auto;
-    justify-content: flex-end;
-  }
-
-  .app-header__tools {
-    width: 100%;
-    justify-content: flex-end;
-    padding-bottom: 0.35rem;
-  }
-
-  .fonoran-auth-user {
-    max-width: min(8rem, 22vw);
   }
 }
 
@@ -5172,27 +5308,6 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 }
 
 @media (max-width: 640px) {
-  .main-nav {
-    border-top: 1px solid #eee;
-    padding-top: 0.35rem;
-  }
-
-  .main-nav-primary {
-    flex: 1;
-  }
-
-  .main-nav-primary .tab-btn {
-    flex: 1;
-    justify-content: center;
-    padding: 0.55rem 0.5rem;
-    font-size: 0.8rem;
-  }
-
-  .tab-btn {
-    padding: 0.65rem 0.75rem;
-    font-size: 0.8rem;
-  }
-
   .home-intro-header h1 {
     font-size: 2rem;
   }

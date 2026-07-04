@@ -433,6 +433,8 @@ function patchStaticNav(root) {
   }
 
   patchAuthSlot(root);
+  ensureMobileNavChrome(root);
+  syncMobileNavTitle(root);
   syncBootAttributes();
 }
 
@@ -468,6 +470,85 @@ function render() {
 }
 
 const ALL_DROPDOWN_IDS = [];
+const MOBILE_NAV_MQ = typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)') : null;
+
+function hamburgerMarkup() {
+  return `<button type="button" class="app-header__menu-btn" id="app-header-menu-btn" aria-expanded="false" aria-controls="app-header-mobile-panel" aria-label="Open menu">
+    <svg class="app-header__menu-icon app-header__menu-icon--open" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+    <svg class="app-header__menu-icon app-header__menu-icon--close" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="6" y1="18" x2="18" y2="6"/></svg>
+  </button>`;
+}
+
+function syncMobileNavTitle(root) {
+  const titleEl = root.querySelector('.app-header__mobile-title');
+  if (!titleEl) return;
+  const active =
+    root.querySelector('.platform-tab--active') || root.querySelector('.platform-tab[aria-current="page"]');
+  titleEl.textContent = active?.textContent?.trim() || 'Fonora';
+}
+
+function closeMobileNav(root = document.getElementById(state.mountId)) {
+  if (!root) return;
+  root.classList.remove('app-header--menu-open');
+  document.documentElement.classList.remove('app-header-menu-open');
+  const btn = root.querySelector('#app-header-menu-btn');
+  if (btn) {
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-label', 'Open menu');
+  }
+  root.querySelector('.app-header__mobile-backdrop')?.remove();
+  document.querySelector('.app-header__mobile-backdrop')?.remove();
+}
+
+function openMobileNav(root = document.getElementById(state.mountId)) {
+  if (!root) return;
+  syncMobileNavTitle(root);
+  root.classList.add('app-header--menu-open');
+  document.documentElement.classList.add('app-header-menu-open');
+  const btn = root.querySelector('#app-header-menu-btn');
+  if (btn) {
+    btn.setAttribute('aria-expanded', 'true');
+    btn.setAttribute('aria-label', 'Close menu');
+  }
+  if (!document.querySelector('.app-header__mobile-backdrop')) {
+    const backdrop = document.createElement('div');
+    backdrop.className = 'app-header__mobile-backdrop';
+    backdrop.addEventListener('click', () => closeMobileNav(root));
+    document.body.appendChild(backdrop);
+  }
+}
+
+function ensureMobileNavChrome(root) {
+  const platformRow = root.querySelector('.app-header__row--platform');
+  if (!platformRow) return;
+
+  if (!platformRow.querySelector('#app-header-menu-btn')) {
+    platformRow.insertAdjacentHTML('afterbegin', hamburgerMarkup());
+    const title = document.createElement('div');
+    title.className = 'app-header__mobile-title';
+    title.setAttribute('aria-hidden', 'true');
+    platformRow.insertBefore(title, platformRow.querySelector('.app-header__start'));
+  }
+  syncMobileNavTitle(root);
+}
+
+function wireMobileNav(root) {
+  ensureMobileNavChrome(root);
+  const btn = root.querySelector('#app-header-menu-btn');
+  if (!btn || btn.dataset.mobileNavWired === 'true') return;
+  btn.dataset.mobileNavWired = 'true';
+
+  btn.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (root.classList.contains('app-header--menu-open')) closeMobileNav(root);
+    else openMobileNav(root);
+  });
+
+  MOBILE_NAV_MQ?.addEventListener('change', (event) => {
+    if (!event.matches) closeMobileNav(root);
+  });
+}
 
 function closeNavDropdown(dropdownId) {
   const dropdown = document.getElementById(dropdownId);
@@ -512,6 +593,7 @@ function dispatchNavEvent(root, type, detail) {
 }
 
 function handleScriptTab(root, tab) {
+  closeMobileNav(root);
   closeAllNavDropdowns();
   if (navSelectHandlers.onTab) {
     navSelectHandlers.onTab(tab);
@@ -529,6 +611,7 @@ function handleScriptTab(root, tab) {
 }
 
 function handlePlatformTab(root, tab) {
+  closeMobileNav(root);
   if (navSelectHandlers.onPlatformTab) {
     navSelectHandlers.onPlatformTab(tab);
     return;
@@ -579,6 +662,22 @@ function bindNavListeners() {
     );
   });
 
+  root.querySelectorAll('.platform-tab[href]').forEach((el) => {
+    el.addEventListener(
+      'click',
+      () => closeMobileNav(root),
+      { signal },
+    );
+  });
+
+  root.querySelectorAll('[data-platform-tab][href], .main-nav a.tab-btn').forEach((el) => {
+    el.addEventListener(
+      'click',
+      () => closeMobileNav(root),
+      { signal },
+    );
+  });
+
   root.querySelectorAll('[data-fonoran-page]').forEach((el) => {
     el.addEventListener(
       'click',
@@ -586,6 +685,7 @@ function bindNavListeners() {
         event.preventDefault();
         const page = el.dataset.fonoranPage;
         if (!page) return;
+        closeMobileNav(root);
         closeAllNavDropdowns();
         if (navSelectHandlers.onPage) {
           navSelectHandlers.onPage(page);
@@ -604,6 +704,7 @@ function bindNavListeners() {
         event.preventDefault();
         const view = el.dataset.learnHub;
         if (!view) return;
+        closeMobileNav(root);
         if (navSelectHandlers.onLearnHub) {
           navSelectHandlers.onLearnHub(view);
           return;
@@ -656,6 +757,8 @@ function bindNavListeners() {
       { signal },
     );
   });
+
+  wireMobileNav(root);
 }
 
 let listenersBound = false;
@@ -676,6 +779,7 @@ function bindGlobalDismiss() {
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
       closeAllNavDropdowns();
+      closeMobileNav();
     }
   });
 }
@@ -774,4 +878,4 @@ export function setFonoranAuth(auth) {
   }
 }
 
-export { closeNavDropdown, closeAllNavDropdowns };
+export { closeNavDropdown, closeAllNavDropdowns, closeMobileNav };
