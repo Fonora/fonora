@@ -13,6 +13,7 @@
 | `data/fonoran-approved-roots.json` | |
 | `data/fonoran-root-candidates.json` | |
 | `data/fonoran-llm-evaluations.json` — intuition rounds | |
+| `data/fonoran-compound-proposals.json` — LLM gap proposals (in git) | |
 | `tools/fonoran-expression-candidates.js` — `ASSOCIATION_SEEDS` | |
 
 **Build** reads editorial JSON → writes the lab bucket. Production Postgres is seeded once from git; later updates require an explicit import + rebuild (below).
@@ -222,3 +223,53 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 4. **Heuristic** — `optimize-compounds`, `--length-only` for safe bulk compression
 
 Preferred-form policy: [fonoran.md](fonoran.md) · LLM protocol: [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md)
+
+---
+
+## LLM-assisted vocabulary growth loop
+
+The **Vocabulary Survey** is the primary way to generate new compound proposals in bulk.
+Run it once to populate `data/fonoran-compound-proposals.json`; no second LLM call is
+needed on subsequent `fonoran:regenerate` runs.
+
+```bash
+# Generate compound proposals across all primitive roots (requires ANTHROPIC_API_KEY)
+npm run fonoran:vocab-survey
+
+# Or target a specific batch size
+npm run fonoran:vocab-survey -- --limit=50
+```
+
+Proposals land in `data/fonoran-compound-proposals.json`. Review them in the
+**Proposal Review** tab of the Language Lab UI, or via the API
+(`GET /api/fonoran/compound-proposals`).
+
+For each proposal: **accept** (merges the composition into `fonoran-compounds.json` on the
+next `fonoran:regenerate` run) or **reject** / **skip**.
+
+`promoteAcceptedProposals` runs automatically as the first step of `fonoran:regenerate`,
+so accepted proposals are baked into `fonoran-compounds.json` before the build begins.
+
+```bash
+# After accepting proposals, regenerate the full dictionary (promotes + rebuilds)
+npm run fonoran:regenerate
+
+# See playtest data suggesting preferred form promotions (no LLM needed)
+curl http://localhost:8000/api/fonoran/playtests/promotions
+```
+
+Seed integrity — verify `ASSOCIATION_SEEDS` has no phantom component IDs:
+
+```bash
+node --input-type=module -e "
+import { validateSeedIntegrity } from './tools/fonoran-expression-candidates.js';
+import { loadConceptInventory } from './tools/fonoran-concepts.js';
+import { readDoc } from './tools/fonoran-store.js';
+const inv = await loadConceptInventory();
+const c = await readDoc('compounds');
+const v = validateSeedIntegrity(inv.concepts.map(x => x.id), c?.compounds ?? []);
+console.log(v.length ? v : '✓ No phantom IDs');
+"
+```
+
+See also: [RN-26 · LLM-assisted word generation](/research/notes/llm-assisted-word-generation)

@@ -518,58 +518,80 @@
 
       <section id="page-advanced" class="page">
         <div class="box">
-          <h2>Advanced</h2>
-          <p>Generator tools for rebuilding vocabulary from git seeds and LLM evaluation data. Normal creation never requires any of this.</p>
+          <h2>Word Generation Pipeline</h2>
+          <p class="sans">How Fonoran words are born — from primitive roots to a built dictionary. Each step feeds the next.</p>
 
-          <div class="adv-regen-zone">
-            <h3>Regenerate language from git seeds</h3>
-            <p class="sans adv-regen-zone__lead">Canonical data lives in git (<code>data/*.json</code> + LLM evaluations). The dictionary is <em>derived</em> — rebuild it with the pipeline below, not from snapshot backups.</p>
+          <!-- Pipeline steps -->
+          <ol class="adv-pipeline">
 
-            <div class="adv-regen-flow mermaid-wrap">
-              <pre class="mermaid adv-regen-mermaid">flowchart LR
-  subgraph gitSeeds [Git seeds]
-    Compounds["compounds.json"]
-    LLM["llm-evaluations.json"]
-    Roots["approved-roots.json"]
-    Inv["concept-inventory.json"]
-  end
-  subgraph pipeline [Generator pipeline]
-    Import["1. Reload editorial"]
-    Opt["2. Apply LLM rankings"]
-    Build["3. Rebuild dictionary"]
-  end
-  subgraph derived [Derived runtime]
-    Lab["Postgres lab / Dictionary"]
-  end
-  Compounds --> Import
-  LLM --> Import
-  Roots --> Import
-  Inv --> Import
-  Import --> Opt
-  Opt --> Build
-  Build --> Lab</pre>
-            </div>
+            <!-- Step 1: Primitive roots -->
+            <li class="adv-step">
+              <div class="adv-step__number">1</div>
+              <div class="adv-step__body">
+                <h3 class="adv-step__title">Define primitive roots</h3>
+                <p class="sans adv-step__desc">The ~89 irreducible concepts that everything else is built from. They live in <code>data/fonoran-approved-roots.json</code> and are curated by hand using the campfire test.</p>
+                <div class="adv-step__stat" id="adv-roots-stat">Loading…</div>
+                <div class="adv-step__actions">
+                  <a href="/?path=docs%2Ffonoran-generation-2.md" target="_blank" rel="noopener" class="btn btn--sm">Architecture doc</a>
+                </div>
+              </div>
+            </li>
 
-            <nav class="adv-doc-links sans" aria-label="Regeneration documentation">
-              <span class="adv-doc-links__label">Reference docs:</span>
-              <a href="/?path=docs%2Ffonoran-compound-workflow.md" target="_blank" rel="noopener">Compound workflow</a>
-              <a href="/?path=docs%2Ffonoran-llm-playtest-experiment.md" target="_blank" rel="noopener">LLM intuition experiment</a>
-              <a href="/?path=docs%2Ffonoran.md" target="_blank" rel="noopener">Fonoran pipeline overview</a>
-              <a href="/?path=docs%2Fdeploy.md" target="_blank" rel="noopener">Deploy &amp; production</a>
-            </nav>
+            <!-- Step 2: Vocab survey -->
+            <li class="adv-step">
+              <div class="adv-step__number">2</div>
+              <div class="adv-step__body">
+                <h3 class="adv-step__title">Run vocab survey</h3>
+                <p class="sans adv-step__desc">Ask the LLM to propose 300–500 compound words across semantic domains — all validated against the current primitive set. Proposals are queued for review.</p>
+                <p class="adv-step__cmd sans"><code>npm run fonoran:vocab-survey</code></p>
+              </div>
+            </li>
 
-            <div id="adv-regen-status" class="adv-regen-status sans" aria-live="polite">Loading status…</div>
-            <ul id="adv-regen-warnings" class="adv-regen-warnings sans" hidden></ul>
+            <!-- Step 3: Review proposals -->
+            <li class="adv-step">
+              <div class="adv-step__number">3</div>
+              <div class="adv-step__body">
+                <h3 class="adv-step__title">Review proposals</h3>
+                <p class="sans adv-step__desc">Accept or reject each compound proposal. Accepted proposals go into <code>data/fonoran-compounds.json</code> on the next regenerate.</p>
+                <div class="adv-step__stat" id="adv-proposals-stat">Loading…</div>
+                <div class="adv-step__actions">
+                  <a href="/tools#gap-workshop" class="btn btn--sm btn--primary">Open Proposal Review</a>
+                </div>
+              </div>
+            </li>
 
-            <div class="adv-regen-actions actions">
-              <button type="button" class="btn btn--primary" id="adv-regenerate" data-write>Regenerate dictionary from git seeds</button>
-              <label class="adv-regen-opt sans"><input type="checkbox" id="adv-regen-apply-llm" data-write-input> Re-run LLM optimizer (promote from saved evaluations)</label>
-              <button type="button" class="btn" id="adv-run-translator-tests" data-write>Run translation tests</button>
-            </div>
-            <pre id="adv-regen-result" class="debug-panel adv-regen-result" hidden></pre>
-            <pre id="adv-translator-result" class="debug-panel adv-regen-result" hidden></pre>
-          </div>
+            <!-- Step 4: Regenerate -->
+            <li class="adv-step">
+              <div class="adv-step__number">4</div>
+              <div class="adv-step__body">
+                <h3 class="adv-step__title">Regenerate dictionary</h3>
+                <p class="sans adv-step__desc">Reload editorial seeds, re-rank compounds, assign phonetic spellings, and rebuild the full dictionary from the canonical JSON files in git.</p>
+                <div id="adv-regen-status" class="adv-regen-status sans" aria-live="polite">Loading status…</div>
+                <ul id="adv-regen-warnings" class="adv-regen-warnings sans" hidden></ul>
+                <div class="adv-step__actions">
+                  <button type="button" class="btn btn--sm btn--primary" id="adv-regenerate" data-write>Regenerate dictionary</button>
+                  <label class="adv-regen-opt sans"><input type="checkbox" id="adv-regen-apply-llm" data-write-input> Re-run LLM optimizer</label>
+                </div>
+                <pre id="adv-regen-result" class="debug-panel adv-regen-result" hidden></pre>
+              </div>
+            </li>
 
+            <!-- Step 5: Validate -->
+            <li class="adv-step">
+              <div class="adv-step__number">5</div>
+              <div class="adv-step__body">
+                <h3 class="adv-step__title">Validate translations</h3>
+                <p class="sans adv-step__desc">Run the golden translation suite to confirm previously working concepts still resolve correctly after any changes.</p>
+                <div class="adv-step__actions">
+                  <button type="button" class="btn btn--sm" id="adv-run-translator-tests" data-write>Run translation tests</button>
+                </div>
+                <pre id="adv-translator-result" class="debug-panel adv-regen-result" hidden></pre>
+              </div>
+            </li>
+
+          </ol>
+
+          <!-- Optional export -->
           <details class="adv-optional-zone">
             <summary>Optional: milestone export</summary>
             <p class="sans adv-optional-zone__lead">Export a zip for milestones or Postgres sync — not required for regeneration.</p>
@@ -584,11 +606,9 @@
             <pre id="adv-snapshot-preview" class="debug-panel" hidden></pre>
           </details>
 
-          <p class="sans adv-archive-link">Gen 3 coordinate inference (DDA) was an archived experiment — see <a href="/?path=docs%2Ffonoran-generator-archive.md">Generator archive</a>. Live word building uses editorial roots and compound composition, not DDA.</p>
-
           <div class="adv-danger-zone">
             <h3>Danger zone</h3>
-            <p class="adv-danger-zone__lead sans">Destructive maintenance only. Prefer <strong>Regenerate dictionary from git seeds</strong> above for prod recovery.</p>
+            <p class="adv-danger-zone__lead sans">Destructive maintenance only. Prefer <strong>Regenerate dictionary</strong> above for prod recovery.</p>
             <div class="actions adv-danger-zone__actions">
               <button type="button" class="btn danger" id="adv-force-build" data-write>Force rebuild only (skip seed reload)</button>
               <p class="sans adv-danger-zone__hint">Requires typing BUILD. Use only when editorial seeds are already loaded. Blocked on prod when seeds are stale.</p>

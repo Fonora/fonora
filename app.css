@@ -579,6 +579,7 @@ html[data-fonora-tab='encoder-testing'] #tab-encoder-testing,
 html[data-fonora-tab='pronunciation-validation'] #tab-pronunciation-validation,
 html[data-fonora-tab='research-notes'] #tab-research-notes,
 html[data-fonora-tab='word-manager'] #tab-word-manager,
+html[data-fonora-tab='gap-workshop'] #tab-gap-workshop,
 html[data-fonora-tab='docs'] #tab-docs {
   display: block !important;
 }

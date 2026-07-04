@@ -255,3 +255,48 @@ export async function summarizePlaytests() {
     concepts,
   };
 }
+
+/**
+ * Identify compound preferred forms that playtest data suggests should be promoted.
+ *
+ * A concept qualifies for promotion when:
+ *   - it has >= minRounds playtest rounds,
+ *   - its recovery_rate is >= minRecoveryRate, and
+ *   - its current preferred_source is not already 'playtest' or 'human'.
+ *
+ * Returns a list ready for editorial review. Admins verify and call
+ * optimize-compounds or directly update compounds.json.
+ *
+ * @param {object} [opts]
+ * @param {number} [opts.minRounds=3]        minimum playtest rounds to qualify
+ * @param {number} [opts.minRecoveryRate=0.7] minimum recovery_rate (0–1)
+ */
+export async function buildPlaytestPromotionCandidates({ minRounds = 3, minRecoveryRate = 0.7 } = {}) {
+  const summary = await summarizePlaytests();
+  const compoundsDoc = await readDoc('compounds');
+  const compounds = compoundsDoc?.compounds ?? [];
+
+  const promotable = [];
+  for (const s of summary.concepts) {
+    if (s.rounds < minRounds) continue;
+    if (s.recovery_rate == null || s.recovery_rate < minRecoveryRate) continue;
+
+    const compound = compounds.find(c => c.concept === s.concept_id);
+    if (!compound) continue;
+    const preferredSource = compound.preferred_source ?? compound.preferred?.preferred_source ?? 'heuristic';
+    if (preferredSource === 'playtest' || preferredSource === 'human') continue;
+
+    promotable.push({
+      concept_id: s.concept_id,
+      rounds: s.rounds,
+      recovery_rate: s.recovery_rate,
+      avg_repair_turns: s.avg_repair_turns,
+      current_preferred_source: preferredSource,
+      current_composition: compound.preferred?.composition ?? compound.composition ?? [],
+      last_playtest: s.last_at,
+      action: 'promote_to_playtest',
+    });
+  }
+
+  return promotable.sort((a, b) => b.recovery_rate - a.recovery_rate || b.rounds - a.rounds);
+}

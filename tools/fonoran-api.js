@@ -80,12 +80,20 @@ import {
   recordPlaytestFeedback,
   recordPlaytestRound,
   summarizePlaytests,
+  buildPlaytestPromotionCandidates,
 } from './fonoran-playtests.js';
 import {
   generateCandidates,
   loadCandidateContext,
 } from './fonoran-expression-candidates.js';
 import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
+import {
+  listCompoundProposals,
+  resolveCompoundProposal,
+  createCompoundProposals,
+  getProposalStats,
+} from './fonoran-compound-proposals.js';
+import { analyzeGap, analyzeGaps } from './fonoran-gap-analyzer.js';
 import {
   getRegenStatus,
   runRegenerate,
@@ -416,6 +424,65 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     if (pathname === '/api/fonoran/playtests/summary' && method === 'GET') {
       return done(200, await summarizePlaytests());
+    }
+    if (pathname === '/api/fonoran/playtests/promotions' && method === 'GET') {
+      const url = new URL(req.url ?? '', 'http://localhost');
+      const minRounds = Number(url.searchParams.get('min_rounds') ?? 3);
+      const minRate = Number(url.searchParams.get('min_rate') ?? 0.7);
+      return done(200, {
+        promotions: await buildPlaytestPromotionCandidates({ minRounds, minRecoveryRate: minRate }),
+      });
+    }
+    if (pathname === '/api/fonoran/compound-proposals' && method === 'GET') {
+      const url = new URL(req.url ?? '', 'http://localhost');
+      const status = url.searchParams.get('status') ?? 'open';
+      const classification = url.searchParams.get('classification') ?? null;
+      const limit = Number(url.searchParams.get('limit') ?? 200);
+      const [proposals, stats] = await Promise.all([
+        listCompoundProposals({ status, classification, limit }),
+        getProposalStats(),
+      ]);
+      return done(200, { proposals, stats });
+    }
+    const compoundProposalMatch = pathname.match(/^\/api\/fonoran\/compound-proposals\/([^/]+)$/);
+    if (compoundProposalMatch && method === 'PATCH') {
+      const id = decodeURIComponent(compoundProposalMatch[1]);
+      const body = await readJsonBody(req);
+      const action = body.action; // accepted | rejected | skipped
+      if (!['accepted', 'rejected', 'skipped'].includes(action)) {
+        return done(400, { error: 'action must be accepted, rejected, or skipped' });
+      }
+      const user = getSessionUser(req);
+      const proposal = await resolveCompoundProposal(id, action, {
+        resolvedBy: user?.email ?? 'admin',
+        note: body.note ?? null,
+        chosenCompositionIndex: body.chosen_composition_index ?? null,
+      });
+      return done(200, proposal);
+    }
+    if (pathname === '/api/fonoran/gaps/suggest' && method === 'POST') {
+      const body = await readJsonBody(req);
+      const word = body.word;
+      const role = body.role ?? 'concept';
+      if (!word) return done(400, { error: 'word is required' });
+      const [inv, compoundsDoc] = await Promise.all([
+        import('./fonoran-concepts.js').then(m => m.loadConceptInventory()),
+        import('./fonoran-store.js').then(m => m.readDoc('compounds')),
+      ]);
+      const primitiveIds = (inv?.concepts ?? []).map(c => c.id);
+      const compoundDefs = compoundsDoc?.compounds ?? [];
+      const analysis = await analyzeGap(word, role, primitiveIds, compoundDefs, inv);
+      // Persist as a proposal if valid — use word as the concept_id so
+      // getAcceptedCompositionSeeds can index it into generateCandidates.
+      let created = null;
+      if (analysis.classification !== 'unknown') {
+        const records = await createCompoundProposals([{
+          ...analysis,
+          concept_id: analysis.concept_id ?? word.toLowerCase().replace(/\s+/g, '_'),
+        }]);
+        created = records[0] ?? null;
+      }
+      return done(200, { analysis, proposal: created });
     }
     if (pathname === '/api/fonoran/expressions/candidates' && method === 'POST') {
       const body = await readJsonBody(req);

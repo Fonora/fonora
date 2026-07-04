@@ -8,7 +8,7 @@
       "email": "info@fonora.org",
       "name": "James Calhoun",
       "created_at": "2026-07-03T19:24:02.107Z",
-      "last_login": "2026-07-03T22:14:22.566Z"
+      "last_login": "2026-07-04T01:38:28.494Z"
     },
     {
       "id": "usr-mr5e5763-05fa58e9",
@@ -198,8 +198,8 @@
               }
             },
             "curriculum": {
-              "total": 231,
-              "totalLessons": 24,
+              "total": 528,
+              "totalLessons": 53,
               "ring": "Communicative core"
             }
           },
@@ -215,8 +215,8 @@
               }
             },
             "curriculum": {
-              "total": 231,
-              "totalLessons": 24,
+              "total": 528,
+              "totalLessons": 53,
               "ring": "Communicative core"
             }
           },
@@ -227,8 +227,8 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 231,
-              "totalLessons": 24,
+              "total": 528,
+              "totalLessons": 53,
               "ring": "Communicative core"
             }
           },
@@ -244,14 +244,14 @@
               }
             },
             "curriculum": {
-              "total": 61,
-              "totalLessons": 7,
+              "total": 55,
+              "totalLessons": 6,
               "ring": "Communicative core"
             }
           }
         }
       },
-      "updated_at": "2026-07-03T22:14:29.147Z"
+      "updated_at": "2026-07-04T01:38:31.351Z"
     }
   },
   "proposals": [],

@@ -384,10 +384,12 @@ export function buildConceptAliasIndex(concepts, lab = null, locData = {}, { lab
   }
 
   for (const c of concepts) {
+    if (!c.spelling) continue; // skip compound_candidates with no assigned root yet
     const base = baseFor(c);
     for (const alias of strongAliases(c)) register(alias, { ...base, matched_alias: alias }, { strength: 'strong' });
   }
   for (const c of concepts) {
+    if (!c.spelling) continue; // skip compound_candidates with no assigned root yet
     const base = baseFor(c);
     for (const alias of weakAliases(c)) register(alias, { ...base, matched_alias: alias }, { strength: 'weak' });
   }

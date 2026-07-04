@@ -67,7 +67,9 @@ async function main() {
   const inventoryDoc = JSON.parse(
     readFileSync(join(ROOT, 'data/fonoran-concept-inventory.json'), 'utf8'),
   );
-  const primitiveIds = new Set((inventoryDoc.primitives ?? []).map(p => p.id));
+  const primitiveIds = new Set((inventoryDoc.primitives ?? [])
+    .filter(p => p.suggested_status !== 'compound_candidate')
+    .map(p => p.id));
   const liveDoc = await readDoc('compounds');
   const live = (liveDoc?.compounds ?? []).map(normalizeLive);
   const liveById = new Map(live.map(c => [c.concept, c]));

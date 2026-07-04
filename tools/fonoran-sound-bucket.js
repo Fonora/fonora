@@ -24,7 +24,7 @@ import {
 } from './fonoran-derivation.js';
 import { runDdaBatch, ddaSummary } from './fonoran-dda-infer.js';
 import { buildMermaidGraph, buildPreviewMermaidGraph } from './fonoran-graph.js';
-import { loadLocalization } from './fonoran-concepts.js';
+import { loadLocalization, loadConceptInventory } from './fonoran-concepts.js';
 
 /** Review lifecycle shared by base sounds and compounds. */
 export const REVIEW_STATES = ['draft', 'needs_review', 'approved', 'rejected', 'revised'];
@@ -61,13 +61,17 @@ function mergeLocaleAliases(record, locData = {}) {
   return merged.length ? merged : undefined;
 }
 
-function enrichSound(s, bucket, locData = {}) {
+function enrichSound(s, bucket, locData = {}, domainByConceptId = null) {
   normalizeSoundRecord(s);
   const usedIn = wordsUsing('root', s.spelling, bucket).map(c => ({
     id: c.id, spelling: c.spelling, meaning: c.meaning, state: effectiveState(c),
   }));
+  const domain = s.domain
+    ?? (s.concept_id && domainByConceptId?.get(s.concept_id))
+    ?? null;
   return {
     ...s,
+    domain,
     aliases: mergeLocaleAliases(s, locData),
     state: effectiveState(s),
     why: legacyGlossFromHint(s.generator_hint) ?? s.gloss ?? null,
@@ -155,9 +159,15 @@ function countByState(items) {
 
 export async function getLab(preloadedBucket = null) {
   const bucket = preloadedBucket ?? await loadBucket();
-  const locData = await loadLocalization('en');
+  const [locData, inventory] = await Promise.all([
+    loadLocalization('en'),
+    loadConceptInventory('en'),
+  ]);
+  const domainByConceptId = new Map(
+    inventory.concepts.map(c => [c.id, c.domain]).filter(([, domain]) => domain),
+  );
   const soundsBySpelling = Object.fromEntries(bucket.sounds.map(s => [s.spelling, s]));
-  const sounds = bucket.sounds.map(s => enrichSound(s, bucket, locData));
+  const sounds = bucket.sounds.map(s => enrichSound(s, bucket, locData, domainByConceptId));
   const compounds = bucket.compounds.map(c => enrichCompound(c, bucket, soundsBySpelling, locData));
   const soundStates = countByState(bucket.sounds);
   const compoundStates = countByState(bucket.compounds);

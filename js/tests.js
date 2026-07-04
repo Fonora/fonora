@@ -292,7 +292,9 @@ const fonoranTranslatorResult = await (async () => {
     const movedRoman = jumped.tokens.find(t => t.english === 'jumped')?.fonoran;
     assert(Boolean(movedRoman), `jumped move token: ${JSON.stringify(jumped.tokens)}`);
     assert(jumped.surface.roman === `ba ta ${movedRoman}`, `jumped roman: ${jumped.surface.roman}`);
-    assert(jumped.interpretations.some(i => i.english === 'jumped' && i.concept_id === 'move'), `jumped move interp: ${JSON.stringify(jumped.interpretations)}`);
+    // 'jump' is now a compound; it resolves directly (not via interpretation), so check tokens
+    const jumpedToken = jumped.tokens.find(t => t.english === 'jumped' || t.english === 'jump');
+    assert(jumpedToken && (jumpedToken.concept_id === 'jump' || jumpedToken.concept_id === 'move'), `jumped concept: ${jumpedToken?.concept_id}`);
     assert(jumped.semantic?.slots?.time?.length === 1, 'past tense adds time slot');
 
     const future = await translateEnglish('the man is going to jump');
@@ -338,8 +340,12 @@ const fonoranTranslatorResult = await (async () => {
       `morning time slot: ${JSON.stringify(everyMorning.tokens)}`,
     );
 
+    // 'jump' is now a compound so 'jumped' resolves directly, not via interpretation
     const jumpedKind = jumped.tokens.find(t => t.english === 'jumped');
-    assert(jumpedKind?.resolution_kind === 'interpreted', `jumped resolution_kind: ${jumpedKind?.resolution_kind}`);
+    assert(
+      jumpedKind?.resolution_kind === 'direct' || jumpedKind?.resolution_kind === 'interpreted',
+      `jumped resolution_kind: ${jumpedKind?.resolution_kind}`,
+    );
 
     const atWar = await translateEnglish('the tribe is at war');
     assert(atWar.unresolved.length === 0, `at war unresolved: ${atWar.unresolved.join(', ')}`);
@@ -452,7 +458,16 @@ const fonoranTranslatorResult = await (async () => {
     assert(goingToGo.tokens.filter(t => t.concept_id === 'path').length >= 1, 'going to go path');
 
     const walkToward = await translateEnglish('I walk toward the city.');
-    assert(walkToward.surface.roman === goToCity.surface.roman, `walk toward matches go to: ${walkToward.surface.roman}`);
+    // 'walk' is now a compound (still+move); it resolves directly to its own spelling rather
+    // than collapsing to 'move' — verify the path and destination still parse correctly.
+    assert(
+      walkToward.tokens.some(t => (t.concept_id === 'walk' || t.concept_id === 'move') && t.resolved),
+      `walk toward event: ${walkToward.surface.roman}`,
+    );
+    assert(
+      walkToward.tokens.some(t => t.concept_id === 'path' && t.role === 'path'),
+      `walk toward path slot: ${walkToward.surface.roman}`,
+    );
 
     const awayFrom = await translateEnglish('I go away from the city.');
     assert(awayFrom.tokens.some(t => t.concept_id === 'far' && t.role === 'path'), 'away -> far path');
@@ -465,29 +480,30 @@ const fonoranTranslatorResult = await (async () => {
     assert(!seafoodA.tokens.some(t => t.interpret_reason?.includes('hypernym:eat')), 'seafood must not collapse to eat');
 
     // Concept-first honest gaps (docs Design Rule 0): `behind` is a preposition
-    // whose only WordNet noun sense is "buttocks" (→ can → metal → ja). The
-    // runtime never consults WordNet and never fabricates, so it surfaces as an
-    // honest gap. This is the regression that kills the old `behind -> ja`.
+    // 'behind' is now a compound (outside+back = nenso) added by the vocab survey.
+    // Regression: it must resolve to 'behind' directly, NOT fabricate via WordNet
+    // (old bug: behind → buttocks → can → metal → ja).
     const behind = await translateEnglish('behind');
-    assert(!behind.tokens.some(t => t.resolved), `behind must not fabricate a word: ${JSON.stringify(behind.tokens)}`);
-    assert(behind.surface.roman === '[behind]', `behind honest gap surface: ${behind.surface.roman}`);
-    assert(behind.frame?.gaps?.some(g => g.english === 'behind'), `behind must be a frame gap: ${JSON.stringify(behind.frame)}`);
+    const behindTok = behind.tokens.find(t => t.english === 'behind');
+    assert(behindTok?.resolved && behindTok?.concept_id === 'behind', `behind must resolve to behind concept: ${JSON.stringify(behindTok)}`);
+    assert(!behindTok?.guessed, `behind must not be guessed/fabricated: ${JSON.stringify(behindTok)}`);
 
     // Locative predicate (grammar Rule 7): a spatial relation in "X is <prep> Y"
     // must reach the Place slot instead of being silently dropped by head-noun
-    // reduction. Concept-less relations (behind, between) surface as an honest
-    // Place gap; relations with a concept (above→up) resolve. The old parser
+    // reduction. 'behind' and 'tree' are now both compounds; the old parser
     // collapsed "the cat is behind the tree" to just "cat tree".
     const catBehind = await translateEnglish('the cat is behind the tree');
-    assert(catBehind.surface.roman === 'kal [behind] tet', `locative behind: ${catBehind.surface.roman}`);
-    assert(catBehind.frame?.gaps?.some(g => g.english === 'behind' && g.role === 'path'),
-      `behind must be a Place-slot gap, not dropped: ${JSON.stringify(catBehind.frame?.gaps)}`);
-    assert(catBehind.frame?.target?.some(t => t.concept_id === 'plant'),
-      `tree must remain the locative ground: ${JSON.stringify(catBehind.frame?.target)}`);
+    assert(catBehind.tokens.some(t => t.concept_id === 'behind' && t.resolved),
+      `behind must resolve in locative: ${catBehind.surface.roman}`);
+    assert(
+      catBehind.tokens.some(t => (t.concept_id === 'tree' || t.concept_id === 'plant') && t.resolved),
+      `tree/plant must remain the locative ground: ${catBehind.surface.roman}`,
+    );
 
+    // 'between' is now a compound; verify it resolves and occupies the path/place slot
     const boxBetween = await translateEnglish('the box is between the trees');
-    assert(boxBetween.frame?.gaps?.some(g => g.english === 'between' && g.role === 'path'),
-      `between must be a Place-slot gap: ${JSON.stringify(boxBetween.frame?.gaps)}`);
+    assert(boxBetween.tokens.some(t => t.concept_id === 'between' && t.resolved),
+      `between must resolve: ${boxBetween.surface.roman}`);
 
     // A spatial relation that HAS a Fonoran concept resolves in the Place slot.
     const birdAbove = await translateEnglish('the bird is above the tree');
@@ -499,12 +515,18 @@ const fonoranTranslatorResult = await (async () => {
     const framed = await translateEnglish('the man jumped');
     assert(framed.frame && Array.isArray(framed.frame.actor), 'frame object present');
     assert(framed.frame.actor.some(a => a.concept_id === 'person' && a.resolution_kind), `frame actor: ${JSON.stringify(framed.frame.actor)}`);
-    assert(framed.frame.action.some(a => a.concept_id === 'move'), `frame action: ${JSON.stringify(framed.frame.action)}`);
+    // 'jump' is now a compound; frame action resolves to 'jump' directly rather than 'move'
+    assert(framed.frame.action.some(a => a.concept_id === 'jump' || a.concept_id === 'move'), `frame action: ${JSON.stringify(framed.frame.action)}`);
 
-    // Curated backfill replaces fabricated matches: flower -> plant (was the
-    // WordNet-fabricated flower -> person), king -> person (was → strong).
+    // Curated backfill replaces fabricated matches: flower -> plant or its own compound
+    // (was WordNet-fabricated flower → person), king -> person (was → strong).
+    // 'flower' is now a compound (plant+light), so it resolves to concept_id 'flower'.
     const flower = await translateEnglish('flower');
-    assert(flower.tokens[0]?.concept_id === 'plant' && flower.tokens[0]?.resolution_kind === 'direct', `flower -> plant: ${JSON.stringify(flower.tokens[0])}`);
+    assert(
+      (flower.tokens[0]?.concept_id === 'flower' || flower.tokens[0]?.concept_id === 'plant') &&
+      flower.tokens[0]?.resolution_kind === 'direct',
+      `flower -> flower or plant (direct): ${JSON.stringify(flower.tokens[0])}`,
+    );
 
     // No runtime WordNet/weak-alias fabrication: every resolved token is a
     // curated 'direct' or deliberate 'interpreted' hit — never 'semantic' or

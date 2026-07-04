@@ -471,7 +471,9 @@
     "skin": {
       "label": "skin",
       "aliases": [
-        "hide"
+        "skin",
+        "your skin",
+        "your"
       ]
     },
     "some": {

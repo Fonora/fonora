@@ -31,6 +31,7 @@ data/fonoran-translation-test-latest.json
 data/research-notes-store.json
 
 data/fonoran-sound-bucket.json
+data/fonoran-compound-proposals.json
 data/fonoran-english-lexicon.json
 data/fonoran-stress-test-report.json
 data/fonoran-semantic-cache.json

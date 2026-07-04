@@ -89,6 +89,7 @@ import {
   getAuthState,
 } from './auth-session.js';
 import { onWordManagerTabActivated, migrateWordManagerHash } from './word-manager-page.js';
+import { onGapWorkshopTabActivated } from './gap-workshop-page.js';
 import { setReaderWordSources } from './fonora-tts.js';
 import { refreshLearnHomeProgress } from './learn-home-progress.js';
 import { syncLearnSessionBar, saveLearnHomeScroll, restoreLearnHomeScroll } from './learn-session-ui.js';
@@ -545,6 +546,7 @@ function normalizeLearnTab(tabId) {
 const BUILDER_TOOLS_TAB_IDS = new Set([
   'tools-home',
   'word-manager',
+  'gap-workshop',
   'encoder-testing',
   'pronunciation-validation',
   'research-notes',
@@ -678,6 +680,9 @@ function resolveTabForAuth(tabId) {
   if (tabId === 'word-manager' && !canAccessWordManager()) {
     return 'tools-auth-gate';
   }
+  if (tabId === 'gap-workshop' && !canAccessWordManager()) {
+    return 'tools-auth-gate';
+  }
   if (isToolsPath() && !canAccessTools() && (isGatedToolsTab(tabId) || tabId === 'tools-home')) {
     return 'tools-auth-gate';
   }
@@ -738,6 +743,10 @@ function showTab(tabId) {
 
   if (panelId === 'word-manager') {
     void onWordManagerTabActivated();
+  }
+
+  if (panelId === 'gap-workshop') {
+    void onGapWorkshopTabActivated();
   }
 
   if (panelId === 'samples') {
@@ -832,6 +841,7 @@ function setupTabs() {
 
   refreshAuth().then(() => {
     syncWordManagerNav();
+    syncGapWorkshopNav();
     migrateWordManagerHash();
     showTab(getTabFromHash());
   });
@@ -845,6 +855,14 @@ function syncWordManagerNav() {
   const btn = document.getElementById('nav-word-manager');
   if (!btn) return;
   const show = canAccessWordManager();
+  btn.hidden = !show;
+  btn.removeAttribute('aria-hidden');
+}
+
+function syncGapWorkshopNav() {
+  const btn = document.getElementById('nav-gap-workshop');
+  if (!btn) return;
+  const show = canAccessWordManager(); // same admin gate
   btn.hidden = !show;
   btn.removeAttribute('aria-hidden');
 }

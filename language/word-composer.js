@@ -24,10 +24,13 @@ export function createWordComposer(ctx) {
     editingRootId: null,
     editingRootIsNew: false,
     editingRootSpelling: null,
+    editingRootDomain: null,
     candidateId: null,
     itemState: null,
     returnPage: null,
     pendingFields: null,
+    compoundEdit: false,
+    editSnapshot: null,
     filter: '',
     showRoots: true,
     showWords: true,
@@ -297,9 +300,34 @@ export function createWordComposer(ctx) {
     return null;
   }
 
+  /** Resolve the compound under edit; id can change after a recipe recompose. */
+  function findEditingCompound({ updateState = false } = {}) {
+    let id = state.editingId;
+    const spelling = state.composer.length >= 2 ? resolveComposerSpelling(state.composer) : null;
+    let existing = id ? lab()?.compounds?.find(c => c.id === id) : null;
+    if (!existing && spelling && (state.mode === 'compound' || id)) {
+      existing = lab()?.compounds?.find(c =>
+        c.spelling === spelling && c.state !== 'rejected' && !c.generator_hint);
+      if (existing) {
+        id = existing.id;
+        if (updateState) state.editingId = id;
+      }
+    }
+    return { id, existing };
+  }
+
+  function isSameCompoundBeingEdited(match, editingId = null) {
+    if (!match || match.kind !== 'compound') return false;
+    if (editingId && match.item.id === editingId) return true;
+    if ((state.mode === 'compound' || state.editingId) && state.composer.length >= 2) {
+      return match.item.spelling === resolveComposerSpelling(state.composer);
+    }
+    return false;
+  }
+
   function spellingBlocksSave(match, editingId = null) {
     if (!match) return false;
-    if (editingId && match.kind === 'compound' && match.item.id === editingId) return false;
+    if (isSameCompoundBeingEdited(match, editingId)) return false;
     if (match.kind === 'sound') return Boolean(match.item.meaning?.trim());
     return !match.item.generator_hint;
   }
@@ -437,7 +465,7 @@ export function createWordComposer(ctx) {
       reopen.hidden = !alreadyRejected;
       approveCand.hidden = !state.candidateId;
     } else {
-      label.textContent = 'Compound';
+      label.textContent = state.compoundEdit ? 'Editing' : 'Compound';
       badge.innerHTML = state.itemState ? stateBadge(state.itemState) : '';
       approve.hidden = alreadyApproved;
       approve.textContent = 'Approve word';
@@ -488,27 +516,84 @@ export function createWordComposer(ctx) {
     renderAnalysis();
   }
 
+  function isCompoundBrowseMode() {
+    return state.mode === 'compound' && Boolean(state.editingId) && !state.compoundEdit;
+  }
+
+  function isCompoundEditMode() {
+    return state.mode === 'compound' && Boolean(state.editingId) && state.compoundEdit;
+  }
+
+  function pickerAddsToRecipe() {
+    return state.mode === 'compose' || isCompoundEditMode();
+  }
+
+  function enterCompoundEdit() {
+    if (!state.editingId || state.mode !== 'compound') return;
+    state.editSnapshot = {
+      composer: state.composer.map(c => ({ ...c })),
+      meaning: $(`${PREFIX}-meaning`)?.value ?? '',
+      aliases: $(`${PREFIX}-aliases`)?.value ?? '',
+    };
+    state.compoundEdit = true;
+    render();
+  }
+
+  function cancelCompoundEdit() {
+    if (state.mode === 'compose') {
+      goIdle();
+      return;
+    }
+    if (isCompoundEditMode() && state.editSnapshot) {
+      state.composer = state.editSnapshot.composer.map(c => ({ ...c }));
+      if ($(`${PREFIX}-meaning`)) $(`${PREFIX}-meaning`).value = state.editSnapshot.meaning;
+      if ($(`${PREFIX}-aliases`)) $(`${PREFIX}-aliases`).value = state.editSnapshot.aliases;
+    }
+    state.compoundEdit = false;
+    state.editSnapshot = null;
+    render();
+  }
+
+  function syncCompoundFormReadonly() {
+    const browse = isCompoundBrowseMode();
+    const meaningEl = $(`${PREFIX}-meaning`);
+    const aliasesEl = $(`${PREFIX}-aliases`);
+    if (meaningEl) meaningEl.readOnly = browse;
+    if (aliasesEl) aliasesEl.readOnly = browse;
+  }
+
   function syncControls() {
     if (state.mode === 'root') return;
+    syncCompoundFormReadonly();
     const picks = state.composer;
     const spelling = picks.length ? resolveComposerSpelling(picks) : '';
     const match = renderSpellingMatch(spelling, state.editingId);
     const boundaryBlocked = renderBoundaryViolation(picks);
     const saveBtn = $(`${PREFIX}-save`);
+    const editBtn = $(`${PREFIX}-edit`);
+    const browse = isCompoundBrowseMode();
+    const editing = isCompoundEditMode();
     if (saveBtn) {
+      saveBtn.hidden = browse;
       saveBtn.disabled = picks.length < 2 || spellingBlocksSave(match, state.editingId) || boundaryBlocked;
       saveBtn.textContent = state.editingId ? 'Save changes' : 'Save compound';
     }
+    if (editBtn) editBtn.hidden = !browse;
     const clearBtn = $(`${PREFIX}-clear`);
-    if (clearBtn) clearBtn.textContent = state.mode === 'compose' ? 'Cancel' : 'Clear';
+    if (clearBtn) {
+      clearBtn.textContent = 'Cancel';
+      clearBtn.hidden = browse;
+    }
     const cancelBtn = $(`${PREFIX}-cancel`);
     if (cancelBtn) cancelBtn.hidden = !state.returnPage;
     const intro = $(`${PREFIX}-intro`);
     if (intro) {
       if (state.mode === 'compose') {
         intro.textContent = 'New compound — click roots or words on the left to build the recipe, then name and save.';
+      } else if (editing) {
+        intro.textContent = 'Editing — change meaning, word bank, or recipe. Picker clicks add components. Cancel discards changes.';
       } else if (state.editingId) {
-        intro.textContent = 'Editing a compound — adjust the recipe, meaning, or aliases, then save.';
+        intro.textContent = 'Browsing — click a word in the picker to open it. Click Edit to change this compound.';
       } else {
         intro.textContent = 'Select a root or compound on the left to edit it, or start a new compound.';
       }
@@ -520,16 +605,27 @@ export function createWordComposer(ctx) {
     if (state.mode === 'root') return;
     const recipe = state.composer;
     const pickEl = $(`${PREFIX}-recipe-pick`);
+    const canEditRecipe = pickerAddsToRecipe();
     if (pickEl) {
+      const emptyHint = canEditRecipe
+        ? 'Click roots or words in the picker to build the recipe…'
+        : 'Click Edit to change the recipe.';
       pickEl.innerHTML = recipe.length
-        ? recipe.map((comp, i) => `<span class="tok" data-idx="${i}" data-write>${typeBadge(comp.type)} <span class="mono">${escapeHtml(comp.spelling || comp.ref)}</span> = ${escapeHtml(compDisplayLabel(comp))} ×</span>`).join('')
-        : '<span class="wm-recipe__empty">Click roots or words in the picker to build the recipe…</span>';
-      pickEl.querySelectorAll('.tok').forEach(t => t.addEventListener('click', () => {
-        recipe.splice(Number(t.dataset.idx), 1);
-        renderRecipe();
-        syncControls();
-        updatePanels();
-      }));
+        ? recipe.map((comp, i) => {
+          const remove = canEditRecipe
+            ? ` <span class="tok-remove" aria-label="Remove">×</span>`
+            : '';
+          return `<span class="tok${canEditRecipe ? '' : ' tok--readonly'}" data-idx="${i}"${canEditRecipe ? ' data-write' : ''}>${typeBadge(comp.type)} <span class="mono">${escapeHtml(comp.spelling || comp.ref)}</span> = ${escapeHtml(compDisplayLabel(comp))}${remove}</span>`;
+        }).join('')
+        : `<span class="wm-recipe__empty">${emptyHint}</span>`;
+      if (canEditRecipe) {
+        pickEl.querySelectorAll('.tok').forEach(t => t.addEventListener('click', () => {
+          recipe.splice(Number(t.dataset.idx), 1);
+          renderRecipe();
+          syncControls();
+          updatePanels();
+        }));
+      }
     }
     const live = $(`${PREFIX}-live-pron`);
     if (live) {
@@ -591,7 +687,7 @@ export function createWordComposer(ctx) {
   }
 
   function addToRecipe(type, ref, spelling, meaning) {
-    if (state.mode !== 'compose') return;
+    if (!pickerAddsToRecipe()) return;
     if (type === 'root') {
       state.composer.push({ type: 'root', ref, spelling });
     } else {
@@ -616,7 +712,7 @@ export function createWordComposer(ctx) {
 
     if (state.mode !== 'root') {
       renderRecipe();
-      renderEditDupe('compound', editingId ?? '', $(`${PREFIX}-meaning`)?.value.trim() || '');
+      renderEditDupe('compound', findEditingCompound().id ?? '', $(`${PREFIX}-meaning`)?.value.trim() || '');
     } else {
       renderRootPreview();
     }
@@ -646,7 +742,7 @@ export function createWordComposer(ctx) {
     if (showRoots) {
       $(`${PREFIX}-roots`).innerHTML = rootPickerWithBadge(pickableRoots(state.filter, pickerOpts));
       wirePickerClick($(`${PREFIX}-roots`), (btn) => {
-        if (state.mode === 'compose') {
+        if (pickerAddsToRecipe()) {
           addToRecipe('root', btn.dataset.pickRoot, btn.dataset.pickRoot);
           return;
         }
@@ -662,7 +758,7 @@ export function createWordComposer(ctx) {
       wirePickerClick($(`${PREFIX}-words`), (btn) => {
         const w = lab()?.compounds?.find(c => c.id === btn.dataset.pickWord);
         if (!w) return;
-        if (state.mode === 'compose') {
+        if (pickerAddsToRecipe()) {
           addToRecipe('word', w.id, w.spelling, w.meaning);
           return;
         }
@@ -683,10 +779,13 @@ export function createWordComposer(ctx) {
     state.editingRootId = null;
     state.editingRootIsNew = false;
     state.editingRootSpelling = null;
+    state.editingRootDomain = null;
     state.candidateId = null;
     state.itemState = null;
     state.pendingFields = null;
     state.analysis = null;
+    state.compoundEdit = false;
+    state.editSnapshot = null;
     render();
   }
 
@@ -698,24 +797,16 @@ export function createWordComposer(ctx) {
     state.editingRootId = null;
     state.editingRootIsNew = false;
     state.editingRootSpelling = null;
+    state.editingRootDomain = null;
     state.candidateId = null;
     state.itemState = null;
     state.pendingFields = null;
     state.analysis = null;
+    state.compoundEdit = false;
+    state.editSnapshot = null;
     if ($(`${PREFIX}-meaning`)) $(`${PREFIX}-meaning`).value = '';
     if ($(`${PREFIX}-aliases`)) $(`${PREFIX}-aliases`).value = '';
     render();
-  }
-
-  function clearCompoundForm() {
-    if (state.mode === 'compose') {
-      goIdle();
-      return;
-    }
-    if (state.editingId) {
-      const c = lab()?.compounds?.find(x => x.id === state.editingId);
-      if (c) openCompound(c);
-    }
   }
 
   function clearComposer() {
@@ -772,11 +863,26 @@ export function createWordComposer(ctx) {
     }
   }
 
+  async function loadRootDomain(conceptId) {
+    try {
+      const concept = await ctx.api(`/api/fonoran/concepts/${encodeURIComponent(conceptId)}`);
+      const domain = concept.domain ?? '';
+      if (!domain || state.editingRootId !== conceptId) return;
+      state.editingRootDomain = domain;
+      populateDomainSelect(domain);
+    } catch {
+      /* concept lookup optional */
+    }
+  }
+
   function openRootEditor(s, { isNew = false } = {}) {
     state.mode = 'root';
+    state.compoundEdit = false;
+    state.editSnapshot = null;
     state.editingRootIsNew = isNew;
     state.editingRootId = s.concept_id ?? null;
     state.editingRootSpelling = s.spelling ?? null;
+    state.editingRootDomain = s.domain ?? null;
     state.candidateId = s.candidate_id ?? null;
     state.itemState = s.state ?? null;
     state.composer = [];
@@ -790,6 +896,7 @@ export function createWordComposer(ctx) {
     if ($(`${PREFIX}-gloss`)) $(`${PREFIX}-gloss`).value = s.meaning ?? '';
     populateDomainSelect(s.domain ?? '');
     if ($(`${PREFIX}-root-aliases`)) $(`${PREFIX}-root-aliases`).value = (s.aliases ?? []).join('\n');
+    if (!s.domain && s.concept_id && !isNew) void loadRootDomain(s.concept_id);
 
     render();
   }
@@ -801,6 +908,8 @@ export function createWordComposer(ctx) {
   function openCompound(c, { returnPage = null } = {}) {
     state.mode = 'compound';
     state.editingId = c.id;
+    state.compoundEdit = false;
+    state.editSnapshot = null;
     state.returnPage = returnPage;
     state.itemState = c.state ?? null;
     state.composer = composerFromCompound(c);
@@ -817,11 +926,10 @@ export function createWordComposer(ctx) {
     if (state.composer.length < 2) { toast('Stack at least two components.'); return; }
     if (!meaning) { toast('Give the word a meaning.'); return; }
     const aliases = ($(`${PREFIX}-aliases`)?.value ?? '').trim();
-    const editingId = state.editingId;
+    const spelling = resolveComposerSpelling(state.composer);
+    let { id: editingId, existing } = findEditingCompound({ updateState: true });
     try {
       if (editingId) {
-        const existing = lab()?.compounds?.find(c => c.id === editingId);
-        const spelling = resolveComposerSpelling(state.composer);
         const recipeChanged = spelling !== existing?.spelling;
         if (recipeChanged) {
           const res = await ctx.api(`/api/fonoran/lab/compounds/${encodeURIComponent(editingId)}`, {
@@ -832,6 +940,7 @@ export function createWordComposer(ctx) {
               allow_unapproved: state.showUnapproved,
             }),
           });
+          state.editingId = res.id ?? editingId;
           toast(`Saved ${res.spelling ?? spelling}`);
           state.itemState = res.state ?? state.itemState;
         } else {
@@ -844,6 +953,7 @@ export function createWordComposer(ctx) {
               state: changed && existing?.meaning ? 'revised' : undefined,
             }),
           });
+          state.editingId = res.id ?? editingId;
           toast(`Saved ${spelling}`);
           state.itemState = res.state ?? state.itemState;
         }
@@ -862,6 +972,8 @@ export function createWordComposer(ctx) {
         state.itemState = res.state ?? 'draft';
         toast(`Saved ${res.spelling ?? meaning}`);
       }
+      state.compoundEdit = false;
+      state.editSnapshot = null;
       await ctx.reloadLab?.();
       render();
     } catch (e) {
@@ -874,12 +986,13 @@ export function createWordComposer(ctx) {
     const gloss = $(`${PREFIX}-gloss`)?.value.trim();
     const domainSel = $(`${PREFIX}-domain`);
     const domainCustomEl = $(`${PREFIX}-domain-custom`);
-    const domain = domainSel?.value === '_custom'
+    let domain = domainSel?.value === '_custom'
       ? (domainCustomEl?.value.trim().toLowerCase() ?? '')
       : (domainSel?.value.trim().toLowerCase() ?? '');
+    if (!domain) domain = state.editingRootDomain ?? '';
     const spelling = $(`${PREFIX}-spelling`)?.value.trim().toLowerCase();
     const aliases = $(`${PREFIX}-root-aliases`)?.value ?? '';
-    if (!id || !gloss || !domain || !spelling) {
+    if (!id || !gloss || !spelling || (state.editingRootIsNew && !domain)) {
       toast('Concept id, gloss, domain, and root sound are required.');
       return;
     }
@@ -887,7 +1000,8 @@ export function createWordComposer(ctx) {
       toast('Enter a valid Fonoran syllable.');
       return;
     }
-    const body = { description: gloss, domain, aliases, spelling };
+    const body = { description: gloss, aliases, spelling };
+    if (domain) body.domain = domain;
     try {
       if (state.editingRootIsNew) {
         await ctx.api('/api/fonoran/concepts', { method: 'POST', body: JSON.stringify({ id, ...body }) });
@@ -994,7 +1108,8 @@ export function createWordComposer(ctx) {
 
     $(`${PREFIX}-new-compound`)?.addEventListener('click', () => startNewCompound());
     $(`${PREFIX}-new-root`)?.addEventListener('click', () => openNewRoot());
-    $(`${PREFIX}-clear`)?.addEventListener('click', () => clearCompoundForm());
+    $(`${PREFIX}-edit`)?.addEventListener('click', () => enterCompoundEdit());
+    $(`${PREFIX}-clear`)?.addEventListener('click', () => cancelCompoundEdit());
     $(`${PREFIX}-clear-root`)?.addEventListener('click', () => goIdle());
     $(`${PREFIX}-cancel`)?.addEventListener('click', () => goIdle());
     $(`${PREFIX}-save`)?.addEventListener('click', () => void saveWord());

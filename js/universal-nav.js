@@ -97,7 +97,7 @@ let state = {
   mountId: 'app-header-root',
 };
 
-/** @type {{ required: boolean, configured: boolean, toolsGated: boolean, authenticated: boolean, email: string | null, loginUrl: string } | null} */
+/** @type {{ required: boolean, configured: boolean, toolsGated: boolean, authenticated: boolean, isAdmin: boolean, email: string | null, loginUrl: string } | null} */
 let fonoranAuthState = null;
 
 function shouldHideToolsPlatformTab() {
@@ -681,7 +681,7 @@ export function setFonoranUndoDisabled(disabled) {
 }
 
 /**
- * @param {{ required?: boolean, configured?: boolean, toolsGated?: boolean, learnToolsGated?: boolean, authenticated: boolean, email?: string | null, loginUrl?: string }} auth
+ * @param {{ required?: boolean, configured?: boolean, toolsGated?: boolean, learnToolsGated?: boolean, authenticated: boolean, isAdmin?: boolean, email?: string | null, loginUrl?: string }} auth
  */
 export function setFonoranAuth(auth) {
   fonoranAuthState = {
@@ -689,6 +689,7 @@ export function setFonoranAuth(auth) {
     configured: Boolean(auth.configured),
     toolsGated: Boolean(auth.toolsGated ?? auth.learnToolsGated),
     authenticated: Boolean(auth.authenticated),
+    isAdmin: Boolean(auth.isAdmin),
     email: auth.email ?? null,
     loginUrl: auth.loginUrl ?? '/auth/google?returnTo=/language',
   };
