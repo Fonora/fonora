@@ -11,10 +11,24 @@ const DEFAULT_DELAY_MS = 200;
 const MAX_RETRIES = 5;
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 
+/** Backend/tooling LLM key (gap analysis, playtests, corpus generation). */
+export const ANTHROPIC_API_KEY_ENV = 'ANTHROPIC_API_KEY';
+
+/** User-facing translator LLM key (Language app /api/fonoran/translate). */
+export const ANTHROPIC_TRANSLATOR_API_KEY_ENV = 'ANTHROPIC_API_KEY_FONORA_TRANSLATOR';
+
 let lastRequestAt = 0;
 
-export function anthropicConfigured() {
-  return Boolean(process.env.ANTHROPIC_API_KEY?.trim());
+function resolveApiKey(apiKeyEnv = ANTHROPIC_API_KEY_ENV) {
+  return process.env[apiKeyEnv]?.trim() ?? '';
+}
+
+export function anthropicConfigured(apiKeyEnv = ANTHROPIC_API_KEY_ENV) {
+  return Boolean(resolveApiKey(apiKeyEnv));
+}
+
+export function anthropicTranslatorConfigured() {
+  return anthropicConfigured(ANTHROPIC_TRANSLATOR_API_KEY_ENV);
 }
 
 export function anthropicModel() {
@@ -57,14 +71,20 @@ function extractJsonText(text) {
  * @param {string} opts.system
  * @param {string} opts.user
  * @param {number} [opts.temperature]
+ * @param {string} [opts.apiKeyEnv] env var name for the API key (default ANTHROPIC_API_KEY)
  * @returns {Promise<{ ok: true, data: object, raw: string, usage?: object } | { ok: false, error: string, status?: number }>}
  */
-export async function completeJson({ system, user, temperature = 0, maxTokens: maxTokensOpt }) {
-  if (!anthropicConfigured()) {
-    return { ok: false, error: 'ANTHROPIC_API_KEY not set' };
+export async function completeJson({
+  system,
+  user,
+  temperature = 0,
+  maxTokens: maxTokensOpt,
+  apiKeyEnv = ANTHROPIC_API_KEY_ENV,
+}) {
+  const apiKey = resolveApiKey(apiKeyEnv);
+  if (!apiKey) {
+    return { ok: false, error: `${apiKeyEnv} not set` };
   }
-
-  const apiKey = process.env.ANTHROPIC_API_KEY.trim();
   const model = anthropicModel();
   const maxTokens = maxTokensOpt ?? anthropicMaxTokens();
 

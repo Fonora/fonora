@@ -86,6 +86,8 @@ The stranger phrase corpus stress-tests translation coverage with realistic mult
 
 ## Translation gaps & probes
 
+Live translator architecture: [fonoran-translator.md](fonoran-translator.md).
+
 | Command | What it does |
 | --- | --- |
 | `npm run fonoran:translation-gaps` | Full gap report: unknown words, coverage stats, quality findings. |
@@ -182,7 +184,8 @@ External vocabulary data lives in the `fonora-data` submodule.
 
 | Variable | Purpose |
 | --- | --- |
-| `ANTHROPIC_API_KEY` | Required for vocab survey, gap analysis, LLM intuition, refine loop |
+| `ANTHROPIC_API_KEY` | Backend tooling: vocab survey, gap analysis, LLM intuition, refine loop |
+| `ANTHROPIC_API_KEY_FONORA_TRANSLATOR` | User-facing Language translator (`/api/fonoran/translate`) and `npm run fonoran:translate:cache-warm` |
 | `ANTHROPIC_MODEL` | Override default model (default: `claude-sonnet-4-6`) |
 | `DATABASE_URL` | PostgreSQL for production lab state |
 | `PORT` | Dev server port (default `8000`) |

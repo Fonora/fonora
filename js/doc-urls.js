@@ -134,7 +134,8 @@ function buildDocCatalog() {
     { path: 'docs/fonoran-compound-workflow.md', label: 'Compound workflow', layer: 'language' },
     { path: 'docs/fonoran-cli-tools.md', label: 'CLI tools reference', layer: 'language' },
     { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
-    { path: 'docs/fonoran-interpretive-translator.md', label: 'Interpretive translator', layer: 'language' },
+    { path: 'docs/fonoran-translator.md', label: 'Fonoran translator', layer: 'language' },
+    { path: 'docs/fonoran-interpretive-translator.md', label: 'Interpretive translator (legacy)', layer: 'language' },
 
     ...RESEARCH_DOC_ENTRIES,
 

@@ -24,6 +24,7 @@
  *                                                         #   as the new baseline
  *   node scripts/fonoran-translation-gaps.js --corpus stranger   # stranger corpus gap report
  *   node scripts/fonoran-translation-gaps.js --corpus stranger --json
+ *   node scripts/fonoran-translation-gaps.js --engine llm   # LLM semantic compiler
  */
 import {
   runTranslationGapReport,
@@ -44,11 +45,14 @@ const levelIdx = argv.indexOf('--level');
 const onlyLevel = levelIdx !== -1 ? Number(argv[levelIdx + 1]) : null;
 const corpusIdx = argv.indexOf('--corpus');
 const corpusArg = corpusIdx !== -1 ? argv[corpusIdx + 1] : 'golden';
+const engineIdx = argv.indexOf('--engine');
+const engineArg = engineIdx !== -1 ? argv[engineIdx + 1] : 'legacy';
 
 const gapReportOpts = () => ({
   level: onlyLevel,
   resetCache: true,
   corpus: corpusArg,
+  engine: engineArg,
 });
 
 const C = {

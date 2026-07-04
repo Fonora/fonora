@@ -49,7 +49,8 @@ Read in this order for a new contributor:
 | 2b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
 | 2c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
 | 3 | Fonoran grammar | [fonoran-grammar.md](fonoran-grammar.md) |
-| 4 | Interpretive translator | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
+| 4 | **Translator (live)** | [fonoran-translator.md](fonoran-translator.md) |
+| 5 | Interpretive translator (legacy) | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
 
 ---
 

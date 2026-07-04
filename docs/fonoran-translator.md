@@ -1,0 +1,256 @@
+# Fonoran Translator
+
+> **Status**: Active (July 2026). Live path at `/language#translator` and `POST /api/fonoran/translate`.
+
+The Fonoran Translator compiles **meaning** from any source language into Fonoran — it is not a word-for-word gloss. Grammar is language-neutral ([Rule 7](fonoran-grammar.md#rule-7-translator-architecture)); concepts are canonical; spellings come only from the approved lab inventory.
+
+The **default engine** is a multilingual **LLM semantic compiler** (`tools/fonoran-llm-translate.js`) that emits a concept frame, then a **deterministic renderer** (`translateFromFrame()` in `tools/fonoran-translator.js`) builds roman, script, tokens, and playback. The legacy English-only compiler remains for regression (`engine=legacy`).
+
+Research context: [RN-28 · Multilingual LLM semantic compiler](research-notes/RN-28-multilingual-llm-semantic-compiler.md). Legacy compiler spec: [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md).
+
+---
+
+## End-to-end architecture
+
+```mermaid
+flowchart TB
+  subgraph UI["Language app (/language#translator)"]
+    IN["Source text + sourceLang"]
+    PB["Playback bar (Listen / speed / syllable mode)"]
+    OUT["Output panel"]
+    IN -->|debounced POST| API
+    API --> OUT
+    OUT --> PB
+  end
+
+  subgraph API["Server"]
+    RT["tools/fonoran-translate.js<br/>translate() router"]
+    LLM["tools/fonoran-llm-translate.js<br/>compileFrameViaLlm()"]
+    CACHE[("fonoran-translation-cache.json")]
+    REPAIR["repairLlmFrame()"]
+    RENDER["translateFromFrame()"]
+    PLAY["attachTranslatorPlayback()"]
+    ALT["attachTranslateAlternates()"]
+  end
+
+  subgraph Lab["Approved inventory"]
+    ROOTS["Roots + compounds"]
+    PART["Grammar particles"]
+    GRAM["docs/fonoran-grammar.md + grammar brief"]
+  end
+
+  API --> RT
+  RT -->|engine=llm default| LLM
+  RT -->|engine=legacy| LEG["translateEnglishLegacy()"]
+  LLM --> CACHE
+  CACHE -->|hit| REPAIR
+  LLM -->|miss| REPAIR
+  REPAIR --> RENDER
+  LEG --> PLAY
+  RENDER --> PLAY
+  PLAY --> ALT
+  ROOTS --> RENDER
+  PART --> RENDER
+  GRAM --> LLM
+  GRAM --> REPAIR
+  ALT --> OUT
+```
+
+---
+
+## Compile pipeline (LLM path)
+
+```mermaid
+flowchart LR
+  subgraph Input
+    T["Source text"]
+    SL["sourceLang (auto | en | es | …)"]
+  end
+
+  subgraph LLM["Anthropic (ANTHROPIC_API_KEY_FONORA_TRANSLATOR)"]
+    P["Prompt: grammar brief + concept inventory + few-shot"]
+    F["Concept frame JSON<br/>{ slots, is_question, unresolved, reasoning }"]
+    T --> P --> F
+  end
+
+  subgraph Repair["Deterministic repair"]
+    N1["normalizeWePrimaryFrame()"]
+    N2["stripExistentialThereFromFrame()"]
+    N3["normalizeFrameParticles()"]
+    G["checkLlmGrammarViolations()"]
+    L["repairFromLegacySlots() on WH misuse / removed particles"]
+    F --> N1 --> N2 --> N3 --> G
+    G -->|violations| L
+  end
+
+  subgraph Render["Deterministic render"]
+    V["validateLlmFrame()"]
+    ST["slotsToTokens()"]
+    BS["buildSurface()"]
+    PB["buildPlaybackFromTokens()"]
+    L --> V
+    G -->|ok| V
+    V --> ST --> BS --> PB
+  end
+
+  subgraph Output
+    TOK["tokens + resolution_kind"]
+    SUR["surface (roman, script, pronunciation)"]
+    PBK["playback (script, segments, wordSources)"]
+    ALT["alternates (rule-based we readings)"]
+    ST --> TOK
+    BS --> SUR
+    PB --> PBK
+    TOK --> ALT
+  end
+
+  CACHE[("Cache lookup / write")] -.-> F
+  CACHE -.-> Output
+```
+
+**Key invariant:** the LLM chooses **concept ids and slot roles** only. It never invents spellings. Every `fonoran` token on the surface resolves through the live lab (`buildResolveContext()`), including spelling→concept fallback for LLM outputs that used roman instead of ids.
+
+---
+
+## Language app UI
+
+```mermaid
+flowchart TB
+  subgraph Layout["Two-column layout"]
+    LEFT["Input panel<br/>sourceLang select + textarea + examples"]
+    RIGHT["Output panel"]
+  end
+
+  subgraph OutputPanel["Output panel (auto height, no scroll)"]
+    HDR["Header: Fonoran · Why this reading (hover popup)"]
+    SURF["Surface block"]
+    SCRIPT["Fonora script"]
+    ROMAN["Roman line + resolution colors"]
+    PRON["Pronunciation ▸ (collapsed details)"]
+    TOK["Token list (role → english → fonoran)"]
+    ALT2["Also sayable (we alternates: Use / ▶)"]
+    HDR --- SURF
+    SURF --> SCRIPT --> ROMAN --> PRON --> TOK --> ALT2
+  end
+
+  subgraph Playback["Playback bar (page top)"]
+    LISTEN["▶ Listen"]
+    STOP["■ Stop"]
+    SPD["Speech speed"]
+    SYL["By syllable"]
+  end
+
+  LEFT --> RIGHT
+  RIGHT --> OutputPanel
+  LISTEN -->|speakTranslatorResult| PB2["Server playback payload or client rebuild"]
+  PB2 --> TOK
+  ALT2 -->|▶| PB2
+```
+
+### UI behavior (July 2026)
+
+| Element | Behavior |
+| --- | --- |
+| **Translate** | Debounced (~280 ms) POST to `/api/fonoran/translate`; spinner while busy |
+| **Resolution colors** | Default text = direct lexicon hit; gold = interpreted; orange = semantic / weak alias; red = unresolved |
+| **Pronunciation** | Collapsed `<details>` under roman; phonetic key + “sounds like” hint |
+| **Why this reading** | Hover/focus popup in output header; shows LLM `reasoning` + engine badge (Cached / LLM) |
+| **Listen** | Uses server `playback` as source of truth; speaks every token; unresolved → browser TTS English fallback; punctuation skipped |
+| **Also sayable** | Rule-based alternates (e.g. collective `dan` ↔ dyadic `mi be` for *we*); alternate ▶ highlights alternate tokens |
+| **Layout** | 15 px gap below nav; panels `align-items: start`; independent auto heights |
+
+Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
+
+---
+
+## Module reference
+
+| Module | Role |
+| --- | --- |
+| `tools/fonoran-translate.js` | Unified `translate()` router (`llm` default, `legacy` fallback) |
+| `tools/fonoran-llm-translate.js` | LLM prompt, frame compile, cache, validation, repair |
+| `tools/fonoran-llm-grammar-brief.js` | Grammar rules excerpt + `checkLlmGrammarViolations()` |
+| `tools/fonoran-translator.js` | `translateFromFrame()`, `slotsToTokens()`, `buildSurface()`, legacy English compiler |
+| `tools/fonoran-english-resolve.js` | Concept resolution cascade, spelling fallback |
+| `tools/fonoran-interpretation.js` | Motion rules, existential *there* peel, frame helpers |
+| `tools/fonoran-translate-alternates.js` | Optional we-reading alternates (no second LLM call) |
+| `tools/fonoran-playback-build.js` | Server wrapper; attaches `playback` to every result |
+| `js/fonoran-playback-build.js` | Browser-safe playback builder (shared with Samples pipeline) |
+| `tools/fonoran-translation-cache.js` | Read/write `fonoran-translation-cache.json` |
+| `language/fonoran-app.js` | Translator page UI |
+
+---
+
+## API
+
+**`POST /api/fonoran/translate`** (public, read-only)
+
+```json
+{
+  "text": "We need shelter",
+  "sourceLang": "auto",
+  "engine": "llm",
+  "skipCache": false
+}
+```
+
+**Response (success):**
+
+| Field | Description |
+| --- | --- |
+| `surface.roman` | Fonoran roman line |
+| `surface.pronunciation` | `{ sayLine, englishLine }` for UI + TTS hints |
+| `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id` |
+| `playback` | `{ script, segments, wordSources, tokenIndices, playable }` |
+| `reasoning` | One-sentence compiler note (shown in “Why this reading”) |
+| `llm_frame` | Normalized concept frame `{ slots, is_question, … }` |
+| `alternates[]` | Optional rule-based readings (`roman`, `tokens`, `playback`, `note`) |
+| `unresolved[]` | Honest gaps (render red; never fabricated) |
+| `engine` | `llm` \| `cached` \| `legacy` |
+
+Requires `ANTHROPIC_API_KEY_FONORA_TRANSLATOR` for `engine=llm`. See [fonoran-cli-tools.md](fonoran-cli-tools.md).
+
+---
+
+## Resolution cascade
+
+Each token carries `resolution_kind` (see [Rule 7 · Resolution cascade](fonoran-grammar.md#resolution-cascade--honest-gaps)):
+
+| Kind | UI color | Meaning |
+| --- | --- | --- |
+| `direct` | default | Curated alias, concept id, or lab lemma |
+| `interpreted` | gold | Tense lemma, idiom, rule-based mapping |
+| `semantic` / `alias_weak` | orange | Weaker semantic or gloss-only alias |
+| `unknown` | red | No confident concept — honest gap |
+
+---
+
+## Cache & warm-up
+
+Successful frames are stored in `external/fonora-data/data/fonoran-translation-cache.json`. Cache hits re-run **repair + render** against the current lab so vocabulary changes propagate without a new LLM call.
+
+```bash
+npm run fonoran:translate:cache-warm   # batch warm stranger corpus
+```
+
+---
+
+## Testing
+
+| Command | Purpose |
+| --- | --- |
+| `npm run test:translator` | Golden regression — fails on unexpected drift |
+| `npm run test:translator:update` | Accept current output as new baseline |
+| `node scripts/fonoran-translate-frame-test.js` | Frame repair + we-alternate smoke tests |
+
+Legacy English golden suite still exercises `engine=legacy` until LLM coverage matches the 1,000-phrase stranger corpus.
+
+---
+
+## Related
+
+- [fonoran-grammar.md · Rule 7](fonoran-grammar.md#rule-7-translator-architecture) — constitutional translator rules
+- [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — legacy English compiler
+- [RN-28](research-notes/RN-28-multilingual-llm-semantic-compiler.md) — decision record
+- [RN-25](research-notes/RN-25-concept-first-translation-and-honest-gaps.md) — honest gaps
+- [RN-15](research-notes/RN-15-compiling-english-into-meaning.md) — original interpretive compiler

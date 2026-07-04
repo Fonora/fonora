@@ -903,6 +903,30 @@ export const MODALS = new Set(['should', 'must', 'may', 'might', 'can', 'could',
 const YES_NO_BE_AUX = new Set(['are', 'am', 'is', 'was', 'were']);
 
 /**
+ * English dummy "there" in existential frames (Are there… / There are…) — not deictic place.
+ * Deictic "there" (= tak) only when pointing at a location, not as a pure existence stub.
+ */
+export function isExistentialDummyThereEnglish(text) {
+  const t = String(text ?? '').trim().toLowerCase().replace(/\?+$/, '');
+  return /^(are|is|was|were|am)\s+there\b/.test(t)
+    || /^there\s+(are|is|was|were|am)\b/.test(t);
+}
+
+/** Strip leading "Are there" / "There are" dummy scaffolding from token stream. */
+export function peelExistentialDummyThere(tokens) {
+  if (!tokens?.length || tokens.length < 2) return { tokens, peeled: false };
+  const t0 = tokens[0]?.toLowerCase();
+  const t1 = tokens[1]?.toLowerCase();
+  if (YES_NO_BE_AUX.has(t0) && t1 === 'there') {
+    return { tokens: tokens.slice(2), peeled: true };
+  }
+  if (t0 === 'there' && YES_NO_BE_AUX.has(t1)) {
+    return { tokens: tokens.slice(2), peeled: true };
+  }
+  return { tokens, peeled: false };
+}
+
+/**
  * Peel question auxiliary before pronoun: "Are you going" → subject you + [going, …].
  * Does not peel do/did (those carry tense / interrogative) or it/there subjects.
  */

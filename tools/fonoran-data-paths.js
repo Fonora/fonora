@@ -20,6 +20,7 @@ export const EXTERNAL_DATA_REL = {
   stranger_gap_report: 'data/fonoran-stranger-gap-report.json',
   phonetic_analytics: 'data/fonoran-phonetic-analytics.json',
   refine_iterations: 'data/fonoran-refine-iterations.json',
+  translation_cache: 'data/fonoran-translation-cache.json',
 };
 
 /** Editorial doc keys stored in fonora-data when external dir is active. */

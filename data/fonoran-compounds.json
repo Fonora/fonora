@@ -3,7 +3,7 @@
   "status": "canonical",
   "philosophy": "Compounds are meaning-attempts, not canonical answers. Each concept keeps a preferred form and alternate understandable forms. understandability is an advisory ranking aid; human guess-the-meaning playtests decide the preferred form (docs/fonoran-constitution.md).",
   "description": "Curated transparent Fonoran compounds with ranked alternates. Preferred forms selected deterministically from ASSOCIATION_SEEDS via fonoran-preferred-select.",
-  "compound_count": 483,
+  "compound_count": 484,
   "compounds": [
     {
       "concept": "community",
@@ -12489,6 +12489,36 @@
         }
       ],
       "notes": "Belongs = something/someone has a home-place or bond-place; a stranger would guess 'bond+place' or 'home+bond' as 'this thing has its place here'. Concrete spatial and social roots make this recoverab"
+    },
+    {
+      "concept": "maybe",
+      "preferred": {
+        "composition": [
+          "some",
+          "true"
+        ],
+        "gloss": "maybe"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "think",
+            "some"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "doubt",
+            "true"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "'Maybe' expresses uncertainty or possibility — a thought that is not fully true or false. This can be naturally expressed as 'think + some + true' or more simply 'some + true', meaning 'partially true"
     }
   ]
 }

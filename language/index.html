@@ -289,20 +289,12 @@
 
       <section id="page-translator" class="page">
         <div class="translator-page content-page">
-          <header class="grammar-toolbar">
-            <div class="grammar-toolbar__text">
-              <p class="grammar-toolbar__tag">English → Fonoran</p>
-              <h1 class="grammar-toolbar__title">Meaning compiler</h1>
-              <p class="grammar-toolbar__lead sans">Compiles English into Fonoran concepts, not word-for-word substitution. Direct matches use normal text; interpreted mappings are <span class="translator-resolved--interpreted">yellow</span>, WordNet matches <span class="translator-resolved--semantic">orange</span>; unknown words stay <span class="translator-unresolved-sample">red</span>.</p>
-            </div>
-            <a class="btn grammar-toolbar__source" href="#grammar">Grammar rules</a>
-          </header>
-
           <div class="translator-playback-bar sans" role="group" aria-label="Translation playback">
             <div class="translator-playback-bar__actions">
               <button type="button" class="btn btn--primary" id="tr-hear" disabled aria-label="Listen to Fonoran translation">▶ Listen</button>
               <button type="button" class="btn" id="tr-stop" disabled aria-label="Stop playback">■ Stop</button>
             </div>
+            <p id="tr-playback-status" class="translator-playback-status sans" hidden aria-live="polite"></p>
             <div class="translator-playback-controls">
               <label class="translator-playback-speed" for="tr-speed">
                 <span class="translator-playback-speed__label">Speech speed</span>
@@ -320,11 +312,19 @@
             <div class="translator-panel translator-panel--input content-card">
               <div class="translator-panel__header">
                 <label class="translator-panel__lang" for="tr-input">
-                  <span class="translator-panel__lang-text" id="tr-source-lang-label">English</span>
-                  <!-- When more source locales ship: add <select id="tr-source-lang" class="translator-panel__lang-select"> and hide .translator-panel__lang-text -->
+                  <select id="tr-source-lang" class="translator-panel__lang-select" aria-label="Source language">
+                    <option value="auto">Auto-detect</option>
+                    <option value="en" selected>English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ar">Arabic</option>
+                    <option value="zh">Mandarin</option>
+                  </select>
                 </label>
               </div>
-              <textarea id="tr-input" class="translator-input" rows="6" placeholder="e.g. All men are created equal&#10;The air feels cool&#10;The tribe is at war" autocomplete="off" spellcheck="true" aria-labelledby="tr-source-lang-label"></textarea>
+              <textarea id="tr-input" class="translator-input" rows="6" placeholder="Type words, phrases, or sentences in any language…" autocomplete="off" spellcheck="true" aria-labelledby="tr-source-lang-label"></textarea>
               <div class="translator-examples sans">
                 <span class="translator-examples__label">Try:</span>
                 <button type="button" class="chip" data-tr-example="All men are created equal">All men are created equal</button>
@@ -334,11 +334,12 @@
             </div>
 
             <div class="translator-panel translator-panel--output content-card">
-              <div class="translator-panel__header">
+              <div class="translator-panel__header translator-panel__header--output">
                 <span class="translator-panel__lang" id="tr-output-label">Fonoran</span>
+                <div id="tr-output-meta" class="translator-panel__meta"></div>
               </div>
               <div id="tr-output" class="translator-output" aria-live="polite" aria-labelledby="tr-output-label">
-                <p class="translator-output__empty sans">Type English on the left to see Fonoran script and pronunciation.</p>
+                <p class="translator-output__empty sans">Type any language on the left to see Fonoran script and pronunciation.</p>
               </div>
             </div>
           </div>

@@ -447,15 +447,17 @@ flowchart TD
   EN --> ME --> SG --> PC --> CC --> GP --> FO
 ```
 
-**Current implementation (concept-first, slot-filling compiler).** The live
-translator in `tools/fonoran-translator.js` compiles English → **grammar slots**
-(Actor · Action · Target · Place · Time; Place covers spatial/motion landmarks) →
-scored resolution → a language-neutral **semantic frame** → surface. Motion
-frames are matched programmatically (`matchMotionPhrase` in
-`tools/fonoran-interpretation.js`) from declarative rules in
-`data/fonoran-interpretation-rules.json` — not per-phrase hard-coded glosses. It
-does **not** yet build a full semantic *graph* (relations between frames), but
-the per-sentence frame below is now a real object, not just an intermediate.
+**Current implementation (July 2026).** The live translator is a **multilingual LLM semantic compiler** plus deterministic render. See **[fonoran-translator.md](fonoran-translator.md)** for architecture diagrams, UI behavior, API fields, and module map.
+
+At a high level:
+
+1. **Any language** → LLM emits a language-neutral **concept frame** (`{ slots, is_question, unresolved, reasoning }`).
+2. **Repair** — grammar brief validates the frame; rule-based fallback fixes WH misuse on yes/no questions and removed v1 particles.
+3. **Render** — `translateFromFrame()` maps concept ids to approved spellings via `slotsToTokens()` + `buildSurface()`. No invented roots.
+4. **Playback** — `attachTranslatorPlayback()` builds Fonora script + TTS segments (same pipeline as Samples).
+5. **Alternates** — optional rule-based readings (e.g. collective vs dyadic *we*) without a second LLM call.
+
+The legacy English slot-filling compiler in `tools/fonoran-translator.js` (`translateEnglishLegacy`, `engine=legacy`) remains for golden regression. It uses programmatic motion matching (`matchMotionPhrase` in `tools/fonoran-interpretation.js`) from `data/fonoran-interpretation-rules.json`. The per-sentence **semantic frame** below is still the pivot object — now produced by the LLM path as well as the legacy parser.
 
 **The semantic frame is a real pivot object.** Between the parse and the surface,
 `translateEnglish` builds an explicit, language-neutral frame:
@@ -514,7 +516,7 @@ dan ta ginek nan yetasnan
 6. **Grammar particles**: attach past (**ta**), future (**sa**), negation (**no**), conditional (**von**). **Omit time particles for present.** Questions add no particle — content questions compose from concepts and are written with `?`.
 7. **Fonoran sentence**: emit fixed-order surface string
 
-Full implementation spec: [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md).
+Full implementation spec: [fonoran-translator.md](fonoran-translator.md) (live path) · [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) (legacy English compiler).
 
 **Default tense rule:** if the semantic frame has no time particle, the translator treats the sentence as **present** (or contextually current). Only **ta** (past) and **sa** (future) appear on the surface.
 
