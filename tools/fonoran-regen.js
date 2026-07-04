@@ -3,7 +3,7 @@
  * Shared by CLI scripts and Advanced GUI API routes.
  */
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildFonoran } from './fonoran-build.js';
@@ -159,6 +159,92 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
 }
 
 /**
+ * Merge accepted proposals from fonoran-compound-proposals.json into
+ * fonoran-compounds.json on disk so the editorial import picks them up.
+ *
+ * - Skips proposals whose concept is already defined in compounds.json
+ * - Skips proposals where no valid composition is available
+ * - When a concept has multiple accepted proposals, uses the first valid_composition
+ *   (or chosen_composition if set)
+ * - Writes the updated fonoran-compounds.json back to disk
+ *
+ * @param {string} baseDir  repo root
+ * @returns {{ promoted: number, skipped: number, already_present: number }}
+ */
+export function promoteAcceptedProposals(baseDir = ROOT) {
+  const proposalsPath = join(baseDir, 'data/fonoran-compound-proposals.json');
+  const compoundsPath = join(baseDir, 'data/fonoran-compounds.json');
+
+  if (!existsSync(proposalsPath) || !existsSync(compoundsPath)) {
+    return { promoted: 0, skipped: 0, already_present: 0 };
+  }
+
+  const proposalsDoc = JSON.parse(readFileSync(proposalsPath, 'utf8'));
+  const compoundsDoc = JSON.parse(readFileSync(compoundsPath, 'utf8'));
+
+  const existingConcepts = new Set((compoundsDoc.compounds ?? []).map(c => c.concept));
+
+  // Group accepted compound proposals by concept; pick the best composition per concept
+  const accepted = (proposalsDoc.proposals ?? [])
+    .filter(p => p.status === 'accepted' && p.classification === 'compound');
+
+  // Deduplicate: keep first accepted proposal per concept
+  const byConceptFirst = new Map();
+  for (const p of accepted) {
+    const key = p.concept_id ?? p.word;
+    if (!key) continue;
+    if (!byConceptFirst.has(key)) byConceptFirst.set(key, p);
+  }
+
+  let promoted = 0;
+  let skipped = 0;
+  let alreadyPresent = 0;
+
+  const newEntries = [];
+  for (const [concept, prop] of byConceptFirst) {
+    if (existingConcepts.has(concept)) {
+      alreadyPresent++;
+      continue;
+    }
+
+    // Use chosen_composition if set, else first valid_composition
+    const composition = prop.chosen_composition?.length
+      ? prop.chosen_composition
+      : (prop.valid_compositions ?? []).filter(Array.isArray)[0];
+
+    if (!composition?.length) {
+      skipped++;
+      continue;
+    }
+
+    newEntries.push({
+      concept,
+      preferred: {
+        composition,
+        gloss: prop.gloss ?? concept,
+      },
+      preferred_source: 'proposal',
+      alternates: (prop.valid_compositions ?? [])
+        .filter(Array.isArray)
+        .filter(c => JSON.stringify(c) !== JSON.stringify(composition))
+        .slice(0, 3)
+        .map(c => ({ composition: c, status: 'plausible', source: 'proposal' })),
+      notes: prop.rationale ? prop.rationale.slice(0, 200) : undefined,
+    });
+    existingConcepts.add(concept);
+    promoted++;
+  }
+
+  if (promoted > 0) {
+    compoundsDoc.compounds = [...(compoundsDoc.compounds ?? []), ...newEntries];
+    compoundsDoc.compound_count = compoundsDoc.compounds.length;
+    writeFileSync(compoundsPath, JSON.stringify(compoundsDoc, null, 2) + '\n', 'utf8');
+  }
+
+  return { promoted, skipped, already_present: alreadyPresent };
+}
+
+/**
  * Full generator pipeline: editorial import → optional LLM optimize → build.
  */
 export async function runRegenerate({
@@ -167,6 +253,9 @@ export async function runRegenerate({
   approveAll = true,
 } = {}) {
   const steps = [];
+
+  const promoted = promoteAcceptedProposals(baseDir);
+  steps.push({ step: 'promote_proposals', ...promoted });
 
   const editorial = await importEditorialFromSeedPaths(baseDir);
   steps.push({ step: 'editorial_import', ...editorial });

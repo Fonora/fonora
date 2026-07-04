@@ -343,6 +343,8 @@ export function isAdminWriteRequired(pathname, method) {
   // Vote endpoints are community-only (handled by isCommunityWriteRequired); everything else requires admin
   if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/vote$/) && m === 'POST') return false;
   if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return false;
+  // Community proposal creation is handled by isCommunityWriteRequired
+  if (pathname === '/api/fonoran/proposals' && m === 'POST') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
 }
 
@@ -354,6 +356,7 @@ export function isWriteAuthRequired(pathname, method) {
 export function isCommunityWriteRequired(pathname, method) {
   const m = method.toUpperCase();
   if (m !== 'POST') return false;
+  if (pathname === '/api/fonoran/proposals') return true;
   if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/vote$/) && m === 'POST') return true;
   if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return true;
   return false;

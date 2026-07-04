@@ -78,6 +78,7 @@
         <div class="main-nav-primary">
           <button type="button" class="tab-btn" data-tab="tools-home">Home</button>
           <button type="button" class="tab-btn" data-tab="word-manager" id="nav-word-manager" hidden>Word Manager</button>
+          <button type="button" class="tab-btn" data-tab="gap-workshop" id="nav-gap-workshop" hidden>Proposal Review</button>
           <button type="button" class="tab-btn" data-tab="samples">Samples</button>
           <button type="button" class="tab-btn" data-tab="encoder-testing">Pronunciation Testing</button>
           <button type="button" class="tab-btn" data-tab="pronunciation-validation">Validation</button>
@@ -421,6 +422,14 @@
               <a href="/tools#word-manager" class="btn btn--primary">Open Word Manager</a>
             </div>
           </article>
+          <article class="home-layer-card">
+            <p class="home-layer-card__tag">Vocabulary</p>
+            <h3>Proposal Review</h3>
+            <p>Review vocab survey proposals and playtest promotions, then accept them into the vocabulary pipeline.</p>
+            <div class="home-layer-card__actions">
+              <a href="/tools#gap-workshop" class="btn btn--primary" id="tools-home-gap-workshop">Open Proposal Review</a>
+            </div>
+          </article>
           <article class="home-layer-card home-layer-card--muted">
             <p class="home-layer-card__tag">Community</p>
             <h3>Vote &amp; propose</h3>
@@ -463,6 +472,34 @@
           </article>
         </div>
       </section>
+    </section>
+
+    <!-- Admin: Proposal Review -->
+    <section class="tab-panel gw-page" id="tab-gap-workshop" data-tab-panel="gap-workshop" hidden aria-labelledby="gap-workshop-title">
+      <h1 id="gap-workshop-title" class="gw-page-title">Proposal Review</h1>
+      <p class="gw-page-subtitle sans">Review vocab survey proposals and playtest promotions, then accept them into the vocabulary pipeline.</p>
+
+      <div class="gw-layout">
+        <!-- Left: queue -->
+        <aside class="gw-queue" aria-label="Proposal queue">
+          <div class="gw-queue-tabs">
+            <button type="button" class="gw-tab-btn" data-gw-tab="proposals" data-gw-label="Proposals">Proposals</button>
+            <button type="button" class="gw-tab-btn" data-gw-tab="playtests" data-gw-label="Playtests">Playtests</button>
+          </div>
+          <div class="gw-queue-actions">
+            <button type="button" class="btn btn--sm" id="gw-refresh">↺ Refresh</button>
+          </div>
+          <div class="gw-queue-list" role="listbox" aria-label="Items"></div>
+        </aside>
+
+        <!-- Right: detail -->
+        <div class="gw-detail-panel" id="gw-detail">
+          <div class="gw-empty-state">
+            <p class="gw-empty-state__lead">Pick an item from the queue</p>
+            <p class="gw-empty-state__hint">Select an open proposal to review, or a playtest promotion to accept.</p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Admin: Word Manager -->

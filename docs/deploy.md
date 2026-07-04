@@ -194,7 +194,8 @@ Because WASM assets are large (~90 MB in `vendor/` after install), a Node static
 - [ ] `FONORAN_AUTH` omitted in production (opt-out only; do not set to `off` on Heroku)
 - [ ] Write API requires `@fonora.org` session; unsigned users can browse dictionary only
 - [ ] `DATABASE_URL` set; `FONORAN_SKIP_JSON_MIRROR=1` on Heroku
-- [ ] Live state seeded from git JSON on first deploy
+- [ ] On first deploy: run `npm run fonoran:regenerate` (via Advanced → Regenerate, or Heroku one-off dyno) to populate Postgres from git seed data — `data/fonoran-compounds.json` + `data/fonoran-approved-roots.json` are the canonical sources
+- [ ] Verify dictionary count via `GET /api/fonoran/lab/compounds` (expect ~440 words)
 - [ ] Research notes: release sync populated Postgres (`GET /api/research/notes` count matches git store published count)
 - [ ] Contributor Google Form linked from `/language/` lander
 - [ ] Periodic backup: Advanced → Download snapshot, or `npm run fonoran:snapshot:export`

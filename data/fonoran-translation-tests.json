@@ -16,7 +16,7 @@
         },
         {
           "en": "The child runs.",
-          "fon": "re ginek"
+          "fon": "bagen ginek"
         },
         {
           "en": "The dog drinks water.",
@@ -24,7 +24,7 @@
         },
         {
           "en": "The bird flies.",
-          "fon": "kal giges"
+          "fon": "kalsam kalsam"
         },
         {
           "en": "The sun rises.",
@@ -44,7 +44,7 @@
         },
         {
           "en": "The tree is tall.",
-          "fon": "tet ni"
+          "fon": "tetni ni"
         }
       ]
     },
@@ -66,19 +66,19 @@
         },
         {
           "en": "The child sees the dog.",
-          "fon": "re wi kal"
+          "fon": "bagen wi kal"
         },
         {
           "en": "The woman carries the baby.",
-          "fon": "ba gat re"
+          "fon": "ba gat bagen"
         },
         {
           "en": "The man opens the door.",
-          "fon": "ba kelnan nantem"
+          "fon": "ba tamtem temnan"
         },
         {
           "en": "The cat chases the bird.",
-          "fon": "kal gi kal"
+          "fon": "kal gi kalsam"
         },
         {
           "en": "The teacher speaks.",
@@ -112,11 +112,11 @@
         },
         {
           "en": "The small child is happy.",
-          "fon": "re yi"
+          "fon": "bagen nesgu"
         },
         {
           "en": "The old tree is strong.",
-          "fon": "tet femgu"
+          "fon": "tetni femgu"
         },
         {
           "en": "The new house is beautiful.",
@@ -124,7 +124,7 @@
         },
         {
           "en": "The red flower grows.",
-          "fon": "datwi tet fomas"
+          "fon": "datwi tetkek fomas"
         },
         {
           "en": "The river is wide.",
@@ -170,11 +170,11 @@
         },
         {
           "en": "She came home.",
-          "fon": "ba gi chekam"
+          "fon": "ba gi nalche"
         },
         {
           "en": "He will return.",
-          "fon": "ba sa gi"
+          "fon": "ba sa giyinam"
         },
         {
           "en": "The rain stopped.",
@@ -190,7 +190,7 @@
         },
         {
           "en": "The child will learn.",
-          "fon": "re sa lahu"
+          "fon": "bagen sa lahu"
         }
       ]
     },
@@ -212,12 +212,11 @@
         },
         {
           "en": "When will you return?",
-          "fon": "no hu kan sa be gi ?"
+          "fon": "no hu kan sa be giyinam ?"
         },
         {
           "en": "Is the food ready?",
-          "fon": "tel [ready] ?",
-          "note": "gap: ready (needs a root)"
+          "fon": "tel gatdimo ?"
         },
         {
           "en": "Can you help me?",
@@ -239,7 +238,7 @@
       "phrases": [
         {
           "en": "I love my family.",
-          "fon": "mi san bakam"
+          "fon": "mi san sanba"
         },
         {
           "en": "Friends help each other.",
@@ -252,7 +251,7 @@
         },
         {
           "en": "Parents protect children.",
-          "fon": "so gat re"
+          "fon": "ba gat bagen"
         },
         {
           "en": "The king trusts the guard.",
@@ -264,7 +263,7 @@
         },
         {
           "en": "The doctor helps sick people.",
-          "fon": "kasfemba bakas wu balek"
+          "fon": "kasfemba bakas femgam balek"
         },
         {
           "en": "The farmer grows food.",
@@ -306,20 +305,19 @@
         },
         {
           "en": "The blacksmith made a knife.",
-          "fon": "jaba ta hutam jatem"
+          "fon": "fendatsasba ta dalkel fendatsastem"
         },
         {
           "en": "The grandmother tells stories.",
-          "fon": "diso se se"
+          "fon": "dibadi se se"
         },
         {
           "en": "The doorway is open.",
-          "fon": "nantem kelnan"
+          "fon": "temnan tamtem"
         },
         {
           "en": "The raindrops fall quietly.",
-          "fon": "[raindrops] ju ti",
-          "note": "gap: raindrops (needs a root)"
+          "fon": "yejugen jugi ti"
         },
         {
           "en": "The birdsong wakes everyone.",
@@ -334,7 +332,7 @@
       "phrases": [
         {
           "en": "I ate because I was hungry.",
-          "fon": "mi ta sak"
+          "fon": "mi ta saklo"
         },
         {
           "en": "We stayed inside because it rained.",
@@ -342,13 +340,11 @@
         },
         {
           "en": "The child laughed after the dog ran away.",
-          "fon": "re ta [laughed] shu kal ginek fet",
-          "note": "gap: laughed (needs a root)"
+          "fon": "bagen ta nesgubase shu kal ginek gifet"
         },
         {
           "en": "When the sun rose, we began walking.",
-          "fon": "[when] samdat ra dan diye gi",
-          "note": "gap: when (needs a root)"
+          "fon": "gamtel samdat ra dan diye gifem"
         },
         {
           "en": "Although it was cold, they continued.",
@@ -360,7 +356,7 @@
         },
         {
           "en": "She said she would return tomorrow.",
-          "fon": "ba se ba gi shu"
+          "fon": "ba se ba giyinam shu"
         },
         {
           "en": "The man who built the house is my friend.",
@@ -382,7 +378,7 @@
       "phrases": [
         {
           "en": "Yesterday we walked to the river. The water was cold, but the morning was beautiful. We built a small fire and cooked food. After we ate, we watched the sunrise over the mountains. Then we returned home together.",
-          "fon": "di ta dan gi nan yenanye ye kekshu ta ta mak guwi dan ta kel gen dat kel tel shu ta dan tel dan wi kekra hugatmes fen shu ta dan gi chekam dan"
+          "fon": "di ta dan gi nan yenanye ye kekshu ta ta mak guwi dan ta kel gen dat datlo shu ta dan tel dan wi kekra gamfo fen shu ta dan gi nalche dan"
         }
       ]
     },
@@ -392,11 +388,11 @@
       "phrases": [
         {
           "en": "I saw the red bird.",
-          "fon": "mi ta wi datwi kal"
+          "fon": "mi ta wi datwi kalsam"
         },
         {
           "en": "The bird saw me.",
-          "fon": "kal ta wi mi"
+          "fon": "kalsam ta wi mi"
         },
         {
           "en": "I almost fell.",
@@ -416,19 +412,19 @@
         },
         {
           "en": "The door opened.",
-          "fon": "nantem ta kelnan"
+          "fon": "temnan ta tamtem"
         },
         {
           "en": "I opened the door.",
-          "fon": "mi ta kelnan nantem"
+          "fon": "mi ta tamtem temnan"
         },
         {
           "en": "The child made the toy.",
-          "fon": "re ta hutam to"
+          "fon": "bagen ta dalkel to"
         },
         {
           "en": "The toy was made by the child.",
-          "fon": "to ta hutam re"
+          "fon": "to ta dalkel bagen"
         },
         {
           "en": "I think he knows that she left.",
@@ -436,7 +432,7 @@
         },
         {
           "en": "The old man's young son.",
-          "fon": "di ba re re"
+          "fon": "di ba bagen bagen"
         },
         {
           "en": "They can fish.",
@@ -444,7 +440,7 @@
         },
         {
           "en": "Time flies.",
-          "fon": "kan giges"
+          "fon": "kan kalsam"
         },
         {
           "en": "Light travels fast.",
@@ -462,11 +458,11 @@
         },
         {
           "en": "The woman who taught me said that the river had changed.",
-          "fon": "ba ta bakas kuhu mi se yenanye diho"
+          "fon": "ba ta badi kuhu mi se yenanye diho"
         },
         {
           "en": "The old hunter gave the child his knife.",
-          "fon": "di ta lakalba ku re jatem"
+          "fon": "di ta lakalba nesguku bagen fendatsastem"
         },
         {
           "en": "Time heals all wounds, but memory keeps the pain alive.",
@@ -484,7 +480,7 @@
         },
         {
           "en": "I walk toward the city.",
-          "fon": "mi gi nan lekche"
+          "fon": "mi tigi nan lekche"
         },
         {
           "en": "I will go to the city.",
@@ -534,7 +530,7 @@
         },
         {
           "en": "The hunter followed the animal into the forest.",
-          "fon": "lakalba ta gi mes kal lekshe"
+          "fon": "lakalba ta sogi mes kal lektetche"
         },
         {
           "en": "We should not go there at night.",
@@ -542,8 +538,7 @@
         },
         {
           "en": "Go away and leave me alone.",
-          "fon": "gi gi fet mi [alone]",
-          "note": "gap: alone (needs a root)"
+          "fon": "gi gi fet mi nesfa"
         },
         {
           "en": "I want to go to the city but I am afraid of the dark.",
@@ -551,11 +546,11 @@
         },
         {
           "en": "The bird flew over the lake and landed near the trees.",
-          "fon": "kal gi ra yeti"
+          "fon": "kalsam gi ra yegat"
         },
         {
           "en": "He said he would return home after the sun set.",
-          "fon": "ba se ba gi chekam shu samdat ju"
+          "fon": "ba se ba giyinam nalche shu samdat ju"
         },
         {
           "en": "I have never been to the city before.",
@@ -573,8 +568,7 @@
         },
         {
           "en": "She wants to learn Fonoran.",
-          "fon": "ba sak lahu [fonoran]",
-          "note": "gap: fonoran (needs a root)"
+          "fon": "ba husak lahu maldanse"
         },
         {
           "en": "Do not eat the fish.",
@@ -594,15 +588,15 @@
         },
         {
           "en": "Nobody went home after dark.",
-          "fon": "no ba gi chekam shu gan"
+          "fon": "no ba gi nalche shu gan"
         },
         {
           "en": "Tell the child a story about the sea.",
-          "fon": "se re se yemelto"
+          "fon": "se bagen se yemelto"
         },
         {
           "en": "I am afraid of the dark.",
-          "fon": "mi pe gan"
+          "fon": "mi nespe gan"
         },
         {
           "en": "The old king ruled the city for many years.",

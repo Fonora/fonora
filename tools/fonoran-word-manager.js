@@ -9,6 +9,8 @@ import { readDoc } from './fonoran-store.js';
 import { loadParticles } from './fonoran-particles.js';
 import { getVoteAggregate } from './fonoran-community-store.js';
 import { listProposals } from './fonoran-community-store.js';
+import { listCompoundProposals, getProposalStats } from './fonoran-compound-proposals.js';
+import { loadLatestGapReport } from './fonoran-translation-gaps.js';
 
 function lifecycleForConcept(concept, candidate, sound) {
   if (sound?.state === 'approved') return 'approved';
@@ -114,6 +116,62 @@ export async function listWordInventory({ filter = 'all', query = '' } = {}) {
     });
   }
 
+  // LLM compound/primitive proposals (fonoran-compound-proposals.js)
+  try {
+    const llmProposals = await listCompoundProposals({ status: 'open', limit: 200 });
+    for (const lp of llmProposals) {
+      items.push({
+        kind: 'llm_proposal',
+        id: lp.id,
+        ref: lp.id,
+        word: lp.word,
+        role: lp.role,
+        concept_id: lp.concept_id,
+        classification: lp.classification,
+        rationale: lp.rationale,
+        compositions: lp.compositions,
+        valid_compositions: lp.valid_compositions,
+        primitive_proposal: lp.primitive_proposal,
+        alias_proposal: lp.alias_proposal,
+        source: lp.source,
+        lifecycle: 'proposal_open',
+        state: 'open',
+        created_at: lp.created_at,
+        meaning: lp.gloss ?? lp.word ?? lp.concept_id ?? '',
+        spelling: '',
+        aliases: [],
+      });
+    }
+  } catch {
+    // Non-fatal: compound proposals store may not exist yet
+  }
+
+  // Translation gaps as actionable queue items
+  if (filter === 'gaps' || filter === 'queue') {
+    try {
+      const gapReport = await loadLatestGapReport();
+      for (const g of gapReport?.gaps ?? []) {
+        items.push({
+          kind: 'gap',
+          id: `gap:${g.word}`,
+          ref: `gap:${g.word}`,
+          word: g.word,
+          role: g.role ?? 'concept',
+          count: g.count ?? 0,
+          samples: g.samples ?? [],
+          suggestions: g.suggestions ?? [],
+          lifecycle: 'gap_unresolved',
+          state: 'gap',
+          meaning: `[gap] ${g.word}`,
+          spelling: '',
+          aliases: [],
+        });
+      }
+    } catch {
+      // Non-fatal: gap report may not have been run yet
+    }
+  }
+
   const q = query.trim().toLowerCase();
   let filtered = items;
   if (filter === 'roots') filtered = items.filter(i => i.kind === 'root');
@@ -125,6 +183,10 @@ export async function listWordInventory({ filter = 'all', query = '' } = {}) {
       || i.lifecycle === 'candidate_pending'
       || i.lifecycle === 'proposal_open',
     );
+  } else if (filter === 'llm_proposals') {
+    filtered = items.filter(i => i.kind === 'llm_proposal');
+  } else if (filter === 'gaps') {
+    filtered = items.filter(i => i.kind === 'gap');
   }
 
   if (q) {

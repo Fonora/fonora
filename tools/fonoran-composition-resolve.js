@@ -60,6 +60,30 @@ export function buildCompositionResolver(primitiveIds, compoundDefs = []) {
   };
 }
 
+/**
+ * Check a flattened primitive root sequence for semantic redundancy patterns.
+ *
+ * Returns a descriptor if a pattern is found, or null if the sequence is clean.
+ *
+ * Patterns detected:
+ *   'adjacent_repeat' — the same primitive appears consecutively (e.g. before+before+person)
+ *   'edge_repeat'     — the first and last primitive are the same in a 3+ element sequence
+ *                       (e.g. water+path+water, bond+collective+bond)
+ *
+ * @param {string[]} flatRoots  primitive concept ids as produced by resolver.flatRoots()
+ * @returns {{ pattern: 'adjacent_repeat'|'edge_repeat', roots: string[] } | null}
+ */
+export function detectRedundantRootPattern(flatRoots) {
+  if (!Array.isArray(flatRoots) || flatRoots.length < 3) return null;
+  for (let i = 0; i < flatRoots.length - 1; i++) {
+    if (flatRoots[i] === flatRoots[i + 1])
+      return { pattern: 'adjacent_repeat', roots: flatRoots };
+  }
+  if (flatRoots[0] === flatRoots[flatRoots.length - 1])
+    return { pattern: 'edge_repeat', roots: flatRoots };
+  return null;
+}
+
 /** Default max flattened roots before build/audit warn (override with FONORAN_MAX_FLATTENED). */
 export function maxFlattenedRoots() {
   const raw = process.env.FONORAN_MAX_FLATTENED?.trim();

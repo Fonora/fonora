@@ -4,7 +4,7 @@
   "description": "Phase 1: ~100 dimensions of fundamental human experience. No phonetic forms. Not a word list — a carved semantic space.",
   "philosophy_source": "docs/fonoran-grammar.md",
   "defining_test": "A primitive concept represents a fundamental human experience that cannot be naturally expressed using simpler Fonoran concepts.",
-  "primitive_count": 99,
+  "primitive_count": 103,
   "primitives": [
     {
       "id": "person",
@@ -290,6 +290,26 @@
       "id": "center",
       "domain": "space",
       "description": "middle point"
+    },
+    {
+      "id": "around",
+      "domain": "space",
+      "description": "encircling; cyclical; going in a circle; recurring — spin, again, return, surround, orbit all inherit from this"
+    },
+    {
+      "id": "front",
+      "domain": "space",
+      "description": "the face-side; forward direction; ahead — hide=go behind front, face=turn front toward, approach=move toward front"
+    },
+    {
+      "id": "back",
+      "domain": "space",
+      "description": "the rear side; behind; away from the front — behind=place at back, backward=move back, avoid=go back from"
+    },
+    {
+      "id": "through",
+      "domain": "space",
+      "description": "traversal from one side to the other; passing inside and out — cross, pierce, enter, tunnel, transparent all inherit from this"
     },
     {
       "id": "before",
@@ -627,9 +647,126 @@
         "know",
         "empty"
       ]
+    },
+    {
+      "id": "happy",
+      "reason": "Specific emotion derivable from feel + good; not irreducible",
+      "compound": ["feel", "good"]
+    },
+    {
+      "id": "angry",
+      "reason": "Specific emotion derivable from feel + bad (with force); not irreducible",
+      "compound": ["feel", "bad"]
+    },
+    {
+      "id": "calm",
+      "reason": "Specific emotion derivable from feel + still; not irreducible",
+      "compound": ["feel", "still"]
+    },
+    {
+      "id": "trust",
+      "reason": "Composite social concept: knowing someone is good/bonded; derivable",
+      "compound": ["know", "good", "bond"]
+    },
+    {
+      "id": "hope",
+      "reason": "Forward-looking want: good thing wanted in the future; derivable",
+      "compound": ["want", "good", "after"]
+    },
+    {
+      "id": "sick",
+      "reason": "Body in bad state; straightforward compound; naming a state not a primitive experience",
+      "compound": ["body", "bad"]
+    },
+    {
+      "id": "understand",
+      "reason": "Knowing from the inside; knowing that penetrates; derivable from know + through or know + inside",
+      "compound": ["know", "through"]
+    },
+    {
+      "id": "wait",
+      "reason": "Being still across time; derivable from still + time",
+      "compound": ["still", "time"]
+    },
+    {
+      "id": "metal",
+      "reason": "Specific material, not a universal primitive experience; derivable as hard earth shaped by fire",
+      "compound": ["earth", "fire", "stone"]
+    },
+    {
+      "id": "tree",
+      "reason": "Specific thing in the world; a big plant; not an irreducible experience",
+      "compound": ["plant", "big"]
+    },
+    {
+      "id": "left",
+      "reason": "Relative body orientation; derivable from front + around; not universally body-anchored across cultures",
+      "compound": ["front", "around"]
+    },
+    {
+      "id": "right",
+      "reason": "Relative body orientation; derivable from front + around (opposite direction)",
+      "compound": ["front", "back", "around"]
+    },
+    {
+      "id": "child",
+      "reason": "Person who is small/young; generational relation expressible compositionally",
+      "compound": ["person", "small"]
+    },
+    {
+      "id": "parent",
+      "reason": "Person who came before; the before-person in a generational chain",
+      "compound": ["person", "before"]
+    },
+    {
+      "id": "surface",
+      "reason": "The outside boundary of something; derivable from outside + bound",
+      "compound": ["outside", "bound"]
+    },
+    {
+      "id": "center",
+      "reason": "The inside equidistant point; derivable from inside + same",
+      "compound": ["inside", "same"]
     }
   ],
   "productive_dimensions": {
+    "around": [
+      "spin",
+      "again",
+      "surround",
+      "orbit",
+      "cycle",
+      "return",
+      "spiral",
+      "revolution",
+      "wrap",
+      "encircle",
+      "repeat",
+      "loop"
+    ],
+    "front": [
+      "ahead",
+      "face",
+      "forward",
+      "approach",
+      "front_side"
+    ],
+    "back": [
+      "behind",
+      "backward",
+      "avoid",
+      "retreat",
+      "rear"
+    ],
+    "through": [
+      "cross",
+      "pierce",
+      "tunnel",
+      "transparent",
+      "traverse",
+      "enter",
+      "exit"
+    ],
     "thing": [
       "book",
       "meal",

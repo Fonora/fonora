@@ -4828,18 +4828,6 @@
       await load();
     });
 
-    async function renderAdvancedMermaid() {
-      const el = document.querySelector('#page-advanced .adv-regen-mermaid');
-      if (!el || !window.mermaid) return;
-      try {
-        const { MERMAID_INIT } = await import('../js/mermaid-theme.js');
-        window.mermaid.initialize(MERMAID_INIT);
-        await window.mermaid.run({ nodes: [el] });
-      } catch (err) {
-        console.warn('Advanced mermaid render failed:', err);
-      }
-    }
-
     function formatRegenStatusHtml(status) {
       if (!status) return '<p class="empty">Could not load regeneration status.</p>';
       const imp = status.editorial_imported_at
@@ -4863,6 +4851,7 @@
 
     async function renderAdvanced() {
       try {
+        // Step 4: regen status
         try {
           const status = await api('/api/fonoran/lab/regen/status');
           const regenEl = $('adv-regen-status');
@@ -4878,15 +4867,37 @@
               warnEl.innerHTML = '';
             }
           }
+          const roots = status.lab?.sounds ?? 0;
+          const words = status.lab?.compounds ?? 0;
+          const rootsStat = $('adv-roots-stat');
+          if (rootsStat) rootsStat.textContent = `${roots} primitive roots`;
           if ($('adv-storage-status')) {
             $('adv-storage-status').textContent =
-              `Storage: ${status.storage_mode} · ${status.lab?.sounds ?? 0} roots · ${status.lab?.compounds ?? 0} words`;
+              `Storage: ${status.storage_mode} · ${roots} roots · ${words} words`;
           }
         } catch {
           if ($('adv-regen-status')) $('adv-regen-status').textContent = 'Could not load regeneration status.';
           if ($('adv-storage-status')) $('adv-storage-status').textContent = '';
+          if ($('adv-roots-stat')) $('adv-roots-stat').textContent = '';
         }
-        void renderAdvancedMermaid();
+
+        // Step 3: proposal counts
+        try {
+          const [open, accepted] = await Promise.all([
+            api('/api/fonoran/compound-proposals?status=open&limit=1'),
+            api('/api/fonoran/compound-proposals?status=accepted&limit=1'),
+          ]);
+          const statEl = $('adv-proposals-stat');
+          if (statEl) {
+            const openCount = open?.stats?.open ?? 0;
+            const acceptedCount = accepted?.stats?.accepted ?? 0;
+            statEl.textContent = openCount > 0
+              ? `${openCount} open · ${acceptedCount} accepted`
+              : `All reviewed — ${acceptedCount} accepted`;
+          }
+        } catch {
+          if ($('adv-proposals-stat')) $('adv-proposals-stat').textContent = '';
+        }
       } catch { /* ignore */ }
     }
 

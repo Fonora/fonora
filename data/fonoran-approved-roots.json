@@ -1,8 +1,8 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-07-03T22:45:58.912Z",
+  "updated_at": "2026-07-04T02:16:55.191Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
-  "root_count": 101,
+  "root_count": 89,
   "roots": [
     {
       "id": "person",
@@ -437,15 +437,6 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "surface",
-      "spelling": "lel",
-      "ipa": "/lɛl/",
-      "concept": "the outer side you touch",
-      "domain": "space",
-      "reason": "the outer side you touch — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
       "id": "bound",
       "spelling": "tem",
       "ipa": "/tɛm/",
@@ -455,13 +446,40 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "center",
-      "spelling": "fes",
-      "ipa": "/fɛs/",
-      "concept": "the middle",
+      "id": "around",
+      "spelling": "yi",
+      "ipa": "/jɪ/",
+      "concept": "encircling; going in a circle; again",
       "domain": "space",
-      "reason": "the middle — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
+      "reason": "encircling — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-04T00:18:06.508638Z"
+    },
+    {
+      "id": "front",
+      "spelling": "cha",
+      "ipa": "/tʃʌ/",
+      "concept": "forward; the front side; ahead",
+      "domain": "space",
+      "reason": "forward — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-04T00:18:06.508638Z"
+    },
+    {
+      "id": "back",
+      "spelling": "so",
+      "ipa": "/sɑ/",
+      "concept": "behind; the back side; rear",
+      "domain": "space",
+      "reason": "behind — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-04T00:18:06.508638Z"
+    },
+    {
+      "id": "through",
+      "spelling": "fel",
+      "ipa": "/fɛl/",
+      "concept": "through; passing from one side to the other",
+      "domain": "space",
+      "reason": "through — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-04T00:18:06.508638Z"
     },
     {
       "id": "before",
@@ -761,24 +779,6 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "metal",
-      "spelling": "ja",
-      "ipa": "/dʒʌ/",
-      "concept": "a hard shiny material you can shape, like iron",
-      "domain": "element",
-      "reason": "a hard shiny material you can shape, like iron — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "parent",
-      "spelling": "so",
-      "ipa": "/sɑ/",
-      "concept": "a mother or father",
-      "domain": "being",
-      "reason": "a mother or father — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
       "id": "drink",
       "spelling": "ko",
       "ipa": "/kɑ/",
@@ -797,120 +797,12 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "tree",
-      "spelling": "she",
-      "ipa": "/ʃɛ/",
-      "concept": "a tree",
-      "domain": "element",
-      "reason": "a tree — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "left",
-      "spelling": "chu",
-      "ipa": "/tʃʊ/",
-      "concept": "the left side",
-      "domain": "space",
-      "reason": "the left side — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "right",
-      "spelling": "gak",
-      "ipa": "/gʌk/",
-      "concept": "the right side",
-      "domain": "space",
-      "reason": "the right side — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "happy",
-      "spelling": "yi",
-      "ipa": "/jɪ/",
-      "concept": "feeling glad and content",
-      "domain": "emotion",
-      "reason": "feeling glad and content — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "angry",
-      "spelling": "kat",
-      "ipa": "/kʌt/",
-      "concept": "feeling mad or hostile",
-      "domain": "emotion",
-      "reason": "feeling mad or hostile — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "calm",
-      "spelling": "nel",
-      "ipa": "/nɛl/",
-      "concept": "feeling settled and at peace",
-      "domain": "emotion",
-      "reason": "feeling settled and at peace — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "trust",
-      "spelling": "nas",
-      "ipa": "/nʌs/",
-      "concept": "to believe someone is safe and reliable",
-      "domain": "emotion",
-      "reason": "to believe someone is safe and reliable — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "hope",
-      "spelling": "mem",
-      "ipa": "/mɛm/",
-      "concept": "to wish and expect something good",
-      "domain": "emotion",
-      "reason": "to wish and expect something good — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
       "id": "food",
       "spelling": "lo",
       "ipa": "/lɑ/",
       "concept": "food; something to eat",
       "domain": "being",
       "reason": "food — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-03T03:40:11.102Z"
-    },
-    {
-      "id": "sick",
-      "spelling": "wu",
-      "ipa": "/wʊ/",
-      "concept": "sick; ill in the body",
-      "domain": "being",
-      "reason": "sick — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-03T03:40:11.102Z"
-    },
-    {
-      "id": "understand",
-      "spelling": "cha",
-      "ipa": "/tʃʌ/",
-      "concept": "to understand; to grasp a meaning",
-      "domain": "action",
-      "reason": "to understand — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-03T03:40:11.102Z"
-    },
-    {
-      "id": "child",
-      "spelling": "re",
-      "ipa": "/rɛ/",
-      "concept": "a child; a young person",
-      "domain": "being",
-      "reason": "a child — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-03T03:40:11.102Z"
-    },
-    {
-      "id": "wait",
-      "spelling": "yo",
-      "ipa": "/jɑ/",
-      "concept": "to wait; to stay until later",
-      "domain": "action",
-      "reason": "to wait — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-03T03:40:11.102Z"
     }
   ]
