@@ -2856,25 +2856,25 @@ a.btn:hover {
 }
 
 .data-table,
-.sound-grid {
+table.sound-grid {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.875rem;
 }
 
-.sound-grid {
+table.sound-grid {
   table-layout: fixed;
 }
 
-.sound-grid th:first-child,
-.sound-grid td:first-child {
+table.sound-grid th:first-child,
+table.sound-grid td:first-child {
   width: 5.25rem;
 }
 
 .data-table th,
 .data-table td,
-.sound-grid th,
-.sound-grid td {
+table.sound-grid th,
+table.sound-grid td {
   border: 1px solid var(--color-table-border);
   padding: 0.5rem 0.65rem;
   text-align: left;
@@ -2882,21 +2882,21 @@ a.btn:hover {
 }
 
 .data-table th,
-.sound-grid th {
+table.sound-grid th {
   background: var(--color-table-header-bg);
   font-weight: 600;
   color: var(--color-heading);
   vertical-align: bottom;
 }
 
-.sound-grid tbody th {
+table.sound-grid tbody th {
   vertical-align: middle;
   font-weight: 600;
   background: var(--color-table-header-bg);
 }
 
 .data-table td,
-.sound-grid td {
+table.sound-grid td {
   color: var(--color-text-body);
 }
 
@@ -2924,11 +2924,11 @@ a.btn:hover {
   background: var(--color-table-row-hover);
 }
 
-.sound-grid td:not([class*="grid-cell--"]) {
+table.sound-grid td:not([class*="grid-cell--"]) {
   background: var(--layout-surface);
 }
 
-.sound-grid .grid-cell {
+table.sound-grid .grid-cell {
   min-width: 0;
   height: 6.75rem;
   box-sizing: border-box;
