@@ -20,12 +20,11 @@ Fonora has three projects plus a public research notebook, surfaced as four top-
 The **Fonora** sub-nav links to **About**, **Research**, **Timeline**, **Open Questions**, and **Docs**. The research notebook is the narrative layer of the project: each major experiment is written up as a standalone research note (question → hypothesis → constraints → implementation → outcome → next question), with a [visual timeline](/research/timeline) connecting them. The docs in this folder are the *reference* layer the notebook links to.
 
 [`/learn`](/learn) is public learner-facing practice (Learn the Sounds, Breakdown, Samples,
-Spelling Practice). [`/tools`](/tools) is QA/debugging (Pronunciation Testing/Validation,
-Samples, Research Notes, plus cards linking into the `/language` builder
-tools). `/script`, `/learn`, and `/tools` are served by the same front-end bundle and reuse
-the same panels — there is no duplicated tool logic. `/language` is a separate app (the
-Fonoran vocabulary builder); Tools links directly into its pages (Word Creator, Concept Editor,
-Review, Health, ...) rather than duplicating them.
+Spelling Practice). [`/tools`](/tools) hosts both Script QA/debugging (Pronunciation Testing,
+Validation, Samples) **and** the Fonoran builder admin tools (Word Manager, Gap Workshop,
+Advanced pipeline, Translation Test). `/script`, `/learn`, and `/tools` are served by the same
+front-end bundle and reuse the same panels — there is no duplicated tool logic. `/language` is
+a separate public app (Translator, Dictionary, Grammar, Puzzle).
 
 ```mermaid
 flowchart TB
@@ -44,12 +43,11 @@ flowchart TB
     subgraph tools [Tools]
       Learn["Learn\n(Learn the Sounds, Breakdown, Samples, Spelling Practice)"]
       ScriptTools["Tools: Script QA\n(Pronunciation Testing, Validation, Samples)"]
-      LangTools["Tools: Language Tools\n(Word Creator, Concept Editor, Review, Health, ...)"]
+      LangTools["Tools: Admin\n(Word Manager, Gap Workshop, Advanced, Translation Test)"]
     end
   end
   script -. "reused panels" .-> Learn
   script -. "reused panels" .-> ScriptTools
-  language -. "real links" .-> LangTools
   tools -->|"builds & tests"| language
   tools -->|"builds & tests"| script
 ```
@@ -82,9 +80,9 @@ intertwined by design — splitting the data model is explicitly out of scope fo
 
 1. `npm start` → [`/language`](/language)
 2. `npm run fonoran:build` — assign roots, build curated compounds, import lab
-3. **Review** — approve roots and words (via [`/tools#tools-home`](/tools#tools-home) → Language Tools)
+3. **Words** — approve roots and words at [`/tools#word-manager`](/tools#word-manager)
 4. **Word Creator** — stack roots and approved words into compounds
-5. **Health** / **Advanced** — scores and Run DDA
+5. **Advanced** — import build, lab reset, snapshot export at [`/tools#advanced`](/tools#advanced)
 
 Details: [fonoran.md#pipeline](fonoran.md#pipeline).
 

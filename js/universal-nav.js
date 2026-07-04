@@ -58,7 +58,11 @@ const BUILDER_TITLES = {
 
 const TOOLS_TITLES = {
   'tools-home': 'Tools',
-  'word-manager': 'Word Manager',
+  'word-manager': 'Words',
+  'gap-workshop': 'Review',
+  'translation-test': 'Translation Test',
+  advanced: 'Advanced',
+  docs: 'Docs',
   samples: 'Samples',
   'encoder-testing': 'Pronunciation Testing',
   'pronunciation-validation': 'Pronunciation Validation',
@@ -66,10 +70,11 @@ const TOOLS_TITLES = {
 
 const TOOLS_ROW_TABS = [
   { id: 'tools-home', label: 'Home' },
-  { id: 'word-manager', label: 'Word Manager', adminOnly: true },
-  { id: 'samples', label: 'Samples' },
-  { id: 'encoder-testing', label: 'Pronunciation Testing' },
-  { id: 'pronunciation-validation', label: 'Validation' },
+  { id: 'word-manager', label: 'Words', adminOnly: true },
+  { id: 'gap-workshop', label: 'Review', adminOnly: true },
+  { id: 'translation-test', label: 'Translation Test', adminOnly: true },
+  { id: 'advanced', label: 'Advanced', adminOnly: true },
+  { id: 'docs', label: 'Docs' },
 ];
 
 const PLATFORM_TABS = [
@@ -260,13 +265,25 @@ function renderLearnRow2() {
   return '';
 }
 
+function shouldShowToolsTab(tab) {
+  if (!tab.adminOnly) return true;
+  if (!fonoranAuthState?.configured || !fonoranAuthState?.toolsGated) return true;
+  return Boolean(fonoranAuthState?.isAdmin);
+}
+
 function renderToolsRow2(activeTab) {
-  const tabs = TOOLS_ROW_TABS.map(
-    (t) => `
-      <button type="button" class="tab-btn${t.id === activeTab ? ' tab-btn--active' : ''}" data-tab="${t.id}"${
-        t.id === activeTab ? ' aria-current="page"' : ''
-      }>${t.label}</button>`,
-  ).join('');
+  const tabs = TOOLS_ROW_TABS.filter(shouldShowToolsTab)
+    .map((t) => {
+      if (t.href) {
+        return `<a href="${escapeAttr(t.href)}" class="tab-btn">${t.label}</a>`;
+      }
+      const active = t.id === activeTab;
+      return `
+      <button type="button" class="tab-btn${active ? ' tab-btn--active' : ''}" data-tab="${t.id}"${
+        active ? ' aria-current="page"' : ''
+      }>${t.label}</button>`;
+    })
+    .join('');
 
   return `
     <div class="app-header__row app-header__row--tools" data-nav-row="tools-tools">

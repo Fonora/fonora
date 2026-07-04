@@ -57,7 +57,7 @@ Locking behavior lives in [`tools/fonoran-root-candidates.js`](../tools/fonoran-
 
 ### Builder UI
 
-Editors work across three tabs wired in the metadata: [Root Creator](/language#roots) for manual CV/CVC entry, [Concept Editor](/language#concepts) for gloss and metadata edits, and [Review](/language#review) for the root queue with per-candidate score tooltips (distinctiveness, collision, boundary warnings).
+Editors work across three tabs wired in the metadata: Root Creator for manual CV/CVC entry, Concept Editor for gloss and metadata edits, and **Words** at [`/tools#word-manager`](/tools#word-manager) for the root queue with per-candidate score tooltips (distinctiveness, collision, boundary warnings).
 
 ## Evaluation
 
@@ -135,7 +135,7 @@ The grammar question is the most immediate bridge: with roots locked, the next b
 
 **Documentation:** [`docs/fonoran.md`](../docs/fonoran.md)
 
-**Interactive demo:** [Concept Editor](/language#concepts), [Review](/language#review)
+**Interactive demo:** [Word Manager](/tools#word-manager) (words, roots, concept editor), [Gap Workshop](/tools#gap-workshop) (proposals review)
 
 **Source:** [`tools/fonoran-root-sound-assign.js`](../tools/fonoran-root-sound-assign.js), [`tools/fonoran-build.js`](../tools/fonoran-build.js)
 

@@ -89,6 +89,7 @@
               Fonoran is not one flat vocabulary. It grows in three rings. Each ring adds reach while keeping the same compositional approach of combining shared roots.
             </p>
 
+            <div class="content-section--panel fonoran-tiers-panel">
             <ol class="fonoran-tier-ladder">
               <li class="fonoran-tier-ladder__item fonoran-tier-ladder__item--core">
                 <div class="fonoran-tier-ladder__marker" aria-hidden="true">1</div>
@@ -133,6 +134,7 @@
                 </div>
               </li>
             </ol>
+            </div>
 
             <div class="fonoran-experience content-section--panel" aria-labelledby="fonoran-experience-heading">
               <h3 id="fonoran-experience-heading" class="fonoran-experience__heading">Ordered by human experience</h3>
@@ -291,7 +293,7 @@
             <div class="grammar-toolbar__text">
               <p class="grammar-toolbar__tag">English → Fonoran</p>
               <h1 class="grammar-toolbar__title">Meaning compiler</h1>
-              <p class="grammar-toolbar__lead sans">Compiles English into Fonoran concepts, not word-for-word substitution. Direct matches use normal text; interpreted mappings are <span class="translator-resolved--interpreted">yellow</span>, WordNet matches <span class="translator-resolved--semantic">orange</span>, guessed compounds <span class="translator-resolved--guessed">dashed orange</span>; unknown words stay <span class="translator-unresolved-sample">red</span>.</p>
+              <p class="grammar-toolbar__lead sans">Compiles English into Fonoran concepts, not word-for-word substitution. Direct matches use normal text; interpreted mappings are <span class="translator-resolved--interpreted">yellow</span>, WordNet matches <span class="translator-resolved--semantic">orange</span>; unknown words stay <span class="translator-unresolved-sample">red</span>.</p>
             </div>
             <a class="btn grammar-toolbar__source" href="#grammar">Grammar rules</a>
           </header>
@@ -342,103 +344,6 @@
           </div>
         </div>
       </section>
-
-      <section id="page-create" class="page fonoran-split-page" hidden aria-hidden="true">
-        <div class="fonoran-split-shell" data-split-shell>
-          <div class="fonoran-split-chrome">
-            <p class="fonoran-split-chrome__intro sans" id="wc-intro">Stack roots and approved words on the left, build the recipe, and name the compound.</p>
-            <input type="search" id="wc-filter" class="search-bar" placeholder="Search by spelling, meaning, alias, or concept…" autocomplete="off">
-            <div class="toolbar" id="wc-filters">
-              <button type="button" class="chip active" data-wc-filter="roots">Roots</button>
-              <button type="button" class="chip active" data-wc-filter="words">Words</button>
-              <button type="button" class="chip" data-wc-filter="unapproved">Unapproved</button>
-              <button type="button" class="chip" data-wc-filter="unnamed">Unnamed</button>
-            </div>
-          </div>
-        </div>
-        <div class="fonoran-split-grid">
-          <aside class="fonoran-split-picker" aria-label="Roots and words">
-            <p class="empty sans" id="wc-picker-empty" hidden style="margin:0.5rem 0">Turn on <strong>Roots</strong> or <strong>Words</strong> above to browse the picker.</p>
-            <h4 class="picker-h" id="wc-roots-h">Roots</h4>
-            <div class="sound-grid" id="wc-roots"></div>
-            <h4 class="picker-h" id="wc-words-h">Words</h4>
-            <div class="sound-grid" id="wc-words"></div>
-          </aside>
-          <div class="fonoran-split-workspace word-editor" id="word-create">
-            <div class="edit-panel word-editor__panel">
-              <div class="word-editor__hero word-preview-panel">
-                <div id="wc-live-pron"></div>
-              </div>
-              <input type="text" id="wc-meaning" placeholder="Meaning, e.g. river, friend…" data-write-input aria-label="Meaning">
-              <div id="wc-dupe"></div>
-              <label class="fld">Recipe: which sounds build it (tap to remove)</label>
-              <div class="pick" id="wc-recipe-pick"></div>
-              <div id="wc-match"></div>
-              <div id="wc-boundary"></div>
-              <label class="fld" for="wc-aliases">English word bank <span class="word-editor__hint sans">— one phrase per line, optional</span></label>
-              <textarea id="wc-aliases" rows="2" placeholder="evil&#10;wicked&#10;malice" data-write-input></textarea>
-              <div class="edit-actions word-editor__actions">
-                <button type="button" class="btn btn--primary" id="wc-save" disabled data-write>Save word</button>
-                <button type="button" class="btn" id="wc-clear" data-write>Clear</button>
-                <button type="button" class="btn" id="wc-cancel" hidden data-write>Cancel</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="page-concepts" class="page fonoran-split-page" hidden aria-hidden="true">
-        <div class="fonoran-split-shell" data-split-shell>
-          <div class="fonoran-split-chrome">
-            <p class="fonoran-split-chrome__intro sans">Edit primitive concepts, English word banks, and their Fonoran sounds in one place.</p>
-            <div class="concept-editor__toolbar">
-              <input type="search" id="ce-filter" class="search-bar" placeholder="Search concepts… id, gloss, domain, sound" autocomplete="off" aria-label="Filter concepts">
-              <button type="button" class="btn btn--primary" id="ce-new" data-write>New concept</button>
-            </div>
-          </div>
-        </div>
-        <div class="fonoran-split-grid">
-          <aside class="fonoran-split-picker" aria-label="Concept list">
-            <div class="fonoran-split-picker__body" id="concept-editor-list"></div>
-          </aside>
-          <div class="fonoran-split-workspace" id="concept-editor-detail" aria-live="polite">
-            <div class="fonoran-split-empty">
-              <p>Select a concept on the left, or create a new one.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="page-review" class="page fonoran-split-page" hidden aria-hidden="true">
-        <div class="fonoran-split-shell" data-split-shell>
-          <div class="fonoran-split-chrome">
-            <p class="fonoran-split-chrome__intro sans">Pick a root or word on the left, review it on the right, and approve, reject, or edit.</p>
-            <input type="search" id="rv-filter" class="search-bar" placeholder="Search by spelling or meaning…" autocomplete="off">
-            <div class="toolbar" id="rv-filters">
-              <button type="button" class="chip active" data-rv-filter="roots">Roots</button>
-              <button type="button" class="chip active" data-rv-filter="words">Words</button>
-              <button type="button" class="chip" data-rv-filter="needs-review">Needs review</button>
-              <button type="button" class="chip" data-rv-filter="rejected">Rejected</button>
-            </div>
-          </div>
-        </div>
-        <div class="fonoran-split-grid">
-          <aside class="fonoran-split-picker" aria-label="Items to review">
-            <p class="empty sans" id="rv-picker-empty" hidden style="margin:0.5rem 0">Turn on a category above to browse items.</p>
-            <h4 class="picker-h" id="rv-roots-h">Roots</h4>
-            <div class="sound-grid" id="rv-roots"></div>
-            <h4 class="picker-h" id="rv-words-h">Words</h4>
-            <div class="sound-grid" id="rv-words"></div>
-          </aside>
-          <div class="fonoran-split-workspace" id="word-review" aria-live="polite">
-            <div class="fonoran-split-empty">
-              <p>Select a root or word on the left to review it.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="page-root-review" class="page" hidden aria-hidden="true"></section>
 
       <section id="page-dictionary" class="page fonoran-split-page">
         <div class="fonoran-split-shell" data-split-shell>
@@ -508,119 +413,10 @@
         <div id="health-body"></div>
       </section>
 
-      <section id="page-gaps" class="page">
-        <div id="gaps-body"></div>
-      </section>
-
       <section id="page-progress" class="page">
         <div id="progress-body"></div>
       </section>
 
-      <section id="page-advanced" class="page">
-        <div class="box">
-          <h2>Word Generation Pipeline</h2>
-          <p class="sans">How Fonoran words are born — from primitive roots to a built dictionary. Each step feeds the next.</p>
-
-          <!-- Pipeline steps -->
-          <ol class="adv-pipeline">
-
-            <!-- Step 1: Primitive roots -->
-            <li class="adv-step">
-              <div class="adv-step__number">1</div>
-              <div class="adv-step__body">
-                <h3 class="adv-step__title">Define primitive roots</h3>
-                <p class="sans adv-step__desc">The ~89 irreducible concepts that everything else is built from. They live in <code>data/fonoran-approved-roots.json</code> and are curated by hand using the campfire test.</p>
-                <div class="adv-step__stat" id="adv-roots-stat">Loading…</div>
-                <div class="adv-step__actions">
-                  <a href="/?path=docs%2Ffonoran-generation-2.md" target="_blank" rel="noopener" class="btn btn--sm">Architecture doc</a>
-                </div>
-              </div>
-            </li>
-
-            <!-- Step 2: Vocab survey -->
-            <li class="adv-step">
-              <div class="adv-step__number">2</div>
-              <div class="adv-step__body">
-                <h3 class="adv-step__title">Run vocab survey</h3>
-                <p class="sans adv-step__desc">Ask the LLM to propose 300–500 compound words across semantic domains — all validated against the current primitive set. Proposals are queued for review.</p>
-                <p class="adv-step__cmd sans"><code>npm run fonoran:vocab-survey</code></p>
-              </div>
-            </li>
-
-            <!-- Step 3: Review proposals -->
-            <li class="adv-step">
-              <div class="adv-step__number">3</div>
-              <div class="adv-step__body">
-                <h3 class="adv-step__title">Review proposals</h3>
-                <p class="sans adv-step__desc">Accept or reject each compound proposal. Accepted proposals go into <code>data/fonoran-compounds.json</code> on the next regenerate.</p>
-                <div class="adv-step__stat" id="adv-proposals-stat">Loading…</div>
-                <div class="adv-step__actions">
-                  <a href="/tools#gap-workshop" class="btn btn--sm btn--primary">Open Proposal Review</a>
-                </div>
-              </div>
-            </li>
-
-            <!-- Step 4: Regenerate -->
-            <li class="adv-step">
-              <div class="adv-step__number">4</div>
-              <div class="adv-step__body">
-                <h3 class="adv-step__title">Regenerate dictionary</h3>
-                <p class="sans adv-step__desc">Reload editorial seeds, re-rank compounds, assign phonetic spellings, and rebuild the full dictionary from the canonical JSON files in git.</p>
-                <div id="adv-regen-status" class="adv-regen-status sans" aria-live="polite">Loading status…</div>
-                <ul id="adv-regen-warnings" class="adv-regen-warnings sans" hidden></ul>
-                <div class="adv-step__actions">
-                  <button type="button" class="btn btn--sm btn--primary" id="adv-regenerate" data-write>Regenerate dictionary</button>
-                  <label class="adv-regen-opt sans"><input type="checkbox" id="adv-regen-apply-llm" data-write-input> Re-run LLM optimizer</label>
-                </div>
-                <pre id="adv-regen-result" class="debug-panel adv-regen-result" hidden></pre>
-              </div>
-            </li>
-
-            <!-- Step 5: Validate -->
-            <li class="adv-step">
-              <div class="adv-step__number">5</div>
-              <div class="adv-step__body">
-                <h3 class="adv-step__title">Validate translations</h3>
-                <p class="sans adv-step__desc">Run the golden translation suite to confirm previously working concepts still resolve correctly after any changes.</p>
-                <div class="adv-step__actions">
-                  <button type="button" class="btn btn--sm" id="adv-run-translator-tests" data-write>Run translation tests</button>
-                </div>
-                <pre id="adv-translator-result" class="debug-panel adv-regen-result" hidden></pre>
-              </div>
-            </li>
-
-          </ol>
-
-          <!-- Optional export -->
-          <details class="adv-optional-zone">
-            <summary>Optional: milestone export</summary>
-            <p class="sans adv-optional-zone__lead">Export a zip for milestones or Postgres sync — not required for regeneration.</p>
-            <p id="adv-storage-status" class="sans adv-storage-status"></p>
-            <div class="actions adv-backup-zone__actions">
-              <a class="btn" id="adv-snapshot-download" href="/api/fonoran/snapshot/export" download data-write>Download snapshot zip</a>
-              <label class="btn" id="adv-snapshot-import-label" data-write>
-                Import snapshot zip
-                <input type="file" id="adv-snapshot-import" accept=".zip,application/zip" hidden data-write-input>
-              </label>
-            </div>
-            <pre id="adv-snapshot-preview" class="debug-panel" hidden></pre>
-          </details>
-
-          <div class="adv-danger-zone">
-            <h3>Danger zone</h3>
-            <p class="adv-danger-zone__lead sans">Destructive maintenance only. Prefer <strong>Regenerate dictionary</strong> above for prod recovery.</p>
-            <div class="actions adv-danger-zone__actions">
-              <button type="button" class="btn danger" id="adv-force-build" data-write>Force rebuild only (skip seed reload)</button>
-              <p class="sans adv-danger-zone__hint">Requires typing BUILD. Use only when editorial seeds are already loaded. Blocked on prod when seeds are stale.</p>
-              <button type="button" class="btn danger" id="adv-reset-review" data-write>Reset all review states (keep meanings)</button>
-              <button type="button" class="btn" id="adv-reconcile-inventory" data-write>Reconcile inventory from lab</button>
-              <button type="button" class="btn danger" id="adv-reseed" data-write>Reset lab (blank slate)</button>
-              <p class="sans adv-danger-zone__hint">Reset lab clears Dictionary, Review queue, and assigned sounds. Concept inventory is kept.</p>
-            </div>
-          </div>
-          <p class="sans adv-archive-link">Historical bulk generators are archived in <a href="/?path=docs%2Ffonoran-generator-archive.md">Generator archive</a>.</p>
-        </div>
-      </section>
     </main>
   </div>
 

@@ -17,6 +17,46 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS_PATH = join(ROOT, 'data/fonoran-translation-tests.json');
 const GAP_BASELINE_PATH = join(ROOT, 'data/fonoran-translation-gap-baseline.json');
 const LATEST_PATH = () => resolveDataPath('translation_test_latest');
+const STRANGER_GAP_PATH = () => resolveDataPath('stranger_gap_report');
+
+/** Resolve corpus file path from key, absolute path, or default golden corpus. */
+export function resolveCorpusPath(corpus = 'golden') {
+  if (!corpus || corpus === 'golden') return CORPUS_PATH;
+  if (corpus === 'stranger') return resolveDataPath('stranger_corpus');
+  return corpus;
+}
+
+/**
+ * Normalize stranger-corpus shape (domains[]) into levels[] for the gap runner.
+ * @param {object} raw
+ */
+export function normalizeCorpusLevels(raw) {
+  if (Array.isArray(raw?.levels)) return raw;
+  if (!Array.isArray(raw?.domains)) {
+    throw new Error('Corpus must have levels[] or domains[]');
+  }
+  return {
+    ...raw,
+    levels: raw.domains.map((d, i) => ({
+      level: i + 1,
+      name: d.label ?? d.id ?? `Domain ${i + 1}`,
+      phrases: (d.phrases ?? []).map(p => {
+        if (typeof p === 'string') return p;
+        const entry = { en: p.en };
+        if (p.note) entry.note = p.note;
+        if (p.fon) entry.fon = p.fon;
+        return entry;
+      }),
+    })),
+  };
+}
+
+/** Load a phrase corpus from disk (golden, stranger key, or absolute path). */
+export async function loadTranslationCorpus(corpus = 'golden') {
+  const path = resolveCorpusPath(corpus);
+  const raw = JSON.parse(await readFile(path, 'utf8'));
+  return normalizeCorpusLevels(raw);
+}
 
 /**
  * The gap baseline is the tracked set of English words the language does not yet
@@ -51,9 +91,9 @@ export function diffGapsAgainstBaseline(report, baseline) {
   return { new: newGaps, resolved, baseline: [...base].sort() };
 }
 
-/** Load the phrase corpus from disk. */
-export async function loadTranslationCorpus() {
-  return JSON.parse(await readFile(CORPUS_PATH, 'utf8'));
+/** Load the golden CI corpus from disk. */
+export async function loadGoldenCorpus() {
+  return loadTranslationCorpus('golden');
 }
 
 /** Persist the golden corpus back to disk (used by --update-golden). */
@@ -68,7 +108,7 @@ export async function saveTranslationCorpus(corpus) {
  * baseline" path behind `--update-golden`; the diff is reviewable in git.
  */
 export async function updateGoldenCorpus({ lab = null } = {}) {
-  const corpus = await loadTranslationCorpus();
+  const corpus = await loadGoldenCorpus();
   resetTranslatorCache();
   let updated = 0;
   const allGaps = new Set();
@@ -104,6 +144,21 @@ export async function updateGoldenCorpus({ lab = null } = {}) {
 export async function loadLatestGapReport() {
   try {
     return JSON.parse(await readFile(LATEST_PATH(), 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/** Persist a stranger-corpus gap report snapshot. */
+export async function saveStrangerGapReport(report) {
+  await writeFile(STRANGER_GAP_PATH(), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
+  return report;
+}
+
+/** Load the stranger-corpus gap report (null if none yet). */
+export async function loadStrangerGapReport() {
+  try {
+    return JSON.parse(await readFile(STRANGER_GAP_PATH(), 'utf8'));
   } catch {
     return null;
   }
@@ -219,9 +274,16 @@ export function gradePhrase(tokens) {
  * @param {number|null} [options.level] - run a single level only
  * @param {object|null} [options.lab]   - warm lab bucket (server passes getLab())
  * @param {boolean} [options.resetCache] - reset translator cache first (CLI)
+ * @param {string} [options.corpus] - 'golden' | 'stranger' | absolute path
  */
-export async function runTranslationGapReport({ level = null, lab = null, resetCache = false, suggest = false } = {}) {
-  const corpus = await loadTranslationCorpus();
+export async function runTranslationGapReport({
+  level = null,
+  lab = null,
+  resetCache = false,
+  suggest = false,
+  corpus = 'golden',
+} = {}) {
+  const corpusDoc = await loadTranslationCorpus(corpus);
   if (resetCache) resetTranslatorCache();
 
   const gap = new Map();
@@ -240,7 +302,7 @@ export async function runTranslationGapReport({ level = null, lab = null, resetC
 
   // Supports both the legacy string corpus and the golden corpus (phrases are
   // {en, fon, note} objects); the loop normalizes each entry below.
-  for (const lvl of corpus.levels) {
+  for (const lvl of corpusDoc.levels) {
     if (level != null && lvl.level !== level) continue;
     let lvlPhrases = 0;
     let lvlClean = 0;
@@ -340,7 +402,8 @@ export async function runTranslationGapReport({ level = null, lab = null, resetC
 
   const report = {
     generated_at: new Date().toISOString(),
-    corpus_version: corpus.version ?? null,
+    corpus: corpus === 'golden' ? 'golden' : corpus === 'stranger' ? 'stranger' : corpus,
+    corpus_version: corpusDoc.version ?? null,
     total_phrases: totalPhrases,
     clean_phrases: cleanPhrases,
     coverage_pct: totalPhrases ? Math.round((cleanPhrases / totalPhrases) * 100) : 0,
@@ -357,10 +420,14 @@ export async function runTranslationGapReport({ level = null, lab = null, resetC
     phrases: phraseResults,
   };
 
-  // Persist full-corpus runs as the canonical "latest" report shown in the lab.
+  // Persist full-corpus runs as the canonical snapshot for the lab / stranger report.
   if (level == null) {
     try {
-      await saveLatestGapReport(report);
+      if (corpus === 'stranger') {
+        await saveStrangerGapReport(report);
+      } else {
+        await saveLatestGapReport(report);
+      }
     } catch {
       // Non-fatal: a read-only environment just won't cache the latest run.
     }

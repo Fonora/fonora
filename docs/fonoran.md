@@ -31,7 +31,7 @@ flowchart TD
   end
 
   subgraph composition [Composition]
-    CompoundsJson["compounds.json\n82 curated recipes"]
+    CompoundsJson["compounds.json\n483+ curated compounds"]
     Build["fonoran-build.js\nunique-parse check"]
     Lab["sound-bucket.json\nruntime lab"]
   end
@@ -113,7 +113,7 @@ meaning cleanup → primitive test → priority class → sound generation
 | Step | What happens |
 | --- | --- |
 | 1. Build | `npm run fonoran:build` assigns CV/CVC spellings, builds compounds, imports lab |
-| 2. Review | Open **Review** at `/language#review` — approve, reject, edit, or regenerate roots |
+| 2. Review | Open **Words** at `/tools#word-manager` — approve, reject, edit, or regenerate roots |
 | 3. Rebuild | Re-run build; approved spellings stay locked; **user-created lab items are preserved** |
 
 ### Concept metadata drives generation
@@ -195,7 +195,7 @@ Typical lab loop:
 
 ```bash
 npm run fonoran:reset && npm run fonoran:build
-# → Review at /language#review
+# → Review at /tools#word-manager
 # → npm run fonoran:build again after approving roots
 ```
 

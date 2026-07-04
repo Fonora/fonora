@@ -123,13 +123,14 @@ at `GET /api/fonoran/playtests/promotions`. This turns the constitutional author
 | `/api/fonoran/gaps/suggest` | POST | admin | LLM-classify a word and create a proposal |
 | `/api/fonoran/playtests/promotions` | GET | public | compounds ready for playtest promotion |
 
-### 8. CLI runner (`scripts/fonoran-suggest-compounds.js` → `fonoran:suggest-compounds`)
+### 8. CLI runner (retired — superseded by `fonoran:vocab-survey` and `fonoran:refine`)
+
+> **Historical.** `scripts/fonoran-suggest-compounds.js` and the `fonoran:suggest-compounds` npm script were removed. The reactive per-gap CLI was replaced by the batch vocabulary survey and automated refine loop (see §Outcomes below and [RN-27](/research/notes/automated-refine-loop)). Use `npm run fonoran:vocab-survey` for bulk proposal generation.
 
 ```bash
-npm run fonoran:suggest-compounds -- --gaps          # analyze all current gaps
-npm run fonoran:suggest-compounds -- --gaps --top=5  # top-5 by frequency
-npm run fonoran:suggest-compounds -- --word=behind --role=path
-npm run fonoran:suggest-compounds -- --status        # show proposal store stats
+# Current equivalents:
+npm run fonoran:vocab-survey                # batch compound proposals (replaces --gaps)
+npm run fonoran:refine                      # automated gap → propose → build loop
 ```
 
 ## Evaluation

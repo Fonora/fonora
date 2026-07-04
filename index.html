@@ -77,11 +77,11 @@
       <nav class="main-nav" aria-label="Tools">
         <div class="main-nav-primary">
           <button type="button" class="tab-btn" data-tab="tools-home">Home</button>
-          <button type="button" class="tab-btn" data-tab="word-manager" id="nav-word-manager" hidden>Word Manager</button>
-          <button type="button" class="tab-btn" data-tab="gap-workshop" id="nav-gap-workshop" hidden>Proposal Review</button>
-          <button type="button" class="tab-btn" data-tab="samples">Samples</button>
-          <button type="button" class="tab-btn" data-tab="encoder-testing">Pronunciation Testing</button>
-          <button type="button" class="tab-btn" data-tab="pronunciation-validation">Validation</button>
+          <button type="button" class="tab-btn" data-tab="word-manager" id="nav-word-manager" hidden>Words</button>
+          <button type="button" class="tab-btn" data-tab="gap-workshop" id="nav-gap-workshop" hidden>Review</button>
+          <button type="button" class="tab-btn" data-tab="translation-test" id="nav-translation-test" hidden>Translation Test</button>
+          <button type="button" class="tab-btn" data-tab="advanced" id="nav-advanced" hidden>Advanced</button>
+          <button type="button" class="tab-btn" data-tab="docs">Docs</button>
         </div>
       </nav>
     </div>
@@ -350,108 +350,17 @@
           <h1 id="tools-home-title">Tools</h1>
           <p class="home-subtitle">The software used to build, analyze, and test Fonora Script and Fonoran.</p>
         </header>
-        <div class="home-prose">
-          <p>
-            These experimental tools power the research behind the project.
-          </p>
-          <p>
-            Explore the language builder, pronunciation testing and validation, multilingual samples, research notes, and other utilities used to design and evaluate both the writing system and the language.
-          </p>
-          <p>
-            These tools are intended for researchers, contributors, and anyone interested in language creation. If you're looking to learn the script itself, start with the <strong>Learn</strong> section.
-          </p>
-        </div>
       </section>
 
-      <section class="home-section home-section--layers content-section" aria-labelledby="tools-script-heading">
-        <h2 id="tools-script-heading">Script Tools</h2>
+      <section class="home-section home-section--layers content-section" aria-labelledby="tools-metrics-heading">
+        <h2 id="tools-metrics-heading">Metrics</h2>
         <div class="home-layer-cards">
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Debug &amp; QA</p>
-            <h3>Pronunciation Testing</h3>
-            <p>Evaluate IPA → Fonora encoding across languages.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-tab="encoder-testing">Open Pronunciation Testing</button>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Debug &amp; QA</p>
-            <h3>Pronunciation Validation</h3>
-            <p>Validate that Fonora preserves pronunciation through the full encode/decode pipeline.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-tab="pronunciation-validation">Open Validation</button>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Demo</p>
-            <h3>Samples</h3>
-            <p>Hear Fonora Script read aloud across languages — a universal-script demo.</p>
-            <div class="home-layer-card__actions">
-              <button type="button" class="btn" data-tab="samples">Open Samples</button>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Research</p>
-            <h3>Research Notes</h3>
-            <p>Research notes are markdown files in the repo. The in-app editor is deprecated.</p>
-            <div class="home-layer-card__actions">
-              <a class="btn btn--primary" href="/docs/research-notes-authoring.md">Authoring guide</a>
-              <a class="btn" href="/research">Public Research site</a>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section class="home-section home-section--layers content-section" aria-labelledby="tools-language-heading">
-        <h2 id="tools-language-heading">Language Tools</h2>
-        <p>These open the <a href="/language">Language Builder</a> app directly to the tool you need.</p>
-        <div class="home-layer-cards">
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Experiment</p>
-            <h3>Puzzle Conversation</h3>
-            <p>Test whether two people can communicate using only the Communicative Core.</p>
-            <div class="home-layer-card__actions">
-              <a href="/language#puzzle" class="btn btn--primary">Open Puzzle Conversation</a>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Vocabulary</p>
-            <h3>Word Manager</h3>
-            <p>Stack roots and words, build compounds, and save to the lab (admin only).</p>
-            <div class="home-layer-card__actions">
-              <a href="/tools#word-manager" class="btn btn--primary">Open Word Manager</a>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Vocabulary</p>
-            <h3>Proposal Review</h3>
-            <p>Review vocab survey proposals and playtest promotions, then accept them into the vocabulary pipeline.</p>
-            <div class="home-layer-card__actions">
-              <a href="/tools#gap-workshop" class="btn btn--primary" id="tools-home-gap-workshop">Open Proposal Review</a>
-            </div>
-          </article>
-          <article class="home-layer-card home-layer-card--muted">
-            <p class="home-layer-card__tag">Community</p>
-            <h3>Vote &amp; propose</h3>
-            <p>Community members vote and propose alternates on the public Language dictionary — not in Tools.</p>
-            <div class="home-layer-card__actions">
-              <a href="/language#dictionary" class="btn">Open Dictionary</a>
-            </div>
-          </article>
           <article class="home-layer-card">
             <p class="home-layer-card__tag">Analysis</p>
             <h3>Health</h3>
             <p>Check vocabulary coverage and consistency metrics.</p>
             <div class="home-layer-card__actions">
-              <a href="/language#health" class="btn">Open Health</a>
-            </div>
-          </article>
-          <article class="home-layer-card">
-            <p class="home-layer-card__tag">Analysis</p>
-            <h3>Translation Test</h3>
-            <p>Stress-test translation gaps against real text.</p>
-            <div class="home-layer-card__actions">
-              <a href="/language#gaps" class="btn">Open Translation Test</a>
+              <button type="button" class="btn btn--primary" data-tab="health">Open Health</button>
             </div>
           </article>
           <article class="home-layer-card">
@@ -459,15 +368,51 @@
             <h3>Lab progress</h3>
             <p>Track vocabulary growth over time.</p>
             <div class="home-layer-card__actions">
-              <a href="/language#progress" class="btn">Open Lab progress</a>
+              <button type="button" class="btn btn--primary" data-tab="progress">Open Lab progress</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="home-section home-section--layers content-section" aria-labelledby="tools-debug-heading">
+        <h2 id="tools-debug-heading">Debug tools</h2>
+        <div class="home-layer-cards">
+          <article class="home-layer-card">
+            <p class="home-layer-card__tag">Debug &amp; QA</p>
+            <h3>Pronunciation Testing</h3>
+            <p>Evaluate IPA → Fonora encoding across languages.</p>
+            <div class="home-layer-card__actions">
+              <button type="button" class="btn btn--primary" data-tab="encoder-testing">Open Pronunciation Testing</button>
             </div>
           </article>
           <article class="home-layer-card">
-            <p class="home-layer-card__tag">Advanced</p>
-            <h3>Advanced</h3>
-            <p>Low-level tools for the language lab.</p>
+            <p class="home-layer-card__tag">Debug &amp; QA</p>
+            <h3>Pronunciation Validation</h3>
+            <p>Validate that Fonora preserves pronunciation through the full encode/decode pipeline.</p>
             <div class="home-layer-card__actions">
-              <a href="/language#advanced" class="btn">Open Advanced</a>
+              <button type="button" class="btn btn--primary" data-tab="pronunciation-validation">Open Validation</button>
+            </div>
+          </article>
+          <article class="home-layer-card">
+            <p class="home-layer-card__tag">Demo</p>
+            <h3>Samples</h3>
+            <p>Hear Fonora Script read aloud across languages — a universal-script demo.</p>
+            <div class="home-layer-card__actions">
+              <button type="button" class="btn btn--primary" data-tab="samples">Open Samples</button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="home-section home-section--layers content-section" aria-labelledby="tools-community-heading">
+        <h2 id="tools-community-heading">Community</h2>
+        <div class="home-layer-cards">
+          <article class="home-layer-card home-layer-card--muted">
+            <p class="home-layer-card__tag">Community</p>
+            <h3>Vote &amp; propose</h3>
+            <p>Community members vote and propose alternates on the public Language dictionary — not in Tools.</p>
+            <div class="home-layer-card__actions">
+              <a href="/language#dictionary" class="btn btn--primary">Open Dictionary</a>
             </div>
           </article>
         </div>
@@ -475,36 +420,184 @@
     </section>
 
     <!-- Admin: Proposal Review -->
-    <section class="tab-panel gw-page" id="tab-gap-workshop" data-tab-panel="gap-workshop" hidden aria-labelledby="gap-workshop-title">
-      <h1 id="gap-workshop-title" class="gw-page-title">Proposal Review</h1>
-      <p class="gw-page-subtitle sans">Review vocab survey proposals and playtest promotions, then accept them into the vocabulary pipeline.</p>
-
-      <div class="gw-layout">
-        <!-- Left: queue -->
-        <aside class="gw-queue" aria-label="Proposal queue">
-          <div class="gw-queue-tabs">
-            <button type="button" class="gw-tab-btn" data-gw-tab="proposals" data-gw-label="Proposals">Proposals</button>
-            <button type="button" class="gw-tab-btn" data-gw-tab="playtests" data-gw-label="Playtests">Playtests</button>
+    <section class="tab-panel fonoran-split-page wm-tools-page gw-tools-page" id="tab-gap-workshop" data-tab-panel="gap-workshop" hidden aria-labelledby="gap-workshop-title">
+      <h1 id="gap-workshop-title" hidden>Review</h1>
+      <div class="fonoran-split-shell" data-split-shell>
+        <div class="fonoran-split-chrome wm-chrome gw-chrome">
+          <div class="gw-chrome__head">
+            <p class="gw-chrome__title">Proposal Review</p>
+            <p class="gw-chrome__subtitle sans">Review vocab survey proposals and playtest promotions, then accept them into the vocabulary pipeline.</p>
           </div>
-          <div class="gw-queue-actions">
+          <div class="gw-chrome__controls">
+            <div class="gw-queue-tabs" role="tablist" aria-label="Queue type">
+              <button type="button" class="gw-tab-btn chip" data-gw-tab="proposals" data-gw-label="Proposals">Proposals</button>
+              <button type="button" class="gw-tab-btn chip" data-gw-tab="resolved" data-gw-label="Resolved">Resolved</button>
+              <button type="button" class="gw-tab-btn chip" data-gw-tab="playtests" data-gw-label="Playtests">Playtests</button>
+            </div>
             <button type="button" class="btn btn--sm" id="gw-refresh">↺ Refresh</button>
           </div>
+        </div>
+      </div>
+      <div class="fonoran-split-grid">
+        <aside class="fonoran-split-picker gw-queue" aria-label="Proposal queue">
           <div class="gw-queue-list" role="listbox" aria-label="Items"></div>
         </aside>
-
-        <!-- Right: detail -->
-        <div class="gw-detail-panel" id="gw-detail">
-          <div class="gw-empty-state">
-            <p class="gw-empty-state__lead">Pick an item from the queue</p>
-            <p class="gw-empty-state__hint">Select an open proposal to review, or a playtest promotion to accept.</p>
+        <div class="fonoran-split-workspace gw-detail-panel" id="gw-detail">
+          <div class="wm-empty-state">
+            <div class="wm-empty-state__body">
+              <p class="wm-empty-state__lead">Pick an item from the queue</p>
+              <p class="wm-empty-state__hint">Select an open proposal to review, or a playtest promotion to accept.</p>
+            </div>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- Admin: Translation Test -->
+    <section class="content-page tab-panel" id="tab-translation-test" data-tab-panel="translation-test" hidden aria-labelledby="translation-test-title">
+      <h1 id="translation-test-title" hidden>Translation Test</h1>
+      <section class="content-section content-section--intro" aria-labelledby="translation-test-heading">
+        <header class="home-intro-header">
+          <h1 id="translation-test-heading">Translation Test</h1>
+          <p class="home-subtitle">The latest full run of the English corpus through the translator. Red words are concepts the language cannot yet express.</p>
+        </header>
+      </section>
+      <div id="translation-test-body"></div>
+    </section>
+
+    <!-- Admin: Lab Health -->
+    <section class="content-page tab-panel" id="tab-health" data-tab-panel="health" hidden aria-labelledby="health-title">
+      <h1 id="health-title" hidden>Health</h1>
+      <section class="content-section content-section--intro" aria-labelledby="health-heading">
+        <header class="home-intro-header">
+          <h1 id="health-heading">Health</h1>
+          <p class="home-subtitle">Live readability audit of vocabulary — internal consistency, morphological transparency, and learner ergonomics.</p>
+        </header>
+      </section>
+      <div id="tools-health-body"></div>
+    </section>
+
+    <!-- Admin: Lab progress -->
+    <section class="content-page tab-panel" id="tab-progress" data-tab-panel="progress" hidden aria-labelledby="progress-title">
+      <h1 id="progress-title" hidden>Lab progress</h1>
+      <section class="content-section content-section--intro" aria-labelledby="progress-heading">
+        <header class="home-intro-header">
+          <h1 id="progress-heading">Lab progress</h1>
+          <p class="home-subtitle">Review activity, vocabulary growth, and recent changes in your lab.</p>
+        </header>
+      </section>
+      <div id="tools-progress-body"><p class="empty">Loading lab progress…</p></div>
+    </section>
+
+    <!-- Admin: Advanced pipeline -->
+    <section class="content-page tab-panel" id="tab-advanced" data-tab-panel="advanced" hidden aria-labelledby="advanced-title">
+      <h1 id="advanced-title" hidden>Advanced</h1>
+      <section class="content-section content-section--intro" aria-labelledby="advanced-heading">
+        <header class="home-intro-header">
+          <h1 id="advanced-heading">Advanced</h1>
+          <p class="home-subtitle">Advanced tools and features for managing the Fonoran language.</p>
+        </header>
+      </section>
+      <div class="box advanced-page">
+        <ol class="adv-pipeline">
+          <li class="adv-step">
+            <div class="adv-step__number">1</div>
+            <div class="adv-step__body">
+              <h3 class="adv-step__title">Define primitive roots</h3>
+              <p class="sans adv-step__desc">The ~89 irreducible concepts that everything else is built from. They live in <code>data/fonoran-approved-roots.json</code> and are curated by hand using the campfire test.</p>
+              <div class="adv-step__stat" id="adv-roots-stat">Loading…</div>
+              <div class="adv-step__actions">
+                <a href="/tools?path=docs%2Ffonoran.md#pipeline" class="btn btn--sm" data-tab="docs" data-doc-path="docs/fonoran.md">Pipeline guide</a>
+              </div>
+            </div>
+          </li>
+
+          <li class="adv-step">
+            <div class="adv-step__number">2</div>
+            <div class="adv-step__body">
+              <h3 class="adv-step__title">Run vocab survey</h3>
+              <p class="sans adv-step__desc">Ask the LLM to propose 300–500 compound words across semantic domains — all validated against the current primitive set. Proposals are queued for review.</p>
+              <p class="adv-step__cmd sans"><code>npm run fonoran:vocab-survey</code></p>
+              <div class="adv-step__actions">
+                <button type="button" class="btn btn--sm" data-tab="docs" data-doc-path="docs/fonoran-cli-tools.md">CLI reference</button>
+              </div>
+            </div>
+          </li>
+
+          <li class="adv-step">
+            <div class="adv-step__number">3</div>
+            <div class="adv-step__body">
+              <h3 class="adv-step__title">Review proposals</h3>
+              <p class="sans adv-step__desc">Accept or reject each compound proposal. Accepted proposals go into <code>data/fonoran-compounds.json</code> on the next regenerate.</p>
+              <div class="adv-step__stat" id="adv-proposals-stat">Loading…</div>
+              <div class="adv-step__actions">
+                <button type="button" class="btn btn--sm btn--primary" data-tab="gap-workshop">Open Review</button>
+              </div>
+            </div>
+          </li>
+
+          <li class="adv-step">
+            <div class="adv-step__number">4</div>
+            <div class="adv-step__body">
+              <h3 class="adv-step__title">Regenerate dictionary</h3>
+              <p class="sans adv-step__desc">Reload editorial seeds, re-rank compounds, assign phonetic spellings, and rebuild the full dictionary from the canonical JSON files in git.</p>
+              <div id="adv-regen-status" class="adv-regen-status sans" aria-live="polite">Loading status…</div>
+              <ul id="adv-regen-warnings" class="adv-regen-warnings sans" hidden></ul>
+              <div class="adv-step__actions">
+                <button type="button" class="btn btn--sm btn--primary" id="adv-regenerate" data-write>Regenerate dictionary</button>
+                <label class="adv-regen-opt sans"><input type="checkbox" id="adv-regen-apply-llm" data-write-input> Re-run LLM optimizer</label>
+              </div>
+              <pre id="adv-regen-result" class="debug-panel adv-regen-result" hidden></pre>
+            </div>
+          </li>
+
+          <li class="adv-step">
+            <div class="adv-step__number">5</div>
+            <div class="adv-step__body">
+              <h3 class="adv-step__title">Validate translations</h3>
+              <p class="sans adv-step__desc">Run the golden translation suite to confirm previously working concepts still resolve correctly after any changes.</p>
+              <div class="adv-step__actions">
+                <button type="button" class="btn btn--sm" id="adv-run-translator-tests" data-write>Run translation tests</button>
+                <button type="button" class="btn btn--sm" data-tab="translation-test">View gap report</button>
+              </div>
+              <pre id="adv-translator-result" class="debug-panel adv-regen-result" hidden></pre>
+            </div>
+          </li>
+        </ol>
+
+        <details class="adv-optional-zone">
+          <summary>Optional: milestone export</summary>
+          <p class="sans adv-optional-zone__lead">Export a zip for milestones or Postgres sync — not required for regeneration.</p>
+          <p id="adv-storage-status" class="sans adv-storage-status"></p>
+          <div class="actions adv-backup-zone__actions">
+            <a class="btn" id="adv-snapshot-download" href="/api/fonoran/snapshot/export" download data-write>Download snapshot zip</a>
+            <label class="btn" id="adv-snapshot-import-label" data-write>
+              Import snapshot zip
+              <input type="file" id="adv-snapshot-import" accept=".zip,application/zip" hidden data-write-input>
+            </label>
+          </div>
+          <pre id="adv-snapshot-preview" class="debug-panel" hidden></pre>
+        </details>
+
+        <div class="adv-danger-zone">
+          <h3>Danger zone</h3>
+          <p class="adv-danger-zone__lead sans">Destructive maintenance only. Prefer <strong>Regenerate dictionary</strong> above for prod recovery.</p>
+          <div class="actions adv-danger-zone__actions">
+            <button type="button" class="btn danger" id="adv-force-build" data-write>Force rebuild only (skip seed reload)</button>
+            <p class="sans adv-danger-zone__hint">Requires typing BUILD. Use only when editorial seeds are already loaded. Blocked on prod when seeds are stale.</p>
+            <button type="button" class="btn danger" id="adv-reset-review" data-write>Reset all review states (keep meanings)</button>
+            <button type="button" class="btn" id="adv-reconcile-inventory" data-write>Reconcile inventory from lab</button>
+            <button type="button" class="btn danger" id="adv-reseed" data-write>Reset lab (blank slate)</button>
+            <p class="sans adv-danger-zone__hint">Reset lab clears Dictionary, Review queue, and assigned sounds. Concept inventory is kept.</p>
+          </div>
+        </div>
+        <p class="sans adv-archive-link">Historical bulk generators are archived in <a href="/tools?path=docs%2Farchive%2Ffonoran-generator-archive.md#docs" data-tab="docs" data-doc-path="docs/archive/fonoran-generator-archive.md">Generator archive</a>.</p>
+      </div>
+    </section>
+
     <!-- Admin: Word Manager -->
     <section class="tab-panel fonoran-split-page wm-tools-page" id="tab-word-manager" data-tab-panel="word-manager" hidden aria-labelledby="word-manager-title">
-      <h1 id="word-manager-title" hidden>Word Manager</h1>
+      <h1 id="word-manager-title" hidden>Words</h1>
       <div class="fonoran-split-shell" data-split-shell>
         <div class="fonoran-split-chrome wm-chrome">
           <div class="wm-chrome__search-row">
@@ -1166,15 +1259,6 @@
           </table>
         </div>
       </div>
-    </section>
-
-    <!-- Research notes editor -->
-    <section class="panel tab-panel content-page" id="tab-research-notes" data-tab-panel="research-notes" hidden aria-labelledby="research-notes-title">
-      <header class="content-section content-section--intro">
-        <h1 id="research-notes-title">Research Notes</h1>
-        <p class="section-desc">Deprecated. Author notes as markdown in <code>docs/research-notes/</code> and view them on the public <a href="/research">Research</a> site.</p>
-      </header>
-      <div id="research-notes-editor-root" class="rn-editor-root"></div>
     </section>
 
     <!-- Language Samples -->

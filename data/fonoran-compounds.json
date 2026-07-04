@@ -3,7 +3,7 @@
   "status": "canonical",
   "philosophy": "Compounds are meaning-attempts, not canonical answers. Each concept keeps a preferred form and alternate understandable forms. understandability is an advisory ranking aid; human guess-the-meaning playtests decide the preferred form (docs/fonoran-constitution.md).",
   "description": "Curated transparent Fonoran compounds with ranked alternates. Preferred forms selected deterministically from ASSOCIATION_SEEDS via fonoran-preferred-select.",
-  "compound_count": 459,
+  "compound_count": 483,
   "compounds": [
     {
       "concept": "community",
@@ -8575,21 +8575,6 @@
       "notes": "Vocab survey proposal — naming someone who has been expelled from the community"
     },
     {
-      "concept": "mentor",
-      "preferred": {
-        "composition": [
-          "person",
-          "know",
-          "give"
-        ],
-        "gloss": "one who gives knowledge; a teacher or guide"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [],
-      "understandability": 0.73,
-      "notes": "Vocab survey proposal — the person who teaches you skills you need to survive"
-    },
-    {
       "concept": "apprentice",
       "preferred": {
         "composition": [
@@ -8597,7 +8582,7 @@
           "know",
           "take"
         ],
-        "gloss": "one who takes knowledge; a learner under a mentor"
+        "gloss": "one who takes knowledge; a learner"
       },
       "preferred_source": "heuristic",
       "alternates": [],
@@ -11552,6 +11537,883 @@
       "notes": "Fonoran as a modifier means 'of/relating to the Fonoran language', which can be expressed as 'language + name' (the named language) or 'shared_meaning + name' (the named shared meaning system). The mo"
     },
     {
+      "concept": "raindrop",
+      "preferred": {
+        "composition": [
+          "rain",
+          "small"
+        ],
+        "gloss": "raindrop"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "rain",
+            "one"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "water",
+            "small",
+            "down"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "rain",
+            "part"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Raindrops are small units/pieces of rain (water falling from the sky), naturally expressible as small particles of rain. 'rain' + 'small' or 'rain' + 'one' captures the individual drop concept well."
+    },
+    {
+      "concept": "laugh",
+      "preferred": {
+        "composition": [
+          "happy",
+          "voice"
+        ],
+        "gloss": "laugh"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "joy",
+            "voice"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "happy",
+            "speak"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "joy",
+            "speak"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Laughter is a joyful, expressive vocalization — happy + voice. English inflections (laughed, laughing) are aliases, not separate concepts."
+    },
+    {
+      "concept": "please",
+      "preferred": {
+        "composition": [
+          "give",
+          "good"
+        ],
+        "gloss": "please"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "want",
+            "good"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "feel",
+            "good"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "request",
+            "good"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Please is a politeness softener meaning 'I want this in a good/kind way' — best conveyed as want+good, which a campfire stranger would read as 'wanting with goodwill' rather than demanding. Concrete a"
+    },
+    {
+      "concept": "try",
+      "preferred": {
+        "composition": [
+          "want",
+          "do"
+        ],
+        "gloss": "try"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "will",
+            "do"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "do",
+            "hope"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "move",
+            "hope"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Try = doing something with effort toward an uncertain outcome — best captured as 'want+do' (attempting = wanting to do) or 'will+do' (pushing effort into action). A campfire stranger would quickly gue"
+    },
+    {
+      "concept": "show",
+      "preferred": {
+        "composition": [
+          "move",
+          "see"
+        ],
+        "gloss": "show"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "give",
+            "see"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "see",
+            "give"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "light",
+            "see"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Show means making something visible to another person — a stranger would guess 'give+see' as 'make someone see something', which is the core campfire act of showing. Concrete and directional."
+    },
+    {
+      "concept": "worried",
+      "preferred": {
+        "composition": [
+          "fear",
+          "think"
+        ],
+        "gloss": "worried"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "think",
+            "danger"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "think",
+            "bad"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Worried is fear-thinking — the mind running ahead to bad outcomes. A stranger would immediately guess 'fear+think' as anxious mental anticipation of danger."
+    },
+    {
+      "concept": "slowly",
+      "preferred": {
+        "composition": [
+          "move",
+          "less",
+          "fast"
+        ],
+        "gloss": "slowly"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "less",
+            "fast"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "small",
+            "fast"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "move",
+            "small",
+            "fast"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Slowly is 'less fast' — a stranger at a campfire would immediately grasp this as the opposite end of the speed scale. Concrete move+less+fast gives the motion context that makes it unambiguous."
+    },
+    {
+      "concept": "relieved",
+      "preferred": {
+        "composition": [
+          "feel",
+          "good"
+        ],
+        "gloss": "relieved"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "feel",
+            "safe"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "pain",
+            "empty"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "fear",
+            "empty"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Relieved = the feeling when danger/pain/burden is gone and you feel good again. A stranger would guess 'feel+safe' or 'pain+gone/empty' immediately from campfire context."
+    },
+    {
+      "concept": "what",
+      "preferred": {
+        "composition": [
+          "want",
+          "know",
+          "thing"
+        ],
+        "gloss": "what"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "question",
+            "thing"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "\"What\" is a question word pointing to an unknown thing — best captured as 'question+thing', which a stranger would immediately read as 'which thing?' or 'what thing?'. It's a pointer to an unidentifie"
+    },
+    {
+      "concept": "closer",
+      "preferred": {
+        "composition": [
+          "move",
+          "near"
+        ],
+        "gloss": "closer"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "toward",
+            "near"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "come",
+            "near"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "near",
+            "more"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "'Closer' means moving toward near — a stranger would guess 'move+near' or 'toward+near' immediately as 'come nearer/closer'. Concrete spatial roots make this highly recoverable."
+    },
+    {
+      "concept": "sorry",
+      "preferred": {
+        "composition": [
+          "pain",
+          "give"
+        ],
+        "gloss": "sorry"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "feel",
+            "bad"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "feel",
+            "regret"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "shame",
+            "give"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Sorry is a social-emotional gesture meaning 'I feel bad about what happened' — concrete feel+bad captures this instantly at a campfire. A stranger hearing feel+bad as an apology would guess it correct"
+    },
+    {
+      "concept": "plan",
+      "preferred": {
+        "composition": [
+          "know",
+          "before",
+          "do"
+        ],
+        "gloss": "plan"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "think",
+            "before",
+            "do"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "think",
+            "path"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "mind",
+            "path"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "A plan is thinking-ahead about what to do — 'think+before+do' captures the mental rehearsal of future action that a stranger would recognize. Concrete action root 'do' anchors it away from pure abstra"
+    },
+    {
+      "concept": "sit",
+      "preferred": {
+        "composition": [
+          "still",
+          "down"
+        ],
+        "gloss": "sit"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "body",
+            "down",
+            "still"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "rest",
+            "down"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "body",
+            "still",
+            "surface"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Sit is body+down+still — a stranger at a campfire would immediately picture 'body going down and staying still'. Two or three concrete roots nail it without ambiguity."
+    },
+    {
+      "concept": "borrow",
+      "preferred": {
+        "composition": [
+          "take",
+          "bond"
+        ],
+        "gloss": "borrow"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "take",
+            "promise"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "take",
+            "return"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "take",
+            "temporary"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Borrow is 'take with promise to return' — a stranger at a campfire would immediately grasp 'take+promise' or 'take+return' as a temporary taking with obligation. Concrete take+promise captures the soc"
+    },
+    {
+      "concept": "other",
+      "preferred": {
+        "composition": [
+          "same",
+          "outside"
+        ],
+        "gloss": "other"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "opposite",
+            "same"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "one",
+            "opposite"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "outside",
+            "one"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Other means 'not this one, a different one' — best captured as opposite+same (the one that is not the same) or different+thing. A stranger at a campfire pointing to one object and gesturing 'not same'"
+    },
+    {
+      "concept": "boil",
+      "preferred": {
+        "composition": [
+          "water",
+          "fire",
+          "move"
+        ],
+        "gloss": "boil"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "water",
+            "hot",
+            "move"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Boiling is water becoming hot and moving/bubbling — a stranger at a campfire would immediately picture 'hot water moving' or 'water+fire+move'. Concrete survival concept best built from visible compon"
+    },
+    {
+      "concept": "breathe",
+      "preferred": {
+        "composition": [
+          "air",
+          "move"
+        ],
+        "gloss": "breathe"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "breath",
+            "move"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "air",
+            "body"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "lung",
+            "move"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Breathing is the act of moving air through the body — a stranger would immediately guess 'air+move' or 'air+body' as 'breathe'. Breath already exists as a concept, so this is the event form of that sa"
+    },
+    {
+      "concept": "stand",
+      "preferred": {
+        "composition": [
+          "still",
+          "up"
+        ],
+        "gloss": "stand"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "body",
+            "up",
+            "still"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "body",
+            "still",
+            "upward"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "foot",
+            "still",
+            "up"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Stand is body upright/still on feet — a stranger would guess 'body still up' or 'up still body'. Concrete body+position roots make this recoverable without a primitive."
+    },
+    {
+      "concept": "mistake",
+      "preferred": {
+        "composition": [
+          "do",
+          "bad"
+        ],
+        "gloss": "mistake"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "bad",
+            "do"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "think",
+            "bad"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "A mistake is something done badly or wrongly — a 'bad doing' or 'wrong action' is immediately guessable at a campfire. Concrete action root 'do' plus 'bad' is the clearest pairing."
+    },
+    {
+      "concept": "belong",
+      "preferred": {
+        "composition": [
+          "bond",
+          "place"
+        ],
+        "gloss": "belong"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "home",
+            "bond"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "own",
+            "place"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "bond",
+            "home"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Belongs = something/someone has a home-place or bond-place; a stranger would guess 'bond+place' or 'home+bond' as 'this thing has its place here'. Concrete spatial and social roots make this recoverab"
+    },
+    {
+      "concept": "staying",
+      "preferred": {
+        "composition": [
+          "still",
+          "place"
+        ],
+        "gloss": "staying"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "hold",
+            "place"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "still",
+            "here"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Staying is 'not moving from a place' — a stranger would immediately grasp 'still+place' or 'hold+place' as remaining/not leaving. Concrete spatial roots make this highly recoverable."
+    },
+    {
+      "concept": "mentor",
+      "preferred": {
+        "composition": [
+          "person",
+          "know",
+          "give"
+        ],
+        "gloss": "one who gives knowledge; a teacher or guide"
+      },
+      "preferred_source": "proposal",
+      "alternates": [],
+      "notes": "the person who teaches you skills you need to survive"
+    },
+    {
+      "concept": "long",
+      "preferred": {
+        "composition": [
+          "big",
+          "path"
+        ],
+        "gloss": "long"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "far",
+            "duration"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "more",
+            "path"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "far",
+            "path"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "A stranger would guess 'long' from 'far+duration' (extends far in time/space) or 'big+path' (big stretch). Concrete spatial/temporal roots make this recoverable without a new primitive."
+    },
+    {
+      "concept": "still_raw",
+      "preferred": {
+        "composition": [
+          "food",
+          "before",
+          "fire"
+        ],
+        "gloss": "still raw"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "raw_food",
+            "before"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "food",
+            "cold",
+            "fire"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Still raw means food that hasn't been cooked yet — a stranger at a campfire would immediately understand 'not cooked food' or 'food before fire'. Combining raw_food with a negation/before concept capt"
+    },
+    {
+      "concept": "clearly",
+      "preferred": {
+        "composition": [
+          "see",
+          "true"
+        ],
+        "gloss": "clearly"
+      },
+      "preferred_source": "proposal",
+      "alternates": [
+        {
+          "composition": [
+            "light",
+            "see"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "light",
+            "understand"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        },
+        {
+          "composition": [
+            "see",
+            "understand"
+          ],
+          "status": "plausible",
+          "source": "proposal"
+        }
+      ],
+      "notes": "Clearly means 'in a way that is easy to see/understand' — a stranger would guess 'light+see' or 'see+true' as 'visible/obvious'. Concrete visual roots make this recoverable without abstract stacking."
+    },
+    {
       "concept": "raindrops",
       "preferred": {
         "composition": [
@@ -11591,42 +12453,42 @@
       "notes": "Raindrops are small units/pieces of rain (water falling from the sky), naturally expressible as small particles of rain. 'rain' + 'small' or 'rain' + 'one' captures the individual drop concept well."
     },
     {
-      "concept": "laughed",
+      "concept": "belongs",
       "preferred": {
         "composition": [
-          "happy",
-          "voice"
+          "bond",
+          "place"
         ],
-        "gloss": "laughed"
+        "gloss": "belongs"
       },
       "preferred_source": "proposal",
       "alternates": [
         {
           "composition": [
-            "joy",
-            "voice"
+            "home",
+            "bond"
           ],
           "status": "plausible",
           "source": "proposal"
         },
         {
           "composition": [
-            "happy",
-            "speak"
+            "own",
+            "place"
           ],
           "status": "plausible",
           "source": "proposal"
         },
         {
           "composition": [
-            "joy",
-            "speak"
+            "bond",
+            "home"
           ],
           "status": "plausible",
           "source": "proposal"
         }
       ],
-      "notes": "Laughter is a joyful, expressive vocalization — naturally decomposable as 'happy' + 'voice' (a happy vocal expression), which is intuitively recoverable. The past tense 'laughed' is handled by Fonoran"
+      "notes": "Belongs = something/someone has a home-place or bond-place; a stranger would guess 'bond+place' or 'home+bond' as 'this thing has its place here'. Concrete spatial and social roots make this recoverab"
     }
   ]
 }

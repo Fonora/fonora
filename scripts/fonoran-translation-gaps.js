@@ -22,6 +22,8 @@
  *   node scripts/fonoran-translation-gaps.js --update-gap-baseline # accept the
  *                                                         #   current honest gaps
  *                                                         #   as the new baseline
+ *   node scripts/fonoran-translation-gaps.js --corpus stranger   # stranger corpus gap report
+ *   node scripts/fonoran-translation-gaps.js --corpus stranger --json
  */
 import {
   runTranslationGapReport,
@@ -40,6 +42,14 @@ const doUpdate = argv.includes('--update-golden');
 const doUpdateBaseline = argv.includes('--update-gap-baseline');
 const levelIdx = argv.indexOf('--level');
 const onlyLevel = levelIdx !== -1 ? Number(argv[levelIdx + 1]) : null;
+const corpusIdx = argv.indexOf('--corpus');
+const corpusArg = corpusIdx !== -1 ? argv[corpusIdx + 1] : 'golden';
+
+const gapReportOpts = () => ({
+  level: onlyLevel,
+  resetCache: true,
+  corpus: corpusArg,
+});
 
 const C = {
   reset: '\x1b[0m', dim: '\x1b[2m', bold: '\x1b[1m',
@@ -49,7 +59,7 @@ const color = (c, s) => (asJson ? s : `${c}${s}${C.reset}`);
 
 /** Strict regression mode: diff actual roman vs golden `fon`, fail on any drift. */
 async function runAssert() {
-  const report = await runTranslationGapReport({ level: onlyLevel, resetCache: true });
+  const report = await runTranslationGapReport({ ...gapReportOpts(), suggest: false });
   const graded = report.phrases.filter(p => typeof p.expected === 'string');
   const mismatches = graded.filter(p => !p.matches_golden);
 
@@ -126,7 +136,7 @@ async function runUpdate() {
 }
 
 async function runUpdateBaseline() {
-  const report = await runTranslationGapReport({ level: onlyLevel, resetCache: true });
+  const report = await runTranslationGapReport({ ...gapReportOpts(), suggest: false });
   const words = (report.gaps ?? []).map(g => g.word);
   const gaps = await saveGapBaseline(words);
   console.log(color(C.green + C.bold, `Updated gap baseline`) +
@@ -135,7 +145,10 @@ async function runUpdateBaseline() {
 }
 
 async function runReport() {
-  const report = await runTranslationGapReport({ level: onlyLevel, resetCache: true, suggest: true });
+  const report = await runTranslationGapReport({
+    ...gapReportOpts(),
+    suggest: true,
+  });
 
   if (asJson) {
     console.log(JSON.stringify(report, null, 2));

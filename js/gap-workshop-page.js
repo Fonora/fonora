@@ -8,8 +8,53 @@
  */
 
 import { escapeHtml } from './utils.js';
+import { loadLanguageRules } from './load-language-rules.js';
+import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 
 const TAB_ROOT = () => document.getElementById('tab-gap-workshop');
+
+/** @type {ResizeObserver | null} */
+let stickyObserver = null;
+
+function syncStickyOffsets() {
+  const header = document.getElementById('app-header-root');
+  let headerBottom = 0;
+  if (header) {
+    headerBottom = Math.ceil(header.getBoundingClientRect().bottom);
+    document.documentElement.style.setProperty('--fonoran-header-offset', `${headerBottom}px`);
+  }
+  const root = TAB_ROOT();
+  const shell = root?.querySelector('[data-split-shell]');
+  if (shell) {
+    const grid = shell.nextElementSibling;
+    const gridGap = grid?.classList.contains('fonoran-split-grid')
+      ? parseFloat(getComputedStyle(grid).marginTop) || 0
+      : 0;
+    document.documentElement.style.setProperty(
+      '--fonoran-split-chrome-offset',
+      `${headerBottom + shell.offsetHeight + gridGap}px`,
+    );
+  }
+}
+
+function ensureStickyObserver() {
+  const header = document.getElementById('app-header-root');
+  const root = TAB_ROOT();
+  if (!header || !root) return;
+  if (!stickyObserver) {
+    stickyObserver = new ResizeObserver(() => syncStickyOffsets());
+    stickyObserver.observe(header);
+    window.addEventListener('resize', syncStickyOffsets);
+  }
+  root.querySelectorAll('[data-split-shell]').forEach((shell) => {
+    if (!shell.dataset.stickyObserved) {
+      shell.dataset.stickyObserved = '1';
+      stickyObserver.observe(shell);
+    }
+  });
+  syncStickyOffsets();
+  requestAnimationFrame(syncStickyOffsets);
+}
 
 function $(id) {
   return TAB_ROOT()?.querySelector(`#${id}`) ?? document.getElementById(id);
@@ -44,28 +89,137 @@ async function api(path, opts = {}) {
 // ── State ─────────────────────────────────────────────────────────────────────
 
 const state = {
-  activeTab: 'proposals',   // 'proposals' | 'playtests'
-  proposals: [],
+  activeTab: 'proposals',   // 'proposals' | 'resolved' | 'playtests'
+  openProposals: [],
+  resolvedProposals: [],
   promotions: [],
   selectedId: null,
   analyzing: false,
   loading: false,
 };
 
+function allProposals() {
+  return [...state.openProposals, ...state.resolvedProposals];
+}
+
+function findProposal(id) {
+  return allProposals().find((p) => p.id === id) ?? null;
+}
+
+/** @type {object | null} */
+let lab = null;
+/** @type {object | null} */
+let rules = null;
+
+async function ensureLab() {
+  if (!rules) {
+    const bundle = await loadLanguageRules();
+    rules = bundle.rules ?? null;
+  }
+  if (lab) return lab;
+  const bootstrap = await api('/api/fonoran/bootstrap');
+  lab = bootstrap.lab ?? null;
+  return lab;
+}
+
+function findSound(conceptId) {
+  return lab?.sounds?.find(
+    (s) => s.state !== 'rejected' && (s.concept_id === conceptId || s.spelling === conceptId),
+  ) ?? null;
+}
+
+function findCompound(conceptId) {
+  return lab?.compounds?.find(
+    (c) => c.state !== 'rejected' && (c.concept_id === conceptId || c.id === conceptId || c.spelling === conceptId),
+  ) ?? null;
+}
+
+function flatSpellingsForComponent(comp) {
+  if (!comp) return [];
+  if (comp.type === 'word') {
+    const word = findCompound(comp.ref) ?? findCompound(comp.spelling);
+    if (word?.components?.length) {
+      return word.components.flatMap(flatSpellingsForComponent);
+    }
+    if (word?.parts?.length) return word.parts;
+    return [word?.spelling ?? comp.spelling ?? comp.ref.replace(/^cmp-/, '')];
+  }
+  const sp = comp.spelling || comp.ref;
+  if (sp) return [sp];
+  return [];
+}
+
+/** @param {string[]} composition concept ids or root refs */
+function flatSpellingsForComposition(composition) {
+  if (!Array.isArray(composition) || !composition.length) return [];
+  return composition.flatMap((conceptId) => {
+    const compound = findCompound(conceptId);
+    if (compound) {
+      if (compound.components?.length) {
+        return compound.components.flatMap(flatSpellingsForComponent);
+      }
+      if (compound.parts?.length) return compound.parts;
+      if (compound.spelling) return [compound.spelling];
+    }
+    const sound = findSound(conceptId);
+    if (sound?.spelling) return [sound.spelling];
+    return [conceptId];
+  });
+}
+
+function spellingsToGlyphs(parts) {
+  if (!rules || !parts?.length) return '';
+  return romanToFonoraScript(parts, rules).phrase ?? '';
+}
+
+function glyphHtml(parts, className = 'gw-glyphs') {
+  const glyphs = spellingsToGlyphs(parts);
+  if (!glyphs) return '';
+  return `<span class="${className} symbol-text fonora-script" aria-hidden="true">${escapeHtml(glyphs)}</span>`;
+}
+
+function proposalSpellings(prop) {
+  if (prop.classification === 'alias' && prop.alias_proposal?.existing_concept_id) {
+    return flatSpellingsForComposition([prop.alias_proposal.existing_concept_id]);
+  }
+  if (prop.classification === 'primitive' && prop.primitive_proposal?.suggested_id) {
+    return [prop.primitive_proposal.suggested_id];
+  }
+  const comp = prop.valid_compositions?.[0];
+  if (comp?.length) return flatSpellingsForComposition(comp);
+  return [];
+}
+
+function promotionSpellings(promo) {
+  if (promo.current_composition?.length) {
+    return flatSpellingsForComposition(promo.current_composition);
+  }
+  const compound = findCompound(promo.concept_id);
+  if (compound?.spelling) return flatSpellingsForComposition([promo.concept_id]);
+  const sound = findSound(promo.concept_id);
+  if (sound?.spelling) return [sound.spelling];
+  return [];
+}
+
 // ── Data loading ──────────────────────────────────────────────────────────────
 
 async function loadProposals() {
   try {
-    // Load open + recently resolved so the user can see accepted work
-    const [open, recent] = await Promise.all([
+    const [open, accepted, rejected, skipped] = await Promise.all([
       api('/api/fonoran/compound-proposals?status=open&limit=100'),
-      api('/api/fonoran/compound-proposals?status=accepted&limit=20'),
+      api('/api/fonoran/compound-proposals?status=accepted&limit=100'),
+      api('/api/fonoran/compound-proposals?status=rejected&limit=100'),
+      api('/api/fonoran/compound-proposals?status=skipped&limit=100'),
     ]);
-    const openList = open?.proposals ?? [];
-    const recentList = (recent?.proposals ?? []).filter(p => !openList.some(o => o.id === p.id));
-    state.proposals = [...openList, ...recentList];
+    state.openProposals = open?.proposals ?? [];
+    state.resolvedProposals = [
+      ...(accepted?.proposals ?? []),
+      ...(rejected?.proposals ?? []),
+      ...(skipped?.proposals ?? []),
+    ].sort((a, b) => new Date(b.resolved_at ?? 0) - new Date(a.resolved_at ?? 0));
   } catch {
-    state.proposals = [];
+    state.openProposals = [];
+    state.resolvedProposals = [];
   }
 }
 
@@ -109,11 +263,11 @@ function renderQueue() {
   if (!root) return;
 
   // Tab counts
-  const tabGaps = root.querySelector('[data-gw-tab="gaps"]');
   const tabProposals = root.querySelector('[data-gw-tab="proposals"]');
+  const tabResolved = root.querySelector('[data-gw-tab="resolved"]');
   const tabPlaytests = root.querySelector('[data-gw-tab="playtests"]');
-  if (tabGaps) tabGaps.dataset.count = state.gaps.length;
-  if (tabProposals) tabProposals.dataset.count = state.proposals.length;
+  if (tabProposals) tabProposals.dataset.count = state.openProposals.length;
+  if (tabResolved) tabResolved.dataset.count = state.resolvedProposals.length;
   if (tabPlaytests) tabPlaytests.dataset.count = state.promotions.length;
 
   // Active tab label
@@ -132,25 +286,29 @@ function renderQueue() {
   }
 
   if (state.activeTab === 'proposals') {
-    renderProposalsList(list);
+    renderOpenProposalsList(list);
+  } else if (state.activeTab === 'resolved') {
+    renderResolvedProposalsList(list);
   } else {
     renderPromotionsList(list);
   }
+  requestAnimationFrame(syncStickyOffsets);
 }
 
-function renderProposalsList(list) {
-  if (!state.proposals.length) {
-    list.innerHTML = '<p class="gw-empty sans">No proposals yet. Run <code>npm run fonoran:vocab-survey</code> to generate compound proposals.</p>';
+function renderOpenProposalsList(list) {
+  if (!state.openProposals.length) {
+    list.innerHTML = '<p class="gw-empty sans">No open proposals. Run <code>npm run fonoran:vocab-survey</code> to generate compound proposals.</p>';
     return;
   }
-  const open = state.proposals.filter(p => p.status === 'open');
-  const resolved = state.proposals.filter(p => p.status !== 'open');
-  const items = [
-    ...open.map(p => renderProposalItem(p)),
-    ...(resolved.length ? [`<div class="gw-queue-divider sans">Recently resolved</div>`] : []),
-    ...resolved.map(p => renderProposalItem(p)),
-  ];
-  list.innerHTML = items.join('');
+  list.innerHTML = state.openProposals.map((p) => renderProposalItem(p)).join('');
+}
+
+function renderResolvedProposalsList(list) {
+  if (!state.resolvedProposals.length) {
+    list.innerHTML = '<p class="gw-empty sans">No resolved proposals yet. Accepted, rejected, and skipped items appear here.</p>';
+    return;
+  }
+  list.innerHTML = state.resolvedProposals.map((p) => renderProposalItem(p)).join('');
 }
 
 function renderProposalItem(p) {
@@ -160,7 +318,11 @@ function renderProposalItem(p) {
     ? `<span class="gw-badge ${p.status === 'accepted' ? 'badge--green' : 'badge--muted'} gw-badge--sm">${p.status}</span>`
     : '';
   return `<button type="button" class="gw-item${active}" data-gw-id="proposal:${p.id}">
-    <span class="gw-item__label">${escapeHtml(p.word ?? p.concept_id ?? '?')} ${statusBadge}</span>
+    <span class="gw-item__label">
+      <span class="gw-item__word">${escapeHtml(p.word ?? p.concept_id ?? '?')}</span>
+      ${glyphHtml(proposalSpellings(p), 'gw-item__glyphs')}
+      ${statusBadge}
+    </span>
     <span class="gw-item__meta sans">${classificationBadge(p.classification)} ${escapeHtml(comp)}</span>
   </button>`;
 }
@@ -173,7 +335,10 @@ function renderPromotionsList(list) {
   list.innerHTML = state.promotions.map(p => {
     const active = state.selectedId === `promo:${p.concept_id}` ? ' gw-item--active' : '';
     return `<button type="button" class="gw-item${active}" data-gw-id="promo:${p.concept_id}">
-      <span class="gw-item__label">${escapeHtml(p.concept_id)}</span>
+      <span class="gw-item__label">
+        <span class="gw-item__word">${escapeHtml(p.concept_id)}</span>
+        ${glyphHtml(promotionSpellings(p), 'gw-item__glyphs')}
+      </span>
       <span class="gw-item__meta sans">${recoveryBar(p.recovery_rate)} · ${p.rounds} rounds</span>
     </button>`;
   }).join('');
@@ -186,9 +351,11 @@ function renderDetail() {
   if (!panel) return;
 
   if (!state.selectedId) {
-    panel.innerHTML = `<div class="gw-empty-state">
-      <p class="gw-empty-state__lead">Pick an item from the queue</p>
-      <p class="gw-empty-state__hint">Select an open proposal to review, or a playtest promotion to accept.</p>
+    panel.innerHTML = `<div class="wm-empty-state">
+      <div class="wm-empty-state__body">
+        <p class="wm-empty-state__lead">Pick an item from the queue</p>
+        <p class="wm-empty-state__hint">Select an open proposal to review, a resolved item to inspect, or a playtest promotion to accept.</p>
+      </div>
     </div>`;
     return;
   }
@@ -197,7 +364,7 @@ function renderDetail() {
     renderGapDetail(panel, state.selectedId.slice(4));
   } else if (state.selectedId.startsWith('proposal:')) {
     const id = state.selectedId.slice(9);
-    const prop = state.proposals.find(p => p.id === id);
+    const prop = findProposal(id);
     if (prop) renderProposalDetail(panel, prop);
   } else if (state.selectedId.startsWith('promo:')) {
     const conceptId = state.selectedId.slice(6);
@@ -209,7 +376,7 @@ function renderDetail() {
 function renderGapDetail(panel, word) {
   const gap = state.gaps.find(g => g.word === word);
   if (!gap) { panel.innerHTML = '<p class="gw-empty sans">Gap not found.</p>'; return; }
-  const existingProposals = state.proposals.filter(p => p.word === word);
+  const existingProposals = state.openProposals.filter(p => p.word === word);
 
   const samplesHtml = gap.samples?.length
     ? `<div class="gw-samples">${gap.samples.map(s => `<div class="gw-sample sans">"${escapeHtml(s)}"</div>`).join('')}</div>`
@@ -295,6 +462,78 @@ function redundancyBadge(warning) {
   return `<span class="gw-badge gw-badge--warn" title="${escapeHtml(title)}" style="margin-left:0.4rem">⚠ ${escapeHtml(label)}</span>`;
 }
 
+function renderCompositionList(validComps, warnings, { selectable = false, selectedIndex = 0, title = 'Valid compositions' } = {}) {
+  if (!validComps.length) return '';
+  const hint = selectable && validComps.length > 1
+    ? '<p class="sans gw-hint gw-compositions-hint">Click a composition to choose which one to accept.</p>'
+    : '';
+  return `
+    <div class="gw-compositions${selectable ? ' gw-compositions--selectable' : ''}"${selectable ? ' role="radiogroup"' : ''}>
+      <h5 class="gw-compositions-title">${escapeHtml(title)}</h5>
+      ${hint}
+      ${validComps.map((comp, i) => {
+        const isBest = i === 0;
+        const isSelected = selectable && i === selectedIndex;
+        const rowClass = [
+          'gw-comp-row',
+          isBest ? 'gw-comp-row--best' : '',
+          selectable ? 'gw-comp-row--selectable' : '',
+          isSelected ? 'gw-comp-row--selected' : '',
+        ].filter(Boolean).join(' ');
+        return `
+          <div class="${rowClass}"${selectable ? ` role="radio" tabindex="${isSelected ? 0 : -1}" aria-checked="${isSelected}" data-comp-index="${i}"` : ''}>
+            <span class="gw-comp-index sans">${isBest ? '★' : `${i + 1}.`}</span>
+            <span class="gw-comp-main">
+              <code class="gw-comp-code">${comp.filter(Boolean).map(escapeHtml).join(' + ')}</code>
+              ${glyphHtml(flatSpellingsForComposition(comp), 'gw-comp-glyphs')}
+            </span>
+            ${isBest ? '<span class="gw-comp-label sans">recommended</span>' : ''}
+            ${isSelected ? '<span class="gw-comp-label gw-comp-label--selected sans">selected</span>' : ''}
+            ${redundancyBadge(warnings[i])}
+          </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function wireCompositionSelection(container) {
+  const group = container.querySelector('.gw-compositions--selectable');
+  if (!group) return;
+
+  const selectRow = (row) => {
+    group.querySelectorAll('.gw-comp-row--selectable').forEach(r => {
+      const selected = r === row;
+      r.classList.toggle('gw-comp-row--selected', selected);
+      r.setAttribute('aria-checked', selected ? 'true' : 'false');
+      r.tabIndex = selected ? 0 : -1;
+      const label = r.querySelector('.gw-comp-label--selected');
+      if (selected && !label) {
+        const el = document.createElement('span');
+        el.className = 'gw-comp-label gw-comp-label--selected sans';
+        el.textContent = 'selected';
+        r.querySelector('.gw-comp-code')?.after(el);
+      } else if (!selected && label) {
+        label.remove();
+      }
+    });
+  };
+
+  group.querySelectorAll('.gw-comp-row--selectable').forEach(row => {
+    row.addEventListener('click', () => selectRow(row));
+    row.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      selectRow(row);
+    });
+  });
+}
+
+function getSelectedCompositionIndex(container) {
+  const selected = container.querySelector('.gw-comp-row--selected');
+  if (!selected) return 0;
+  const idx = Number(selected.dataset.compIndex);
+  return Number.isFinite(idx) && idx >= 0 ? idx : 0;
+}
+
 function renderAnalysisResult(analysis, proposal) {
   if (!analysis) return '';
   const cls = analysis.classification;
@@ -304,31 +543,25 @@ function renderAnalysisResult(analysis, proposal) {
   const validComps = (analysis.valid_compositions ?? []).filter(Array.isArray);
   const warnings = analysis.redundancy_warnings ?? [];
   if (cls === 'compound' && validComps.length) {
-    bodyHtml = `
-      <div class="gw-compositions">
-        <h5 class="gw-compositions-title">Proposed compositions</h5>
-        ${validComps.map((comp, i) => `
-          <div class="gw-comp-row${i === 0 ? ' gw-comp-row--best' : ''}">
-            <span class="gw-comp-index sans">${i === 0 ? '★' : `${i + 1}.`}</span>
-            <code class="gw-comp-code">${comp.filter(Boolean).map(escapeHtml).join(' + ')}</code>
-            ${i === 0 ? '<span class="gw-comp-label sans">best</span>' : ''}
-            ${redundancyBadge(warnings[i])}
-          </div>`).join('')}
-      </div>`;
+    bodyHtml = renderCompositionList(validComps, warnings, {
+      selectable: Boolean(proposal?.id),
+      title: 'Proposed compositions',
+    });
   } else if (cls === 'primitive' && analysis.primitive_proposal) {
     const pp = analysis.primitive_proposal;
     bodyHtml = `
       <div class="gw-primitive-card">
-        <div class="gw-primitive-field"><span class="gw-field-label sans">id:</span> <code>${escapeHtml(pp.suggested_id)}</code></div>
+        <div class="gw-primitive-field"><span class="gw-field-label sans">id:</span> <code>${escapeHtml(pp.suggested_id)}</code> ${glyphHtml(pp.suggested_id ? [pp.suggested_id] : [], 'gw-comp-glyphs')}</div>
         <div class="gw-primitive-field"><span class="gw-field-label sans">gloss:</span> ${escapeHtml(pp.gloss ?? '')}</div>
         <div class="gw-primitive-field"><span class="gw-field-label sans">domain:</span> ${escapeHtml(pp.domain ?? '')}</div>
         <div class="gw-primitive-field"><span class="gw-field-label sans">priority:</span> ${escapeHtml(pp.priority_class ?? '')}</div>
         <div class="gw-primitive-field gw-primitive-field--full"><span class="gw-field-label sans">campfire:</span> ${escapeHtml(pp.campfire_rationale ?? '')}</div>
       </div>`;
   } else if (cls === 'alias' && analysis.alias_proposal) {
+    const aliasId = analysis.alias_proposal.existing_concept_id;
     bodyHtml = `
       <div class="gw-alias-card">
-        <p class="sans">Maps to existing concept: <code>${escapeHtml(analysis.alias_proposal.existing_concept_id)}</code></p>
+        <p class="sans">Maps to existing concept: <code>${escapeHtml(aliasId)}</code> ${glyphHtml(flatSpellingsForComposition([aliasId]), 'gw-comp-glyphs')}</p>
         <p class="sans gw-hint">${escapeHtml(analysis.alias_proposal.rationale ?? '')}</p>
       </div>`;
   }
@@ -356,21 +589,15 @@ function renderAnalysisResult(analysis, proposal) {
 function renderProposalDetail(panel, prop) {
   const propValidComps = (prop.valid_compositions ?? []).filter(Array.isArray);
   const propWarnings = prop.redundancy_warnings ?? [];
-  const compHtml = propValidComps.length
-    ? `<div class="gw-compositions">
-        <h5 class="gw-compositions-title">Valid compositions</h5>
-        ${propValidComps.map((comp, i) => `
-          <div class="gw-comp-row${i === 0 ? ' gw-comp-row--best' : ''}">
-            <span class="gw-comp-index sans">${i === 0 ? '★' : `${i + 1}.`}</span>
-            <code class="gw-comp-code">${comp.filter(Boolean).map(escapeHtml).join(' + ')}</code>
-            ${redundancyBadge(propWarnings[i])}
-          </div>`).join('')}
-      </div>`
-    : '';
+  const compHtml = prop.status === 'open' && propValidComps.length
+    ? renderCompositionList(propValidComps, propWarnings, { selectable: true })
+    : propValidComps.length
+      ? renderCompositionList(propValidComps, propWarnings)
+      : '';
 
   const primitiveHtml = prop.primitive_proposal
     ? `<div class="gw-primitive-card">
-        <div class="gw-primitive-field"><span class="gw-field-label sans">id:</span> <code>${escapeHtml(prop.primitive_proposal.suggested_id ?? '')}</code></div>
+        <div class="gw-primitive-field"><span class="gw-field-label sans">id:</span> <code>${escapeHtml(prop.primitive_proposal.suggested_id ?? '')}</code> ${glyphHtml(prop.primitive_proposal.suggested_id ? [prop.primitive_proposal.suggested_id] : [], 'gw-comp-glyphs')}</div>
         <div class="gw-primitive-field"><span class="gw-field-label sans">gloss:</span> ${escapeHtml(prop.primitive_proposal.gloss ?? '')}</div>
         <div class="gw-primitive-field"><span class="gw-field-label sans">domain:</span> ${escapeHtml(prop.primitive_proposal.domain ?? '')}</div>
         <div class="gw-primitive-field gw-primitive-field--full"><span class="gw-field-label sans">campfire:</span> ${escapeHtml(prop.primitive_proposal.campfire_rationale ?? '')}</div>
@@ -380,6 +607,7 @@ function renderProposalDetail(panel, prop) {
   panel.innerHTML = `
     <div class="gw-detail-head">
       <h2 class="gw-detail-title">"${escapeHtml(prop.word ?? prop.concept_id ?? '?')}"</h2>
+      ${glyphHtml(proposalSpellings(prop), 'gw-detail-glyphs')}
       <p class="gw-detail-meta sans">${classificationBadge(prop.classification)} · ${escapeHtml(prop.source ?? 'llm')}</p>
     </div>
     <div class="gw-section">
@@ -408,12 +636,13 @@ function renderPromotionDetail(panel, promo) {
   panel.innerHTML = `
     <div class="gw-detail-head">
       <h2 class="gw-detail-title">${escapeHtml(promo.concept_id)}</h2>
+      ${glyphHtml(promotionSpellings(promo), 'gw-detail-glyphs')}
       <p class="gw-detail-meta sans">Playtest authority: ${recoveryBar(promo.recovery_rate)} over ${promo.rounds} round(s)</p>
     </div>
     <div class="gw-section">
       <div class="gw-primitive-card">
         <div class="gw-primitive-field"><span class="gw-field-label sans">current source:</span> ${escapeHtml(promo.current_preferred_source)}</div>
-        <div class="gw-primitive-field"><span class="gw-field-label sans">composition:</span> <code>${(promo.current_composition ?? []).map(escapeHtml).join(' + ')}</code></div>
+        <div class="gw-primitive-field"><span class="gw-field-label sans">composition:</span> <code>${(promo.current_composition ?? []).map(escapeHtml).join(' + ')}</code> ${glyphHtml(promotionSpellings(promo), 'gw-comp-glyphs')}</div>
         <div class="gw-primitive-field"><span class="gw-field-label sans">avg repair turns:</span> ${promo.avg_repair_turns ?? '–'}</div>
         <div class="gw-primitive-field"><span class="gw-field-label sans">last tested:</span> ${promo.last_playtest ? new Date(promo.last_playtest).toLocaleDateString() : '–'}</div>
       </div>
@@ -441,14 +670,19 @@ function renderPromotionDetail(panel, promo) {
 
 function wireProposalActions(container, proposalId, analysisOrProp) {
   if (!proposalId) return;
+  wireCompositionSelection(container);
   container.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const action = btn.dataset.action;
       btn.disabled = true;
       try {
+        const body = { action };
+        if (action === 'accepted') {
+          body.chosen_composition_index = getSelectedCompositionIndex(container);
+        }
         await api(`/api/fonoran/compound-proposals/${encodeURIComponent(proposalId)}`, {
           method: 'PATCH',
-          body: JSON.stringify({ action }),
+          body: JSON.stringify(body),
         });
 
         // Replace action buttons with a confirmation — keep the gap selected
@@ -459,7 +693,7 @@ function wireProposalActions(container, proposalId, analysisOrProp) {
               <div class="gw-confirmation">
                 <span class="gw-badge badge--green">✓ Accepted</span>
                 <span class="sans gw-hint" style="margin-left:0.5rem">Run <strong>Step 4 — Regenerate dictionary</strong> in Advanced to publish this word.</span>
-                <a href="/language#advanced" class="btn btn--sm" target="_blank" style="margin-left:auto">Go to Advanced →</a>
+                <a href="/tools#advanced" class="btn btn--sm" style="margin-left:auto">Go to Advanced →</a>
               </div>`;
           } else {
             const label = action === 'rejected' ? '✗ Rejected' : '→ Skipped';
@@ -517,5 +751,8 @@ export async function onGapWorkshopTabActivated() {
     wireEvents();
     _initialized = true;
   }
+  ensureStickyObserver();
+  lab = null;
+  await ensureLab();
   await reloadAll();
 }

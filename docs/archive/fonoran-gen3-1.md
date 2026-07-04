@@ -7,6 +7,8 @@
 > Built on the Gen 3 coordinate track, which the [Fonoran Constitution](../fonoran-constitution.md)
 > demotes in favor of a human-experience root organization and a communication-first success
 > metric. Retained for reference only.
+>
+> **Commands and file paths in this document are historical.** `npm run fonoran:gen3:compare`, `tools/legacy/gen3/fonoran-gen3-1.js`, and `tools/fonoran-gen3-1-compare.js` were removed from the repo.
 
 > **Status:** experimental, extends Gen 3 without changing semantic coordinate theory  
 > **Previous:** [`fonoran-gen3.md`](fonoran-gen3.md) (frozen for comparison)

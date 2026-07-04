@@ -29,7 +29,7 @@ The **Docs viewer** sidebar in the app mirrors this index (see `js/doc-urls.js`)
 
 | Topic | Document |
 | --- | --- |
-| Fonora encoding rules | [language-rules.md](language-rules.md) |
+| Language rules (script encoding) | [language-rules.md](language-rules.md) |
 | Transliteration | [multilingual-support.md](multilingual-support.md) |
 | IPA pipeline | [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md) |
 | eSpeak NG / WASM | [espeak-integration.md](espeak-integration.md) |
@@ -47,6 +47,7 @@ Read in this order for a new contributor:
 | 1 | **Fonoran constitution** | [fonoran-constitution.md](fonoran-constitution.md) |
 | 2 | **Fonoran guide** | [fonoran.md](fonoran.md) |
 | 2b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
+| 2c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
 | 3 | Fonoran grammar | [fonoran-grammar.md](fonoran-grammar.md) |
 | 4 | Interpretive translator | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
 
@@ -54,7 +55,7 @@ Read in this order for a new contributor:
 
 ## Research notebook (`/research`)
 
-Narrative research notes (one per major experiment), authored in `docs/research/`. Open the rendered notebook at [/research](/research); each note links back to the reference docs and tools below.
+Narrative research notes (one per major experiment), authored in `docs/research-notes/`. Open the rendered notebook at [/research](/research); each note links back to the reference docs and tools below.
 
 | Era | Notes |
 | --- | --- |
@@ -62,7 +63,7 @@ Narrative research notes (one per major experiment), authored in `docs/research/
 | Phase II: Inventing a language | Gen 1/2 roots, Gen 3 DDA, Gen 3.1 distinctiveness, the 200-primitive allocation |
 | Phase III: A usable language | semantic foundation, the Constitution, the editorial pipeline, grammar particles, the translator, typing, puzzle conversation |
 | Phase IV: Reconstructing compounds | teaching trees, meaning-attempts, seed expansion, playtest-driven preferred forms |
-| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, LLM-assisted word generation |
+| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, LLM-assisted word generation, automated refine loop |
 
 ---
 
@@ -90,9 +91,12 @@ Historical experiments and audits, preserved as primary sources for the research
 
 | Command | Purpose |
 | --- | --- |
-| `npm test` | Unit/integration (`?test` in browser) |
+| `npm test` | Unit/integration + golden translator regression |
 | `npm run test:pronunciation-validation` | IPA round-trip report |
+| `npm run research:verify-md` | Validate research note frontmatter |
 | `npm run fonoran:build` | Converged Fonoran pipeline |
+| `npm run fonoran:compound-audit` | Live compound count and quality report |
+| `npm run fonoran:refine` | Automated gap → propose → build loop |
 | `npm run fonoran:import` / `fonoran:export` | PostgreSQL bucket sync |
 
-See [README.md](../README.md) for the full test list.
+See [fonoran-cli-tools.md](fonoran-cli-tools.md) for the full operator command reference.

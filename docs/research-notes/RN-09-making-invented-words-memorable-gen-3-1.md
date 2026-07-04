@@ -4,6 +4,8 @@ date: 2026-06-25
 phase: phase-2
 ---
 
+> **Historical commands.** `npm run fonoran:gen3:compare` and `tools/fonoran-gen3-1-compare.js` were removed from the repo. The Gen 3.1 scoring libraries (`fonoran-gen3-readability.js`, `fonoran-gen3-distinctiveness.js`) are retained for the active boundary-check pipeline. See the [archive doc](../../docs/archive/fonoran-gen3-1.md) for the full historical record.
+
 # Making invented words memorable (Gen 3.1)
 
 ## Research Question

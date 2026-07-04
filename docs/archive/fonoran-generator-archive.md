@@ -4,7 +4,7 @@
 
 > **Archive.** Retired bulk generators. Active workflow: [fonoran.md](../fonoran.md); direction set by the [Fonoran Constitution](../fonoran-constitution.md).
 
-> **Status:** archival reference only, code and data for Gen 1 and Gen 2 were removed during the lab-first cleanup.
+> **Status:** archival reference only. Code for Gen 1 and Gen 2 was removed during the lab-first cleanup. `tools/legacy/` does not exist in the current repo tree. `npm run fonoran:gen3*` and `fonoran:primitive-roots*` scripts were removed (deprecated aliases exit 1). Gen 3 scoring utilities (`fonoran-gen3-readability.js`, `fonoran-gen3-distinctiveness.js`) are retained for the active boundary-check pipeline.
 
 ## Overview
 

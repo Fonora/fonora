@@ -577,9 +577,12 @@ html[data-fonora-tab='fonoran-grammar'] #tab-fonoran-grammar,
 html[data-fonora-tab='fonoran-speaking'] #tab-fonoran-speaking,
 html[data-fonora-tab='encoder-testing'] #tab-encoder-testing,
 html[data-fonora-tab='pronunciation-validation'] #tab-pronunciation-validation,
-html[data-fonora-tab='research-notes'] #tab-research-notes,
 html[data-fonora-tab='word-manager'] #tab-word-manager,
 html[data-fonora-tab='gap-workshop'] #tab-gap-workshop,
+html[data-fonora-tab='translation-test'] #tab-translation-test,
+html[data-fonora-tab='health'] #tab-health,
+html[data-fonora-tab='progress'] #tab-progress,
+html[data-fonora-tab='advanced'] #tab-advanced,
 html[data-fonora-tab='docs'] #tab-docs {
   display: block !important;
 }
@@ -619,6 +622,9 @@ html[data-fonora-tab='quiz'] [data-tab='quiz'].tab-btn,
 html[data-fonora-tab='encoder-testing'] [data-tab='encoder-testing'].tab-btn,
 html[data-fonora-tab='pronunciation-validation'] [data-tab='pronunciation-validation'].tab-btn,
 html[data-fonora-tab='word-manager'] [data-tab='word-manager'].tab-btn,
+html[data-fonora-tab='gap-workshop'] [data-tab='gap-workshop'].tab-btn,
+html[data-fonora-tab='translation-test'] [data-tab='translation-test'].tab-btn,
+html[data-fonora-tab='advanced'] [data-tab='advanced'].tab-btn,
 html[data-fonora-tab='platform'] [data-platform-tab='platform'].tab-btn,
 html[data-fonora-tab='docs'] [data-tab='docs'].tab-btn,
 html[data-fonora-tab='docs'] [data-platform-tab='docs'].tab-btn,
@@ -1548,6 +1554,52 @@ html[data-fonora-tab='docs'] .main-content {
   border-radius: var(--layout-card-radius);
   padding: 1.25rem;
   margin-bottom: 1.25rem;
+}
+
+/* Tools content cards (Advanced, Translation Test) — match home-layer-card / panel shell */
+html[data-fonora-nav='tools'] .content-page > .box,
+html[data-fonora-nav='tools'] #translation-test-body > .box,
+html[data-fonora-nav='tools'] #tools-health-body > .box,
+html[data-fonora-nav='tools'] #tools-progress-body > .box {
+  background: var(--layout-surface);
+  border: 1px solid var(--layout-border);
+  border-radius: var(--layout-card-radius);
+  box-shadow: var(--shadow-card);
+}
+
+/* Tools page intros sit on gray; keep the next block close (no double section gap). */
+html[data-fonora-nav='tools'] .content-page > .content-section--intro {
+  padding-bottom: 0;
+}
+
+html[data-fonora-nav='tools'] .content-page > .content-section--intro .home-intro-header {
+  margin-bottom: 0;
+}
+
+html[data-fonora-nav='tools'] .content-page > .content-section--intro + .content-section {
+  padding-top: 1rem;
+  border-top: none;
+}
+
+html[data-fonora-nav='tools'] .content-page > .content-section--intro + .box,
+html[data-fonora-nav='tools'] .content-page > .content-section--intro + #translation-test-body,
+html[data-fonora-nav='tools'] .content-page > .content-section--intro + #tools-health-body,
+html[data-fonora-nav='tools'] .content-page > .content-section--intro + #tools-progress-body {
+  margin-top: 1rem;
+}
+
+/* Language About: headings on gray, cards close below intro */
+.fonoran-lander > .content-section--intro {
+  padding-bottom: 0;
+}
+
+.fonoran-lander > .content-section--intro .home-intro-header {
+  margin-bottom: 0;
+}
+
+.fonoran-lander > .content-section--intro + .content-section {
+  padding-top: 1rem;
+  border-top: none;
 }
 
 /* Shared page shells + section rhythm (home, Fonoran lander, docs, etc.) */
@@ -8316,194 +8368,4 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   .research-note-footer__section {
     max-width: none;
   }
-}
-
-/* Research Notes editor (/tools#research-notes) */
-.rn-editor-root {
-  margin-top: 1rem;
-}
-
-.rn-loading,
-.rn-empty,
-.rn-error {
-  color: var(--muted);
-}
-
-.rn-error {
-  color: #b00020;
-}
-
-.rn-list-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.rn-filter {
-  display: flex;
-  gap: 0.35rem;
-}
-
-.rn-table-wrap {
-  overflow-x: auto;
-}
-
-.rn-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.92rem;
-}
-
-.rn-table th,
-.rn-table td {
-  padding: 0.55rem 0.65rem;
-  border-bottom: 1px solid var(--border, #e5e7eb);
-  text-align: left;
-  vertical-align: middle;
-}
-
-.rn-table th {
-  font-size: 0.78rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--muted);
-}
-
-.rn-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.rn-badge {
-  display: inline-block;
-  padding: 0.15rem 0.45rem;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.rn-badge--draft {
-  background: #fff7d6;
-  color: #9a7b00;
-}
-
-.rn-badge--published {
-  background: #e8f5e9;
-  color: var(--color-accent);
-}
-
-.rn-editor-toolbar-top {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.rn-editor-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
-
-.rn-meta-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.rn-meta-grid label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.82rem;
-  font-weight: 600;
-}
-
-.rn-meta-full {
-  grid-column: 1 / -1;
-}
-
-.rn-editor-shell {
-  --rn-editor-font-size: 1rem;
-  --rn-preview-font-size: 1rem;
-}
-
-.rn-editor-shell[data-rn-font-size='sm'] {
-  --rn-editor-font-size: 0.875rem;
-  --rn-preview-font-size: 0.9rem;
-}
-
-.rn-editor-shell[data-rn-font-size='lg'] {
-  --rn-editor-font-size: 1.125rem;
-  --rn-preview-font-size: 1.05rem;
-}
-
-.rn-markdown-toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 0.5rem;
-}
-
-.rn-toolbar-sep {
-  width: 1px;
-  height: 1.25rem;
-  background: var(--border, #e5e7eb);
-  margin: 0 0.25rem;
-}
-
-.rn-toolbar-label {
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-right: 0.15rem;
-}
-
-.rn-split {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  min-height: 420px;
-}
-
-@media (max-width: 900px) {
-  .rn-split {
-    grid-template-columns: 1fr;
-  }
-}
-
-.rn-textarea {
-  min-height: 420px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: var(--rn-editor-font-size);
-  line-height: 1.55;
-  resize: vertical;
-}
-
-.rn-preview {
-  min-height: 420px;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--border, #e5e7eb);
-  border-radius: 8px;
-  background: #fafafa;
-  overflow: auto;
-  font-size: var(--rn-preview-font-size);
-}
-
-.rn-editor-status {
-  margin-top: 0.75rem;
-  font-size: 0.88rem;
-  color: var(--muted);
-}
-
-.rn-editor-status--error {
-  color: #b00020;
 }

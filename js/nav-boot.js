@@ -26,9 +26,14 @@
   const TOOLS_TABS = new Set([
     'tools-home',
     'word-manager',
+    'gap-workshop',
+    'translation-test',
+    'health',
+    'progress',
+    'advanced',
+    'docs',
     'encoder-testing',
     'pronunciation-validation',
-    'research-notes',
     'samples',
   ]);
 
@@ -44,7 +49,7 @@
     'advanced',
   ]);
 
-  /** Legacy Language builder hashes → admin Word Manager under Tools. */
+  /** Legacy Language builder hashes → admin tools under /tools. */
   const WORD_MANAGER_ALIASES = new Set(['words', 'roots', 'concepts', 'create', 'review', 'root-review']);
 
   function resolveLanguagePage(rawHash) {
@@ -62,6 +67,22 @@
 
   if (path === '/language' || path.startsWith('/language/')) {
     const page = hash.split('?')[0];
+    if (page === 'advanced') {
+      window.location.replace(`/tools#advanced${window.location.search}`);
+      return;
+    }
+    if (page === 'gaps' || page === 'translation-test') {
+      window.location.replace(`/tools#translation-test${window.location.search}`);
+      return;
+    }
+    if (page === 'health') {
+      window.location.replace(`/tools#health${window.location.search}`);
+      return;
+    }
+    if (page === 'progress') {
+      window.location.replace(`/tools#progress${window.location.search}`);
+      return;
+    }
     if (WORD_MANAGER_ALIASES.has(page)) {
       window.location.replace(`/tools#word-manager${window.location.search}`);
       return;
@@ -117,7 +138,7 @@
       window.location.replace(`/learn${nextHash}${window.location.search}`);
       return;
     }
-    const tab = hash && TOOLS_TABS.has(hash) ? hash : 'tools-home';
+    const tab = hash && TOOLS_TABS.has(hash) ? hash : hash === 'docs' || hasDocPath ? 'docs' : 'tools-home';
     html.setAttribute('data-fonora-nav', 'tools');
     html.setAttribute('data-fonora-tab', tab);
     return;

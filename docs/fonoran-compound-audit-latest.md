@@ -1,6 +1,6 @@
 # Fonoran compound audit
 
-> Generated: 2026-07-03T03:41:09.820Z
+> **Generated snapshot** — 2026-07-03. Run `npm run fonoran:compound-audit` to regenerate. This file is overwritten on each audit run; do not edit manually.
 
 ## Summary
 

@@ -132,7 +132,7 @@ git push heroku staging:main -a fonora
 # or: git push heroku main:main -a fonora
 ```
 
-Release phase runs research-notes sync only (`Procfile` `release:`). Vocabulary is **not** rebuilt yet.
+Release phase runs `scripts/fonoran-data-fetch.js` (`Procfile` `release:`), which fetches the pinned external data submodule. Vocabulary is **not** rebuilt yet.
 
 **Step B — reload editorial seeds + rebuild lab (GUI or CLI)**
 
@@ -140,7 +140,7 @@ After deploy, regenerate vocabulary from git seeds. **Do not run build alone** �
 
 **Advanced UI (recommended on Heroku):**
 
-1. Sign in as admin → `/language#advanced`
+1. Sign in as admin → `/tools#advanced`
 2. Click **Regenerate dictionary from git seeds** → type `REGENERATE`
 3. Click **Run translation tests** to verify
 
@@ -206,7 +206,7 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 
 ## Commit checklist (before push to staging/main)
 
-- [ ] `npm run fonoran:build:approved` — 111 compounds, 0 dropped
+- [ ] `npm run fonoran:build:approved` — 0 dropped (run `npm run fonoran:compound-audit` for live compound count)
 - [ ] `npm run fonoran:compound-audit` — 0 flattened-length warnings (or documented exceptions)
 - [ ] `npm test` — unit + golden translator pass
 - [ ] Commit: `data/fonoran-compounds.json`, `tools/fonoran-expression-candidates.js`, tool/script changes, audit markdown, LLM eval JSON if re-run
@@ -241,7 +241,7 @@ npm run fonoran:vocab-survey -- --limit=50
 ```
 
 Proposals land in `data/fonoran-compound-proposals.json`. Review them in the
-**Proposal Review** tab of the Language Lab UI, or via the API
+**Review** tab at `/tools#gap-workshop`, or via the API
 (`GET /api/fonoran/compound-proposals`).
 
 For each proposal: **accept** (merges the composition into `fonoran-compounds.json` on the

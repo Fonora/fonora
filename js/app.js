@@ -56,8 +56,15 @@ import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
 import { setupTranslatePlayback, setTranslateSymbols } from './fonora-tts-ui.js';
 import { setupSamples, setupHomeSample, ensureSamplesLoaded } from './samples.js';
 import { setupDocsViewer, onDocsTabActivated } from './docs-viewer-ui.js';
-import { onResearchNotesTabActivated } from './research-notes-editor.js';
-import { openDocViewer, DEFAULT_DOC_PATH, docViewerHref, isDocsRoute } from './doc-urls.js';
+import {
+  openDocViewer,
+  DEFAULT_DOC_PATH,
+  TOOLS_DOCS_DEFAULT,
+  docViewerHref,
+  isDocsRoute,
+  isToolsPath,
+  toolsDocViewerHref,
+} from './doc-urls.js';
 import {
   initUniversalNav,
   setActiveTab,
@@ -90,6 +97,10 @@ import {
 } from './auth-session.js';
 import { onWordManagerTabActivated, migrateWordManagerHash } from './word-manager-page.js';
 import { onGapWorkshopTabActivated } from './gap-workshop-page.js';
+import { onAdvancedTabActivated } from './fonoran-advanced-page.js';
+import { migrateTranslationTestHash, onTranslationTestTabActivated } from './fonoran-translation-test-page.js';
+import { migrateHealthHash, onHealthTabActivated } from './fonoran-health-page.js';
+import { migrateProgressHash, onLabProgressTabActivated } from './fonoran-lab-progress-page.js';
 import { setReaderWordSources } from './fonora-tts.js';
 import { refreshLearnHomeProgress } from './learn-home-progress.js';
 import { syncLearnSessionBar, saveLearnHomeScroll, restoreLearnHomeScroll } from './learn-session-ui.js';
@@ -507,6 +518,22 @@ function migrateLegacyUrl() {
   }
   if (path === '/language' || path.startsWith('/language/')) {
     const hash = window.location.hash.replace(/^#/, '').split('?')[0];
+    if (hash === 'advanced') {
+      history.replaceState(null, '', `/tools#advanced${window.location.search}`);
+      return;
+    }
+    if (hash === 'gaps' || hash === 'translation-test') {
+      history.replaceState(null, '', `/tools#translation-test${window.location.search}`);
+      return;
+    }
+    if (hash === 'health') {
+      history.replaceState(null, '', `/tools#health${window.location.search}`);
+      return;
+    }
+    if (hash === 'progress') {
+      history.replaceState(null, '', `/tools#progress${window.location.search}`);
+      return;
+    }
     const legacy = new Set(['words', 'concepts', 'create', 'review', 'roots', 'root-review']);
     if (legacy.has(hash)) {
       history.replaceState(null, '', `/tools#word-manager${window.location.search}`);
@@ -547,20 +574,37 @@ const BUILDER_TOOLS_TAB_IDS = new Set([
   'tools-home',
   'word-manager',
   'gap-workshop',
+  'translation-test',
+  'health',
+  'progress',
+  'advanced',
+  'docs',
   'encoder-testing',
   'pronunciation-validation',
-  'research-notes',
   'samples',
 ]);
+
+/** Tabs that live under /tools — keep Tools platform context even if pathname lagged. */
+function requiresToolsPath(tabId) {
+  if (tabId === 'docs') return isToolsPath();
+  return BUILDER_TOOLS_TAB_IDS.has(tabId);
+}
+
+function navContextForTab(tabId) {
+  if (requiresToolsPath(tabId)) return 'tools';
+  return currentNavContext();
+}
+
+function basePathForTab(tabId) {
+  if (requiresToolsPath(tabId)) return '/tools';
+  if (isLearnPath()) return '/learn';
+  if (isToolsPath()) return '/tools';
+  return '/script';
+}
 
 function isLearnPath() {
   const path = window.location.pathname.replace(/\/$/, '') || '/';
   return path === '/learn';
-}
-
-function isToolsPath() {
-  const path = window.location.pathname.replace(/\/$/, '') || '/';
-  return path === '/tools';
 }
 
 function currentNavContext() {
@@ -592,6 +636,12 @@ function scrollLearnHomeToSection() {
 
 function getTabFromHash() {
   migrateLegacyUrl();
+  if (isToolsPath()) {
+    const id = window.location.hash.replace(/^#/, '');
+    if (id === 'docs' || new URLSearchParams(window.location.search).has('path')) return 'docs';
+    if (id && BUILDER_TOOLS_TAB_IDS.has(id)) return id;
+    return defaultTabForBase('/tools');
+  }
   if (isDocsRoute()) return 'docs';
   if (isLearnPath()) {
     const id = window.location.hash.replace(/^#/, '');
@@ -599,11 +649,6 @@ function getTabFromHash() {
     if (id && (LEARN_SKILL_IDS.has(id) || id === LEARN_DEFAULT_TAB)) return id;
     if (id && LEGACY_LEARN_HASH[id]) return LEGACY_LEARN_HASH[id];
     return defaultTabForBase('/learn');
-  }
-  if (isToolsPath()) {
-    const id = window.location.hash.replace(/^#/, '');
-    if (id && BUILDER_TOOLS_TAB_IDS.has(id)) return id;
-    return defaultTabForBase('/tools');
   }
   if (isScriptAppPath()) {
     const id = window.location.hash.replace(/^#/, '');
@@ -635,6 +680,14 @@ function setHashForTab(tabId) {
       return;
     }
     if (tabId === 'docs') {
+      if (isToolsPath()) {
+        if (window.location.hash === '#docs' && new URLSearchParams(window.location.search).has('path')) return;
+        const next = toolsDocViewerHref(TOOLS_DOCS_DEFAULT);
+        if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== next) {
+          history.replaceState(null, '', next);
+        }
+        return;
+      }
       if (isDocsRoute()) return;
       const next = docViewerHref(DEFAULT_DOC_PATH);
       if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== next) {
@@ -645,7 +698,7 @@ function setHashForTab(tabId) {
     return;
   }
 
-  const base = isLearnPath() ? '/learn' : isToolsPath() ? '/tools' : '/script';
+  const base = basePathForTab(tabId);
   const hash = tabId === defaultTabForBase(base) ? '' : `#${tabId}`;
   const next = `${base}${hash}`;
   if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== next) {
@@ -673,7 +726,7 @@ function ensureAppHeaderOffsetObserver() {
 }
 
 function isGatedToolsTab(tabId) {
-  return BUILDER_TOOLS_TAB_IDS.has(tabId);
+  return BUILDER_TOOLS_TAB_IDS.has(tabId) && tabId !== 'docs';
 }
 
 function resolveTabForAuth(tabId) {
@@ -681,6 +734,18 @@ function resolveTabForAuth(tabId) {
     return 'tools-auth-gate';
   }
   if (tabId === 'gap-workshop' && !canAccessWordManager()) {
+    return 'tools-auth-gate';
+  }
+  if (tabId === 'translation-test' && !canAccessWordManager()) {
+    return 'tools-auth-gate';
+  }
+  if (tabId === 'advanced' && !canAccessWordManager()) {
+    return 'tools-auth-gate';
+  }
+  if (tabId === 'health' && !canAccessWordManager()) {
+    return 'tools-auth-gate';
+  }
+  if (tabId === 'progress' && !canAccessWordManager()) {
     return 'tools-auth-gate';
   }
   if (isToolsPath() && !canAccessTools() && (isGatedToolsTab(tabId) || tabId === 'tools-home')) {
@@ -692,7 +757,7 @@ function resolveTabForAuth(tabId) {
 function showTab(tabId) {
   tabId = resolveTabForAuth(tabId);
   const previousPanel = document.querySelector('.tab-panel--active')?.dataset.tabPanel;
-  const context = currentNavContext();
+  const context = navContextForTab(tabId);
   const { navTab, panelId } = normalizeLearnTab(tabId);
   const goingLearnHome = panelId === LEARN_HUB_TAB;
   const leftLearnHome = previousPanel === LEARN_HUB_TAB && !goingLearnHome;
@@ -749,6 +814,22 @@ function showTab(tabId) {
     void onGapWorkshopTabActivated();
   }
 
+  if (panelId === 'translation-test') {
+    void onTranslationTestTabActivated();
+  }
+
+  if (panelId === 'health') {
+    void onHealthTabActivated();
+  }
+
+  if (panelId === 'progress') {
+    void onLabProgressTabActivated();
+  }
+
+  if (panelId === 'advanced') {
+    void onAdvancedTabActivated();
+  }
+
   if (panelId === 'samples') {
     ensureSamplesLoaded().catch(() => {});
   }
@@ -787,10 +868,6 @@ function showTab(tabId) {
     onDocsTabActivated();
   }
 
-  if (panelId === 'research-notes') {
-    onResearchNotesTabActivated();
-  }
-
   requestAnimationFrame(syncAppHeaderOffset);
 
   if (returningFromLesson) {
@@ -803,7 +880,7 @@ window.openDocViewer = openDocViewer;
 
 function handleNavTabSelect(tab) {
   if (tab === 'docs') {
-    openDocViewer('docs/platform-overview.md');
+    openDocViewer(isToolsPath() ? TOOLS_DOCS_DEFAULT : DEFAULT_DOC_PATH);
     return;
   }
   showTab(tab);
@@ -842,7 +919,12 @@ function setupTabs() {
   refreshAuth().then(() => {
     syncWordManagerNav();
     syncGapWorkshopNav();
+    syncTranslationTestNav();
+    syncAdvancedNav();
     migrateWordManagerHash();
+    migrateTranslationTestHash();
+    migrateHealthHash();
+    migrateProgressHash();
     showTab(getTabFromHash());
   });
   handleAuthUrlErrors();
@@ -863,6 +945,22 @@ function syncGapWorkshopNav() {
   const btn = document.getElementById('nav-gap-workshop');
   if (!btn) return;
   const show = canAccessWordManager(); // same admin gate
+  btn.hidden = !show;
+  btn.removeAttribute('aria-hidden');
+}
+
+function syncTranslationTestNav() {
+  const btn = document.getElementById('nav-translation-test');
+  if (!btn) return;
+  const show = canAccessWordManager();
+  btn.hidden = !show;
+  btn.removeAttribute('aria-hidden');
+}
+
+function syncAdvancedNav() {
+  const btn = document.getElementById('nav-advanced');
+  if (!btn) return;
+  const show = canAccessWordManager();
   btn.hidden = !show;
   btn.removeAttribute('aria-hidden');
 }
@@ -956,7 +1054,7 @@ function bootstrapShell() {
   const initialNavTab = resolveTabForAuth(getTabFromHash());
   const { navTab, panelId } = normalizeLearnTab(initialNavTab);
   initUniversalNav({
-    context: currentNavContext(),
+    context: navContextForTab(initialNavTab),
     activeTab: isLearnPath() ? navTab : initialNavTab,
   });
   document.querySelectorAll('.tab-panel').forEach((panel) => {

@@ -152,9 +152,13 @@ export async function resolveCompoundProposal(id, action, opts = {}) {
   proposal.resolved_by = opts.resolvedBy ?? null;
   proposal.resolution_note = opts.note ?? null;
 
-  if (action === 'accepted' && opts.chosenCompositionIndex != null) {
-    proposal.chosen_composition_index = opts.chosenCompositionIndex;
-    proposal.chosen_composition = proposal.valid_compositions?.[opts.chosenCompositionIndex] ?? null;
+  if (action === 'accepted') {
+    if (Array.isArray(opts.chosenComposition) && opts.chosenComposition.length) {
+      proposal.chosen_composition = opts.chosenComposition;
+    } else if (opts.chosenCompositionIndex != null && opts.chosenCompositionIndex >= 0) {
+      proposal.chosen_composition_index = opts.chosenCompositionIndex;
+      proposal.chosen_composition = proposal.valid_compositions?.[opts.chosenCompositionIndex] ?? null;
+    }
   }
 
   await writeProposalsDoc(doc);

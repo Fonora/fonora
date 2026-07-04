@@ -159,28 +159,19 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
 }
 
 /**
- * Merge accepted proposals from fonoran-compound-proposals.json into
- * fonoran-compounds.json on disk so the editorial import picks them up.
+ * Merge accepted compound proposals into the active compounds store.
  *
- * - Skips proposals whose concept is already defined in compounds.json
- * - Skips proposals where no valid composition is available
- * - When a concept has multiple accepted proposals, uses the first valid_composition
- *   (or chosen_composition if set)
- * - Writes the updated fonoran-compounds.json back to disk
- *
- * @param {string} baseDir  repo root
- * @returns {{ promoted: number, skipped: number, already_present: number }}
+ * @returns {Promise<{ promoted: number, skipped: number, already_present: number }>}
  */
-export function promoteAcceptedProposals(baseDir = ROOT) {
+export async function promoteAcceptedProposals(baseDir = ROOT) {
   const proposalsPath = join(baseDir, 'data/fonoran-compound-proposals.json');
-  const compoundsPath = join(baseDir, 'data/fonoran-compounds.json');
 
-  if (!existsSync(proposalsPath) || !existsSync(compoundsPath)) {
+  if (!existsSync(proposalsPath)) {
     return { promoted: 0, skipped: 0, already_present: 0 };
   }
 
   const proposalsDoc = JSON.parse(readFileSync(proposalsPath, 'utf8'));
-  const compoundsDoc = JSON.parse(readFileSync(compoundsPath, 'utf8'));
+  const compoundsDoc = (await readDoc('compounds')) ?? { compounds: [] };
 
   const existingConcepts = new Set((compoundsDoc.compounds ?? []).map(c => c.concept));
 
@@ -238,7 +229,59 @@ export function promoteAcceptedProposals(baseDir = ROOT) {
   if (promoted > 0) {
     compoundsDoc.compounds = [...(compoundsDoc.compounds ?? []), ...newEntries];
     compoundsDoc.compound_count = compoundsDoc.compounds.length;
-    writeFileSync(compoundsPath, JSON.stringify(compoundsDoc, null, 2) + '\n', 'utf8');
+    await writeDoc('compounds', compoundsDoc);
+  }
+
+  return { promoted, skipped, already_present: alreadyPresent };
+}
+
+/**
+ * Add accepted alias proposals as English locale aliases on target concepts.
+ *
+ * @returns {Promise<{ promoted: number, skipped: number, already_present: number }>}
+ */
+export async function promoteAcceptedAliases(baseDir = ROOT) {
+  const proposalsPath = join(baseDir, 'data/fonoran-compound-proposals.json');
+  if (!existsSync(proposalsPath)) {
+    return { promoted: 0, skipped: 0, already_present: 0 };
+  }
+
+  const proposalsDoc = JSON.parse(readFileSync(proposalsPath, 'utf8'));
+  const accepted = (proposalsDoc.proposals ?? [])
+    .filter(p => p.status === 'accepted' && p.classification === 'alias');
+
+  const locale = (await readDoc('localization_en')) ?? { version: '1.0-localization', locale: 'en', entries: {} };
+  if (!locale.entries) locale.entries = {};
+
+  let promoted = 0;
+  let skipped = 0;
+  let alreadyPresent = 0;
+
+  for (const prop of accepted) {
+    const targetId = prop.alias_proposal?.existing_concept_id;
+    const aliasWord = String(prop.word ?? prop.concept_id ?? '').trim().toLowerCase();
+    if (!targetId || !aliasWord) {
+      skipped++;
+      continue;
+    }
+
+    if (!locale.entries[targetId]) {
+      locale.entries[targetId] = { label: targetId.replace(/_/g, ' ') };
+    }
+
+    const aliases = new Set((locale.entries[targetId].aliases ?? []).map(a => String(a).toLowerCase()));
+    if (aliases.has(aliasWord)) {
+      alreadyPresent++;
+      continue;
+    }
+
+    aliases.add(aliasWord);
+    locale.entries[targetId].aliases = [...aliases];
+    promoted++;
+  }
+
+  if (promoted > 0) {
+    await writeDoc('localization_en', locale);
   }
 
   return { promoted, skipped, already_present: alreadyPresent };
@@ -254,8 +297,11 @@ export async function runRegenerate({
 } = {}) {
   const steps = [];
 
-  const promoted = promoteAcceptedProposals(baseDir);
+  const promoted = await promoteAcceptedProposals(baseDir);
   steps.push({ step: 'promote_proposals', ...promoted });
+
+  const aliasPromoted = await promoteAcceptedAliases(baseDir);
+  steps.push({ step: 'promote_aliases', ...aliasPromoted });
 
   const editorial = await importEditorialFromSeedPaths(baseDir);
   steps.push({ step: 'editorial_import', ...editorial });

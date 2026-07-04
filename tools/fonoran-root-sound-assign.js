@@ -395,3 +395,5 @@ export function usefulnessLabel(score) {
   if (score >= 3) return 'moderate';
   return 'low';
 }
+
+export { pickEasiestSyllable } from './fonoran-phonetic-weights.js';

@@ -16,6 +16,10 @@ export const EXTERNAL_DATA_REL = {
   llm_evaluations: 'data/fonoran-llm-evaluations.json',
   playtests: 'data/fonoran-playtests.json',
   translation_test_latest: 'data/fonoran-translation-test-latest.json',
+  stranger_corpus: 'data/fonoran-stranger-corpus.json',
+  stranger_gap_report: 'data/fonoran-stranger-gap-report.json',
+  phonetic_analytics: 'data/fonoran-phonetic-analytics.json',
+  refine_iterations: 'data/fonoran-refine-iterations.json',
 };
 
 /** Editorial doc keys stored in fonora-data when external dir is active. */
