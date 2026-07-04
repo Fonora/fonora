@@ -409,8 +409,7 @@
     .pick { display:flex; flex-wrap:wrap; gap:0.35rem; min-height:2.4rem; padding:0.5rem; background:var(--bg); border:1px dashed var(--border); border-radius:8px; margin:0.5rem 0; }
     .pick .tok { font-family:var(--font-serif); background:var(--accent-soft); border:1px solid var(--accent); border-radius:99px; padding:0.2rem 0.6rem; font-size:0.82rem; cursor:pointer; }
     .pick .tok .mono { font-family:var(--font-mono); }
-    .sound-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:0.6rem; max-height:280px; overflow-y:auto; padding:0.15rem; align-items:stretch; }
-    .fonoran-split-picker .sound-grid { max-height:none; overflow:visible; align-items:stretch; }
+    .fonoran-split-picker .sound-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:0.6rem; padding:0.15rem; align-items:stretch; max-height:none; overflow:visible; }
     .fonoran-split-picker .root-cell {
       min-height:6.85rem;
       height:100%;
