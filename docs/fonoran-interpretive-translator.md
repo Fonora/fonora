@@ -2,7 +2,9 @@
 > **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-15 · Compiling English into meaning](/research/notes/concepts-are-canonical-sounds-are-editorial-proposals).
 
 
-> **Status**: Active. Compiles English into **nearest approved Fonoran concepts** — not word-for-word glosses.
+> **Status**: Superseded for live translation by the multilingual LLM semantic compiler. **Current architecture:** [fonoran-translator.md](fonoran-translator.md). This document describes the legacy English-only frame parser kept for regression comparison (`engine=legacy`).
+
+> **Status (legacy)**: Compiles English into **nearest approved Fonoran concepts** — not word-for-word glosses.
 
 ## Philosophy
 

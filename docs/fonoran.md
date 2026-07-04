@@ -239,7 +239,7 @@ Reserved particles (never roots): `mi`, `na`, `ta`.
 | `/api/fonoran/snapshot/export` | GET | Admin | Download full-state zip |
 | `/api/fonoran/snapshot/preview` | POST | Sign-in | Preview zip before restore |
 | `/api/fonoran/snapshot/import` | POST | Admin | Replace all state (`confirm: RESTORE`) |
-| `/api/fonoran/translate` | POST | Public | English sentence → Fonoran |
+| `/api/fonoran/translate` | POST | Public | Any language → Fonoran (LLM semantic compiler; requires `ANTHROPIC_API_KEY_FONORA_TRANSLATOR`; `engine=legacy` for English-only compiler) |
 | `/api/fonoran/concepts` | GET | Public | Concept inventory + spellings |
 
 Auth and production release checklist: [fonoran-auth-and-release.md](fonoran-auth-and-release.md).
@@ -252,7 +252,8 @@ The translator's semantic lookup uses **WordNet** (via **wordpos**). See [third-
 
 - [fonoran-constitution.md](fonoran-constitution.md) — what Fonoran is for: the communication experiment, the campfire test, the tiered language
 - [fonoran-grammar.md](fonoran-grammar.md) — syntax and composition rules
-- [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — translator design
+- [fonoran-translator.md](fonoran-translator.md) — live translator (LLM compiler, UI, playback, API)
+- [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — legacy English compiler
 - [platform-overview.md](platform-overview.md) — three platform layers
 - [deploy.md](deploy.md) — PostgreSQL and production hosting
 - Legacy generators: [fonoran-generator-archive.md](archive/fonoran-generator-archive.md) — includes the archived **DDA** coordinate experiment (not live word generation; no Language Lab UI)

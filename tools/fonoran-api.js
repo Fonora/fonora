@@ -21,7 +21,7 @@ import {
 } from './fonoran-sound-bucket.js';
 import { resetProject } from './fonoran-reset.js';
 import { loadEnglishLexicon } from './fonoran-english-lexicon.js';
-import { translateEnglish } from './fonoran-translator.js';
+import { translate } from './fonoran-translate.js';
 import { loadTranslationCorpus, runTranslationGapReport, loadLatestGapReport } from './fonoran-translation-gaps.js';
 import { loadParticles } from './fonoran-particles.js';
 import { buildFonoran } from './fonoran-build.js';
@@ -398,8 +398,19 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     if (pathname === '/api/fonoran/translate' && method === 'POST') {
       const body = await readJsonBody(req);
+      const url = new URL(req.url ?? '', 'http://localhost');
       const lab = await getLab();
-      return done(200, await translateEnglish(body.text ?? '', { lab }));
+      const engine = body.engine ?? url.searchParams.get('engine') ?? undefined;
+      const result = await translate(body.text ?? '', {
+        lab,
+        sourceLang: body.sourceLang ?? url.searchParams.get('sourceLang') ?? 'auto',
+        engine,
+        skipCache: body.skipCache === true,
+      });
+      if (result.ok === false) {
+        return done(result.status ?? 503, { error: result.error, engine: result.engine ?? 'llm' });
+      }
+      return done(200, result);
     }
     if (pathname === '/api/fonoran/grammar-particles' && method === 'GET') {
       return done(200, await loadParticles());

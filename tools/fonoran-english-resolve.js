@@ -382,14 +382,21 @@ export async function buildResolveContext(lab = null) {
     .map(s => ({ root: s.spelling, id: s.concept_id ?? s.spelling }));
 
   const compoundByConceptId = new Map();
+  const spellingByConceptId = new Map();
   const parseInventory = [...rootInventory];
+  for (const s of liveLab.sounds ?? []) {
+    if (s.state === 'rejected' || !s.spelling || !s.concept_id) continue;
+    spellingByConceptId.set(String(s.spelling).toLowerCase(), s.concept_id);
+  }
   for (const c of liveLab.compounds ?? []) {
     if (!REUSABLE_WORD_STATES.includes(c.state) || !c.concept_id || !c.spelling) continue;
     compoundByConceptId.set(c.concept_id, {
       id: c.id,
       spelling: c.spelling,
       gloss: c.meaning ?? c.gloss ?? c.concept_id,
+      parts: c.parts?.length ? [...c.parts] : null,
     });
+    spellingByConceptId.set(String(c.spelling).toLowerCase(), c.concept_id);
     parseInventory.push({ root: c.spelling, id: c.concept_id });
   }
 
@@ -401,6 +408,7 @@ export async function buildResolveContext(lab = null) {
     rootInventory,
     parseInventory,
     compoundByConceptId,
+    spellingByConceptId,
     rules,
   };
 }
@@ -426,7 +434,8 @@ function lookupByConceptId(ctx, conceptId) {
       gloss: compound.gloss,
       fonoran: compound.spelling,
       kind: 'compound',
-      parts: [compound.spelling],
+      composition_roots: compound.parts ?? undefined,
+      parts: compound.parts ?? undefined,
       source: 'lab',
     }, { lookup: conceptId, rules: ctx.rules, pastLemma: null });
   }
@@ -445,11 +454,26 @@ function lookupByConceptId(ctx, conceptId) {
   if (aliasHit) {
     return entryToHit(aliasHit.hit, { lookup: aliasHit.lookup, rules: ctx.rules, pastLemma: null });
   }
+  const mappedId = ctx.spellingByConceptId?.get(String(conceptId).toLowerCase());
+  if (mappedId && mappedId !== conceptId) {
+    return lookupByConceptId(ctx, mappedId);
+  }
   return {
     ...unknownHit(conceptId),
     concept_id: conceptId,
     gloss: spec?.gloss ?? conceptId,
   };
+}
+
+/** Resolve an approved concept id to a translator token (LLM frame path). */
+export function resolveConceptId(conceptId, ctx, role) {
+  const hit = lookupByConceptId(ctx, conceptId);
+  return enrichToken(hit, {
+    role,
+    concept_id: conceptId,
+    resolution_kind: hit.resolved ? 'direct' : 'unknown',
+    confidence: hit.resolved ? 'high' : 'low',
+  });
 }
 
 /**

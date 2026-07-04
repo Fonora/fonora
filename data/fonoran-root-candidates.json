@@ -1,12 +1,19 @@
 {
+  "version": "2.0-editorial-workflow",
   "status": "proposal",
+  "generated_at": "2026-07-04T16:32:12.377Z",
+  "collision_profile": "en",
+  "philosophy": {
+    "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
+    "workflow": "meaning cleanup → primitive test → priority class → sound generation → distinctiveness + collision + boundary scoring → human approval → compounds",
+    "source_concepts": "data/fonoran-concept-inventory.json"
+  },
   "summary": {
     "total": 105,
     "pending": 16,
     "approved": 89,
     "rejected": 0
   },
-  "version": "2.0-editorial-workflow",
   "candidates": [
     {
       "id": "person",
@@ -1978,36 +1985,36 @@
     },
     {
       "id": "surface",
-      "ipa": null,
-      "domain": "space",
-      "reason": "the outer side you touch — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "the outer side you touch",
-      "priority": 59952,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "space",
+      "plain_description": "the outer side you touch",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "useful",
       "priority_weight": 60,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "the outer side you touch",
-      "collision_warnings": [],
+      "priority": 59952,
+      "spelling": null,
+      "ipa": null,
+      "reason": "the outer side you touch — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "bound",
@@ -2052,36 +2059,36 @@
     },
     {
       "id": "center",
-      "ipa": null,
-      "domain": "space",
-      "reason": "the middle — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "the middle",
-      "priority": 59950,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "space",
+      "plain_description": "the middle",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "useful",
       "priority_weight": 60,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "the middle",
-      "collision_warnings": [],
+      "priority": 59950,
+      "spelling": null,
+      "ipa": null,
+      "reason": "the middle — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "around",
@@ -3600,69 +3607,69 @@
     },
     {
       "id": "metal",
-      "ipa": null,
-      "domain": "element",
-      "reason": "a hard shiny material you can shape, like iron — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "a hard shiny material you can shape, like iron",
-      "priority": 79912,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "element",
+      "plain_description": "a hard shiny material you can shape, like iron",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "a hard shiny material you can shape, like iron",
-      "collision_warnings": [],
+      "priority": 79912,
+      "spelling": null,
+      "ipa": null,
+      "reason": "a hard shiny material you can shape, like iron — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "parent",
-      "ipa": null,
-      "domain": "being",
-      "reason": "a mother or father — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "a mother or father",
-      "priority": 79911,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "being",
+      "plain_description": "a mother or father",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "a mother or father",
-      "collision_warnings": [],
+      "priority": 79911,
+      "spelling": null,
+      "ipa": null,
+      "reason": "a mother or father — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "drink",
@@ -3748,267 +3755,267 @@
     },
     {
       "id": "tree",
-      "ipa": null,
-      "domain": "element",
-      "reason": "a tree — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "a tree",
-      "priority": 79908,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "element",
+      "plain_description": "a tree",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "a tree",
-      "collision_warnings": [],
+      "priority": 79908,
+      "spelling": null,
+      "ipa": null,
+      "reason": "a tree — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "left",
-      "ipa": null,
-      "domain": "space",
-      "reason": "the left side — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "the left side",
-      "priority": 79907,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "space",
+      "plain_description": "the left side",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "the left side",
-      "collision_warnings": [],
+      "priority": 79907,
+      "spelling": null,
+      "ipa": null,
+      "reason": "the left side — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "right",
-      "ipa": null,
-      "domain": "space",
-      "reason": "the right side — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "the right side",
-      "priority": 79906,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "space",
+      "plain_description": "the right side",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "the right side",
-      "collision_warnings": [],
+      "priority": 79906,
+      "spelling": null,
+      "ipa": null,
+      "reason": "the right side — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "happy",
-      "ipa": null,
-      "domain": "emotion",
-      "reason": "feeling glad and content — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "feeling glad and content",
-      "priority": 99905,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "emotion",
+      "plain_description": "feeling glad and content",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "essential",
       "priority_weight": 100,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "feeling glad and content",
-      "collision_warnings": [],
+      "priority": 99905,
+      "spelling": null,
+      "ipa": null,
+      "reason": "feeling glad and content — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "angry",
-      "ipa": null,
-      "domain": "emotion",
-      "reason": "feeling mad or hostile — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "feeling mad or hostile",
-      "priority": 79904,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "emotion",
+      "plain_description": "feeling mad or hostile",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "feeling mad or hostile",
-      "collision_warnings": [],
+      "priority": 79904,
+      "spelling": null,
+      "ipa": null,
+      "reason": "feeling mad or hostile — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "calm",
-      "ipa": null,
-      "domain": "emotion",
-      "reason": "feeling settled and at peace — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "feeling settled and at peace",
-      "priority": 79903,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "emotion",
+      "plain_description": "feeling settled and at peace",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "feeling settled and at peace",
-      "collision_warnings": [],
+      "priority": 79903,
+      "spelling": null,
+      "ipa": null,
+      "reason": "feeling settled and at peace — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "trust",
-      "ipa": null,
-      "domain": "emotion",
-      "reason": "to believe someone is safe and reliable — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "to believe someone is safe and reliable",
-      "priority": 79902,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "emotion",
+      "plain_description": "to believe someone is safe and reliable",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "to believe someone is safe and reliable",
-      "collision_warnings": [],
+      "priority": 79902,
+      "spelling": null,
+      "ipa": null,
+      "reason": "to believe someone is safe and reliable — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "hope",
-      "ipa": null,
-      "domain": "emotion",
-      "reason": "to wish and expect something good — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "to wish and expect something good",
-      "priority": 79901,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "emotion",
+      "plain_description": "to wish and expect something good",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "to wish and expect something good",
-      "collision_warnings": [],
+      "priority": 79901,
+      "spelling": null,
+      "ipa": null,
+      "reason": "to wish and expect something good — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "food",
@@ -4049,142 +4056,135 @@
     },
     {
       "id": "sick",
-      "ipa": null,
-      "domain": "being",
-      "reason": "sick — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "sick; ill in the body",
-      "priority": 99899,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "being",
+      "plain_description": "sick; ill in the body",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "essential",
       "priority_weight": 100,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "sick; ill in the body",
-      "collision_warnings": [],
+      "priority": 99899,
+      "spelling": null,
+      "ipa": null,
+      "reason": "sick — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "understand",
-      "ipa": null,
-      "domain": "action",
-      "reason": "to understand — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "to understand; to grasp a meaning",
-      "priority": 99898,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "action",
+      "plain_description": "to understand; to grasp a meaning",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "essential",
       "priority_weight": 100,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "to understand; to grasp a meaning",
-      "collision_warnings": [],
+      "priority": 99898,
+      "spelling": null,
+      "ipa": null,
+      "reason": "to understand — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "child",
-      "ipa": null,
-      "domain": "being",
-      "reason": "a child — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "a child; a young person",
-      "priority": 79897,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "being",
+      "plain_description": "a child; a young person",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "a child; a young person",
-      "collision_warnings": [],
+      "priority": 79897,
+      "spelling": null,
+      "ipa": null,
+      "reason": "a child — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     },
     {
       "id": "wait",
-      "ipa": null,
-      "domain": "action",
-      "reason": "to wait — probably better as a compound than its own root for now.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": null,
-        "rejected_at": null
-      },
-      "status": "pending",
       "concept": "to wait; to stay until later",
-      "priority": 79896,
-      "spelling": null,
-      "generation": {
-        "tier": null,
-        "eligible": false,
-        "template": null,
-        "phonetic_cost": null
-      },
+      "domain": "action",
+      "plain_description": "to wait; to stay until later",
+      "primitive_test_note": null,
+      "suggested_status": "compound_candidate",
       "priority_class": "common",
       "priority_weight": 80,
-      "suggested_status": "compound_candidate",
-      "boundary_warnings": [],
-      "plain_description": "to wait; to stay until later",
-      "collision_warnings": [],
+      "priority": 79896,
+      "spelling": null,
+      "ipa": null,
+      "reason": "to wait — probably better as a compound than its own root for now.",
       "pronunciation_ease": null,
-      "primitive_test_note": null,
-      "semantic_usefulness": null,
       "pronunciation_ease_label": null,
-      "semantic_usefulness_label": null
+      "semantic_usefulness": null,
+      "semantic_usefulness_label": null,
+      "status": "pending",
+      "review": {
+        "approved_at": null,
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": null,
+        "template": null,
+        "tier": null,
+        "eligible": false
+      },
+      "collision_warnings": [],
+      "boundary_warnings": []
     }
-  ],
-  "philosophy": {
-    "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
-    "workflow": "meaning cleanup → primitive test → priority class → sound generation → distinctiveness + collision + boundary scoring → human approval → compounds",
-    "source_concepts": "data/fonoran-concept-inventory.json"
-  },
-  "generated_at": "2026-07-04T14:49:48.241Z",
-  "collision_profile": "en"
+  ]
 }

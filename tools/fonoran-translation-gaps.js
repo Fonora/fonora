@@ -9,7 +9,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { translateEnglish, resetTranslatorCache } from './fonoran-translator.js';
+import { translate } from './fonoran-translate.js';
+import { resetTranslatorCache } from './fonoran-translator.js';
 import { buildResolveContext, suggestGapConcepts } from './fonoran-english-resolve.js';
 import { resolveDataPath } from './fonoran-data-paths.js';
 
@@ -49,6 +50,15 @@ export function normalizeCorpusLevels(raw) {
       }),
     })),
   };
+}
+
+/** Resolve translate function for gap reports. */
+async function runTranslate(phrase, { lab, engine = 'legacy' } = {}) {
+  const result = await translate(phrase, { lab, engine, sourceLang: 'en' });
+  if (result.ok === false) {
+    throw new Error(result.error ?? 'Translation failed');
+  }
+  return result;
 }
 
 /** Load a phrase corpus from disk (golden, stranger key, or absolute path). */
@@ -107,7 +117,7 @@ export async function saveTranslationCorpus(corpus) {
  * from the current translator output. This is the deliberate "accept new
  * baseline" path behind `--update-golden`; the diff is reviewable in git.
  */
-export async function updateGoldenCorpus({ lab = null } = {}) {
+export async function updateGoldenCorpus({ lab = null, engine = 'legacy' } = {}) {
   const corpus = await loadGoldenCorpus();
   resetTranslatorCache();
   let updated = 0;
@@ -116,7 +126,7 @@ export async function updateGoldenCorpus({ lab = null } = {}) {
     const next = [];
     for (const entry of lvl.phrases) {
       const en = typeof entry === 'string' ? entry : entry.en;
-      const r = await translateEnglish(en, lab ? { lab } : {});
+      const r = await runTranslate(en, { lab, engine });
       const roman = r.surface?.roman ?? '';
       const grade = gradePhrase(r.tokens ?? []);
       const rec = { en, fon: roman };
@@ -282,6 +292,7 @@ export async function runTranslationGapReport({
   resetCache = false,
   suggest = false,
   corpus = 'golden',
+  engine = 'legacy',
 } = {}) {
   const corpusDoc = await loadTranslationCorpus(corpus);
   if (resetCache) resetTranslatorCache();
@@ -311,7 +322,7 @@ export async function runTranslationGapReport({
     for (const entry of lvl.phrases) {
       const phrase = typeof entry === 'string' ? entry : entry.en;
       const golden = typeof entry === 'string' ? null : entry;
-      const r = await translateEnglish(phrase, lab ? { lab } : {});
+      const r = await runTranslate(phrase, { lab, engine });
       const unresolved = r.unresolved ?? [];
       const tokens = r.tokens ?? [];
       const roman = r.surface?.roman ?? '';
@@ -404,6 +415,7 @@ export async function runTranslationGapReport({
     generated_at: new Date().toISOString(),
     corpus: corpus === 'golden' ? 'golden' : corpus === 'stranger' ? 'stranger' : corpus,
     corpus_version: corpusDoc.version ?? null,
+    engine,
     total_phrases: totalPhrases,
     clean_phrases: cleanPhrases,
     coverage_pct: totalPhrases ? Math.round((cleanPhrases / totalPhrases) * 100) : 0,

@@ -1,8 +1,11 @@
     import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, isValidSyllable, romanToIpa } from '../tools/fonoran-pronunciation.js';
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
     import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
+    import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
-    import { speakFonoraPhrase, cancelSpeech } from '../js/fonora-tts.js';
+    import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
+    import { getSamplePlaybackPlan, getPiperVoiceForLang } from '../js/piper-audio.js';
+    import { resolveEspeakVoice, loadLanguagePreferences } from '../js/language-preferences.js';
     import { primeAudioContext } from '../js/espeak-audio.js';
     import { initUniversalNav, setActiveTab, setFonoranUndoDisabled, setFonoranAuth, setNavSelectHandlers } from '../js/universal-nav.js';
     import { mountSiteFooter } from '../js/site-footer.js';
@@ -256,11 +259,64 @@
       const t = $('toast'); t.textContent = msg; t.classList.add('show');
       clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2600);
     }
+    function cancelBrowserSpeech() {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    }
+
+    function cancelAllSpeech() {
+      cancelSpeech();
+      cancelBrowserSpeech();
+    }
+
+    const SOURCE_LANG_BCP47 = {
+      en: 'en-US',
+      es: 'es-ES',
+      fr: 'fr-FR',
+      de: 'de-DE',
+      ja: 'ja-JP',
+      ar: 'ar-SA',
+      zh: 'zh-CN',
+    };
+
+    function sourceLangToBcp47(lang) {
+      const code = String(lang ?? 'en').toLowerCase().split(/[-_]/)[0];
+      return SOURCE_LANG_BCP47[code] ?? 'en-US';
+    }
+
+    function speakAsync(text, lang = 'en-US') {
+      return new Promise((resolve) => {
+        if (!window.speechSynthesis || !String(text ?? '').trim()) {
+          resolve();
+          return;
+        }
+        cancelBrowserSpeech();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang;
+        u.rate = 0.85;
+        const done = () => resolve();
+        u.onend = done;
+        u.onerror = done;
+        window.speechSynthesis.speak(u);
+      });
+    }
+
+    /** @deprecated Use speakAsync — kept for quick fire-and-forget outside playback loops. */
     function speak(text) {
-      if (!window.speechSynthesis) return;
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text); u.rate = 0.85;
-      window.speechSynthesis.speak(u);
+      void speakAsync(text);
+    }
+
+    async function speakNeural(parts, { lang = 'en' } = {}) {
+      const list = Array.isArray(parts) ? parts : [parts];
+      const rules = await ensureRules();
+      const { phrase } = romanToFonoraScript(list, rules);
+      if (!phrase) throw new Error('no script');
+      cancelSpeech();
+      const plan = getSamplePlaybackPlan(lang);
+      await speakFonoraPhrase(phrase, rules, plan ?? {
+        engine: 'auto',
+        piperVoice: getPiperVoiceForLang('en'),
+        espeakVoice: resolveEspeakVoice(lang, { englishDialect: loadLanguagePreferences().englishDialect }),
+      });
     }
     async function ensureRules() {
       if (!STATE.rules) {
@@ -269,18 +325,7 @@
       }
       return STATE.rules;
     }
-    async function speakNeural(parts) {
-      const list = Array.isArray(parts) ? parts : [parts];
-      try {
-        const rules = await ensureRules();
-        const { phrase } = romanToFonoraScript(list, rules);
-        if (!phrase) throw new Error('no script');
-        cancelSpeech();
-        await speakFonoraPhrase(phrase, rules, { engine: 'auto', lang: 'en' });
-      } catch {
-        speak(Array.isArray(parts) ? compoundSpeakable(parts) : toSpeakable(parts));
-      }
-    }
+
     function wordPreviewPron(parts) {
       const list = Array.isArray(parts) ? parts : [parts];
       return {
@@ -2384,10 +2429,56 @@
     const TRANSLATOR_SPEED_KEY = 'fonoran:translator:speed';
     const TRANSLATOR_SYLLABLE_MODE_KEY = 'fonoran:translator:syllable-by-syllable';
     const TRANSLATOR_SYLLABLE_MODE_LEGACY_KEY = 'fonoran:translator:word-by-word';
-    const TRANSLATOR_SHOW_PRON_KEY = 'fonoran:translator:show-pronunciation';
+    const TRANSLATOR_SOURCE_LANG_KEY = 'fonoran:translator:source-lang';
 
-    function readTranslatorShowPron() {
-      return localStorage.getItem(TRANSLATOR_SHOW_PRON_KEY) === '1';
+    function readTranslatorSourceLang() {
+      const el = $('tr-source-lang');
+      const fromSelect = el?.value?.trim();
+      if (fromSelect) return fromSelect;
+      return localStorage.getItem(TRANSLATOR_SOURCE_LANG_KEY) || 'auto';
+    }
+
+    function translatorEngineLabel(engine) {
+      if (engine === 'cached') return 'Cached';
+      if (engine === 'legacy') return 'Legacy';
+      if (engine === 'llm') return 'LLM';
+      return engine ? String(engine) : '';
+    }
+
+    function syncTranslatorOutputHeader(result) {
+      const meta = $('tr-output-meta');
+      if (!meta) return;
+      const reasoning = result?.reasoning?.trim();
+      if (!reasoning) {
+        meta.innerHTML = '';
+        meta.hidden = true;
+        return;
+      }
+      const engine = result?.engine ? translatorEngineLabel(result.engine) : '';
+      const engineHtml = engine
+        ? `<p class="translator-output__frame-engine sans">${escapeHtml(engine)}</p>`
+        : '';
+      meta.hidden = false;
+      meta.innerHTML = `<div class="translator-output__frame-popup">
+        <button type="button" class="translator-output__frame-trigger sans" aria-describedby="tr-frame-popover">Why this reading</button>
+        <div class="translator-output__frame-popover sans" id="tr-frame-popover" role="tooltip">
+          <p>${escapeHtml(reasoning)}</p>
+          ${engineHtml}
+        </div>
+      </div>`;
+    }
+
+    function translatorPronHtml(pron) {
+      if (!pron?.sayLine) return '';
+      const likeHtml = pron.englishLine
+        ? `<span class="translator-output__meta-sep" aria-hidden="true"> · </span><span class="translator-output__like">${escapeHtml(pron.englishLine)}</span>`
+        : '';
+      return `<details class="translator-output__pron sans">
+        <summary>Pronunciation</summary>
+        <div class="translator-output__pron-body">
+          <p class="translator-output__pron-line"><strong class="translator-output__phonetic-key mono">${escapeHtml(pron.sayLine)}</strong>${likeHtml}</p>
+        </div>
+      </details>`;
     }
 
     function readTranslatorSpeed() {
@@ -2402,7 +2493,24 @@
     }
 
     function translatorCanHear(result) {
-      return Boolean(result?.tokens?.some(t => t.resolved && t.parts?.length));
+      if (!result || result.error || result.mode === 'empty') return false;
+      if (result.playback?.playable) return true;
+      return Boolean(result.tokens?.some(t => !isSkippablePlaybackToken(t)));
+    }
+
+    /** Resolve playback payload — prefer server-built, rebuild client-side when needed. */
+    function resolveTranslatorPlayback(result, { syllableBySyllable = false } = {}) {
+      if (!syllableBySyllable && result?.playback?.segments?.length) {
+        return result.playback;
+      }
+      if (!STATE.rules || !result?.tokens?.length) {
+        return result?.playback ?? { phrase: '', script: '', segments: [], wordSources: [], tokenIndices: [], playable: false };
+      }
+      return buildPlaybackFromTokens(result.tokens, STATE.rules, { syllableBySyllable });
+    }
+
+    function sleepMs(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
     function syncTranslatorPlaybackUi(result) {
@@ -2416,49 +2524,73 @@
       if (stopBtn && !STATE.translatorPlaying) stopBtn.disabled = true;
     }
 
-    function buildTranslatorScriptPhrase(result, { syllableBySyllable = false } = {}) {
-      if (!result?.tokens?.length || !STATE.rules) return { phrase: '', unitTokenIndex: [] };
-      const chunks = [];
-      const unitTokenIndex = [];
-      for (let i = 0; i < result.tokens.length; i++) {
-        const token = result.tokens[i];
-        if (!token.resolved || !token.parts?.length) continue;
-        if (syllableBySyllable && token.parts.length > 1) {
-          for (const part of token.parts) {
-            const { phrase } = romanToFonoraScript([part], STATE.rules);
-            if (phrase) {
-              chunks.push(phrase);
-              unitTokenIndex.push(i);
-            }
-          }
-        } else {
-          const { phrase } = romanToFonoraScript(token.parts, STATE.rules);
-          if (phrase) {
-            chunks.push(phrase);
-            unitTokenIndex.push(i);
-          }
-        }
-      }
-      return { phrase: chunks.join(' '), unitTokenIndex };
+    function readTranslatorPlaybackLang(result) {
+      const sel = readTranslatorSourceLang();
+      if (sel && sel !== 'auto') return sel;
+      return result?.detected_lang ?? result?.sourceLang ?? 'en';
     }
 
-    function highlightTranslatorToken(tokenIndex) {
-      document.querySelectorAll('.translator-token').forEach(el => el.classList.remove('translator-token--speaking'));
+    function getTranslatorPlaybackOptions(result) {
+      const lang = readTranslatorPlaybackLang(result);
+      const prefs = loadLanguagePreferences();
+      const plan = getSamplePlaybackPlan(lang);
+      const playbackRate = readTranslatorSpeed();
+      if (plan) return { ...plan, playbackRate };
+      return {
+        engine: 'auto',
+        piperVoice: getPiperVoiceForLang('en'),
+        espeakVoice: resolveEspeakVoice(lang, { englishDialect: prefs.englishDialect }),
+        playbackRate,
+      };
+    }
+
+    function clearTranslatorSpeakingHighlight() {
+      document.querySelectorAll('.translator-token--speaking').forEach(el => {
+        el.classList.remove('translator-token--speaking');
+      });
+      document.querySelectorAll('.translator-alternate--speaking').forEach(el => {
+        el.classList.remove('translator-alternate--speaking');
+      });
+      $('tr-output')?.classList.remove('translator-output--alternate-playing');
+    }
+
+    function highlightTranslatorToken(tokenIndex, { alternateIndex = null } = {}) {
+      clearTranslatorSpeakingHighlight();
       if (tokenIndex == null || tokenIndex < 0) return;
-      document.querySelector(`.translator-token[data-tr-word="${tokenIndex}"]`)?.classList.add('translator-token--speaking');
+
+      if (alternateIndex != null) {
+        $('tr-output')?.classList.add('translator-output--alternate-playing');
+        document.querySelector(`.translator-alternate[data-tr-alt-index="${alternateIndex}"]`)
+          ?.classList.add('translator-alternate--speaking');
+        document.querySelector(
+          `.translator-alternate[data-tr-alt-index="${alternateIndex}"] .translator-token[data-tr-word="${tokenIndex}"]`,
+        )?.classList.add('translator-token--speaking');
+        return;
+      }
+
+      document.querySelector(
+        `.translator-token-list--primary .translator-token[data-tr-word="${tokenIndex}"]`,
+      )?.classList.add('translator-token--speaking');
     }
 
-    async function speakTranslatorResult(result) {
-      if (!result?.tokens?.some(t => t.resolved) || STATE.translatorPlaying) return;
+    function setTranslatorPlaybackStatus(message, { isError = false } = {}) {
+      const el = $('tr-playback-status');
+      if (!el) return;
+      el.hidden = !message;
+      el.textContent = message;
+      el.classList.toggle('translator-playback-status--error', Boolean(isError));
+    }
+
+    async function speakTranslatorResult(result, { alternateIndex = null } = {}) {
+      if (!result?.tokens?.some(t => !isSkippablePlaybackToken(t)) || STATE.translatorPlaying) return;
       await ensureRules();
       primeAudioContext();
 
       const syllableBySyllable = $('tr-syllable-by-syllable')?.checked === true;
-      const playbackRate = readTranslatorSpeed();
-      const wordGapMs = syllableBySyllable ? Math.round(250 + (1 - playbackRate) * 450) : 0;
-      const { phrase, unitTokenIndex } = buildTranslatorScriptPhrase(result, { syllableBySyllable });
-      if (!phrase) {
-        speak(compoundSpeakable(result.tokens.flatMap(t => (t.resolved ? t.parts : []))));
+      const playback = resolveTranslatorPlayback(result, { syllableBySyllable });
+
+      if (!playback?.segments?.length) {
+        setTranslatorPlaybackStatus('Nothing to speak for this translation.', { isError: true });
         return;
       }
 
@@ -2468,25 +2600,57 @@
       const stopBtn = $('tr-stop');
       if (playBtn) { playBtn.disabled = true; playBtn.textContent = '…'; }
       if (stopBtn) stopBtn.disabled = false;
+      setTranslatorPlaybackStatus('');
 
       highlightTranslatorToken(-1);
 
       try {
-        cancelSpeech();
-        await speakFonoraPhrase(phrase, STATE.rules, {
-          engine: 'auto',
-          playbackRate,
-          wordGapMs,
-          shouldCancel: () => STATE.translatorCancel,
-          onWordStart: (index) => highlightTranslatorToken(unitTokenIndex[index]),
-          onWordEnd: () => highlightTranslatorToken(-1),
-        });
-      } catch {
-        speak(compoundSpeakable(result.tokens.flatMap(t => (t.resolved ? t.parts : []))));
+        cancelAllSpeech();
+        const playbackOpts = getTranslatorPlaybackOptions(result);
+        const sourceBcp47 = sourceLangToBcp47(readTranslatorPlaybackLang(result));
+        const wordGapMs = syllableBySyllable
+          ? Math.round(250 + (1 - playbackOpts.playbackRate) * 450)
+          : Math.round(120 + (1 - playbackOpts.playbackRate) * 80);
+
+        for (let i = 0; i < playback.segments.length; i++) {
+          if (STATE.translatorCancel) break;
+
+          const seg = playback.segments[i];
+          highlightTranslatorToken(seg.tokenIndex ?? -1, { alternateIndex });
+
+          if (seg.kind === 'english') {
+            await speakAsync(seg.text, sourceBcp47);
+          } else {
+            setReaderWordSources([seg.wordSource]);
+            let spokeFonora = false;
+            try {
+              const wordResult = await speakFonoraPhrase(seg.phrase, STATE.rules, {
+                ...playbackOpts,
+                wordGapMs: 0,
+                shouldCancel: () => STATE.translatorCancel,
+              });
+              spokeFonora = (wordResult.spoken ?? 0) > 0;
+            } catch {
+              spokeFonora = false;
+            }
+            if (!spokeFonora && seg.fallbackEnglish) {
+              await speakAsync(seg.fallbackEnglish, sourceBcp47);
+            }
+          }
+
+          if (STATE.translatorCancel) break;
+          if (wordGapMs > 0 && i < playback.segments.length - 1) {
+            await sleepMs(wordGapMs);
+          }
+        }
+      } catch (err) {
+        setTranslatorPlaybackStatus(err.message || 'Playback failed.', { isError: true });
       } finally {
         STATE.translatorPlaying = false;
         STATE.translatorCancel = false;
         highlightTranslatorToken(-1);
+        setReaderWordSources(null);
+        clearTranslatorSpeakingHighlight();
         if (playBtn) { playBtn.disabled = false; playBtn.textContent = '▶ Listen'; }
         if (stopBtn) stopBtn.disabled = true;
       }
@@ -2495,7 +2659,7 @@
     function stopTranslatorSpeech() {
       if (!STATE.translatorPlaying) return;
       STATE.translatorCancel = true;
-      cancelSpeech();
+      cancelAllSpeech();
     }
 
     function translatorResolutionKind(token) {
@@ -2529,7 +2693,9 @@
       const kind = translatorResolutionKind(token);
       const resClass = translatorResolutionClass(kind);
       const fonoran = token.resolved
-        ? `<span class="${resClass}">${escapeHtml(token.fonoran)}</span>`
+        ? (resClass
+          ? `<span class="${resClass}">${escapeHtml(token.fonoran)}</span>`
+          : escapeHtml(token.fonoran))
         : `<span class="translator-unresolved-sample">${escapeHtml(token.english)}</span>`;
       const gloss = token.gloss ? `<span class="translator-token__gloss">${escapeHtml(token.gloss)}</span>` : '';
       const showInterp = token.interpreted || (kind !== 'direct' && kind !== 'unknown');
@@ -2546,60 +2712,129 @@
       </li>`;
     }
 
+    function swapTranslatorAlternate(index) {
+      const r = STATE.translatorResult;
+      const alt = r?.alternates?.[index];
+      if (!alt) return;
+      const previous = {
+        id: 'previous_primary',
+        note: 'Previous primary reading.',
+        roman: r.surface?.roman ?? '',
+        surface: r.surface,
+        playback: r.playback,
+        tokens: r.tokens,
+        frame: r.llm_frame,
+      };
+      const otherAlts = (r.alternates ?? []).filter((_, i) => i !== index);
+      STATE.translatorResult = {
+        ...r,
+        tokens: alt.tokens,
+        surface: alt.surface,
+        playback: alt.playback,
+        llm_frame: alt.frame ?? r.llm_frame,
+        alternates: [...otherAlts, previous],
+      };
+      void renderTranslatorOutput(STATE.translatorResult);
+    }
+
+    async function speakTranslatorAlternate(index) {
+      const alt = STATE.translatorResult?.alternates?.[index];
+      if (!alt?.tokens?.length || STATE.translatorPlaying) return;
+      await speakTranslatorResult({
+        ...STATE.translatorResult,
+        tokens: alt.tokens,
+        playback: alt.playback,
+        surface: alt.surface,
+      }, { alternateIndex: index });
+    }
+
+    function translatorAlternatesHtml(result) {
+      if (!result?.alternates?.length) return '';
+      const items = result.alternates.map((alt, i) => {
+        const script = alt.playback?.script || alt.roman || '';
+        const tokenList = alt.tokens?.length
+          ? `<ul class="translator-token-list translator-token-list--alternate">${alt.tokens.map((t, ti) => translatorTokenHtml(t, ti)).join('')}</ul>`
+          : '';
+        return `<li class="translator-alternate" data-tr-alt-index="${i}">
+          <div class="translator-alternate__actions">
+            <button type="button" class="chip translator-alternate__use" data-tr-alt-use="${i}">Use</button>
+            <button type="button" class="chip translator-alternate__hear" data-tr-alt-hear="${i}">▶</button>
+          </div>
+          <div class="translator-alternate__body">
+            ${script ? `<div class="translator-alternate__script fonora-script symbol-text">${escapeHtml(script)}</div>` : ''}
+            <p class="translator-alternate__roman sans">${escapeHtml(alt.roman)}</p>
+            <p class="translator-alternate__note sans">${escapeHtml(alt.note)}</p>
+            ${tokenList}
+          </div>
+        </li>`;
+      }).join('');
+      return `<div class="translator-output__alternates">
+        <p class="translator-output__alternates-label sans">Also sayable</p>
+        <ul class="translator-alternates-list">${items}</ul>
+      </div>`;
+    }
+
     async function renderTranslatorOutput(result) {
       const out = $('tr-output');
       if (!out) return;
       if (!result || result.mode === 'empty') {
-        out.innerHTML = '<p class="translator-output__empty sans">Type English on the left to see Fonoran script and pronunciation.</p>';
+        out.innerHTML = '<p class="translator-output__empty sans">Type any language on the left to see Fonoran script and pronunciation.</p>';
+        syncTranslatorOutputHeader(null);
+        syncTranslatorPlaybackUi(null);
+        return;
+      }
+
+      if (result.error) {
+        out.innerHTML = `<p class="translator-output__empty sans translator-output__error">${escapeHtml(result.error)}</p>`;
+        syncTranslatorOutputHeader(null);
         syncTranslatorPlaybackUi(null);
         return;
       }
 
       await ensureRules();
-      const scriptParts = result.tokens.flatMap(t => (t.resolved ? t.parts : []));
-      const script = scriptParts.length && STATE.rules
-        ? result.tokens.map(t => {
-          if (!t.resolved || !t.parts?.length) return '';
-          return romanToFonoraScript(t.parts, STATE.rules).phrase;
-        }).filter(Boolean).join(' ')
-        : '';
+      const playbackScript = result.playback?.script
+        || (STATE.rules ? resolveTranslatorPlayback(result).phrase : '');
 
       const romanHtml = result.tokens.map(t => {
         if (!t.resolved) {
           return `<span class="translator-unresolved-sample">${escapeHtml(t.english)}</span>`;
         }
-        const kind = translatorResolutionKind(t);
-        const cls = translatorResolutionClass(kind);
+        const cls = translatorResolutionClass(translatorResolutionKind(t));
         return cls
           ? `<span class="${cls}">${escapeHtml(t.fonoran)}</span>`
           : escapeHtml(t.fonoran);
       }).join(' ');
 
       const pron = result.surface?.pronunciation;
-      const showPron = readTranslatorShowPron();
-      const pronHtml = pron?.sayLine
-        ? `<div class="translator-output__pron-wrap">
-            <label class="translator-output__pron-toggle sans">
-              <input type="checkbox" id="tr-show-pron"${showPron ? ' checked' : ''}>
-              Pronunciation
-            </label>
-            <div class="pron-block translator-output__pron" id="tr-pron-detail"${showPron ? '' : ' hidden'}>
-              <div class="pron-line">Say: <strong>${escapeHtml(pron.sayLine)}</strong></div>
-              ${pron.englishLine ? `<div class="pron-english">Sounds like: ${escapeHtml(pron.englishLine)}</div>` : ''}
-            </div>
-          </div>`
-        : '';
+      const pronHtml = translatorPronHtml(pron);
+
+      syncTranslatorOutputHeader(result);
 
       out.innerHTML = `
         <div class="translator-output__surface">
-          ${script ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(script)}</div>` : ''}
+          ${playbackScript ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(playbackScript)}</div>` : ''}
           <p class="translator-output__roman">${romanHtml}</p>
           ${pronHtml}
         </div>
-        <ul class="translator-token-list">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>
-        ${result.unresolved?.length ? `<p class="sans translator-output__note" style="font-size:0.84rem;color:var(--muted);margin:0.75rem 0 0">Unresolved concepts reveal where the language still needs to grow — add roots or compounds in <a href="/tools#word-manager">Tools → Words</a>.</p>` : ''}`;
+        <ul class="translator-token-list translator-token-list--primary">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>
+        ${translatorAlternatesHtml(result)}`;
+
+      out.querySelectorAll('[data-tr-alt-use]').forEach((btn) => {
+        btn.addEventListener('click', () => swapTranslatorAlternate(Number(btn.dataset.trAltUse)));
+      });
+      out.querySelectorAll('[data-tr-alt-hear]').forEach((btn) => {
+        btn.addEventListener('click', () => { void speakTranslatorAlternate(Number(btn.dataset.trAltHear)); });
+      });
 
       syncTranslatorPlaybackUi(result);
+    }
+
+    function showTranslatorLoading() {
+      const out = $('tr-output');
+      if (!out) return;
+      out.innerHTML = `<div class="translator-output__loading sans" role="status" aria-live="polite"><span class="gap-spinner" aria-hidden="true"></span>Translating…</div>`;
+      syncTranslatorOutputHeader(null);
+      syncTranslatorPlaybackUi(null);
     }
 
     async function runTranslator() {
@@ -2609,24 +2844,35 @@
       const token = ++translatorToken;
 
       if (!text) {
+        STATE.translatorBusy = false;
         STATE.translatorResult = null;
         renderTranslatorOutput(null);
         return;
       }
 
       STATE.translatorBusy = true;
+      showTranslatorLoading();
       try {
         const result = await api('/api/fonoran/translate', {
           method: 'POST',
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({
+            text,
+            sourceLang: readTranslatorSourceLang(),
+          }),
         });
         if (token !== translatorToken) return;
+        if (result?.error) {
+          STATE.translatorResult = { error: result.error, mode: 'error' };
+          await renderTranslatorOutput(STATE.translatorResult);
+          return;
+        }
         STATE.translatorResult = result;
         await renderTranslatorOutput(result);
       } catch (e) {
         if (token !== translatorToken) return;
         const out = $('tr-output');
         if (out) out.innerHTML = `<p class="translator-output__empty sans" style="color:var(--danger,#c0392b)">${escapeHtml(e.message)}</p>`;
+        syncTranslatorOutputHeader(null);
         syncTranslatorPlaybackUi(null);
       } finally {
         if (token === translatorToken) STATE.translatorBusy = false;
@@ -2643,6 +2889,9 @@
       const savedSyllableMode = localStorage.getItem(TRANSLATOR_SYLLABLE_MODE_KEY)
         ?? localStorage.getItem(TRANSLATOR_SYLLABLE_MODE_LEGACY_KEY);
       if (syllableEl && savedSyllableMode != null) syllableEl.checked = savedSyllableMode !== '0';
+      const langEl = $('tr-source-lang');
+      const savedLang = localStorage.getItem(TRANSLATOR_SOURCE_LANG_KEY);
+      if (langEl && savedLang) langEl.value = savedLang;
       syncTranslatorSpeedLabel();
       syncTranslatorPlaybackUi(STATE.translatorResult);
       if (STATE.translatorResult) void renderTranslatorOutput(STATE.translatorResult);
@@ -2909,11 +3158,9 @@
     $('tr-syllable-by-syllable')?.addEventListener('change', (e) => {
       localStorage.setItem(TRANSLATOR_SYLLABLE_MODE_KEY, e.target.checked ? '1' : '0');
     });
-    $('tr-output')?.addEventListener('change', (e) => {
-      if (e.target.id !== 'tr-show-pron') return;
-      const detail = $('tr-pron-detail');
-      if (detail) detail.hidden = !e.target.checked;
-      localStorage.setItem(TRANSLATOR_SHOW_PRON_KEY, e.target.checked ? '1' : '0');
+    $('tr-source-lang')?.addEventListener('change', (e) => {
+      localStorage.setItem(TRANSLATOR_SOURCE_LANG_KEY, e.target.value);
+      void runTranslator();
     });
     document.querySelectorAll('[data-tr-example]').forEach(btn => {
       btn.addEventListener('click', () => {

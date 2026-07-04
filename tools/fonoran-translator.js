@@ -39,6 +39,7 @@ import {
   peelFutureFromTokens,
   LEADING_TIME_WORDS,
   peelQuestionAuxiliary,
+  peelExistentialDummyThere,
 } from './fonoran-interpretation.js';
 import {
   buildResolveContext,
@@ -48,9 +49,11 @@ import {
   lemmatizeEnglish,
   IRREGULAR,
   CONJUNCTIONS,
+  resolveConceptId,
 } from './fonoran-english-resolve.js';
 import { getPosHint } from './fonoran-semantic-lookup.js';
 import { getParticleRuntime, resetParticleCache } from './fonoran-particles.js';
+import { attachTranslatorPlayback } from './fonoran-playback-build.js';
 
 /**
  * Cached grammar-particle runtime: { index, byId, quantifiers }.
@@ -394,6 +397,9 @@ async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
     subject.push(subjectSlot(questionPeel.subjectWord));
   }
 
+  const existentialPeel = peelExistentialDummyThere(tokens);
+  tokens = existentialPeel.tokens;
+
   const timeHit = matchLeadingTimeAdverbial(tokens);
   if (timeHit) {
     time.push({ english: timeHit.english, role: 'time' });
@@ -721,6 +727,16 @@ async function expandQuantifier(ctx, parts, role, surface) {
 async function resolveSlot(ctx, slot, role) {
   const surface = String(slot.english ?? '').trim();
   const lower = surface.toLowerCase();
+
+  if (slot.particle) {
+    return particleToken(role, slot.particle, surface || slot.particle);
+  }
+
+  if (slot.concept_id) {
+    const token = resolveConceptId(slot.concept_id, ctx, role);
+    return { ...token, role };
+  }
+
   if (PRONOUNS[lower]) {
     return particleToken(role, PRONOUNS[lower], surface);
   }
@@ -913,11 +929,96 @@ function buildSurface(tokens) {
   };
 }
 
+/** Particle surface forms the LLM may emit in frame slots. */
+const LLM_PARTICLE_FORMS = new Set(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
+
 /**
+ * Convert an LLM concept frame into internal grammar slots.
+ * @param {object} frameSlots
+ */
+export function frameSlotsToSemanticSlots(frameSlots) {
+  const convert = (items, role) => {
+    const list = Array.isArray(items) ? items : [];
+    return list.map((raw) => {
+      const id = String(raw ?? '').trim().toLowerCase();
+      if (!id) return null;
+      if (id === 'neg') {
+        return { english: 'not', role, particle: 'no' };
+      }
+      if (LLM_PARTICLE_FORMS.has(id)) {
+        return { english: id, role, particle: id };
+      }
+      return { english: id, role, concept_id: id };
+    }).filter(Boolean);
+  };
+
+  return {
+    mode: 'sentence',
+    subject: convert(frameSlots?.subject, 'subject'),
+    time: convert(frameSlots?.time, 'time'),
+    event: convert(frameSlots?.event, 'event'),
+    path: convert(frameSlots?.path, 'path'),
+    object: convert(frameSlots?.object, 'object'),
+    modifiers: convert(frameSlots?.modifiers, 'modifier'),
+  };
+}
+
+/**
+ * Compile a language-neutral concept frame into Fonoran surface output.
+ * @param {object} frame  { slots, is_question?, unresolved?, reasoning? }
+ * @param {{ lab?: object, input?: string, sourceLang?: string }} [options]
+ */
+export async function translateFromFrame(frame, options = {}) {
+  const input = String(options.input ?? '').trim();
+  const ctx = await buildResolveContext(options.lab);
+  if (!PARTICLES) PARTICLES = await getParticleRuntime();
+
+  ctx.isQuestion = Boolean(frame?.is_question);
+  const semantic = frameSlotsToSemanticSlots(frame?.slots ?? {});
+  const tokens = await slotsToTokens(ctx, semantic);
+  if (ctx.isQuestion) tokens.push(punctuationToken('?'));
+
+  const surface = buildSurface(tokens);
+  const unresolved = [
+    ...(frame?.unresolved ?? []).map(w => String(w)),
+    ...tokens.filter(t => !t.resolved).map(t => t.english),
+  ];
+  const uniqueUnresolved = [...new Set(unresolved.map(w => String(w).toLowerCase()))];
+
+  const interpretations = tokens
+    .filter(t => t.interpreted)
+    .map(t => ({
+      english: t.interpreted_from ?? t.english,
+      concept_id: t.concept_id ?? t.english,
+      fonoran: t.fonoran,
+      reason: t.interpret_reason ?? '',
+      role: t.role,
+      resolution_kind: t.resolution_kind,
+    }));
+
+  return attachTranslatorPlayback({
+    input,
+    mode: semantic.mode,
+    tokens,
+    surface,
+    semantic: {
+      skeleton: GRAMMAR_SKELETON,
+      slots: semantic,
+    },
+    frame: buildFrame(tokens),
+    interpretations,
+    unresolved: uniqueUnresolved,
+    reasoning: frame?.reasoning ?? null,
+    sourceLang: options.sourceLang ?? null,
+  });
+}
+
+/**
+ * @deprecated Use translate() from fonoran-translate.js (LLM compiler). Kept for regression comparison.
  * @param {string} text
  * @param {{ lab?: object }} [options]
  */
-export async function translateEnglish(text, options = {}) {
+export async function translateEnglishLegacy(text, options = {}) {
   const input = String(text ?? '').trim();
   if (!input) {
     return {
@@ -963,7 +1064,7 @@ export async function translateEnglish(text, options = {}) {
         resolution_kind: t.resolution_kind,
       }));
 
-    return {
+    return attachTranslatorPlayback({
       input,
       mode: 'discourse',
       tokens,
@@ -975,7 +1076,7 @@ export async function translateEnglish(text, options = {}) {
       frame: buildFrame(tokens),
       interpretations,
       unresolved,
-    };
+    });
   }
 
   ctx.isQuestion = isQuestionSentence(sentences[0] ?? input);
@@ -996,7 +1097,7 @@ export async function translateEnglish(text, options = {}) {
       resolution_kind: t.resolution_kind,
     }));
 
-  return {
+  return attachTranslatorPlayback({
     input,
     mode: semantic.mode,
     tokens,
@@ -1015,8 +1116,11 @@ export async function translateEnglish(text, options = {}) {
     frame: buildFrame(tokens),
     interpretations,
     unresolved,
-  };
+  });
 }
+
+/** @deprecated Alias for translateEnglishLegacy — use translate() from fonoran-translate.js. */
+export const translateEnglish = translateEnglishLegacy;
 
 export async function loadGrammarParticlesMeta() {
   try {
