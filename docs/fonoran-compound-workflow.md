@@ -13,7 +13,7 @@
 | `data/fonoran-approved-roots.json` | |
 | `data/fonoran-root-candidates.json` | |
 | `data/fonoran-llm-evaluations.json` — intuition rounds | |
-| `data/fonoran-compound-proposals.json` — LLM gap proposals (in git) | |
+| `data/fonoran-compound-proposals.json` — LLM gap proposals (JSON mirror; **Postgres on Heroku**) | |
 | `tools/fonoran-expression-candidates.js` — `ASSOCIATION_SEEDS` | |
 
 **Build** reads editorial JSON → writes the lab bucket. Production Postgres is seeded once from git; later updates require an explicit import + rebuild (below).
@@ -229,18 +229,25 @@ Preferred-form policy: [fonoran.md](fonoran.md) · LLM protocol: [fonoran-llm-pl
 ## LLM-assisted vocabulary growth loop
 
 The **Vocabulary Survey** is the primary way to generate new compound proposals in bulk.
-Run it once to populate `data/fonoran-compound-proposals.json`; no second LLM call is
-needed on subsequent `fonoran:regenerate` runs.
+On **Heroku** (with `DATABASE_URL`), proposals persist in **PostgreSQL** and are visible
+to the live Review UI on the same dyno. Locally they use `data/fonoran-compound-proposals.json`.
+
+```bash
+# Production (DATABASE_URL → shared Postgres; visible to live Review UI)
+heroku run npm run fonoran:vocab-survey -a fonora
+
+# Local (JSON file)
+npm run fonoran:vocab-survey
+```
+
+No second LLM call is needed on subsequent `fonoran:regenerate` runs.
 
 ```bash
 # Generate compound proposals across all primitive roots (requires ANTHROPIC_API_KEY)
 npm run fonoran:vocab-survey
-
-# Or target a specific batch size
-npm run fonoran:vocab-survey -- --limit=50
 ```
 
-Proposals land in `data/fonoran-compound-proposals.json`. Review them in the
+Proposals land in the compound proposal store (Postgres or local JSON). Review them in the
 **Review** tab at `/tools#gap-workshop`, or via the API
 (`GET /api/fonoran/compound-proposals`).
 

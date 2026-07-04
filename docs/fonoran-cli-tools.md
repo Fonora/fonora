@@ -70,6 +70,8 @@ LLM-generated compound proposals land in a queue reviewed in the **Review** tab 
 
 After `fonoran:vocab-survey`, open **Review** to accept, skip, or reject proposals. Accepted compounds require dictionary regeneration (Advanced tab or `npm run fonoran:regenerate`).
 
+**Production storage:** With `DATABASE_URL` set, the proposal queue uses PostgreSQL (shared by web dynos and `heroku run` one-offs). Without Postgres, proposals use local JSON only. Research artifacts (translation cache, gap reports, refine iterations) live in the **fonora-data** submodule via `resolveDataPath()`.
+
 ---
 
 ## Stranger corpus

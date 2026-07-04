@@ -86,6 +86,11 @@ All runtime Fonoran state lives in **PostgreSQL** when `DATABASE_URL` is set:
 - Concept inventory, root candidates, approved roots
 - English word banks (`localizations/en.json`)
 - Build inputs (compound recipes, phonetics config)
+- **Compound proposal queue** (`fonoran:vocab-survey`, Review tab)
+- Community users, learn progress, community proposals/votes
+- Research notes (published notebook)
+
+**fonora-data submodule** (via `FONORAN_DATA_DIR` / `external/fonora-data`): translation cache, gap reports, stranger corpus, playtest exports, refine iteration logs — research artifacts, not live lab state.
 
 Git-tracked JSON under `data/` is the **seed** format. On first boot with an empty database, the server seeds from those files automatically.
 

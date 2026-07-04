@@ -10,6 +10,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runRegenerate } from '../tools/fonoran-regen.js';
 import { closeStore } from '../tools/fonoran-store.js';
+import { closeCompoundProposalsStore } from '../tools/fonoran-compound-proposals.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const applyLlm = process.argv.includes('--use-llm');
@@ -26,4 +27,5 @@ try {
   process.exitCode = 1;
 } finally {
   await closeStore();
+  await closeCompoundProposalsStore();
 }
