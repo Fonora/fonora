@@ -1,11 +1,15 @@
 /**
- * Fonoran hearing practice: listen to a Fonoran word, pick the meaning.
+ * Fonoran hearing practice: listen to a Fonoran phrase, pick the meaning.
+ *
+ * Prefers the phrase-based domain curriculum when translated phrases are available;
+ * falls back to the word-based ring curriculum.
  */
 import {
   loadFonoranPracticeEntries,
   meaningChoicesForEntry,
 } from './fonoran-practice-words.js';
-import { createCurriculum } from './fonoran-learn-curriculum.js';
+import { loadDomainCurriculum, meaningChoicesForCourseEntry } from './fonoran-course-phrases.js';
+import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curriculum.js';
 import { speakFonoraPhrase, speakFonoraSlow, cancelSpeech } from './fonora-tts.js';
 import {
   createLearnSession,
@@ -14,9 +18,9 @@ import {
   markChoiceStates,
 } from './learn-session-ui.js';
 
-/** @type {import('./fonoran-practice-words.js').PracticeEntry[]} */
+/** @type {Array<import('./fonoran-practice-words.js').PracticeEntry | import('./fonoran-course-phrases.js').CourseEntry>} */
 let entries = [];
-/** @type {import('./fonoran-practice-words.js').PracticeEntry[]} */
+/** @type {Array<import('./fonoran-practice-words.js').PracticeEntry | import('./fonoran-course-phrases.js').CourseEntry>} */
 let pool = [];
 /** @type {ReturnType<typeof createCurriculum> | null} */
 let curriculum = null;
@@ -26,6 +30,8 @@ let currentChoices = [];
 let answered = false;
 /** @type {object | null} */
 let rulesRef = null;
+/** @type {boolean} */
+let usingPhrases = false;
 
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
@@ -45,7 +51,9 @@ function renderChoices() {
   const container = document.getElementById('fonoran-hearing-choices');
   if (!entry || !container) return;
 
-  currentChoices = meaningChoicesForEntry(entry, pool.length ? pool : entries);
+  currentChoices = usingPhrases
+    ? meaningChoicesForCourseEntry(/** @type {any} */ (entry), /** @type {any[]} */ (pool.length ? pool : entries))
+    : meaningChoicesForEntry(/** @type {any} */ (entry), pool.length ? pool : entries);
   answered = false;
   session?.setContinueVisible('fonoran-hearing-next', false);
 
@@ -150,13 +158,21 @@ export async function setupFonoranHearing(rules) {
   });
 
   try {
-    curriculum = createCurriculum('fonoran-hearing', await loadFonoranPracticeEntries(rules));
+    const courseData = await loadDomainCurriculum(rules);
+    if (courseData) {
+      usingPhrases = true;
+      curriculum = createDomainCurriculum('fonoran-hearing', courseData.items, courseData.domains);
+    } else {
+      usingPhrases = false;
+      curriculum = createCurriculum('fonoran-hearing', await loadFonoranPracticeEntries(rules));
+    }
     pool = curriculum.ordered;
     entries = curriculum.currentLessonEntries();
   } catch {
     curriculum = null;
     pool = [];
     entries = [];
+    usingPhrases = false;
   }
 
   const status = document.getElementById('fonoran-hearing-status');
@@ -164,7 +180,7 @@ export async function setupFonoranHearing(rules) {
     status.hidden = entries.length > 0;
     status.textContent = entries.length
       ? ''
-      : 'No practice words loaded. Run the dev server so /api/fonoran/bootstrap can supply the lab dictionary.';
+      : 'No practice content loaded. Run the dev server and build course phrases with npm run fonoran:course-phrases:build.';
   }
 
   document.getElementById('fonoran-hearing-play')?.addEventListener('click', () => {

@@ -5,7 +5,7 @@
 const STORAGE_KEY = 'fonora-learn-progress-v2';
 const LEGACY_STORAGE_KEY = 'fonora-learn-progress-v1';
 
-/** @typedef {'script-writing' | 'script-sounds' | 'script-words' | 'fonoran-reading' | 'fonoran-writing' | 'fonoran-hearing' | 'fonoran-grammar'} LearnSkillId */
+/** @typedef {'script-writing' | 'script-sounds' | 'script-words' | 'fonoran-reading' | 'fonoran-writing' | 'fonoran-hearing' | 'fonoran-grammar' | 'fonoran-speaking'} LearnSkillId */
 
 /** @typedef {{ seen: number, correct: number }} ItemStats */
 
@@ -28,6 +28,7 @@ export const LEARN_SKILL_IDS = [
   'fonoran-writing',
   'fonoran-hearing',
   'fonoran-grammar',
+  'fonoran-speaking',
 ];
 
 /** @type {Record<LearnSkillId, 'script' | 'language'>} */
@@ -39,6 +40,7 @@ export const SKILL_TRACK = {
   'fonoran-writing': 'language',
   'fonoran-hearing': 'language',
   'fonoran-grammar': 'language',
+  'fonoran-speaking': 'language',
 };
 
 function todayLocal() {
@@ -394,4 +396,52 @@ export function setSkillCurriculumMeta(skillId, meta) {
 /** @param {LearnSkillId} skillId */
 export function getSkillCurriculumMeta(skillId) {
   return getSkillProgress(skillId).curriculum ?? defaultCurriculumMeta();
+}
+
+/** Fonoran language skills that share the domain phrase curriculum. */
+export const FONORAN_LANGUAGE_SKILL_IDS = [
+  'fonoran-reading',
+  'fonoran-writing',
+  'fonoran-hearing',
+  'fonoran-grammar',
+  'fonoran-speaking',
+];
+
+/** localStorage flag set after migrating to domain-based phrase courses. */
+export const COURSE_CURRICULUM_MIGRATION_KEY = 'fonoran-course-curriculum-v1';
+
+/** Reset progress for all Fonoran language skills (phrase course migration). */
+export function resetFonoranLanguageSkills() {
+  const state = loadProgress();
+  for (const id of FONORAN_LANGUAGE_SKILL_IDS) {
+    state.skills[id] = defaultSkill();
+  }
+  saveProgress(state);
+}
+
+/**
+ * True when the learner has ring-vocabulary progress but has not acknowledged
+ * the switch to domain phrase courses.
+ * @param {LearnProgress} [progress]
+ */
+export function needsCourseCurriculumMigration(progress = loadProgress()) {
+  if (localStorage.getItem(COURSE_CURRICULUM_MIGRATION_KEY)) return false;
+  return FONORAN_LANGUAGE_SKILL_IDS.some((id) => {
+    const skill = progress.skills[id];
+    if (!skill) return false;
+    const hasLesson = (skill.lessonIndex ?? 0) > 0;
+    const hasXp = (skill.xp ?? 0) > 0;
+    const masteryKeys = Object.keys(skill.mastery ?? {});
+    const ringBasedKeys = masteryKeys.some((k) => !/^[a-z]{2,4}-\d{3}$/i.test(k));
+    return (hasLesson || hasXp) && ringBasedKeys;
+  });
+}
+
+/** Mark domain phrase curriculum as acknowledged (banner dismissed or reset). */
+export function markCourseCurriculumMigrated() {
+  try {
+    localStorage.setItem(COURSE_CURRICULUM_MIGRATION_KEY, new Date().toISOString());
+  } catch {
+    /* ignore */
+  }
 }

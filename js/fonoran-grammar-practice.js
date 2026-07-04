@@ -1,11 +1,19 @@
 /**
- * Fonoran grammar story practice: short sentence translation drills.
+ * Fonoran grammar practice: sentence translation drills.
+ *
+ * Prefers phrase-derived exercises from the domain curriculum when translated
+ * course phrases are available; falls back to dynamically-generated SVO drills
+ * (or the static seed file) when course phrases are absent.
+ *
+ * Grammar practice always uses phrase-level items only (not single-word vocabulary),
+ * so it passes phrasesOnly: true to createDomainCurriculum.
  */
 import { learningPrompt } from './learning-locale.js';
 import { createLearnSession, finishTypingAnswer, setLearnVerdict } from './learn-session-ui.js';
-import { createCurriculum } from './fonoran-learn-curriculum.js';
+import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curriculum.js';
 import { loadFonoranPracticeLab } from './fonoran-practice-words.js';
 import { buildGrammarExercises } from './fonoran-grammar-generate.js';
+import { loadDomainCurriculum } from './fonoran-course-phrases.js';
 
 /** @typedef {{ id: string, promptLang: string, answerRoman: string, promptFonoran: string, answerLang: string, parts?: string[], spelling?: string, tierRank?: number }} GrammarExercise */
 
@@ -30,18 +38,47 @@ function normalize(text) {
 }
 
 /**
- * Build the exercise pool. Prefer sentences generated from the live lab so answers always
- * match the current dictionary; fall back to the static seed file when the lab is offline.
- * @returns {Promise<GrammarExercise[]>}
+ * Map a CourseEntry (phrase item) to a GrammarExercise for bidirectional drills.
+ * domainIndex and itemType are preserved so createDomainCurriculum can bucket correctly.
+ * @param {import('./fonoran-course-phrases.js').CourseEntry} entry
+ * @returns {GrammarExercise & { domainIndex: number, itemType: 'phrase' }}
+ */
+function courseEntryToExercise(entry) {
+  return {
+    id: entry.id,
+    promptLang: entry.meaning,
+    answerRoman: entry.spelling,
+    promptFonoran: entry.spelling,
+    answerLang: entry.meaning,
+    parts: entry.parts,
+    spelling: entry.spelling,
+    tierRank: entry.tierRank,
+    domainIndex: entry.domainIndex,
+    itemType: /** @type {'phrase'} */ ('phrase'),
+  };
+}
+
+/**
+ * Build the exercise pool from course phrases (preferred) or fall back to
+ * dynamically-generated SVO drills / static seed file.
+ * @returns {Promise<{ exercises: GrammarExercise[], domains?: import('./fonoran-course-phrases.js').CourseDomain[] }>}
  */
 async function loadExercisePool() {
+  const courseData = await loadDomainCurriculum(null);
+  if (courseData) {
+    return {
+      exercises: courseData.phraseItems.map(courseEntryToExercise),
+      domains: courseData.domains,
+    };
+  }
+
   try {
     const bootstrap = await loadFonoranPracticeLab();
     const particles = await fetch('/data/fonoran-grammar-particles.json')
       .then((r) => (r.ok ? r.json() : null))
       .catch(() => null);
     const generated = buildGrammarExercises(bootstrap.lab, particles);
-    if (generated.length) return generated;
+    if (generated.length) return { exercises: generated };
   } catch {
     /* fall through to static seeds */
   }
@@ -50,9 +87,9 @@ async function loadExercisePool() {
     const res = await fetch('/data/fonoran-grammar-practice.json');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return data.exercises ?? [];
+    return { exercises: data.exercises ?? [] };
   } catch {
-    return [];
+    return { exercises: [] };
   }
 }
 
@@ -129,7 +166,13 @@ export async function setupFonoranGrammar() {
 
   try {
     const pool = await loadExercisePool();
-    curriculum = createCurriculum('fonoran-grammar', pool, { keyOf: (item) => item.id });
+    if (pool.domains) {
+      curriculum = createDomainCurriculum('fonoran-grammar', pool.exercises, pool.domains, {
+        phrasesOnly: true,
+      });
+    } else {
+      curriculum = createCurriculum('fonoran-grammar', pool.exercises, { keyOf: (item) => item.id });
+    }
     exercises = curriculum.currentLessonEntries();
   } catch {
     curriculum = null;

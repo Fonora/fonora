@@ -14,8 +14,8 @@
     'fonoran-speaking',
   ];
 
-  /** Learn home section anchors (scroll targets, not lesson tabs). */
-  const LEARN_SECTION_HASHES = ['fonora-script', 'fonoran-language'];
+  /** Learn home section anchors (scroll targets / hub views, not lesson tabs). */
+  const LEARN_SECTION_HASHES = ['learn-home', 'fonora-script', 'fonoran-language', 'learn-progress'];
 
   const LEARN_SKILL_IDS = [...LEARN_SCRIPT_SKILL_IDS, ...LEARN_FONORAN_SKILL_IDS];
 

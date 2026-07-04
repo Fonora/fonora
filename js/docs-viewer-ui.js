@@ -18,6 +18,7 @@ import {
   extractMarkdownTitle,
   normalizeGrammarSource,
   renderMarkdown,
+  stripMarkdownLead,
 } from './markdown-render.js';
 import { renderMermaidIn } from './mermaid-render.js';
 import {
@@ -160,10 +161,12 @@ function setSidebarOpen(open) {
 function updateViewerChrome({ title, lead, path }) {
   const titleEl = document.getElementById('docs-viewer-title');
   const leadEl = document.getElementById('docs-viewer-lead');
+  const proseEl = document.getElementById('docs-viewer-prose');
   const githubEl = document.getElementById('docs-viewer-github');
 
   if (titleEl) titleEl.textContent = title;
   if (leadEl) leadEl.textContent = lead;
+  if (proseEl) proseEl.hidden = !lead;
   if (githubEl) {
     githubEl.href = githubDocUrl(path);
     githubEl.hidden = false;
@@ -230,7 +233,8 @@ export async function loadDocViewer(repoPath) {
 
     const title = extractMarkdownTitle(markdown);
     const lead = extractMarkdownLead(markdown);
-    contentEl.innerHTML = renderMarkdown(markdown, {
+    const bodyMarkdown = lead ? stripMarkdownLead(markdown) : markdown;
+    contentEl.innerHTML = renderMarkdown(bodyMarkdown, {
       docPath: path,
       skipTitle: true,
       headingAnchors: true,

@@ -19,6 +19,7 @@ import { runResearchNoteMetaTests } from './research-note-meta.test.js';
 import { runResearchNotesStoreTests } from '../tools/research-notes-store.test.js';
 import { runFonoranAuthTests } from '../tools/fonoran-auth.test.js';
 import { runFonoranLabSearchTests } from '../tools/fonoran-lab-search.test.js';
+import { runFonoranCoursePhrasesTests } from '../tools/fonoran-course-phrases.test.js';
 import { initEspeak, textToIpa } from './ipa.js';
 import { normalizeIpa } from './ipa-normalize.js';
 import { encodeFromIpa } from './ipa-encode-helper.js';
@@ -585,6 +586,10 @@ try {
   labSearchResult = { ok: false, name: 'fonoran lab search', error: e.message };
 }
 
+const coursePhrasesResults = runFonoranCoursePhrasesTests();
+const coursePhrasesFailed = coursePhrasesResults.filter((r) => !r.ok);
+const coursePhrasesPassed = coursePhrasesResults.length - coursePhrasesFailed.length;
+
 async function runCorpusIpaTests() {
   const bundle = loadActiveRulesFixture();
   applyBundleMaps(bundle);
@@ -799,6 +804,7 @@ const allFailed = [
   ...(boundaryMultiResult.ok ? [] : [boundaryMultiResult]),
   ...(boundaryDigraphResult.ok ? [] : [boundaryDigraphResult]),
   ...(labSearchResult.ok ? [] : [labSearchResult]),
+  ...coursePhrasesFailed,
 ];
 const allPassed =
   passed
@@ -806,6 +812,7 @@ const allPassed =
   + researchMetaPassed
   + researchStorePassed
   + authPassed
+  + coursePhrasesPassed
   + corpusResults.filter((r) => r.ok).length
   + (parserResult.ok ? 1 : 0)
   + (composeResult.ok ? 1 : 0)
@@ -829,8 +836,9 @@ const allPassed =
   + (boundaryMultiResult.ok ? 1 : 0)
   + (boundaryDigraphResult.ok ? 1 : 0)
   + (rootWorkflowResult.ok ? 1 : 0)
-  + (labSearchResult.ok ? 1 : 0);
-const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + corpusResults.length + 23;
+  + (labSearchResult.ok ? 1 : 0)
+  + coursePhrasesPassed;
+const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + 23;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

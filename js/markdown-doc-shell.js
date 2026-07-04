@@ -61,13 +61,22 @@ export function renderPageToolbar({
 }
 
 /**
- * @param {Parameters<typeof renderPageToolbar>[0] & { shellId?: string, compact?: boolean, sticky?: boolean }} options
+ * @param {string | string[]} prose
  */
-export function renderPageToolbarShell({ shellId = '', compact = false, sticky = true, ...toolbar }) {
+export function renderHomeProse(prose) {
+  const parts = (Array.isArray(prose) ? prose : [prose]).filter(Boolean);
+  if (!parts.length) return '';
+  return `<div class="home-prose">${parts.map((p) => `<p>${escapeHtml(p)}</p>`).join('')}</div>`;
+}
+
+/**
+ * @param {Parameters<typeof renderPageToolbar>[0] & { shellId?: string, compact?: boolean, sticky?: boolean, prose?: string | string[] }} options
+ */
+export function renderPageToolbarShell({ shellId = '', compact = false, sticky = true, prose = '', ...toolbar }) {
   const idAttr = shellId ? ` id="${escapeHtml(shellId)}"` : '';
   const compactClass = compact ? ' page-toolbar-shell--compact' : '';
   const stickyClass = sticky ? '' : ' page-toolbar-shell--static';
-  return `<div class="page-toolbar-shell${compactClass}${stickyClass}"${idAttr}>${renderPageToolbar(toolbar)}</div>`;
+  return `<div class="page-toolbar-shell${compactClass}${stickyClass}"${idAttr}>${renderPageToolbar(toolbar)}</div>${renderHomeProse(prose)}`;
 }
 
 /**

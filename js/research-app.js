@@ -192,7 +192,7 @@ async function renderTimeline() {
         tag: 'How one experiment led to the next',
         tagTone: researchHeroTagTone('timeline'),
         title: 'Research Timeline',
-        lead:
+        prose:
           'The project unfolded in three phases: building the script, inventing the language, then making communication work in practice. Each card is one research note. Read down the spine in order, or open any entry that catches your eye.',
       })}
 
@@ -307,7 +307,7 @@ function renderIndex() {
         tag: 'Public laboratory notebook',
         tagTone: researchHeroTagTone('index'),
         title: 'Fonora Research',
-        lead:
+        prose:
           'Fonora is an open research project exploring written and spoken language through open-source experiments. This is the lab notebook: each note records one experiment: the question we asked, what we expected, the constraints, what we built, what happened, and the question that followed. Dead ends are kept, not hidden.',
         actionsHtml:
           '<a class="btn btn--primary" href="/research/timeline">See the timeline</a><a class="btn" href="/research#open">Open questions</a>',
@@ -356,7 +356,7 @@ function renderOpen() {
         tag: 'Live research frontier',
         tagTone: researchHeroTagTone('open'),
         title: 'Open Questions',
-        lead:
+        prose:
           'The experiments that are still in progress, plus the loose threads scattered across the notebook and reference docs that we would pick up next.',
       })}
 

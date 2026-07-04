@@ -303,6 +303,57 @@ export function extractMarkdownLead(markdown) {
 }
 
 /**
+ * Remove the first intro block after the document H1 (same block extractMarkdownLead reads).
+ * @param {string} markdown
+ */
+export function stripMarkdownLead(markdown) {
+  const lines = String(markdown).split('\n');
+  const out = [];
+  let passedTitle = false;
+  let skippedLead = false;
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    if (!passedTitle) {
+      out.push(line);
+      if (/^#\s+/.test(trimmed)) passedTitle = true;
+      i += 1;
+      continue;
+    }
+
+    if (!skippedLead) {
+      if (!trimmed) {
+        out.push(line);
+        i += 1;
+        continue;
+      }
+      if (/^#{1,6}\s+/.test(trimmed) || /^[-*+]\s+/.test(trimmed) || /^\d+\.\s+/.test(trimmed) || /^```/.test(trimmed)) {
+        skippedLead = true;
+        out.push(line);
+        i += 1;
+        continue;
+      }
+      if (/^>\s?/.test(trimmed)) {
+        while (i < lines.length && /^>\s?/.test(lines[i])) i += 1;
+        skippedLead = true;
+        continue;
+      }
+      while (i < lines.length && lines[i].trim()) i += 1;
+      skippedLead = true;
+      continue;
+    }
+
+    out.push(line);
+    i += 1;
+  }
+
+  return out.join('\n');
+}
+
+/**
  * @param {string} markdown
  * @param {{ minLevel?: number, maxLevel?: number }} [options]
  * @returns {Array<{ level: number, title: string, id: string }>}

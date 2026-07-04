@@ -10,7 +10,9 @@
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { execSync } from 'node:child_process';
 import '../load-env.js';
 import {
   runTranslationGapReport,
@@ -209,6 +211,16 @@ async function runIteration(n, opts) {
     console.log(`Promoted ${promoted.promoted} compound(s), ${aliasPromoted.promoted} alias(es) to editorial store`);
     build = await buildFonoran({ approveAll: true });
     console.log(`Build: ${build.roots} roots, ${build.compounds} compounds`);
+    try {
+      const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+      console.log('Rebuilding course phrases from translation cache…');
+      execSync('node tools/fonoran-course-phrases-build.js --cache-only', {
+        cwd: root,
+        stdio: 'inherit',
+      });
+    } catch (err) {
+      console.warn('Course phrase rebuild skipped:', err?.message ?? err);
+    }
   }
 
   const afterReport = opts.dryRun
