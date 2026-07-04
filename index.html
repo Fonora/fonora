@@ -101,12 +101,16 @@
   <main class="main-content" id="main-content">
     <!-- Platform home -->
     <section class="platform-home content-page tab-panel" id="tab-platform" data-tab-panel="platform" aria-labelledby="platform-title">
-      <section class="content-section content-section--intro page-hero-split" aria-labelledby="platform-title">
+      <section class="content-section content-section--intro page-hero-split page-hero-lander" aria-labelledby="platform-title">
         <div class="page-hero-split__text">
-          <header class="home-intro-header">
-            <h1 id="platform-title">Fonora</h1>
-            <p class="home-subtitle">An open research project exploring language from first principles.</p>
-          </header>
+          <div class="page-toolbar-shell page-toolbar-shell--static">
+            <header class="page-toolbar">
+              <div class="page-toolbar__text">
+                <h1 class="page-toolbar__title" id="platform-title">Fonora</h1>
+                <p class="page-toolbar__lead">An open research project exploring language from first principles.</p>
+              </div>
+            </header>
+          </div>
           <div class="home-prose">
             <p>
               Fonora is an open-source research project exploring how writing systems and languages can be designed from first principles. It combines experimental software, a phonetic script, and a constructed language to test new ideas about communication.
@@ -124,8 +128,8 @@
         </aside>
       </section>
 
-      <section class="home-section home-section--layers content-section" aria-labelledby="explore-heading">
-        <h2 id="explore-heading">Projects</h2>
+      <section class="home-section home-section--layers content-section" aria-labelledby="platform-explore-heading">
+        <h2 id="platform-explore-heading">Explore</h2>
         <div class="home-layer-cards">
           <article class="home-layer-card home-layer-card--script">
             <p class="home-layer-card__tag">Script</p>
@@ -152,7 +156,28 @@
               <a href="/tools" class="btn btn--primary">Open Tools</a>
             </div>
           </article>
+          <article class="home-layer-card">
+            <p class="home-layer-card__tag">Research</p>
+            <h3>Research notebook</h3>
+            <p>The public laboratory record of how the script and language evolved — experiments, decisions, and open questions.</p>
+            <div class="home-layer-card__actions">
+              <a href="/research" class="btn btn--primary">Open Research</a>
+              <a href="/research/timeline" class="btn">Timeline</a>
+            </div>
+          </article>
+          <article class="home-layer-card">
+            <p class="home-layer-card__tag">Reference</p>
+            <h3>Documentation</h3>
+            <p>Platform overview, grammar notes, and guides for contributors and operators.</p>
+            <div class="home-layer-card__actions">
+              <button type="button" class="btn btn--primary" data-tab="docs">Browse docs</button>
+            </div>
+          </article>
         </div>
+        <article class="content-card script-explore-more">
+          <p class="home-layer-card__tag">Learn more</p>
+          <p class="script-explore-more__text">Follow the <a href="/research/timeline">research timeline</a> or read the current <a href="/research#open">open questions</a>.</p>
+        </article>
       </section>
 
       <section class="home-section home-section--card content-section" aria-labelledby="platform-goals-heading">
@@ -193,16 +218,22 @@
 
     <!-- Learn home -->
     <section class="content-page tab-panel learn-home" id="tab-learn-home" data-tab-panel="learn-home" hidden aria-labelledby="learn-home-title">
-      <header class="learn-home__hero">
-        <h1 id="learn-home-title" class="learn-home__title">Learn</h1>
-        <p class="learn-home__subtitle">Two paths, one system. Learn the Fonora script, the Fonoran language, or both. You don't need to learn the script to learn the language.</p>
-        <div class="learn-home__lang">
-          <label for="learn-language-global">I'm learning in</label>
-          <select id="learn-language-global" class="text-input">
-            <option value="en" selected>English</option>
-          </select>
-        </div>
-      </header>
+      <div class="page-toolbar-shell page-toolbar-shell--static">
+        <header class="page-toolbar">
+          <div class="page-toolbar__text">
+            <h1 class="page-toolbar__title" id="learn-home-title">Learn</h1>
+            <p class="page-toolbar__lead">Two paths, one system. Learn the Fonora script, the Fonoran language, or both. You don't need to learn the script to learn the language.</p>
+          </div>
+          <div class="page-toolbar__actions">
+            <div class="learn-home__lang">
+              <label for="learn-language-global">I'm learning Fonoran in: </label>
+              <select id="learn-language-global" class="text-input">
+                <option value="en" selected>English</option>
+              </select>
+            </div>
+          </div>
+        </header>
+      </div>
 
       <div id="learn-home-progress" class="learn-stats" aria-label="Your learning progress"></div>
 
@@ -345,12 +376,14 @@
 
     <!-- Tools home -->
     <section class="content-page tab-panel" id="tab-tools-home" data-tab-panel="tools-home" hidden aria-labelledby="tools-home-title">
-      <section class="content-section content-section--intro" aria-labelledby="tools-home-title">
-        <header class="home-intro-header">
-          <h1 id="tools-home-title">Tools</h1>
-          <p class="home-subtitle">The software used to build, analyze, and test Fonora Script and Fonoran.</p>
+      <div class="page-toolbar-shell page-toolbar-shell--static">
+        <header class="page-toolbar">
+          <div class="page-toolbar__text">
+            <h1 class="page-toolbar__title" id="tools-home-title">Tools</h1>
+            <p class="page-toolbar__lead">The software used to build, analyze, and test Fonora Script and Fonoran.</p>
+          </div>
         </header>
-      </section>
+      </div>
 
       <section class="home-section home-section--layers content-section" aria-labelledby="tools-metrics-heading">
         <h2 id="tools-metrics-heading">Metrics</h2>
@@ -420,14 +453,9 @@
     </section>
 
     <!-- Admin: Proposal Review -->
-    <section class="tab-panel fonoran-split-page wm-tools-page gw-tools-page" id="tab-gap-workshop" data-tab-panel="gap-workshop" hidden aria-labelledby="gap-workshop-title">
-      <h1 id="gap-workshop-title" hidden>Review</h1>
-      <div class="fonoran-split-shell" data-split-shell>
-        <div class="fonoran-split-chrome wm-chrome gw-chrome">
-          <div class="gw-chrome__head">
-            <p class="gw-chrome__title">Proposal Review</p>
-            <p class="gw-chrome__subtitle sans">Review vocab survey proposals and playtest promotions, then accept them into the vocabulary pipeline.</p>
-          </div>
+    <section class="content-page tab-panel fonoran-split-page wm-tools-page gw-tools-page" id="tab-gap-workshop" data-tab-panel="gap-workshop" hidden aria-label="Proposal Review">
+      <div class="page-toolbar-shell page-toolbar-shell--compact" id="gap-workshop-toolbar-root">
+        <div class="gw-toolbar-filters">
           <div class="gw-chrome__controls">
             <div class="gw-queue-tabs" role="tablist" aria-label="Queue type">
               <button type="button" class="gw-tab-btn chip" data-gw-tab="proposals" data-gw-label="Proposals">Proposals</button>
@@ -454,50 +482,54 @@
     </section>
 
     <!-- Admin: Translation Test -->
-    <section class="content-page tab-panel" id="tab-translation-test" data-tab-panel="translation-test" hidden aria-labelledby="translation-test-title">
-      <h1 id="translation-test-title" hidden>Translation Test</h1>
-      <section class="content-section content-section--intro" aria-labelledby="translation-test-heading">
-        <header class="home-intro-header">
-          <h1 id="translation-test-heading">Translation Test</h1>
-          <p class="home-subtitle">The latest full run of the English corpus through the translator. Red words are concepts the language cannot yet express.</p>
+    <section class="content-page tab-panel" id="tab-translation-test" data-tab-panel="translation-test" hidden aria-labelledby="translation-test-heading">
+      <div class="page-toolbar-shell page-toolbar-shell--static">
+        <header class="page-toolbar">
+          <div class="page-toolbar__text">
+            <h1 class="page-toolbar__title" id="translation-test-heading">Translation Test</h1>
+            <p class="page-toolbar__lead">The latest full run of the English corpus through the translator. Red words are concepts the language cannot yet express.</p>
+          </div>
         </header>
-      </section>
+      </div>
       <div id="translation-test-body"></div>
     </section>
 
     <!-- Admin: Lab Health -->
-    <section class="content-page tab-panel" id="tab-health" data-tab-panel="health" hidden aria-labelledby="health-title">
-      <h1 id="health-title" hidden>Health</h1>
-      <section class="content-section content-section--intro" aria-labelledby="health-heading">
-        <header class="home-intro-header">
-          <h1 id="health-heading">Health</h1>
-          <p class="home-subtitle">Live readability audit of vocabulary — internal consistency, morphological transparency, and learner ergonomics.</p>
+    <section class="content-page tab-panel" id="tab-health" data-tab-panel="health" hidden aria-labelledby="health-heading">
+      <div class="page-toolbar-shell">
+        <header class="page-toolbar">
+          <div class="page-toolbar__text">
+            <h1 class="page-toolbar__title" id="health-heading">Health</h1>
+            <p class="page-toolbar__lead">Live readability audit of vocabulary — internal consistency, morphological transparency, and learner ergonomics.</p>
+          </div>
         </header>
-      </section>
+      </div>
       <div id="tools-health-body"></div>
     </section>
 
     <!-- Admin: Lab progress -->
-    <section class="content-page tab-panel" id="tab-progress" data-tab-panel="progress" hidden aria-labelledby="progress-title">
-      <h1 id="progress-title" hidden>Lab progress</h1>
-      <section class="content-section content-section--intro" aria-labelledby="progress-heading">
-        <header class="home-intro-header">
-          <h1 id="progress-heading">Lab progress</h1>
-          <p class="home-subtitle">Review activity, vocabulary growth, and recent changes in your lab.</p>
+    <section class="content-page tab-panel" id="tab-progress" data-tab-panel="progress" hidden aria-labelledby="progress-heading">
+      <div class="page-toolbar-shell">
+        <header class="page-toolbar">
+          <div class="page-toolbar__text">
+            <h1 class="page-toolbar__title" id="progress-heading">Lab progress</h1>
+            <p class="page-toolbar__lead">Review activity, vocabulary growth, and recent changes in your lab.</p>
+          </div>
         </header>
-      </section>
+      </div>
       <div id="tools-progress-body"><p class="empty">Loading lab progress…</p></div>
     </section>
 
     <!-- Admin: Advanced pipeline -->
-    <section class="content-page tab-panel" id="tab-advanced" data-tab-panel="advanced" hidden aria-labelledby="advanced-title">
-      <h1 id="advanced-title" hidden>Advanced</h1>
-      <section class="content-section content-section--intro" aria-labelledby="advanced-heading">
-        <header class="home-intro-header">
-          <h1 id="advanced-heading">Advanced</h1>
-          <p class="home-subtitle">Advanced tools and features for managing the Fonoran language.</p>
+    <section class="content-page tab-panel" id="tab-advanced" data-tab-panel="advanced" hidden aria-labelledby="advanced-heading">
+      <div class="page-toolbar-shell page-toolbar-shell--static">
+        <header class="page-toolbar">
+          <div class="page-toolbar__text">
+            <h1 class="page-toolbar__title" id="advanced-heading">Advanced</h1>
+            <p class="page-toolbar__lead">Advanced tools and features for managing the Fonoran language.</p>
+          </div>
         </header>
-      </section>
+      </div>
       <div class="box advanced-page">
         <ol class="adv-pipeline">
           <li class="adv-step">
@@ -732,13 +764,16 @@
 
     <!-- Script home -->
     <section class="home-page content-page tab-panel" id="tab-home" data-tab-panel="home" hidden aria-labelledby="home-title">
-      <section class="home-section home-section--intro content-section content-section--intro page-hero-split" aria-labelledby="home-title">
+      <section class="home-section home-section--intro content-section content-section--intro page-hero-split page-hero-lander" aria-labelledby="home-title">
         <div class="page-hero-split__text">
-          <header class="home-intro-header">
-            <h1 id="home-title">Fonora Script</h1>
-            <p class="home-subtitle">A phonetic writing system constructed from speech itself.</p>
-          </header>
-
+          <div class="page-toolbar-shell page-toolbar-shell--static">
+            <header class="page-toolbar">
+              <div class="page-toolbar__text">
+                <h1 class="page-toolbar__title" id="home-title">Fonora Script</h1>
+                <p class="page-toolbar__lead">A phonetic writing system constructed from speech itself.</p>
+              </div>
+            </header>
+          </div>
           <div class="home-prose">
             <p>
               Fonora is an open-source, experimental writing system that represents speech using a small set of symbols based on how sounds are physically produced in the mouth.
@@ -1287,29 +1322,27 @@
     </section>
 
     <!-- Docs viewer -->
-    <section class="doc-viewer-page tab-panel" id="tab-docs" data-tab-panel="docs" hidden aria-labelledby="docs-viewer-title">
-      <div class="doc-viewer-layout">
-        <aside class="doc-viewer-sidebar" id="docs-viewer-sidebar" aria-label="Documentation index"></aside>
-        <div class="doc-viewer-main">
-          <header class="doc-viewer-toolbar">
-            <div class="doc-viewer-toolbar-text">
-              <p class="doc-viewer-toolbar-label">Documentation</p>
-              <h2 id="docs-viewer-title">Documentation</h2>
-              <p id="docs-viewer-path" class="doc-viewer-path"></p>
+    <section class="page-doc-page tab-panel" id="tab-docs" data-tab-panel="docs" hidden aria-labelledby="docs-viewer-title">
+      <div class="page-doc-shell">
+        <div class="page-toolbar-shell" id="docs-viewer-toolbar-root">
+          <header class="page-toolbar">
+            <div class="page-toolbar__text">
+              <h1 class="page-toolbar__title" id="docs-viewer-title">Documentation</h1>
+              <p class="page-toolbar__lead" id="docs-viewer-lead">Select a document from the sidebar.</p>
             </div>
-            <div class="doc-viewer-toolbar-actions">
-              <button type="button" class="btn doc-viewer-sidebar-toggle" id="docs-viewer-sidebar-toggle" aria-expanded="false" aria-controls="docs-viewer-sidebar">Browse docs</button>
-              <a id="docs-viewer-github" class="btn doc-viewer-github-btn" href="https://github.com/Fonora/fonora/blob/main/docs/README.md" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
+            <div class="page-toolbar__actions">
+              <button type="button" class="btn page-doc-sidebar-toggle" id="docs-viewer-sidebar-toggle" aria-expanded="false" aria-controls="docs-viewer-sidebar">Browse docs</button>
+              <a id="docs-viewer-github" class="btn page-toolbar__action" href="https://github.com/Fonora/fonora/blob/main/docs/README.md" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
             </div>
           </header>
-          <div class="doc-viewer-body">
-            <aside id="docs-viewer-toc" class="doc-viewer-toc" aria-label="On this page" hidden></aside>
-            <article id="docs-viewer-content" class="doc-viewer-content markdown-body" aria-live="polite">
-              <p class="doc-viewer-loading">Select a document from the sidebar.</p>
-            </article>
-          </div>
-          <nav id="docs-viewer-pager" class="doc-viewer-pager" aria-label="Document navigation" hidden></nav>
         </div>
+        <div class="page-doc-layout page-doc-layout--no-toc">
+          <aside class="page-doc-sidebar" id="docs-viewer-sidebar" aria-label="Documentation index"></aside>
+          <article id="docs-viewer-content" class="page-doc-content markdown-body" aria-live="polite">
+            <p class="page-doc-loading">Select a document from the sidebar.</p>
+          </article>
+        </div>
+        <nav id="docs-viewer-pager" class="page-doc-pager" aria-label="Document navigation" hidden></nav>
       </div>
     </section>
 

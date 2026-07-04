@@ -56,13 +56,16 @@
 
       <section id="page-home" class="page">
         <div class="fonoran-lander content-page">
-          <section class="content-section content-section--intro page-hero-split">
+          <section class="content-section content-section--intro page-hero-split page-hero-lander" aria-labelledby="language-home-title">
             <div class="page-hero-split__text">
-              <header class="home-intro-header">
-                <h1>Fonoran</h1>
-                <p class="home-subtitle">Communicate by constructing meaning, not memorizing it.</p>
-              </header>
-
+              <div class="page-toolbar-shell page-toolbar-shell--static">
+                <header class="page-toolbar">
+                  <div class="page-toolbar__text">
+                    <h1 class="page-toolbar__title" id="language-home-title">Fonoran</h1>
+                    <p class="page-toolbar__lead">Communicate by constructing meaning, not memorizing it.</p>
+                  </div>
+                </header>
+              </div>
               <div class="home-prose">
                 <p>
                   Fonoran is an experimental language built from a small set of shared semantic roots. Instead of memorizing thousands of words, speakers combine concepts to create new meaning.
@@ -349,7 +352,6 @@
       <section id="page-dictionary" class="page fonoran-split-page">
         <div class="fonoran-split-shell" data-split-shell>
           <div class="fonoran-split-chrome">
-            <p class="fonoran-split-chrome__intro sans">Browse the vocabulary and explore word trees.</p>
             <input type="search" id="dict-search" class="search-bar" placeholder="Search Fonoran or English…" autocomplete="off">
             <div class="toolbar" id="dict-filters">
               <button type="button" class="chip active" data-dict-filter="roots">Roots</button>
@@ -385,27 +387,23 @@
       </section>
 
       <section id="page-grammar" class="page">
-        <div class="grammar-page content-page">
-          <div class="grammar-sticky-shell">
-            <header class="grammar-toolbar">
-              <div class="grammar-toolbar__text">
-                <p class="grammar-toolbar__tag">Living specification</p>
-                <h1 class="grammar-toolbar__title">Grammar</h1>
-                <p class="grammar-toolbar__lead sans">The constitution of Fonoran. Semantic, compositional, and designed for the future translator.</p>
-              </div>
-              <a class="btn grammar-toolbar__source" href="../docs/fonoran-grammar.md" target="_blank" rel="noopener noreferrer">Source markdown</a>
-            </header>
-          </div>
-          <div class="grammar-layout">
-            <aside class="grammar-sidebar" aria-label="Grammar sections">
-              <h3 class="grammar-sidebar__title">On this page</h3>
-              <nav id="grammar-toc" class="grammar-toc" aria-label="Grammar table of contents">
-                <p class="grammar-toc__loading sans">Loading…</p>
-              </nav>
-            </aside>
-            <article id="grammar-body" class="grammar-content markdown-body" aria-live="polite">
-              <p class="grammar-content__loading sans">Loading specification…</p>
-            </article>
+        <div class="page-doc-page content-page">
+          <div class="page-doc-shell">
+            <div class="page-toolbar-shell" id="grammar-toolbar-root">
+              <header class="page-toolbar">
+                <div class="page-toolbar__text">
+                  <h1 class="page-toolbar__title">Grammar</h1>
+                  <p class="page-toolbar__lead sans">The constitution of Fonoran. Semantic, compositional, and designed for the future translator.</p>
+                </div>
+                <a class="btn page-toolbar__action" href="../docs/fonoran-grammar.md" target="_blank" rel="noopener noreferrer">Source markdown</a>
+              </header>
+            </div>
+            <div class="page-doc-layout page-doc-layout--no-sidebar">
+              <article id="grammar-body" class="page-doc-content markdown-body" aria-live="polite">
+                <p class="page-doc-loading sans">Loading specification…</p>
+              </article>
+              <aside id="grammar-toc" class="page-doc-toc" aria-label="On this page" hidden></aside>
+            </div>
           </div>
         </div>
       </section>

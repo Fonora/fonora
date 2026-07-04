@@ -55,7 +55,7 @@ import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
 import { setupTranslatePlayback, setTranslateSymbols } from './fonora-tts-ui.js';
 import { setupSamples, setupHomeSample, ensureSamplesLoaded } from './samples.js';
-import { setupDocsViewer, onDocsTabActivated } from './docs-viewer-ui.js';
+import { setupDocsViewer, onDocsTabActivated, loadDocViewer } from './docs-viewer-ui.js';
 import {
   openDocViewer,
   DEFAULT_DOC_PATH,
@@ -877,6 +877,7 @@ function showTab(tabId) {
 
 window.showTab = showTab;
 window.openDocViewer = openDocViewer;
+window.loadDocViewer = loadDocViewer;
 
 function handleNavTabSelect(tab) {
   if (tab === 'docs') {

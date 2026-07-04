@@ -157,6 +157,25 @@ export function getDocCatalog() {
   return buildDocCatalog();
 }
 
+/**
+ * Layer eyebrow label for a doc path (toolbar tag).
+ * @param {string} repoPath
+ */
+export function getDocLayerLabel(repoPath) {
+  const entry = getDocCatalog().find((item) => item.path === repoPath);
+  if (!entry) return 'Documentation';
+  const layer = DOC_LAYER_ORDER.find((item) => item.id === entry.layer);
+  return layer?.label || 'Documentation';
+}
+
+/**
+ * @param {string} repoPath
+ */
+export function getDocLayerId(repoPath) {
+  const entry = getDocCatalog().find((item) => item.path === repoPath);
+  return entry?.layer || 'essential';
+}
+
 /** Docs the viewer can fetch and render (excludes runtime research notebook routes). */
 export function getNavigableDocCatalog() {
   return getDocCatalog().filter(
@@ -333,6 +352,11 @@ export function resolveMarkdownHref(href, docPath) {
 export function openDocViewer(repoPath) {
   const { path } = splitDocRef(repoPath);
   history.pushState(null, '', docViewerHrefForContext(repoPath));
+  const docsPanel = document.getElementById('tab-docs');
+  if (docsPanel && !docsPanel.hidden && typeof window.loadDocViewer === 'function') {
+    window.loadDocViewer(repoPath).catch(() => {});
+    return path;
+  }
   if (typeof window.showTab === 'function') {
     window.showTab('docs');
   }

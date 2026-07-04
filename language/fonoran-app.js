@@ -15,6 +15,16 @@
     import { experienceMetaFor } from '../tools/fonoran-experience-tiers.js';
     import { bindModalDismiss, setModalBackdropOpen } from '../js/modal-dismiss.js';
     import { extractMarkdownHeadings, normalizeGrammarSource, renderMarkdown } from '../js/markdown-render.js';
+    import {
+      disconnectTocScrollSpy,
+      ensurePageChromeObserver,
+      mountDocToc,
+      scrollToPageAnchor,
+      setupContentAnchorHandlers,
+      setupTocClickHandlers,
+      setupTocScrollSpy,
+      syncPageChromeOffset,
+    } from '../js/markdown-doc-shell.js';
     import { getStoredTheme, isDarkTheme } from '../js/theme.js';
 
     const AUTH = {
@@ -2359,6 +2369,7 @@
       if (header) {
         headerBottom = Math.ceil(header.getBoundingClientRect().bottom);
         document.documentElement.style.setProperty('--fonoran-header-offset', `${headerBottom}px`);
+        document.documentElement.style.setProperty('--app-header-offset', `${headerBottom}px`);
       }
       const shell = activeSplitPageEl()?.querySelector('[data-split-shell]');
       if (shell) {
@@ -2371,9 +2382,9 @@
           `${headerBottom + shell.offsetHeight + gridGap}px`,
         );
       }
-      const grammarChrome = document.querySelector('#page-grammar.active .grammar-sticky-shell');
+      const grammarChrome = document.querySelector('#page-grammar.active .page-toolbar-shell');
       if (grammarChrome) {
-        document.documentElement.style.setProperty('--grammar-chrome-offset', `${grammarChrome.offsetHeight}px`);
+        syncPageChromeOffset(grammarChrome);
       }
     }
 
@@ -2391,7 +2402,7 @@
           splitStickyObserver.observe(shell);
         }
       });
-      const grammarChrome = document.querySelector('#page-grammar .grammar-sticky-shell');
+      const grammarChrome = document.querySelector('#page-grammar .page-toolbar-shell');
       if (grammarChrome && !grammarChrome.dataset.stickyObserved) {
         grammarChrome.dataset.stickyObserved = '1';
         splitStickyObserver.observe(grammarChrome);
@@ -2915,48 +2926,39 @@
 
     async function renderGrammar() {
       ensureSplitStickyObserver();
+      ensurePageChromeObserver(document.getElementById('grammar-toolbar-root'));
       syncSplitStickyOffsets();
       const body = $('grammar-body');
       const toc = $('grammar-toc');
       if (!body) return;
       const token = ++grammarLoadToken;
-      body.innerHTML = '<p class="grammar-content__loading sans">Loading specification…</p>';
-      if (toc) toc.innerHTML = '<p class="grammar-toc__loading sans">Loading…</p>';
+      disconnectTocScrollSpy();
+      body.innerHTML = '<p class="page-doc-loading sans">Loading specification…</p>';
+      mountDocToc(toc, []);
       try {
         const res = await fetch(GRAMMAR_DOC_PATH, { cache: 'no-store' });
         if (!res.ok) throw new Error(`Could not load grammar specification (HTTP ${res.status})`);
         const markdown = normalizeGrammarSource(await res.text());
+        grammarMarkdownCache = markdown;
         if (token !== grammarLoadToken) return;
         const headings = extractMarkdownHeadings(markdown, { minLevel: 2, maxLevel: 3 });
-        if (toc) {
-          toc.innerHTML = headings.length
-            ? `<ul class="grammar-toc__list">${headings
-                .map(
-                  (h) =>
-                    `<li class="grammar-toc__item grammar-toc__item--h${h.level}"><a href="#${escapeHtml(h.id)}" class="grammar-toc__link">${escapeHtml(h.title)}</a></li>`,
-                )
-                .join('')}</ul>`
-            : '<p class="grammar-toc__loading sans">No sections</p>';
-        }
+        mountDocToc(toc, headings);
         body.innerHTML = renderMarkdown(markdown, { docPath: 'docs/fonoran-grammar.md', grammar: true });
         await renderGrammarMermaidIn(body);
         if (token !== grammarLoadToken) return;
         syncSplitStickyOffsets();
-        toc?.querySelectorAll('.grammar-toc__link').forEach((link) => {
-          link.addEventListener('click', (event) => {
-            const href = link.getAttribute('href');
-            if (!href?.startsWith('#')) return;
-            const target = document.getElementById(href.slice(1));
-            if (!target) return;
-            event.preventDefault();
-            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            history.replaceState(null, '', `${window.location.pathname}#grammar`);
-          });
-        });
+        syncPageChromeOffset(document.getElementById('grammar-toolbar-root'));
+        const onGrammarAnchor = (anchorId) => {
+          scrollToPageAnchor(document.getElementById(anchorId));
+          history.replaceState(null, '', `${window.location.pathname}#grammar`);
+        };
+        setupContentAnchorHandlers(body, onGrammarAnchor);
+        setupTocClickHandlers(onGrammarAnchor);
+        setupTocScrollSpy(body);
       } catch (e) {
         if (token !== grammarLoadToken) return;
         body.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`;
-        if (toc) toc.innerHTML = '';
+        mountDocToc(toc, []);
       }
     }
 
@@ -3002,11 +3004,15 @@
       try {
         body.innerHTML = `
         <div class="content-page progress-page">
-          <section class="content-section content-section--intro">
-            <header class="home-intro-header">
-              <h1>Lab progress</h1>
-              <p class="home-subtitle">Review activity, vocabulary growth, and recent changes in your lab.</p>
+          <div class="page-toolbar-shell">
+            <header class="page-toolbar">
+              <div class="page-toolbar__text">
+                <h1 class="page-toolbar__title">Lab progress</h1>
+                <p class="page-toolbar__lead">Review activity, vocabulary growth, and recent changes in your lab.</p>
+              </div>
             </header>
+          </div>
+          <section class="content-section">
             <div class="health-progress-header">
               <h2 class="section-h">Your progress</h2>
               <button type="button" class="health-undo-btn" id="undo-btn"${undoDisabled ? ' disabled' : ''} data-write>↶ Undo</button>
