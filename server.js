@@ -9,6 +9,10 @@ import { handleFonoranApi } from './tools/fonoran-api.js';
 import { handleResearchApi } from './tools/research-notes-api.js';
 import { maybeAutoSeedOnStartup, initStore } from './tools/fonoran-store.js';
 import {
+  initCompoundProposalsStore,
+  maybeImportCompoundProposalsFromJson,
+} from './tools/fonoran-compound-proposals.js';
+import {
   getResearchBootstrapData,
   initResearchNotesStore,
   warmPublishedCache,
@@ -205,8 +209,10 @@ async function bootstrapServerData() {
   try {
     await initStore();
     await initResearchNotesStore();
+    await initCompoundProposalsStore();
     await warmPublishedCache();
     await maybeAutoSeedOnStartup();
+    await maybeImportCompoundProposalsFromJson();
   } catch (err) {
     console.warn('Fonoran startup init skipped:', err instanceof Error ? err.message : err);
   }

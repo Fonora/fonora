@@ -92,7 +92,7 @@ async function main() {
     console.log(`  OK   ${analysis.word} → ${analysis.classification} (${analysis.valid_compositions?.length ?? 0} valid comps)`);
   }
 
-  console.log(`\nSaved ${saved} proposal(s) to data/fonoran-compound-proposals.json`);
+  console.log(`\nSaved ${saved} proposal(s) to the compound proposal store.`);
   console.log('Review in Word Manager, accept, then npm run fonoran:build');
 }
 

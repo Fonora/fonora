@@ -284,4 +284,6 @@ main().catch(err => {
   process.exitCode = 1;
 }).finally(async () => {
   await closeStore();
+  const { closeCompoundProposalsStore } = await import('../tools/fonoran-compound-proposals.js');
+  await closeCompoundProposalsStore();
 });

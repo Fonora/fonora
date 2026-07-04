@@ -3,7 +3,8 @@
  * Shared by CLI scripts and Advanced GUI API routes.
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { loadCompoundProposals } from './fonoran-compound-proposals.js';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildFonoran } from './fonoran-build.js';
@@ -163,14 +164,11 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
  *
  * @returns {Promise<{ promoted: number, skipped: number, already_present: number }>}
  */
-export async function promoteAcceptedProposals(baseDir = ROOT) {
-  const proposalsPath = join(baseDir, 'data/fonoran-compound-proposals.json');
-
-  if (!existsSync(proposalsPath)) {
+export async function promoteAcceptedProposals(_baseDir = ROOT) {
+  const proposalsDoc = await loadCompoundProposals();
+  if (!proposalsDoc?.proposals?.length) {
     return { promoted: 0, skipped: 0, already_present: 0 };
   }
-
-  const proposalsDoc = JSON.parse(readFileSync(proposalsPath, 'utf8'));
   const compoundsDoc = (await readDoc('compounds')) ?? { compounds: [] };
 
   const existingConcepts = new Set((compoundsDoc.compounds ?? []).map(c => c.concept));
@@ -240,13 +238,11 @@ export async function promoteAcceptedProposals(baseDir = ROOT) {
  *
  * @returns {Promise<{ promoted: number, skipped: number, already_present: number }>}
  */
-export async function promoteAcceptedAliases(baseDir = ROOT) {
-  const proposalsPath = join(baseDir, 'data/fonoran-compound-proposals.json');
-  if (!existsSync(proposalsPath)) {
+export async function promoteAcceptedAliases(_baseDir = ROOT) {
+  const proposalsDoc = await loadCompoundProposals();
+  if (!proposalsDoc?.proposals?.length) {
     return { promoted: 0, skipped: 0, already_present: 0 };
   }
-
-  const proposalsDoc = JSON.parse(readFileSync(proposalsPath, 'utf8'));
   const accepted = (proposalsDoc.proposals ?? [])
     .filter(p => p.status === 'accepted' && p.classification === 'alias');
 
