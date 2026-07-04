@@ -14,17 +14,17 @@ Fonora has three projects plus a public research notebook, surfaced as four top-
 | **Fonora** | [`/`](/) | Platform home: the project, the hypothesis, research notebook | This document · [`/research`](/research) · [`/research/timeline`](/research/timeline) |
 | **Script** | [`/script`](/script) | Fonora Script: phonetic writing system | [language-rules.md](language-rules.md) · [Sound Grid](/script#grid) |
 | **Language** | [`/language`](/language) | Fonoran: experimental language built on Fonora Script | [fonoran-constitution.md](fonoran-constitution.md) · [fonoran.md](fonoran.md) |
-| **Learn** | [`/learn`](/learn) | Learner-facing practice for Fonora Script | [`/learn`](/learn) · [Reading](/learn#reading) · [Writing](/learn#writing) |
+| **Learn** | [`/learn`](/learn) | Structured drills: Fonora Script + Fonoran language skills | [fonoran-learn.md](fonoran-learn.md) · [`/learn`](/learn) |
 | **Tools** | [`/tools`](/tools) | QA/build tooling for Script and Language (sign-in required when OAuth is configured) | [`/tools#tools-home`](/tools#tools-home) |
 
 The **Fonora** sub-nav links to **About**, **Research**, **Timeline**, **Open Questions**, and **Docs**. The research notebook is the narrative layer of the project: each major experiment is written up as a standalone research note (question → hypothesis → constraints → implementation → outcome → next question), with a [visual timeline](/research/timeline) connecting them. The docs in this folder are the *reference* layer the notebook links to.
 
-[`/learn`](/learn) is public learner-facing practice (Learn the Sounds, Breakdown, Samples,
-Spelling Practice). [`/tools`](/tools) hosts both Script QA/debugging (Pronunciation Testing,
-Validation, Samples) **and** the Fonoran builder admin tools (Word Manager, Gap Workshop,
-Advanced pipeline, Translation Test). `/script`, `/learn`, and `/tools` are served by the same
-front-end bundle and reuse the same panels — there is no duplicated tool logic. `/language` is
-a separate public app (Translator, Dictionary, Grammar, Puzzle).
+[`/learn`](/learn) is public structured practice: **Fonora Script** skills (sounds, writing, words)
+and **Fonoran language** skills (reading, writing, hearing, grammar). See [fonoran-learn.md](fonoran-learn.md).
+[`/tools`](/tools) hosts Script QA/debugging (Pronunciation Testing, Validation, Samples)
+**and** the Fonoran builder admin tools (Word Manager, Gap Workshop, Advanced pipeline, Translation Test).
+`/script`, `/learn`, and `/tools` share the same front-end bundle. `/language` is a separate public app
+(Translator, Dictionary, Grammar, Puzzle).
 
 ```mermaid
 flowchart TB
@@ -40,16 +40,34 @@ flowchart TB
       Dict[Dictionary]
       Gram[Grammar]
     end
+    subgraph learn [Learn]
+      ScriptLearn["Script skills\nsounds · writing · words"]
+      FonoranLearn["Fonoran skills\nreading · writing · hearing · grammar"]
+    end
     subgraph tools [Tools]
-      Learn["Learn\n(Learn the Sounds, Breakdown, Samples, Spelling Practice)"]
-      ScriptTools["Tools: Script QA\n(Pronunciation Testing, Validation, Samples)"]
-      LangTools["Tools: Admin\n(Word Manager, Gap Workshop, Advanced, Translation Test)"]
+      ScriptTools["Script QA\n(Pronunciation Testing, Validation, Samples)"]
+      LangTools["Admin\n(Word Manager, Gap Workshop, Advanced, Translation Test)"]
     end
   end
-  script -. "reused panels" .-> Learn
+  script -. "reused panels" .-> learn
   script -. "reused panels" .-> ScriptTools
+  learn -->|"vocabulary from bootstrap"| language
   tools -->|"builds & tests"| language
   tools -->|"builds & tests"| script
+```
+
+```mermaid
+flowchart LR
+  subgraph learnerPath [Learner path]
+    LearnRoute["/learn\ndrills + XP"]
+    LangRoute["/language\nTranslator · Dictionary · Puzzle"]
+  end
+  subgraph builderPath [Builder path]
+    ToolsRoute["/tools\nbuild + test"]
+  end
+  LearnRoute --> LangRoute
+  ToolsRoute -->|"lab inventory"| LearnRoute
+  ToolsRoute -->|"lab inventory"| LangRoute
 ```
 
 For the full Fonoran data pipeline (concepts → roots → compounds → lab), see the diagram in **[fonoran.md](fonoran.md)**.
@@ -72,9 +90,10 @@ intertwined by design — splitting the data model is explicitly out of scope fo
 ### Learn Fonoran
 
 1. [fonoran-constitution.md](fonoran-constitution.md) — philosophy, the campfire test, the tiered language
-2. [`/language`](/language) — About Fonoran, then Translator / Dictionary / Grammar
-3. [`/learn`](/learn) — reading, breakdown, samples, and spelling practice
-4. [fonoran-grammar.md](fonoran-grammar.md)
+2. [fonoran-learn.md](fonoran-learn.md) — Learn architecture (Script + Fonoran skill tracks)
+3. [`/learn`](/learn) — structured drills: [`#fonoran-reading`](/learn#fonoran-reading), [`#fonoran-writing`](/learn#fonoran-writing), [`#fonoran-hearing`](/learn#fonoran-hearing), [`#fonoran-grammar`](/learn#fonoran-grammar)
+4. [`/language`](/language) — Translator / Dictionary / Grammar / Puzzle (exploration)
+5. [fonoran-grammar.md](fonoran-grammar.md)
 
 ### Build the language
 
@@ -118,6 +137,7 @@ When `DATABASE_URL` is set, the lab can live in PostgreSQL. JSON is imported on 
 ## Related
 
 - Doc index: [README.md](README.md)
+- Fonoran Learn: [fonoran-learn.md](fonoran-learn.md)
 - Fonoran philosophy: [fonoran-constitution.md](fonoran-constitution.md)
 - Third-party licenses: [third-party.md](third-party.md)
 - Contributing: [../CONTRIBUTING.md](../CONTRIBUTING.md)

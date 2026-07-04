@@ -6,6 +6,8 @@ Pronunciation Validation Mode is a **testing tool** that checks whether Fonora p
 
 ## Pipeline under test
 
+Canonical architecture diagram: [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md#architecture).
+
 ```
 English source
     ↓  eSpeak NG

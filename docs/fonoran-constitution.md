@@ -64,6 +64,23 @@ We optimize for **successful communication**, not perfect decomposition.
   even though only the preferred form is **produced as output**.
 - A generated compound is good if **another root-knower would likely understand it.**
 
+```mermaid
+flowchart LR
+  subgraph input [Listener accepts]
+    Alt1["alternate A"]
+    Alt2["alternate B"]
+    Pref["preferred form"]
+  end
+  subgraph dict [Dictionary record]
+    Out["output production\npreferred only"]
+    In["input acceptance\npreferred + alternates"]
+  end
+  Alt1 --> In
+  Alt2 --> In
+  Pref --> Out
+  Pref --> In
+```
+
 ## Roots are still central
 
 We do **not** abandon roots. Roots are the shared key. Everything else is built by

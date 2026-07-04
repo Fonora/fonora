@@ -4,15 +4,36 @@
 
 ## Architecture
 
-Fonora uses a single pronunciation pipeline:
+Fonora uses a single pronunciation pipeline for **Translator, Breakdown, and Samples**. The **Reader** replays Fonora symbols with Piper TTS — it does not re-run encoding.
 
+```mermaid
+flowchart TB
+  subgraph encodePath [Encoding — Translator · Breakdown · Samples]
+    Text["Text + lang"]
+    ES["eSpeak NG\njs/ipa.js"]
+    Norm["normalizeIpa\njs/ipa-normalize.js"]
+    Enc["encodeSounds\njs/encode.js"]
+    Sym["Fonora symbols"]
+    Dec["decode.js\nround-trip"]
+    Text --> ES --> Norm --> Enc --> Sym
+    Sym --> Dec
+  end
+  subgraph rules [Authoritative rules]
+    LR["language-rules.md\ngrid · vowels · ipa map"]
+    LR --> Norm
+    LR --> Enc
+  end
+  subgraph readerPath [Playback — Reader only]
+    Sym2["Fonora symbols"]
+    Piper["Piper / ONNX\npiper-tts-web"]
+    Audio["Listen audio"]
+    Sym2 --> Piper --> Audio
+  end
 ```
-Text → eSpeak NG → IPA → ipa-normalize.js → encodeSounds() → Fonora symbols → decode.js
-```
 
-The former English spelling-based Legacy Encoder (`normalize.js`, `encoder-rules.md`, `encoder-pipeline.js`) has been removed.
+Legacy English spelling encoder removed. Every word uses eSpeak IPA as pronunciation source (`js/ipa-pipeline.js`).
 
-There is **no dictionary or glossary bypass**: every word uses eSpeak IPA as the pronunciation source (`js/ipa-pipeline.js`).
+See also: [multilingual-support.md](multilingual-support.md) (language matrix) · [ipa-normalize.md](ipa-normalize.md) (consonant/vowel maps) · [espeak-integration.md](espeak-integration.md)
 
 ## eSpeak NG integration
 

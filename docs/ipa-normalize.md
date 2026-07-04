@@ -8,9 +8,20 @@ Raw eSpeak IPA passes through `normalizeIpa()` before encoding.
 - **Consonants**: grid + derived IPA from markdown via `buildConsonantMapFromRules()`, merged with `SUPPLEMENTAL_CONSONANT_MAP` for multilingual variants.
 - **Unknown IPA**: logs a warning and maps to fallback vowel phoneme `a` (never `?` in the phoneme string).
 
-`registerConsonantMapFromRules(rules)` runs when the rules bundle loads (app startup and tests).
+`registerConsonantMapFromRules(rules)` runs when the rules bundle loads (app startup and tests). `npm test` includes **consonant map is built from language rules**, which fails if markdown IPA tokens are missing from the active map.
 
-`npm test` includes **consonant map is built from language rules**, which fails if markdown IPA tokens are missing from the active map.
+## Vowel normalization decision
+
+```mermaid
+flowchart TD
+  IPA["IPA vowel token"]
+  Q{"lang === en?"}
+  IPA --> Q
+  Q -->|yes| Overlay["ENGLISH_IPA_VOWEL_NORMALIZATION\nengineering overlay"]
+  Q -->|no| Rules["rules.ipaVowelMap\nfrom language-rules.md"]
+  Overlay --> Phoneme["Fonora phoneme key"]
+  Rules --> Phoneme
+```
 
 ## English vowel engineering table (`ENGLISH_IPA_VOWEL_NORMALIZATION`)
 
@@ -29,10 +40,6 @@ Temporary mappings in `js/ipa-normalize.js`, consistency over linguistic perfect
 | ʊə | u | CURE (engineering) |
 
 Run `npm run audit:ipa-vowels` to regenerate the token inventory report from eSpeak en-us output.
-
-`registerConsonantMapFromRules(rules)` runs when the rules bundle loads (app startup and tests).
-
-`npm test` includes **consonant map is built from language rules**, which fails if markdown IPA tokens are missing from the active map.
 
 ## From language-rules.md (generated at load)
 

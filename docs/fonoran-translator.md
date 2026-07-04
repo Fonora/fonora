@@ -249,6 +249,7 @@ Legacy English golden suite still exercises `engine=legacy` until LLM coverage m
 
 ## Related
 
+- [fonoran-learn.md](fonoran-learn.md) — structured drills (shared vocabulary, different exercise engine)
 - [fonoran-grammar.md · Rule 7](fonoran-grammar.md#rule-7-translator-architecture) — constitutional translator rules
 - [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — legacy English compiler
 - [RN-28](research-notes/RN-28-multilingual-llm-semantic-compiler.md) — decision record

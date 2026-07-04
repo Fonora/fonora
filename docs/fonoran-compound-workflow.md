@@ -4,6 +4,53 @@
 >
 > See also: [fonoran.md](fonoran.md) (pipeline overview), [deploy.md](deploy.md) (Heroku), [fonoran-constitution.md](fonoran-constitution.md) (success criteria).
 
+## Build vs regenerate — which command?
+
+```mermaid
+flowchart TD
+  Q{"What changed?"}
+  Q -->|"Editorial JSON only\n(compounds.json, seeds)"| Build["npm run fonoran:build:approved\nrebuilds lab from git seeds"]
+  Q -->|"Heroku deploy\nor accepted proposals"| Regen["npm run fonoran:regenerate\nimport seeds → promote proposals → build"]
+  Q -->|"Fresh clone / reset lab"| Reset["npm run fonoran:reset\nthen build"]
+  Build --> Local["Local: JSON bucket or Postgres"]
+  Regen --> Prod["Production: Advanced UI\nor heroku run regenerate"]
+```
+
+| Situation | Command | Why |
+| --- | --- | --- |
+| Edited `compounds.json` locally | `fonoran:build:approved` | Rebuilds lab from editorial JSON |
+| Merged to Heroku | **`fonoran:regenerate`** (not build alone) | Postgres still has old editorial state until import + full pipeline |
+| Accepted proposals in Review | `fonoran:regenerate` | Promotes queue → compounds.json → build |
+| Destructive fresh start | `fonoran:reset` then `build` | Wipes lab |
+
+---
+
+## Storage paths (local vs production)
+
+```mermaid
+flowchart TB
+  subgraph git [Git seeds — committed]
+    Compounds["fonoran-compounds.json"]
+    Inventory["fonoran-concept-inventory.json"]
+    Roots["fonoran-approved-roots.json"]
+  end
+  subgraph local [Local dev — no DATABASE_URL]
+    JSONLab["fonoran-sound-bucket.json\ngitignored"]
+    JSONProp["fonoran-compound-proposals.json"]
+  end
+  subgraph prod [Production — DATABASE_URL set]
+    PGLab["PostgreSQL lab rows"]
+    PGProp["PostgreSQL proposal queue"]
+  end
+  git -->|"fonoran:build"| JSONLab
+  git -->|"fonoran:regenerate"| PGLab
+  git -->|"editorial:import"| PGLab
+  JSONProp -->|"local vocab-survey"| JSONProp
+  PGProp -->|"heroku run vocab-survey"| PGProp
+```
+
+---
+
 ## What gets committed vs what stays runtime-only
 
 | In git (seed / editorial) | Runtime only (not in git) |
@@ -152,7 +199,7 @@ npm run fonoran:regenerate
 npm run fonoran:regenerate -- --use-llm
 ```
 
-Reference: [fonoran-compound-workflow.md](fonoran-compound-workflow.md) · [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md)
+Reference: [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md)
 
 **Step C — verify**
 
@@ -216,6 +263,20 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 ---
 
 ## Authority tiers (reminder)
+
+```mermaid
+flowchart TB
+  subgraph locked [Locked — optimizer will not demote]
+    Playtest["playtest / human\npuzzle conversation winner"]
+  end
+  subgraph advisory [Advisory]
+    LLM["llm_consensus\nintuition + length gate"]
+    Heur["heuristic\noptimize-compounds"]
+  end
+  Playtest -->|"constitutional authority"| Preferred["preferred form\nin compounds.json"]
+  LLM --> Preferred
+  Heur -->|"--length-only safe bulk"| Preferred
+```
 
 1. **`playtest` / `human`** — locked; optimizer will not demote
 2. **Human puzzle conversation** — decides preferred form

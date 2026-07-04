@@ -24,6 +24,31 @@
 
 **Next:** Human-test LLM-promoted compounds in [Puzzle Conversation](/language#puzzle) — use `#puzzle?concept=<id>` for targeted rounds.
 
+### v3 CIB protocol (active)
+
+```mermaid
+flowchart TB
+  subgraph tasks [Three tasks per candidate]
+    A["Task A — cold recovery\nno decomposition shown"]
+    B["Task B — composition naturalness\nrank seed candidates"]
+    C["Task C — repair dialogue\nafter failed recovery"]
+  end
+  subgraph personas [Four fixed personas]
+    P1["literal"]
+    P2["skeptical"]
+    P3["cross_lingual"]
+    P4["repair_focused"]
+  end
+  subgraph output [Promotion signal]
+    IW["intuition_weight\nTask B primary"]
+    Promo["optimize --use-llm\n≥75% recovery + ≥15% margin"]
+  end
+  tasks --> personas
+  B --> IW
+  IW --> Promo
+  Playtest["human / playtest lock\nconstitutional authority"] -.->|"overrides"| Promo
+```
+
 ---
 
 ## 0. Protocol history

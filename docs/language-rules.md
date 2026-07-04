@@ -39,6 +39,28 @@ The **4 manner modifiers** plus the **vowel indicator** (keyboard **0**).
 
 Symbols are **composed** from Places + Modifiers at load time (`modifier + place`). Five places only, no derived symbols.
 
+```mermaid
+flowchart LR
+  subgraph places [5 Places]
+    P1["∋ lips"]
+    P2["∩ front"]
+    P3["⌓ middle"]
+    P4["∪ back"]
+    P5["⊃ throat"]
+  end
+  subgraph modifiers [4 Modifiers + vowel]
+    M0["⚬ vowel"]
+    M1["plain"]
+    M2["⌇ voice"]
+    M3["⌀ friction"]
+    M4["⏌ nasal"]
+    M5["ᵔ glide"]
+  end
+  M1 --> Cell["grid cell\nmodifier + place → symbol"]
+  P1 --> Cell
+  M0 --> Vowel["⚬X simple\n⚬XᵔY diphthong"]
+```
+
 | modifier_id | place_id | sound | ipa | status | explanation |
 | --- | --- | --- | --- | --- | --- |
 | plain | lips | p | /p/ | defined | Plain lips stop |

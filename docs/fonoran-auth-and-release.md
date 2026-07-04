@@ -8,6 +8,18 @@ This document covers authentication, community features (progress sync, votes, p
 
 ## Auth tiers
 
+```mermaid
+flowchart TB
+  Public["Public\nno sign-in"]
+  Community["Community\nGoogle — any verified email"]
+  Admin["Admin\nGoogle — ADMIN_EMAILS allowlist"]
+  Public -->|"Sign in with Google"| Community
+  Community -->|"email in ADMIN_EMAILS"| Admin
+  Public -->|"read only"| CapPub["Dictionary · Learn local\nvote tallies · analyze preview"]
+  Community --> CapCom["Sync Learn progress\nvote · submit proposals"]
+  Admin --> CapAdmin["Word Manager · lab writes\nresolve proposals · Advanced ops"]
+```
+
 | Tier | Sign-in | Capabilities |
 | --- | --- | --- |
 | **Public** | none | Read dictionary, learn (local progress), browse vote tallies |
@@ -15,6 +27,13 @@ This document covers authentication, community features (progress sync, votes, p
 | **Admin** | Google (`ADMIN_EMAILS`, default `info@fonora.org`) | Word Manager canon edits, approve/reject lab, promote proposals |
 
 ### Routes
+
+| Access | Methods | Examples |
+| --- | --- | --- |
+| Public | GET | `/api/fonoran/words`, lab, dictionary, health |
+| Public | POST | `/api/fonoran/analyze/word` (preview) |
+| Community | POST (session) | vote, `/api/fonoran/me/progress`, proposals |
+| Admin | POST/PATCH (session) | lab writes, concept edits, proposal resolve |
 
 ```
 GET  /auth/session
@@ -41,85 +60,11 @@ POST/PATCH lab + concepts routes     admin only
 | `SESSION_SECRET` | Required to enable auth |
 | `ADMIN_EMAILS` | Comma-separated admin allowlist (default `info@fonora.org`) |
 | `DATABASE_URL` | Recommended for user/progress/vote persistence |
+| `FONORAN_AUTH` | Opt-out only: set to `off` locally to disable auth when OAuth is configured |
 
 Community data is stored in `fonoran_users`, `fonoran_learn_progress`, `fonoran_proposals`, `fonoran_votes` (Postgres) or `data/fonoran-community.json` (JSON mode).
 
----
-
-## Legacy notes (pre–Word Manager)
-
-## Goals
-
-| Goal | Approach |
-| --- | --- |
-| **Fonora script** stays open | Public read + GitHub PRs for `language-rules.md` and encoder changes |
-| **Fonoran language** edits are controlled | Google OAuth for builder write access; public read-only dictionary |
-| **Contributor intake** | Google Form (Workspace), no in-app form, no admin panel |
-| **Admin workflow** | You sign in with Google, use existing builder tabs (Concept Editor, Review, etc.) |
-| **Open source repo** | Auth middleware and docs in git; secrets and live vocabulary stay out of git |
-
----
-
-## What we are *not* building
-
-- In-app intake / submission queue
-- Separate admin panel or inbox UI
-- Custom TOTP / 2FA inside the app (Google Workspace 2-Step Verification covers this)
-
----
-
-## Authentication (Phase 1: required before production writes)
-
-### Identity provider
-
-**Google Workspace** for `@fonora.org`:
-
-1. Create Workspace org and primary admin account
-2. Enable **2-Step Verification** on admin account (mandatory)
-3. Create OAuth 2.0 **Web application** credentials in Google Cloud Console
-4. Authorized redirect URI: `https://fonora.org/auth/callback` (and `http://localhost:8000/auth/callback` for dev)
-
-### App behavior
-
-```
-Public (no login)
-  GET  /api/fonoran/*         , lab, dictionary, graph, health, lexicon
-  GET  /fonoran/              , lander, dictionary, explorer (read-only UI)
-
-Admin (@fonora.org Google session)
-  POST /api/fonoran/*         , create roots, compounds, review, DDA, undo
-  PATCH /api/fonoran/*        , edit sounds, compounds, review state
-  /fonoran/ builder tabs      , Concept Editor, Word Creator, Review, Advanced
-```
-
-### Implementation sketch
-
-1. Add session middleware to [`server.js`](../server.js) (httpOnly, Secure, SameSite=Lax cookie)
-2. Routes: `GET /auth/google`, `GET /auth/callback`, `POST /auth/logout`, `GET /auth/session`
-3. In [`tools/fonoran-api.js`](../tools/fonoran-api.js): allow all **GET**; require valid session for **POST** and **PATCH**
-4. Restrict login to `ALLOWED_DOMAIN=fonora.org` or explicit `ADMIN_EMAILS` allowlist
-5. In [`fonoran/fonoran-app.js`](../fonoran/fonoran-app.js): show **Sign in with Google** when unauthenticated; hide or disable write controls (server enforcement is authoritative)
-
-### Heroku env vars (new)
-
-| Variable | Purpose |
-| --- | --- |
-| `GOOGLE_CLIENT_ID` | OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | OAuth client secret |
-| `SESSION_SECRET` | Random 32+ byte secret for signing cookies |
-| `ALLOWED_DOMAIN` | e.g. `fonora.org`, only `@fonora.org` accounts may write |
-| `AUTH_CALLBACK_URL` | Optional override; default derived from request host |
-
-Existing vars unchanged: `DATABASE_URL`, `FONORAN_STORAGE`, etc.
-
-### Dev mode
-
-Without OAuth env vars, local dev can either:
-
-- Stay fully open (document clearly), or
-- Use `FONORAN_AUTH=off` explicitly for local builder work
-
-Production must **never** run with writes enabled and no auth when `DATABASE_URL` is set.
+Learn progress sync: see [fonoran-learn.md](fonoran-learn.md).
 
 ---
 
@@ -145,15 +90,6 @@ Use a **Google Form** in Workspace (linked from `/language/` lander and [CONTRIB
 | Can we contact you at your `.edu` address? | Yes / No | Yes |
 | Anything else we should know? | Paragraph | No |
 
-### Form settings
-
-- Collect email addresses (Workspace)
-- Limit to one response per Google account (optional)
-- Notification email to `you@fonora.org` on each submission
-- Do **not** embed Form API keys in the repo, link to the public Form URL only
-
-### Placeholder URL
-
 Replace `FORM_URL_TBD` in docs/UI once the Form is created:
 
 ```
@@ -173,77 +109,22 @@ https://docs.google.com/forms/d/e/FORM_ID/viewform
 | Docs, tests, CLI tools | PostgreSQL rows for production vocabulary |
 | Auto-built lexicon source logic | `data/fonoran-english-lexicon.json` (gitignored, built at runtime) |
 
-Security does not depend on hiding code. Attackers cannot write without a valid Google session on an allowlisted account.
-
 **Fonora contributions:** GitHub issues / PRs (existing templates).
 
 **Fonoran contributions:** Google Form → manual review → you add approved items while signed in.
 
 ---
 
-## Branch review: `feature/fonoran-language-experiment`
-
-Reviewed against `main` (6 commits, 53 files, ~14.6k lines). **Nothing in the committed history should be removed** for open-source release.
-
-### Clean ✅
-
-- No `.env`, credentials, or connection strings in git history
-- `data/fonoran-sound-bucket.json` never committed (gitignored)
-- `data/fonoran-english-lexicon.json` never committed (gitignored)
-- No personal emails or API keys in tracked files
-- `npm test` passes (71/71) on branch
-- Reference semantics JSON under `data/` is intentional public reference data, not live vocabulary
-
-### Committed data (intentional)
-
-| File | Role |
-| --- | --- |
-| `fonoran-gen3-*.json` | DDA reference inventory for inference and English picker |
-| `fonoran-canonical-*.json` | Canonical primitive registry (generator / audit reference) |
-| `fonoran-stress-test-concepts.json` | Offline stress-test fixture |
-
-Live vocabulary on production lives in **PostgreSQL** (or local gitignored JSON), not in these files.
-
-### Blockers before production deploy ⚠️
-
-1. **Unauthenticated write API**: all `POST`/`PATCH` routes in `fonoran-api.js` are open today. Do **not** deploy with `DATABASE_URL` until Phase 1 auth ships (or temporarily disable mutating routes).
-2. **Dangerous ops exposed**: `POST /api/fonoran/lab/seed`, `reset-review`, and `undo` must require admin session.
-3. **CI**: GitHub Actions runs on PR to `main`; open PR to validate CI on this branch.
-
-### Safe to merge to `main` for open source? 
-
-**Yes for the codebase**, with this caveat documented in README/deploy:
-
-- Merging public **read** features (dictionary, lander, docs, reference data) is safe
-- Production **write** access must stay disabled or auth-gated before pointing `DATABASE_URL` at live data
-
-Optional follow-up (not blockers for merge):
-
-- Link Google Form from Fonoran lander once URL exists
-- Add `FONORAN_WRITES=off` env kill-switch for emergency read-only mode
-- GitHub issue template mirroring Form fields (alternative to Form for open-source-native intake)
-
----
-
 ## Release checklist
-
-### Pre-merge (open source)
-
-- [ ] Open PR from `feature/fonoran-language-experiment` → `main`
-- [ ] CI green on PR
-- [ ] Confirm `.gitignore` still excludes runtime bucket + lexicon
-- [ ] Update CONTRIBUTING with Fonora vs Fonoran contribution paths
-- [ ] Create Google Form; replace `FORM_URL_TBD` in docs and lander
 
 ### Pre-production deploy
 
 - [ ] Google Workspace live; admin 2FA enabled
 - [ ] OAuth credentials created; redirect URIs configured
-- [ ] Phase 1 auth merged and deployed
-- [ ] Heroku config: `GOOGLE_*`, `SESSION_SECRET`, `ALLOWED_DOMAIN`, `DATABASE_URL`
-- [ ] Smoke test: unsigned user can browse dictionary; cannot POST root
-- [ ] Signed-in `@fonora.org` user can create and approve words
-- [ ] Export backup: `npm run fonoran:export` after deploy
+- [ ] Heroku config: `GOOGLE_*`, `SESSION_SECRET`, `ADMIN_EMAILS`, `DATABASE_URL`
+- [ ] Smoke test: unsigned user can browse dictionary; cannot POST lab writes
+- [ ] Signed-in admin can create and approve words
+- [ ] Export backup: `npm run fonoran:snapshot:export` after deploy
 
 ### Post-deploy
 
@@ -253,20 +134,51 @@ Optional follow-up (not blockers for merge):
 
 ---
 
-## Implementation order
+## Related docs
 
-1. **Google Workspace**: email + OAuth app + Form
-2. **Auth middleware**: session + write protection on API
-3. **Builder login UX**: sign in button, hide writes when logged out
-4. **Merge to `main`**: open source release
-5. **Production deploy**: with Postgres + auth env vars
-6. **Form link**: on lander and CONTRIBUTING
+- [platform-overview.md](platform-overview.md) — three-layer architecture
+- [fonoran-learn.md](fonoran-learn.md) — Learn progress sync
+- [fonoran.md](fonoran.md) — vocabulary model and API
+- [deploy.md](deploy.md) — Heroku, PostgreSQL, production checklist
+- [CONTRIBUTING.md](../CONTRIBUTING.md) — contribution paths
 
 ---
 
-## Related docs
+## Archive: pre-release planning notes
 
-- [platform-overview.md](platform-overview.md), three-layer architecture
-- [fonoran.md](fonoran.md), vocabulary model and API
-- [deploy.md](deploy.md), Heroku, PostgreSQL, production checklist
-- [CONTRIBUTING.md](../CONTRIBUTING.md), contribution paths
+The sections below are **historical planning material** from before OAuth shipped. Current behavior is documented above.
+
+<details>
+<summary>Legacy goals, Phase 1 sketch, and branch review (click to expand)</summary>
+
+### Goals (pre–Word Manager)
+
+| Goal | Approach |
+| --- | --- |
+| **Fonora script** stays open | Public read + GitHub PRs for `language-rules.md` and encoder changes |
+| **Fonoran language** edits are controlled | Google OAuth for builder write access; public read-only dictionary |
+| **Contributor intake** | Google Form (Workspace), no in-app form, no admin panel |
+| **Admin workflow** | Sign in with Google, use existing builder tabs |
+| **Open source repo** | Auth middleware and docs in git; secrets and live vocabulary stay out of git |
+
+### What we were *not* building
+
+- In-app intake / submission queue
+- Separate admin panel or inbox UI
+- Custom TOTP / 2FA inside the app
+
+### Authentication (Phase 1 sketch — now implemented)
+
+1. Session middleware on `server.js` (httpOnly, Secure, SameSite=Lax cookie)
+2. Routes: `GET /auth/google`, `GET /auth/callback`, `POST /auth/logout`, `GET /auth/session`
+3. In `tools/fonoran-api.js`: allow all **GET**; require valid session for **POST** and **PATCH**
+4. `ADMIN_EMAILS` allowlist for admin tier (replaces legacy `ALLOWED_DOMAIN` restriction on community sign-in)
+
+### Branch review: `feature/fonoran-language-experiment` (historical)
+
+Reviewed against `main`. **Nothing in the committed history should be removed** for open-source release. Blockers listed below were addressed when Phase 1 auth shipped.
+
+- Unauthenticated write API — **fixed** (admin session required for mutating routes)
+- Dangerous ops (`lab/seed`, `reset-review`, `undo`) — **fixed** (admin only)
+
+</details>
