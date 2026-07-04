@@ -2,6 +2,8 @@
 
 Fonora uses [eSpeak NG](https://github.com/espeak-ng/espeak-ng) via the [`espeak-ng`](https://www.npmjs.com/package/espeak-ng) npm package as the canonical pronunciation engine for the IPA pipeline.
 
+**Full pipeline diagram:** [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md#architecture)
+
 ## Setup
 
 ```bash

@@ -2,9 +2,7 @@
 
 > **Read the research.** How this build pipeline was designed is told in the research notebook: [RN-13 · Concepts are canonical, sounds are editorial proposals](/research/notes/the-campfire-test-communication-over-correctness).
 
-> **Start here** for the experimental Fonoran language and its builder at [`/language`](/language). To
-> practice reading the script Fonoran is written in — Learn the Sounds, Breakdown, Samples — see
-> [`/tools`](/tools) instead; this document covers the builder/lab side.
+> **Start here** for the experimental Fonoran language and its builder at [`/language`](/language). For structured learner drills (Script + Fonoran skills), see [`/learn`](/learn) and [fonoran-learn.md](fonoran-learn.md); this document covers the builder/lab side.
 >
 > **Why Fonoran exists:** it is an experiment in whether people from different native
 > languages can communicate basic meaning by combining a small shared set of roots. The
@@ -32,12 +30,14 @@ flowchart TD
 
   subgraph composition [Composition]
     CompoundsJson["compounds.json\n483+ curated compounds"]
+    Proposals["compound-proposals\nvocab-survey queue"]
+    Regen["fonoran:regenerate\npromote accepted"]
     Build["fonoran-build.js\nunique-parse check"]
     Lab["sound-bucket.json\nruntime lab"]
   end
 
   subgraph ui [Builder UI]
-    Review["Review"]
+    Review["Review / Gap Workshop"]
     Creator["Word Creator"]
     Dict["Dictionary"]
   end
@@ -48,12 +48,16 @@ flowchart TD
   Candidates -->|"approve"| Approved
   Candidates --> Build
   Approved --> Build
+  Proposals -->|"accept in Review"| Regen
+  Regen --> CompoundsJson
   CompoundsJson --> Build
   Build --> Lab
   Lab --> Review
   Lab --> Creator
   Lab --> Dict
 ```
+
+Operator sequences (local vs Heroku): [fonoran-compound-workflow.md](fonoran-compound-workflow.md). CLI reference: [fonoran-cli-tools.md](fonoran-cli-tools.md).
 
 ## Quick start
 
@@ -71,7 +75,7 @@ npm run fonoran:build    # assign roots + build curated compounds → lab
 | --- | --- | --- |
 | **Dictionary** | Public | Browse roots and words; word trees and family graphs |
 | **Grammar** | Public | Language specification ([fonoran-grammar.md](fonoran-grammar.md)) |
-| **Translator** | Public | English → Fonoran sentences. Resolves via curated aliases, interpretation rules, and a single-concept WordNet fallback; unknown words surface as honest gaps (never fabricated). |
+| **Translator** | Public | Multilingual meaning → Fonoran via LLM semantic compiler ([fonoran-translator.md](fonoran-translator.md)) |
 | **Word Creator** | Sign-in | Stack roots and approved words → save compound |
 | **Concept Editor** | Sign-in | Edit concept gloss, aliases, and spelling (unlinked sounds become new concepts here) |
 | **Review** | Sign-in | **Root queue** (pending spellings) · **Roots** · **Words** · **Generated** |

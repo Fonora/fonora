@@ -4,6 +4,8 @@
 
 Fonora’s Translator, Breakdown, and Samples pages share one IPA pipeline. The **Reader** replays Fonora symbols with a language-selected TTS voice; it does not re-run encoding.
 
+**Canonical pipeline diagram:** [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md#architecture)
+
 ## Selectable languages
 
 | UI code | Label | eSpeak voice (default) | Piper neural voice (Reader / Samples) |
@@ -12,7 +14,7 @@ Fonora’s Translator, Breakdown, and Samples pages share one IPA pipeline. The 
 | `es` | Spanish | `es` | `es_ES-davefx-medium` |
 | `fr` | French | `fr-fr` | `fr_FR-siwis-medium` |
 | `de` | German | `de` | `de_DE-thorsten-medium` |
-| `ja` | Japanese | `ja` |, (eSpeak IPA fallback) |
+| `ja` | Japanese | `ja` | — (eSpeak IPA fallback) |
 | `ar` | Arabic | `ar` | `ar_JO-kareem-medium` |
 | `zh` | Mandarin | `zh` | `zh_CN-huayan-medium` |
 
@@ -22,11 +24,7 @@ Language preference is stored in `localStorage` (`fonora-language-v1`) and share
 
 ## Pipeline and `lang`
 
-```
-Text + lang → eSpeak NG (voice for lang) → IPA → normalizeIpa({ lang }) → encode → Fonora symbols
-```
-
-Entry point: [`js/ipa-pipeline.js`](../js/ipa-pipeline.js) (`runIpaPipeline`, `translateIpaPhrase`).
+Entry point: [`js/ipa-pipeline.js`](../js/ipa-pipeline.js) (`runIpaPipeline`, `translateIpaPhrase`). Full module diagram: [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md#architecture).
 
 Surfaces that pass `lang` into normalization:
 

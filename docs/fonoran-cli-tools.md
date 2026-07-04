@@ -2,9 +2,32 @@
 
 Command-line tools for building, reviewing, and maintaining the Fonoran vocabulary. Run all commands from the repo root after `npm install`.
 
-Most npm scripts wrap modules in `tools/` or `scripts/`. The [Fonoran guide](fonoran.md) covers the language model and web UI; this page is the operator reference for CLI workflows.
+Most npm scripts wrap modules in `tools/` or `scripts/`. The [Fonoran guide](fonoran.md) covers the language model and web UI; [compound workflow](fonoran-compound-workflow.md) covers local vs Heroku sequences. This page is the command reference.
 
-## Quick reference
+## Pipeline overview
+
+```mermaid
+flowchart LR
+  Survey["vocab-survey\ngenerate proposals"] --> Review["Review UI\naccept / reject"]
+  Review --> Regen["regenerate\npromote + build"]
+  Gaps["translation-gaps\nor stranger-corpus:gaps"] --> Refine["refine loop\ngap → propose → build"]
+  Refine --> Regen
+  Optimize["optimize-compounds\nlength / heuristic / LLM"] --> Build["build:approved\nlab from seeds"]
+  Regen --> Build
+  Build --> Audit["compound-audit\n+ npm test"]
+  Audit --> Deploy["git push → Heroku\nAdvanced regenerate"]
+```
+
+| Stage | Primary commands | Web UI |
+| --- | --- | --- |
+| Propose | `fonoran:vocab-survey`, `fonoran:gap-analyze-batch` | Review — `/tools#gap-workshop` |
+| Accept & publish | `fonoran:regenerate` | Advanced — `/tools#advanced` |
+| Optimize editorial | `fonoran:optimize-compounds` | — |
+| Build lab | `fonoran:build`, `fonoran:build:approved` | — |
+| Measure | `fonoran:translation-gaps`, `fonoran:refine` | Translation Test |
+| Ship | `git push heroku` + regenerate on dyno | Advanced regenerate |
+
+---
 
 | Goal | Command |
 | --- | --- |

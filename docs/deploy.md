@@ -80,7 +80,42 @@ No secrets are required for the **public script app** alone. When all three OAut
 
 ## PostgreSQL (Fonoran storage)
 
-All runtime Fonoran state lives in **PostgreSQL** when `DATABASE_URL` is set:
+All **runtime Fonoran lab state** lives in **PostgreSQL** when `DATABASE_URL` is set:
+
+```mermaid
+flowchart TB
+  subgraph browser [Browser]
+    SPA["SPA /language · /learn · /tools"]
+  end
+  subgraph server [server.js]
+    API["/api/fonoran/*"]
+    OAuth["OAuth session"]
+    Static["Static files + WASM"]
+    Research["Research notes reader\nreads markdown at startup"]
+  end
+  subgraph postgres [PostgreSQL — when DATABASE_URL set]
+    Lab["Lab bucket\nroots · compounds · history"]
+    Editorial["Editorial seeds\ninventory · compounds recipes"]
+    Community["Community\users · learn progress · votes · proposals"]
+    PropQueue["Compound proposal queue"]
+  end
+  subgraph gitSeeds [Git — committed seeds]
+    DataJSON["data/*.json\neditorial JSON"]
+  end
+  subgraph fonoraData [fonora-data submodule]
+    Cache["Translation cache · gap reports\nstranger corpus · playtest exports"]
+  end
+  subgraph markdown [Markdown — not in Postgres]
+    RN["docs/research-notes/*.md\nserved at /research"]
+  end
+  SPA --> API
+  SPA --> Static
+  SPA --> Research
+  API --> postgres
+  gitSeeds -->|"first boot seed\nor regenerate/import"| postgres
+  API --> fonoraData
+  Research --> RN
+```
 
 - Lab bucket (roots, words, review state, history)
 - Concept inventory, root candidates, approved roots
@@ -88,7 +123,8 @@ All runtime Fonoran state lives in **PostgreSQL** when `DATABASE_URL` is set:
 - Build inputs (compound recipes, phonetics config)
 - **Compound proposal queue** (`fonoran:vocab-survey`, Review tab)
 - Community users, learn progress, community proposals/votes
-- Research notes (published notebook)
+
+**Not in PostgreSQL:** research notes (`docs/research-notes/*.md` — read from disk at startup), fonora-data artifacts (translation cache, stranger corpus, refine logs).
 
 **fonora-data submodule** (via `FONORAN_DATA_DIR` / `external/fonora-data`): translation cache, gap reports, stranger corpus, playtest exports, refine iteration logs — research artifacts, not live lab state.
 

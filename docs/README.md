@@ -49,6 +49,7 @@ Read in this order for a new contributor:
 | 2b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
 | 2c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
 | 3 | Fonoran grammar | [fonoran-grammar.md](fonoran-grammar.md) |
+| 3b | **Fonoran Learn** (`/learn`) | [fonoran-learn.md](fonoran-learn.md) |
 | 4 | **Translator (live)** | [fonoran-translator.md](fonoran-translator.md) |
 | 5 | Interpretive translator (legacy) | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
 
@@ -85,6 +86,8 @@ Historical experiments and audits, preserved as primary sources for the research
 | [FONORA_VOWEL_DECISION_REPORT.md](archive/FONORA_VOWEL_DECISION_REPORT.md) | Vowel decision report (v2) |
 
 **Not in sidebar:** [fonoran-root-workflow.md](fonoran-root-workflow.md) is a stub redirecting to [fonoran.md#pipeline](fonoran.md#pipeline).
+
+**Generated (not in doc index):** [fonoran-compound-audit-latest.md](fonoran-compound-audit-latest.md) — overwritten by `npm run fonoran:compound-audit`; reference only, not maintained prose.
 
 ---
 
