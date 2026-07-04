@@ -37,6 +37,10 @@ import {
   onFonoranGrammarTabActivated,
 } from './fonoran-grammar-practice.js';
 import {
+  setupFonoranSpeaking,
+  onFonoranSpeakingTabActivated,
+} from './fonoran-speaking-practice.js';
+import {
   loadLanguageRulesFromString,
   buildKeyboardMap,
   findGridCell,
@@ -104,6 +108,13 @@ import { migrateProgressHash, onLabProgressTabActivated } from './fonoran-lab-pr
 import { setReaderWordSources } from './fonora-tts.js';
 import { refreshLearnHomeProgress } from './learn-home-progress.js';
 import { syncLearnSessionBar, saveLearnHomeScroll, restoreLearnHomeScroll } from './learn-session-ui.js';
+import { initEduDebug } from './edu-debug.js';
+import {
+  navigateLearnHub,
+  registerLearnHubNavigateHook,
+  syncLearnHubViewFromHash,
+  wireLearnHubControls,
+} from './learn-hub-nav.js';
 import {
   setupLearningLanguageSelect,
   updateLearningLanguageNote,
@@ -621,17 +632,7 @@ function defaultTabForBase(base) {
 }
 
 function scrollLearnHomeToSection() {
-  const hash = window.location.hash.replace(/^#/, '');
-  if (!LEARN_SECTION_HASHES.has(hash)) return;
-  const target = document.getElementById(hash);
-  if (!target) return;
-  requestAnimationFrame(() => {
-    const headerOffset =
-      Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--app-header-offset')) ||
-      112;
-    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset - 12;
-    window.scrollTo({ top: Math.max(0, top), behavior: 'auto' });
-  });
+  syncLearnHubViewFromHash();
 }
 
 function getTabFromHash() {
@@ -699,8 +700,17 @@ function setHashForTab(tabId) {
   }
 
   const base = basePathForTab(tabId);
-  const hash = tabId === defaultTabForBase(base) ? '' : `#${tabId}`;
-  const next = `${base}${hash}`;
+  const currentHash = window.location.hash.replace(/^#/, '');
+  let hashSuffix = '';
+  if (tabId !== defaultTabForBase(base)) {
+    hashSuffix = `#${tabId}`;
+  } else if (
+    base === '/learn'
+    && (currentHash === 'fonora-script' || currentHash === 'fonoran-language' || currentHash === 'learn-progress')
+  ) {
+    hashSuffix = `#${currentHash}`;
+  }
+  const next = `${base}${hashSuffix}${window.location.search}`;
   if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== next) {
     history.replaceState(null, '', next);
   }
@@ -862,6 +872,10 @@ function showTab(tabId) {
     onFonoranGrammarTabActivated();
   }
 
+  if (panelId === 'fonoran-speaking') {
+    onFonoranSpeakingTabActivated();
+  }
+
   notifyFonoraTabChange(panelId);
 
   if (tabId === 'docs') {
@@ -890,6 +904,12 @@ function handleNavTabSelect(tab) {
 setNavSelectHandlers({
   onTab: handleNavTabSelect,
   onPlatformTab: handleNavTabSelect,
+  onLearnHub: (view) => {
+    if (view === 'hub' || view === 'script' || view === 'fonoran' || view === 'progress') {
+      navigateLearnHub(view);
+      refreshLearnHomeProgress();
+    }
+  },
   onSignOut: () => {
     signOut().then(() => showTab(getTabFromHash()));
   },
@@ -916,6 +936,9 @@ function setupTabs() {
       showTab(el.dataset.tab);
     });
   });
+
+  wireLearnHubControls();
+  registerLearnHubNavigateHook(() => setActiveTab(LEARN_HUB_TAB));
 
   refreshAuth().then(() => {
     syncWordManagerNav();
@@ -967,6 +990,7 @@ function syncAdvancedNav() {
 }
 
 async function initApp() {
+  void initEduDebug();
   let loaded;
   try {
     const res = await fetch(LANGUAGE_RULES_PATH);
@@ -1024,6 +1048,7 @@ function applyRulesBundle(loaded) {
   void setupFonoranWriting(rules);
   void setupFonoranHearing(rules);
   void setupFonoranGrammar();
+  void setupFonoranSpeaking(rules);
   setupLearningLanguageSelect('learn-language-global', () => {
     updateLearningLanguageNote('script-writing-language-note');
     updateLearningLanguageNote('script-reading-language-note');
@@ -1064,6 +1089,10 @@ function bootstrapShell() {
     panel.classList.toggle('tab-panel--active', active);
   });
   setupTabs();
+  if (isLearnPath() && panelId === LEARN_HUB_TAB) {
+    syncLearnHubViewFromHash();
+    refreshLearnHomeProgress();
+  }
   ensureAppHeaderOffsetObserver();
 }
 

@@ -5,6 +5,7 @@
 
 import { docViewerHref, isDocsRoute } from './doc-urls.js';
 import { learnTrackForTab } from './learn-routing.js';
+import { learnHubNavActive } from './learn-hub-nav.js';
 import { pageTitle, PLATFORM_HOME_TITLE, PLATFORM_PAGE_TITLE, SITE_NAME } from './site-copy.js';
 import { cycleTheme, getStoredTheme } from './theme.js';
 
@@ -259,10 +260,28 @@ function renderBuilderRow2(activeTab) {
     </div>`;
 }
 
-function renderLearnRow2() {
-  // The Learn platform tab is its own section (the skill hub); no sub-nav row is
-  // rendered. In-lesson navigation is handled by the sticky session bar.
-  return '';
+function renderLearnRow2(activeTab) {
+  const active = learnHubNavActive(activeTab);
+  const tabs = [
+    { id: 'hub', label: 'About' },
+    { id: 'script', label: 'Read & Write' },
+    { id: 'fonoran', label: 'Speak' },
+    { id: 'progress', label: 'Progress' },
+  ]
+    .map(
+      (t) =>
+        `<button type="button" class="tab-btn${active === t.id ? ' tab-btn--active' : ''}" data-learn-hub="${t.id}"${
+          active === t.id ? ' aria-current="page"' : ''
+        }>${t.label}</button>`,
+    )
+    .join('');
+
+  return `
+    <div class="app-header__row app-header__row--tools" data-nav-row="learn-tools">
+      <nav class="main-nav" aria-label="Learn">
+        <div class="main-nav-primary">${tabs}</div>
+      </nav>
+    </div>`;
 }
 
 function shouldShowToolsTab(tab) {
@@ -307,7 +326,11 @@ function updateDocumentTitle() {
     const label = SCRIPT_TITLES[state.activeTab] ?? 'Script';
     document.title = pageTitle(state.activeTab === 'home' ? 'Fonora Script' : `Fonora Script · ${label}`);
   } else if (state.context === 'learn') {
-    const label = LEARN_TITLES[state.activeTab] ?? 'Learn';
+    const hubView = learnHubNavActive(state.activeTab);
+    const hubTitles = { hub: 'Learn', script: 'Read & Write', fonoran: 'Speak', progress: 'Progress' };
+    const label = state.activeTab === 'learn-home'
+      ? hubTitles[hubView] ?? 'Learn'
+      : LEARN_TITLES[state.activeTab] ?? 'Learn';
     document.title = pageTitle(`Learn · ${label}`);
   } else if (state.context === 'tools') {
     const label = TOOLS_TITLES[state.activeTab] ?? 'Tools';
@@ -398,6 +421,16 @@ function patchStaticNav(root) {
     if (active) el.setAttribute('aria-current', 'page');
     else el.removeAttribute('aria-current');
   });
+
+  if (state.context === 'learn') {
+    const hubActive = learnHubNavActive(state.activeTab);
+    root.querySelectorAll('[data-learn-hub].tab-btn').forEach((el) => {
+      const active = el.dataset.learnHub === hubActive;
+      el.classList.toggle('tab-btn--active', active);
+      if (active) el.setAttribute('aria-current', 'page');
+      else el.removeAttribute('aria-current');
+    });
+  }
 
   patchAuthSlot(root);
   syncBootAttributes();
@@ -564,6 +597,23 @@ function bindNavListeners() {
     );
   });
 
+  root.querySelectorAll('[data-learn-hub]').forEach((el) => {
+    el.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
+        const view = el.dataset.learnHub;
+        if (!view) return;
+        if (navSelectHandlers.onLearnHub) {
+          navSelectHandlers.onLearnHub(view);
+          return;
+        }
+        dispatchNavEvent(root, 'universal-nav:learn-hub', { view });
+      },
+      { signal },
+    );
+  });
+
   root.querySelectorAll('[data-learn-tab]').forEach((el) => {
     el.addEventListener(
       'click',
@@ -682,12 +732,17 @@ export function setNavContext(context) {
  * @param {string} tabOrPage
  */
 export function setActiveTab(tabOrPage) {
-  if (state.activeTab === tabOrPage) {
+  const root = document.getElementById(state.mountId);
+  const unchanged = state.activeTab === tabOrPage;
+  state.activeTab = tabOrPage;
+  if (unchanged) {
     updateDocumentTitle();
     syncBootAttributes();
+    if (root?.dataset.navShell === 'static' && state.context === 'learn') {
+      patchStaticNav(root);
+    }
     return;
   }
-  state.activeTab = tabOrPage;
   render();
 }
 

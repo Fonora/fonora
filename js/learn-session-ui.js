@@ -10,6 +10,8 @@ import {
 } from './learn-gamification.js';
 import { icon } from './learn-icons.js';
 import { escapeHtml } from './utils.js';
+import { effectiveAnswerCorrect, learnAutoAdvanceDelayMs } from './edu-debug.js';
+import { fireConfetti } from './learn-confetti.js';
 
 export const SESSION_LENGTH = 10;
 
@@ -22,6 +24,7 @@ export const LEARN_SKILL_TITLES = {
   'fonoran-writing': 'Writing',
   'fonoran-hearing': 'Hearing',
   'fonoran-grammar': 'Grammar',
+  'fonoran-speaking': 'Speaking',
 };
 
 const LEARN_HOME_SCROLL_KEY = 'fonora-learn-home-scroll-y';
@@ -115,10 +118,12 @@ export function syncLearnSessionBar(domPanelId) {
   const entry = sessionRegistry.get(domPanelId);
   if (entry) {
     bar.hidden = false;
+    document.documentElement.setAttribute('data-learn-session-active', 'true');
     bar.setAttribute('data-track', entry.track);
     entry.updateBar();
   } else {
     bar.hidden = true;
+    document.documentElement.removeAttribute('data-learn-session-active');
     bar.removeAttribute('data-track');
   }
 }
@@ -141,7 +146,6 @@ export function xpForAnswer(type, correct) {
  * @property {LearnAnswerType} [answerType='typing']
  * @property {() => void} [onQuestionStart] — called when a new question begins
  * @property {() => void} [onSessionReset] — called when session restarts after summary
- * @property {() => string} [lessonLabel] — optional lesson/ring label for the session bar
  * @property {(stats: { correct: number, attempts: number }) => { primaryLabel?: string, note?: string }} [onComplete] — called when the 10th question is answered; result customizes the summary
  */
 
@@ -150,13 +154,12 @@ export function xpForAnswer(type, correct) {
  * @param {LearnSessionOptions} options
  */
 export function createLearnSession(skillId, options) {
-  const { panelId, answerType = 'typing', onQuestionStart, onSessionReset, lessonLabel, onComplete } = options;
+  const { panelId, answerType = 'typing', onQuestionStart, onSessionReset, onComplete } = options;
   const panel = document.getElementById(panelId);
 
   const sessionBar = document.getElementById('learn-session-bar');
   const progressFill = sessionBar?.querySelector('.learn-session__progress-fill');
   const progressBar = sessionBar?.querySelector('.learn-session__progress');
-  const lessonEl = sessionBar?.querySelector('.learn-session__lesson');
   const questionEl = sessionBar?.querySelector('.learn-session__question');
   const accuracyEl = null;
   const summaryEl = panel?.querySelector('.learn-session-summary');
@@ -182,10 +185,6 @@ export function createLearnSession(skillId, options) {
     if (progressBar) {
       progressBar.setAttribute('aria-valuenow', String(summaryVisible ? SESSION_LENGTH : questionIndex));
       progressBar.setAttribute('aria-valuemax', String(SESSION_LENGTH));
-    }
-    if (lessonEl) {
-      const label = lessonLabel?.();
-      lessonEl.textContent = label ? `${lessonTitle} (${label})` : lessonTitle;
     }
     if (questionEl) {
       questionEl.textContent = summaryVisible
@@ -217,25 +216,60 @@ export function createLearnSession(skillId, options) {
     summaryEl.hidden = false;
     panel?.classList.add('learn-exercise--session-complete');
     sessionBar?.classList.add('learn-session--complete');
+
+    const moduleComplete = completion?.moduleComplete === true;
+    const completedModule = completion?.completedModule ?? '';
+    const nextModule = completion?.nextModule ?? '';
     const primaryLabel = completion?.primaryLabel ?? 'Practice again';
-    const note = completion?.note
-      ? `<p class="learn-session-summary__note">${escapeHtml(completion.note)}</p>`
-      : '';
-    summaryEl.innerHTML = `
-      <div class="learn-session-summary__card">
-        <span class="learn-session-summary__seal">${icon('award')}</span>
-        <h3 class="learn-session-summary__title">Session complete</h3>
-        <dl class="learn-session-summary__stats">
-          <div><dt>Accuracy</dt><dd>${acc}%</dd></div>
-          <div><dt>XP earned</dt><dd>+${sessionXp}</dd></div>
-          <div><dt>Streak</dt><dd>${streak} day${streak === 1 ? '' : 's'}</dd></div>
-        </dl>
-        ${note}
-        <div class="button-row learn-session-summary__actions">
-          <button type="button" class="btn btn--primary learn-session-summary__continue">${escapeHtml(primaryLabel)}</button>
-          <button type="button" class="btn learn-session-summary__home">Back to Learn</button>
-        </div>
-      </div>`;
+
+    let cardHtml;
+    if (moduleComplete && completedModule) {
+      const nextSection = nextModule
+        ? `<div class="learn-module-complete__next">
+             <p class="learn-module-complete__next-label">Up next</p>
+             <p class="learn-module-complete__next-name">${escapeHtml(nextModule)}</p>
+           </div>`
+        : '';
+      cardHtml = `
+        <div class="learn-session-summary__card learn-session-summary__card--module-complete">
+          <div class="learn-module-complete__fireworks" aria-hidden="true">🎉</div>
+          <h2 class="learn-module-complete__headline">Module complete!</h2>
+          <p class="learn-module-complete__module-name">${escapeHtml(completedModule)}</p>
+          <dl class="learn-session-summary__stats">
+            <div><dt>Accuracy</dt><dd>${acc}%</dd></div>
+            <div><dt>XP earned</dt><dd>+${sessionXp}</dd></div>
+            <div><dt>Streak</dt><dd>${streak} day${streak === 1 ? '' : 's'}</dd></div>
+          </dl>
+          ${nextSection}
+          <div class="button-row learn-session-summary__actions">
+            <button type="button" class="btn btn--primary learn-session-summary__continue">
+              ${escapeHtml(nextModule ? `Start ${nextModule}` : primaryLabel)}
+            </button>
+            <button type="button" class="btn learn-session-summary__home">Back to Learn</button>
+          </div>
+        </div>`;
+    } else {
+      const note = completion?.note
+        ? `<p class="learn-session-summary__note">${escapeHtml(completion.note)}</p>`
+        : '';
+      cardHtml = `
+        <div class="learn-session-summary__card">
+          <span class="learn-session-summary__seal">${icon('award')}</span>
+          <h3 class="learn-session-summary__title">Session complete</h3>
+          <dl class="learn-session-summary__stats">
+            <div><dt>Accuracy</dt><dd>${acc}%</dd></div>
+            <div><dt>XP earned</dt><dd>+${sessionXp}</dd></div>
+            <div><dt>Streak</dt><dd>${streak} day${streak === 1 ? '' : 's'}</dd></div>
+          </dl>
+          ${note}
+          <div class="button-row learn-session-summary__actions">
+            <button type="button" class="btn btn--primary learn-session-summary__continue">${escapeHtml(primaryLabel)}</button>
+            <button type="button" class="btn learn-session-summary__home">Back to Learn</button>
+          </div>
+        </div>`;
+    }
+
+    summaryEl.innerHTML = cardHtml;
 
     summaryEl.querySelector('.learn-session-summary__continue')?.addEventListener('click', () => {
       hideSummary();
@@ -244,6 +278,11 @@ export function createLearnSession(skillId, options) {
     summaryEl.querySelector('.learn-session-summary__home')?.addEventListener('click', () => {
       goToLearnHome();
     });
+
+    if (moduleComplete) {
+      window.setTimeout(() => fireConfetti(), 150);
+    }
+
     updateBar();
   }
 
@@ -389,19 +428,18 @@ export function createLearnSession(skillId, options) {
  * @param {{ checkButtonId: string, continueButtonId: string, correct: boolean, beforeAdvance?: () => void }} opts
  */
 export function finishTypingAnswer(session, { checkButtonId, continueButtonId, correct, beforeAdvance }) {
-  session.onAnswer({ correct });
+  session.onAnswer({ correct: effectiveAnswerCorrect(correct) });
   const checkBtn = document.getElementById(checkButtonId);
   if (checkBtn) checkBtn.hidden = true;
 
-  if (correct) {
+  if (effectiveAnswerCorrect(correct)) {
     session.setContinueVisible(continueButtonId, false);
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.setTimeout(() => {
       if (session.canAdvance()) {
         beforeAdvance?.();
         session.advance();
       }
-    }, reducedMotion ? 0 : 800);
+    }, learnAutoAdvanceDelayMs());
   } else {
     session.setContinueVisible(continueButtonId, true);
   }
@@ -413,16 +451,15 @@ export function finishTypingAnswer(session, { checkButtonId, continueButtonId, c
  * @param {{ continueButtonId: string, correct: boolean, beforeAdvance?: () => void }} opts
  */
 export function finishMcqAnswer(session, { continueButtonId, correct, beforeAdvance }) {
-  session.onAnswer({ correct });
-  if (correct) {
+  session.onAnswer({ correct: effectiveAnswerCorrect(correct) });
+  if (effectiveAnswerCorrect(correct)) {
     session.setContinueVisible(continueButtonId, false);
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.setTimeout(() => {
       if (session.canAdvance()) {
         beforeAdvance?.();
         session.advance();
       }
-    }, reducedMotion ? 0 : 800);
+    }, learnAutoAdvanceDelayMs());
   } else {
     session.setContinueVisible(continueButtonId, true);
   }
@@ -447,11 +484,12 @@ export function setLearnVerdict(badgeId, match) {
   }
 
   badge.hidden = false;
-  badge.className = `typing-practice__verdict-badge typing-practice__verdict-badge--${match ? 'ok' : 'miss'} learn-exercise__verdict`;
-  badge.innerHTML = `${icon(match ? 'check' : 'x')}<span>${match ? 'Correct!' : 'Not quite'}</span>`;
+  const shownCorrect = effectiveAnswerCorrect(match);
+  badge.className = `typing-practice__verdict-badge typing-practice__verdict-badge--${shownCorrect ? 'ok' : 'miss'} learn-exercise__verdict`;
+  badge.innerHTML = `${icon(shownCorrect ? 'check' : 'x')}<span>${shownCorrect ? 'Correct!' : 'Not quite'}</span>`;
   if (prompt) {
-    prompt.classList.toggle('learn-exercise__card--ok', match);
-    prompt.classList.toggle('learn-exercise__card--miss', !match);
+    prompt.classList.toggle('learn-exercise__card--ok', shownCorrect);
+    prompt.classList.toggle('learn-exercise__card--miss', !shownCorrect);
   }
 }
 

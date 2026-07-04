@@ -517,22 +517,27 @@ html.modal-open {
 html[data-fonora-nav='platform'] [data-nav-row='script-tools'],
 html[data-fonora-nav='platform'] [data-nav-row='language-tools'],
 html[data-fonora-nav='platform'] [data-nav-row='learn-tools'],
+html[data-fonora-nav='platform'] [data-nav-row='learn-session'],
 html[data-fonora-nav='platform'] [data-nav-row='tools-tools'],
 html[data-fonora-nav='script'] [data-nav-row='platform-tools'],
 html[data-fonora-nav='script'] [data-nav-row='language-tools'],
 html[data-fonora-nav='script'] [data-nav-row='learn-tools'],
+html[data-fonora-nav='script'] [data-nav-row='learn-session'],
 html[data-fonora-nav='script'] [data-nav-row='tools-tools'],
 html[data-fonora-nav='learn'] [data-nav-row='platform-tools'],
 html[data-fonora-nav='learn'] [data-nav-row='script-tools'],
 html[data-fonora-nav='learn'] [data-nav-row='language-tools'],
 html[data-fonora-nav='learn'] [data-nav-row='tools-tools'],
+html[data-fonora-nav='learn'][data-learn-session-active='true'] [data-nav-row='learn-tools'],
 html[data-fonora-nav='tools'] [data-nav-row='platform-tools'],
 html[data-fonora-nav='tools'] [data-nav-row='script-tools'],
 html[data-fonora-nav='tools'] [data-nav-row='language-tools'],
 html[data-fonora-nav='tools'] [data-nav-row='learn-tools'],
+html[data-fonora-nav='tools'] [data-nav-row='learn-session'],
 html[data-fonora-nav='language'] [data-nav-row='platform-tools'],
 html[data-fonora-nav='language'] [data-nav-row='script-tools'],
 html[data-fonora-nav='language'] [data-nav-row='learn-tools'],
+html[data-fonora-nav='language'] [data-nav-row='learn-session'],
 html[data-fonora-nav='language'] [data-nav-row='tools-tools'] {
   display: none;
 }
@@ -1008,12 +1013,11 @@ html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
   border: 1px solid var(--layout-border);
   border-radius: 12px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .home-layer-card:hover {
-    transform: translateY(-1px);
     box-shadow: var(--shadow-card-hover);
   }
 }
@@ -1035,30 +1039,169 @@ html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
   vertical-align: middle;
 }
 
-/* —— Learn home language picker (in page toolbar actions) —— */
-.learn-home__lang {
-  display: flex;
+/* —— Compact stats (Learn toolbar) —— */
+.learn-stats-compact {
+  display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.learn-home__lang label {
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--layout-border);
+  border-radius: 999px;
+  background: var(--layout-surface);
+  box-shadow: var(--shadow-card);
+  font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-body);
 }
 
-.learn-home__lang select {
-  max-width: 14rem;
+.learn-stats-compact__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-/* —— Stats bar —— */
+.learn-stats-compact__icon,
+.learn-stats-compact__ring {
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--text-muted);
+}
+
+.learn-stats-compact__item--streak .learn-stats-compact__icon {
+  color: #d97634;
+}
+
+.learn-stats-compact__item--level .learn-stats-compact__icon {
+  color: var(--color-accent-strong);
+}
+
+.learn-stats-compact__item--goal .learn-stats-compact__ring {
+  position: relative;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color-accent) calc(var(--goal-pct, 0) * 1%),
+    var(--color-inset-bg) 0
+  );
+}
+
+.learn-stats-compact__item--goal .learn-stats-compact__ring .learn-icon {
+  width: 0.65rem;
+  height: 0.65rem;
+}
+
+.learn-stats-compact__sep {
+  color: var(--text-muted);
+  opacity: 0.5;
+  user-select: none;
+}
+
+.learn-home .page-hero-lander + .content-section {
+  padding-top: var(--layout-section-gap, 3rem);
+  border-top: 1px solid var(--layout-section-divider);
+}
+
+.learn-home .page-hero-lander.page-hero-split {
+  grid-template-columns: 1fr;
+}
+
+.learn-home .page-hero-lander .home-prose {
+  margin-bottom: 0;
+}
+
+.learn-hub-tracks {
+  margin-top: 0;
+}
+
+.learn-hub-tracks .home-layer-card--featured {
+  border-top-width: 1px;
+  border-top-color: var(--layout-border);
+  border-color: color-mix(in srgb, var(--color-word) 28%, var(--layout-border));
+  background: color-mix(in srgb, var(--color-word) 5%, var(--layout-surface));
+}
+
+.learn-hub-tracks .home-layer-card--secondary {
+  border-top-width: 1px;
+  border-top-color: var(--layout-border);
+}
+
+.home-layer-card__badge {
+  display: inline-block;
+  margin: 0 0 0.4rem;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-accent-strong);
+  background: color-mix(in srgb, var(--color-accent-strong) 10%, transparent);
+  border-radius: 4px;
+}
+
+.home-layer-card__meta {
+  margin: -0.35rem 0 0.85rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.learn-home__lang {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.learn-home__lang--footnote {
+  margin-top: 1.25rem;
+}
+
+.learn-home__lang label {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.learn-home__lang select {
+  max-width: 11rem;
+  padding: 0.3rem 0.55rem;
+  font-size: 0.8rem;
+}
+
+html[data-edu-debug='true']::after {
+  content: 'Debug';
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  z-index: 100;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #b45309;
+  background: color-mix(in srgb, #f59e0b 18%, transparent);
+  pointer-events: none;
+}
+
+/* —— Stats bar (legacy grid — kept for other pages) —— */
 .learn-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.75rem;
   margin: 0 0 2rem;
+}
+
+.learn-progress .learn-stats {
+  margin-top: 0;
+}
+
+.learn-progress #learn-progress-modules-heading {
+  margin-top: 0.5rem;
 }
 
 .learn-stat {
@@ -1165,7 +1308,7 @@ html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
 
 /* —— Learn track sections —— */
 .learn-track {
-  margin: 0 0 2.25rem;
+  margin: 0;
   scroll-margin-top: calc(var(--app-header-offset, 7rem) + 0.75rem);
 }
 
@@ -1235,7 +1378,7 @@ html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
   border-radius: 12px;
   background: var(--layout-surface);
   box-shadow: var(--shadow-card);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease;
 }
 
 .learn-skill-card--script {
@@ -1248,7 +1391,6 @@ html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
 
 @media (prefers-reduced-motion: no-preference) {
   .learn-skill-card:hover {
-
     box-shadow: var(--shadow-card-hover);
   }
 }
@@ -1378,6 +1520,103 @@ html[data-fonora-nav] .app-header .tab-btn.tab-btn--active {
   .learn-skill-card__progress {
     max-width: none;
   }
+}
+
+.learn-track__head--sub {
+  margin-top: 1.5rem;
+}
+
+.learn-track__subheading {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.learn-migration-banner {
+  margin: 0.75rem 0 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--layout-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-word) 8%, var(--layout-surface));
+}
+
+.learn-migration-banner p {
+  margin: 0 0 0.65rem;
+  font-size: 0.9rem;
+}
+
+.learn-migration-banner__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.learn-domain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+  gap: 0.65rem;
+  margin-top: 0.75rem;
+}
+
+.learn-domain-card {
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--layout-border);
+  border-radius: 10px;
+  background: var(--layout-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.learn-domain-card--current {
+  border-color: var(--color-word);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-word) 35%, transparent);
+}
+
+.learn-domain-card--locked {
+  opacity: 0.55;
+}
+
+.learn-domain-card__level {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.learn-domain-card__label {
+  margin: 0.2rem 0 0.55rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.learn-domain-card__progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--layout-border);
+  overflow: hidden;
+}
+
+.learn-domain-card__progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-word);
+  transition: width 0.25s ease;
+}
+
+.learn-domain-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.learn-domain-card__gap {
+  color: color-mix(in srgb, var(--color-word) 70%, var(--text-muted));
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1583,7 +1822,8 @@ html[data-fonora-nav='tools'] #tools-progress-body > .box {
 }
 
 /* Tools page intros sit on gray; keep the next block close (no double section gap). */
-html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell {
+html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell,
+.content-page [data-learn-hub-panel]:not([hidden]) > .page-toolbar-shell--static {
   padding-bottom: 0;
 }
 
@@ -1591,7 +1831,12 @@ html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell .page-toolbar 
   padding-bottom: 0.75rem;
 }
 
-html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + .home-section {
+.page-toolbar-shell:has(> .section-lead) .page-toolbar {
+  padding-bottom: 0.35rem;
+}
+
+html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + .home-section,
+.content-page [data-learn-hub-panel]:not([hidden]) > .page-toolbar-shell--static + .content-section {
   padding-top: 1rem;
   border-top: none;
 }
@@ -1661,13 +1906,18 @@ html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-progr
 .content-page > .page-hero-lander,
 .platform-home > .page-hero-lander,
 .fonoran-lander > .page-hero-lander,
-.home-page > .page-hero-lander {
+.home-page > .page-hero-lander,
+.learn-home .page-hero-lander {
   --page-hero-lander-text-gap: 1.25rem;
   align-items: center;
   margin-top: 0;
   padding-top: 0;
   padding-bottom: 0;
   border-top: none;
+}
+
+.learn-home .page-hero-lander {
+  padding-bottom: 1.5rem;
 }
 
 .page-hero-lander .page-toolbar__title {
@@ -1770,7 +2020,8 @@ html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-progr
   .content-page > .page-hero-lander,
   .platform-home > .page-hero-lander,
   .fonoran-lander > .page-hero-lander,
-  .home-page > .page-hero-lander {
+  .home-page > .page-hero-lander,
+  .learn-home .page-hero-lander {
     align-items: start;
   }
 }
@@ -1782,7 +2033,7 @@ html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-progr
   border: 1px solid var(--layout-border);
   border-radius: 12px;
   box-shadow: var(--shadow-card);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: box-shadow 0.15s ease;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1853,12 +2104,16 @@ html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-progr
   color: var(--text-heading);
 }
 
-.home-subtitle {
+.home-subtitle,
+.page-toolbar__lead {
   margin: 0;
-  font-size: 1.05rem;
-  color: var(--text-muted);
-  font-weight: 500;
+  font-size: 1.25rem;
+  color: var(--text-muted, var(--color-text-body));
   line-height: 1.45;
+}
+
+.home-subtitle {
+  font-weight: 500;
 }
 
 .home-prose {
@@ -1873,6 +2128,13 @@ html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-progr
 
 .home-prose p:last-child {
   margin-bottom: 0;
+}
+
+.content-page > .page-toolbar-shell + .home-prose,
+.page-doc-shell > .page-toolbar-shell + .home-prose,
+.research-page > .page-toolbar-shell + .home-prose {
+  margin: 0 0 1.25rem;
+  max-width: 62rem;
 }
 
 .home-hypothesis {
@@ -2338,7 +2600,7 @@ html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-progr
 }
 
 /* Home page (script lander sections) */
-.home-section p:not(.home-subtitle) {
+.home-section p:not(.home-subtitle):not(.page-toolbar__lead) {
   margin: 0 0 0.9rem;
   font-size: 1rem;
   line-height: 1.65;
@@ -3544,18 +3806,13 @@ table.sound-grid .grid-cell {
   letter-spacing: 0.02em;
 }
 
-/* —— Learn session bar (global, sticky under header) —— */
+/* —— Learn session bar (header row — replaces Learn sub-nav during lessons) —— */
 .learn-session-bar {
-  position: sticky;
-  top: var(--app-header-offset, 0);
-  z-index: 15;
-  background: var(--layout-surface);
-  border-bottom: 1px solid var(--layout-border);
   --learn-track-accent: var(--color-accent);
 }
 
 .learn-session-bar[hidden] {
-  display: none;
+  display: none !important;
 }
 
 .learn-session-bar[data-track='script'] {
@@ -3567,12 +3824,14 @@ table.sound-grid .grid-cell {
 }
 
 .learn-session-bar__inner {
+  width: 100%;
   max-width: var(--layout-max-width);
   margin: 0 auto;
   padding: 0.55rem var(--layout-gutter);
   display: flex;
   align-items: center;
   gap: 0.85rem;
+  box-sizing: border-box;
 }
 
 .learn-session__back {
@@ -3598,17 +3857,6 @@ table.sound-grid .grid-cell {
 .learn-session__back .learn-icon {
   width: 1.2rem;
   height: 1.2rem;
-}
-
-.learn-session__lesson {
-  flex-shrink: 0;
-  max-width: 9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-heading);
 }
 
 .learn-session__progress {
@@ -3711,6 +3959,65 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   margin: 0 0 1rem;
   font-size: 0.92rem;
   color: var(--text-muted);
+}
+
+/* ── Module-complete celebration card ─────────────────────────────────────── */
+
+.learn-session-summary__card--module-complete {
+  border-color: #8b5cf6;
+  background: linear-gradient(160deg, var(--layout-surface) 60%, color-mix(in srgb, #8b5cf6 8%, var(--layout-surface)));
+}
+
+.learn-module-complete__fireworks {
+  font-size: 3rem;
+  line-height: 1;
+  margin: 0 auto 0.35rem;
+  animation: learn-bounce 0.6s ease-out;
+}
+
+@keyframes learn-bounce {
+  0%   { transform: scale(0.5); opacity: 0; }
+  65%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.learn-module-complete__headline {
+  margin: 0 0 0.2rem;
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #8b5cf6;
+  letter-spacing: -0.01em;
+}
+
+.learn-module-complete__module-name {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.learn-module-complete__next {
+  margin: 0.5rem 0 1rem;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  background: color-mix(in srgb, #8b5cf6 10%, var(--layout-surface));
+  border: 1px solid color-mix(in srgb, #8b5cf6 25%, transparent);
+}
+
+.learn-module-complete__next-label {
+  margin: 0 0 0.2rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8b5cf6;
+  font-weight: 600;
+}
+
+.learn-module-complete__next-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-heading);
 }
 
 .learn-session-summary__stats div {
@@ -4890,7 +5197,6 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
     font-size: 2rem;
   }
 
-  .home-subtitle,
   .home-prose p {
     font-size: 1rem;
   }
@@ -6827,13 +7133,20 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   margin-top: calc(-1 * var(--layout-main-pt, 1.75rem));
 }
 
+.page-toolbar-shell:has(> .section-lead) > .section-lead {
+  margin: 0 0 1rem;
+  max-width: 62ch;
+}
+
 /* Static headers stay in normal document flow inside main-content padding */
-.content-page > .page-toolbar-shell--static:first-child {
+.content-page > .page-toolbar-shell--static:first-child,
+.content-page [data-learn-hub-panel]:not([hidden]) > .page-toolbar-shell--static {
   margin-top: 0;
   padding-top: 0;
 }
 
-.content-page > .page-toolbar-shell--static:first-child .page-toolbar {
+.content-page > .page-toolbar-shell--static:first-child .page-toolbar,
+.content-page [data-learn-hub-panel]:not([hidden]) > .page-toolbar-shell--static .page-toolbar {
   padding-top: 0;
 }
 
@@ -6867,11 +7180,7 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 }
 
 .page-toolbar__lead {
-  margin: 0;
   max-width: 42rem;
-  font-size: 0.92rem;
-  color: var(--text-muted, var(--color-text-body));
-  line-height: 1.45;
 }
 
 .page-toolbar__action {
@@ -7711,7 +8020,7 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   color: var(--color-text);
 }
 
-.research-page p {
+.research-page p:not(.page-toolbar__lead) {
   color: var(--text-body);
 }
 
@@ -7751,12 +8060,11 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   background: var(--layout-surface);
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .research-card:hover {
   border-color: #b7d8c6;
-  transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(45, 106, 79, 0.08);
 }
 
@@ -8049,13 +8357,12 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   background: var(--layout-surface);
   text-decoration: none;
   color: inherit;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .tl-step__card:hover {
   border-color: #b7d8c6;
   box-shadow: 0 6px 18px rgba(45, 106, 79, 0.08);
-  transform: translateY(-1px);
 }
 
 .tl-step__meta {

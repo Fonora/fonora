@@ -2240,9 +2240,9 @@
     .lander-health__actions { display:flex; justify-content:center; margin-top:1rem; }
     .lander-health__actions--in-panel { margin-top:1rem; width:100%; }
     .lander-health__actions--in-panel .btn { width:100%; }
-    .fonoran-compare-card { display:flex; flex-direction:column; gap:0.5rem; border-radius:12px; box-shadow:var(--shadow-card); transition:transform 0.15s ease, box-shadow 0.15s ease; }
+    .fonoran-compare-card { display:flex; flex-direction:column; gap:0.5rem; border-radius:12px; box-shadow:var(--shadow-card); transition:box-shadow 0.15s ease; }
     @media (prefers-reduced-motion: no-preference) {
-      .fonoran-compare-card:hover { transform:translateY(-1px); box-shadow:var(--shadow-card-hover); }
+      .fonoran-compare-card:hover { box-shadow:var(--shadow-card-hover); }
     }
     .fonoran-compare-card--script { border-top:3px solid var(--color-script, #2563eb); }
     .fonoran-compare-card--language { border-top:3px solid var(--accent); }

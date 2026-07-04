@@ -1,11 +1,15 @@
 /**
  * Fonoran writing practice (roman mode): meaning → type Fonoran roman spelling.
+ *
+ * Prefers the phrase-based domain curriculum when translated phrases are available;
+ * falls back to the word-based ring curriculum.
  */
 import {
   loadFonoranPracticeEntries,
   spellingMatchesEntry,
 } from './fonoran-practice-words.js';
-import { createCurriculum } from './fonoran-learn-curriculum.js';
+import { loadDomainCurriculum, spellingMatchesCourseEntry } from './fonoran-course-phrases.js';
+import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curriculum.js';
 import { setupFonoranDisplayModeToggle, loadFonoranDisplayMode } from './learning-display-mode.js';
 import {
   onSpellingPracticeTabActivated,
@@ -19,15 +23,17 @@ import {
   setLearnVerdict,
 } from './learn-session-ui.js';
 
-/** @type {import('./fonoran-practice-words.js').PracticeEntry[]} */
+/** @type {Array<import('./fonoran-practice-words.js').PracticeEntry | import('./fonoran-course-phrases.js').CourseEntry>} */
 let entries = [];
-/** @type {import('./fonoran-practice-words.js').PracticeEntry[]} */
+/** @type {Array<import('./fonoran-practice-words.js').PracticeEntry | import('./fonoran-course-phrases.js').CourseEntry>} */
 let pool = [];
 /** @type {ReturnType<typeof createCurriculum> | null} */
 let curriculum = null;
 let currentIndex = 0;
 /** @type {'roman' | 'script'} */
 let displayMode = 'roman';
+/** @type {boolean} */
+let usingPhrases = false;
 
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
@@ -66,7 +72,9 @@ function checkRomanAnswer() {
   const input = document.getElementById('fonoran-writing-roman-input');
   if (!entry || !input) return;
 
-  const correct = spellingMatchesEntry(input.value, entry, pool.length ? pool : entries);
+  const correct = usingPhrases
+    ? spellingMatchesCourseEntry(input.value, /** @type {any} */ (entry))
+    : spellingMatchesEntry(input.value, /** @type {any} */ (entry), pool.length ? pool : entries);
   checked = true;
   input.disabled = true;
 
@@ -125,13 +133,21 @@ export async function setupFonoranWriting(rules) {
   setupFonoranDisplayModeToggle('fonoran-writing-mode', applyDisplayMode, 'fonoran-writing-display-mode');
 
   try {
-    curriculum = createCurriculum('fonoran-writing', await loadFonoranPracticeEntries(rules));
+    const courseData = await loadDomainCurriculum(rules);
+    if (courseData) {
+      usingPhrases = true;
+      curriculum = createDomainCurriculum('fonoran-writing', courseData.items, courseData.domains);
+    } else {
+      usingPhrases = false;
+      curriculum = createCurriculum('fonoran-writing', await loadFonoranPracticeEntries(rules));
+    }
     pool = curriculum.ordered;
     entries = curriculum.currentLessonEntries();
   } catch {
     curriculum = null;
     pool = [];
     entries = [];
+    usingPhrases = false;
   }
 
   const status = document.getElementById('fonoran-writing-status');
@@ -139,7 +155,7 @@ export async function setupFonoranWriting(rules) {
     status.hidden = entries.length > 0;
     status.textContent = entries.length
       ? ''
-      : 'No practice words loaded. Run the dev server so /api/fonoran/bootstrap can supply the lab dictionary.';
+      : 'No practice content loaded. Run the dev server and build course phrases with npm run fonoran:course-phrases:build.';
   }
 
   document.getElementById('fonoran-writing-roman-check')?.addEventListener('click', checkRomanAnswer);

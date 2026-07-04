@@ -22,6 +22,11 @@ const root = fileURLToPath(new URL('.', import.meta.url));
 const host = process.env.HOST || '0.0.0.0';
 const port = Number(process.env.PORT) || 8000;
 
+function eduDebugModeEnabled() {
+  const v = process.env.EDU_DEBUG_MODE?.trim().toLowerCase();
+  return v === 'true' || v === '1' || v === 'yes';
+}
+
 const MIME = {
   '.css': 'text/css; charset=utf-8',
   '.html': 'text/html; charset=utf-8',
@@ -242,6 +247,12 @@ createServer(async (req, res) => {
       if (handled) return;
       res.writeHead(404, { 'Content-Type': 'application/json', ...SECURITY_HEADERS });
       res.end(JSON.stringify({ error: 'Not found' }));
+      return;
+    }
+
+    if (url.pathname === '/api/learn/config' && method === 'GET') {
+      res.writeHead(200, { 'Content-Type': 'application/json', ...SECURITY_HEADERS });
+      res.end(JSON.stringify({ eduDebugMode: eduDebugModeEnabled() }));
       return;
     }
 
