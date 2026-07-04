@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "repository": "https://github.com/Fonora/fonora-data",
-  "ref": "v0.1.0-migration",
-  "commit": "59b5b41b60f094988b3a966b5694f6d799c81240",
-  "updated_at": "2026-07-03T08:15:00.000Z"
+  "ref": "main",
+  "commit": "1f11f6dca6558bd0adc4ef96c16cf7697cabb869",
+  "updated_at": "2026-07-04T16:24:00.000Z"
 }
