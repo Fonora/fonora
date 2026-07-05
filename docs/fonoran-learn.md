@@ -71,13 +71,17 @@ flowchart TB
 
 ### Fonora Script
 
-Teaches the phonetic writing system independently of Fonoran vocabulary.
+Teaches the phonetic writing system with **structured lesson progression** and inline **Listen** buttons on prompts (except pure listening exercises).
 
-| Skill | Route | Exercise |
-| --- | --- | --- |
-| Sounds | `#script-sounds` | Match symbol to sound (MCQ) |
-| Writing | `#script-writing` | Type Fonora symbols from IPA prompts |
-| Words | `#script-words` | Read words written in Fonora Script |
+| Skill | Route | Exercise | Curriculum |
+| --- | --- | --- | --- |
+| Sounds | `#script-sounds` | Match symbol ↔ sound (decode + construct) | Ordered symbol modules: places → modifiers → grid → vowels ([`js/fonora-script-curriculum.js`](../js/fonora-script-curriculum.js)) |
+| Writing | `#script-writing` | English meaning → type Fonora script | Domain curriculum from [`data/fonoran-course-phrases.json`](../data/fonoran-course-phrases.json): words then phrases per module |
+| Words | `#script-words` | Fonora script → type English meaning | Same domain curriculum as Writing |
+
+Script Writing and Read Words reuse the Fonoran phrase corpus: English `sourceText` prompts and precomputed `script` glyphs from translated course entries. Pass ≥70% to advance; skill cards show module labels and lesson progress ([`js/learn-home-progress.js`](../js/learn-home-progress.js)).
+
+**Playback:** Inline hear buttons use [`js/learn-hear-ui.js`](../js/learn-hear-ui.js) + [`js/fonora-tts.js`](../js/fonora-tts.js). Piper voice models are cached in the browser Cache API ([`js/piper-audio.js`](../js/piper-audio.js)) and warmed on app load so Listen is fast after the first visit.
 
 ### Fonoran language
 
@@ -89,10 +93,10 @@ Teaches roots and compounds from the live lab, ordered by **language rings** (ca
 
 | Skill | Route | Exercise |
 | --- | --- | --- |
-| Reading | `#fonoran-reading` | Fonoran script/roman → English meaning (MCQ) |
-| Writing | `#fonoran-writing` | English meaning → type Fonoran roman |
-| Hearing | `#fonoran-hearing` | TTS of Fonoran → English meaning (MCQ) |
-| Grammar | `#fonoran-grammar` | Sentence translation drills (template compiler) |
+| Reading | `#fonoran-reading` | Fonoran script/roman → English meaning (MCQ) · **Listen** on prompt |
+| Writing | `#fonoran-writing` | English meaning → type Fonoran roman · **Listen** for target word |
+| Hearing | `#fonoran-hearing` | TTS of Fonoran → English meaning (MCQ) — no inline hear (exercise is listening) |
+| Grammar | `#fonoran-grammar` | Sentence translation drills · **Listen** for Fonoran phrase |
 | Speaking | `#fonoran-speaking` | Stub — not yet on Learn home |
 
 Ring labels and tier assignment come from [`tools/fonoran-experience-tiers.js`](../tools/fonoran-experience-tiers.js). Curriculum ordering is implemented in [`js/fonoran-learn-curriculum.js`](../js/fonoran-learn-curriculum.js): tier rank → root before compound → alphabetical.

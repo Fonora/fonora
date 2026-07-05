@@ -4,6 +4,8 @@ import { findCellBySymbols } from './rules.js';
 import { findVowelForCell, isVowelPhonemeKey } from './vowel-display.js';
 import { translateIpaPhrase } from './ipa-pipeline.js';
 import { normalizeIpaForComparison } from './pronunciation-validation.js';
+import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
+import { isValidSyllable, romanToIpa } from '../tools/fonoran-pronunciation.js';
 
 const PLACE_IDS = ['lips', 'front_tongue', 'middle_tongue', 'back_tongue', 'throat'];
 const MANNER_IDS = ['voice', 'friction', 'nasal', 'glide'];
@@ -186,6 +188,97 @@ function buildEncodingPath(chunks) {
       return `${chunk.symbols} → ${chunk.label}${ipa}`;
     })
     .join(' · ');
+}
+
+/** Build teaching breakdown from Fonoran roman syllable parts (matches TTS/hear). */
+export function buildRomanPartsBreakdown(spelling, parts, rules) {
+  const syllables = (parts?.length ? parts : [spelling]).filter(Boolean);
+  const chunks = [];
+  const warnings = [];
+  let symbols = '';
+  const ipaSegments = [];
+  const phonemeKeyParts = [];
+
+  for (const part of syllables) {
+    const row = romanToFonoraScript([part], rules);
+    if (row.warnings?.length) warnings.push(...row.warnings);
+    if (!row.phrase) {
+      warnings.push(`Could not encode “${part}”`);
+      continue;
+    }
+    symbols += row.phrase;
+    const decoded = decodeSymbols(row.phrase, rules);
+    warnings.push(...(decoded.warnings || []));
+    if (decoded.groups?.length) {
+      phonemeKeyParts.push(decoded.groups.map((group) => group.sound).join(''));
+    }
+    for (const group of decoded.groups) {
+      chunks.push(enrichGroup(group, rules, ''));
+    }
+    ipaSegments.push(romanToIpa(part).replace(/^\/+|\/+$/g, ''));
+  }
+
+  return {
+    original: spelling,
+    ipa: ipaSegments.length ? `/${ipaSegments.join('')}/` : '',
+    phonemeKeys: chunks.map((chunk) => chunk.label).join(' '),
+    decoded: phonemeKeyParts.join(''),
+    phonemeString: phonemeKeyParts.join(''),
+    symbols,
+    chunks,
+    encodingPath: buildEncodingPath(chunks),
+    warnings,
+  };
+}
+
+/** Build teaching breakdown from decoded Fonora script (matches Listen/TTS). */
+export function buildScriptBreakdown(spelling, script, rules) {
+  const trimmedScript = String(script || '').trim();
+  if (!trimmedScript || !rules) return null;
+
+  const decoded = decodeSymbols(trimmedScript, rules);
+  const chunks = decoded.groups.map((group) => enrichGroup(group, rules, ''));
+  if (!chunks.length) return null;
+
+  return {
+    original: spelling || trimmedScript,
+    ipa: '',
+    phonemeKeys: chunks.map((chunk) => chunk.label).join(' '),
+    decoded: decoded.groups.map((group) => group.sound).join(''),
+    phonemeString: decoded.groups.map((group) => group.sound).join(''),
+    symbols: trimmedScript,
+    chunks,
+    encodingPath: buildEncodingPath(chunks),
+    warnings: decoded.warnings || [],
+  };
+}
+
+/** Analyze Fonoran roman using syllable parts — not English IPA. */
+export function analyzeFonoranBreakdown(spelling, rules, { parts, script } = {}) {
+  const trimmed = String(spelling || '').trim();
+  if (!trimmed || !rules) return null;
+
+  let speakParts = parts?.filter(Boolean) ?? [];
+  if (!speakParts.length && isValidSyllable(trimmed)) {
+    speakParts = [trimmed];
+  }
+
+  let word = speakParts.length
+    ? buildRomanPartsBreakdown(trimmed, speakParts, rules)
+    : { chunks: [], warnings: [] };
+
+  if (!word.chunks.length && script) {
+    const fromScript = buildScriptBreakdown(trimmed, script, rules);
+    if (fromScript) word = fromScript;
+  }
+
+  if (!word.chunks.length) return null;
+
+  return {
+    original: trimmed,
+    words: [word],
+    warnings: word.warnings || [],
+  };
 }
 
 /** Build pronunciation chunks for one IPA pipeline word result. */

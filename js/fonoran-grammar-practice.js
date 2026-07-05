@@ -14,6 +14,8 @@ import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curric
 import { loadFonoranPracticeLab } from './fonoran-practice-words.js';
 import { buildGrammarExercises } from './fonoran-grammar-generate.js';
 import { loadDomainCurriculum } from './fonoran-course-phrases.js';
+import { mountPromptHear } from './learn-hear-ui.js';
+import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 
 /** @typedef {{ id: string, promptLang: string, answerRoman: string, promptFonoran: string, answerLang: string, parts?: string[], spelling?: string, tierRank?: number }} GrammarExercise */
 
@@ -28,6 +30,12 @@ let direction = 'to-fonoran';
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
 let checked = false;
+
+/** @type {object | null} */
+let rulesRef = null;
+
+/** @type {(() => void) | null} */
+let unbindHear = null;
 
 function resetAnswerState() {
   checked = false;
@@ -93,6 +101,25 @@ async function loadExercisePool() {
   }
 }
 
+function speakTextForExercise(exercise) {
+  if (!exercise || !rulesRef) return '';
+  const parts = exercise.parts?.length ? exercise.parts : [exercise.answerRoman || exercise.spelling];
+  const { phrase } = romanToFonoraScript(parts.filter(Boolean), rulesRef);
+  return phrase || '';
+}
+
+function wirePromptHear(exercise) {
+  unbindHear?.();
+  const promptEl = document.getElementById('fonoran-grammar-prompt');
+  unbindHear = mountPromptHear({
+    promptEl,
+    panelId: 'tab-fonoran-grammar',
+    rules: rulesRef,
+    ariaLabel: 'Listen to Fonoran phrase',
+    getSpeakText: () => speakTextForExercise(exercise),
+  });
+}
+
 function renderExercise() {
   const exercise = exercises[currentIndex];
   const promptEl = document.getElementById('fonoran-grammar-prompt');
@@ -115,6 +142,7 @@ function renderExercise() {
   setLearnVerdict('fonoran-grammar-verdict', null);
   session?.setContinueVisible('fonoran-grammar-next', false);
   if (checkBtn) checkBtn.hidden = false;
+  wirePromptHear(exercise);
   input.focus();
 }
 
@@ -145,7 +173,8 @@ function nextExercise() {
   renderExercise();
 }
 
-export async function setupFonoranGrammar() {
+export async function setupFonoranGrammar(rules) {
+  rulesRef = rules ?? null;
   session = createLearnSession('fonoran-grammar', {
     panelId: 'tab-fonoran-grammar',
     answerType: 'typing',

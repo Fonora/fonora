@@ -50,12 +50,92 @@ const PIPER_SPLIT = {
 const STRESS_MARKS = new Set(['ˈ', 'ˌ']);
 const VOWEL_LIKE = /[aeiouæɑɒɔəɚɝɐɨʉɯɪʊɜɞɵʏyɛœøʌaɪaʊoʊeɪɔɪ]/;
 
+const PIPER_CACHE_NAME = 'fonora-piper-v3';
+
 let initPromise = null;
 let initError = null;
 let voiceId = null;
 let voiceData = null;
 let onnxRuntime = null;
 let onnxWasmBasePath = null;
+
+function voiceOnnxUrl(baseUrl, voice) {
+  return `${baseUrl}/${voice}/${voice}.onnx`;
+}
+
+function voiceConfigUrl(baseUrl, voice) {
+  return `${baseUrl}/${voice}/${voice}.onnx.json`;
+}
+
+function isValidVoiceConfig(config) {
+  return Boolean(config?.phoneme_id_map && config?.inference && config?.audio);
+}
+
+async function resolveOnnxBytes(modelRef) {
+  if (modelRef instanceof Uint8Array) return modelRef;
+  if (modelRef instanceof ArrayBuffer) return new Uint8Array(modelRef);
+  if (typeof modelRef === 'string') {
+    const res = await fetch(modelRef);
+    if (!res.ok) throw new Error('Could not read Piper model bytes');
+    return new Uint8Array(await res.arrayBuffer());
+  }
+  throw new Error('Unsupported Piper model format');
+}
+
+function voiceFilesFromBytes(config, onnxBytes) {
+  const blobUrl = URL.createObjectURL(new Blob([onnxBytes], { type: 'application/octet-stream' }));
+  return [config, blobUrl];
+}
+
+async function readCachedVoiceFiles(baseUrl, voice) {
+  if (typeof caches === 'undefined') return null;
+  try {
+    const cache = await caches.open(PIPER_CACHE_NAME);
+    const onnxRes = await cache.match(voiceOnnxUrl(baseUrl, voice));
+    const jsonRes = await cache.match(voiceConfigUrl(baseUrl, voice));
+    if (!onnxRes?.ok || !jsonRes?.ok) return null;
+    const [onnxBuffer, configText] = await Promise.all([
+      onnxRes.arrayBuffer(),
+      jsonRes.text(),
+    ]);
+    const config = JSON.parse(configText);
+    if (!isValidVoiceConfig(config) || !onnxBuffer?.byteLength) return null;
+    return voiceFilesFromBytes(config, new Uint8Array(onnxBuffer));
+  } catch {
+    return null;
+  }
+}
+
+async function storeVoiceFiles(baseUrl, voice, files) {
+  if (typeof caches === 'undefined') return;
+  try {
+    const config = files[0];
+    if (!isValidVoiceConfig(config)) return;
+    const onnxBytes = await resolveOnnxBytes(files[1]);
+    const cache = await caches.open(PIPER_CACHE_NAME);
+    await Promise.all([
+      cache.put(voiceOnnxUrl(baseUrl, voice), new Response(onnxBytes)),
+      cache.put(voiceConfigUrl(baseUrl, voice), new Response(JSON.stringify(config), {
+        headers: { 'Content-Type': 'application/json' },
+      })),
+    ]);
+  } catch {
+    // Cache write failures are non-fatal.
+  }
+}
+
+async function fetchVoiceFiles(provider, voice, onProgress) {
+  const cached = await readCachedVoiceFiles(PIPER_VOICE_BASE_URL, voice);
+  if (cached) {
+    onProgress?.('Loading cached voice model…');
+    return cached;
+  }
+
+  onProgress?.('Downloading voice model (~20–60 MB, one-time)…');
+  const data = await provider.fetch(voice);
+  void storeVoiceFiles(PIPER_VOICE_BASE_URL, voice, data);
+  return data;
+}
 
 export function getPiperVoiceForLang(lang) {
   return PIPER_VOICE_BY_LANG[lang] ?? null;
@@ -81,8 +161,13 @@ function expandSegmentsForPiper(segments) {
   return out;
 }
 
+function isConsonantSchwaClip(segments) {
+  const nuclei = segments.filter((segment) => !STRESS_MARKS.has(segment) && VOWEL_LIKE.test(segment));
+  return nuclei.length === 1 && nuclei[0] === 'ə' && segments.includes('ə');
+}
+
 /** Map compact IPA to Piper phoneme ID sequence (^ … $ with pad tokens). */
-export function ipaToPiperPhonemeIds(ipa, phonemeIdMap) {
+export function ipaToPiperPhonemeIds(ipa, phonemeIdMap, options = {}) {
   const pad = phonemeIdMap._?.[0];
   const bos = phonemeIdMap['^']?.[0];
   const eos = phonemeIdMap['$']?.[0];
@@ -91,13 +176,15 @@ export function ipaToPiperPhonemeIds(ipa, phonemeIdMap) {
   }
 
   const segments = expandSegmentsForPiper(segmentIpa(ipa));
+  const schwaClip = Boolean(options.teachingClip) && isConsonantSchwaClip(segments);
   const ids = [bos];
   let stressed = false;
 
   for (const segment of segments) {
     if (STRESS_MARKS.has(segment)) continue;
 
-    if (!stressed && VOWEL_LIKE.test(segment) && phonemeIdMap['ˈ']) {
+    const unstressedSchwa = schwaClip && segment === 'ə';
+    if (!stressed && VOWEL_LIKE.test(segment) && phonemeIdMap['ˈ'] && !unstressedSchwa) {
       ids.push(pad, phonemeIdMap['ˈ'][0]);
       stressed = true;
     }
@@ -202,8 +289,7 @@ async function ensurePiper(voice, onProgress) {
       onProgress?.('Loading neural voice engine…');
       const mod = await loadPiperModule();
       const provider = new mod.HuggingFaceVoiceProvider({ baseUrl: PIPER_VOICE_BASE_URL });
-      onProgress?.('Downloading voice model (~20–60 MB, one-time)…');
-      const data = await provider.fetch(voice);
+      const data = await fetchVoiceFiles(provider, voice, onProgress);
       const wasmBasePath = await resolveOnnxWasmBasePath();
       const runtime = createOnnxRuntime(mod, wasmBasePath);
       voiceData = data;
@@ -239,16 +325,23 @@ export function getPiperInitError() {
   return initError?.message || null;
 }
 
-export async function synthesizePiperIpa(ipa, voice = 'en_US-lessac-medium', onProgress) {
+export async function synthesizePiperIpa(ipa, voice = 'en_US-lessac-medium', onProgress, options = {}) {
   const trimmed = String(ipa || '').trim();
   if (!trimmed) return null;
 
   const { voiceData: data, onnxRuntime: runtime } = await ensurePiper(voice, onProgress);
   const config = data[0];
-  const phonemeIds = ipaToPiperPhonemeIds(trimmed, config.phoneme_id_map);
+  if (!isValidVoiceConfig(config)) {
+    throw new Error('Invalid Piper voice configuration');
+  }
+  const phonemeIds = ipaToPiperPhonemeIds(trimmed, config.phoneme_id_map, options);
+  let payload = data;
+  if (options.lengthScale != null && config.inference) {
+    payload = [{ ...config, inference: { ...config.inference, length_scale: options.lengthScale } }, data[1]];
+  }
   const response = await runtime.generate(
     { phoneme_ids: phonemeIds, phonemes: [], text: trimmed },
-    data,
+    payload,
     0,
   );
 
@@ -271,7 +364,9 @@ function decodeWavPcm(bytes) {
 
 export async function playPiperIpa(ipa, voice = 'en_US-lessac-medium', onProgress, options = {}) {
   primeAudioContext();
-  const decoded = await synthesizePiperIpa(ipa, voice, onProgress);
-  if (!decoded?.samples?.length) return;
+  const decoded = await synthesizePiperIpa(ipa, voice, onProgress, options);
+  if (!decoded?.samples?.length) {
+    throw new Error('Neural voice produced no audio');
+  }
   await playEspeakSamples(decoded.samples, decoded.sampleRate, options);
 }

@@ -58,7 +58,7 @@ function getReaderPlaybackOptions() {
   const englishDialect = getReaderEnglishDialect();
   return {
     lang,
-    engine: 'auto',
+    engine: 'piper',
     piperVoice: getReaderPiperVoice(lang),
     espeakVoice: resolveEspeakVoice(lang, { englishDialect }),
   };
@@ -109,9 +109,9 @@ export function syncTranslatePlaybackControls() {
   const piperVoice = getPiperVoiceForLang(lang);
   voiceNote.hidden = false;
   if (piperVoice) {
-    voiceNote.textContent = `Neural voice: ${piperVoice.replace(/_/g, ' ')}. Falls back to eSpeak IPA if the voice fails to load.`;
+    voiceNote.textContent = `Neural voice: ${piperVoice.replace(/_/g, ' ')}.`;
   } else {
-    voiceNote.textContent = 'No Piper neural voice for this language, playback uses eSpeak IPA.';
+    voiceNote.textContent = 'No Piper neural voice for this language.';
   }
 }
 

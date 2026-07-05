@@ -1,59 +1,68 @@
 /**
- * Fonora Script reading — words: Fonora script → type source-language word.
+ * Fonora Script reading — Fonora script → type English meaning.
+ * Uses the Fonoran domain curriculum (words then phrases).
  */
-import { runIpaPipeline } from './ipa-pipeline.js';
-import { initEspeak } from './ipa.js';
-import { loadLanguagePreference, learningPrompt } from './learning-locale.js';
-import {
-  setupLearningLanguageSelect,
-  ensureLearningLanguageSelect,
-  updateLearningLanguageNote,
-} from './learning-language-select.js';
-import { showBreakdownFeedback, hideBreakdownFeedback } from './breakdown-feedback.js';
+import { loadDomainCurriculum } from './fonoran-course-phrases.js';
+import { createDomainCurriculum } from './fonoran-learn-curriculum.js';
+import { showScriptReadingBreakdown, hideBreakdownFeedback } from './breakdown-feedback.js';
 import {
   createLearnSession,
   finishTypingAnswer,
   setLearnVerdict,
 } from './learn-session-ui.js';
+import { mountPromptHear } from './learn-hear-ui.js';
 import { escapeHtml } from './utils.js';
 
-/** @typedef {{ text: string, accept: string[], symbols: string }} ScriptReadingWord */
+/** @typedef {import('./fonoran-course-phrases.js').CourseEntry & { accept?: string[] }} ReadingEntry */
 
-/** @type {ScriptReadingWord[]} */
-let readingWords = [];
+/** @type {ReadingEntry[]} */
+let readingEntries = [];
 let currentIndex = 0;
 let wired = false;
 /** @type {object | null} */
 let rulesRef = null;
 
+/** @type {ReturnType<typeof createDomainCurriculum> | null} */
+let curriculum = null;
+
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
+
+/** @type {(() => void) | null} */
+let unbindHear = null;
+
 let checked = false;
 
 function resetAnswerState() {
   checked = false;
 }
 
-async function loadWordBank() {
-  const res = await fetch('/data/fonora-script-practice-words.json');
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  return data.words ?? [];
-}
-
 function normalizeAnswer(text) {
   return String(text ?? '').trim().toLowerCase();
 }
 
+function wirePromptHear() {
+  unbindHear?.();
+  const promptEl = document.getElementById('script-reading-word-prompt');
+  const entry = readingEntries[currentIndex];
+  unbindHear = mountPromptHear({
+    promptEl,
+    panelId: 'tab-script-reading-words',
+    rules: rulesRef,
+    ariaLabel: 'Listen to script',
+    getSpeakText: () => entry?.script ?? '',
+  });
+}
+
 function showWordPrompt() {
-  const word = readingWords[currentIndex];
+  const entry = readingEntries[currentIndex];
   const prompt = document.getElementById('script-reading-word-prompt');
   const input = document.getElementById('script-reading-word-answer');
   const checkBtn = document.getElementById('script-reading-word-check');
   const breakdown = document.getElementById('script-reading-word-breakdown');
-  if (!word || !prompt || !input) return;
+  if (!entry || !prompt || !input) return;
 
-  prompt.innerHTML = `<span class="symbol-text learn-exercise__prompt-glyphs">${escapeHtml(word.symbols)}</span>`;
+  prompt.innerHTML = `<span class="symbol-text learn-exercise__prompt-glyphs">${escapeHtml(entry.script)}</span>`;
   input.value = '';
   resetAnswerState();
   input.disabled = false;
@@ -61,34 +70,36 @@ function showWordPrompt() {
   session?.setContinueVisible('script-reading-word-next', false);
   if (checkBtn) checkBtn.hidden = false;
   hideBreakdownFeedback(breakdown);
+  wirePromptHear();
   input.focus();
 }
 
 function nextWord() {
-  if (!readingWords.length || session?.isComplete) return;
-  currentIndex = (currentIndex + 1) % readingWords.length;
+  if (!readingEntries.length || session?.isComplete) return;
+  currentIndex = (currentIndex + 1) % readingEntries.length;
   showWordPrompt();
 }
 
 function checkWordAnswer() {
   if (checked || session?.isComplete) return;
-  const word = readingWords[currentIndex];
+  const entry = readingEntries[currentIndex];
   const input = document.getElementById('script-reading-word-answer');
   const breakdown = document.getElementById('script-reading-word-breakdown');
-  if (!word || !input || !rulesRef || !session) return;
+  if (!entry || !input || !rulesRef || !session) return;
 
   const answer = normalizeAnswer(input.value);
-  const accepted = (word.accept ?? [word.text]).map(normalizeAnswer);
+  const accepted = (entry.accept ?? [entry.meaning]).map(normalizeAnswer);
   const correct = accepted.includes(answer);
   checked = true;
   input.disabled = true;
 
   setLearnVerdict('script-reading-word-verdict', correct);
+  curriculum?.recordResult(entry, correct);
 
   if (correct) {
     hideBreakdownFeedback(breakdown);
   } else {
-    void showBreakdownFeedback(breakdown, word.text, rulesRef);
+    void showScriptReadingBreakdown(breakdown, entry, rulesRef, input.value);
   }
 
   finishTypingAnswer(session, {
@@ -99,32 +110,42 @@ function checkWordAnswer() {
   });
 }
 
-async function reloadScriptReadingWords(rules) {
-  await initEspeak();
-  const bank = await loadWordBank();
-  const lang = loadLanguagePreference();
-  readingWords = [];
-
-  for (const item of bank) {
-    const result = await runIpaPipeline(item.text, rules, { lang, testMode: 'practice' });
-    if (!result?.symbols || result.symbols.includes('?')) continue;
-    readingWords.push({
-      text: item.text,
-      accept: item.accept ?? [item.text],
-      symbols: result.symbols,
-    });
+async function reloadLessonEntries(rules) {
+  if (!curriculum) {
+    const courseData = await loadDomainCurriculum(rules);
+    if (!courseData) {
+      readingEntries = [];
+      curriculum = null;
+    } else {
+      curriculum = createDomainCurriculum('script-words', courseData.items, courseData.domains);
+      readingEntries = curriculum
+        .currentLessonEntries()
+        .filter((entry) => entry.script)
+        .map((entry) => ({
+          ...entry,
+          accept: [entry.meaning],
+        }));
+    }
+  } else {
+    readingEntries = curriculum
+      .currentLessonEntries()
+      .filter((entry) => entry.script)
+      .map((entry) => ({
+        ...entry,
+        accept: [entry.meaning],
+      }));
   }
 
   const status = document.getElementById('script-reading-word-status');
   if (status) {
-    status.hidden = readingWords.length > 0;
-    status.textContent = readingWords.length
+    status.hidden = readingEntries.length > 0;
+    status.textContent = readingEntries.length
       ? ''
-      : 'No reading words loaded. Check /data/fonora-script-practice-words.json.';
+      : 'No reading content loaded. Build course phrases with npm run fonoran:course-phrases:build.';
   }
 
   currentIndex = 0;
-  showWordPrompt();
+  if (readingEntries.length) showWordPrompt();
 }
 
 /**
@@ -132,25 +153,29 @@ async function reloadScriptReadingWords(rules) {
  */
 export async function setupScriptReadingWords(rules) {
   rulesRef = rules;
+  curriculum = null;
 
   session = createLearnSession('script-words', {
     panelId: 'tab-script-reading-words',
     answerType: 'typing',
+    lessonLabel: () => curriculum?.lessonLabel() ?? '',
+    onComplete: (stats) => curriculum?.complete(stats) ?? {},
     onQuestionStart: () => {
-      if (readingWords.length) nextWord();
+      if (readingEntries.length) nextWord();
     },
     onSessionReset: () => {
-      currentIndex = 0;
-      showWordPrompt();
+      void reloadLessonEntries(rules);
     },
   });
+
   session.bindContinue('script-reading-word-next', () => {
+    hideBreakdownFeedback(document.getElementById('script-reading-word-breakdown'));
     resetAnswerState();
   });
 
   const label = document.getElementById('script-reading-word-label');
   if (label) {
-    label.textContent = learningPrompt('Your answer ({language} word)');
+    label.textContent = 'Your answer (English meaning)';
   }
 
   if (!wired) {
@@ -158,21 +183,22 @@ export async function setupScriptReadingWords(rules) {
     document.getElementById('script-reading-word-check')?.addEventListener('click', checkWordAnswer);
     const readingInput = document.getElementById('script-reading-word-answer');
     readingInput?.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter') checkWordAnswer();
-    });
-    setupLearningLanguageSelect('script-reading-language', async () => {
-      updateLearningLanguageNote('script-reading-language-note');
-      if (rulesRef) await reloadScriptReadingWords(rulesRef);
+      if (event.key !== 'Enter') return;
+      if (checked) {
+        const continueBtn = document.getElementById('script-reading-word-next');
+        if (continueBtn && !continueBtn.hidden) {
+          continueBtn.click();
+          return;
+        }
+      }
+      checkWordAnswer();
     });
   }
 
-  updateLearningLanguageNote('script-reading-language-note');
-  await reloadScriptReadingWords(rules);
+  await reloadLessonEntries(rules);
 }
 
 export function onScriptReadingTabActivated() {
-  ensureLearningLanguageSelect('script-reading-language');
-  updateLearningLanguageNote('script-reading-language-note');
-  if (readingWords.length && !session?.isComplete) showWordPrompt();
+  if (readingEntries.length && !session?.isComplete) showWordPrompt();
   else if (rulesRef) void setupScriptReadingWords(rulesRef);
 }

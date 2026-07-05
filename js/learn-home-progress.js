@@ -16,10 +16,15 @@ import {
   resetFonoranLanguageSkills,
   SKILL_TRACK,
 } from './learn-gamification.js';
-import { countDomainMastered, loadDomainStats } from './fonoran-course-phrases.js';
+import { renderModulePath } from './learn-module-path.js';
 import { icon } from './learn-icons.js';
 
 const XP_PER_LEVEL = 100;
+
+/** @type {Partial<Record<import('./learn-gamification.js').LearnSkillId, string>>} */
+const CURRICULUM_UNITS = {
+  'script-sounds': 'sounds',
+};
 
 function hasAnyLearnProgress(progress) {
   if (progress.totalXp > 0 || progress.streak > 0) return true;
@@ -78,7 +83,7 @@ function refreshFullProgress() {
     </article>`;
 }
 
-export function refreshLearnHomeProgress() {
+export function refreshLearnHomeProgress(rules = null) {
   refreshCompactProgress();
   refreshFullProgress();
 
@@ -89,7 +94,7 @@ export function refreshLearnHomeProgress() {
     const typedSkillId = /** @type {import('./learn-gamification.js').LearnSkillId} */ (skillId);
     const skill = getSkillProgress(typedSkillId);
     const meta = getSkillCurriculumMeta(typedSkillId);
-    const isCurriculum = SKILL_TRACK[typedSkillId] === 'language' && meta.total > 0;
+    const isCurriculum = (SKILL_TRACK[typedSkillId] === 'language' || SKILL_TRACK[typedSkillId] === 'script') && meta.total > 0;
 
     let pct;
     let levelText;
@@ -98,9 +103,10 @@ export function refreshLearnHomeProgress() {
       const lessonIndex = getSkillLesson(typedSkillId);
       const lessonNumber = Math.min(lessonIndex + 1, meta.totalLessons);
       pct = meta.total ? Math.round((mastered / meta.total) * 100) : 0;
+      const unit = CURRICULUM_UNITS[typedSkillId] ?? 'words';
       const ring = meta.ring ? `${meta.ring} · ` : '';
       levelText = lessonIndex >= meta.totalLessons
-        ? `${ring}Review · ${mastered}/${meta.total} words`
+        ? `Review · ${mastered}/${meta.total} ${unit}`
         : `${ring}Lesson ${lessonNumber}/${meta.totalLessons}`;
     } else {
       const lvl = getSkillLevel(skill.xp);
@@ -123,7 +129,7 @@ export function refreshLearnHomeProgress() {
     card.classList.toggle('learn-skill-card--started', skill.xp > 0);
   });
 
-  void refreshDomainProgress();
+  void renderModulePath(rules);
   maybeShowCourseMigrationBanner();
 }
 
@@ -145,59 +151,4 @@ function maybeShowCourseMigrationBanner() {
     markCourseCurriculumMigrated();
     banner.hidden = true;
   }, { once: true });
-}
-
-/**
- * Render 20 domain progress cards in #learn-domain-progress (if present).
- * The current domain (first incomplete) is highlighted; locked domains are dimmed.
- * This is a best-effort async update — absent or empty data silently no-ops.
- */
-async function refreshDomainProgress() {
-  const container = document.getElementById('learn-domain-progress');
-  if (!container) return;
-
-  let stats;
-  try {
-    stats = await loadDomainStats();
-  } catch {
-    return;
-  }
-  if (!stats.length) {
-    container.hidden = true;
-    return;
-  }
-
-  // Determine which domain is currently active from the reading skill lesson index.
-  const LESSONS_PER_DOMAIN = 5;
-  const currentLesson = getSkillLesson('fonoran-reading');
-  const currentDomainIndex = Math.floor(currentLesson / LESSONS_PER_DOMAIN);
-
-  container.hidden = false;
-  const readingMastery = getSkillProgress('fonoran-reading').mastery ?? {};
-  container.innerHTML = stats
-    .map((domain, idx) => {
-      const isUnlocked = idx <= currentDomainIndex;
-      const isCurrent = idx === currentDomainIndex;
-      const domainMastered = countDomainMastered(readingMastery, domain.phraseIds ?? []);
-      const masteredPct = isUnlocked && domain.translated
-        ? Math.round((domainMastered / domain.translated) * 100)
-        : 0;
-
-      const gapNote = domain.translated < domain.total
-        ? `<span class="learn-domain-card__gap">${domain.total - domain.translated} awaiting translation</span>`
-        : '';
-
-      return `<article class="learn-domain-card${isCurrent ? ' learn-domain-card--current' : ''}${!isUnlocked ? ' learn-domain-card--locked' : ''}" aria-label="${domain.label}">
-        <div class="learn-domain-card__level">Module ${domain.level}</div>
-        <div class="learn-domain-card__label">${domain.label}</div>
-        <div class="learn-domain-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${masteredPct}">
-          <span class="learn-domain-card__progress-fill" style="width:${isUnlocked ? masteredPct : 0}%"></span>
-        </div>
-        <div class="learn-domain-card__meta">
-          ${isUnlocked ? `${domainMastered}/${domain.translated} mastered` : icon('lock')}
-          ${gapNote}
-        </div>
-      </article>`;
-    })
-    .join('');
 }

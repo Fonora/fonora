@@ -73,3 +73,23 @@ export function ipaToEspeakSynthesisInput(ipa) {
 
   return out.join('_');
 }
+
+function isConsonantSchwaClip(segments) {
+  const nuclei = segments.filter((segment) => !STRESS_MARKS.has(segment) && VOWEL_LIKE.test(segment));
+  return nuclei.length === 1 && nuclei[0] === 'ə' && segments.includes('ə');
+}
+
+/**
+ * eSpeak input for isolated symbol teaching clips.
+ * Consonant + schwa (pə) stays unstressed so it reads as a quick puff, not "pah"/"ba".
+ */
+export function ipaToEspeakTeachingInput(ipa) {
+  const segments = segmentIpa(ipa);
+  if (!segments.length) return '';
+
+  if (isConsonantSchwaClip(segments)) {
+    return segments.filter((segment) => !STRESS_MARKS.has(segment)).join('_');
+  }
+
+  return ipaToEspeakSynthesisInput(ipa);
+}

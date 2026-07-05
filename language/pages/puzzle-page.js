@@ -18,10 +18,11 @@ const FEEDBACK_TAG_LABELS = {
  *   toast: (msg: string) => void,
  *   ensureRules: () => Promise<void>,
  *   romanToFonoraScript: (parts: string[], rules: object) => { phrase?: string },
+ *   speakNeural?: (parts: string[]) => void | Promise<void>,
  * }} deps
  */
 export function createPuzzlePage(deps) {
-  const { getState, api, $, escapeHtml, toast, ensureRules, romanToFonoraScript } = deps;
+  const { getState, api, $, escapeHtml, toast, ensureRules, romanToFonoraScript, speakNeural } = deps;
 
   function puzzleScriptPhrase(challenge) {
     const STATE = getState();
@@ -56,7 +57,7 @@ export function createPuzzlePage(deps) {
     return `<span class="puzzle-word__roman mono">${escapeHtml(spelling)}</span>`;
   }
 
-  function puzzleBreakdownHtml(b, { reveal = false } = {}) {
+  function puzzleBreakdownHtml(b, { reveal = false, parts = null } = {}) {
     if (!b?.spelling && !b?.spellings_line) return '';
     const cls = reveal ? ' puzzle-breakdown--reveal' : '';
     const word = b.spelling ?? '';
@@ -82,11 +83,18 @@ export function createPuzzlePage(deps) {
       : '';
 
     return `<div class="puzzle-breakdown${cls}">
-      <p class="sans puzzle-breakdown__headline"><span class="mono puzzle-breakdown__word">${escapeHtml(word)}</span><span class="puzzle-breakdown__arrow" aria-hidden="true">→</span><span class="puzzle-breakdown__meaning">${escapeHtml(meaning)}</span></p>
+      <p class="sans puzzle-breakdown__headline"><span class="mono puzzle-breakdown__word">${escapeHtml(word)}</span><span class="puzzle-breakdown__arrow" aria-hidden="true">→</span><span class="puzzle-breakdown__meaning">${escapeHtml(meaning)}</span>${reveal && parts?.length ? ' <button type="button" class="hear-min puzzle-breakdown__hear" aria-label="Listen to breakdown">Listen</button>' : ''}</p>
       ${recipeLine}
       ${levelsHtml}
       ${atomicHtml}
     </div>`;
+  }
+
+  function wireBreakdownHear(root, parts) {
+    if (!speakNeural || !parts?.length) return;
+    root?.querySelector('.puzzle-breakdown__hear')?.addEventListener('click', () => {
+      void speakNeural(parts);
+    });
   }
 
   function partsCount(b) {
@@ -306,7 +314,7 @@ export function createPuzzlePage(deps) {
       const reveal = p.revealed
         ? `<div class="puzzle-reveal ${p.lastCorrect ? 'puzzle-reveal--ok' : 'puzzle-reveal--miss'}">
                <p class="sans">${p.lastCorrect ? 'Recovered' : 'Not recovered'} ${p.repairTurns ? `after ${p.repairTurns} repair turn${p.repairTurns === 1 ? '' : 's'}` : 'on the first try'}. It means <strong>${escapeHtml(c.answer)}</strong>.</p>
-               ${puzzleBreakdownHtml(c.breakdown, { reveal: true })}
+               ${puzzleBreakdownHtml(c.breakdown, { reveal: true, parts: c.parts })}
                ${puzzleAlternatesHtml(c.alternate_forms)}
                ${puzzleFeedbackHtml(p, c)}
                <button type="button" class="btn btn--primary" id="puzzle-next">Next word</button>
@@ -371,6 +379,9 @@ export function createPuzzlePage(deps) {
         else renderPuzzle();
       });
     });
+    if (p.revealed && c?.parts?.length) {
+      wireBreakdownHear(host.querySelector('.puzzle-reveal'), c.parts);
+    }
     if (!c && !p.busy && STATE.lab) {
       void loadPuzzleChallenge();
     }

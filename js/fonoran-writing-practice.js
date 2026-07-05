@@ -22,6 +22,8 @@ import {
   finishTypingAnswer,
   setLearnVerdict,
 } from './learn-session-ui.js';
+import { mountPromptHear } from './learn-hear-ui.js';
+import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 
 /** @type {Array<import('./fonoran-practice-words.js').PracticeEntry | import('./fonoran-course-phrases.js').CourseEntry>} */
 let entries = [];
@@ -39,8 +41,33 @@ let usingPhrases = false;
 let session = null;
 let checked = false;
 
+/** @type {object | null} */
+let rulesRef = null;
+
+/** @type {(() => void) | null} */
+let unbindHear = null;
+
 function resetAnswerState() {
   checked = false;
+}
+
+function wireRomanHear() {
+  unbindHear?.();
+  const entry = entries[currentIndex];
+  const meaningEl = document.getElementById('fonoran-writing-roman-meaning');
+  unbindHear = mountPromptHear({
+    promptEl: meaningEl,
+    panelId: 'tab-spelling-practice',
+    rules: rulesRef,
+    ariaLabel: 'Listen to Fonoran word',
+    getSpeakText: () => {
+      if (!entry || !rulesRef) return '';
+      if (entry.script) return entry.script;
+      const parts = entry.parts?.length ? entry.parts : [entry.spelling];
+      const { phrase } = romanToFonoraScript(parts, rulesRef);
+      return phrase || '';
+    },
+  });
 }
 
 function showRomanPrompt() {
@@ -57,6 +84,7 @@ function showRomanPrompt() {
   session?.setContinueVisible('fonoran-writing-roman-next', false);
   if (checkBtn) checkBtn.hidden = false;
   input.disabled = false;
+  wireRomanHear();
   input.focus();
 }
 
@@ -108,6 +136,7 @@ function applyDisplayMode(mode) {
  * @param {object} rules
  */
 export async function setupFonoranWriting(rules) {
+  rulesRef = rules;
   session = createLearnSession('fonoran-writing', {
     panelId: 'tab-spelling-practice',
     answerType: 'typing',
@@ -161,7 +190,15 @@ export async function setupFonoranWriting(rules) {
   document.getElementById('fonoran-writing-roman-check')?.addEventListener('click', checkRomanAnswer);
   const romanInput = document.getElementById('fonoran-writing-roman-input');
   romanInput?.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') checkRomanAnswer();
+    if (event.key !== 'Enter') return;
+    if (checked) {
+      const continueBtn = document.getElementById('fonoran-writing-roman-next');
+      if (continueBtn && !continueBtn.hidden) {
+        continueBtn.click();
+        return;
+      }
+    }
+    checkRomanAnswer();
   });
 
   await setupSpellingPractice(rules);

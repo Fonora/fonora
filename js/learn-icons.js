@@ -47,6 +47,8 @@ const ICON_PATHS = {
     '<path d="M2.5 14.2c1-6.2 5.8-10 11.8-9 2.5.4 4.3 1.8 5.3 3.6"/><path d="M2.5 14.2c5.7.6 12.5-.4 17.1-5.4"/><path d="M19.6 8.8c.9-2.4 2.6-4.6 4.6-3.6 1.5.8 1.5 2.4.6 3.7-1.4 2.1-3.7 4.4-6.5 5.5"/><path d="M7.1 14.4l-1.4 4.8h4.6l.4-3.4"/><path d="M16.3 14.4l.4 4.8h4.5l-1.4-4.8"/><path d="M2.5 14.2c-1.2-.1-1.6-1.2-.5-1.9"/><circle class="learn-icon__dot" cx="22.5" cy="7.2" r="0.7"/>',
   'chevron-right':
     '<polyline points="9 18 15 12 9 6"/>',
+  lock:
+    '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
 };
 
 /** Icons that read better filled rather than stroked. */

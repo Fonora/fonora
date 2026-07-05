@@ -1,4 +1,4 @@
-import { getEncodableEntries, getQuizEntries, getVowelPhonemeKeys, vowelSymbolForKey, buildPhonemeInventory, findGridCell } from './rules.js';
+import { getEncodableEntries, getQuizEntries, getVowelPhonemeKeys, vowelSymbolForKey, buildPhonemeInventory, findGridCell, reverseLookup } from './rules.js';
 import { encodeSounds } from './encode.js';
 import { decodeSymbols, decodeText, decodeToPhonemeKeys, normalizeSymbolInput } from './decode.js';
 import { normalizeIpa, registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules, findConsonantMapSyncIssues, buildConsonantMapFromRules } from './ipa-normalize.js';
@@ -12,6 +12,10 @@ import {
   normalizeIpaForComparison,
   symbolsToRecoveredIpa,
   phonemeKeysToRecoveredIpa,
+  teachingIpaForSymbolGroup,
+  teachingIpaForSymbols,
+  teachingSpeakTextForSymbolGroup,
+  teachingSpeakTextForSymbols,
   detectCollisionWarnings,
   summarizeValidationResults,
 } from './pronunciation-validation.js';
@@ -20,6 +24,10 @@ import { containsDoubleVowelMarker, validateVowelSymbolString } from './vowel-gr
 import { VOWEL_ARCHITECTURE_WORDS } from './vowel-architecture-set.js';
 import { docViewerHref, githubDocUrl, normalizeDocPath, parseDocFromLocation } from './doc-urls.js';
 import { renderMarkdown } from './markdown-render.js';
+import { ipaToEspeakTeachingInput } from './ipa-espeak-format.js';
+import { resolveFonoraPhoneticText, decodeFonoraWord } from './fonora-tts.js';
+import { buildRomanPartsBreakdown, buildScriptBreakdown } from './breakdown.js';
+import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { ASCII_EQUALS } from './load-language-rules.js';
 
 function assert(cond, msg) {
@@ -586,6 +594,58 @@ export function runTests(options) {
     assert(ipa === 'bɔɪ');
     assert(normalizeIpaForComparison('bˈɔɪ') === 'bɔɪ');
     assert(normalizeIpaForComparison('bɔɪ') === normalizeIpaForComparison('bˈɔɪ'));
+  });
+
+  t('teaching IPA adds schwa to isolated consonants', () => {
+    assert(teachingIpaForSymbolGroup({ sound: 'p', ipa: '/p/' }, rules) === 'pə');
+    assert(teachingIpaForSymbolGroup({ sound: 'sh', ipa: '/ʃ/' }, rules) === 'ʃə');
+    assert(teachingIpaForSymbolGroup({ sound: 'ch', ipa: '/tʃ/' }, rules) === 'tʃə');
+  });
+
+  t('teaching IPA leaves vowel nuclei bare', () => {
+    assert(teachingIpaForSymbolGroup({ sound: 'a', ipa: '/ʌ, ə, ɐ, a/' }, rules) === 'ʌ');
+    assert(teachingIpaForSymbolGroup({ sound: 'ee', ipa: '/i, iː/' }, rules) === 'i');
+    assert(teachingIpaForSymbolGroup({ sound: 'ay', ipa: '/eɪ/' }, rules) === 'eɪ');
+  });
+
+  t('teaching IPA for symbol strings uses decode groups', () => {
+    const pCell = reverseLookup('p', rules)?.[0];
+    assert(pCell?.symbols, 'p grid cell missing');
+    assert(teachingIpaForSymbols(pCell.symbols, rules) === 'pə');
+    const aCell = reverseLookup('a', rules)?.[0];
+    assert(aCell?.symbols, 'a vowel cell missing');
+    const aTeaching = teachingIpaForSymbols(aCell.symbols, rules);
+    assert(aTeaching === 'ʌ' || aTeaching === 'a', `unexpected vowel teaching IPA: ${aTeaching}`);
+  });
+
+  t('teaching speak text uses roman syllables for isolated symbols', () => {
+    assert(teachingSpeakTextForSymbolGroup({ sound: 'p', ipa: '/p/' }, rules) === 'pah');
+    assert(teachingSpeakTextForSymbolGroup({ sound: 'sh', ipa: '/ʃ/' }, rules) === 'shah');
+    assert(teachingSpeakTextForSymbolGroup({ sound: 'a', ipa: '/ʌ/' }, rules) === 'ah');
+    const pCell = reverseLookup('p', rules)?.[0];
+    assert(pCell?.symbols, 'p grid cell missing');
+    assert(teachingSpeakTextForSymbols(pCell.symbols, rules) === 'pah');
+  });
+
+  t('teaching IPA resolves to short schwa clips for Piper/eSpeak', () => {
+    assert(ipaToEspeakTeachingInput('pə') === 'p_ə');
+    assert(ipaToEspeakTeachingInput('tʃə') === 'tʃ_ə');
+    assert(ipaToEspeakTeachingInput('ʌ').includes('ˈ'));
+    const pCell = reverseLookup('p', rules)?.[0];
+    const word = decodeFonoraWord(pCell.symbols, rules);
+    const target = resolveFonoraPhoneticText(word, rules);
+    assert(target?.mode === 'teaching-ipa');
+    assert(target?.text === 'pə');
+  });
+
+  t('roman parts breakdown preserves compound syllables like nes + pe', () => {
+    const word = buildRomanPartsBreakdown('nespe', ['nes', 'pe'], rules);
+    assert(word.chunks.map((chunk) => chunk.label).join(' ') === 'n e s p e');
+    assert(word.symbols.length > 0);
+
+    const { phrase } = romanToFonoraScript(['nes', 'pe'], rules);
+    const fromScript = buildScriptBreakdown('nespe', phrase, rules);
+    assert(fromScript?.chunks.map((chunk) => chunk.label).join(' ') === 'n e s p e');
   });
 
   t('pronunciation validation: symbols round-trip IPA for boy', () => {

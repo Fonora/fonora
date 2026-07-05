@@ -2,7 +2,7 @@
  * eSpeak NG audio synthesis (WASM) for phonetic playback in the browser.
  */
 import EspeakInitializer from '../vendor/espeak-audio/espeak-ng.js';
-import { ipaToEspeakSynthesisInput } from './ipa-espeak-format.js';
+import { ipaToEspeakSynthesisInput, ipaToEspeakTeachingInput } from './ipa-espeak-format.js';
 
 let initPromise = null;
 let initError = null;
@@ -165,6 +165,16 @@ export async function synthesizeEspeakAudio(text, voice = 'en-us') {
 /** Synthesize compact IPA (Unicode) using eSpeak's underscore phoneme input format. */
 export async function synthesizeEspeakIpa(ipa, voice = 'en-us') {
   const espeakInput = ipaToEspeakSynthesisInput(ipa);
+  if (!espeakInput) return null;
+
+  const instance = await getWorker();
+  instance.set_voice(voice);
+  return synthesizeWithWorker(instance, espeakInput);
+}
+
+/** Synthesize teaching clips (short consonant puffs use unstressed schwa). */
+export async function synthesizeEspeakTeachingIpa(ipa, voice = 'en-us') {
+  const espeakInput = ipaToEspeakTeachingInput(ipa);
   if (!espeakInput) return null;
 
   const instance = await getWorker();

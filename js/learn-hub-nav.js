@@ -29,7 +29,7 @@ const LEARN_PAGE_HEADERS = {
   },
   progress: {
     title: 'Progress',
-    lead: 'Your streak, XP, and course modules.',
+    lead: 'Your streak, XP, and learning paths.',
   },
 };
 
@@ -59,6 +59,19 @@ export function setLearnHubView(view) {
     el.hidden = panel !== view;
   });
   updateLearnPageHeader(view);
+}
+
+/**
+ * True when the user is on the Learn About hub (not a subview or active lesson).
+ * @param {string} activeTab
+ */
+export function isOnLearnAbout(activeTab) {
+  const path = window.location.pathname.replace(/\/$/, '') || '/';
+  if (path !== '/learn' && !path.startsWith('/learn/')) return false;
+  const hash = window.location.hash.replace(/^#/, '');
+  if (hash && hash !== 'learn-home') return false;
+  if (activeTab !== LEARN_HUB_TAB) return false;
+  return learnHubNavActive(activeTab) === 'hub';
 }
 
 /** Sync hub panels from the location hash (on Learn home only). */
