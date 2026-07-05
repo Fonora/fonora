@@ -252,7 +252,7 @@ function classificationBadge(cls) {
 function recoveryBar(rate) {
   if (rate == null) return '';
   const pct = Math.round(rate * 100);
-  const color = pct >= 70 ? '#4caf50' : pct >= 40 ? '#ff9800' : '#f44336';
+  const color = pct >= 70 ? '#2d6a4f' : pct >= 40 ? '#c4a574' : '#9a3b3b';
   return `<span class="gw-rate" style="--gw-rate-pct:${pct}%;--gw-rate-color:${color}" title="${pct}% recovery">${pct}%</span>`;
 }
 

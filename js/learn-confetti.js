@@ -3,7 +3,7 @@
  * No external dependencies. Fades out after ~3 s and removes itself.
  */
 
-const COLORS = ['#f97316', '#8b5cf6', '#06b6d4', '#22c55e', '#eab308', '#ec4899', '#f43f5e'];
+const COLORS = ['#c4a574', '#9a7544', '#2d6a4f', '#40916c', '#1b4332', '#dcc9a8', '#95d5b2'];
 const PARTICLE_COUNT = 130;
 const DURATION_MS = 3200;
 const FADE_START = 0.65; // fraction of DURATION_MS when fade begins

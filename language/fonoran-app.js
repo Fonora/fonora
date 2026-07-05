@@ -27,6 +27,7 @@
     } from '../js/markdown-doc-shell.js';
     import { getStoredTheme, isDarkTheme } from '../js/theme.js';
     import { buildMermaidPanZoomHtml } from '../js/mermaid-pan-zoom.js';
+    import { playButtonMarkup, setPlayButtonLabel, setPlayButtonText } from '../js/play-button-ui.js';
 
     const AUTH = {
       required: false,
@@ -1265,7 +1266,7 @@
       const ipa = pron ? previewIpaForFocus(focus) : '';
       const hearBtn = !sideActionsHtml && showHear && hasSpelling
         ? `<div class="word-preview__sound-actions">
-            <button type="button" class="hear-min word-preview__hear"${hearId ? ` id="${hearId}"` : ''} aria-label="Listen to ${escapeHtml(focus.spelling)}">▶ Listen</button>
+            <button type="button" class="hear-min word-preview__hear"${hearId ? ` id="${hearId}"` : ''} aria-label="Listen to ${escapeHtml(focus.spelling)}">${playButtonMarkup('Listen')}</button>
           </div>`
         : '';
       const actionsColumn = sideActionsHtml || hearBtn;
@@ -1910,6 +1911,32 @@
       sheet.hidden = true;
     }
 
+    const DICT_DETAIL_SHEET_MQ = window.matchMedia('(max-width: 768px)');
+
+    function dictDetailUsesSheet() {
+      return STATE.page === 'dictionary' && DICT_DETAIL_SHEET_MQ.matches;
+    }
+
+    function dictDetailPanel() {
+      return dictDetailUsesSheet() ? $('sheet-body') : $('dict-detail');
+    }
+
+    function openDictDetailSheet() {
+      if (!dictDetailUsesSheet()) return;
+      openSheet();
+    }
+
+    DICT_DETAIL_SHEET_MQ.addEventListener('change', () => {
+      if (STATE.page !== 'dictionary' || !STATE.dictSelection) return;
+      const { kind, id } = STATE.dictSelection;
+      if (DICT_DETAIL_SHEET_MQ.matches) {
+        loadDictionaryDetail(kind, id);
+      } else {
+        closeSheet();
+        loadDictionaryDetail(kind, id);
+      }
+    });
+
     function openAuthModal() {
       const modal = $('auth-sign-in-modal');
       const googleLink = $('auth-sign-in-google');
@@ -2115,8 +2142,7 @@
         </div>`;
     }
 
-    function showParticleDetail(id) {
-      const panel = $('dict-detail');
+    function showParticleDetail(id, panel = dictDetailPanel()) {
       if (!panel) return;
       const p = (STATE.dictParticles?.particles ?? []).find(x => x.id === id);
       panel.innerHTML = p
@@ -2125,6 +2151,7 @@
       if (p?.form) {
         panel.querySelector('.word-preview__hear')?.addEventListener('click', () => speakNeural(p.form));
       }
+      openDictDetailSheet();
     }
 
     let dictDetailToken = 0;
@@ -2191,10 +2218,11 @@
         showParticleDetail(id);
         return;
       }
-      const panel = $('dict-detail');
+      const panel = dictDetailPanel();
       if (!panel) return;
       const token = ++dictDetailToken;
       panel.innerHTML = '<p class="fonoran-split-loading">Loading…</p>';
+      openDictDetailSheet();
       try {
         await mountExplorer(panel, dictExplorerKind(entryKind), id, null, {
           layout: 'dictionary',
@@ -2225,6 +2253,7 @@
     function syncDictSelection() {
       if (!STATE.dictSelection) {
         showDictDetailEmpty();
+        if (dictDetailUsesSheet()) closeSheet();
         return;
       }
       const list = dictEntries();
@@ -2232,6 +2261,7 @@
       if (!still) {
         STATE.dictSelection = null;
         showDictDetailEmpty();
+        if (dictDetailUsesSheet()) closeSheet();
       }
     }
 
@@ -2531,7 +2561,7 @@
       const canHear = translatorCanHear(result);
       if (playBtn && !STATE.translatorPlaying) {
         playBtn.disabled = !canHear;
-        playBtn.textContent = '▶ Listen';
+        setPlayButtonLabel(playBtn, 'Listen');
       }
       if (stopBtn && !STATE.translatorPlaying) stopBtn.disabled = true;
     }
@@ -2610,7 +2640,7 @@
       STATE.translatorCancel = false;
       const playBtn = $('tr-hear');
       const stopBtn = $('tr-stop');
-      if (playBtn) { playBtn.disabled = true; playBtn.textContent = '…'; }
+      if (playBtn) { playBtn.disabled = true; setPlayButtonText(playBtn, '…'); }
       if (stopBtn) stopBtn.disabled = false;
       setTranslatorPlaybackStatus('');
 
@@ -2663,7 +2693,7 @@
         highlightTranslatorToken(-1);
         setReaderWordSources(null);
         clearTranslatorSpeakingHighlight();
-        if (playBtn) { playBtn.disabled = false; playBtn.textContent = '▶ Listen'; }
+        if (playBtn) { playBtn.disabled = false; setPlayButtonLabel(playBtn, 'Listen'); }
         if (stopBtn) stopBtn.disabled = true;
       }
     }
@@ -2770,7 +2800,7 @@
         return `<li class="translator-alternate" data-tr-alt-index="${i}">
           <div class="translator-alternate__actions">
             <button type="button" class="chip translator-alternate__use" data-tr-alt-use="${i}">Use</button>
-            <button type="button" class="chip translator-alternate__hear" data-tr-alt-hear="${i}">▶</button>
+            <button type="button" class="chip translator-alternate__hear" data-tr-alt-hear="${i}" aria-label="Listen to alternate">${playButtonMarkup('', { iconOnly: true, solo: true })}</button>
           </div>
           <div class="translator-alternate__body">
             ${script ? `<div class="translator-alternate__script fonora-script symbol-text">${escapeHtml(script)}</div>` : ''}
@@ -2883,7 +2913,7 @@
       } catch (e) {
         if (token !== translatorToken) return;
         const out = $('tr-output');
-        if (out) out.innerHTML = `<p class="translator-output__empty sans" style="color:var(--danger,#c0392b)">${escapeHtml(e.message)}</p>`;
+        if (out) out.innerHTML = `<p class="translator-output__empty sans" style="color:var(--color-error)">${escapeHtml(e.message)}</p>`;
         syncTranslatorOutputHeader(null);
         syncTranslatorPlaybackUi(null);
       } finally {
@@ -3078,6 +3108,7 @@
         goWordManager();
         return;
       }
+      if (name !== 'dictionary') closeSheet();
       STATE.page = name;
       setActiveTab(name);
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));

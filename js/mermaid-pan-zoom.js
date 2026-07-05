@@ -17,9 +17,11 @@ export function buildMermaidPanZoomHtml(mermaidSource, {
   const variantClass = variant === 'diagram' ? ' mermaid-pan-zoom--diagram' : '';
   const toolbarHtml = toolbar
     ? `<div class="mermaid-pan-zoom__toolbar" aria-label="Graph zoom controls">
-        <button type="button" class="mermaid-pan-zoom__btn" data-mermaid-zoom-out aria-label="Zoom out">−</button>
-        <button type="button" class="mermaid-pan-zoom__btn" data-mermaid-zoom-reset aria-label="Reset view">Fit</button>
-        <button type="button" class="mermaid-pan-zoom__btn" data-mermaid-zoom-in aria-label="Zoom in">+</button>
+        <div class="mermaid-pan-zoom__toolbar-inner">
+          <button type="button" class="mermaid-pan-zoom__btn" data-mermaid-zoom-out aria-label="Zoom out">−</button>
+          <button type="button" class="mermaid-pan-zoom__btn" data-mermaid-zoom-reset aria-label="Reset view">Fit</button>
+          <button type="button" class="mermaid-pan-zoom__btn" data-mermaid-zoom-in aria-label="Zoom in">+</button>
+        </div>
       </div>`
     : '';
   return `<div class="mermaid-pan-zoom${variantClass}"${wheelAttr}>

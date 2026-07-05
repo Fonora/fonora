@@ -6,6 +6,7 @@ import { primeAudioContext } from './espeak-audio.js';
 import { getPiperVoiceForLang } from './piper-audio.js';
 import { resolveEspeakVoice } from './language-preferences.js';
 import { escapeHtml } from './utils.js';
+import { playButtonMarkup, getPlayButtonLabel, setPlayButtonLabel, setPlayButtonText } from './play-button-ui.js';
 
 /** Panels where inline hear would spoil listen-then-guess exercises. */
 export const HEAR_EXCLUDED_PANELS = new Set(['tab-fonoran-hearing']);
@@ -15,10 +16,10 @@ export const HEAR_EXCLUDED_PANELS = new Set(['tab-fonoran-hearing']);
  */
 export function renderHearButton(opts = {}) {
   const id = opts.id ? ` id="${escapeHtml(opts.id)}"` : '';
-  const label = opts.label ?? '▶ Listen';
+  const label = opts.label ?? 'Listen';
   const aria = escapeHtml(opts.ariaLabel ?? 'Listen');
   const extraClass = opts.className ? ` ${escapeHtml(opts.className)}` : '';
-  return `<button type="button" class="hear-min learn-hear-btn${extraClass}"${id} aria-label="${aria}">${escapeHtml(label)}</button>`;
+  return `<button type="button" class="hear-min learn-hear-btn${extraClass}"${id} aria-label="${aria}">${playButtonMarkup(label)}</button>`;
 }
 
 /**
@@ -74,24 +75,24 @@ export function mountPromptHear(opts) {
     btn?.removeAttribute('title');
     primeAudioContext();
     cancelSpeech();
-    const defaultLabel = btn?.textContent || '▶ Listen';
+    const defaultLabel = getPlayButtonLabel(btn);
     try {
       await speakFonoraPhrase(text, rules, {
         engine: 'piper',
         piperVoice: getPiperVoiceForLang('en'),
         espeakVoice: resolveEspeakVoice('en'),
         onPrepare: (message) => {
-          if (btn) btn.textContent = '…';
+          if (btn) setPlayButtonText(btn, '…');
           if (message) btn?.setAttribute('title', message);
         },
       });
     } catch (err) {
       const message = err?.message || String(err);
       if (btn) {
-        btn.textContent = 'No audio';
+        setPlayButtonText(btn, 'No audio');
         btn.setAttribute('title', message);
         window.setTimeout(() => {
-          if (btn.textContent === 'No audio') btn.textContent = defaultLabel;
+          if (btn.textContent === 'No audio') setPlayButtonLabel(btn, defaultLabel);
         }, 3000);
       }
       console.error('Learn hear playback failed:', err);

@@ -1,4 +1,5 @@
 import { escapeHtml } from './utils.js';
+import { playButtonMarkup } from './play-button-ui.js';
 import { getActiveLanguageRulesBundle } from './fonora-config.js';
 import { ENGLISH_DIALECT_CODES } from './language-preferences.js';
 import {
@@ -88,8 +89,8 @@ function renderSingleResult(result) {
       <header class="pv-card-header">
         <h3 class="pv-word">${escapeHtml(result.word)}</h3>
         <div class="pv-audio-row">
-          <button type="button" class="btn btn--sm pv-play-original" data-word="${escapeHtml(result.word)}">▶ Original</button>
-          <button type="button" class="btn btn--sm pv-play-fonora" data-keys="${escapeHtml(result.recoveredPhonemeKeys || '')}">▶ Fonora Readback</button>
+          <button type="button" class="btn btn--sm pv-play-original" data-word="${escapeHtml(result.word)}">${playButtonMarkup('Original')}</button>
+          <button type="button" class="btn btn--sm pv-play-fonora" data-keys="${escapeHtml(result.recoveredPhonemeKeys || '')}">${playButtonMarkup('Fonora Readback')}</button>
         </div>
       </header>
 
