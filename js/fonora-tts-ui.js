@@ -15,6 +15,7 @@ import {
 import { getPiperVoiceForLang, PIPER_VOICE_OPTIONS } from './piper-audio.js';
 import { primeAudioContext } from './espeak-audio.js';
 import { initPiperAudio, isPiperAudioReady } from './piper-audio.js';
+import { setPlayButtonLabel, setPlayButtonText } from './play-button-ui.js';
 
 let rulesRef = null;
 let playing = false;
@@ -163,7 +164,7 @@ function showLoading(message) {
 
   if (loading) loading.hidden = false;
   if (msg) msg.textContent = message;
-  if (playBtn) playBtn.textContent = 'Loading…';
+  if (playBtn) setPlayButtonText(playBtn, 'Loading…');
   if (display) display.classList.add('tts-display--loading');
   showPlaybackStatus('');
 }
@@ -174,7 +175,7 @@ function hideLoading() {
   const display = getOutputDisplay();
 
   if (loading) loading.hidden = true;
-  if (playBtn) playBtn.textContent = '▶ Play';
+  if (playBtn) setPlayButtonLabel(playBtn, 'Play');
   if (display) display.classList.remove('tts-display--loading');
 }
 

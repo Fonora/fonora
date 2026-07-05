@@ -8,6 +8,7 @@ import { learnTrackForTab } from './learn-routing.js';
 import { isOnLearnAbout, learnHubNavActive } from './learn-hub-nav.js';
 import { pageTitle, PLATFORM_HOME_TITLE, PLATFORM_PAGE_TITLE, SITE_NAME } from './site-copy.js';
 import { cycleTheme, getStoredTheme } from './theme.js';
+import { lockPageScroll, unlockPageScroll } from './scroll-lock.js';
 
 const SCRIPT_TABS = [
   { id: 'home', label: 'About', primary: true },
@@ -472,7 +473,7 @@ function render() {
 }
 
 const ALL_DROPDOWN_IDS = [];
-const MOBILE_NAV_MQ = typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)') : null;
+const MOBILE_NAV_MQ = typeof window !== 'undefined' ? window.matchMedia('(max-width: 640px)') : null;
 
 function hamburgerMarkup() {
   return `<button type="button" class="app-header__menu-btn" id="app-header-menu-btn" aria-expanded="false" aria-controls="app-header-mobile-panel" aria-label="Open menu">
@@ -493,6 +494,7 @@ function closeMobileNav(root = document.getElementById(state.mountId)) {
   if (!root) return;
   root.classList.remove('app-header--menu-open');
   document.documentElement.classList.remove('app-header-menu-open');
+  unlockPageScroll();
   const btn = root.querySelector('#app-header-menu-btn');
   if (btn) {
     btn.setAttribute('aria-expanded', 'false');
@@ -507,6 +509,7 @@ function openMobileNav(root = document.getElementById(state.mountId)) {
   syncMobileNavTitle(root);
   root.classList.add('app-header--menu-open');
   document.documentElement.classList.add('app-header-menu-open');
+  lockPageScroll();
   const btn = root.querySelector('#app-header-menu-btn');
   if (btn) {
     btn.setAttribute('aria-expanded', 'true');

@@ -5,6 +5,7 @@ import { initEspeak, getEspeakInitError } from './ipa.js';
 import { primeAudioContext } from './espeak-audio.js';
 import { DEFAULT_ENGLISH_VOICE } from './language-preferences.js';
 import { getSamplePlaybackPlan } from './piper-audio.js';
+import { playButtonMarkup, setPlayButtonLabel, setPlayButtonText, setStopButtonLabel } from './play-button-ui.js';
 
 /** Split CJK samples into phrases for Fonora rendering and word-by-word playback. */
 function splitCjkClauses(text, lang) {
@@ -132,7 +133,7 @@ function renderSampleAudioControls(sample) {
 
   const engineLabel = playbackEngineLabel(sample);
   return `
-        <button type="button" class="btn btn--primary sample-audio-btn" data-sample-play="${escapeHtml(sample.id)}" disabled aria-label="Listen to ${escapeHtml(sample.language)} Fonora sample">▶ Listen</button>
+        <button type="button" class="btn btn--primary sample-audio-btn" data-sample-play="${escapeHtml(sample.id)}" disabled aria-label="Listen to ${escapeHtml(sample.language)} Fonora sample">${playButtonMarkup('Listen')}</button>
         <span class="sample-audio-engine">${escapeHtml(engineLabel)}</span>
         <span class="sample-audio-status" id="sample-${escapeHtml(sample.id)}-status" hidden role="status"></span>`;
 }
@@ -265,7 +266,7 @@ function resetPlayButtons() {
     const sample = SAMPLES.find((item) => item.id === btn.dataset.samplePlay);
     const ready = sample?.audioEnabled !== false && sampleResults.has(btn.dataset.samplePlay);
     btn.disabled = !ready;
-    btn.textContent = '▶ Listen';
+    setPlayButtonLabel(btn, 'Listen');
   });
 }
 
@@ -373,14 +374,14 @@ async function playSample(sampleId) {
   playingId = sampleId;
   cancelPlayback = false;
   setPlayButtonsLocked(true, sampleId);
-  for (const playBtn of playBtns) playBtn.textContent = 'Loading…';
+  for (const playBtn of playBtns) setPlayButtonText(playBtn, 'Loading…');
   setAudioStatus(sampleId, '');
 
   try {
     await primeAudioContext();
     clearSampleWordHighlight(sampleId);
     setSampleFonoraPlaybackState(sampleId, { loading: true });
-    for (const playBtn of playBtns) playBtn.textContent = '■ Stop';
+    for (const playBtn of playBtns) setStopButtonLabel(playBtn, 'Stop');
 
     let result;
     setReaderWordSources(data.words);

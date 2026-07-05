@@ -10,6 +10,7 @@ import {
   phoneticKeyBold,
   romanToIpa,
 } from '../tools/fonoran-pronunciation.js';
+import { playButtonMarkup } from '../js/play-button-ui.js';
 
 /**
  * @param {object} ctx
@@ -257,7 +258,7 @@ export function createWordComposer(ctx) {
               ${focus.spelling ? `<p class="word-preview__meaning-line"><span class="review-meaning">${meaningHtml}</span></p>` : ''}
             </div>
             <div class="word-preview__sound-actions">
-              <button type="button" class="hear-min word-preview__hear" id="${hearId}" aria-label="Listen">▶ Listen</button>
+              <button type="button" class="hear-min word-preview__hear" id="${hearId}" aria-label="Listen">${playButtonMarkup('Listen')}</button>
             </div>
           </div>
         </div>

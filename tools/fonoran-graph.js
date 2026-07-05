@@ -118,8 +118,8 @@ export function buildMermaidGraph(bucket, { kind, ref, usedIn = [], related = []
   }
   if (lines.length === 1) lines.push('  empty["No derivation yet"]');
   lines.push(
-    '  classDef rootNode fill:#e8f4f8,stroke:#1864ab,color:#1864ab,stroke-width:1.5px,rx:10,ry:10',
-    '  classDef wordNode fill:#f3f0ff,stroke:#5f3dc4,color:#5f3dc4,stroke-width:1.5px,rx:10,ry:10',
+    '  classDef rootNode fill:#f5edd9,stroke:#9a7544,color:#9a7544,stroke-width:1.5px,rx:10,ry:10',
+    '  classDef wordNode fill:#eaf6ef,stroke:#2d6a4f,color:#1b4332,stroke-width:1.5px,rx:10,ry:10',
     '  classDef focusNode fill:#d8f3dc,stroke:#2d6a4f,color:#1b4332,stroke-width:2px,rx:10,ry:10',
   );
 

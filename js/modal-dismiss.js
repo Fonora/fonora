@@ -1,5 +1,7 @@
 /** Shared backdrop click + Escape dismiss for overlay modals. */
 
+import { lockPageScroll, unlockPageScroll } from './scroll-lock.js';
+
 /**
  * @param {HTMLElement | null | undefined} backdrop
  * @param {boolean} open
@@ -10,6 +12,8 @@ export function setModalBackdropOpen(backdrop, open) {
   backdrop.hidden = !open;
   backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
   document.documentElement.classList.toggle('modal-open', open);
+  if (open) lockPageScroll();
+  else unlockPageScroll();
 }
 
 /**
