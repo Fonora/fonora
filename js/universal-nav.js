@@ -192,10 +192,9 @@ function renderPlatformTabs(context) {
     .map((tab) => {
       const active = context === tab.id;
       const href = escapeAttr(platformTabHref(context, tab.id));
-      if (active) {
-        return `<span class="platform-tab platform-tab--active" aria-current="page">${tab.label}</span>`;
-      }
-      return `<a href="${href}" class="platform-tab">${tab.label}</a>`;
+      return `<a href="${href}" class="platform-tab${active ? ' platform-tab--active' : ''}" data-nav-tab="${tab.id}"${
+        active ? ' aria-current="page"' : ''
+      }>${tab.label}</a>`;
     })
     .join('');
 }
@@ -598,6 +597,16 @@ function dispatchNavEvent(root, type, detail) {
 function handleScriptTab(root, tab) {
   closeMobileNav(root);
   closeAllNavDropdowns();
+
+  const homeTab = CONTEXT_HOME_TAB[state.context] ?? 'home';
+  if (tab === homeTab || (state.context === 'script' && tab === 'home')) {
+    goToContextHome(root, state.context);
+    return;
+  }
+  if (tab === state.activeTab) {
+    scrollNavHome();
+    return;
+  }
   if (navSelectHandlers.onTab) {
     navSelectHandlers.onTab(tab);
     return;
@@ -613,8 +622,107 @@ function handleScriptTab(root, tab) {
   dispatchNavEvent(root, 'universal-nav:tab', { tab });
 }
 
+const CONTEXT_HOME_TAB = {
+  platform: 'platform',
+  script: 'home',
+  language: 'home',
+  learn: 'learn-home',
+  tools: 'tools-home',
+};
+
+/** Home URL for a top-level platform tab (Fonora / Script / Language / Learn / Tools). */
+function platformTabHomeHref(tabId) {
+  return platformTabHref(state.context, tabId);
+}
+
+/** Whether the browser is already on the default landing view for a top-level tab. */
+function isOnContextHome(tabId) {
+  const homePath = platformTabHomeHref(tabId).replace(/\/$/, '') || '/';
+  const path = window.location.pathname.replace(/\/$/, '') || '/';
+  if (path !== homePath) return false;
+
+  const hash = window.location.hash.replace(/^#/, '');
+  const homeHashes = {
+    platform: new Set(['', 'about']),
+    script: new Set(['', 'home']),
+    language: new Set(['', 'home']),
+    learn: new Set(['', 'learn-home']),
+    tools: new Set(['', 'tools-home']),
+  };
+  return (homeHashes[tabId] ?? new Set([''])).has(hash);
+}
+
+function scrollNavHome() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function hrefMatchesCurrentLocation(href) {
+  if (!href) return false;
+  try {
+    const target = new URL(href, window.location.origin);
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const next = `${target.pathname}${target.search}${target.hash}`;
+    return current === next;
+  } catch {
+    return false;
+  }
+}
+
+/** Navigate to the main landing view for the given top-level tab. */
+function goToContextHome(root, tabId) {
+  closeMobileNav(root);
+
+  if (isOnContextHome(tabId)) {
+    scrollNavHome();
+    return;
+  }
+
+  if (tabId === 'platform') {
+    const onPlatformSpa = window.location.pathname === '/' || window.location.pathname === '';
+    if (onPlatformSpa && typeof window.showTab === 'function') {
+      window.showTab('platform');
+      scrollNavHome();
+      return;
+    }
+    window.location.href = '/';
+    return;
+  }
+
+  if (tabId === 'language') {
+    if (state.context === 'language' && navSelectHandlers.onPage) {
+      navSelectHandlers.onPage('home');
+      return;
+    }
+    window.location.href = '/language';
+    return;
+  }
+
+  const homeTab = CONTEXT_HOME_TAB[tabId];
+  if (homeTab && typeof window.showTab === 'function') {
+    const onTabBase =
+      (tabId === 'script' && (window.location.pathname === '/script' || window.location.pathname.startsWith('/script/'))) ||
+      (tabId === 'learn' && (window.location.pathname === '/learn' || window.location.pathname.startsWith('/learn/'))) ||
+      (tabId === 'tools' && (window.location.pathname === '/tools' || window.location.pathname.startsWith('/tools/')));
+    if (onTabBase) {
+      window.showTab(homeTab);
+      scrollNavHome();
+      return;
+    }
+  }
+
+  window.location.href = platformTabHomeHref(tabId);
+}
+
 function handlePlatformTab(root, tab) {
   closeMobileNav(root);
+  if (tab === 'platform') {
+    goToContextHome(root, 'platform');
+    return;
+  }
+  if (tab === state.activeTab) {
+    scrollNavHome();
+    return;
+  }
   if (navSelectHandlers.onPlatformTab) {
     navSelectHandlers.onPlatformTab(tab);
     return;
@@ -665,10 +773,18 @@ function bindNavListeners() {
     );
   });
 
-  root.querySelectorAll('.platform-tab[href]').forEach((el) => {
+  root.querySelectorAll('[data-nav-tab]').forEach((el) => {
     el.addEventListener(
       'click',
-      () => closeMobileNav(root),
+      (event) => {
+        const tabId = el.dataset.navTab;
+        if (!tabId || tabId !== state.context) {
+          closeMobileNav(root);
+          return;
+        }
+        event.preventDefault();
+        goToContextHome(root, tabId);
+      },
       { signal },
     );
   });
@@ -676,7 +792,20 @@ function bindNavListeners() {
   root.querySelectorAll('[data-platform-tab][href], .main-nav a.tab-btn').forEach((el) => {
     el.addEventListener(
       'click',
-      () => closeMobileNav(root),
+      (event) => {
+        const tab = el.dataset.platformTab;
+        if (tab === 'platform') {
+          event.preventDefault();
+          goToContextHome(root, 'platform');
+          return;
+        }
+        if (tab && tab === state.activeTab && hrefMatchesCurrentLocation(el.getAttribute('href'))) {
+          event.preventDefault();
+          scrollNavHome();
+          return;
+        }
+        closeMobileNav(root);
+      },
       { signal },
     );
   });
@@ -690,6 +819,14 @@ function bindNavListeners() {
         if (!page) return;
         closeMobileNav(root);
         closeAllNavDropdowns();
+        if (page === 'home') {
+          goToContextHome(root, 'language');
+          return;
+        }
+        if (page === state.activeTab) {
+          scrollNavHome();
+          return;
+        }
         if (navSelectHandlers.onPage) {
           navSelectHandlers.onPage(page);
           return;
@@ -708,6 +845,15 @@ function bindNavListeners() {
         const view = el.dataset.learnHub;
         if (!view) return;
         closeMobileNav(root);
+        const hubActive = learnHubNavActive(state.activeTab);
+        if (view === 'hub') {
+          goToContextHome(root, 'learn');
+          return;
+        }
+        if (view === hubActive) {
+          scrollNavHome();
+          return;
+        }
         if (navSelectHandlers.onLearnHub) {
           navSelectHandlers.onLearnHub(view);
           return;

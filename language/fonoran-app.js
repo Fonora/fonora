@@ -26,6 +26,7 @@
       syncPageChromeOffset,
     } from '../js/markdown-doc-shell.js';
     import { getStoredTheme, isDarkTheme } from '../js/theme.js';
+    import { buildMermaidPanZoomHtml } from '../js/mermaid-pan-zoom.js';
 
     const AUTH = {
       required: false,
@@ -876,23 +877,6 @@
       });
     }
 
-    function buildMermaidPanZoomHtml(mermaidSource, { wheelZoom = true } = {}) {
-      if (!mermaidSource) return '';
-      const wheelAttr = wheelZoom ? '' : ' data-wheel-zoom="false"';
-      return `<div class="mermaid-pan-zoom"${wheelAttr}>
-        <div class="mermaid-pan-zoom__toolbar sans" aria-label="Graph zoom controls">
-          <button type="button" class="btn mermaid-pan-zoom__btn" data-mermaid-zoom-out aria-label="Zoom out">−</button>
-          <button type="button" class="btn mermaid-pan-zoom__btn" data-mermaid-zoom-reset aria-label="Reset view">Fit</button>
-          <button type="button" class="btn mermaid-pan-zoom__btn" data-mermaid-zoom-in aria-label="Zoom in">+</button>
-        </div>
-        <div class="mermaid-pan-zoom__viewport">
-          <div class="mermaid-pan-zoom__stage">
-            <div class="mermaid-wrap"><div class="mermaid">${escapeHtml(mermaidSource)}</div></div>
-          </div>
-        </div>
-      </div>`;
-    }
-
     function initMermaidPanZoom(panZoomEl) {
       if (!panZoomEl || panZoomEl.dataset.panZoomReady === '1') return;
       const viewport = panZoomEl.querySelector('.mermaid-pan-zoom__viewport');
@@ -1012,6 +996,7 @@
 
       const reveal = () => {
         panZoomEl.dataset.panZoomReady = '1';
+        viewport.classList.remove('is-loading');
         panZoomEl.classList.remove('is-loading');
         panZoomEl.classList.add('is-ready');
       };
@@ -1075,6 +1060,8 @@
       const scheduleFit = () => {
         fitAttempts = 0;
         panZoomEl.classList.remove('is-ready');
+        viewport.classList.add('is-loading');
+        panZoomEl.classList.add('is-loading');
         requestAnimationFrame(() => requestAnimationFrame(fitReadable));
         if (panZoomEl.closest('.sheet')) {
           setTimeout(fitReadable, 320);
@@ -1107,6 +1094,7 @@
 
       if (panZoomEl.dataset.wheelZoom !== 'false') {
         viewport.addEventListener('wheel', (e) => {
+          if (!(e.metaKey || e.ctrlKey)) return;
           e.preventDefault();
           e.stopPropagation();
           zoomBy(e.deltaY > 0 ? 0.9 : 1.1, e.clientX, e.clientY);
@@ -1389,13 +1377,9 @@
       if (!mermaid) return '';
       const isShowcase = variant === 'showcase';
       const klass = isShowcase ? 'explorer-section showcase-graph' : 'explorer-section';
-      const hint = isShowcase
-        ? 'Drag to pan · tap a node to explore.'
-        : 'Drag to pan · scroll or use +/− to zoom · tap a node to explore.';
       return `<div class="${klass}">
         <h4>Word Tree</h4>
-        <p class="sans graph-hint">${hint}</p>
-        ${buildMermaidPanZoomHtml(mermaid, { wheelZoom: !isShowcase })}
+        ${buildMermaidPanZoomHtml(mermaid, { wheelZoom: !isShowcase, toolbar: true })}
       </div>`;
     }
 
@@ -1819,8 +1803,7 @@
       return `
         <div class="explorer-section showcase-graph word-tree-sheet">
           <h4>Word Tree · <span class="mono" data-word-tree-spelling>${escapeHtml(f.spelling)}</span></h4>
-          <p class="sans graph-hint">Drag to pan · scroll or use +/− to zoom · tap a node to explore.</p>
-          ${buildMermaidPanZoomHtml(data.mermaid)}
+          ${buildMermaidPanZoomHtml(data.mermaid, { toolbar: true })}
         </div>`;
     }
 
@@ -1834,7 +1817,7 @@
       } else {
         host.querySelector('[data-word-tree-spelling]')?.replaceChildren(document.createTextNode(data.focus.spelling));
         host.querySelector('.mermaid-pan-zoom')?.remove();
-        host.querySelector('.word-tree-sheet')?.insertAdjacentHTML('beforeend', buildMermaidPanZoomHtml(data.mermaid));
+        host.querySelector('.word-tree-sheet')?.insertAdjacentHTML('beforeend', buildMermaidPanZoomHtml(data.mermaid, { toolbar: true }));
       }
 
       const navigateInTree = async (navKind, ref) => {

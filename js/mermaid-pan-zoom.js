@@ -1,5 +1,7 @@
 import { escapeHtml } from './utils.js';
 
+export const MERMAID_PAN_ZOOM_HINT = 'Drag to pan · Ctrl or ⌘ scroll to zoom';
+
 /**
  * @param {string} mermaidSource
  * @param {{ wheelZoom?: boolean, variant?: 'diagram' | 'default', toolbar?: boolean, hint?: string }} [options]
@@ -8,7 +10,7 @@ export function buildMermaidPanZoomHtml(mermaidSource, {
   wheelZoom = true,
   variant = 'default',
   toolbar = false,
-  hint = 'Drag to pan · Ctrl or ⌘ scroll to zoom',
+  hint = MERMAID_PAN_ZOOM_HINT,
 } = {}) {
   if (!mermaidSource) return '';
   const wheelAttr = wheelZoom ? '' : ' data-wheel-zoom="false"';

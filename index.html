@@ -188,25 +188,114 @@
         </article>
       </section>
 
-      <section class="home-section home-section--card content-section" aria-labelledby="platform-goals-heading">
-        <h2 id="platform-goals-heading">Project Goals</h2>
-        <ul class="home-list home-list--goals">
-          <li>Explore new approaches to written and spoken language</li>
-          <li>Design a highly learnable writing system</li>
-          <li>Design a highly learnable constructed language</li>
-          <li>Reduce memorization through phonetic writing and semantic composition</li>
-          <li>Test communication between people with different native languages</li>
-          <li>Build open-source tools for language experimentation</li>
+      <section class="home-section content-section platform-about platform-goals" aria-labelledby="platform-goals-heading">
+        <div class="platform-goals__header">
+          <div class="platform-goals__header-text">
+            <p class="platform-goals__eyebrow">Project goals</p>
+            <h2 id="platform-goals-heading" class="platform-goals__title">What Fonora is trying to achieve through open experimentation.</h2>
+          </div>
+          <div class="platform-goals__illustration" aria-hidden="true">
+            <svg class="platform-goals__mountain" viewBox="0 0 220 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M18 118 L78 42 L118 78 L182 28 L202 118 Z" fill="url(#goals-mountain-fill)" opacity="0.55"/>
+              <path d="M78 42 L118 78 L182 28" stroke="url(#goals-mountain-stroke)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M28 98 C 52 88, 68 72, 92 58 C 108 68, 128 52, 148 44 C 162 56, 178 48, 194 38" stroke="#dcc9a8" stroke-width="1.5" stroke-dasharray="3 5" stroke-linecap="round"/>
+              <circle cx="28" cy="98" r="3" fill="#c4a574"/>
+              <circle cx="92" cy="58" r="3" fill="#c4a574"/>
+              <circle cx="148" cy="44" r="3" fill="#9a7544"/>
+              <path d="M182 24 L182 34 M177 29 L187 29" stroke="#1b4332" stroke-width="2" stroke-linecap="round"/>
+              <path d="M182 24 L186 30 L178 30 Z" fill="#1b4332"/>
+              <circle cx="44" cy="24" r="1.5" fill="#dcc9a8"/>
+              <circle cx="168" cy="18" r="1.5" fill="#c4a574"/>
+              <circle cx="196" cy="32" r="1" fill="#e5e7eb"/>
+              <defs>
+                <linearGradient id="goals-mountain-fill" x1="18" y1="118" x2="202" y2="28" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#f5edd9"/>
+                  <stop offset="1" stop-color="#dce8e0"/>
+                </linearGradient>
+                <linearGradient id="goals-mountain-stroke" x1="78" y1="42" x2="182" y2="28" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#c4a574"/>
+                  <stop offset="1" stop-color="#1b4332"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+        </div>
+
+        <ul class="platform-goal-grid">
+          <li class="platform-goal platform-goal--explore">
+            <div class="platform-goal__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="16 8 12 16 8 12 12 12 16 8"/></svg>
+            </div>
+            <div class="platform-goal__body">
+              <span class="platform-goal__num">01</span>
+              <h3 class="platform-goal__title">Explore new approaches to written and spoken language</h3>
+              <p class="platform-goal__desc">Push the boundaries of how language can be expressed and understood.</p>
+            </div>
+          </li>
+          <li class="platform-goal platform-goal--script">
+            <div class="platform-goal__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h6"/></svg>
+            </div>
+            <div class="platform-goal__body">
+              <span class="platform-goal__num">02</span>
+              <h3 class="platform-goal__title">Design a highly learnable writing system</h3>
+              <p class="platform-goal__desc">Create a system that is intuitive, accessible, and easy to learn.</p>
+            </div>
+          </li>
+          <li class="platform-goal platform-goal--language">
+            <div class="platform-goal__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="7" height="7" rx="1"/><rect x="14" y="11" width="7" height="7" rx="1"/><rect x="8.5" y="4" width="7" height="7" rx="1"/></svg>
+            </div>
+            <div class="platform-goal__body">
+              <span class="platform-goal__num">03</span>
+              <h3 class="platform-goal__title">Design a highly learnable constructed language</h3>
+              <p class="platform-goal__desc">Build a language with clarity, consistency, and ease of use at its core.</p>
+            </div>
+          </li>
+          <li class="platform-goal platform-goal--memory">
+            <div class="platform-goal__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4M7 8v8M10 6v12M13 8v8M16 10v4M19 11v2"/></svg>
+            </div>
+            <div class="platform-goal__body">
+              <span class="platform-goal__num">04</span>
+              <h3 class="platform-goal__title">Reduce memorization through phonetic writing and semantic composition</h3>
+              <p class="platform-goal__desc">Make language intuitive by aligning sound and meaning.</p>
+            </div>
+          </li>
+          <li class="platform-goal platform-goal--communicate">
+            <div class="platform-goal__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><circle cx="16" cy="11" r="2.5"/><path d="M4 19c0-2.8 2.2-5 5-5s5 2.2 5 5"/><path d="M14 19c0-1.8 1.3-3.2 3-3.5"/></svg>
+            </div>
+            <div class="platform-goal__body">
+              <span class="platform-goal__num">05</span>
+              <h3 class="platform-goal__title">Test communication between people with different native languages</h3>
+              <p class="platform-goal__desc">Ensure the language works across cultures and linguistic backgrounds.</p>
+            </div>
+          </li>
+          <li class="platform-goal platform-goal--tools">
+            <div class="platform-goal__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/></svg>
+            </div>
+            <div class="platform-goal__body">
+              <span class="platform-goal__num">06</span>
+              <h3 class="platform-goal__title">Build open-source tools for language experimentation</h3>
+              <p class="platform-goal__desc">Empower the community with resources to create, test, and collaborate.</p>
+            </div>
+          </li>
         </ul>
 
-        <h2 id="platform-status-heading" class="home-section__subheading">Experimental Research Project</h2>
-        <p>Fonora is an active open-source research project exploring how written and spoken language can be designed from first principles.</p>
-        <p>The project includes a phonetic writing system, an experimental constructed language, and the software used to build, analyze, and test both.</p>
-        <p>Every symbol, sound mapping, root, and grammar rule is treated as a hypothesis rather than a conclusion. Ideas are refined through experimentation, measurement, and community feedback.</p>
-        <p>The central research question is simple:</p>
-        <p class="home-hypothesis">
-          <strong>Can a writing system and language designed from first principles be learned quickly enough that two people with no shared native language can achieve practical communication after only a short period of study?</strong>
-        </p>
+        <article class="content-section--panel platform-about__research" aria-labelledby="platform-research-heading">
+          <h2 id="platform-research-heading" class="platform-about__research-heading">Experimental research</h2>
+          <p class="section-lead">Fonora is an active open-source project and not a finished product.</p>
+          <div class="platform-about__prose">
+            <p>
+              Fonora combines a phonetic writing system, a constructed language, and software for building and testing both. Every symbol, sound mapping, root, and grammar rule is treated as a hypothesis rather than a conclusion.
+            </p>
+            <p>
+              Ideas are refined through experimentation, measurement, and community feedback. Follow the <a href="/research">research notebook</a> for experiment write-ups, or browse the <a href="/research/timeline">timeline</a> to see how the project evolved.
+            </p>
+          </div>
+        </article>
       </section>
     </section>
 
