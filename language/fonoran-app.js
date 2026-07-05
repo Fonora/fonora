@@ -2482,12 +2482,13 @@
     function translatorPronHtml(pron) {
       if (!pron?.sayLine) return '';
       const likeHtml = pron.englishLine
-        ? `<span class="translator-output__meta-sep" aria-hidden="true"> · </span><span class="translator-output__like">${escapeHtml(pron.englishLine)}</span>`
+        ? `<p class="translator-output__pron-line translator-output__like">${escapeHtml(pron.englishLine)}</p>`
         : '';
       return `<details class="translator-output__pron sans">
         <summary>Pronunciation</summary>
         <div class="translator-output__pron-body">
-          <p class="translator-output__pron-line"><strong class="translator-output__phonetic-key mono">${escapeHtml(pron.sayLine)}</strong>${likeHtml}</p>
+          <p class="translator-output__pron-line"><strong class="translator-output__phonetic-key mono">${escapeHtml(pron.sayLine)}</strong></p>
+          ${likeHtml}
         </div>
       </details>`;
     }

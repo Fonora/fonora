@@ -476,11 +476,32 @@ export function createWordComposer(ctx) {
     }
   }
 
+  function syncCompoundHear() {
+    const hearBtn = $(`${PREFIX}-compound-hear`);
+    if (!hearBtn) return;
+    const isCompound = state.mode === 'compound' || state.mode === 'compose';
+    hearBtn.hidden = !isCompound;
+    if (!isCompound) return;
+    const recipe = state.composer;
+    const canListen = composerCanListen(recipe);
+    hearBtn.disabled = !canListen;
+    if (canListen) {
+      const speakParts = composerFlatSpellings(recipe);
+      hearBtn.onclick = () => ctx.speakNeural(speakParts);
+    } else {
+      hearBtn.onclick = null;
+    }
+  }
+
   function renderScriptLine() {
+    const row = $(`${PREFIX}-script-row`);
     const el = $(`${PREFIX}-script-display`);
     if (!el) return;
     if (state.mode === 'idle') {
-      el.hidden = true; el.innerHTML = ''; return;
+      if (row) row.hidden = true;
+      el.innerHTML = '';
+      syncCompoundHear();
+      return;
     }
     let spelling = '';
     let parts = [];
@@ -494,11 +515,16 @@ export function createWordComposer(ctx) {
         : (c?.parts ?? (c?.spelling ? [c.spelling] : []));
       spelling = parts.join('') || c?.spelling || '';
     }
-    if (!spelling) { el.hidden = true; return; }
+    if (!spelling) {
+      if (row) row.hidden = true;
+      syncCompoundHear();
+      return;
+    }
     const pron = wordPreviewPron(parts);
-    el.hidden = false;
+    if (row) row.hidden = false;
     el.innerHTML = `<span class="wm-script-line__roman">${escapeHtml(spelling)}</span>`
       + (pron.script ? `<span class="wm-script-line__glyphs symbol-text fonora-script" aria-hidden="true">${escapeHtml(pron.script)}</span>` : '');
+    syncCompoundHear();
   }
 
   function updatePanels() {
@@ -627,23 +653,7 @@ export function createWordComposer(ctx) {
         }));
       }
     }
-    const live = $(`${PREFIX}-live-pron`);
-    if (live) {
-      if (recipe.length) {
-        const focus = focusFromComposer(recipe, $(`${PREFIX}-meaning`)?.value.trim());
-        const speakParts = composerFlatSpellings(recipe);
-        live.innerHTML = buildComposerPreviewHtml(focus, speakParts, `${PREFIX}-hear`);
-        const hearBtn = $(`${PREFIX}-hear`);
-        if (hearBtn) {
-          const canListen = composerCanListen(recipe);
-          hearBtn.disabled = !canListen;
-          hearBtn.onclick = () => ctx.speakNeural(speakParts);
-          hearBtn.closest('.word-preview__sound-actions')?.toggleAttribute('hidden', !canListen);
-        }
-      } else {
-        live.innerHTML = '<p class="sans word-preview__empty">Add components from the picker to preview pronunciation.</p>';
-      }
-    }
+    syncCompoundHear();
     syncControls();
   }
 
