@@ -110,6 +110,7 @@ import { migrateProgressHash, onLabProgressTabActivated } from './fonoran-lab-pr
 import { onUserAnalyticsTabActivated } from './fonoran-user-analytics-page.js';
 import { setReaderWordSources } from './fonora-tts.js';
 import { refreshLearnHomeProgress } from './learn-home-progress.js';
+import { captureLearnRef } from './learn-ref.js';
 import { syncLearnSessionBar, saveLearnHomeScroll, restoreLearnHomeScroll } from './learn-session-ui.js';
 import { initEduDebug } from './edu-debug.js';
 import {
@@ -1091,6 +1092,7 @@ function applyRulesBundle(loaded) {
 }
 
 function bootstrapShell() {
+  captureLearnRef();
   const initialNavTab = resolveTabForAuth(getTabFromHash());
   const { navTab, panelId } = normalizeLearnTab(initialNavTab);
   initUniversalNav({

@@ -18,8 +18,106 @@ import {
 } from './learn-gamification.js';
 import { renderModulePath } from './learn-module-path.js';
 import { icon } from './learn-icons.js';
+import { getAuthState } from './auth-session.js';
+import {
+  buildLearnShareMessage,
+  copyLearnShareMessage,
+  canUseNativeShare,
+  getShareTargets,
+  shareLearnProgress,
+} from './learn-share.js';
 
 const XP_PER_LEVEL = 100;
+
+/** @type {(() => void) | null} */
+let sharePopoverDismiss = null;
+
+function closeSharePopover() {
+  sharePopoverDismiss?.();
+  sharePopoverDismiss = null;
+}
+
+function wireShareStatCard(root) {
+  const card = root.querySelector('.learn-stat--share');
+  if (!card) return;
+
+  /** @type {HTMLElement | null} */
+  let popover = null;
+
+  const dismiss = () => {
+    if (!popover) return;
+    popover.hidden = true;
+    card.setAttribute('aria-expanded', 'false');
+    document.removeEventListener('click', onDocClick);
+    document.removeEventListener('keydown', onKeydown);
+    sharePopoverDismiss = null;
+  };
+  sharePopoverDismiss = dismiss;
+
+  /** @param {MouseEvent} event */
+  function onDocClick(event) {
+    if (!card.contains(/** @type {Node} */ (event.target))) dismiss();
+  }
+
+  /** @param {KeyboardEvent} event */
+  function onKeydown(event) {
+    if (event.key === 'Escape') dismiss();
+  }
+
+  const ensurePopover = () => {
+    if (popover) return popover;
+    const shareTargets = getShareTargets(buildLearnShareMessage());
+    popover = document.createElement('div');
+    popover.className = 'learn-share-popover';
+    popover.hidden = true;
+    popover.setAttribute('role', 'menu');
+    popover.setAttribute('aria-label', 'Share options');
+    popover.innerHTML = `
+      <a class="learn-share-popover__btn" href="${shareTargets.x}" target="_blank" rel="noopener noreferrer" role="menuitem">X</a>
+      <a class="learn-share-popover__btn" href="${shareTargets.reddit}" target="_blank" rel="noopener noreferrer" role="menuitem">Reddit</a>
+      <a class="learn-share-popover__btn" href="${shareTargets.facebook}" target="_blank" rel="noopener noreferrer" role="menuitem">Facebook</a>
+      <button type="button" class="learn-share-popover__btn" data-share-copy role="menuitem">Copy text</button>`;
+    card.appendChild(popover);
+    popover.querySelector('[data-share-copy]')?.addEventListener('click', async (event) => {
+      event.stopPropagation();
+      const btn = /** @type {HTMLButtonElement} */ (event.currentTarget);
+      const copied = await copyLearnShareMessage();
+      const prev = btn.textContent;
+      btn.textContent = copied ? 'Copied!' : 'Copy failed';
+      window.setTimeout(() => {
+        btn.textContent = prev;
+      }, 1600);
+    });
+    return popover;
+  };
+
+  const openPopover = () => {
+    const menu = ensurePopover();
+    menu.hidden = false;
+    card.setAttribute('aria-expanded', 'true');
+    requestAnimationFrame(() => {
+      document.addEventListener('click', onDocClick);
+      document.addEventListener('keydown', onKeydown);
+    });
+  };
+
+  const handleShare = async () => {
+    const result = await shareLearnProgress();
+    if (result === 'menu') openPopover();
+  };
+
+  card.addEventListener('click', (event) => {
+    if (event.target.closest('.learn-share-popover')) return;
+    event.preventDefault();
+    void handleShare();
+  });
+
+  card.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    void handleShare();
+  });
+}
 
 /** @type {Partial<Record<import('./learn-gamification.js').LearnSkillId, string>>} */
 const CURRICULUM_UNITS = {
@@ -59,9 +157,15 @@ function refreshFullProgress() {
   const root = document.getElementById('learn-progress-stats');
   if (!root) return;
 
+  closeSharePopover();
+
   const progress = loadProgress();
   const daily = getDailyGoalProgress();
   const level = getTotalLevel();
+  const auth = getAuthState();
+  const shareMessage = buildLearnShareMessage();
+  const referralCount = auth.authenticated ? auth.referralCount : 0;
+  const hasNativeShare = canUseNativeShare();
 
   root.innerHTML = `
     <article class="learn-stat">
@@ -80,7 +184,23 @@ function refreshFullProgress() {
       <span class="learn-stat__icon learn-stat__icon--level">${icon('award')}</span>
       <span class="learn-stat__value">Lv ${level}</span>
       <span class="learn-stat__label">${progress.totalXp} XP total</span>
+    </article>
+    <article
+      class="learn-stat learn-stat--share"
+      tabindex="0"
+      role="button"
+      aria-label="Share your progress and recruit friends"
+      ${hasNativeShare ? '' : 'aria-haspopup="true"'}
+      aria-expanded="false"
+    >
+      <span class="learn-stat__icon learn-stat__icon--share">${icon('share')}</span>
+      <span class="learn-stat__value">${referralCount}</span>
+      <span class="learn-stat__label">Friends recruited</span>
+      <span class="learn-stat__preview">${shareMessage.preview}</span>
+      ${auth.authenticated ? '' : '<span class="learn-stat__hint">Sign in to track friends you recruit</span>'}
     </article>`;
+
+  wireShareStatCard(root);
 }
 
 export function refreshLearnHomeProgress(rules = null) {
