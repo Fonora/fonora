@@ -92,13 +92,16 @@ export async function runFonoranAuthTests() {
       }),
     );
 
-    const { isAdminWriteRequired } = await import(`./fonoran-auth.js?test-gate=${Date.now()}`);
+    const { isAdminWriteRequired, isAuthEnabled } = await import(`./fonoran-auth.js?test-gate=${Date.now()}`);
     results.push(
       await test('learn progress PUT is not admin-gated', async () => {
-        const prevGoogle = process.env.GOOGLE_CLIENT_ID;
+        const prevGoogleId = process.env.GOOGLE_CLIENT_ID;
+        const prevGoogleSecret = process.env.GOOGLE_CLIENT_SECRET;
         const prevSecret = process.env.SESSION_SECRET;
         process.env.GOOGLE_CLIENT_ID = 'test-client';
-        process.env.SESSION_SECRET = process.env.SESSION_SECRET ?? 'test-session-secret-for-codeql';
+        process.env.GOOGLE_CLIENT_SECRET = 'test-secret';
+        process.env.SESSION_SECRET = 'test-session-secret-for-codeql';
+        assert(isAuthEnabled(), 'auth must be enabled to exercise write gates');
         assert(
           isAdminWriteRequired('/api/fonoran/me/progress', 'PUT') === false,
           'community users must sync learn progress',
@@ -107,8 +110,10 @@ export async function runFonoranAuthTests() {
           isAdminWriteRequired('/api/fonoran/lab/regenerate', 'POST') === true,
           'lab writes stay admin-only',
         );
-        if (prevGoogle === undefined) delete process.env.GOOGLE_CLIENT_ID;
-        else process.env.GOOGLE_CLIENT_ID = prevGoogle;
+        if (prevGoogleId === undefined) delete process.env.GOOGLE_CLIENT_ID;
+        else process.env.GOOGLE_CLIENT_ID = prevGoogleId;
+        if (prevGoogleSecret === undefined) delete process.env.GOOGLE_CLIENT_SECRET;
+        else process.env.GOOGLE_CLIENT_SECRET = prevGoogleSecret;
         if (prevSecret === undefined) delete process.env.SESSION_SECRET;
         else process.env.SESSION_SECRET = prevSecret;
       }),
