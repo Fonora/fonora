@@ -66,6 +66,7 @@ import {
   getVoteAggregate,
   getUserVote,
   checkRateLimit,
+  getUserAnalytics,
 } from './fonoran-community-store.js';
 import { analyzeWord, analysisDelta } from './fonoran-word-analysis.js';
 import { listWordInventory, getWordDetail, acceptProposal } from './fonoran-word-manager.js';
@@ -536,6 +537,13 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     if (pathname === '/api/fonoran/lab/health' && method === 'GET') {
       return done(200, await getHealth());
+    }
+    if (pathname === '/api/fonoran/admin/analytics' && method === 'GET') {
+      if (!isAdminUser(req)) {
+        adminRequiredResponse(res);
+        return true;
+      }
+      return done(200, await getUserAnalytics());
     }
     if (pathname === '/api/fonoran/lab/run-dda' && method === 'POST') {
       const body = await readJsonBody(req);

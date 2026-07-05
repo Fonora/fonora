@@ -464,6 +464,14 @@
         <h2 id="tools-metrics-heading">Metrics</h2>
         <div class="home-layer-cards">
           <article class="home-layer-card">
+            <p class="home-layer-card__tag">Community</p>
+            <h3>User analytics</h3>
+            <p>Upvotes and signups — by day, week, month, and all time.</p>
+            <div class="home-layer-card__actions">
+              <button type="button" class="btn btn--primary" data-tab="user-analytics">Open User analytics</button>
+            </div>
+          </article>
+          <article class="home-layer-card">
             <p class="home-layer-card__tag">Analysis</p>
             <h3>Health</h3>
             <p>Check vocabulary coverage and consistency metrics.</p>
@@ -567,6 +575,19 @@
         </header>
       </div>
       <div id="translation-test-body"></div>
+    </section>
+
+    <!-- Admin: User analytics -->
+    <section class="content-page tab-panel" id="tab-user-analytics" data-tab-panel="user-analytics" hidden aria-labelledby="user-analytics-heading">
+      <div class="page-toolbar-shell page-toolbar-shell--static">
+        <header class="page-toolbar">
+          <div class="page-toolbar__text">
+            <h1 class="page-toolbar__title" id="user-analytics-heading">User analytics</h1>
+            <p class="page-toolbar__lead">Community upvotes and user signups over time.</p>
+          </div>
+        </header>
+      </div>
+      <div id="tools-user-analytics-body"><p class="empty">Loading user analytics…</p></div>
     </section>
 
     <!-- Admin: Lab Health -->

@@ -28,6 +28,7 @@
     'word-manager',
     'gap-workshop',
     'translation-test',
+    'user-analytics',
     'health',
     'progress',
     'advanced',

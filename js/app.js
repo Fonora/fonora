@@ -105,6 +105,7 @@ import { onAdvancedTabActivated } from './fonoran-advanced-page.js';
 import { migrateTranslationTestHash, onTranslationTestTabActivated } from './fonoran-translation-test-page.js';
 import { migrateHealthHash, onHealthTabActivated } from './fonoran-health-page.js';
 import { migrateProgressHash, onLabProgressTabActivated } from './fonoran-lab-progress-page.js';
+import { onUserAnalyticsTabActivated } from './fonoran-user-analytics-page.js';
 import { setReaderWordSources } from './fonora-tts.js';
 import { refreshLearnHomeProgress } from './learn-home-progress.js';
 import { syncLearnSessionBar, saveLearnHomeScroll, restoreLearnHomeScroll } from './learn-session-ui.js';
@@ -586,6 +587,7 @@ const BUILDER_TOOLS_TAB_IDS = new Set([
   'word-manager',
   'gap-workshop',
   'translation-test',
+  'user-analytics',
   'health',
   'progress',
   'advanced',
@@ -758,6 +760,9 @@ function resolveTabForAuth(tabId) {
   if (tabId === 'progress' && !canAccessWordManager()) {
     return 'tools-auth-gate';
   }
+  if (tabId === 'user-analytics' && !canAccessWordManager()) {
+    return 'tools-auth-gate';
+  }
   if (isToolsPath() && !canAccessTools() && (isGatedToolsTab(tabId) || tabId === 'tools-home')) {
     return 'tools-auth-gate';
   }
@@ -834,6 +839,10 @@ function showTab(tabId) {
 
   if (panelId === 'progress') {
     void onLabProgressTabActivated();
+  }
+
+  if (panelId === 'user-analytics') {
+    void onUserAnalyticsTabActivated();
   }
 
   if (panelId === 'advanced') {
