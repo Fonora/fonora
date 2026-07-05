@@ -1,10 +1,14 @@
 ---
-status: Superseded
+status: Foundational
 date: 2026-07-03
 phase: phase-5
 ---
 
 # LLM-assisted word generation
+
+> **Status (Jul 2026):** This note documents the **active production pipeline** for LLM-assisted vocabulary growth — gap classifier, proposal store, vocab survey, Proposal Review UI, and `fonoran:regenerate` promotion. Status `Foundational` means the architecture shipped here remains the editorial default; it is not obsolete.
+>
+> **What was retired:** the reactive per-gap CLI (`fonoran:suggest-compounds`) and the Gap Workshop **Gaps** sub-tab (word-by-word lookup). **Successor experiment:** [RN-27 · Automated refine loop](/research/notes/automated-refine-loop) adds corpus-driven auto-accept gates and `fonoran:refine` on top of the same modules — it extends RN-26; it does not replace the vocab-survey → review → regenerate path.
 
 ## Research Question
 
@@ -123,14 +127,24 @@ at `GET /api/fonoran/playtests/promotions`. This turns the constitutional author
 | `/api/fonoran/gaps/suggest` | POST | admin | LLM-classify a word and create a proposal |
 | `/api/fonoran/playtests/promotions` | GET | public | compounds ready for playtest promotion |
 
-### 8. CLI runner (retired — superseded by `fonoran:vocab-survey` and `fonoran:refine`)
+### 8. CLI entry points (current)
 
-> **Historical.** `scripts/fonoran-suggest-compounds.js` and the `fonoran:suggest-compounds` npm script were removed. The reactive per-gap CLI was replaced by the batch vocabulary survey and automated refine loop (see §Outcomes below and [RN-27](/research/notes/automated-refine-loop)). Use `npm run fonoran:vocab-survey` for bulk proposal generation.
+Two complementary paths share the same proposal store (`fonoran-compound-proposals.json` locally, PostgreSQL on Heroku) and the same acceptance → `fonoran:regenerate` promotion step:
+
+| Path | Command | When to use |
+|------|---------|-------------|
+| **Bulk survey (default)** | `npm run fonoran:vocab-survey` | Proactive growth — LLM proposes 300–500 compounds from the full primitive glossary in one batch |
+| **Gap-targeted batch** | `npm run fonoran:gap-analyze-batch` | Analyze specific gap words from the latest gap report |
+| **Automated refine loop** | `npm run fonoran:refine` | Corpus-driven experiment — gap → propose → gate → auto-accept → build → measure ([RN-27](/research/notes/automated-refine-loop)) |
+
+> **Retired:** `scripts/fonoran-suggest-compounds.js` and `fonoran:suggest-compounds` (reactive one-gap-at-a-time CLI). Use vocab survey or refine instead.
 
 ```bash
-# Current equivalents:
-npm run fonoran:vocab-survey                # batch compound proposals (replaces --gaps)
-npm run fonoran:refine                      # automated gap → propose → build loop
+npm run fonoran:vocab-survey                # bulk compound proposals (primary editorial path)
+npm run fonoran:vocab-survey:dry            # dry run — seeds only, no LLM writes
+npm run fonoran:gap-analyze-batch           # batch gap analysis from gap report
+npm run fonoran:refine                      # automated loop (RN-27; optional experiment)
+npm run fonoran:refine:dry                  # refine dry run — limited gaps, no writes
 ```
 
 ## Evaluation
@@ -166,6 +180,12 @@ The architecture diagnosis from the audit holds: the pieces are right, the conne
 missing. LLM classification + the proposal store + Word Manager filters form the missing
 connective tissue between honest gap reporting and editorial action.
 
+**Still active (Jul 2026):** `fonoran-gap-analyzer.js`, `fonoran-compound-proposals.js`,
+`validateSeedIntegrity`, Word Manager gap/proposal filters, playtest promotion API,
+`fonoran:vocab-survey`, Proposal Review UI, and `promoteAcceptedProposals()` as the first
+step of `fonoran:regenerate`. Operational sequences: [fonoran-compound-workflow.md](../fonoran-compound-workflow.md),
+[fonoran-cli-tools.md](../fonoran-cli-tools.md).
+
 ## What Changed
 
 - `tools/fonoran-gap-analyzer.js` — new LLM gap classifier (compound / primitive / alias)
@@ -178,17 +198,10 @@ connective tissue between honest gap reporting and editorial action.
   LLM proposals; gap report items and LLM proposals appear in inventory
 - `tools/fonoran-playtests.js` — `buildPlaytestPromotionCandidates` export
 - `tools/fonoran-api.js` — compound-proposals, gaps/suggest, playtests/promotions endpoints
-- `scripts/fonoran-suggest-compounds.js` — CLI runner (`fonoran:suggest-compounds`)
-- `data/fonoran-compound-proposals.json` — new empty proposal store
+- `data/fonoran-compound-proposals.json` — new proposal store (runtime; Postgres on Heroku)
+- ~~`scripts/fonoran-suggest-compounds.js`~~ — removed; replaced by vocab survey and refine loop
 
-## Open Questions → Resolved (Generation 2)
-
-All four open questions were answered during the Generation 2 primitive redesign sprint
-(July 2026). See below.
-
----
-
-## Generation 2 milestone (July 2026)
+## Addendum — Generation 2 milestone (July 2026)
 
 ### What changed and why
 
@@ -265,23 +278,28 @@ not individual gap lookup). The **Advanced** tab was redesigned from a Mermaid d
 **five-step visual pipeline** — Roots → Vocab Survey → Proposal Review → Regenerate →
 Validate — with live stats for each step.
 
-### PostgreSQL as local default
+### Storage (local vs production)
 
-The local development environment was migrated from JSON file storage to a local PostgreSQL
-database (`fonora`). `.env` now sets `FONORAN_STORAGE=postgres` and `PGSSLMODE=disable`.
-The `fonoran:regenerate` pipeline writes directly to Postgres, matching production behavior.
+During the Gen 2 sprint, local dev briefly defaulted to Postgres to mirror Heroku. The
+[RN-27](/research/notes/automated-refine-loop) refine experiment then exposed a critical
+integration rule: **promote → build → gap report must share one editorial backend** or
+accepted proposals never reach the lab. Local `.env` now defaults to **`FONORAN_STORAGE=json`**
+(see `.env.example`). Production Heroku sets **`FONORAN_STORAGE=postgres`** with
+`DATABASE_URL`. The proposal queue follows the same rule: JSON file locally, Postgres rows
+on Heroku.
 
 ### Reproducibility
 
-A fresh clone + `npm install` + `npm run fonoran:regenerate` produces the same ~440 words:
+A fresh clone + `npm install` + `npm run fonoran:regenerate` reproduces the committed lab
+from `data/fonoran-compounds.json` without any LLM key:
 
-1. `promoteAcceptedProposals` finds nothing new (promoted words already in `fonoran-compounds.json`)
-2. `importEditorialFromSeedPaths` reads all 459 entries in `data/fonoran-compounds.json`
-3. `fonoran-build.js` resolves, validates uniqueness, writes to Postgres
-4. Total in lab: ~440 (some drop due to phonetic collisions handled deterministically)
+1. `promoteAcceptedProposals` merges any newly accepted queue items (usually none on a clean clone)
+2. `importEditorialFromSeedPaths` reads editorial JSON (`fonoran-compounds.json`, roots, inventory)
+3. `fonoran-build.js` resolves, validates uniqueness, writes the lab bucket or Postgres
+4. Some editorial entries may drop at build time due to phonetic collisions (handled deterministically)
 
-No LLM key is needed to reproduce the vocabulary. `ANTHROPIC_API_KEY` is only required to
-run a new `fonoran:vocab-survey` or LLM playtest.
+`ANTHROPIC_API_KEY` is only required to run a new `fonoran:vocab-survey`, gap-analysis batch,
+refine loop with LLM gates, or LLM playtest.
 
 ### What Changed (Generation 2)
 
@@ -302,16 +320,33 @@ run a new `fonoran:vocab-survey` or LLM playtest.
 | `language/index.html` + `fonoran-app.js` | Advanced tab: five-step visual pipeline |
 | `language/fonoran.css` | Pipeline step styles; `.gw-badge--warn` for redundancy |
 | `index.html` | Gap Workshop → Proposal Review; Gaps tab removed |
-| `.env` | Switched to local Postgres (`FONORAN_STORAGE=postgres`, `PGSSLMODE=disable`) |
-| `package.json` | Added `fonoran:vocab-survey`; removed `fonoran:suggest-compounds`, gen3 scripts |
+| `.env` | Gen 2: briefly `FONORAN_STORAGE=postgres`; RN-27 refine fix: local default back to `json` |
+| `package.json` | Added `fonoran:vocab-survey`, `fonoran:refine`; removed `fonoran:suggest-compounds`, gen3 scripts |
+
+## Open Questions
+
+Resolved during the Gen 2 addendum above:
+
+- **Phantom seed IDs** — `validateSeedIntegrity` + 15 fixes; enforced in `fonoran:compound-audit`
+- **Broken accept → lab write** — replaced by `promoteAcceptedProposals()` in `fonoran:regenerate`
+- **Reactive gap UI bottleneck** — vocab survey + Proposal Review pipeline
+- **Over-specific primitives** — 16 demoted; 4 spatial roots added (89 primitives)
+
+Handed to [RN-27 · Automated refine loop](/research/notes/automated-refine-loop):
+
+- Corpus coverage targets and auto-accept gate thresholds on the 1,000-phrase stranger corpus
+- Phonetic analytics, proposal gates, alias promotion, and lexicon hygiene guardrails
+- Whether refine runs on a schedule or only when manually triggered
 
 ## References
 
+- [RN-27 · Automated refine loop](/research/notes/automated-refine-loop) — extends this pipeline with `fonoran:refine`
 - [RN-25 · Concept-first translation and honest gaps](/research/notes/concept-first-translation-and-honest-gaps)
 - [RN-21 · Beginner core remediation](/research/notes/beginner-core-remediation)
 - [RN-20 · Synthetic intuition ranking](/research/notes/synthetic-intuition-ranking)
-- [docs/fonoran-compound-workflow.md](../fonoran-compound-workflow.md)
-- [docs/fonoran-generation-2.md](../fonoran-generation-2.md)
+- [docs/fonoran-compound-workflow.md](../fonoran-compound-workflow.md) — operational sequences (local + Heroku)
+- [docs/fonoran-cli-tools.md](../fonoran-cli-tools.md) — command reference
+- [docs/fonoran-generation-2.md](../fonoran-generation-2.md) — Gen 2 primitive redesign snapshot
 - [tools/fonoran-gap-analyzer.js](../../tools/fonoran-gap-analyzer.js)
 - [tools/fonoran-compound-proposals.js](../../tools/fonoran-compound-proposals.js)
 - [tools/fonoran-expression-candidates.js](../../tools/fonoran-expression-candidates.js)

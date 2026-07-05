@@ -289,6 +289,13 @@ Preferred-form policy: [fonoran.md](fonoran.md) · LLM protocol: [fonoran-llm-pl
 
 ## LLM-assisted vocabulary growth loop
 
+Two complementary paths share the same proposal store and the same accept → `fonoran:regenerate`
+promotion step. See [RN-26 · LLM-assisted word generation](/research/notes/llm-assisted-word-generation)
+for architecture; [RN-27 · Automated refine loop](/research/notes/automated-refine-loop) for the
+corpus-driven auto-accept experiment.
+
+### Path A — Bulk survey + human review (default editorial)
+
 The **Vocabulary Survey** is the primary way to generate new compound proposals in bulk.
 On **Heroku** (with `DATABASE_URL`), proposals persist in **PostgreSQL** and are visible
 to the live Review UI on the same dyno. Locally they use `data/fonoran-compound-proposals.json`.
@@ -299,14 +306,10 @@ heroku run npm run fonoran:vocab-survey -a fonora
 
 # Local (JSON file)
 npm run fonoran:vocab-survey
+npm run fonoran:vocab-survey:dry    # seeds only — no LLM writes
 ```
 
 No second LLM call is needed on subsequent `fonoran:regenerate` runs.
-
-```bash
-# Generate compound proposals across all primitive roots (requires ANTHROPIC_API_KEY)
-npm run fonoran:vocab-survey
-```
 
 Proposals land in the compound proposal store (Postgres or local JSON). Review them in the
 **Review** tab at `/tools#gap-workshop`, or via the API
@@ -326,7 +329,35 @@ npm run fonoran:regenerate
 curl http://localhost:8000/api/fonoran/playtests/promotions
 ```
 
-Seed integrity — verify `ASSOCIATION_SEEDS` has no phantom component IDs:
+For targeted gap words (not full survey), use `npm run fonoran:gap-analyze-batch`.
+
+### Path B — Automated refine loop (corpus experiment)
+
+Runs gap → propose → gate → auto-accept → build → measure on the 1,000-phrase stranger
+corpus. Requires **`FONORAN_STORAGE=json`** locally so promote, build, and gap report share
+one backend (see RN-27). Human playtests remain constitutional authority for preferred-form
+promotion in production.
+
+```bash
+npm run fonoran:refine
+npm run fonoran:refine:dry              # limited gaps, no writes
+npm run fonoran:refine -- --skip-llm --max-iterations 1   # gates only, no LLM Task A
+```
+
+Auto-accepted compounds still flow through the same proposal store; review or revert via git
+if an iteration regresses coverage or phonetic distribution.
+
+### Storage reminder
+
+| Environment | Editorial + proposal queue | Gap / refine artifacts |
+|-------------|---------------------------|-------------------------|
+| Local dev (default) | `FONORAN_STORAGE=json` — `data/fonoran-*.json` | `data/` + fonora-data submodule |
+| Heroku production | `FONORAN_STORAGE=postgres` + `DATABASE_URL` | fonora-data submodule (not Postgres) |
+
+Promote → build → gap report **must** use the same storage backend. Mixing JSON promote with
+Postgres build silently drops coverage gains (RN-27 finding).
+
+### Seed integrity
 
 ```bash
 node --input-type=module -e "
@@ -340,4 +371,7 @@ console.log(v.length ? v : '✓ No phantom IDs');
 "
 ```
 
-See also: [RN-26 · LLM-assisted word generation](/research/notes/llm-assisted-word-generation)
+See also:
+
+- [RN-26 · LLM-assisted word generation](/research/notes/llm-assisted-word-generation) — foundational pipeline (gap analyzer, proposal store, vocab survey, review UI)
+- [RN-27 · Automated refine loop](/research/notes/automated-refine-loop) — corpus auto-accept experiment (`fonoran:refine`)
