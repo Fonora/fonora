@@ -347,6 +347,8 @@ export function isAdminWriteRequired(pathname, method) {
   if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return false;
   // Community proposal creation is handled by isCommunityWriteRequired
   if (pathname === '/api/fonoran/proposals' && m === 'POST') return false;
+  // Learn progress sync is community-only (handler checks session user)
+  if (pathname === '/api/fonoran/me/progress' && m === 'PUT') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
 }
 
