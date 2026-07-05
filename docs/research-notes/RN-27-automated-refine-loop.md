@@ -4,9 +4,9 @@ date: 2026-07-04
 phase: phase-5
 ---
 
-# RN-27: Automated refinement loop (pre-community experiment)
+# Automated refinement loop (pre-community experiment)
 
-## Research question
+## Research Question
 
 Can we close an automated **gap → propose → gate → accept → build → measure** loop on the 1,000-phrase stranger corpus to grow Fonoran vocabulary *before* human playtests and community review—while enforcing cross-linguistic phonetic ease and campfire recoverability?
 
@@ -57,7 +57,9 @@ Rhyme-family saturation targets: stop+a ≤25%, stop+e ≤15%, glide+h ≤10%.
 
 Primitives deferred; aliases accepted when target exists.
 
-## Baseline (before first refine run)
+## Evaluation
+
+### Baseline (before first refine run)
 
 | Metric | Value |
 |--------|-------|
@@ -65,8 +67,6 @@ Primitives deferred; aliases accepted when target exists.
 | Coverage | 74% (737/1000 clean) |
 | Distinct honest gaps | 117 |
 | Top gap | please (43×) |
-
-## Results
 
 ### First refine run (3 iterations, `--skip-llm`)
 
@@ -114,13 +114,15 @@ Primitives deferred; aliases accepted when target exists.
 
 `relieved` (8×), `maybe` (6×), `closer` (5×), `breathe` (5×), `tonight` (4×), `mother` (4×) — mostly hard-gate failures (family kinship, time compounds) or phonetic score just under 0.70.
 
-### Conclusion
+## Findings
 
-**Hypothesis supported:** the automated loop can close high-frequency stranger gaps with research-weighted phonetic gates and campfire-oriented LLM proposals. The critical integration requirement is **store consistency** (JSON mode for local refine experiments, or promote/build must share the same editorial backend). LLM Task A gate was not exercised in the validating run (`--skip-llm`); run full gates before community promotion.
+**Hypothesis supported:** the automated loop can close high-frequency stranger gaps with research-weighted phonetic gates and campfire-oriented LLM proposals. The critical integration requirement is **store consistency** (JSON mode for local refine experiments, or promote/build must share the same editorial backend).
 
-See `external/fonora-data/data/fonoran-refine-iterations.json` and `external/fonora-data/data/fonoran-phonetic-analytics.json` for machine-readable snapshots.
+LLM Task A gate was not exercised in the validating run (`--skip-llm`); full gates should be run before community promotion to confirm campfire recoverability holds under LLM review.
 
-## Lexicon hygiene (lemma + agentive collapse)
+Machine-readable snapshots: [`external/fonora-data/data/fonoran-refine-iterations.json`](../../external/fonora-data/data/fonoran-refine-iterations.json) and [`external/fonora-data/data/fonoran-phonetic-analytics.json`](../../external/fonora-data/data/fonoran-phonetic-analytics.json).
+
+## Addendum — Lexicon hygiene (lemma + agentive collapse)
 
 Follow-up pass after manual review of auto-accepted compounds.
 
@@ -157,6 +159,38 @@ npm run fonoran:lexicon:hygiene              # preview (dry run)
 npm run fonoran:lexicon:hygiene -- --apply --rebuild   # apply + sync lab
 ```
 
-## Authority note
+## What Changed
 
-This experiment auto-accepts gated proposals into `compounds.json`. Human playtests remain constitutional authority for preferred-form promotion in production. Revert via git if an iteration regresses coverage or phonetic distribution.
+| File | Change |
+|------|--------|
+| `tools/fonoran-proposal-gate.js` | Fixed undefined `v` in `scoreComposition()`; added inflected concept id and agentive duplicate rejection |
+| `tools/fonoran-gap-analyzer.js` | Campfire-oriented LLM prompt; lemma invariant and agentive alias prompt rules |
+| `tools/fonoran-phonetic-analytics.js` | Onset/vowel/rhyme-family share analytics |
+| `tools/fonoran-phonetic-weights.js` | Research-backed phonetic tier weights |
+| `tools/fonoran-lexicon-hygiene.js` | New: inflection detection, agentive multiset duplicate check |
+| `scripts/fonoran-lexicon-audit.js` | New: inflected concept id, agentive duplicate group, and missing alias reports |
+| `data/fonoran-compound-proposals.json` | Accepted proposals from refine runs |
+| `data/fonoran-translation-gap-baseline.json` | Updated to 94 gaps (post-fix), then 85 (post-hygiene) |
+| `data/localizations/en.json` | 11 new English aliases promoted (`mean`, `little`, `a lot`, …) |
+| `external/fonora-data/data/fonoran-refine-iterations.json` | Machine-readable iteration snapshots |
+| `external/fonora-data/data/fonoran-phonetic-analytics.json` | Machine-readable phonetic analytics |
+| `.env` | Switched to `FONORAN_STORAGE=json` for local refine experiments |
+
+## Open Questions
+
+- LLM Task A (`campfire_stranger`) gate was skipped in the validating run (`--skip-llm`). Full gates must be exercised before community promotion to confirm campfire recoverability holds under LLM review.
+- Remaining top gaps (`relieved`, `maybe`, `breathe`, `tonight`, `mother`) require new primitives or deliberate compositions — each should pass the campfire test before acceptance.
+- Should the refine loop run on a schedule (e.g. after each community playtest cycle) or only manually triggered?
+- Auto-accepted proposals feed `compounds.json` directly; human playtests remain the constitutional authority for preferred-form promotion in production. Revert via git if an iteration regresses coverage or phonetic distribution.
+
+## References
+
+- [RN-25 · Concept-first translation and honest gaps](/research/notes/concept-first-translation-and-honest-gaps)
+- [RN-26 · LLM-assisted word generation](/research/notes/llm-assisted-word-generation)
+- [`tools/fonoran-gap-analyzer.js`](../../tools/fonoran-gap-analyzer.js)
+- [`tools/fonoran-proposal-gate.js`](../../tools/fonoran-proposal-gate.js)
+- [`tools/fonoran-phonetic-analytics.js`](../../tools/fonoran-phonetic-analytics.js)
+- [`tools/fonoran-lexicon-hygiene.js`](../../tools/fonoran-lexicon-hygiene.js)
+- [`scripts/fonoran-lexicon-audit.js`](../../scripts/fonoran-lexicon-audit.js)
+- [`external/fonora-data/data/fonoran-refine-iterations.json`](../../external/fonora-data/data/fonoran-refine-iterations.json)
+- [`external/fonora-data/data/fonoran-phonetic-analytics.json`](../../external/fonora-data/data/fonoran-phonetic-analytics.json)
