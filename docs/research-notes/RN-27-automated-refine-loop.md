@@ -6,6 +6,8 @@ phase: phase-5
 
 # Automated refinement loop (pre-community experiment)
 
+> **Builds on [RN-26 · LLM-assisted word generation](/research/notes/llm-assisted-word-generation).** This note documents the **corpus-driven experiment** (`fonoran:refine`) that auto-accepts proposals through phonetic and campfire gates. It reuses RN-26 modules (`fonoran-gap-analyzer.js`, `fonoran-compound-proposals.js`, `promoteAcceptedProposals`). The default editorial path remains vocab survey → Proposal Review → `fonoran:regenerate`; use refine when optimizing stranger-corpus coverage in bulk before community review.
+
 ## Research Question
 
 Can we close an automated **gap → propose → gate → accept → build → measure** loop on the 1,000-phrase stranger corpus to grow Fonoran vocabulary *before* human playtests and community review—while enforcing cross-linguistic phonetic ease and campfire recoverability?

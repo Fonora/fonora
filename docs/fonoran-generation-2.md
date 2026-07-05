@@ -136,7 +136,10 @@ Previously missing concepts that now resolve:
 | `tools/fonoran-expression-candidates.js` | Understandability ranker + ASSOCIATION_SEEDS |
 | `tools/fonoran-build.js` | Full language builder |
 | `scripts/fonoran-regenerate.js` | Orchestrates the full regen pipeline |
-| `tools/fonoran-gap-analyzer.js` | Secondary: one-word targeted analysis when vocab survey misses something |
+| `tools/fonoran-gap-analyzer.js` | Gap classification (compound / primitive / alias); used by vocab survey, gap batch, and refine loop |
+| `scripts/fonoran-refine-loop.js` | Optional corpus experiment — auto-accept through phonetic gates ([RN-27](research-notes/RN-27-automated-refine-loop.md)) |
+
+Research notes: [RN-26 · LLM-assisted word generation](research-notes/RN-26-llm-assisted-word-generation.md) (foundational pipeline) · [RN-27 · Automated refine loop](research-notes/RN-27-automated-refine-loop.md) (corpus experiment)
 
 ## Deprecated / removed
 
