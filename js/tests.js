@@ -836,8 +836,7 @@ const allPassed =
   + (boundaryMultiResult.ok ? 1 : 0)
   + (boundaryDigraphResult.ok ? 1 : 0)
   + (rootWorkflowResult.ok ? 1 : 0)
-  + (labSearchResult.ok ? 1 : 0)
-  + coursePhrasesPassed;
+  + (labSearchResult.ok ? 1 : 0);
 const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + 23;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
