@@ -499,3 +499,145 @@ export function checkRateLimit(key, { max = 30, windowMs = 60_000 } = {}) {
     throw err;
   }
 }
+
+const MS_HOUR = 60 * 60 * 1000;
+const MS_DAY = 24 * MS_HOUR;
+
+function startOfUtcDay(d = new Date()) {
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
+function toIso(d) {
+  return d instanceof Date ? d.toISOString() : String(d);
+}
+
+function parseDate(value) {
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function countSince(items, dateField, since) {
+  return items.filter((item) => {
+    const d = parseDate(item[dateField]);
+    return d && d >= since;
+  }).length;
+}
+
+function buildHourlySeries(items, dateField, hours = 24) {
+  const now = new Date();
+  const start = new Date(now.getTime() - hours * MS_HOUR);
+  const buckets = [];
+  for (let i = 0; i < hours; i++) {
+    const bucketStart = new Date(start.getTime() + i * MS_HOUR);
+    const bucketEnd = new Date(bucketStart.getTime() + MS_HOUR);
+    const count = items.filter((item) => {
+      const d = parseDate(item[dateField]);
+      return d && d >= bucketStart && d < bucketEnd;
+    }).length;
+    buckets.push({
+      start: bucketStart.toISOString(),
+      label: bucketStart.toLocaleTimeString('en-US', { hour: 'numeric', timeZone: 'UTC' }),
+      count,
+    });
+  }
+  return buckets;
+}
+
+function buildDailySeries(items, dateField, days, anchor = new Date()) {
+  const endDay = startOfUtcDay(anchor);
+  const buckets = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const bucketStart = new Date(endDay.getTime() - i * MS_DAY);
+    const bucketEnd = new Date(bucketStart.getTime() + MS_DAY);
+    const count = items.filter((item) => {
+      const d = parseDate(item[dateField]);
+      return d && d >= bucketStart && d < bucketEnd;
+    }).length;
+    buckets.push({
+      start: bucketStart.toISOString(),
+      label: bucketStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' }),
+      count,
+    });
+  }
+  return buckets;
+}
+
+function buildMonthlySeries(items, dateField) {
+  const dated = items
+    .map((item) => ({ item, d: parseDate(item[dateField]) }))
+    .filter((x) => x.d)
+    .sort((a, b) => a.d.getTime() - b.d.getTime());
+  if (!dated.length) return [];
+  const first = dated[0].d;
+  const last = dated[dated.length - 1].d;
+  const start = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth(), 1));
+  const end = new Date(Date.UTC(last.getUTCFullYear(), last.getUTCMonth(), 1));
+  const buckets = [];
+  for (let cursor = new Date(start); cursor <= end; cursor.setUTCMonth(cursor.getUTCMonth() + 1)) {
+    const bucketStart = new Date(cursor);
+    const bucketEnd = new Date(Date.UTC(bucketStart.getUTCFullYear(), bucketStart.getUTCMonth() + 1, 1));
+    const count = dated.filter((x) => x.d >= bucketStart && x.d < bucketEnd).length;
+    buckets.push({
+      start: bucketStart.toISOString(),
+      label: bucketStart.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }),
+      count,
+    });
+  }
+  return buckets;
+}
+
+function buildMetricBlock(items, dateField) {
+  const now = new Date();
+  const todayStart = startOfUtcDay(now);
+  const weekStart = new Date(now.getTime() - 7 * MS_DAY);
+  const monthStart = new Date(now.getTime() - 30 * MS_DAY);
+  return {
+    today: countSince(items, dateField, todayStart),
+    week: countSince(items, dateField, weekStart),
+    month: countSince(items, dateField, monthStart),
+    all_time: items.length,
+    series: {
+      day: buildHourlySeries(items, dateField),
+      week: buildDailySeries(items, dateField, 7),
+      month: buildDailySeries(items, dateField, 30),
+      all_time: buildMonthlySeries(items, dateField),
+    },
+  };
+}
+
+async function readAnalyticsRows() {
+  await ensureCommunitySchema();
+  if (resolveStorageMode() === 'postgres') {
+    const pool = await getPool();
+    const client = await pool.connect();
+    try {
+      const [usersRes, votesRes] = await Promise.all([
+        client.query('SELECT created_at FROM fonoran_users ORDER BY created_at ASC'),
+        client.query('SELECT created_at FROM fonoran_votes WHERE vote = 1 ORDER BY created_at ASC'),
+      ]);
+      return {
+        users: usersRes.rows.map((r) => ({ created_at: toIso(r.created_at) })),
+        upvotes: votesRes.rows.map((r) => ({ created_at: toIso(r.created_at) })),
+      };
+    } finally {
+      client.release();
+    }
+  }
+  const doc = await readJsonDoc();
+  return {
+    users: doc.users.map((u) => ({ created_at: u.created_at })),
+    upvotes: doc.votes.filter((v) => v.vote === 1).map((v) => ({ created_at: v.created_at })),
+  };
+}
+
+export async function getUserAnalytics() {
+  const { users, upvotes } = await readAnalyticsRows();
+  return {
+    generated_at: new Date().toISOString(),
+    users: {
+      total: users.length,
+      ...buildMetricBlock(users, 'created_at'),
+    },
+    upvotes: buildMetricBlock(upvotes, 'created_at'),
+  };
+}

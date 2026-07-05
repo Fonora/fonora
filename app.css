@@ -586,6 +586,7 @@ html[data-fonora-tab='pronunciation-validation'] #tab-pronunciation-validation,
 html[data-fonora-tab='word-manager'] #tab-word-manager,
 html[data-fonora-tab='gap-workshop'] #tab-gap-workshop,
 html[data-fonora-tab='translation-test'] #tab-translation-test,
+html[data-fonora-tab='user-analytics'] #tab-user-analytics,
 html[data-fonora-tab='health'] #tab-health,
 html[data-fonora-tab='progress'] #tab-progress,
 html[data-fonora-tab='advanced'] #tab-advanced,
@@ -1950,7 +1951,8 @@ html[data-fonora-tab='docs'] .main-content {
 html[data-fonora-nav='tools'] .content-page > .box,
 html[data-fonora-nav='tools'] #translation-test-body > .box,
 html[data-fonora-nav='tools'] #tools-health-body > .box,
-html[data-fonora-nav='tools'] #tools-progress-body > .box {
+html[data-fonora-nav='tools'] #tools-progress-body > .box,
+html[data-fonora-nav='tools'] #tools-user-analytics-body > .box {
   background: var(--layout-surface);
   border: 1px solid var(--layout-border);
   border-radius: var(--layout-card-radius);
@@ -1980,8 +1982,125 @@ html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + .home-sectio
 html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + .box,
 html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #translation-test-body,
 html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-health-body,
-html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-progress-body {
+html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-progress-body,
+html[data-fonora-nav='tools'] .content-page > .page-toolbar-shell + #tools-user-analytics-body {
   margin-top: 1rem;
+}
+
+/* User analytics charts */
+.ua-page { padding: 1.25rem; }
+.ua-summary-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 1.25rem;
+}
+.ua-summary-card {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+.ua-summary-card__eyebrow {
+  font-family: var(--font-serif);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted, #6b7280);
+  margin: 0 0 0.35rem;
+}
+.ua-summary-card__total {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  margin: 0;
+}
+.ua-summary-card__hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted, #6b7280);
+}
+.ua-period-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+}
+.ua-period-toolbar__label {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted, #6b7280);
+}
+.ua-period-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.ua-period-btn {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 999px;
+  background: var(--surface, #fff);
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.ua-period-btn:hover { border-color: var(--color-accent); }
+.ua-period-btn--active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+.ua-section { margin-top: 1.75rem; }
+.ua-section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+.ua-section__head .section-h { margin: 0; }
+.ua-section__period-count {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted, #6b7280);
+}
+.ua-chart {
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e5e7eb);
+  border-radius: 10px;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+.ua-chart__svg {
+  display: block;
+  width: 100%;
+  min-width: 320px;
+  height: auto;
+}
+.ua-chart__label {
+  font-size: 10px;
+  fill: var(--muted, #6b7280);
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+.ua-chart__empty {
+  margin: 0;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted, #6b7280);
+  font-size: 0.9rem;
+}
+.ua-footnote {
+  margin: 1.25rem 0 0;
+  font-size: 0.78rem;
+  color: var(--muted, #6b7280);
 }
 
 /* Language About: headings on gray, cards close below intro */
@@ -7249,6 +7368,8 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 }
 
 .page-toolbar-shell:has(> .section-lead) > .section-lead {
+  position: relative;
+  z-index: 1;
   margin: 0 0 1rem;
   max-width: 62ch;
 }
@@ -7699,7 +7820,8 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 }
 
 .page-toolbar-shell--loading .page-toolbar__title,
-.page-toolbar-shell--loading .page-toolbar__lead {
+.page-toolbar-shell--loading .page-toolbar__lead,
+.page-toolbar-shell--loading > .section-lead {
   opacity: 0.72;
   transition: opacity 0.18s ease;
 }
