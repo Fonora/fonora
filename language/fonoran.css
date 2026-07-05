@@ -3391,11 +3391,18 @@
     .wm-btn--analysis:hover:not(:disabled) { color:var(--text); background:var(--bg); }
 
     /* Compact Fonoran script display (below topbar) */
-    .wm-script-line {
+    .wm-script-row {
       display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;
       padding:0.55rem 0 0.75rem;
       margin-bottom:0.75rem;
       border-bottom:1px solid var(--border);
+    }
+    .wm-script-row .wm-script-line {
+      flex:1 1 auto; min-width:0;
+      padding:0; margin:0; border:none;
+    }
+    .wm-script-line {
+      display:flex; align-items:center; gap:0.65rem; flex-wrap:wrap;
     }
     .wm-script-line__roman {
       font-family:var(--font-mono); font-weight:700; font-size:1.05rem; color:var(--word);
@@ -3491,7 +3498,7 @@
       padding-top:1rem; border-top:1px solid var(--border);
     }
 
-    /* No pronunciation preview in the editor — this is a management tool, not a learning view */
+    /* No pronunciation preview card — inline ▶ Hear on script line / spelling row instead */
     .wm-tools-page .wm-preview-panel { display:none !important; }
 
     /* Readonly concept-id: visually locked */
