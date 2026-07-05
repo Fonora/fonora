@@ -1371,7 +1371,7 @@ html[data-edu-debug='true']::after {
 /* —— Stats bar (legacy grid — kept for other pages) —— */
 .learn-stats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem;
   margin: 0 0 2rem;
 }
@@ -1761,6 +1761,115 @@ html[data-edu-debug='true']::after {
   color: var(--text-muted);
 }
 
+.learn-stat--share {
+  position: relative;
+  cursor: pointer;
+  border-color: color-mix(in srgb, var(--color-word) 35%, var(--layout-border));
+  background: color-mix(in srgb, var(--color-word) 6%, var(--layout-surface));
+  box-shadow: var(--shadow-card), inset 0 0 0 1px color-mix(in srgb, var(--color-word) 8%, transparent);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+.learn-stat--share:hover,
+.learn-stat--share:focus-visible {
+  border-color: color-mix(in srgb, var(--color-word) 55%, var(--layout-border));
+  background: color-mix(in srgb, var(--color-word) 10%, var(--layout-surface));
+  box-shadow:
+    var(--shadow-card),
+    0 4px 14px color-mix(in srgb, var(--color-word) 18%, transparent),
+    0 0 0 2px color-mix(in srgb, var(--color-word) 22%, transparent);
+  transform: translateY(-1px);
+  outline: none;
+}
+
+.learn-stat--share:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-card);
+}
+
+.learn-stat__icon--share {
+  color: var(--color-word);
+  background: color-mix(in srgb, var(--color-word) 18%, transparent);
+}
+
+.learn-stat__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.45rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-word) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-word) 28%, transparent);
+  color: var(--color-word);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.learn-stat--share:hover .learn-stat__cta,
+.learn-stat--share:focus-visible .learn-stat__cta {
+  background: color-mix(in srgb, var(--color-word) 24%, transparent);
+  border-color: color-mix(in srgb, var(--color-word) 40%, transparent);
+}
+
+.learn-stat__hint {
+  margin-top: 0.15rem;
+  font-size: 0.62rem;
+  line-height: 1.3;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
+.learn-share-popover {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  left: 50%;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: min(100%, 14rem);
+  padding: 0.5rem;
+  border: 1px solid var(--layout-border);
+  border-radius: 10px;
+  background: var(--layout-surface);
+  box-shadow: var(--shadow-card);
+  transform: translateX(-50%);
+}
+
+.learn-share-popover[hidden] {
+  display: none !important;
+}
+
+.learn-share-popover__btn {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--layout-border);
+  border-radius: 8px;
+  background: var(--color-inset-bg);
+  color: var(--text-heading);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.learn-share-popover__btn:hover,
+.learn-share-popover__btn:focus-visible {
+  border-color: color-mix(in srgb, var(--color-accent) 40%, var(--layout-border));
+  background: color-mix(in srgb, var(--color-accent) 10%, var(--color-inset-bg));
+  outline: none;
+}
+
 .learn-stat__ring {
   --goal-pct: 0;
   width: 2.9rem;
@@ -1794,6 +1903,12 @@ html[data-edu-debug='true']::after {
   height: 1.2rem;
 }
 
+@media (max-width: 720px) {
+  .learn-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 520px) {
   .learn-stats {
     grid-template-columns: 1fr;
@@ -1804,12 +1919,28 @@ html[data-edu-debug='true']::after {
     gap: 0.65rem;
     text-align: left;
   }
+  .learn-stat--share {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
   .learn-stat__icon,
   .learn-stat__ring {
     margin-bottom: 0;
   }
   .learn-stat__value {
     margin-left: auto;
+  }
+  .learn-stat--share .learn-stat__value {
+    margin-left: 0;
+  }
+  .learn-stat--share .learn-stat__cta {
+    align-self: flex-start;
+  }
+  .learn-share-popover {
+    left: 0;
+    transform: none;
+    width: 100%;
   }
 }
 

@@ -3,7 +3,7 @@
  */
 
 import { randomBytes } from 'node:crypto';
-import { upsertUser } from './fonoran-community-store.js';
+import { upsertUser, getReferralCount, isValidReferralId } from './fonoran-community-store.js';
 
 const SESSION_COOKIE = 'fonoran_session';
 const SESSION_MAX_AGE_SEC = 60 * 60 * 24 * 14;
@@ -25,7 +25,7 @@ const AUTH_ERROR_CODES = new Set([
 /** @type {Map<string, { email: string, name?: string, userId?: string, role: string, provider?: string, exp: number }>} */
 const sessions = new Map();
 
-/** @type {Map<string, { returnTo: string, provider: string, exp: number }>} */
+/** @type {Map<string, { returnTo: string, provider: string, ref?: string | null, exp: number }>} */
 const oauthStates = new Map();
 
 function envFlag(name) {
@@ -136,12 +136,13 @@ function destroySession(id) {
   if (id) sessions.delete(id);
 }
 
-function createOAuthState(returnTo, provider) {
+function createOAuthState(returnTo, provider, ref = null) {
   purgeExpired(oauthStates);
   const id = newOpaqueId(24);
   oauthStates.set(id, {
     returnTo: sanitizeReturnTo(returnTo),
     provider,
+    ref: isValidReferralId(ref) ? ref : null,
     exp: Math.floor(Date.now() / 1000) + OAUTH_STATE_TTL_SEC,
   });
   return id;
@@ -256,7 +257,7 @@ function loginUrls(returnTo) {
   };
 }
 
-async function finishOAuthLogin(req, res, returnTo, profile) {
+async function finishOAuthLogin(req, res, returnTo, profile, referredBy = null) {
   const email = profile.email?.trim().toLowerCase();
   if (!email || profile.emailVerified === false) {
     redirectToAuthError(res, 'email_unverified');
@@ -268,6 +269,7 @@ async function finishOAuthLogin(req, res, returnTo, profile) {
     providerSub: profile.providerSub,
     email,
     name: profile.name ?? email,
+    referredBy: isValidReferralId(referredBy) ? referredBy : null,
   });
   const role = resolveRole(email);
 
@@ -448,6 +450,7 @@ export async function handleAuthRoutes(req, res, url, method) {
     const user = getAuthenticatedUser(req);
     const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
     const urls = loginUrls(returnTo);
+    const referralCount = user?.userId ? await getReferralCount(user.userId) : 0;
     jsonResponse(res, 200, {
       authRequired: isAuthEnabled(),
       authConfigured: isAuthConfigured(),
@@ -459,6 +462,7 @@ export async function handleAuthRoutes(req, res, url, method) {
       role: user?.role ?? null,
       isAdmin: user?.role === 'admin',
       provider: user?.provider ?? null,
+      referralCount,
       loginUrl: urls.primary,
       loginUrls: urls,
       googleLoginUrl: urls.google,
@@ -484,7 +488,8 @@ export async function handleAuthRoutes(req, res, url, method) {
       return true;
     }
     const returnTo = sanitizeReturnTo(url.searchParams.get('returnTo') ?? '/language');
-    const state = createOAuthState(returnTo, 'google');
+    const ref = url.searchParams.get('ref');
+    const state = createOAuthState(returnTo, 'google', ref);
     const params = new URLSearchParams({
       client_id: process.env.GOOGLE_CLIENT_ID?.trim() ?? '',
       redirect_uri: googleRedirectUri(req),
@@ -513,7 +518,7 @@ export async function handleAuthRoutes(req, res, url, method) {
     }
     try {
       const profile = await exchangeGoogleCode(code, req);
-      await finishOAuthLogin(req, res, statePayload.returnTo ?? '/language', profile);
+      await finishOAuthLogin(req, res, statePayload.returnTo ?? '/language', profile, statePayload.ref ?? null);
     } catch (e) {
       console.error('Google OAuth callback failed:', e);
       redirectToAuthError(res, 'auth_failed');
@@ -549,8 +554,8 @@ export function __testReadSession(id) {
   return readSession(id);
 }
 
-export function __testCreateOAuthState(returnTo, provider = 'google') {
-  return createOAuthState(returnTo, provider);
+export function __testCreateOAuthState(returnTo, provider = 'google', ref = null) {
+  return createOAuthState(returnTo, provider, ref);
 }
 
 export function __testConsumeOAuthState(id) {

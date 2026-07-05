@@ -61,6 +61,16 @@ CREATE TABLE IF NOT EXISTS fonoran_votes (
 CREATE INDEX IF NOT EXISTS idx_fonoran_votes_subject ON fonoran_votes (subject_type, subject_id);
 `;
 
+const REFERRAL_MIGRATION_SQL = `
+ALTER TABLE fonoran_users ADD COLUMN IF NOT EXISTS referred_by TEXT;
+ALTER TABLE fonoran_users ADD COLUMN IF NOT EXISTS referrals_sent INTEGER NOT NULL DEFAULT 0;
+`;
+
+/** @param {string | null | undefined} ref */
+export function isValidReferralId(ref) {
+  return typeof ref === 'string' && /^usr-[a-z0-9-]+$/i.test(ref);
+}
+
 let schemaReady = false;
 /** @type {object | null} */
 let jsonCache = null;
@@ -124,6 +134,7 @@ async function ensureCommunitySchema() {
     const client = await pool.connect();
     try {
       await client.query(COMMUNITY_SQL);
+      await client.query(REFERRAL_MIGRATION_SQL);
     } finally {
       client.release();
     }
@@ -132,9 +143,60 @@ async function ensureCommunitySchema() {
 }
 
 /**
- * @param {{ provider: string, providerSub: string, email: string, name?: string }} profile
+ * @param {string | null | undefined} userId
  */
-export async function upsertUser({ provider, providerSub, email, name }) {
+export async function getReferralCount(userId) {
+  if (!userId) return 0;
+  await ensureCommunitySchema();
+  if (resolveStorageMode() === 'postgres') {
+    const pool = await getPool();
+    const { rows } = await pool.query(
+      'SELECT referrals_sent FROM fonoran_users WHERE id = $1',
+      [userId],
+    );
+    return Number(rows[0]?.referrals_sent ?? 0);
+  }
+  const doc = await readJsonDoc();
+  const user = doc.users.find((u) => u.id === userId);
+  return Number(user?.referrals_sent ?? 0);
+}
+
+async function referrerExists(referrerId) {
+  if (!isValidReferralId(referrerId)) return false;
+  if (resolveStorageMode() === 'postgres') {
+    const pool = await getPool();
+    const { rows } = await pool.query('SELECT id FROM fonoran_users WHERE id = $1', [referrerId]);
+    return Boolean(rows[0]?.id);
+  }
+  const doc = await readJsonDoc();
+  return doc.users.some((u) => u.id === referrerId);
+}
+
+/**
+ * @param {string} referrerId
+ */
+async function incrementReferralsSent(referrerId) {
+  if (resolveStorageMode() === 'postgres') {
+    const pool = await getPool();
+    await pool.query(
+      'UPDATE fonoran_users SET referrals_sent = referrals_sent + 1 WHERE id = $1',
+      [referrerId],
+    );
+    return;
+  }
+  const doc = await readJsonDoc();
+  const referrer = doc.users.find((u) => u.id === referrerId);
+  if (referrer) {
+    referrer.referrals_sent = (referrer.referrals_sent ?? 0) + 1;
+    await writeJsonDoc(doc);
+  }
+}
+
+/**
+ * @param {{ provider: string, providerSub: string, email: string, name?: string, referredBy?: string | null }} profile
+ * @returns {Promise<{ id: string, email: string, name: string, isNew: boolean }>}
+ */
+export async function upsertUser({ provider, providerSub, email, name, referredBy = null }) {
   await ensureCommunitySchema();
   const normalizedEmail = email.trim().toLowerCase();
   const now = new Date().toISOString();
@@ -152,15 +214,25 @@ export async function upsertUser({ provider, providerSub, email, name }) {
           `UPDATE fonoran_users SET email = $1, name = $2, last_login = NOW() WHERE id = $3`,
           [normalizedEmail, name ?? normalizedEmail, existing[0].id],
         );
-        return { id: existing[0].id, email: normalizedEmail, name: name ?? normalizedEmail };
+        return {
+          id: existing[0].id,
+          email: normalizedEmail,
+          name: name ?? normalizedEmail,
+          isNew: false,
+        };
       }
       const id = newId('usr');
+      let validReferrer = null;
+      if (isValidReferralId(referredBy) && referredBy !== id && (await referrerExists(referredBy))) {
+        validReferrer = referredBy;
+      }
       await client.query(
-        `INSERT INTO fonoran_users (id, provider, provider_sub, email, name, created_at, last_login)
-         VALUES ($1, $2, $3, $4, $5, NOW(), NOW())`,
-        [id, provider, providerSub, normalizedEmail, name ?? normalizedEmail],
+        `INSERT INTO fonoran_users (id, provider, provider_sub, email, name, referred_by, referrals_sent, created_at, last_login)
+         VALUES ($1, $2, $3, $4, $5, $6, 0, NOW(), NOW())`,
+        [id, provider, providerSub, normalizedEmail, name ?? normalizedEmail, validReferrer],
       );
-      return { id, email: normalizedEmail, name: name ?? normalizedEmail };
+      if (validReferrer) await incrementReferralsSent(validReferrer);
+      return { id, email: normalizedEmail, name: name ?? normalizedEmail, isNew: true };
     } finally {
       client.release();
     }
@@ -172,20 +244,34 @@ export async function upsertUser({ provider, providerSub, email, name }) {
     user.email = normalizedEmail;
     user.name = name ?? normalizedEmail;
     user.last_login = now;
-  } else {
-    user = {
-      id: newId('usr'),
-      provider,
-      provider_sub: providerSub,
-      email: normalizedEmail,
-      name: name ?? normalizedEmail,
-      created_at: now,
-      last_login: now,
-    };
-    doc.users.push(user);
+    await writeJsonDoc(doc);
+    return { id: user.id, email: user.email, name: user.name, isNew: false };
+  }
+
+  const id = newId('usr');
+  let validReferrer = null;
+  if (isValidReferralId(referredBy) && referredBy !== id) {
+    const referrer = doc.users.find((u) => u.id === referredBy);
+    if (referrer) validReferrer = referredBy;
+  }
+  user = {
+    id,
+    provider,
+    provider_sub: providerSub,
+    email: normalizedEmail,
+    name: name ?? normalizedEmail,
+    created_at: now,
+    last_login: now,
+    referred_by: validReferrer,
+    referrals_sent: 0,
+  };
+  doc.users.push(user);
+  if (validReferrer) {
+    const referrer = doc.users.find((u) => u.id === validReferrer);
+    if (referrer) referrer.referrals_sent = (referrer.referrals_sent ?? 0) + 1;
   }
   await writeJsonDoc(doc);
-  return { id: user.id, email: user.email, name: user.name };
+  return { id: user.id, email: user.email, name: user.name, isNew: true };
 }
 
 export async function getLearnProgress(userId) {
