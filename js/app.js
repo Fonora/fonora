@@ -51,6 +51,8 @@ import { renderAlphabetInventory } from './alphabet-inventory.js';
 import { normalizeSymbolInput, decodeToPhonemeKeys } from './decode.js';
 import { translateIpaPhrase } from './ipa-pipeline.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
+import { getPiperVoiceForLang, initPiperAudio } from './piper-audio.js';
+import { loadLanguagePreference } from './language-preferences.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { mountSymbolSpotlight } from './symbol-spotlight.js';
 import { buildPlatformPipelineData, mountPlatformShowcase } from './platform-showcase.js';
@@ -815,7 +817,7 @@ function showTab(tabId) {
   syncLearnSessionBar(`tab-${panelId}`);
 
   if (panelId === 'learn-home') {
-    refreshLearnHomeProgress();
+    refreshLearnHomeProgress(rules);
     if (!returningFromLesson) {
       scrollLearnHomeToSection();
     }
@@ -916,7 +918,7 @@ setNavSelectHandlers({
   onLearnHub: (view) => {
     if (view === 'hub' || view === 'script' || view === 'fonoran' || view === 'progress') {
       navigateLearnHub(view);
-      refreshLearnHomeProgress();
+      refreshLearnHomeProgress(rules);
     }
   },
   onSignOut: () => {
@@ -1056,7 +1058,7 @@ function applyRulesBundle(loaded) {
   void setupFonoranReading(rules);
   void setupFonoranWriting(rules);
   void setupFonoranHearing(rules);
-  void setupFonoranGrammar();
+  void setupFonoranGrammar(rules);
   void setupFonoranSpeaking(rules);
   setupLearningLanguageSelect('learn-language-global', () => {
     updateLearningLanguageNote('script-writing-language-note');
@@ -1075,6 +1077,9 @@ function applyRulesBundle(loaded) {
       }
     }
   });
+
+  const piperVoice = getPiperVoiceForLang(loadLanguagePreference()) || 'en_US-lessac-medium';
+  initPiperAudio(piperVoice).catch(() => {});
 
   if (new URLSearchParams(window.location.search).has('test')) {
     import('./tests-core.js').then(({ runTests }) => {
@@ -1100,7 +1105,7 @@ function bootstrapShell() {
   setupTabs();
   if (isLearnPath() && panelId === LEARN_HUB_TAB) {
     syncLearnHubViewFromHash();
-    refreshLearnHomeProgress();
+    refreshLearnHomeProgress(rules);
   }
   ensureAppHeaderOffsetObserver();
 }

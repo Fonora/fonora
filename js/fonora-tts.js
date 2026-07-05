@@ -4,11 +4,12 @@
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { decodeToPhonemeKeys } from './decode.js';
 import { getAllSymbols } from './rules.js';
-import { phonemeKeysToRecoveredIpa } from './pronunciation-validation.js';
+import { phonemeKeysToRecoveredIpa, teachingIpaForSymbolGroup } from './pronunciation-validation.js';
 import {
   cancelEspeakAudio,
   initEspeakAudio,
   synthesizeEspeakIpa,
+  synthesizeEspeakTeachingIpa,
   playEspeakSamples,
 } from './espeak-audio.js';
 import { initPiperAudio, isPiperAudioReady, playPiperIpa } from './piper-audio.js';
@@ -68,6 +69,18 @@ export function resolveFonoraPhoneticText(word, rules, index = -1) {
     sourceIpa = source.sourceIpa || '';
   }
 
+  if (word.groups?.length === 1 && !String(word.phonemeKeys || '').includes(' ')) {
+    const teaching = teachingIpaForSymbolGroup(word.groups[0], rules);
+    if (teaching) {
+      return {
+        text: teaching,
+        mode: 'teaching-ipa',
+        phonemeKeys: word.phonemeKeys,
+        sourceIpa: sourceIpa || null,
+      };
+    }
+  }
+
   const recovered = phonemeKeysToRecoveredIpa(word.phonemeKeys, rules, sourceIpa);
   const sourceClean = String(sourceIpa || '')
     .replace(/^\/+|\/+$/g, '')
@@ -89,28 +102,48 @@ export function cancelSpeech() {
   cancelEspeakAudio();
 }
 
-async function speakIpaWithEngine(ipa, { engine, piperVoice, espeakVoice, onPrepare, piperReady, espeakReady, playbackRate }) {
-  const tryPiper = (engine === 'piper' || engine === 'auto') && piperVoice && piperReady;
+/** Shorter Piper clips for consonant + schwa teaching (pə, bə) so it does not sound like "ba". */
+const TEACHING_PIPER_LENGTH_SCALE = 0.58;
 
-  if (tryPiper) {
-    try {
-      await playPiperIpa(ipa, piperVoice, onPrepare, { playbackRate });
+function usesPiperEngine(engine) {
+  return engine === 'piper' || engine === 'auto';
+}
+
+async function speakResolvedAudio(text, { mode = 'fonora-ipa', engine, piperVoice, espeakVoice, onPrepare, piperReady, espeakReady, playbackRate }) {
+  const trimmed = String(text || '').trim();
+  if (!trimmed) throw new Error('Nothing to speak');
+
+  const teachingOpts = {
+    playbackRate,
+    teachingClip: true,
+    lengthScale: TEACHING_PIPER_LENGTH_SCALE,
+  };
+
+  if (usesPiperEngine(engine)) {
+    if (!piperVoice) throw new Error('No Piper voice configured');
+    if (!piperReady) throw new Error('Neural voice is not loaded yet');
+    if (mode === 'teaching-ipa') {
+      await playPiperIpa(trimmed, piperVoice, onPrepare, teachingOpts);
       return;
-    } catch (err) {
-      if (engine !== 'auto') throw err;
     }
+    await playPiperIpa(trimmed, piperVoice, onPrepare, { playbackRate });
+    return;
   }
 
-  if ((engine === 'espeak' || engine === 'auto') && espeakReady) {
-    const samples = await synthesizeEspeakIpa(ipa, espeakVoice);
+  if (engine === 'espeak') {
+    if (!espeakReady) throw new Error('eSpeak audio is not loaded');
+    const samples =
+      mode === 'teaching-ipa'
+        ? await synthesizeEspeakTeachingIpa(trimmed, espeakVoice)
+        : await synthesizeEspeakIpa(trimmed, espeakVoice);
     if (!samples?.length) {
-      throw new Error('No audio generated from recovered IPA');
+      throw new Error('No audio generated from IPA');
     }
     await playEspeakSamples(samples, 22050, { playbackRate });
     return;
   }
 
-  throw new Error('Speech synthesis unavailable for recovered IPA');
+  throw new Error(`Unknown speech engine: ${engine}`);
 }
 
 function sleep(ms) {
@@ -120,7 +153,7 @@ function sleep(ms) {
 /**
  * Speak each Fonora word using recovered IPA.
  * @param {object} options
- * @param {'piper'|'espeak'|'auto'} [options.engine='piper']
+ * @param {'piper'|'espeak'|'auto'} [options.engine='piper'] — `auto` is Piper-only (no eSpeak fallback)
  * @param {string} [options.piperVoice]
  * @param {string} [options.espeakVoice='en-us']
  */
@@ -143,28 +176,24 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
   }
 
   let piperReady = false;
-  if ((engine === 'piper' || engine === 'auto') && piperVoice) {
+  if (usesPiperEngine(engine) && piperVoice) {
     if (!isPiperAudioReady(piperVoice)) {
       onPrepare?.('Loading neural voice…');
     }
     const piperInit = await initPiperAudio(piperVoice, onPrepare);
     piperReady = piperInit.ok;
-    if (engine === 'piper' && !piperInit.ok) {
+    if (!piperInit.ok) {
       throw new Error(piperInit.error || 'Neural voice failed to load');
     }
   }
 
   let espeakReady = false;
-  if (engine === 'espeak' || engine === 'auto') {
+  if (engine === 'espeak') {
     const espeakInit = await initEspeakAudio();
     espeakReady = espeakInit.ok;
-    if (engine === 'espeak' && !espeakInit.ok) {
+    if (!espeakInit.ok) {
       throw new Error(espeakInit.error || 'eSpeak audio failed to load');
     }
-  }
-
-  if (engine === 'auto' && !piperReady && !espeakReady) {
-    throw new Error('No speech engine available');
   }
 
   let spoken = 0;
@@ -186,7 +215,8 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
 
     try {
       onWordStart?.(i, word, speakTarget);
-      await speakIpaWithEngine(speakTarget.text, {
+      await speakResolvedAudio(speakTarget.text, {
+        mode: speakTarget.mode,
         engine,
         piperVoice,
         espeakVoice,
@@ -200,7 +230,7 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
     } catch (err) {
       skipped += 1;
       onWordEnd?.(i, word, err, speakTarget);
-      if (engine === 'piper') {
+      if (usesPiperEngine(engine) || engine === 'espeak') {
         throw err;
       }
     }
@@ -233,12 +263,12 @@ const SLOW_SYLLABLE_GAP_MS = 480;
  * @param {object} rules
  * @param {object} [options]
  * @param {string[]} [options.parts] Roman syllable/morpheme parts from lexicon
- * @param {'piper'|'espeak'|'auto'} [options.engine='auto']
+ * @param {'piper'|'espeak'|'auto'} [options.engine='piper']
  */
 export async function speakFonoraSlow(text, rules, options = {}) {
   const {
     parts = [],
-    engine = 'auto',
+    engine = 'piper',
     playbackRate = SLOW_PLAYBACK_RATE,
     syllableGapMs = SLOW_SYLLABLE_GAP_MS,
     shouldCancel = () => false,

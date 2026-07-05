@@ -526,14 +526,21 @@
           <header class="page-toolbar">
             <div class="page-toolbar__text">
               <h1 class="page-toolbar__title" data-learn-subview-title>Progress</h1>
-              <p class="page-toolbar__lead" data-learn-subview-lead>Your streak, XP, and course modules.</p>
+              <p class="page-toolbar__lead" data-learn-subview-lead>Your streak, XP, and learning paths.</p>
             </div>
           </header>
         </div>
         <section class="content-section learn-progress" aria-labelledby="learn-progress-modules-heading">
           <div id="learn-progress-stats" class="learn-stats" aria-label="Your learning progress"></div>
-          <h2 id="learn-progress-modules-heading">Course modules</h2>
-          <div id="learn-domain-progress" class="learn-domain-grid" hidden aria-label="Course module progress"></div>
+          <div class="learn-module-path-toolbar">
+            <h2 id="learn-progress-modules-heading">Learning path</h2>
+            <div id="learn-module-track-toggle" class="learn-mode-group learn-module-path__toggle" role="radiogroup" aria-label="Module track">
+              <label class="learn-mode-pill"><input type="radio" name="learn-module-track" value="fonoran" checked><span>Fonoran</span></label>
+              <label class="learn-mode-pill"><input type="radio" name="learn-module-track" value="fonora"><span>Fonora</span></label>
+            </div>
+          </div>
+          <div id="learn-module-path" class="learn-module-path" data-track="fonoran" aria-live="polite"></div>
+          <div id="learn-module-tooltip" class="learn-module-tooltip" hidden role="tooltip"></div>
         </section>
       </div>
     </section>
@@ -1142,7 +1149,7 @@
         <div class="typing-practice__prompt">
           <div class="typing-practice__word-col">
             <div class="typing-practice__verdict-slot">
-              <span id="spelling-verdict" class="typing-practice__verdict-badge" aria-live="polite"></span>
+              <span id="spelling-verdict" class="typing-practice__verdict-badge learn-exercise__verdict" hidden aria-live="polite"></span>
             </div>
             <p class="typing-practice__word" id="spelling-prompt-word">—</p>
             <div id="spelling-answer-compare" class="typing-practice__compare" aria-hidden="true">
@@ -1152,7 +1159,6 @@
             </div>
           </div>
           <p class="typing-practice__meaning" id="spelling-prompt-meaning"></p>
-          <button type="button" id="spelling-practice-continue" class="learn-exercise__next" hidden aria-label="Next word"><span>Tab</span><svg class="learn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
         </div>
 
         <textarea id="spelling-practice-input" class="learn-exercise__input symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
@@ -1161,13 +1167,16 @@
 
         <div id="spelling-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
         <div id="spelling-practice-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
+        <div class="button-row learn-exercise__actions learn-exercise__actions--check-continue">
+          <button type="button" id="spelling-practice-continue" class="btn btn--primary learn-exercise__continue" hidden>Continue</button>
+        </div>
       </div>
     </section>
 
     <!-- Script Writing -->
     <section class="panel tab-panel learn-exercise learn-exercise--writing learn-exercise--script" id="tab-script-writing" data-tab-panel="script-writing" hidden>
       <p id="script-writing-language-note" class="section-desc learn-language-note" hidden></p>
-      <p id="script-writing-status" class="typing-practice__status section-desc" hidden></p>
+      <p id="script-writing-status" class="typing-practice__status section-desc learn-exercise__status" hidden></p>
 
       <div class="learn-session-summary" hidden></div>
 
@@ -1175,7 +1184,7 @@
         <div class="typing-practice__prompt">
           <div class="typing-practice__word-col">
             <div class="typing-practice__verdict-slot">
-              <span id="script-writing-verdict" class="typing-practice__verdict-badge" aria-live="polite"></span>
+              <span id="script-writing-verdict" class="typing-practice__verdict-badge learn-exercise__verdict" aria-live="polite"></span>
             </div>
             <p class="typing-practice__word learn-exercise__prompt-word" id="script-writing-prompt-word">—</p>
             <div id="script-writing-answer-compare" class="typing-practice__compare" aria-hidden="true">
@@ -1184,15 +1193,18 @@
               <span class="typing-practice__compare-glyphs typing-practice__compare-glyphs--correct symbol-text" id="script-writing-expected-glyphs"></span>
             </div>
           </div>
-          <button type="button" id="script-writing-continue" class="learn-exercise__next learn-exercise__next--neutral learn-exercise__next--prompt-action" aria-label="Check answer"><span class="learn-exercise__next-label">Check</span><kbd class="learn-exercise__next-kbd">↵</kbd></button>
+          <p class="typing-practice__meaning learn-exercise__prompt-meaning" id="script-writing-prompt-meaning"></p>
         </div>
 
         <textarea id="script-writing-input" class="learn-exercise__input symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
 
-        <p class="typing-practice__tab-hint"><kbd>↵</kbd> Check · <kbd>Tab</kbd> Next · vowel keys show sound options</p>
+        <p class="typing-practice__tab-hint"><kbd>↵</kbd> Check · <kbd>Tab</kbd> Continue · vowel keys show sound options</p>
 
         <div id="script-writing-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
         <div id="script-writing-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
+        <div class="button-row learn-exercise__actions learn-exercise__actions--check-continue">
+          <button type="button" id="script-writing-continue" class="btn btn--primary learn-exercise__continue" hidden>Continue</button>
+        </div>
         <div id="script-writing-breakdown-feedback" class="breakdown-feedback-panel" hidden aria-live="polite"></div>
       </div>
     </section>
@@ -1640,6 +1652,7 @@
       <div class="learn-session-summary" hidden></div>
 
       <div class="learn-exercise__card">
+        <div class="quiz-prompt-label">Listen</div>
         <div class="learn-play-area">
           <div class="learn-play-group" role="group" aria-label="Play word">
             <button type="button" id="fonoran-hearing-play" class="learn-play-btn" aria-label="Play word">

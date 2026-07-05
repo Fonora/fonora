@@ -1,10 +1,10 @@
 /**
- * Fonora Script writing: source-language word → type Fonora script.
+ * Fonora Script writing: English prompt → type Fonora script.
+ * Uses the Fonoran domain curriculum (words then phrases).
  */
 import { createTypingPractice } from './fonora-typing-practice.js';
-import { runIpaPipeline } from './ipa-pipeline.js';
-import { initEspeak } from './ipa.js';
-import { loadLanguagePreference } from './learning-locale.js';
+import { loadDomainCurriculum } from './fonoran-course-phrases.js';
+import { createDomainCurriculum } from './fonoran-learn-curriculum.js';
 import {
   setupLearningLanguageSelect,
   ensureLearningLanguageSelect,
@@ -32,85 +32,103 @@ let practice = null;
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
 
-/** @type {{ text: string, accept: string[] }[]} */
-let wordBank = [];
+/** @type {ReturnType<typeof createDomainCurriculum> | null} */
+let curriculum = null;
 
-async function loadWordBank() {
-  if (wordBank.length) return wordBank;
-  const res = await fetch('/data/fonora-script-practice-words.json');
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const data = await res.json();
-  wordBank = data.words ?? [];
-  return wordBank;
+/** @type {object | null} */
+let rulesRef = null;
+
+/**
+ * @param {import('./fonoran-course-phrases.js').CourseEntry} entry
+ */
+function entryToPracticeWord(entry) {
+  return {
+    spelling: entry.meaning,
+    meaning: entry.itemType === 'phrase' ? entry.spelling : '',
+    expected: entry.script,
+    entry,
+  };
 }
 
 /**
  * @param {object} rules
  */
-async function buildScriptWritingWords(rules) {
-  await initEspeak();
-  const bank = await loadWordBank();
-  const lang = loadLanguagePreference();
-  const words = [];
-
-  for (const item of bank) {
-    const result = await runIpaPipeline(item.text, rules, { lang, testMode: 'practice' });
-    if (!result?.symbols || result.symbols.includes('?')) continue;
-    words.push({
-      spelling: item.text,
-      meaning: '',
-      expected: result.symbols,
-    });
+async function loadLessonWords(rules) {
+  if (!curriculum) {
+    const courseData = await loadDomainCurriculum(rules);
+    if (!courseData) return [];
+    curriculum = createDomainCurriculum('script-writing', courseData.items, courseData.domains);
   }
-
-  return words;
+  return curriculum
+    .currentLessonEntries()
+    .filter((entry) => entry.script)
+    .map(entryToPracticeWord);
 }
 
 /**
  * @param {object} rules
  */
 export async function setupScriptWriting(rules) {
-  const feedbackEl = document.getElementById(IDS.feedback);
+  rulesRef = rules;
+  curriculum = null;
 
   session = createLearnSession('script-writing', {
     panelId: 'tab-script-writing',
     answerType: 'typing',
+    lessonLabel: () => curriculum?.lessonLabel() ?? '',
+    onComplete: (stats) => curriculum?.complete(stats) ?? {},
     onQuestionStart: () => {
       practice?.advanceWord();
     },
     onSessionReset: () => {
-      practice?.restartWords();
+      void practice?.reloadLesson();
     },
   });
+  session.bindContinue('script-writing-continue', () => {});
   practice?.destroy();
   setupLearningLanguageSelect('script-writing-language', () => {
     updateLearningLanguageNote('script-writing-language-note');
-    void practice?.setup();
+    curriculum = null;
+    void practice?.reloadLesson();
   });
   updateLearningLanguageNote('script-writing-language-note');
+
+  const feedbackEl = document.getElementById(IDS.feedback);
 
   practice = createTypingPractice({
     rules,
     ids: IDS,
     tabId: 'script-writing',
-    loadWords: () => buildScriptWritingWords(rules),
-    emptyMessage: 'No script writing words loaded. Check /data/fonora-script-practice-words.json.',
+    loadWords: () => loadLessonWords(rules),
+    emptyMessage: 'No script writing content loaded. Build course phrases with npm run fonoran:course-phrases:build.',
     getSession: () => session,
     continueButtonId: 'script-writing-continue',
-    promptActionButton: true,
+    keyboardCheckOnly: true,
+    hear: {
+      panelId: 'tab-script-writing',
+      rules,
+      getSpeakText: (word) => word.expected,
+    },
     onAnswer: (match, word) => {
       if (match) {
         hideBreakdownFeedback(feedbackEl);
         return;
       }
-      void showBreakdownFeedback(feedbackEl, word.spelling, rules);
+      const roman = word.entry?.spelling || word.spelling;
+    void showBreakdownFeedback(feedbackEl, roman, rules, {
+      parts: word.entry?.parts,
+      script: word.entry?.script ?? word.expected,
+    });
     },
   });
   await practice.setup();
 }
 
 export function refreshScriptWriting(rules) {
+  rulesRef = rules;
+  curriculum = null;
   practice?.refresh(rules);
+  void practice?.reloadLesson();
 }
 
 export function onScriptWritingTabActivated() {

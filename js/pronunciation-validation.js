@@ -7,7 +7,8 @@ import { normalizeIpa } from './ipa-normalize.js';
 import { ipaPhonemesToFonora } from './ipa-to-fonora.js';
 import { decodeToPhonemeKeys } from './decode.js';
 import { findConcatenationCollisions } from './collision-audit.js';
-import { reverseLookup } from './rules.js';
+import { toSpeakable } from '../tools/fonoran-pronunciation.js';
+import { reverseLookup, isVowelPhonemeKey } from './rules.js';
 
 const IPA_COMPARE_STRIP = /[ˈˌˑ\.˞ˤ˥˦˧˨˩ⁿʰʲʷ\u0303\u031E\u032A\u1D5D-\s\/\[\]]/g;
 
@@ -62,6 +63,92 @@ export function phonemeKeysToRecoveredIpa(phonemeKeys, rules, sourceIpa = '') {
   }
 
   return segments.join('');
+}
+
+const VOWEL_IPA_CHARS = /[aeiouæɑɒɔəɚɝɐɨʉɯɪʊɜɞɵʏyɛœøʌ]/;
+
+function isVowelIpa(ipa) {
+  return VOWEL_IPA_CHARS.test(String(ipa || '').replace(/^[ˈˌ]+/, ''));
+}
+
+/**
+ * IPA suited for TTS when teaching one isolated symbol group.
+ * Stops and other consonants get a schwa nucleus (p → pə) so Piper/eSpeak produce a clear clip.
+ * @param {{ sound?: string, ipa?: string }} group decoded symbol group
+ * @param {object} rules
+ * @returns {string | null}
+ */
+export function teachingIpaForSymbolGroup(group, rules) {
+  if (!group?.ipa || group.sound === '?') return null;
+  const ipa = parseIpaVariants(group.ipa)[0];
+  if (!ipa || ipa === '?') return null;
+
+  if (isVowelPhonemeKey(rules, group.sound) || isVowelIpa(ipa)) {
+    return ipa;
+  }
+
+  return `${ipa}ə`;
+}
+
+/**
+ * Teaching IPA for a Fonora symbol string (typically one quiz cell).
+ * @param {string} symbols
+ * @param {object} rules
+ * @returns {string | null}
+ */
+export function teachingIpaForSymbols(symbols, rules) {
+  const decoded = decodeToPhonemeKeys(symbols, rules);
+  const keys = String(decoded.phonemeKeys || '').split(/\s+/).filter(Boolean);
+  if (!keys.length || keys.includes('?')) return null;
+
+  if (decoded.groups.length === 1) {
+    return teachingIpaForSymbolGroup(decoded.groups[0], rules);
+  }
+
+  const recovered = phonemeKeysToRecoveredIpa(decoded.phonemeKeys, rules);
+  if (!recovered || recovered.includes('?')) return null;
+  if (isVowelIpa(recovered) || VOWEL_IPA_CHARS.test(recovered)) return recovered;
+  return `${recovered}ə`;
+}
+
+/**
+ * Plain speakable text for TTS when teaching one isolated symbol group.
+ * Uses roman syllable hints (p → "pah", a → "ah") so engines say a sound, not letter names.
+ * @param {{ sound?: string, ipa?: string }} group decoded symbol group
+ * @param {object} rules
+ * @returns {string | null}
+ */
+export function teachingSpeakTextForSymbolGroup(group, rules) {
+  const sound = String(group?.sound || '').trim();
+  if (!sound || sound === '?') return null;
+
+  const text = isVowelPhonemeKey(rules, sound)
+    ? toSpeakable(sound)
+    : toSpeakable(`${sound}a`);
+
+  const trimmed = String(text || '').trim();
+  if (!trimmed || trimmed === sound) return null;
+  return trimmed;
+}
+
+/**
+ * Teaching speak text for a Fonora symbol string (typically one quiz cell).
+ * @param {string} symbols
+ * @param {object} rules
+ * @returns {string | null}
+ */
+export function teachingSpeakTextForSymbols(symbols, rules) {
+  const decoded = decodeToPhonemeKeys(symbols, rules);
+  const keys = String(decoded.phonemeKeys || '').split(/\s+/).filter(Boolean);
+  if (!keys.length || keys.includes('?')) return null;
+
+  if (decoded.groups.length === 1) {
+    return teachingSpeakTextForSymbolGroup(decoded.groups[0], rules);
+  }
+
+  const recovered = phonemeKeysToRecoveredIpa(decoded.phonemeKeys, rules);
+  if (!recovered || recovered.includes('?')) return null;
+  return toSpeakable(`${recovered}a`) || null;
 }
 
 /** Recover IPA from Fonora symbols via decode → group IPA metadata. */

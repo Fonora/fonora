@@ -156,7 +156,7 @@ export function createCurriculum(skillId, items, opts = {}) {
     const afterRing = ringRankForLesson(afterIndex);
     const ringUp = afterRing > beforeRing;
     return {
-      primaryLabel: 'Next lesson',
+      primaryLabel: 'Next Lesson',
       note: ringUp ? `New ring unlocked: ${RING_LABELS[afterRing]}.` : '',
       passed: true,
       ringUp,
@@ -361,7 +361,7 @@ export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
     }
 
     return {
-      primaryLabel: 'Next lesson',
+      primaryLabel: 'Next Lesson',
       note: !opts.phrasesOnly && !isNowWordPhase && withinDomain === WORD_LESSONS_PER_DOMAIN
         ? 'Vocabulary done — now practicing phrases.'
         : '',

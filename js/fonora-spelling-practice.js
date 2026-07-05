@@ -102,6 +102,12 @@ export async function setupSpellingPractice(rules) {
       'No practice words loaded. Run the dev server so /api/fonoran/bootstrap can supply the lab dictionary.',
     getSession: () => sharedSession,
     continueButtonId: 'spelling-practice-continue',
+    keyboardCheckOnly: true,
+    hear: {
+      panelId: 'tab-spelling-practice',
+      rules,
+      getSpeakText: (word) => word.expected,
+    },
   });
   await spellingPractice.setup();
 }

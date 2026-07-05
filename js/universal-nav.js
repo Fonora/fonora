@@ -5,7 +5,7 @@
 
 import { docViewerHref, isDocsRoute } from './doc-urls.js';
 import { learnTrackForTab } from './learn-routing.js';
-import { learnHubNavActive } from './learn-hub-nav.js';
+import { isOnLearnAbout, learnHubNavActive } from './learn-hub-nav.js';
 import { pageTitle, PLATFORM_HOME_TITLE, PLATFORM_PAGE_TITLE, SITE_NAME } from './site-copy.js';
 import { cycleTheme, getStoredTheme } from './theme.js';
 
@@ -671,6 +671,27 @@ function hrefMatchesCurrentLocation(href) {
 /** Navigate to the main landing view for the given top-level tab. */
 function goToContextHome(root, tabId) {
   closeMobileNav(root);
+
+  if (tabId === 'learn') {
+    if (isOnLearnAbout(state.activeTab)) {
+      scrollNavHome();
+      return;
+    }
+    if (navSelectHandlers.onLearnHub) {
+      navSelectHandlers.onLearnHub('hub');
+      scrollNavHome();
+      return;
+    }
+    const onLearnPath =
+      window.location.pathname === '/learn' || window.location.pathname.startsWith('/learn/');
+    if (onLearnPath && typeof window.showTab === 'function') {
+      window.showTab('learn-home');
+      scrollNavHome();
+      return;
+    }
+    window.location.href = platformTabHomeHref('learn');
+    return;
+  }
 
   if (isOnContextHome(tabId)) {
     scrollNavHome();

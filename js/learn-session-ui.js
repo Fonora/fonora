@@ -242,10 +242,10 @@ export function createLearnSession(skillId, options) {
           </dl>
           ${nextSection}
           <div class="button-row learn-session-summary__actions">
+            <button type="button" class="btn learn-session-summary__home">Back to Learn</button>
             <button type="button" class="btn btn--primary learn-session-summary__continue">
               ${escapeHtml(nextModule ? `Start ${nextModule}` : primaryLabel)}
             </button>
-            <button type="button" class="btn learn-session-summary__home">Back to Learn</button>
           </div>
         </div>`;
     } else {
@@ -263,8 +263,8 @@ export function createLearnSession(skillId, options) {
           </dl>
           ${note}
           <div class="button-row learn-session-summary__actions">
-            <button type="button" class="btn btn--primary learn-session-summary__continue">${escapeHtml(primaryLabel)}</button>
             <button type="button" class="btn learn-session-summary__home">Back to Learn</button>
+            <button type="button" class="btn btn--primary learn-session-summary__continue">${escapeHtml(primaryLabel)}</button>
           </div>
         </div>`;
     }
@@ -425,12 +425,14 @@ export function createLearnSession(skillId, options) {
 /**
  * After a typed answer: auto-advance when correct; hide Check and show Continue on the right when wrong.
  * @param {ReturnType<typeof createLearnSession>} session
- * @param {{ checkButtonId: string, continueButtonId: string, correct: boolean, beforeAdvance?: () => void }} opts
+ * @param {{ checkButtonId?: string, continueButtonId: string, correct: boolean, beforeAdvance?: () => void }} opts
  */
 export function finishTypingAnswer(session, { checkButtonId, continueButtonId, correct, beforeAdvance }) {
   session.onAnswer({ correct: effectiveAnswerCorrect(correct) });
-  const checkBtn = document.getElementById(checkButtonId);
-  if (checkBtn) checkBtn.hidden = true;
+  if (checkButtonId) {
+    const checkBtn = document.getElementById(checkButtonId);
+    if (checkBtn) checkBtn.hidden = true;
+  }
 
   if (effectiveAnswerCorrect(correct)) {
     session.setContinueVisible(continueButtonId, false);
@@ -472,14 +474,14 @@ export function finishMcqAnswer(session, { continueButtonId, correct, beforeAdva
  */
 export function setLearnVerdict(badgeId, match) {
   const badge = document.getElementById(badgeId);
-  const prompt = badge?.closest('.learn-exercise__card, .typing-practice__prompt');
+  const card = badge?.closest('.learn-exercise__card') ?? badge?.closest('.typing-practice__prompt');
   if (!badge) return;
 
   if (match === null) {
     badge.textContent = '';
     badge.className = 'typing-practice__verdict-badge learn-exercise__verdict';
     badge.hidden = true;
-    prompt?.classList.remove('learn-exercise__card--ok', 'learn-exercise__card--miss');
+    card?.classList.remove('learn-exercise__card--ok', 'learn-exercise__card--miss');
     return;
   }
 
@@ -487,9 +489,9 @@ export function setLearnVerdict(badgeId, match) {
   const shownCorrect = effectiveAnswerCorrect(match);
   badge.className = `typing-practice__verdict-badge typing-practice__verdict-badge--${shownCorrect ? 'ok' : 'miss'} learn-exercise__verdict`;
   badge.innerHTML = `${icon(shownCorrect ? 'check' : 'x')}<span>${shownCorrect ? 'Correct!' : 'Not quite'}</span>`;
-  if (prompt) {
-    prompt.classList.toggle('learn-exercise__card--ok', shownCorrect);
-    prompt.classList.toggle('learn-exercise__card--miss', !shownCorrect);
+  if (card) {
+    card.classList.toggle('learn-exercise__card--ok', shownCorrect);
+    card.classList.toggle('learn-exercise__card--miss', !shownCorrect);
   }
 }
 

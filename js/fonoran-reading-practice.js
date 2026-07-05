@@ -17,6 +17,8 @@ import {
   learnChoiceHtml,
   markChoiceStates,
 } from './learn-session-ui.js';
+import { mountPromptHear } from './learn-hear-ui.js';
+import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { escapeHtml } from './utils.js';
 
 /** @type {Array<import('./fonoran-practice-words.js').PracticeEntry | import('./fonoran-course-phrases.js').CourseEntry>} */
@@ -37,6 +39,34 @@ let displayMode = 'roman';
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
 
+/** @type {object | null} */
+let rulesRef = null;
+
+/** @type {(() => void) | null} */
+let unbindHear = null;
+
+function speakTextForEntry(entry) {
+  if (!entry || !rulesRef) return '';
+  if (entry.script) return entry.script;
+  if (entry.parts?.length) {
+    const { phrase } = romanToFonoraScript(entry.parts, rulesRef);
+    return phrase || '';
+  }
+  return '';
+}
+
+function wirePromptHear() {
+  unbindHear?.();
+  const prompt = document.getElementById('fonoran-reading-prompt');
+  unbindHear = mountPromptHear({
+    promptEl: prompt,
+    panelId: 'tab-fonoran-reading',
+    rules: rulesRef,
+    ariaLabel: 'Listen to word',
+    getSpeakText: () => speakTextForEntry(entries[currentIndex]),
+  });
+}
+
 function renderPrompt() {
   const entry = entries[currentIndex];
   const prompt = document.getElementById('fonoran-reading-prompt');
@@ -47,6 +77,7 @@ function renderPrompt() {
   } else {
     prompt.textContent = entry.spelling;
   }
+  wirePromptHear();
 }
 
 function renderChoices() {
@@ -98,6 +129,7 @@ function onChoice(index) {
  * @param {object} rules
  */
 export async function setupFonoranReading(rules) {
+  rulesRef = rules;
   displayMode = loadFonoranDisplayMode();
   setupFonoranDisplayModeToggle('fonoran-reading-mode', (mode) => {
     displayMode = mode;

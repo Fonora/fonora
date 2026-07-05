@@ -80,10 +80,10 @@ async function playCurrentWord(opts = {}) {
     if (slow) {
       await speakFonoraSlow(entry.script, rulesRef, {
         parts: entry.parts,
-        engine: 'auto',
+        engine: 'piper',
       });
     } else {
-      await speakFonoraPhrase(entry.script, rulesRef, { engine: 'auto' });
+      await speakFonoraPhrase(entry.script, rulesRef, { engine: 'piper' });
     }
     if (generation !== playGeneration) return;
     if (status) {

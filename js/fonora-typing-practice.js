@@ -3,6 +3,8 @@
  */
 import { createFonoraKeyboard } from './fonora-keyboard-ui.js';
 import { normalizeSymbolInput } from './decode.js';
+import { mountPromptHear } from './learn-hear-ui.js';
+import { finishTypingAnswer, setLearnVerdict } from './learn-session-ui.js';
 
 /** @typedef {{ spelling: string, meaning?: string, expected: string }} PracticeWord */
 
@@ -38,7 +40,9 @@ function el(ids, suffix) {
  * @param {(match: boolean, word: PracticeWord, user: string) => void} [options.onAnswer]
  * @param {() => import('./learn-session-ui.js').createLearnSession extends Function ? ReturnType<import('./learn-session-ui.js').createLearnSession> : null} [options.getSession]
  * @param {string} [options.continueButtonId]
- * @param {boolean} [options.promptActionButton] — dual Check / Next prompt button
+ * @param {string} [options.checkButtonId]
+ * @param {boolean} [options.keyboardCheckOnly] — submit with keyboard Enter only; no Check button
+ * @param {{ panelId?: string, rules?: object, getSpeakText?: (word: PracticeWord) => string | null | undefined }} [options.hear]
  */
 export function createTypingPractice({
   rules,
@@ -49,7 +53,9 @@ export function createTypingPractice({
   onAnswer = null,
   getSession = null,
   continueButtonId = null,
-  promptActionButton = false,
+  checkButtonId = null,
+  keyboardCheckOnly = false,
+  hear = null,
 }) {
   /** @type {PracticeWord[]} */
   let practiceWords = [];
@@ -58,55 +64,21 @@ export function createTypingPractice({
   let practiceKeyboard = null;
   let rulesRef = rules;
   let answerLocked = false;
-  let promptActionWired = false;
+  let actionButtonsWired = false;
+  /** @type {(() => void) | null} */
+  let unbindHear = null;
 
-  function setPromptActionMode(mode) {
-    if (!promptActionButton || !continueButtonId) return;
-    const btn = document.getElementById(continueButtonId);
-    if (!btn) return;
-    const label = btn.querySelector('.learn-exercise__next-label');
-    const kbd = btn.querySelector('.learn-exercise__next-kbd');
-    if (mode === 'check') {
-      btn.hidden = false;
-      btn.dataset.action = 'check';
-      btn.setAttribute('aria-label', 'Check answer');
-      if (label) label.textContent = 'Check';
-      if (kbd) {
-        kbd.textContent = '↵';
-        kbd.hidden = false;
-      }
-      return;
-    }
-    if (mode === 'next') {
-      btn.hidden = false;
-      btn.dataset.action = 'next';
-      btn.setAttribute('aria-label', 'Next word');
-      if (label) label.textContent = 'Next';
-      if (kbd) {
-        kbd.textContent = 'Tab →';
-        kbd.hidden = false;
-      }
-      return;
-    }
-    btn.hidden = true;
+  function resolvedCheckButtonId() {
+    if (keyboardCheckOnly) return null;
+    return checkButtonId ?? continueButtonId;
   }
 
-  function wirePromptActionButton() {
-    if (!promptActionButton || !continueButtonId || promptActionWired) return;
-    const btn = document.getElementById(continueButtonId);
-    if (!btn) return;
-    promptActionWired = true;
-    btn.addEventListener('click', () => {
-      const session = getSession?.();
-      if (btn.dataset.action === 'next' && session?.canAdvance?.()) {
-        session.advance();
-        setPromptActionMode('check');
-        return;
-      }
-      if (btn.dataset.action === 'check' && !answerLocked) {
-        checkAnswer();
-      }
-    });
+  function wireActionButtons() {
+    if (actionButtonsWired) return;
+    actionButtonsWired = true;
+    const checkId = resolvedCheckButtonId();
+    if (!checkId || checkId === continueButtonId) return;
+    document.getElementById(checkId)?.addEventListener('click', checkAnswer);
   }
 
   function setStatus(message) {
@@ -123,21 +95,8 @@ export function createTypingPractice({
 
   /** @param {boolean | null} match */
   function setVerdict(match) {
-    const badge = el(ids, 'verdict');
-    const prompt = badge?.closest('.typing-practice__prompt');
-    if (!badge || !prompt) return;
-
-    if (match === null) {
-      badge.textContent = '';
-      badge.className = 'typing-practice__verdict-badge';
-      prompt.classList.remove('typing-practice__prompt--ok', 'typing-practice__prompt--miss');
-      return;
-    }
-
-    badge.className = `typing-practice__verdict-badge typing-practice__verdict-badge--${match ? 'ok' : 'miss'}`;
-    badge.textContent = match ? 'Correct!' : 'Not quite';
-    prompt.classList.toggle('typing-practice__prompt--ok', match);
-    prompt.classList.toggle('typing-practice__prompt--miss', !match);
+    if (!ids.verdict) return;
+    setLearnVerdict(ids.verdict, match);
   }
 
   function hideCompare() {
@@ -157,6 +116,20 @@ export function createTypingPractice({
     setVerdict(null);
   }
 
+  function wirePromptHear(word) {
+    if (!hear?.rules || !hear.getSpeakText) return;
+    unbindHear?.();
+    const promptEl = el(ids, 'promptWord');
+    if (!promptEl) return;
+    unbindHear = mountPromptHear({
+      promptEl,
+      panelId: hear.panelId,
+      rules: hear.rules,
+      ariaLabel: 'Listen to word',
+      getSpeakText: () => hear.getSpeakText?.(word) ?? word.expected ?? '',
+    });
+  }
+
   function showCurrentWord() {
     const word = practiceWords[currentIndex];
     const wordEl = el(ids, 'promptWord');
@@ -174,12 +147,13 @@ export function createTypingPractice({
     answerLocked = false;
     hideResult();
     practiceKeyboard?.clearCompose();
-    if (promptActionButton) {
-      setPromptActionMode('check');
-    } else if (continueButtonId) {
-      getSession?.()?.setContinueVisible(continueButtonId, false);
+    if (checkButtonId) {
+      const checkBtn = document.getElementById(checkButtonId);
+      if (checkBtn) checkBtn.hidden = keyboardCheckOnly;
     }
+    getSession?.()?.setContinueVisible(continueButtonId, false);
     input.focus();
+    wirePromptHear(word);
   }
 
   function renderResult(match, user, expected) {
@@ -214,14 +188,16 @@ export function createTypingPractice({
     onAnswer?.(match, word, user);
 
     const session = getSession?.();
-    if (session && continueButtonId) {
-      session.onAnswer({ correct: match });
-      if (promptActionButton) {
-        setPromptActionMode('next');
-      } else {
-        session.setContinueVisible(continueButtonId, true);
-      }
-    }
+    if (!session || !continueButtonId) return;
+
+    finishTypingAnswer(session, {
+      checkButtonId: resolvedCheckButtonId() ?? undefined,
+      continueButtonId,
+      correct: match,
+      beforeAdvance: () => {
+        answerLocked = false;
+      },
+    });
   }
 
   function nextWord() {
@@ -235,12 +211,7 @@ export function createTypingPractice({
   function onTabPressed() {
     const session = getSession?.();
     if (session && continueButtonId && session.canAdvance?.()) {
-      if (promptActionButton) {
-        session.advance();
-        setPromptActionMode('check');
-      } else {
-        document.getElementById(continueButtonId)?.click();
-      }
+      document.getElementById(continueButtonId)?.click();
       return;
     }
     nextWord();
@@ -256,6 +227,10 @@ export function createTypingPractice({
     if (practiceWords.length === 0) return;
     currentIndex = 0;
     showCurrentWord();
+  }
+
+  async function reloadLesson() {
+    await setup();
   }
 
   async function setup() {
@@ -297,10 +272,7 @@ export function createTypingPractice({
       practiceKeyboard.activate();
     }
 
-    wirePromptActionButton();
-    if (promptActionButton) {
-      setPromptActionMode('check');
-    }
+    wireActionButtons();
   }
 
   function refresh(nextRules) {
@@ -317,12 +289,15 @@ export function createTypingPractice({
   }
 
   function destroy() {
+    unbindHear?.();
+    unbindHear = null;
     practiceKeyboard?.destroy();
     practiceKeyboard = null;
   }
 
   return {
     setup,
+    reloadLesson,
     refresh,
     onTabActivated,
     destroy,

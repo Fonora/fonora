@@ -1,7 +1,7 @@
 /**
  * Fonora Script symbol sounds quiz: decode + construct modes.
  */
-import { getQuizEntries, buildKeyboardMap } from './rules.js';
+import { buildKeyboardMap } from './rules.js';
 import { findVowelForCell, isVowelQuizCell } from './vowel-display.js';
 import { normalizeSymbolInput } from './decode.js';
 import { showBreakdownFeedback, hideBreakdownFeedback } from './breakdown-feedback.js';
@@ -10,16 +10,29 @@ import {
   finishTypingAnswer,
   setLearnVerdict,
 } from './learn-session-ui.js';
+import { createSymbolCurriculum } from './fonora-script-curriculum.js';
+import { mountPromptHear } from './learn-hear-ui.js';
 import { escapeHtml, insertAtCursor } from './utils.js';
 
 /** @type {object | null} */
 let rulesRef = null;
 
-/** @type {{ type: string, cell: object, answered: boolean } | null} */
+/** @type {{ type: string, item: import('./fonora-script-curriculum.js').SymbolItem, cell: object, answered: boolean } | null} */
 let currentQuiz = null;
+
+/** @type {ReturnType<typeof createSymbolCurriculum> | null} */
+let curriculum = null;
+
+/** @type {import('./fonora-script-curriculum.js').SymbolItem[]} */
+let lessonItems = [];
+
+let currentIndex = 0;
 
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
+
+/** @type {(() => void) | null} */
+let unbindHear = null;
 
 let wired = false;
 
@@ -138,14 +151,31 @@ function attachKeyboardShortcuts(textarea) {
   };
 }
 
-function pickRandomQuizCell() {
-  const cells = getQuizEntries(rulesRef);
-  return cells[Math.floor(Math.random() * cells.length)];
+function wirePromptHear() {
+  unbindHear?.();
+  const promptEl = document.getElementById('quiz-prompt');
+  unbindHear = mountPromptHear({
+    promptEl,
+    panelId: 'tab-quiz',
+    rules: rulesRef,
+    buttonId: 'quiz-prompt-hear',
+    ariaLabel: 'Listen to symbol',
+    getSpeakText: () => currentQuiz?.cell?.symbols ?? '',
+  });
+}
+
+function nextQuestion() {
+  if (!lessonItems.length || session?.isComplete) return;
+  currentIndex = (currentIndex + 1) % lessonItems.length;
+  startQuiz(getScriptSoundsMode());
 }
 
 function startQuiz(type) {
   if (session?.isComplete) return;
-  currentQuiz = { type, cell: pickRandomQuizCell(), answered: false };
+  const item = lessonItems[currentIndex];
+  if (!item) return;
+
+  currentQuiz = { type, item, cell: item.cell, answered: false };
   setLearnVerdict('quiz-verdict', null);
   session?.setContinueVisible('quiz-next', false);
   const checkBtn = document.getElementById('quiz-check');
@@ -174,6 +204,7 @@ function startQuiz(type) {
     constructAnswer.hidden = false;
   }
   updateQuizHints();
+  wirePromptHear();
 }
 
 function checkQuizAnswer() {
@@ -190,6 +221,7 @@ function checkQuizAnswer() {
 
   currentQuiz.answered = true;
   setLearnVerdict('quiz-verdict', correct);
+  curriculum?.recordResult(currentQuiz.item, correct);
 
   const breakdownEl = document.getElementById('quiz-symbol-breakdown');
   if (correct) {
@@ -217,14 +249,21 @@ function checkQuizAnswer() {
  */
 export function setupScriptSounds(rules) {
   rulesRef = rules;
+  curriculum = createSymbolCurriculum('script-sounds', rules);
+  lessonItems = curriculum.currentLessonEntries();
+  currentIndex = 0;
 
   session = createLearnSession('script-sounds', {
     panelId: 'tab-quiz',
     answerType: 'typing',
+    lessonLabel: () => curriculum?.lessonLabel() ?? '',
+    onComplete: (stats) => curriculum?.complete(stats) ?? {},
     onQuestionStart: () => {
-      startQuiz(getScriptSoundsMode());
+      if (lessonItems.length) nextQuestion();
     },
     onSessionReset: () => {
+      lessonItems = curriculum?.currentLessonEntries() ?? lessonItems;
+      currentIndex = 0;
       startQuiz(getScriptSoundsMode());
     },
   });

@@ -4,7 +4,7 @@
     import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
-    import { getSamplePlaybackPlan, getPiperVoiceForLang } from '../js/piper-audio.js';
+    import { getSamplePlaybackPlan, getPiperVoiceForLang, initPiperAudio } from '../js/piper-audio.js';
     import { resolveEspeakVoice, loadLanguagePreferences } from '../js/language-preferences.js';
     import { primeAudioContext } from '../js/espeak-audio.js';
     import { initUniversalNav, setActiveTab, setFonoranUndoDisabled, setFonoranAuth, setNavSelectHandlers } from '../js/universal-nav.js';
@@ -324,7 +324,7 @@
       cancelSpeech();
       const plan = getSamplePlaybackPlan(lang);
       await speakFonoraPhrase(phrase, rules, plan ?? {
-        engine: 'auto',
+        engine: 'piper',
         piperVoice: getPiperVoiceForLang('en'),
         espeakVoice: resolveEspeakVoice(lang, { englishDialect: loadLanguagePreferences().englishDialect }),
       });
@@ -393,6 +393,7 @@
       toast,
       ensureRules,
       romanToFonoraScript,
+      speakNeural,
     });
 
     function badge(state) {
@@ -468,6 +469,8 @@
         }
         $('load-error').hidden = true;
         setFonoranUndoDisabled(!STATE.lab.can_undo || !canWrite());
+        const piperVoice = getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
+        initPiperAudio(piperVoice).catch(() => {});
         if (!opts.skipRender) renderActivePage();
       } catch { $('load-error').hidden = false; }
     }
@@ -677,15 +680,19 @@
           <p class="sans dict-alternates-panel__empty">No alternates recorded yet.</p>
         </div>`;
       }
-      const items = alts.map((a) => {
+      const items = alts.map((a, altIndex) => {
         const pct = a.understandability != null ? Math.round(a.understandability * 100) : null;
         const breakdown = buildDictAlternateBreakdownHtml(a);
+        const hearBtn = a.parts?.length
+          ? `<button type="button" class="hear-min dict-alt__hear" data-alt-index="${altIndex}" aria-label="Listen to ${escapeHtml(a.spelling)}">Listen</button>`
+          : '';
         return `<li class="dict-alt">
             <div class="dict-alt__main">
               <span class="dict-alt__spelling mono">${escapeHtml(a.spelling)}</span>
               ${breakdown ? `<div class="dict-alt__breakdown">${breakdown}</div>` : ''}
             </div>
             <div class="dict-alt__meta">
+              ${hearBtn}
               ${pct != null ? `<div class="dict-alt__score-row" title="Understandability (advisory)">
                   <span class="dict-alt__bar" aria-hidden="true"><span style="width:${pct}%"></span></span>
                   <span class="dict-alt__score">${pct}%</span>
@@ -1208,9 +1215,10 @@
     }
 
     function wordPreviewSpeakParts(focus, kind = 'word') {
-      return kind === 'root'
-        ? [focus.spelling]
-        : (focus.components?.length ? composerFlatSpellings(focus.components) : [focus.spelling]);
+      if (kind === 'root') return [focus.spelling];
+      if (focus.components?.length) return composerFlatSpellings(focus.components);
+      if (focus.parts?.length > 1) return focus.parts;
+      return [focus.spelling];
     }
 
     function focusFromReviewItem(c) {
@@ -1862,6 +1870,15 @@
         <h4>Alternates</h4>
         <p class="sans dict-alternates-panel__empty">No alternates recorded yet.</p>
       </div>`;
+      if (entryKind === 'compound') {
+        const compound = STATE.lab?.compounds?.find(c => c.id === id);
+        body.querySelectorAll('.dict-alt__hear').forEach((btn) => {
+          const altIndex = Number(btn.getAttribute('data-alt-index'));
+          const alt = compound?.alternate_forms?.[altIndex];
+          if (!alt?.parts?.length) return;
+          btn.addEventListener('click', () => speakNeural(alt.parts));
+        });
+      }
       openSheet();
     }
 
@@ -2532,7 +2549,7 @@
       const playbackRate = readTranslatorSpeed();
       if (plan) return { ...plan, playbackRate };
       return {
-        engine: 'auto',
+        engine: 'piper',
         piperVoice: getPiperVoiceForLang('en'),
         espeakVoice: resolveEspeakVoice(lang, { englishDialect: prefs.englishDialect }),
         playbackRate,
