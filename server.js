@@ -37,6 +37,7 @@ const MIME = {
   '.txt': 'text/plain; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8',
   '.svg': 'image/svg+xml',
+  '.png': 'image/png',
   '.ico': 'image/x-icon',
   '.wasm': 'application/wasm',
   '.data': 'application/octet-stream',
@@ -245,11 +246,11 @@ createServer(async (req, res) => {
     }
 
     if (url.pathname === '/favicon.ico') {
-      const faviconPath = join(root, 'favicon.svg');
+      const faviconPath = join(root, 'favicon.png');
       if (existsSync(faviconPath)) {
         const body = await readFile(faviconPath);
         res.writeHead(200, {
-          'Content-Type': 'image/svg+xml',
+          'Content-Type': 'image/png',
           'Cache-Control': 'public, max-age=86400',
           ...SECURITY_HEADERS,
         });
