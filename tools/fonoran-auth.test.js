@@ -91,6 +91,28 @@ export async function runFonoranAuthTests() {
         else process.env.ADMIN_EMAILS = prev;
       }),
     );
+
+    const { isAdminWriteRequired } = await import(`./fonoran-auth.js?test-gate=${Date.now()}`);
+    results.push(
+      await test('learn progress PUT is not admin-gated', async () => {
+        const prevGoogle = process.env.GOOGLE_CLIENT_ID;
+        const prevSecret = process.env.SESSION_SECRET;
+        process.env.GOOGLE_CLIENT_ID = 'test-client';
+        process.env.SESSION_SECRET = process.env.SESSION_SECRET ?? 'test-session-secret-for-codeql';
+        assert(
+          isAdminWriteRequired('/api/fonoran/me/progress', 'PUT') === false,
+          'community users must sync learn progress',
+        );
+        assert(
+          isAdminWriteRequired('/api/fonoran/lab/regenerate', 'POST') === true,
+          'lab writes stay admin-only',
+        );
+        if (prevGoogle === undefined) delete process.env.GOOGLE_CLIENT_ID;
+        else process.env.GOOGLE_CLIENT_ID = prevGoogle;
+        if (prevSecret === undefined) delete process.env.SESSION_SECRET;
+        else process.env.SESSION_SECRET = prevSecret;
+      }),
+    );
   } finally {
     if (prevSecret === undefined) delete process.env.SESSION_SECRET;
     else process.env.SESSION_SECRET = prevSecret;
