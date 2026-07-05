@@ -1764,27 +1764,58 @@ html[data-edu-debug='true']::after {
 .learn-stat--share {
   position: relative;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  border-color: color-mix(in srgb, var(--color-word) 35%, var(--layout-border));
+  background: color-mix(in srgb, var(--color-word) 6%, var(--layout-surface));
+  box-shadow: var(--shadow-card), inset 0 0 0 1px color-mix(in srgb, var(--color-word) 8%, transparent);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease,
+    background 0.15s ease;
 }
 
 .learn-stat--share:hover,
 .learn-stat--share:focus-visible {
-  border-color: color-mix(in srgb, var(--color-accent) 45%, var(--layout-border));
-  box-shadow: var(--shadow-card), 0 0 0 2px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  border-color: color-mix(in srgb, var(--color-word) 55%, var(--layout-border));
+  background: color-mix(in srgb, var(--color-word) 10%, var(--layout-surface));
+  box-shadow:
+    var(--shadow-card),
+    0 4px 14px color-mix(in srgb, var(--color-word) 18%, transparent),
+    0 0 0 2px color-mix(in srgb, var(--color-word) 22%, transparent);
+  transform: translateY(-1px);
   outline: none;
+}
+
+.learn-stat--share:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-card);
 }
 
 .learn-stat__icon--share {
   color: var(--color-word);
-  background: color-mix(in srgb, var(--color-word) 14%, transparent);
+  background: color-mix(in srgb, var(--color-word) 18%, transparent);
 }
 
-.learn-stat__preview {
-  margin-top: 0.2rem;
-  max-width: 100%;
+.learn-stat__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.45rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-word) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-word) 28%, transparent);
+  color: var(--color-word);
   font-size: 0.68rem;
-  line-height: 1.35;
-  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.learn-stat--share:hover .learn-stat__cta,
+.learn-stat--share:focus-visible .learn-stat__cta {
+  background: color-mix(in srgb, var(--color-word) 24%, transparent);
+  border-color: color-mix(in srgb, var(--color-word) 40%, transparent);
 }
 
 .learn-stat__hint {
@@ -1902,6 +1933,9 @@ html[data-edu-debug='true']::after {
   }
   .learn-stat--share .learn-stat__value {
     margin-left: 0;
+  }
+  .learn-stat--share .learn-stat__cta {
+    align-self: flex-start;
   }
   .learn-share-popover {
     left: 0;

@@ -163,7 +163,6 @@ function refreshFullProgress() {
   const daily = getDailyGoalProgress();
   const level = getTotalLevel();
   const auth = getAuthState();
-  const shareMessage = buildLearnShareMessage();
   const referralCount = auth.authenticated ? auth.referralCount : 0;
   const hasNativeShare = canUseNativeShare();
 
@@ -196,7 +195,7 @@ function refreshFullProgress() {
       <span class="learn-stat__icon learn-stat__icon--share">${icon('share')}</span>
       <span class="learn-stat__value">${referralCount}</span>
       <span class="learn-stat__label">Friends recruited</span>
-      <span class="learn-stat__preview">${shareMessage.preview}</span>
+      <span class="learn-stat__cta">Click to Recruit!</span>
       ${auth.authenticated ? '' : '<span class="learn-stat__hint">Sign in to track friends you recruit</span>'}
     </article>`;
 

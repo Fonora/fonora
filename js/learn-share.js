@@ -19,7 +19,7 @@ export function getLearnShareUrl(userId) {
   return base;
 }
 
-/** @returns {{ title: string, hook: string, text: string, url: string, statsLine: string, preview: string }} */
+/** @returns {{ title: string, hook: string, text: string, url: string, statsLine: string }} */
 export function buildLearnShareMessage() {
   const progress = loadProgress();
   const level = getTotalLevel();
@@ -34,7 +34,6 @@ export function buildLearnShareMessage() {
     text,
     url,
     statsLine,
-    preview: `${hook} · ${statsLine.replace(/^🔥\s*/, '')}`,
   };
 }
 
