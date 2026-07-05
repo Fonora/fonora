@@ -161,12 +161,13 @@ function setSidebarOpen(open) {
 function updateViewerChrome({ title, lead, path }) {
   const titleEl = document.getElementById('docs-viewer-title');
   const leadEl = document.getElementById('docs-viewer-lead');
-  const proseEl = document.getElementById('docs-viewer-prose');
   const githubEl = document.getElementById('docs-viewer-github');
 
   if (titleEl) titleEl.textContent = title;
-  if (leadEl) leadEl.textContent = lead;
-  if (proseEl) proseEl.hidden = !lead;
+  if (leadEl) {
+    leadEl.textContent = lead;
+    leadEl.hidden = !lead;
+  }
   if (githubEl) {
     githubEl.href = githubDocUrl(path);
     githubEl.hidden = false;

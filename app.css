@@ -7368,6 +7368,8 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 }
 
 .page-toolbar-shell:has(> .section-lead) > .section-lead {
+  position: relative;
+  z-index: 1;
   margin: 0 0 1rem;
   max-width: 62ch;
 }
@@ -7818,7 +7820,8 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 }
 
 .page-toolbar-shell--loading .page-toolbar__title,
-.page-toolbar-shell--loading .page-toolbar__lead {
+.page-toolbar-shell--loading .page-toolbar__lead,
+.page-toolbar-shell--loading > .section-lead {
   opacity: 0.72;
   transition: opacity 0.18s ease;
 }
