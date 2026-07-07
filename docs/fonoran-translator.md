@@ -190,7 +190,8 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
   "text": "We need shelter",
   "sourceLang": "auto",
   "engine": "llm",
-  "skipCache": false
+  "skipCache": false,
+  "simplify": "auto"
 }
 ```
 
@@ -203,6 +204,7 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id` |
 | `playback` | `{ script, segments, wordSources, tokenIndices, playable }` |
 | `reasoning` | One-sentence compiler note (shown in “Why this reading”) |
+| `simplified` | Plain-meaning pivot `{ clauses[], text, note }` when the pre-pass ran (shown as “Plain meaning”) |
 | `llm_frame` | Normalized concept frame `{ slots, is_question, … }` |
 | `alternates[]` | Optional rule-based readings (`roman`, `tokens`, `playback`, `note`) |
 | `unresolved[]` | Honest gaps (render red; never fabricated) |
@@ -219,9 +221,19 @@ Each token carries `resolution_kind` (see [Rule 7 · Resolution cascade](fonoran
 | Kind | UI color | Meaning |
 | --- | --- | --- |
 | `direct` | default | Curated alias, concept id, or lab lemma |
-| `interpreted` | gold | Tense lemma, idiom, rule-based mapping |
+| `interpreted` | gold | Tense lemma, idiom, rule-based mapping, concept bridge to an existing concept |
+| `composed` | blue | Transparent runtime compound assembled from approved roots via a concept bridge or `+`-path (e.g. `sentience` → `think+self`). Fuses to one word when the Compound Boundary Constraint passes, else renders as a space-separated phrase |
+| `loan` | purple (italic, wrapped `«…»`) | Phonetic loanword for a proper noun / unmappable term (the "iPhone stays iPhone" rule). Never composed from roots; always visibly marked |
 | `semantic` / `alias_weak` | orange | Weaker semantic or gloss-only alias |
 | `unknown` | red | No confident concept — honest gap |
+
+### Concept bridges (abstract / technical vocabulary)
+
+Abstract source words with no root are resolved through curated **concept bridges** ([data/fonoran-concept-bridges.json](../data/fonoran-concept-bridges.json)) plus any locked lore glossaries ([data/lore/*.json](../data/lore/)). A bridge is one of: `compose` (multi-root path → `composed`), `concept` (redirect to an existing approved concept → `interpreted`), or `loan` (marked phonetic borrow → `loan`). Bridges never invent spellings — every composed part comes from an approved root or compound (Design Rule 0 / Rule 5). Loaded in `buildResolveContext()` and applied in both `resolveConceptId()` (LLM path) and `resolveEnglishToken()` (legacy path).
+
+### Conceptual simplification pre-pass (`simplify`)
+
+For abstract or long prose, the translator can run a **plain-meaning pre-pass** (`simplifyForFonoran()` in [tools/fonoran-llm-translate.js](../tools/fonoran-llm-translate.js)) that rewrites the source into simple, Fonoran-expressible propositions *before* frame compilation — the same "simplify first" step a human translator does. Controlled by the `simplify` request field: `true` (force), `false` (never), `'auto'` (heuristic on abstract/long input; the default the Language app sends). The pivot is returned as `simplified` (`{ clauses, text, note }`) and shown in the UI as a collapsible **Plain meaning** panel, so the compiler stays a language tool rather than a black box.
 
 ---
 

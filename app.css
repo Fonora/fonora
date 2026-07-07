@@ -6318,12 +6318,21 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   align-items: center;
 }
 
+#tab-translator .translate-playback-bar {
+  margin-top: 0.75rem;
+}
+
 .translate-playback-status {
   margin: 0;
 }
 
 #tab-translator .translate-output {
   margin-top: 0;
+}
+
+#tab-translator .translate-output .tts-punct {
+  margin-right: 0.35rem;
+  color: var(--color-text-muted);
 }
 
 #tab-translator .tts-loading {

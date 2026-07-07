@@ -24,6 +24,11 @@ reports/
 # Fonoran snapshot backups (use git-tracked data/ for milestones)
 backups/
 
+# Local-only R&D corpora and glossaries (kept out of the shareable repo)
+data/local/
+data/lore/
+docs/lore/
+
 # External research data (canonical copy in Fonora/fonora-data submodule)
 data/fonoran-llm-evaluations.json
 data/fonoran-playtests.json

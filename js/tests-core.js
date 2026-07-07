@@ -25,9 +25,10 @@ import { VOWEL_ARCHITECTURE_WORDS } from './vowel-architecture-set.js';
 import { docViewerHref, githubDocUrl, normalizeDocPath, parseDocFromLocation } from './doc-urls.js';
 import { renderMarkdown } from './markdown-render.js';
 import { ipaToEspeakTeachingInput } from './ipa-espeak-format.js';
-import { resolveFonoraPhoneticText, decodeFonoraWord } from './fonora-tts.js';
+import { resolveFonoraPhoneticText, decodeFonoraWord, resolveFonoraClauseIpa } from './fonora-tts.js';
 import { buildRomanPartsBreakdown, buildScriptBreakdown } from './breakdown.js';
-import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
+import { romanToFonoraScript, fonoraScriptToRoman, tokenizeFonoraScriptInput, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
+import { chunkSymbolWordsForFluidity } from './fonora-tts-ui.js';
 import { ASCII_EQUALS } from './load-language-rules.js';
 
 function assert(cond, msg) {
@@ -638,6 +639,53 @@ export function runTests(options) {
     assert(target?.text === 'pə');
   });
 
+  t('fonoraScriptToRoman preserves space-separated words', () => {
+    const spaced = [
+      romanToFonoraScript(['fa'], rules).phrase,
+      romanToFonoraScript(['ta'], rules).phrase,
+      romanToFonoraScript(['no'], rules).phrase,
+      romanToFonoraScript(['wi'], rules).phrase,
+    ].join(' ');
+    const result = fonoraScriptToRoman(spaced, rules);
+    assert(result.roman === 'fa ta no wi');
+    assert(result.symbols.split(/\s+/).length === 4);
+    assert(result.words.length === 4);
+  });
+
+  t('chunkSymbolWordsForFluidity groups words more when fluidity is lower', () => {
+    const words = ['a', 'b', 'c', 'd', 'e'];
+    assert(chunkSymbolWordsForFluidity(words, 100).length === 1);
+    assert(chunkSymbolWordsForFluidity(words, 0).length === 5);
+    const mid = chunkSymbolWordsForFluidity(words, 85);
+    assert(mid.length >= 2 && mid.length < 5);
+  });
+
+  t('resolveFonoraClauseIpa joins multiple words for fluid playback', () => {
+    const fa = romanToFonoraScript(['fa'], rules).phrase;
+    const ta = romanToFonoraScript(['ta'], rules).phrase;
+    const clause = resolveFonoraClauseIpa([fa, ta], rules);
+    assert(clause?.text);
+    assert(clause.text.includes(' '));
+    assert(clause.wordCount === 2);
+  });
+
+  t('fonoraScriptToRoman preserves periods in output and pause tokens', () => {
+    const bitvas = romanToFonoraScript(['bitvas'], rules).phrase;
+    const spaced = [
+      romanToFonoraScript(['fa'], rules).phrase,
+      romanToFonoraScript(['ta'], rules).phrase,
+      `${bitvas}.`,
+    ].join(' ');
+    const result = fonoraScriptToRoman(spaced, rules);
+    assert(result.roman === 'fa ta bitvas .');
+    assert(!result.roman.includes('?'));
+    assert(result.warnings.length === 0);
+    assert(result.tokens.some((item) => item.kind === 'pause' && item.char === '.'));
+    assert(result.tokens.filter((item) => item.kind === 'word').length === 3);
+    assert(pauseMsForPunctuation('.', 1) > pauseMsForPunctuation(',', 1));
+    assert(tokenizeFonoraScriptInput('hello · world').length === 2);
+  });
+
   t('roman parts breakdown preserves compound syllables like nes + pe', () => {
     const word = buildRomanPartsBreakdown('nespe', ['nes', 'pe'], rules);
     assert(word.chunks.map((chunk) => chunk.label).join(' ') === 'n e s p e');
@@ -646,6 +694,9 @@ export function runTests(options) {
     const { phrase } = romanToFonoraScript(['nes', 'pe'], rules);
     const fromScript = buildScriptBreakdown('nespe', phrase, rules);
     assert(fromScript?.chunks.map((chunk) => chunk.label).join(' ') === 'n e s p e');
+
+    const roundTrip = fonoraScriptToRoman(phrase, rules);
+    assert(roundTrip.roman === 'nespe');
   });
 
   t('pronunciation validation: symbols round-trip IPA for boy', () => {

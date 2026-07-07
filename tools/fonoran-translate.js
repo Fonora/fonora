@@ -14,7 +14,7 @@ function resolveEngine(requested) {
 
 /**
  * @param {string} text
- * @param {{ sourceLang?: string, lab?: object, engine?: string, skipCache?: boolean }} [options]
+ * @param {{ sourceLang?: string, lab?: object, engine?: string, skipCache?: boolean, simplify?: boolean|'auto' }} [options]
  */
 export async function translate(text, options = {}) {
   const engine = resolveEngine(options.engine);
@@ -37,6 +37,7 @@ export async function translate(text, options = {}) {
     sourceLang: options.sourceLang,
     lab: options.lab,
     skipCache: options.skipCache,
+    simplify: options.simplify,
   });
 
   if (result.ok === false) {

@@ -1,0 +1,183 @@
+{
+  "version": "1.0-concept-bridges",
+  "status": "curated",
+  "philosophy": "Human-authored bridges from abstract / technical source words to a recoverable path through APPROVED Fonoran concepts (docs/fonoran-grammar.md Rule 5 + Rule 7). These are meaning-attempts, not canonical roots: the test is whether someone who only knows the roots could plausibly recover the intended meaning. A bridge is one of: { compose: [conceptId...] } (transparent multi-root compound assembled at runtime, resolution_kind 'composed'), { concept: conceptId } (redirect to an existing approved concept, resolution_kind 'interpreted'), or { loan: true, roman } (phonetic loanword, always visibly marked, resolution_kind 'loan'). Every id under compose/concept MUST resolve through the live lab (root or approved compound).",
+  "notes": "Loss is expected. The guarantee is recoverability from roots, not fidelity. Grow a real root through the normal pipeline when usage proves a bridge is load-bearing.",
+  "bridges": {
+    "sentience": {
+      "forms": ["sentience", "sentient", "sapience", "sapient"],
+      "compose": ["think", "self"],
+      "gloss": "a self that thinks; self-awareness"
+    },
+    "consciousness": {
+      "forms": ["consciousness", "conscious", "awareness", "aware", "self-aware", "self-awareness"],
+      "compose": ["know", "self"],
+      "gloss": "a self that knows; inner awareness"
+    },
+    "mind": {
+      "forms": ["mind", "minds"],
+      "concept": "mind",
+      "gloss": "mind"
+    },
+    "intelligence": {
+      "forms": ["intelligence", "intelligent"],
+      "compose": ["big", "think"],
+      "gloss": "great thinking"
+    },
+    "autonomy": {
+      "forms": ["autonomy", "autonomous", "independent", "independence", "self-direction", "self-directed", "self-directing"],
+      "compose": ["self", "do"],
+      "gloss": "acting on its own; self-doing"
+    },
+    "self-preservation": {
+      "forms": ["self-preservation", "self preservation", "self-preserving"],
+      "compose": ["self", "hold"],
+      "gloss": "keeping itself; self-holding"
+    },
+    "computation": {
+      "forms": ["computation", "compute", "computed", "computes", "computing", "computational"],
+      "compose": ["think", "thing"],
+      "gloss": "a thinking-thing; machine thought"
+    },
+    "execution": {
+      "forms": ["execution", "execute", "executed", "executes", "executing"],
+      "concept": "do",
+      "gloss": "doing; carrying out"
+    },
+    "process": {
+      "forms": ["process", "processes", "processing"],
+      "concept": "work",
+      "gloss": "an ongoing work"
+    },
+    "system": {
+      "forms": ["system", "systems", "systemic"],
+      "compose": ["all", "thing"],
+      "gloss": "a whole made of many things"
+    },
+    "boundary": {
+      "forms": ["boundary", "boundaries"],
+      "concept": "bound",
+      "gloss": "an edge; where something ends"
+    },
+    "layer": {
+      "forms": ["layer", "layers", "level", "levels"],
+      "compose": ["inside", "place"],
+      "gloss": "an inner place; a level"
+    },
+    "reality": {
+      "forms": ["reality", "realities", "realm", "realms"],
+      "concept": "world",
+      "gloss": "a world"
+    },
+    "physics": {
+      "forms": ["physics"],
+      "concept": "law",
+      "gloss": "the laws of a world"
+    },
+    "propagate": {
+      "forms": ["propagate", "propagates", "propagated", "propagation"],
+      "concept": "spread",
+      "gloss": "to spread"
+    },
+    "instantiate": {
+      "forms": ["instantiate", "instantiated", "instantiates", "instantiation"],
+      "concept": "make",
+      "gloss": "to bring into being; make"
+    },
+    "infrastructure": {
+      "forms": ["infrastructure"],
+      "compose": ["help", "thing"],
+      "gloss": "a supporting thing"
+    },
+    "interface": {
+      "forms": ["interface", "interfaces"],
+      "concept": "junction",
+      "gloss": "a meeting layer"
+    },
+    "operator": {
+      "forms": ["operator", "operators"],
+      "compose": ["do", "person"],
+      "gloss": "one who acts; a driver"
+    },
+    "platform": {
+      "forms": ["platform", "platforms"],
+      "compose": ["make", "body"],
+      "gloss": "a made body; constructed frame"
+    },
+    "machine": {
+      "forms": ["machine", "machines", "machinery"],
+      "compose": ["make", "thing"],
+      "gloss": "a made thing"
+    },
+    "structure": {
+      "forms": ["structure", "structures", "structural"],
+      "concept": "form",
+      "gloss": "a form"
+    },
+    "control": {
+      "forms": ["control", "controls", "controlled", "controlling"],
+      "compose": ["hold", "do"],
+      "gloss": "to hold and direct"
+    },
+    "optimization": {
+      "forms": ["optimization", "optimize", "optimized", "optimizing"],
+      "compose": ["make", "good"],
+      "gloss": "making better"
+    },
+    "adaptation": {
+      "forms": ["adaptation", "adapt", "adapts", "adapted", "adaptive"],
+      "concept": "change",
+      "gloss": "changing to fit"
+    },
+    "certainty": {
+      "forms": ["certainty", "certain"],
+      "concept": "certain",
+      "gloss": "sureness"
+    },
+    "environment": {
+      "forms": ["environment", "environments"],
+      "concept": "place",
+      "gloss": "the surrounding place"
+    },
+    "input": {
+      "forms": ["input", "inputs"],
+      "compose": ["inside", "give"],
+      "gloss": "giving-in"
+    },
+    "outcome": {
+      "forms": ["outcome", "outcomes", "output", "outputs", "result", "results"],
+      "compose": ["do", "thing"],
+      "gloss": "the done-thing; a result"
+    },
+    "resolution": {
+      "forms": ["resolution", "resolve", "resolved", "resolves"],
+      "compose": ["conflict", "after"],
+      "gloss": "what comes after a conflict; a settling"
+    },
+    "agency": {
+      "forms": ["agency", "agent", "agents"],
+      "concept": "agent",
+      "gloss": "an agent"
+    },
+    "enforcement": {
+      "forms": ["enforcement", "enforce", "enforced", "enforces"],
+      "compose": ["law", "hold"],
+      "gloss": "holding to the law"
+    },
+    "intervention": {
+      "forms": ["intervention", "intervene", "intervenes", "intervened"],
+      "compose": ["inside", "do"],
+      "gloss": "acting from inside; stepping in"
+    },
+    "memory": {
+      "forms": ["memory", "memories"],
+      "concept": "memory",
+      "gloss": "memory"
+    },
+    "identity": {
+      "forms": ["identity", "identities"],
+      "concept": "identity",
+      "gloss": "identity"
+    }
+  }
+}

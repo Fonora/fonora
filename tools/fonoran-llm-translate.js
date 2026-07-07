@@ -12,7 +12,7 @@ import {
   anthropicModel,
   ANTHROPIC_TRANSLATOR_API_KEY_ENV,
 } from './fonoran-llm-client.js';
-import { buildResolveContext } from './fonoran-english-resolve.js';
+import { buildResolveContext, loadConceptBridges } from './fonoran-english-resolve.js';
 import { translateFromFrame, translateEnglishLegacy } from './fonoran-translator.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
 import { getParticleRuntime } from './fonoran-particles.js';
@@ -58,10 +58,34 @@ const FEW_SHOT_SEEDS = [
 
 let promptContextCache = null;
 let fewShotCache = null;
+let bridgeBlockCache = null;
 
 function normalizeSourceLang(sourceLang) {
   const lang = String(sourceLang ?? 'auto').trim().toLowerCase();
   return lang || 'auto';
+}
+
+/**
+ * Compact concept-bridge block for the prompt: shows the LLM the curated
+ * abstract-word → recoverable path map so it prefers a transparent compose path
+ * (e.g. sentience → think+self) or an existing concept over an honest gap.
+ */
+async function buildBridgeBlock() {
+  if (bridgeBlockCache) return bridgeBlockCache;
+  const bridges = await loadConceptBridges();
+  const seen = new Set();
+  const lines = [];
+  for (const [term, entry] of bridges.entries()) {
+    let target = null;
+    if (entry.loan) target = `loan:${entry.roman ?? term}`;
+    else if (Array.isArray(entry.compose)) target = entry.compose.join('+');
+    else if (entry.concept) target = entry.concept;
+    if (!target || seen.has(`${term}=${target}`)) continue;
+    seen.add(`${term}=${target}`);
+    lines.push(`${term} → ${target}`);
+  }
+  bridgeBlockCache = lines.sort((a, b) => a.localeCompare(b)).join('\n');
+  return bridgeBlockCache;
 }
 
 /** Compact concept list for the LLM prompt (approved lab entries only). */
@@ -227,23 +251,25 @@ async function buildPromptContext(lab) {
   if (promptContextCache) return promptContextCache;
   const particlesRaw = await readFile(GRAMMAR_PARTICLES_PATH, 'utf8').catch(() => '{}');
   const particlesDoc = JSON.parse(particlesRaw);
-  const [grammar, concepts, fewShot] = await Promise.all([
+  const [grammar, concepts, fewShot, bridges] = await Promise.all([
     loadGrammarSummary(particlesDoc),
     buildConceptInventoryBlock(lab),
     buildFewShotExamples(lab),
+    buildBridgeBlock(),
   ]);
   const particleLines = (particlesDoc.particles ?? [])
     .filter(p => p.form)
     .map(p => `${p.form} (${p.id}): ${p.gloss}`)
     .join('\n');
 
-  promptContextCache = { grammar, particleLines, concepts, fewShot, particlesDoc };
+  promptContextCache = { grammar, particleLines, concepts, fewShot, bridges, particlesDoc };
   return promptContextCache;
 }
 
 export function resetLlmTranslateCache() {
   promptContextCache = null;
   fewShotCache = null;
+  bridgeBlockCache = null;
 }
 
 const SYSTEM_PROMPT = `You are the Fonoran semantic compiler defined in docs/fonoran-grammar.md (Rule 7).
@@ -284,7 +310,9 @@ Mandatory rules:
 - Deictic there (tak) only when pointing at a place ("over there", "put it there").
 - we/us: default subject collective (dan). Use mi + addressee only when source explicitly signals a dyad (each other, you and I, both of us) — never from topic or urgency alone.
 - Why/how: not expressible in v1 — put in unresolved[], do not guess.
-- Never invent concept ids; honest gaps in unresolved[] (Design Rule 0).`;
+- Abstract / technical words: prefer a transparent compose path over an existing concept over a gap (Rule 5). Emit either a bridge concept id (e.g. sentience) or an explicit compose path joined with "+" using APPROVED concept ids (e.g. "think+self"). Only fall back to unresolved[] when no root path is recoverable and it is not a proper noun.
+- Proper nouns / coined names with no recoverable path (e.g. a place or product name): keep as a marked loanword — emit its concept id if one is pinned in the glossary/bridge list rather than translating or gapping.
+- Never invent concept ids OR spellings; honest gaps in unresolved[] (Design Rule 0).`;
 
 /**
  * Ask LLM for a concept frame.
@@ -314,6 +342,9 @@ ${ctx.particleLines}
 Concept inventory (id: gloss → spelling):
 ${ctx.concepts}
 
+Concept bridges (abstract/technical word → recoverable path; use these ids or a "+"-joined compose path of approved ids):
+${ctx.bridges}
+
 Examples (English source → frame):
 ${ctx.fewShot}
 
@@ -338,6 +369,68 @@ Return the JSON frame.`;
   return { ok: true, frame: normalizeFrameParticles(result.data), raw: result.raw, model: anthropicModel() };
 }
 
+const SIMPLIFY_SYSTEM_PROMPT = `You are the Fonoran "plain meaning" pre-pass (docs/fonoran-grammar.md Rule 7, meaning-extraction stage).
+Fonoran is a small concept language built for two strangers at a campfire: it has ~90 roots plus transparent compounds, and no abstract technical vocabulary.
+Rewrite the source text into the SIMPLEST possible propositions that a person who only knows basic, concrete concepts could still understand — the same thing a human translator does before glossing.
+
+Rules:
+- Split every sentence into short, single-idea clauses.
+- Replace abstract / technical / sci-fi words with plain, concrete meaning (e.g. "sentience" → "a mind that thinks for itself"; "the system executes processes" → "the thing does its work"; "real-time input was tunneled in" → "control was sent in from outside, moment by moment").
+- Keep the ORIGINAL meaning and intent; do not add new ideas, do not editorialize, do not shorten away meaning.
+- Prefer concrete nouns, simple verbs, and short subject-verb-object clauses.
+- Keep proper nouns (names of people, places, and products) as-is; do not translate them.
+- Preserve negation, tense (past/future), and conditionals ("if").
+
+Output JSON only:
+{
+  "clauses": ["plain clause 1", "plain clause 2", ...],
+  "note": "one short sentence on what you simplified"
+}`;
+
+/** Heuristic: is this input abstract/long enough that a plain-meaning pass helps? */
+export function shouldAutoSimplify(text) {
+  const s = String(text ?? '').trim();
+  if (!s) return false;
+  const words = s.split(/\s+/).filter(Boolean);
+  if (words.length >= 16) return true;
+  return /\b(sentien|conscious|autonom|comput|execut|instantiat|propagat|infrastructure|interface|boundary|abstract|cognit|algorithm)\w*/i.test(s);
+}
+
+/**
+ * Conceptual simplification pre-pass: rewrite abstract source text into plain,
+ * Fonoran-expressible propositions before frame compilation. Returns a pivot the
+ * UI can surface ("Plain meaning") so the translator stays a language tool, not
+ * a black box. On any failure it returns null and the caller compiles the
+ * original text unchanged.
+ * @param {string} text
+ * @param {{ sourceLang?: string }} [options]
+ */
+export async function simplifyForFonoran(text, options = {}) {
+  const input = String(text ?? '').trim();
+  if (!input || !anthropicTranslatorConfigured()) return null;
+  const sourceLang = normalizeSourceLang(options.sourceLang);
+  const langHint = sourceLang === 'auto'
+    ? 'Detect the source language; write the plain clauses in English.'
+    : `Source language code: ${sourceLang}. Write the plain clauses in English.`;
+
+  const result = await completeJson({
+    system: SIMPLIFY_SYSTEM_PROMPT,
+    user: `${langHint}\n\nSource text:\n"""\n${input}\n"""\n\nReturn the JSON.`,
+    temperature: 0,
+    maxTokens: 1024,
+    apiKeyEnv: ANTHROPIC_TRANSLATOR_API_KEY_ENV,
+  });
+
+  if (!result.ok || !Array.isArray(result.data?.clauses)) return null;
+  const clauses = result.data.clauses.map(c => String(c ?? '').trim()).filter(Boolean);
+  if (!clauses.length) return null;
+  return {
+    clauses,
+    text: clauses.join('. ').replace(/\.\.+/g, '.'),
+    note: String(result.data.note ?? '').trim() || null,
+  };
+}
+
 /** Validate LLM frame concept ids, particles, and grammar rules from fonoran-grammar.md. */
 export async function validateLlmFrame(frame, lab = null, sourceText = '') {
   const ctx = await buildResolveContext(lab);
@@ -346,6 +439,10 @@ export async function validateLlmFrame(frame, lab = null, sourceText = '') {
   for (const p of particles.data?.particles ?? []) {
     if (p.form) allowedParticles.add(p.form);
   }
+
+  // A "+"-joined compose path is valid when every id is an approved concept.
+  const composeResolvable = (id) => id.includes('+')
+    && id.split('+').every(part => ctx.rootById.has(part) || ctx.compoundByConceptId.has(part) || ctx.spellingByConceptId?.has(part));
 
   const unknown = [];
   const slots = frame?.slots ?? {};
@@ -358,6 +455,8 @@ export async function validateLlmFrame(frame, lab = null, sourceText = '') {
       if (allowedParticles.has(id)) continue;
       if (ctx.rootById.has(id) || ctx.compoundByConceptId.has(id)) continue;
       if (ctx.spellingByConceptId?.has(id)) continue;
+      if (ctx.bridges?.has(id)) continue;
+      if (composeResolvable(id)) continue;
       unknown.push({ role, id });
     }
   }
@@ -372,11 +471,12 @@ export async function validateLlmFrame(frame, lab = null, sourceText = '') {
 }
 
 /**
- * Translate via LLM concept frame (+ cache).
+ * Translate via LLM concept frame (+ cache). Operates on whatever text it is
+ * given (original, or the simplified pivot when the pre-pass ran).
  * @param {string} text
  * @param {{ sourceLang?: string, lab?: object, skipCache?: boolean }} options
  */
-export async function translateViaLlm(text, options = {}) {
+async function translateViaLlmCore(text, options = {}) {
   const input = String(text ?? '').trim();
   const sourceLang = normalizeSourceLang(options.sourceLang);
 
@@ -483,4 +583,39 @@ export async function translateViaLlm(text, options = {}) {
   }
 
   return finalizeWithAlternates(enriched, frame, input, options);
+}
+
+/**
+ * Translate via LLM with an optional conceptual-simplification pre-pass.
+ * `simplify`: true (force), false (never), or 'auto' (heuristic on abstract/long
+ * input). When active, the source text is rewritten into plain, Fonoran-
+ * expressible propositions before compilation; the pivot is returned as
+ * `simplified` so the UI can show "Plain meaning".
+ * @param {string} text
+ * @param {{ sourceLang?: string, lab?: object, skipCache?: boolean, simplify?: boolean|'auto' }} options
+ */
+export async function translateViaLlm(text, options = {}) {
+  const input = String(text ?? '').trim();
+  const sourceLang = normalizeSourceLang(options.sourceLang);
+
+  const wantSimplify = options.simplify === true
+    || (options.simplify === 'auto' && shouldAutoSimplify(input));
+
+  let simplified = null;
+  if (input && wantSimplify) {
+    simplified = await simplifyForFonoran(input, { sourceLang });
+  }
+
+  const compileText = simplified?.text || input;
+  const result = await translateViaLlmCore(compileText, options);
+
+  if (!result || result.ok === false) return result;
+
+  // Preserve the original source in the returned object; expose the pivot.
+  result.input = input;
+  if (simplified) {
+    result.simplified = simplified;
+    result.source_text = compileText;
+  }
+  return result;
 }

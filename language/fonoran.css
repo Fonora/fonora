@@ -2216,6 +2216,8 @@
     .translator-resolved--interpreted { color:var(--fonora-gold-strong); font-weight:600; }
     .translator-resolved--semantic { color:var(--color-review); font-weight:600; }
     .translator-resolved--alias_weak { color:var(--color-review); font-weight:600; }
+    .translator-resolved--composed { color:#3d7dd6; font-weight:600; }
+    .translator-resolved--loan { color:#9a5bd6; font-weight:600; font-style:italic; }
     .translator-playback-bar {
       display:flex;
       flex-wrap:wrap;
@@ -2456,6 +2458,46 @@
       max-width:100%;
       overflow-wrap:break-word;
     }
+    .translator-output__legend {
+      margin:0.35rem 0 0.15rem;
+      font-size:0.75rem;
+      color:var(--muted);
+    }
+    .translator-output__plain {
+      margin:0 0 0.65rem;
+      padding:0.5rem 0.7rem;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-left:3px solid #3d7dd6;
+      border-radius:var(--radius);
+    }
+    .translator-output__plain summary {
+      cursor:pointer;
+      font-size:0.82rem;
+      font-weight:600;
+      color:var(--text);
+      list-style:none;
+      user-select:none;
+    }
+    .translator-output__plain summary::-webkit-details-marker { display:none; }
+    .translator-output__plain summary::after { content:' ▸'; font-size:0.72em; color:var(--muted); }
+    .translator-output__plain[open] summary::after { content:' ▾'; }
+    .translator-output__plain-hint { font-weight:400; color:var(--muted); }
+    .translator-output__plain-body { margin-top:0.4rem; }
+    .translator-output__plain-list {
+      margin:0;
+      padding-left:1.15rem;
+      font-size:0.85rem;
+      color:var(--text);
+      line-height:1.45;
+    }
+    .translator-output__plain-list li { margin:0.1rem 0; }
+    .translator-output__plain-note {
+      margin:0.4rem 0 0;
+      font-size:0.78rem;
+      color:var(--muted);
+      font-style:italic;
+    }
     .translator-output__pron {
       margin:0.25rem 0 0;
     }
@@ -2601,6 +2643,8 @@
     }
     .translator-token--interpreted .translator-token__fonoran { color:var(--fonora-gold-strong); }
     .translator-token--semantic .translator-token__fonoran { color:var(--color-review); }
+    .translator-token--composed .translator-token__fonoran { color:#3d7dd6; }
+    .translator-token--loan .translator-token__fonoran { color:#9a5bd6; font-style:italic; }
     .translator-token--guessed .translator-token__fonoran {
       color:var(--color-review);
       text-decoration:underline;

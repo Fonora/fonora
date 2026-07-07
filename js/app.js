@@ -56,10 +56,10 @@ import { loadLanguagePreference } from './language-preferences.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { mountSymbolSpotlight } from './symbol-spotlight.js';
 import { buildPlatformPipelineData, mountPlatformShowcase } from './platform-showcase.js';
-import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
+import { romanToFonoraScript, fonoraScriptToRoman } from '../tools/fonoran-fonora-bridge.js';
 import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
-import { setupTranslatePlayback, setTranslateSymbols } from './fonora-tts-ui.js';
+import { setupTranslatePlayback, setTranslateSymbols, setTransliterateFonoranOutput, isFonoranTransliterateMode, FONORAN_TRANSLITERATE_LANG } from './fonora-tts-ui.js';
 import { setupSamples, setupHomeSample, ensureSamplesLoaded } from './samples.js';
 import { setupDocsViewer, onDocsTabActivated, loadDocViewer } from './docs-viewer-ui.js';
 import {
@@ -464,7 +464,47 @@ function setupTranslator() {
 
   bindTranslateDetailsToggle(detailsToggle, detailsBody);
 
+  function applyFonoranTransliterate() {
+    const text = inputEl.value.trim();
+    const generation = ++applyGeneration;
+
+    if (!text) {
+      setTranslateDetails(metaEl, detailsBody, detailsToggle, '');
+      setStatus('');
+      setTransliterateFonoranOutput('', '');
+      pronEl.value = '';
+      decodeEl.textContent = '';
+      setReaderWordSources(null);
+      return;
+    }
+
+    try {
+      const result = fonoraScriptToRoman(text, rules);
+
+      if (generation !== applyGeneration) return;
+
+      setTranslateDetails(metaEl, detailsBody, detailsToggle, '');
+      setStatus(result.warnings.length ? `${result.warnings.length} decode warning(s).` : '');
+
+      setTransliterateFonoranOutput(result.symbols, result.roman, result.tokens);
+      pronEl.value = result.words.map((word) => word.phonemeKeys).filter(Boolean).join(' · ');
+      setReaderWordSources(null);
+      decodeEl.textContent = result.roman
+        ? `Roman spelling: ${result.roman}`
+        : '';
+    } catch (err) {
+      if (generation !== applyGeneration) return;
+      setStatus(err.message || 'Fonora decode failed.', true);
+      setTranslateDetails(metaEl, detailsBody, detailsToggle, `<div class="warning-item">${escapeHtml(err.message || 'Fonora decode failed.')}</div>`);
+    }
+  }
+
   async function applyTranslate() {
+    if (isFonoranTransliterateMode()) {
+      applyFonoranTransliterate();
+      return;
+    }
+
     const text = inputEl.value.trim();
     const generation = ++applyGeneration;
 
@@ -502,7 +542,18 @@ function setupTranslator() {
 
   inputEl.addEventListener('input', applyTranslate);
 
-  langEl.addEventListener('change', applyTranslate);
+  let previousTransliterateLang = langEl.value;
+  langEl.addEventListener('change', () => {
+    const next = langEl.value;
+    const crossedFonoran =
+      previousTransliterateLang === FONORAN_TRANSLITERATE_LANG
+      || next === FONORAN_TRANSLITERATE_LANG;
+    if (crossedFonoran && previousTransliterateLang !== next) {
+      inputEl.value = '';
+    }
+    previousTransliterateLang = next;
+    applyTranslate();
+  });
 
   dialectEl?.addEventListener('change', applyTranslate);
 }
