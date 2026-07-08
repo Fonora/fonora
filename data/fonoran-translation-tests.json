@@ -155,8 +155,8 @@
         },
         {
           "en": "I feel relieved to see you.",
-          "fon": "mi nes testemkan wi be",
-          "note": "review: tes+temkan→testemkan(composed)"
+          "fon": "mi nes [tes+temkan] wi be",
+          "note": "gap: tes+temkan (needs a root)"
         },
         {
           "en": "You do not need to be afraid.",
@@ -204,7 +204,8 @@
         },
         {
           "en": "I feel nervous and unsure.",
-          "fon": "mi nes pemet metpa"
+          "fon": "mi nes [pemet] [metpa]",
+          "note": "gap: pemet, metpa (needs a root)"
         },
         {
           "en": "Can we start again?",
@@ -358,7 +359,8 @@
         },
         {
           "en": "We need more wood.",
-          "fon": "dan les mas tetsas"
+          "fon": "dan les mas [tetsas]",
+          "note": "gap: tetsas (needs a root)"
         },
         {
           "en": "Can you carry this?",
@@ -548,7 +550,7 @@
         },
         {
           "en": "The pain is very strong.",
-          "fon": "tes ni femsas"
+          "fon": "tes ni femgu"
         },
         {
           "en": "I am cold and I feel sick.",
@@ -580,7 +582,8 @@
         },
         {
           "en": "I will help clean your wound.",
-          "fon": "mi sa kas be tesfem guye"
+          "fon": "mi sa kas be [tesfem] guye",
+          "note": "gap: tesfem (needs a root)"
         },
         {
           "en": "This area is red and swollen.",
@@ -738,7 +741,7 @@
         },
         {
           "en": "I am shaking with fear.",
-          "fon": "mi nes nespe femsas"
+          "fon": "mi nes nespe femgu"
         },
         {
           "en": "Did you see that?",
@@ -940,7 +943,8 @@
         },
         {
           "en": "This makes me sad.",
-          "fon": "no hu to kel mi gamnes"
+          "fon": "no hu to kel mi [gamnes]",
+          "note": "gap: gamnes (needs a root)"
         },
         {
           "en": "This makes me angry.",
@@ -996,8 +1000,8 @@
         },
         {
           "en": "Do you feel relieved?",
-          "fon": "be nes nestampa ?",
-          "note": "review: nes+tampa→nestampa(composed)"
+          "fon": "be nes [nes+tampa] ?",
+          "note": "gap: nes+tampa (needs a root)"
         },
         {
           "en": "I do not want to be alone.",
@@ -1143,7 +1147,7 @@
         },
         {
           "en": "We are stronger together.",
-          "fon": "dan femsas dan"
+          "fon": "dan femgu dan"
         },
         {
           "en": "I will share with you.",
@@ -1219,7 +1223,8 @@
         },
         {
           "en": "We survived and I am grateful.",
-          "fon": "dan mi ta fo nes nesguku ti"
+          "fon": "dan mi ta fo nes [nesguku] ti",
+          "note": "gap: nesguku (needs a root)"
         },
         {
           "en": "I am sorry for that.",
@@ -1531,7 +1536,8 @@
         },
         {
           "en": "What happened last night?",
-          "fon": "no hu to ta gankan daldi gankan ?"
+          "fon": "no hu to ta [gankan] daldi gankan ?",
+          "note": "gap: gankan (needs a root)"
         },
         {
           "en": "What is that thing called?",
@@ -1611,7 +1617,8 @@
         },
         {
           "en": "What is this white powder?",
-          "fon": "no hu to gen tofem ?"
+          "fon": "no hu to gen [tofem] ?",
+          "note": "gap: tofem (needs a root)"
         },
         {
           "en": "What is that structure?",
@@ -1631,8 +1638,8 @@
         },
         {
           "en": "What is that color in the sky?",
-          "fon": "no hu to mes sam kekwimal ?",
-          "note": "review: kek+wimal→kekwimal(composed)"
+          "fon": "no hu to mes sam [kek+wimal] ?",
+          "note": "gap: kek+wimal (needs a root)"
         },
         {
           "en": "Please show me what you mean.",
@@ -1706,7 +1713,8 @@
         },
         {
           "en": "Who is crying?",
-          "fon": "no hu ba kemye ?"
+          "fon": "no hu ba [kemye] ?",
+          "note": "gap: kemye (needs a root)"
         },
         {
           "en": "Who is with you?",
@@ -1790,7 +1798,8 @@
         },
         {
           "en": "I feel uneasy about that person.",
-          "fon": "mi nes pemet honen ba"
+          "fon": "mi nes [pemet] honen ba",
+          "note": "gap: pemet (needs a root)"
         },
         {
           "en": "Who is the youngest person here?",
@@ -1826,11 +1835,12 @@
         },
         {
           "en": "I feel glad you are here.",
-          "fon": "mi nes nam nesgu be"
+          "fon": "mi nes nam [nesgu] be",
+          "note": "gap: nesgu (needs a root)"
         },
         {
           "en": "Who is the strongest person here?",
-          "fon": "no hu ba nam femsas daldi ?"
+          "fon": "no hu ba nam femgu daldi ?"
         },
         {
           "en": "That person is a friend or an enemy.",
@@ -2122,7 +2132,8 @@
         },
         {
           "en": "Not now, later.",
-          "fon": "no gem gemshu"
+          "fon": "no gem [gemshu]",
+          "note": "gap: gemshu (needs a root)"
         },
         {
           "en": "We should rest before we walk.",
@@ -2242,7 +2253,8 @@
         },
         {
           "en": "After I rest, I will help.",
-          "fon": "mi sa tinal di kas"
+          "fon": "mi sa [tinal] di kas",
+          "note": "gap: tinal (needs a root)"
         },
         {
           "en": "When will the water come back?",
@@ -2392,7 +2404,8 @@
         },
         {
           "en": "I am scared and I want to stay.",
-          "fon": "mi nes sak nespe tiche"
+          "fon": "mi nes sak nespe [tiche]",
+          "note": "gap: tiche (needs a root)"
         },
         {
           "en": "Can you come back soon?",
@@ -2420,7 +2433,8 @@
         },
         {
           "en": "Wait here until I return.",
-          "fon": "be mi giyinam tikan nam"
+          "fon": "be mi [giyinam] tikan nam",
+          "note": "gap: giyinam (needs a root)"
         },
         {
           "en": "I feel relieved that you came back.",
@@ -2444,7 +2458,8 @@
         },
         {
           "en": "I meant to go the other way.",
-          "fon": "mi ta gi honen nan hudimo"
+          "fon": "mi ta gi [honen] nan hudimo",
+          "note": "gap: honen (needs a root)"
         },
         {
           "en": "We should move together.",
@@ -2638,7 +2653,8 @@
         },
         {
           "en": "Do you have a container I can borrow?",
-          "fon": "be gat togat mi lakam ?"
+          "fon": "be gat togat mi [lakam] ?",
+          "note": "gap: lakam (needs a root)"
         },
         {
           "en": "I am sorry, I took the wrong thing.",
@@ -2910,7 +2926,7 @@
         },
         {
           "en": "The wind is strong.",
-          "fon": "gesgi femsas"
+          "fon": "gesgi femgu"
         },
         {
           "en": "The sun is gone.",
@@ -2946,7 +2962,7 @@
         },
         {
           "en": "The wind is getting stronger.",
-          "fon": "gesgi fomas femsas"
+          "fon": "gesgi fomas femgu"
         },
         {
           "en": "Do you see the dark clouds?",
@@ -2994,7 +3010,7 @@
         },
         {
           "en": "The storm is loud and strong.",
-          "fon": "sampa nes ni femsas"
+          "fon": "sampa nes ni femgu"
         },
         {
           "en": "I feel the cold wind.",
@@ -3014,7 +3030,8 @@
         },
         {
           "en": "I do not understand the weather here.",
-          "fon": "mi no hufel nam sampa"
+          "fon": "mi no hufel nam [sampa]",
+          "note": "gap: sampa (needs a root)"
         },
         {
           "en": "The air is cold and wet.",
@@ -3108,7 +3125,7 @@
         },
         {
           "en": "I feel strong today.",
-          "fon": "mi nes femsas kekdi"
+          "fon": "mi nes femgu kekdi"
         },
         {
           "en": "Are you sick?",
@@ -3176,7 +3193,7 @@
         },
         {
           "en": "I am strong enough.",
-          "fon": "mi femsas lemgu"
+          "fon": "mi femgu lemgu"
         },
         {
           "en": "I need to breathe fresh air.",
@@ -3188,7 +3205,8 @@
         },
         {
           "en": "I cannot stand up.",
-          "fon": "mi no tira ra"
+          "fon": "mi no [tira] ra",
+          "note": "gap: tira (needs a root)"
         },
         {
           "en": "Are you breathing well?",
@@ -3220,11 +3238,11 @@
         },
         {
           "en": "My chest feels tight.",
-          "fon": "mi nes punen femsas"
+          "fon": "mi nes punen femgu"
         },
         {
           "en": "I am not strong today.",
-          "fon": "mi femsas no kekdi gem"
+          "fon": "mi femgu no kekdi gem"
         },
         {
           "en": "Can you breathe deeply?",
@@ -3252,7 +3270,8 @@
         },
         {
           "en": "I feel pain in my side.",
-          "fon": "mi nes mes togen tes"
+          "fon": "mi nes mes [togen] tes",
+          "note": "gap: togen (needs a root)"
         },
         {
           "en": "Please carry this for me.",
@@ -3260,7 +3279,7 @@
         },
         {
           "en": "I am well and strong.",
-          "fon": "mi nes gu femsas"
+          "fon": "mi nes gu femgu"
         },
         {
           "en": "My knee cannot bend.",
@@ -3338,7 +3357,8 @@
         },
         {
           "en": "My mother is sick.",
-          "fon": "badi femgam"
+          "fon": "[badi] femgam",
+          "note": "gap: badi (needs a root)"
         },
         {
           "en": "Please hold the baby.",
@@ -3434,8 +3454,8 @@
         },
         {
           "en": "My mother is old and tired.",
-          "fon": "badi nes femtam di [and]",
-          "note": "gap: and (needs a root)"
+          "fon": "[badi] nes femtam di [and]",
+          "note": "gap: badi, and (needs a root)"
         },
         {
           "en": "Please stay near the child.",
@@ -3487,7 +3507,8 @@
         },
         {
           "en": "I need to find my mother.",
-          "fon": "mi les wi de badi"
+          "fon": "mi les wi de [badi]",
+          "note": "gap: badi (needs a root)"
         },
         {
           "en": "I feel alone without my child.",
@@ -3617,7 +3638,8 @@
         },
         {
           "en": "That word is not clear to me.",
-          "fon": "tose no winat mi"
+          "fon": "[tose] no [winat] mi",
+          "note": "gap: tose, winat (needs a root)"
         },
         {
           "en": "I do not understand this signal.",
@@ -3751,7 +3773,8 @@
         },
         {
           "en": "We can sleep here and leave at light.",
-          "fon": "dan kekra nal felnen nam"
+          "fon": "dan [kekra] nal felnen nam",
+          "note": "gap: kekra (needs a root)"
         },
         {
           "en": "I plan to go up that hill.",
@@ -3831,7 +3854,8 @@
         },
         {
           "en": "I want to try a different path.",
-          "fon": "mi sak nan honen sakmo"
+          "fon": "mi sak nan [honen] sakmo",
+          "note": "gap: honen (needs a root)"
         },
         {
           "en": "Will you watch while I sleep?",
@@ -3855,7 +3879,8 @@
         },
         {
           "en": "I want to understand your plan.",
-          "fon": "mi hufel hudimo sak"
+          "fon": "mi hufel [hudimo] sak",
+          "note": "gap: hudimo (needs a root)"
         },
         {
           "en": "Maybe we can build a shelter today.",
@@ -3907,7 +3932,8 @@
         },
         {
           "en": "I plan to watch through the night.",
-          "fon": "mi sa gankan hudimo wi fel"
+          "fon": "mi sa [gankan] hudimo wi fel",
+          "note": "gap: gankan (needs a root)"
         },
         {
           "en": "Maybe we can try a different way.",
@@ -4029,8 +4055,8 @@
         },
         {
           "en": "We can rest and then continue.",
-          "fon": "dan shu tinal moyigi",
-          "note": "review: moyi+gi→moyigi(composed)"
+          "fon": "dan shu tinal [moyi+gi]",
+          "note": "gap: moyi+gi (needs a root)"
         },
         {
           "en": "Do you want to stop here?",
@@ -4042,7 +4068,8 @@
         },
         {
           "en": "We worked well together today.",
-          "fon": "dan ta kekdi gem bakel gu dan"
+          "fon": "dan ta [kekdi] gem bakel gu dan",
+          "note": "gap: kekdi (needs a root)"
         },
         {
           "en": "Did I understand you correctly?",
