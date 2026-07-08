@@ -2345,6 +2345,16 @@
       });
       $('dict-picker-empty')?.toggleAttribute('hidden', showRoots || showWords || showParticles);
 
+      const visibleCount = (showRoots ? roots.length : 0)
+        + (showWords ? words.length : 0)
+        + (showParticles ? particles.length : 0);
+      const countEl = $('dict-count');
+      if (countEl) {
+        countEl.textContent = emptyAll
+          ? ''
+          : (visibleCount === 1 ? '1 result' : `${visibleCount} results`);
+      }
+
       $('dict-roots-h')?.toggleAttribute('hidden', !showRoots);
       $('dict-words-h')?.toggleAttribute('hidden', !showWords);
       $('dict-particles-h')?.toggleAttribute('hidden', !showParticles);

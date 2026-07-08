@@ -56,10 +56,20 @@ import { loadLanguagePreference } from './language-preferences.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { mountSymbolSpotlight } from './symbol-spotlight.js';
 import { buildPlatformPipelineData, mountPlatformShowcase } from './platform-showcase.js';
-import { romanToFonoraScript, fonoraScriptToRoman } from '../tools/fonoran-fonora-bridge.js';
+import { romanToFonoraScript, fonoraScriptToRoman, romanTextToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
-import { setupTranslatePlayback, setTranslateSymbols, setTransliterateFonoranOutput, isFonoranTransliterateMode, FONORAN_TRANSLITERATE_LANG } from './fonora-tts-ui.js';
+import { phonemeKeysToRecoveredIpa } from './pronunciation-validation.js';
+import { pieceHint } from '../tools/fonoran-pronunciation.js';
+import {
+  setupTranslatePlayback,
+  setTranslateSymbols,
+  setTransliterateFonoranOutput,
+  isFonoranScriptMode,
+  isFonoranRomanMode,
+  FONORAN_TRANSLITERATE_LANG,
+  FONORAN_ROMAN_LANG,
+} from './fonora-tts-ui.js';
 import { setupSamples, setupHomeSample, ensureSamplesLoaded } from './samples.js';
 import { setupDocsViewer, onDocsTabActivated, loadDocViewer } from './docs-viewer-ui.js';
 import {
@@ -464,6 +474,25 @@ function setupTranslator() {
 
   bindTranslateDetailsToggle(detailsToggle, detailsBody);
 
+  function buildRomanWordSource(word, rules) {
+    const ipaBody = phonemeKeysToRecoveredIpa(word.phonemeKeys, rules);
+    return {
+      symbols: word.symbols,
+      normalizedPhonemes: word.phonemeKeys,
+      ipa: ipaBody ? `/${ipaBody}/` : '',
+      original: word.roman,
+      input: word.roman,
+    };
+  }
+
+  function formatRomanPhonemicGuide(words) {
+    return words.map((word) => {
+      const keys = String(word.phonemeKeys || '').split(/\s+/).filter(Boolean);
+      const guide = keys.map((key) => pieceHint(key)).join(' · ');
+      return `<div class="translate-detail-row"><strong>${escapeHtml(word.roman)}</strong> → ${escapeHtml(guide || word.roman)}</div>`;
+    }).join('');
+  }
+
   function applyFonoranTransliterate() {
     const text = inputEl.value.trim();
     const generation = ++applyGeneration;
@@ -499,9 +528,61 @@ function setupTranslator() {
     }
   }
 
+  function applyFonoranRomanTransliterate() {
+    const text = inputEl.value.trim();
+    const generation = ++applyGeneration;
+
+    if (!text) {
+      setTranslateDetails(metaEl, detailsBody, detailsToggle, '');
+      setStatus('');
+      setTransliterateFonoranOutput('', '');
+      pronEl.value = '';
+      decodeEl.textContent = '';
+      setReaderWordSources(null);
+      return;
+    }
+
+    try {
+      const result = romanTextToFonoraScript(text, rules);
+
+      if (generation !== applyGeneration) return;
+
+      const wordSources = result.words.map((word) => buildRomanWordSource(word, rules));
+      const guideHtml = formatRomanPhonemicGuide(result.words);
+      setTranslateDetails(metaEl, detailsBody, detailsToggle, guideHtml);
+
+      if (!result.strictOk) {
+        setStatus(`${result.warnings.length} unknown letter(s) — fix spelling before listening.`, true);
+      } else if (result.warnings.length) {
+        setStatus(`${result.warnings.length} encode warning(s).`, true);
+      } else {
+        setStatus('');
+      }
+
+      setTransliterateFonoranOutput(result.symbols, result.roman, result.tokens, {
+        strictOk: result.strictOk,
+        wordSources,
+      });
+      setReaderWordSources(wordSources);
+      pronEl.value = result.words.map((word) => word.phonemeKeys).filter(Boolean).join(' · ');
+      decodeEl.textContent = result.symbols
+        ? `Fonora script: ${result.symbols}`
+        : '';
+    } catch (err) {
+      if (generation !== applyGeneration) return;
+      setStatus(err.message || 'Fonoran roman encode failed.', true);
+      setTranslateDetails(metaEl, detailsBody, detailsToggle, `<div class="warning-item">${escapeHtml(err.message || 'Fonoran roman encode failed.')}</div>`);
+    }
+  }
+
   async function applyTranslate() {
-    if (isFonoranTransliterateMode()) {
+    if (isFonoranScriptMode()) {
       applyFonoranTransliterate();
+      return;
+    }
+
+    if (isFonoranRomanMode()) {
+      applyFonoranRomanTransliterate();
       return;
     }
 
@@ -545,10 +626,8 @@ function setupTranslator() {
   let previousTransliterateLang = langEl.value;
   langEl.addEventListener('change', () => {
     const next = langEl.value;
-    const crossedFonoran =
-      previousTransliterateLang === FONORAN_TRANSLITERATE_LANG
-      || next === FONORAN_TRANSLITERATE_LANG;
-    if (crossedFonoran && previousTransliterateLang !== next) {
+    const fonoranModes = new Set([FONORAN_TRANSLITERATE_LANG, FONORAN_ROMAN_LANG]);
+    if (previousTransliterateLang !== next && (fonoranModes.has(previousTransliterateLang) || fonoranModes.has(next))) {
       inputEl.value = '';
     }
     previousTransliterateLang = next;

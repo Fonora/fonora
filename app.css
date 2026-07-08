@@ -6322,12 +6322,44 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   margin-top: 0.75rem;
 }
 
+/* Give the sliders their own full-width row so values don't crowd or overflow. */
+#tab-translator .translator-playback-controls {
+  flex-basis: 100%;
+  min-width: 0;
+}
+
+#tab-translator .translator-playback-speed {
+  min-width: 13rem;
+}
+
+#tab-translator .translator-playback-speed__val {
+  min-width: 2.75rem;
+}
+
 .translate-playback-status {
   margin: 0;
 }
 
 #tab-translator .translate-output {
   margin-top: 0;
+}
+
+#tab-translator .translate-output.translate-output--script,
+#tab-translator .translate-output.symbol-text {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.translate-output-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.translate-output-head > label {
+  margin: 0;
 }
 
 #tab-translator .translate-output .tts-punct {

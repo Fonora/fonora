@@ -33,11 +33,17 @@ let currentRomanWords = [];
 /** @type {Array<{ kind: 'word', symbols: string, roman: string } | { kind: 'pause', char: string }>} */
 let currentFonoranTokens = [];
 
+/** @type {Array<object | null>} */
+let currentFonoranWordSources = null;
+let currentFonoranStrictOk = true;
+
 export const FONORAN_TRANSLITERATE_LANG = 'fonoran';
+export const FONORAN_ROMAN_LANG = 'fonoran-roman';
 
 const TRANSLITERATE_LANGUAGE_OPTIONS = [
   ...LANGUAGE_OPTIONS,
   { code: FONORAN_TRANSLITERATE_LANG, label: 'Fonoran' },
+  { code: FONORAN_ROMAN_LANG, label: 'Fonoran (roman)' },
 ];
 
 const EMPTY_OUTPUT_HTML =
@@ -46,13 +52,18 @@ const EMPTY_OUTPUT_HTML =
 const EMPTY_FONORAN_OUTPUT_HTML =
   '<span class="tts-empty">Roman spelling appears here as you paste Fonora script. Press Listen to hear it read aloud.</span>';
 
+const EMPTY_FONORAN_ROMAN_OUTPUT_HTML =
+  '<span class="tts-empty">Fonora script appears here as you type roman spelling. Press Listen to hear it read aloud.</span>';
+
 const TRANSLITERATE_SPEED_KEY = 'fonora:transliterate:speed';
 const TRANSLITERATE_SYLLABLE_MODE_KEY = 'fonora:transliterate:syllable-by-syllable';
 const TRANSLITERATE_FLUIDITY_KEY = 'fonora:transliterate:fluidity';
+const TRANSLITERATE_PERIOD_PAUSE_KEY = 'fonora:transliterate:period-pause';
 /** @deprecated migrated to TRANSLITERATE_FLUIDITY_KEY */
 const TRANSLITERATE_FLUID_MODE_KEY = 'fonora:transliterate:fluid';
 
 const DEFAULT_FLUIDITY = 85;
+const DEFAULT_PERIOD_PAUSE = 100;
 const FLUIDITY_FULL_CLAUSE = 92;
 const FLUIDITY_WORD_BY_WORD = 8;
 
@@ -60,8 +71,25 @@ function getTranslateLang() {
   return document.getElementById('translate-lang')?.value || 'en';
 }
 
-export function isFonoranTransliterateMode() {
+export function isFonoranScriptMode() {
   return getTranslateLang() === FONORAN_TRANSLITERATE_LANG;
+}
+
+export function isFonoranRomanMode() {
+  return getTranslateLang() === FONORAN_ROMAN_LANG;
+}
+
+export function isFonoranTransliterateMode() {
+  return isFonoranScriptMode() || isFonoranRomanMode();
+}
+
+export function isFonoranRomanListenAllowed() {
+  return !isFonoranRomanMode() || currentFonoranStrictOk;
+}
+
+export function setFonoranWordSources(sources, { strictOk = true } = {}) {
+  currentFonoranWordSources = Array.isArray(sources) ? sources : null;
+  currentFonoranStrictOk = strictOk;
 }
 
 function getOutputDisplay() {
@@ -82,13 +110,14 @@ export function setTranslateSymbols(text) {
   renderTranslateOutput();
 }
 
-export function setTransliterateFonoranOutput(symbols, roman, tokens = []) {
+export function setTransliterateFonoranOutput(symbols, roman, tokens = [], { strictOk = true, wordSources = null } = {}) {
   currentSymbols = String(symbols || '').trim();
   currentRoman = String(roman || '').trim();
   currentFonoranTokens = Array.isArray(tokens) ? tokens : [];
   currentRomanWords = currentFonoranTokens
     .filter((item) => item.kind === 'word')
     .map((item) => item.roman);
+  setFonoranWordSources(wordSources, { strictOk });
   renderTranslateOutput();
 }
 
@@ -130,6 +159,28 @@ function syncTransliterateFluidityLabel() {
   const fluidity = readTransliterateFluidity();
   if (val) val.textContent = `${Math.round(fluidity)}%`;
   if (slider) slider.setAttribute('aria-valuenow', String(Math.round(fluidity)));
+}
+
+function readTransliteratePeriodPause() {
+  const el = document.getElementById('translate-period-pause');
+  let raw = el ? parseFloat(el.value) : NaN;
+  if (!Number.isFinite(raw)) {
+    raw = parseFloat(localStorage.getItem(TRANSLITERATE_PERIOD_PAUSE_KEY));
+  }
+  if (!Number.isFinite(raw)) return DEFAULT_PERIOD_PAUSE;
+  return Math.max(0, Math.min(200, raw));
+}
+
+function readTransliteratePeriodPauseScale() {
+  return readTransliteratePeriodPause() / 100;
+}
+
+function syncTransliteratePeriodPauseLabel() {
+  const val = document.getElementById('translate-period-pause-val');
+  const slider = document.getElementById('translate-period-pause');
+  const periodPause = readTransliteratePeriodPause();
+  if (val) val.textContent = `${Math.round(periodPause)}%`;
+  if (slider) slider.setAttribute('aria-valuenow', String(Math.round(periodPause)));
 }
 
 /** Split a clause into fluid playback chunks; lower fluidity → smaller groups. */
@@ -189,8 +240,15 @@ function restoreTransliteratePlaybackPrefs() {
     }
   }
 
+  const periodPauseEl = document.getElementById('translate-period-pause');
+  const savedPeriodPause = parseFloat(localStorage.getItem(TRANSLITERATE_PERIOD_PAUSE_KEY));
+  if (periodPauseEl && Number.isFinite(savedPeriodPause)) {
+    periodPauseEl.value = String(Math.max(0, Math.min(200, savedPeriodPause)));
+  }
+
   syncTransliterateSpeedLabel();
   syncTransliterateFluidityLabel();
+  syncTransliteratePeriodPauseLabel();
   syncTransliteratePlaybackModes();
 }
 
@@ -268,7 +326,7 @@ function buildTransliterateSegments(text, { syllableBySyllable = false } = {}) {
 
 function getReaderLang() {
   const lang = getTranslateLang();
-  return lang === FONORAN_TRANSLITERATE_LANG ? 'en' : lang;
+  return (lang === FONORAN_TRANSLITERATE_LANG || lang === FONORAN_ROMAN_LANG) ? 'en' : lang;
 }
 
 function getReaderEnglishDialect() {
@@ -298,14 +356,18 @@ function populateLanguageSelect() {
   const sel = document.getElementById('translate-lang');
   if (!sel) return;
   const saved = loadLanguagePreferences();
-  const savedLang = saved.lang === FONORAN_TRANSLITERATE_LANG ? 'en' : saved.lang;
+  const savedLang = (saved.lang === FONORAN_TRANSLITERATE_LANG || saved.lang === FONORAN_ROMAN_LANG)
+    ? 'en'
+    : saved.lang;
   sel.innerHTML = TRANSLITERATE_LANGUAGE_OPTIONS.map(
     (item) => `<option value="${escapeHtml(item.code)}"${item.code === savedLang ? ' selected' : ''}>${escapeHtml(item.label)}</option>`,
   ).join('');
 }
 
 export function syncTransliterateModeUi() {
-  const fonoran = isFonoranTransliterateMode();
+  const fonoranScript = isFonoranScriptMode();
+  const fonoranRoman = isFonoranRomanMode();
+  const fonoran = fonoranScript || fonoranRoman;
   const panel = document.getElementById('tab-translator');
   const desc = panel?.querySelector('.section-desc');
   const inputLabel = panel?.querySelector('label[for="translate-input"]');
@@ -315,18 +377,38 @@ export function syncTransliterateModeUi() {
   const detailsSection = panel?.querySelector('.translate-details-section');
 
   if (desc) {
-    desc.textContent = fonoran
-      ? 'Paste Fonora script to see Roman spelling, then press Listen to hear it read aloud.'
-      : 'Type text to transliterate into Fonora, then press Listen to hear it with a matching neural or eSpeak voice.';
+    if (fonoranScript) {
+      desc.textContent = 'Paste Fonora script to see Roman spelling, then press Listen to hear it read aloud.';
+    } else if (fonoranRoman) {
+      desc.textContent = 'Type Fonoran roman spelling (phonemic, not English spelling — a = cup, ae = cat), then press Listen to hear it read aloud.';
+    } else {
+      desc.textContent = 'Type text to transliterate into Fonora, then press Listen to hear it with a matching neural or eSpeak voice.';
+    }
   }
-  if (inputLabel) inputLabel.textContent = fonoran ? 'Fonora script' : 'Text';
-  if (outputLabel) outputLabel.textContent = fonoran ? 'Roman spelling' : 'Fonora spelling';
+  if (inputLabel) {
+    inputLabel.textContent = fonoranScript
+      ? 'Fonora script'
+      : fonoranRoman
+        ? 'Fonoran roman spelling'
+        : 'Text';
+  }
+  if (outputLabel) {
+    outputLabel.textContent = fonoranScript
+      ? 'Roman spelling'
+      : fonoranRoman
+        ? 'Fonora script'
+        : 'Fonora spelling';
+  }
   if (input) {
-    input.placeholder = fonoran ? 'Paste Fonora script here…' : 'e.g. knife, hola, the big dog';
-    input.classList.toggle('symbol-text', fonoran);
+    input.placeholder = fonoranScript
+      ? 'Paste Fonora script here…'
+      : fonoranRoman
+        ? 'Type Fonoran roman spelling (a = cup, ae = cat)…'
+        : 'e.g. knife, hola, the big dog';
+    input.classList.toggle('symbol-text', fonoranScript);
   }
-  if (output) output.classList.toggle('symbol-text', !fonoran);
-  if (detailsSection) detailsSection.hidden = fonoran;
+  if (output) output.classList.toggle('symbol-text', fonoranRoman || !fonoran);
+  if (detailsSection) detailsSection.hidden = fonoranScript;
 }
 
 function populateDialectSelect() {
@@ -351,15 +433,17 @@ export function syncTranslatePlaybackControls() {
   const fonoran = isFonoranTransliterateMode();
   const dialectWrap = document.getElementById('translate-dialect-wrap');
   const piperWrap = document.getElementById('translate-piper-voice-wrap');
+  const periodPauseWrap = document.getElementById('translate-period-pause-wrap');
   const voiceNote = document.getElementById('translate-voice-note');
 
   if (dialectWrap) dialectWrap.hidden = lang !== 'en';
   if (piperWrap) piperWrap.hidden = lang !== 'en';
+  if (periodPauseWrap) periodPauseWrap.hidden = !fonoran;
 
   if (!voiceNote) return;
   if (fonoran) {
     voiceNote.hidden = false;
-    voiceNote.textContent = 'Fluidity controls how continuously sentences are read; periods still pause briefly.';
+    voiceNote.textContent = 'Fluidity controls how continuously sentences are read; Period pause sets the break length at full stops.';
     return;
   }
   if (lang === 'en') {
@@ -381,7 +465,11 @@ export function renderTranslateOutput() {
   const display = getOutputDisplay();
   if (!display) return;
 
-  const fonoran = isFonoranTransliterateMode();
+  const fonoranScript = isFonoranScriptMode();
+  const fonoranRoman = isFonoranRomanMode();
+  const fonoran = fonoranScript || fonoranRoman;
+  display.classList.toggle('symbol-text', fonoranRoman || !fonoran);
+  display.classList.toggle('translate-output--script', fonoranRoman);
 
   if (fonoran && currentFonoranTokens.length) {
     let wordIndex = 0;
@@ -390,7 +478,8 @@ export function renderTranslateOutput() {
         return `<span class="tts-punct" aria-hidden="true">${escapeHtml(item.char)}</span>`;
       }
       const index = wordIndex++;
-      return `<span class="tts-word" data-index="${index}">${escapeHtml(item.roman)}</span>`;
+      const text = fonoranRoman ? item.symbols : item.roman;
+      return `<span class="tts-word" data-index="${index}">${escapeHtml(text)}</span>`;
     }).join(' ');
     return;
   }
@@ -399,7 +488,11 @@ export function renderTranslateOutput() {
   const words = tokenizeFonoraPhrase(text);
 
   if (!words.length) {
-    display.innerHTML = fonoran ? EMPTY_FONORAN_OUTPUT_HTML : EMPTY_OUTPUT_HTML;
+    display.innerHTML = fonoranRoman
+      ? EMPTY_FONORAN_ROMAN_OUTPUT_HTML
+      : fonoran
+        ? EMPTY_FONORAN_OUTPUT_HTML
+        : EMPTY_OUTPUT_HTML;
     return;
   }
 
@@ -408,7 +501,11 @@ export function renderTranslateOutput() {
     .join(' ');
 }
 
-function buildFonoranPlaybackSegments({ syllableBySyllable = false, playbackRate = 1 } = {}) {
+function buildFonoranPlaybackSegments({
+  syllableBySyllable = false,
+  playbackRate = 1,
+  periodPauseScale = 1,
+} = {}) {
   /** @type {Array<{ kind: 'word', symbols: string, wordIndex: number, wordSource?: object } | { kind: 'pause', char: string, pauseMs: number }>} */
   const segments = [];
   let wordIndex = 0;
@@ -418,7 +515,7 @@ function buildFonoranPlaybackSegments({ syllableBySyllable = false, playbackRate
       segments.push({
         kind: 'pause',
         char: item.char,
-        pauseMs: pauseMsForPunctuation(item.char, playbackRate),
+        pauseMs: pauseMsForPunctuation(item.char, playbackRate, periodPauseScale),
       });
       continue;
     }
@@ -437,11 +534,12 @@ function buildFonoranPlaybackSegments({ syllableBySyllable = false, playbackRate
         });
       }
     } else {
+      const prebuilt = currentFonoranWordSources?.[wordIndex];
       segments.push({
         kind: 'word',
         symbols: item.symbols,
         wordIndex,
-        wordSource: buildTransliterateWordSource(item.symbols, [item.roman], item.roman),
+        wordSource: prebuilt || buildTransliterateWordSource(item.symbols, [item.roman], item.roman),
       });
     }
 
@@ -513,6 +611,7 @@ async function playFluidSymbolGroups(symbolGroups, wordIndexGroups, playback, {
       piperVoice: playback.piperVoice,
       espeakVoice: playback.espeakVoice,
       playbackRate: playback.playbackRate,
+      wordSourceOffset: indices[0] ?? 0,
       shouldCancel: () => cancelRequested,
       onPrepare: (message) => {
         if (needsLoad || (playback.piperVoice && !isPiperAudioReady(playback.piperVoice))) {
@@ -603,16 +702,24 @@ export async function playTranslateOutput() {
   const words = tokenizeFonoraPhrase(text);
 
   if (!words.length) {
-    const message = isFonoranTransliterateMode()
+    const message = isFonoranScriptMode()
       ? 'Paste Fonora script above first.'
-      : 'Type some text above to translate first.';
+      : isFonoranRomanMode()
+        ? 'Type Fonoran roman spelling above first.'
+        : 'Type some text above to translate first.';
     showPlaybackStatus(message, { isError: true });
+    return;
+  }
+
+  if (!isFonoranRomanListenAllowed()) {
+    showPlaybackStatus('Fix unknown letters in your roman spelling before listening.', { isError: true });
     return;
   }
 
   const playback = getReaderPlaybackOptions();
   const syllableBySyllable = readTransliterateSyllableMode();
   const fluidity = readTransliterateFluidity();
+  const periodPauseScale = readTransliteratePeriodPauseScale();
   const usesFluidPlayback = !syllableBySyllable && fluidity > FLUIDITY_WORD_BY_WORD;
   const groupGapMs = groupGapMsForFluidity(fluidity, playback.playbackRate);
   const wordGapMs = usesFluidPlayback
@@ -644,6 +751,9 @@ export async function playTranslateOutput() {
   try {
     if (isFonoranTransliterateMode() && currentFonoranTokens.length) {
       if (usesFluidPlayback) {
+        if (isFonoranRomanMode() && currentFonoranWordSources?.length) {
+          setReaderWordSources(currentFonoranWordSources);
+        }
         const clauses = buildFonoranFluidClauses();
         const pauseScale = sentencePauseScaleForFluidity(fluidity);
 
@@ -655,7 +765,9 @@ export async function playTranslateOutput() {
 
           const seg = clauses[i];
           if (seg.kind === 'pause') {
-            await sleepMs(Math.round(pauseMsForPunctuation(seg.char, playback.playbackRate) * pauseScale));
+            await sleepMs(Math.round(
+              pauseMsForPunctuation(seg.char, playback.playbackRate, periodPauseScale) * pauseScale,
+            ));
             continue;
           }
 
@@ -680,6 +792,7 @@ export async function playTranslateOutput() {
       const segments = buildFonoranPlaybackSegments({
         syllableBySyllable,
         playbackRate: playback.playbackRate,
+        periodPauseScale,
       });
 
       for (let i = 0; i < segments.length; i++) {
@@ -847,7 +960,7 @@ function bindPlaybackUiOnce() {
 
   document.getElementById('translate-lang')?.addEventListener('change', () => {
     const lang = getTranslateLang();
-    if (lang !== FONORAN_TRANSLITERATE_LANG) {
+    if (lang !== FONORAN_TRANSLITERATE_LANG && lang !== FONORAN_ROMAN_LANG) {
       saveLanguagePreference(lang, getReaderEnglishDialect());
     }
     syncTransliterateModeUi();
@@ -878,6 +991,11 @@ function bindPlaybackUiOnce() {
   document.getElementById('translate-fluidity')?.addEventListener('input', () => {
     syncTransliterateFluidityLabel();
     localStorage.setItem(TRANSLITERATE_FLUIDITY_KEY, String(readTransliterateFluidity()));
+  });
+
+  document.getElementById('translate-period-pause')?.addEventListener('input', () => {
+    syncTransliteratePeriodPauseLabel();
+    localStorage.setItem(TRANSLITERATE_PERIOD_PAUSE_KEY, String(readTransliteratePeriodPause()));
   });
 }
 

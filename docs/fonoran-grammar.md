@@ -187,6 +187,8 @@ Present is **not** a particle. It is the default when no time marker appears.
 | Past | ta | Active |
 | Future | sa | Active |
 
+**Numeral overlap.** The syllables **ta** (digit 2) and **sa** (digit 10) also serve as cardinal numerals in counting compounds (`sa-pa` = 11, `sasa-pa` = 21). In numeral context they parse as digits, not tense markers. See [fonoran-numerals.md](fonoran-numerals.md).
+
 ### The v1 particle inventory
 
 The full inventory (forms, roles, English triggers) lives in [../data/fonoran-grammar-particles.json](../data/fonoran-grammar-particles.json). The particle class is **closed and minimal** (Design Rule 0): a word is a particle only if it is genuinely grammatical — it cannot be a lexical concept — *and* it is sanctioned here or wired in the translator. The complete v1 set is:
@@ -437,15 +439,21 @@ English surface forms diverge. Meaning converges. The translator **compiles mean
 
 ```mermaid
 flowchart TD
-  EN["English"]
-  ME["Meaning extraction"]
-  SG["Semantic graph"]
-  PC["Primitive concepts"]
-  CC["Compound construction"]
-  GP["Grammar particles"]
-  FO["Fonoran sentence"]
-  EN --> ME --> SG --> PC --> CC --> GP --> FO
+  SRC["Source (any language)"]
+  subgraph Probabilistic["Probabilistic (LLM @ temperature 0)"]
+    ME["Meaning extraction"]
+    SG["Concept frame: slots + concept ids"]
+  end
+  subgraph Deterministic["Deterministic render (hard rules)"]
+    PC["Concept ids to approved roots"]
+    CC["Compound construction / marked loans"]
+    GP["Grammar particles + fixed order"]
+    FO["Fonoran sentence"]
+  end
+  SRC --> ME --> SG --> PC --> CC --> GP --> FO
 ```
+
+The LLM only chooses **meaning** (concept ids + slot roles); everything from concept ids onward is **deterministic** and never invents a spelling.
 
 **Current implementation (July 2026).** The live translator is a **multilingual LLM semantic compiler** plus deterministic render. See **[fonoran-translator.md](fonoran-translator.md)** for architecture diagrams, UI behavior, API fields, and module map.
 
@@ -539,6 +547,8 @@ a spelling and **never consults WordNet at runtime**.
 | --- | --- | --- | --- | --- |
 | Curated strong alias / concept id / lemma / phrase | high | `direct` | pass | Concept id, localized alias, or lab meaning/curated alias. |
 | Curated interpretation | medium | `interpreted` | pass | Tense lemmas, idioms, spatial/relational rules, concept hints/bridges, head-noun of a phrase, transparent compound assembly (over strong aliases only). |
+| Runtime compound from a bridge | medium | `composed` | pass | Transparent multi-root path assembled from approved roots (e.g. `sentience → think+self`); fuses to one word when the Compound Boundary Constraint passes, else a space-separated phrase. |
+| Marked phonetic loan | low | `loan` | pass (marked) | Proper noun / unmappable term phonetically borrowed and visibly wrapped `«…»` (the "iPhone stays iPhone" rule). Never composed from roots. |
 | **Below floor** | low | `unknown` | gap | No confident concept — surfaces in red for the designer to grow a root. A demoted weak (gloss) alias is carried as a non-authoritative `suggestion` for the curation queue but is **never emitted**. |
 
 **Strong vs weak aliases.** An alias is **strong** when it comes from a curated

@@ -124,16 +124,17 @@ export function firstSentence(text, maxLen = 160) {
   return `${sentence.slice(0, maxLen - 1).trim()}…`;
 }
 
-/** @param {string} markdown */
-export function extractTldr(markdown) {
-  const match = String(markdown).match(/^>\s*\*\*TL;DR\.\*\*\s*(.+)$/m);
-  return match ? match[1].trim() : '';
-}
-
-/** @param {string} markdown */
+/**
+ * Description = the first real paragraph after the H1.
+ *
+ * Research notes intentionally have NO "TL;DR" (or any other) summary line —
+ * they open straight into `## Research Question` in the lab-notebook voice
+ * described in docs/research-notes-authoring.md. Do not reintroduce a TL;DR
+ * blockquote or special-case it here; `research:verify-md` rejects notes that
+ * contain one.
+ * @param {string} markdown
+ */
 export function extractDescription(markdown) {
-  const tldr = extractTldr(markdown);
-  if (tldr) return tldr;
   const lines = String(markdown).split('\n');
   let pastTitle = false;
   for (const line of lines) {

@@ -229,7 +229,7 @@ Each token carries `resolution_kind` (see [Rule 7 · Resolution cascade](fonoran
 
 ### Concept bridges (abstract / technical vocabulary)
 
-Abstract source words with no root are resolved through curated **concept bridges** ([data/fonoran-concept-bridges.json](../data/fonoran-concept-bridges.json)) plus any locked lore glossaries ([data/lore/*.json](../data/lore/)). A bridge is one of: `compose` (multi-root path → `composed`), `concept` (redirect to an existing approved concept → `interpreted`), or `loan` (marked phonetic borrow → `loan`). Bridges never invent spellings — every composed part comes from an approved root or compound (Design Rule 0 / Rule 5). Loaded in `buildResolveContext()` and applied in both `resolveConceptId()` (LLM path) and `resolveEnglishToken()` (legacy path).
+Abstract source words with no root are resolved through curated **concept bridges** ([data/fonoran-concept-bridges.json](../data/fonoran-concept-bridges.json)) plus an optional, untracked **local glossary** ([data/local/glossary.json](../data/local/glossary.json)) for pinning proper-noun/loanword decisions on a private corpus. The local glossary loads **first** so its pins win over the general bridge set. A bridge is one of: `compose` (multi-root path → `composed`), `concept` (redirect to an existing approved concept → `interpreted`), or `loan` (marked phonetic borrow → `loan`). Bridges never invent spellings — every composed part comes from an approved root or compound (Design Rule 0 / Rule 5). Loaded in `loadConceptBridges()` / `buildResolveContext()` and applied in both `resolveConceptId()` (LLM path) and `resolveEnglishToken()` (legacy path).
 
 ### Conceptual simplification pre-pass (`simplify`)
 

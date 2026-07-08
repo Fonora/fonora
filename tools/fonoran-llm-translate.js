@@ -13,7 +13,14 @@ import {
   ANTHROPIC_TRANSLATOR_API_KEY_ENV,
 } from './fonoran-llm-client.js';
 import { buildResolveContext, loadConceptBridges } from './fonoran-english-resolve.js';
-import { translateFromFrame, translateEnglishLegacy } from './fonoran-translator.js';
+import {
+  translateFromFrame,
+  translateEnglishLegacy,
+  buildSurface,
+  buildFrame,
+  punctuationToken,
+  splitSentences,
+} from './fonoran-translator.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
 import { getParticleRuntime } from './fonoran-particles.js';
 import {
@@ -301,6 +308,8 @@ Slot semantics (Rule 4 / Rule 7):
 
 Mandatory rules:
 - Compile MEANING, not word-for-word English (Rule 7).
+- The source is ONE sentence: compile ALL of its content — NEVER drop or omit a clause. Coordinating conjunctions (and, or, but, then) have no v1 particle, so fold the concepts of EVERY coordinated clause into the slots rather than discarding the second clause.
+- Demonstratives (this/that/these/those) and articles have NO Fonoran form — never emit a concept for them; leave them to inference (Rule 7).
 - Particles ONLY: mi, ta, sa, no, ya, von — map neg→no (Rule 3).
 - Present tense: leave time slot empty (Rule 3).
 - Spatial/relational: lexical concepts (inside, here, there, near, path, source, up, down…) — NOT particles.
@@ -312,7 +321,7 @@ Mandatory rules:
 - Why/how: not expressible in v1 — put in unresolved[], do not guess.
 - Abstract / technical words: prefer a transparent compose path over an existing concept over a gap (Rule 5). Emit either a bridge concept id (e.g. sentience) or an explicit compose path joined with "+" using APPROVED concept ids (e.g. "think+self"). Only fall back to unresolved[] when no root path is recoverable and it is not a proper noun.
 - Proper nouns / coined names with no recoverable path (e.g. a place or product name): keep as a marked loanword — emit its concept id if one is pinned in the glossary/bridge list rather than translating or gapping.
-- Never invent concept ids OR spellings; honest gaps in unresolved[] (Design Rule 0).`;
+- Never invent concept ids OR spellings. Record honest gaps in unresolved[] as SHORT tokens — the single English word (or ≤2-word phrase) that has no v1 form, e.g. "can", "or", "should", "boy". Do NOT put explanations, clause labels, or sentence fragments in unresolved[] (Design Rule 0).`;
 
 /**
  * Ask LLM for a concept frame.
@@ -334,7 +343,9 @@ export async function compileFrameViaLlm(text, options = {}) {
     ? 'Detect the source language and set detected_lang.'
     : `Source language code: ${sourceLang}. Set detected_lang to "${sourceLang}".`;
 
-  const user = `${ctx.grammar}
+  // Static prefix (identical every call) → one prompt-cache breakpoint. The system
+  // block precedes it and is cached in the same prefix. Only `user` below varies.
+  const cachePrefix = `${ctx.grammar}
 
 Particles:
 ${ctx.particleLines}
@@ -346,9 +357,9 @@ Concept bridges (abstract/technical word → recoverable path; use these ids or 
 ${ctx.bridges}
 
 Examples (English source → frame):
-${ctx.fewShot}
+${ctx.fewShot}`;
 
-${langHint}
+  const user = `${langHint}
 
 Source text:
 """
@@ -359,6 +370,7 @@ Return the JSON frame.`;
 
   const result = await completeJson({
     system: SYSTEM_PROMPT,
+    cachePrefix,
     user,
     temperature: 0,
     maxTokens: 1024,
@@ -366,7 +378,7 @@ Return the JSON frame.`;
   });
 
   if (!result.ok) return result;
-  return { ok: true, frame: normalizeFrameParticles(result.data), raw: result.raw, model: anthropicModel() };
+  return { ok: true, frame: normalizeFrameParticles(result.data), raw: result.raw, model: anthropicModel(), usage: result.usage ?? null };
 }
 
 const SIMPLIFY_SYSTEM_PROMPT = `You are the Fonoran "plain meaning" pre-pass (docs/fonoran-grammar.md Rule 7, meaning-extraction stage).
@@ -533,6 +545,19 @@ async function translateViaLlmCore(text, options = {}) {
     }
   }
 
+  // Cache-only mode (deterministic CI / offline): never call the API. A miss is
+  // an explicit "needs warming" signal, not a live translation.
+  if (options.cacheOnly) {
+    return {
+      ok: false,
+      error: `cache-miss: "${input}" is not warmed in the translation cache (run the warm CLI with an API key).`,
+      engine: 'cache-only',
+      cache_miss: true,
+      input,
+      status: 422,
+    };
+  }
+
   const llm = await compileFrameViaLlm(input, options);
   if (!llm.ok) {
     return { ok: false, error: llm.error, engine: 'llm', status: llm.status ?? 503 };
@@ -586,13 +611,91 @@ async function translateViaLlmCore(text, options = {}) {
 }
 
 /**
- * Translate via LLM with an optional conceptual-simplification pre-pass.
+ * Compose several single-sentence results into one multi-sentence result.
+ * Each sentence keeps its own well-formed grammar; a sentence-boundary marker is
+ * inserted between them so the surface reads as discrete sentences instead of one
+ * run-on frame (the failure mode that made long passages hard to follow).
+ * Surface, frame, and playback are rebuilt from the merged token stream so every
+ * downstream consumer stays consistent.
+ * @param {object[]} results  ordered single-sentence results
+ * @param {string[]} segments source sentence/clause per result
+ * @param {{ input: string }} ctx
+ */
+export async function mergeSentenceResults(results, segments, { input }) {
+  const tokens = [];
+  const slots = { subject: [], time: [], event: [], path: [], object: [], modifiers: [] };
+  const unresolved = [];
+  const interpretations = [];
+  const reasonings = [];
+  const sentences = [];
+  const frames = [];
+  let anyLlm = false;
+
+  results.forEach((r, i) => {
+    const segTokens = Array.isArray(r.tokens) ? r.tokens : [];
+    // Terminate each sentence: keep an existing trailing "?", else add a period,
+    // so sentences render discretely ("... fetdi. ... chefet.") not as a run-on.
+    const last = segTokens[segTokens.length - 1];
+    const withTerminator = last?.kind === 'punctuation'
+      ? segTokens
+      : [...segTokens, punctuationToken('.')];
+    tokens.push(...withTerminator);
+
+    const segSlots = r.semantic?.slots ?? {};
+    for (const key of Object.keys(slots)) {
+      if (Array.isArray(segSlots[key])) slots[key].push(...segSlots[key]);
+    }
+    for (const w of r.unresolved ?? []) unresolved.push(String(w).toLowerCase());
+    for (const it of r.interpretations ?? []) interpretations.push(it);
+    if (r.reasoning) reasonings.push(r.reasoning);
+    if (r.engine === 'llm') anyLlm = true;
+    frames.push(r.llm_frame ?? null);
+    sentences.push({
+      input: segments[i],
+      roman: r.surface?.roman ?? '',
+      unresolved: r.unresolved ?? [],
+      frame: r.llm_frame ?? null,
+    });
+  });
+
+  const surface = buildSurface(tokens);
+  // Multi-sentence tidy: drop the space before sentence/question terminators.
+  // Scoped to this new path only; the single-sentence surface is left byte-for-
+  // byte identical so golden/probe expectations are unaffected.
+  surface.roman = surface.roman.replace(/\s+([.?!])/g, '$1');
+
+  const merged = {
+    input,
+    mode: 'discourse',
+    tokens,
+    surface,
+    semantic: { skeleton: results[0]?.semantic?.skeleton ?? null, slots },
+    frame: buildFrame(tokens),
+    interpretations,
+    unresolved: [...new Set(unresolved)],
+    reasoning: reasonings.join(' ') || null,
+    engine: anyLlm ? 'llm' : 'cached',
+    sentences,
+    llm_frames: frames,
+  };
+  return attachTranslatorPlayback(merged);
+}
+
+/**
+ * Translate via LLM with an optional conceptual-simplification pre-pass and
+ * per-sentence segmentation.
+ *
  * `simplify`: true (force), false (never), or 'auto' (heuristic on abstract/long
  * input). When active, the source text is rewritten into plain, Fonoran-
  * expressible propositions before compilation; the pivot is returned as
  * `simplified` so the UI can show "Plain meaning".
+ *
+ * Segmentation: multi-sentence input (or a multi-clause plain-meaning pivot) is
+ * compiled ONE sentence per concept frame and rendered as discrete Fonoran
+ * sentences. This keeps each sentence's grammar well-formed instead of collapsing
+ * a whole passage into a single run-on frame.
  * @param {string} text
- * @param {{ sourceLang?: string, lab?: object, skipCache?: boolean, simplify?: boolean|'auto' }} options
+ * @param {{ sourceLang?: string, lab?: object, skipCache?: boolean, cacheOnly?: boolean, simplify?: boolean|'auto' }} options
  */
 export async function translateViaLlm(text, options = {}) {
   const input = String(text ?? '').trim();
@@ -607,15 +710,41 @@ export async function translateViaLlm(text, options = {}) {
   }
 
   const compileText = simplified?.text || input;
-  const result = await translateViaLlmCore(compileText, options);
+  const segments = (simplified?.clauses?.length ? simplified.clauses : splitSentences(compileText))
+    .map(s => String(s ?? '').trim())
+    .filter(Boolean);
 
-  if (!result || result.ok === false) return result;
-
-  // Preserve the original source in the returned object; expose the pivot.
-  result.input = input;
-  if (simplified) {
-    result.simplified = simplified;
-    result.source_text = compileText;
+  // Single sentence/clause: compile as one frame (unchanged behavior).
+  if (segments.length <= 1) {
+    const result = await translateViaLlmCore(compileText, options);
+    if (!result || result.ok === false) return result;
+    result.input = input;
+    if (simplified) {
+      result.simplified = simplified;
+      result.source_text = compileText;
+    }
+    return result;
   }
-  return result;
+
+  // Multi-sentence: one frame per sentence, then compose discrete sentences.
+  const segResults = [];
+  for (const seg of segments) {
+    const r = await translateViaLlmCore(seg, options);
+    if (!r || r.ok === false) {
+      // Propagate the first hard failure / cache-miss, tagged with the full input.
+      if (r) {
+        r.input = input;
+        r.segment = seg;
+      }
+      return r;
+    }
+    segResults.push(r);
+  }
+
+  const merged = await mergeSentenceResults(segResults, segments, { input });
+  if (simplified) {
+    merged.simplified = simplified;
+    merged.source_text = compileText;
+  }
+  return merged;
 }

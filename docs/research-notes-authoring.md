@@ -32,6 +32,8 @@ phase: phase-1
 
 Everything else is derived from the markdown body: title from the H1, description from the opening paragraph, related slugs from `/research/notes/...` links.
 
+**No summary line.** Do not add a `> **TL;DR.**` (or similar) blockquote — notes open straight into `## Research Question` in the lab-notebook voice. `npm run research:verify-md` fails if a TL;DR blockquote is present.
+
 ---
 
 ## Expanded note sections (exact order)

@@ -27,7 +27,7 @@ import { renderMarkdown } from './markdown-render.js';
 import { ipaToEspeakTeachingInput } from './ipa-espeak-format.js';
 import { resolveFonoraPhoneticText, decodeFonoraWord, resolveFonoraClauseIpa } from './fonora-tts.js';
 import { buildRomanPartsBreakdown, buildScriptBreakdown } from './breakdown.js';
-import { romanToFonoraScript, fonoraScriptToRoman, tokenizeFonoraScriptInput, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
+import { romanToFonoraScript, fonoraScriptToRoman, romanTextToFonoraScript, tokenizeFonoraScriptInput, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
 import { chunkSymbolWordsForFluidity } from './fonora-tts-ui.js';
 import { ASCII_EQUALS } from './load-language-rules.js';
 
@@ -639,6 +639,36 @@ export function runTests(options) {
     assert(target?.text === 'pə');
   });
 
+  t('romanTextToFonoraScript encodes kas with CUP vowel not TRAP', () => {
+    const result = romanTextToFonoraScript('kas', rules);
+    assert(result.strictOk, result.warnings.join('; '));
+    assert(result.words[0].phonemeKeys === 'k a s', result.words[0].phonemeKeys);
+    const ipa = phonemeKeysToRecoveredIpa(result.words[0].phonemeKeys, rules);
+    assert(ipa.includes('ʌ'), `expected CUP vowel, got ${ipa}`);
+    assert(!ipa.includes('æ'), `expected no TRAP vowel, got ${ipa}`);
+  });
+
+  t('romanTextToFonoraScript encodes kaes with TRAP vowel', () => {
+    const result = romanTextToFonoraScript('kaes', rules);
+    assert(result.strictOk, result.warnings.join('; '));
+    assert(result.words[0].phonemeKeys === 'k ae s', result.words[0].phonemeKeys);
+    const ipa = phonemeKeysToRecoveredIpa(result.words[0].phonemeKeys, rules);
+    assert(ipa.includes('æ'), `expected TRAP vowel, got ${ipa}`);
+  });
+
+  t('romanTextToFonoraScript fails strict mode on unknown letters', () => {
+    const result = romanTextToFonoraScript('qa', rules);
+    assert(!result.strictOk);
+    assert(result.warnings.length > 0);
+    assert(result.symbols.includes('?'));
+  });
+
+  t('romanTextToFonoraScript longest-match tokenizes cha as ch + a', () => {
+    const result = romanTextToFonoraScript('cha', rules);
+    assert(result.strictOk, result.warnings.join('; '));
+    assert(result.words[0].phonemeKeys === 'ch a', result.words[0].phonemeKeys);
+  });
+
   t('fonoraScriptToRoman preserves space-separated words', () => {
     const spaced = [
       romanToFonoraScript(['fa'], rules).phrase,
@@ -683,6 +713,9 @@ export function runTests(options) {
     assert(result.tokens.some((item) => item.kind === 'pause' && item.char === '.'));
     assert(result.tokens.filter((item) => item.kind === 'word').length === 3);
     assert(pauseMsForPunctuation('.', 1) > pauseMsForPunctuation(',', 1));
+    assert(pauseMsForPunctuation('.', 1, 0) === 0);
+    assert(pauseMsForPunctuation('.', 1, 2) === pauseMsForPunctuation('.', 1) * 2);
+    assert(pauseMsForPunctuation(',', 1, 2) === pauseMsForPunctuation(',', 1));
     assert(tokenizeFonoraScriptInput('hello · world').length === 2);
   });
 

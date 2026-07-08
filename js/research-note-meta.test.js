@@ -5,7 +5,6 @@ import {
   deriveMetadataFromBody,
   extractDescription,
   extractRelatedSlugs,
-  extractTldr,
   formatNoteMarkdownExport,
   nextResearchCode,
   parseResearchNoteFrontmatter,
@@ -51,13 +50,13 @@ export function runResearchNoteMetaTests() {
     test('slugifyTitle produces kebab-case', () => {
       assert(slugifyTitle('Writing Sound Instead!') === 'writing-sound-instead');
     }),
-    test('extractTldr reads blockquote', () => {
-      const md = '# Title\n\n> **TL;DR.** A short summary here.\n';
-      assert(extractTldr(md) === 'A short summary here.');
+    test('extractDescription uses first paragraph after H1', () => {
+      const md = '# Title\n\nFirst real paragraph.\n\nSecond paragraph.';
+      assert(extractDescription(md) === 'First real paragraph.');
     }),
-    test('extractDescription prefers TL;DR', () => {
-      const md = '# Title\n\n> **TL;DR.** Summary line.\n\nBody paragraph.';
-      assert(extractDescription(md) === 'Summary line.');
+    test('extractDescription ignores a stray TL;DR blockquote', () => {
+      const md = '# Title\n\n> **TL;DR.** Legacy summary.\n\nFirst real paragraph.';
+      assert(extractDescription(md) === 'First real paragraph.');
     }),
     test('parseResearchNoteFrontmatter reads status and date', () => {
       const md = '---\nstatus: Superseded\ndate: 2026-06-21\n---\n\n# Title\n\nBody.';
@@ -73,7 +72,7 @@ export function runResearchNoteMetaTests() {
       assert(related.includes('foo'));
     }),
     test('deriveMetadataFromBody fills title and abstract', () => {
-      const md = '# My Experiment\n\n> **TL;DR.** We tried something new today.';
+      const md = '# My Experiment\n\nWe tried something new today.';
       const derived = deriveMetadataFromBody(md, {});
       assert(derived.title === 'My Experiment');
       assert(derived.slug === 'my-experiment');

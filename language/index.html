@@ -256,7 +256,7 @@
                   </select>
                 </label>
               </div>
-              <textarea id="tr-input" class="translator-input" rows="6" placeholder="Type words, phrases, or sentences in any language…" autocomplete="off" spellcheck="true" aria-labelledby="tr-source-lang-label"></textarea>
+              <textarea id="tr-input" class="translator-input" rows="6" placeholder="Type words, phrases, or sentences in any language…" autocomplete="off" spellcheck="true" aria-label="Text to translate into Fonoran"></textarea>
               <div class="translator-examples sans">
                 <span class="translator-examples__label">Try:</span>
                 <button type="button" class="chip" data-tr-example="All men are created equal">All men are created equal</button>
@@ -290,6 +290,7 @@
               <button type="button" class="chip" data-dict-filter="needs_review">Needs review</button>
               <button type="button" class="chip" data-dict-filter="approved">Approved</button>
               <button type="button" class="chip" data-dict-filter="rejected">Rejected</button>
+              <span class="dict-count sans" id="dict-count" role="status" aria-live="polite"></span>
             </div>
           </div>
         </div>

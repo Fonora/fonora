@@ -39,7 +39,7 @@ export function parseFonoraScriptInput(text) {
 }
 
 /** Milliseconds to pause on punctuation during readback (scaled by speech speed). */
-export function pauseMsForPunctuation(char, playbackRate = 1) {
+export function pauseMsForPunctuation(char, playbackRate = 1, periodPauseScale = 1) {
   const rate = Math.max(0.45, Math.min(1, Number(playbackRate) || 1));
   const base = char === '.'
     ? 520
@@ -52,7 +52,12 @@ export function pauseMsForPunctuation(char, playbackRate = 1) {
           : char === '!' || char === '?'
             ? 640
             : 500;
-  return Math.round(base + (1 - rate) * 180);
+  let ms = Math.round(base + (1 - rate) * 180);
+  if (char === '.') {
+    const scale = Math.max(0, Number(periodPauseScale) || 0);
+    ms = Math.round(ms * scale);
+  }
+  return ms;
 }
 
 /** Split pasted Fonora script on whitespace; symbols only (no punctuation). */
@@ -110,6 +115,68 @@ export function romanToFonoraScript(input, rules) {
   }
   const phrase = syllables.map(s => s.symbols).filter(Boolean).join('');
   return { phrase, syllables, warnings };
+}
+
+/** One roman word token → Fonora script via encodeSounds (deterministic phoneme spelling). */
+export function romanWordToFonoraScript(roman, rules) {
+  const text = String(roman || '').trim().toLowerCase();
+  if (!text || !rules) {
+    return { roman: text, symbols: '', phonemeKeys: '', warnings: [], strictOk: false };
+  }
+
+  const encoded = encodeSounds(text, rules);
+  const phonemeKeys = encoded.groups.map((group) => group.sound).join(' ');
+  const strictOk = encoded.warnings.length === 0 && !encoded.symbols.includes('?');
+
+  return {
+    roman: text,
+    symbols: encoded.symbols,
+    phonemeKeys,
+    warnings: encoded.warnings.slice(),
+    strictOk,
+  };
+}
+
+/** Space-separated roman phrase → Fonora script (inverse of fonoraScriptToRoman). */
+export function romanTextToFonoraScript(input, rules) {
+  if (!rules) {
+    return { roman: '', symbols: '', tokens: [], words: [], warnings: ['Rules not loaded'], strictOk: false };
+  }
+
+  const items = parseFonoraScriptInput(input);
+  /** @type {Array<FonoraScriptWordToken & { roman: string, phonemeKeys: string, warnings: string[], strictOk: boolean }>} */
+  const words = [];
+  /** @type {Array<{ kind: 'word', symbols: string, roman: string } | FonoraScriptPauseToken>} */
+  const tokens = [];
+  const warnings = [];
+  const romanParts = [];
+  const symbolParts = [];
+  let strictOk = true;
+
+  for (const item of items) {
+    if (item.kind === 'pause') {
+      tokens.push(item);
+      romanParts.push(item.char);
+      continue;
+    }
+
+    const row = romanWordToFonoraScript(item.symbols, rules);
+    words.push({ ...item, ...row });
+    tokens.push({ kind: 'word', symbols: row.symbols, roman: row.roman });
+    romanParts.push(row.roman);
+    symbolParts.push(row.symbols);
+    if (row.warnings.length) warnings.push(...row.warnings);
+    if (!row.strictOk) strictOk = false;
+  }
+
+  return {
+    roman: romanParts.join(' '),
+    symbols: symbolParts.join(' '),
+    tokens,
+    words,
+    warnings,
+    strictOk,
+  };
 }
 
 /** One Fonora script word → roman phoneme spelling (inverse of encodeSounds). */

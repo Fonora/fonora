@@ -69,7 +69,11 @@ function extractJsonText(text) {
 /**
  * @param {object} opts
  * @param {string} opts.system
- * @param {string} opts.user
+ * @param {string} opts.user  the VARIABLE part of the user turn (per-request)
+ * @param {string} [opts.cachePrefix]  large STATIC user prefix; when set it is sent
+ *   as its own cache-breakpoint block so Anthropic prompt caching reuses it across
+ *   calls (huge cost/latency win for the fixed grammar+inventory+few-shot prompt).
+ * @param {boolean} [opts.cacheSystem]  cache the system block too (static prompt).
  * @param {number} [opts.temperature]
  * @param {string} [opts.apiKeyEnv] env var name for the API key (default ANTHROPIC_API_KEY)
  * @returns {Promise<{ ok: true, data: object, raw: string, usage?: object } | { ok: false, error: string, status?: number }>}
@@ -77,6 +81,8 @@ function extractJsonText(text) {
 export async function completeJson({
   system,
   user,
+  cachePrefix = null,
+  cacheSystem = false,
   temperature = 0,
   maxTokens: maxTokensOpt,
   apiKeyEnv = ANTHROPIC_API_KEY_ENV,
@@ -87,6 +93,19 @@ export async function completeJson({
   }
   const model = anthropicModel();
   const maxTokens = maxTokensOpt ?? anthropicMaxTokens();
+
+  // Cache breakpoints (ephemeral, ~5 min TTL): the static system + the static
+  // user prefix. Only the small variable tail changes per request, so warm calls
+  // are billed at the cache-read rate for the shared prefix.
+  const systemField = cacheSystem && system
+    ? [{ type: 'text', text: system, cache_control: { type: 'ephemeral' } }]
+    : system;
+  const userContent = cachePrefix
+    ? [
+      { type: 'text', text: cachePrefix, cache_control: { type: 'ephemeral' } },
+      { type: 'text', text: user },
+    ]
+    : user;
 
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     await throttle();
@@ -103,8 +122,8 @@ export async function completeJson({
           model,
           max_tokens: maxTokens,
           temperature,
-          system,
-          messages: [{ role: 'user', content: user }],
+          system: systemField,
+          messages: [{ role: 'user', content: userContent }],
         }),
       });
 

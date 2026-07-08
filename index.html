@@ -1088,7 +1088,9 @@
 
       <div id="translate-status" class="translate-status" hidden></div>
 
-      <label id="translate-output-label" for="translate-output">Fonora spelling</label>
+      <div class="translate-output-head">
+        <label id="translate-output-label" for="translate-output">Fonora spelling</label>
+      </div>
       <div id="translate-output" class="tts-display symbol-text translate-output" role="status" aria-live="polite" aria-labelledby="translate-output-label"></div>
 
       <div class="translator-playback-bar sans translate-playback-bar" role="group" aria-label="Transliteration playback">
@@ -1107,6 +1109,11 @@
             <span class="translator-playback-speed__label">Fluidity</span>
             <input type="range" id="translate-fluidity" min="0" max="100" step="5" value="85" aria-valuemin="0" aria-valuemax="100" aria-valuenow="85">
             <span id="translate-fluidity-val" class="translator-playback-speed__val">85%</span>
+          </label>
+          <label class="translator-playback-speed" id="translate-period-pause-wrap" for="translate-period-pause" hidden>
+            <span class="translator-playback-speed__label">Period pause</span>
+            <input type="range" id="translate-period-pause" min="0" max="200" step="10" value="100" aria-valuemin="0" aria-valuemax="200" aria-valuenow="100">
+            <span id="translate-period-pause-val" class="translator-playback-speed__val">100%</span>
           </label>
           <label class="translator-playback-mode">
             <input type="checkbox" id="translate-syllable-by-syllable">

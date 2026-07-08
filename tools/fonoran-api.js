@@ -537,9 +537,11 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const body = await readJsonBody(req);
       const lab = await getLab();
       const level = body.level != null ? Number(body.level) : null;
+      // Admin Translation Test mirrors the live app: LLM engine (cache-first,
+      // API on miss), so the report reflects what users actually get.
       // suggest: attach offline WordNet curation suggestions to each gap so the
       // lab GUI / concept editor can propose aliases for human approval.
-      return done(200, await runTranslationGapReport({ level, lab, suggest: true }));
+      return done(200, await runTranslationGapReport({ level, lab, engine: 'llm', suggest: true }));
     }
     if (pathname === '/api/fonoran/lab/health' && method === 'GET') {
       return done(200, await getHealth());
