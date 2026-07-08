@@ -7,12 +7,16 @@
  * below-floor elements surface as honest gaps rather than fabricated words.
  */
 
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   phoneticKeyBold,
   compoundPhoneticKey,
   englishGuide,
   compoundEnglishGuide,
 } from './fonoran-pronunciation.js';
+import { checkCompoundBoundary } from './fonoran-gen3-readability.js';
 import { buildConceptAliasIndex, loadRuntimeConceptInventory, buildRootById, loadLocalization } from './fonoran-concepts.js';
 // WordNet is imported ONLY for the offline curation assistant (suggestGapConcepts).
 // It is never used by resolveEnglishToken / the runtime translate path.
@@ -28,6 +32,76 @@ import {
   headNounToken,
 } from './fonoran-interpretation.js';
 import { REUSABLE_WORD_STATES } from './fonoran-derivation.js';
+
+const RESOLVE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
+const CONCEPT_BRIDGES_PATH = join(RESOLVE_ROOT, 'data/fonoran-concept-bridges.json');
+// Optional local-only loanword glossaries (not tracked in this repo). Drop a
+// JSON glossary at data/local/glossary.json to pin proper-noun/loanword
+// decisions for a private corpus; absent by default.
+const LOCAL_GLOSSARY_PATHS = [join(RESOLVE_ROOT, 'data/local/glossary.json')];
+
+let conceptBridgeCache = null;
+
+/**
+ * Load curated concept bridges (data/fonoran-concept-bridges.json) plus any
+ * optional local glossaries (data/local/glossary.json) into one flat lookup:
+ *   Map<englishForm, { compose?: string[], concept?: string, loan?: bool, roman?, gloss? }>
+ * Bridges are meaning-attempts over APPROVED concepts (docs Rule 5/7): they add
+ * a `composed` / `interpreted` / `loan` tier so abstract text resolves instead
+ * of red-gapping, without ever inventing a root spelling.
+ */
+export async function loadConceptBridges() {
+  if (conceptBridgeCache) return conceptBridgeCache;
+  const map = new Map();
+
+  const add = (form, entry) => {
+    const key = String(form ?? '').trim().toLowerCase();
+    if (!key || map.has(key)) return;
+    map.set(key, entry);
+  };
+
+  // Optional local glossaries load FIRST so their pinned decisions (e.g. a
+  // proper noun kept as a loanword) win over the general bridge set.
+  for (const glossaryPath of LOCAL_GLOSSARY_PATHS) {
+    try {
+      const raw = JSON.parse(await readFile(glossaryPath, 'utf8'));
+      for (const bucket of ['loans', 'compose', 'concept']) {
+        for (const [term, spec] of Object.entries(raw[bucket] ?? {})) {
+          add(term, {
+            compose: Array.isArray(spec.compose) ? spec.compose : null,
+            concept: spec.concept ?? null,
+            loan: bucket === 'loans' || Boolean(spec.loan),
+            roman: spec.roman ?? null,
+            gloss: spec.gloss ?? null,
+          });
+        }
+      }
+    } catch { /* glossary optional */ }
+  }
+
+  try {
+    const raw = JSON.parse(await readFile(CONCEPT_BRIDGES_PATH, 'utf8'));
+    for (const [id, spec] of Object.entries(raw.bridges ?? {})) {
+      const entry = {
+        compose: Array.isArray(spec.compose) ? spec.compose : null,
+        concept: spec.concept ?? null,
+        loan: Boolean(spec.loan),
+        roman: spec.roman ?? null,
+        gloss: spec.gloss ?? null,
+      };
+      add(id, entry);
+      for (const form of spec.forms ?? []) add(form, entry);
+    }
+  } catch { /* bridges file optional */ }
+
+  conceptBridgeCache = map;
+  return map;
+}
+
+/** Reset the concept-bridge cache (tests / hot reload). */
+export function resetConceptBridgeCache() {
+  conceptBridgeCache = null;
+}
 
 /** Hardcoded surface → lemma shortcuts shared with translator frame parser. */
 export const IRREGULAR = {
@@ -351,6 +425,7 @@ export async function buildResolveContext(lab = null) {
   const inventory = await loadRuntimeConceptInventory({ lab: liveLab });
   const rules = await loadInterpretationRules().catch(() => null);
   const locData = await loadLocalization('en');
+  const bridges = await loadConceptBridges();
   const aliasIndex = buildConceptAliasIndex(inventory.concepts, liveLab, locData, { labFirst: true });
 
   for (const compound of liveLab?.compounds ?? []) {
@@ -409,6 +484,7 @@ export async function buildResolveContext(lab = null) {
     parseInventory,
     compoundByConceptId,
     spellingByConceptId,
+    bridges,
     rules,
   };
 }
@@ -465,14 +541,152 @@ function lookupByConceptId(ctx, conceptId) {
   };
 }
 
+/**
+ * Resolve a list of concept ids to their spellings for transparent composition.
+ * Returns null if ANY part is unresolved (never partially fabricate).
+ */
+function partSpellings(ctx, conceptIds) {
+  const specs = [];
+  for (const id of conceptIds) {
+    const hit = lookupByConceptId(ctx, id);
+    if (!hit.resolved || !hit.fonoran) return null;
+    specs.push({ id, spelling: hit.fonoran, gloss: hit.gloss ?? id });
+  }
+  return specs;
+}
+
+/**
+ * Tier COMPOSED: build a transparent compound from approved concepts at runtime
+ * (docs/fonoran-grammar.md Rule 5 + Rule 7 stage 5). Parts fuse into one written
+ * word only when every boundary is clean (Compound Boundary Constraint); a
+ * colliding boundary falls back to a space-separated phrase (still valid,
+ * modifier-before-head) rather than silently altering sounds. Never invents a
+ * spelling: every part comes from an approved root or compound.
+ */
+export function composeConceptToken(ctx, conceptIds, { role = 'concept', english = '', gloss = null, reason = 'concept bridge' } = {}) {
+  const ids = (conceptIds ?? []).map(x => String(x ?? '').trim().toLowerCase()).filter(Boolean);
+  if (ids.length < 2) return null;
+  const specs = partSpellings(ctx, ids);
+  if (!specs) return null;
+  const parts = specs.map(s => s.spelling);
+  const boundary = checkCompoundBoundary(parts);
+  const fused = boundary.valid ? parts.join('') : parts.join(' ');
+  const composedGloss = gloss ?? specs.map(s => s.gloss).join(' + ');
+  const conceptKey = ids.join('+');
+  return enrichToken({
+    english: english || conceptKey,
+    fonoran: fused,
+    parts,
+    composition_roots: parts,
+    resolved: true,
+    gloss: composedGloss,
+    kind: 'compound',
+    source: 'bridge_compose',
+    concept_id: conceptKey,
+    pronunciation: pronunciationForParts(parts),
+  }, {
+    role,
+    resolution_kind: 'composed',
+    confidence: 'medium',
+    concept_id: conceptKey,
+    interpreted: true,
+    interpreted_from: english || conceptKey,
+    interpret_reason: `${reason}:${conceptKey}${boundary.valid ? '' : ' (spaced: boundary collision)'}`,
+    guess_components: ids,
+  });
+}
+
+/**
+ * Tier LOAN: a phonetic loanword, always visibly marked (roman wrapped «…»).
+ * Used for proper nouns / terms with no recoverable Fonoran path (the
+ * "iPhone stays iPhone" rule). The `parts` carry a Fonora-roman approximation so
+ * the playback pipeline can render Fonora script; the surface stays marked so a
+ * reader knows it is borrowed, not composed from roots.
+ */
+export function loanToken({ role = 'concept', english = '', roman = null, gloss = null } = {}) {
+  const clean = String(roman ?? english ?? '').trim().toLowerCase().replace(/[^a-z]/g, '');
+  const parts = clean ? [clean] : [];
+  return enrichToken({
+    english,
+    fonoran: `\u00ab${clean || String(english).toLowerCase()}\u00bb`,
+    parts,
+    composition_roots: parts,
+    resolved: true,
+    gloss: gloss ?? `${english} (loanword)`,
+    kind: 'loan',
+    loan: true,
+    source: 'bridge_loan',
+    concept_id: null,
+    pronunciation: pronunciationForParts(parts),
+  }, {
+    role,
+    resolution_kind: 'loan',
+    confidence: 'low',
+    interpreted: true,
+    interpreted_from: english,
+    interpret_reason: 'loanword (phonetic)',
+  });
+}
+
+/** Turn a concept-bridge entry into a translator token (compose / concept / loan). */
+export function bridgeToToken(ctx, entry, { role = 'concept', english = '' } = {}) {
+  if (!entry) return null;
+  if (entry.loan) {
+    return loanToken({ role, english, roman: entry.roman, gloss: entry.gloss });
+  }
+  if (Array.isArray(entry.compose) && entry.compose.length >= 2) {
+    return composeConceptToken(ctx, entry.compose, { role, english, gloss: entry.gloss });
+  }
+  if (entry.concept) {
+    const hit = lookupByConceptId(ctx, entry.concept);
+    if (hit.resolved) {
+      return enrichToken({ ...hit, role, english: english || hit.english }, {
+        role,
+        resolution_kind: 'interpreted',
+        confidence: 'medium',
+        concept_id: entry.concept,
+        interpreted: true,
+        interpreted_from: english,
+        interpret_reason: `concept bridge:${entry.concept}`,
+      });
+    }
+  }
+  return null;
+}
+
+/** Look up an English word / concept id in the curated bridges. */
+function lookupBridge(ctx, word) {
+  const key = String(word ?? '').trim().toLowerCase();
+  if (!key || !ctx.bridges) return null;
+  return ctx.bridges.get(key) ?? null;
+}
+
 /** Resolve an approved concept id to a translator token (LLM frame path). */
 export function resolveConceptId(conceptId, ctx, role) {
+  const id = String(conceptId ?? '').trim();
+  // LLM may emit an explicit compose path, e.g. "think+self".
+  if (id.includes('+')) {
+    const composed = composeConceptToken(ctx, id.split('+'), { role, english: id, reason: 'frame compose' });
+    if (composed) return composed;
+  }
   const hit = lookupByConceptId(ctx, conceptId);
+  if (hit.resolved) {
+    return enrichToken(hit, {
+      role,
+      concept_id: conceptId,
+      resolution_kind: 'direct',
+      confidence: 'high',
+    });
+  }
+  // Concept id had no spelling: try a curated bridge (compose / concept / loan)
+  // keyed by the id itself before surfacing an honest gap.
+  const bridged = bridgeToToken(ctx, lookupBridge(ctx, id.replace(/_/g, ' ')) ?? lookupBridge(ctx, id), { role, english: id });
+  if (bridged) return bridged;
   return enrichToken(hit, {
     role,
     concept_id: conceptId,
-    resolution_kind: hit.resolved ? 'direct' : 'unknown',
-    confidence: hit.resolved ? 'high' : 'low',
+    resolution_kind: 'unknown',
+    confidence: 'low',
   });
 }
 
@@ -555,6 +769,14 @@ export async function resolveEnglishToken(english, ctx, {
   if (bridgeConcept && !hints.concept_hint) {
     hints.concept_hint = bridgeConcept;
     hints.interpret_reason = hints.interpret_reason ?? 'semantic bridge';
+  }
+
+  // Pinned loanword: a proper noun / coined name explicitly locked as a loan in
+  // a glossary is authoritative over any coincidental lexicon alias, so a name
+  // reads identically everywhere (e.g. "Platform" ≠ the ordinary word "raft").
+  const pinnedLoan = lookupBridge(ctx, lookupWord) ?? lookupBridge(ctx, surface.toLowerCase());
+  if (pinnedLoan?.loan) {
+    return loanToken({ role, english: surface, roman: pinnedLoan.roman, gloss: pinnedLoan.gloss });
   }
 
   // Tier MEDIUM: curated concept hint.
@@ -662,6 +884,18 @@ export async function resolveEnglishToken(english, ctx, {
   // Tier MEDIUM: transparent single-word assembly over strong aliases only.
   const wordAssembly = await tryTransparentWordAssembly(lookupWord, ctx, role);
   if (wordAssembly) return wordAssembly;
+
+  // Tier COMPOSED / CONCEPT / LOAN: curated concept bridge for an abstract or
+  // technical word (docs/fonoran-grammar.md Rule 5/7). Tried before the honest
+  // gap so direct/interpreted lexicon still wins, but abstract prose composes
+  // from roots (or falls back to a marked loanword) instead of red-gapping.
+  const bridge = lookupBridge(ctx, lookupWord)
+    ?? lookupBridge(ctx, lemmatizeEnglish(lookupWord, ctx.rules))
+    ?? lookupBridge(ctx, surface);
+  if (bridge) {
+    const bridged = bridgeToToken(ctx, bridge, { role, english: surface });
+    if (bridged) return bridged;
+  }
 
   // Below the confidence floor → honest gap (never fabricate a word).
   return gapToken(surface, role, {

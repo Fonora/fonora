@@ -1088,12 +1088,38 @@
 
       <div id="translate-status" class="translate-status" hidden></div>
 
-      <label id="translate-output-label" for="translate-output">Fonora spelling</label>
+      <div class="translate-output-head">
+        <label id="translate-output-label" for="translate-output">Fonora spelling</label>
+      </div>
       <div id="translate-output" class="tts-display symbol-text translate-output" role="status" aria-live="polite" aria-labelledby="translate-output-label"></div>
-      <div class="button-row translate-playback-actions">
-        <button type="button" id="translate-play" class="btn btn--primary"><svg class="learn-icon btn-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><polygon points="6 4 20 12 6 20 6 4"/></svg><span class="btn-play-label">Play</span></button>
-        <button type="button" id="translate-stop" class="btn" disabled aria-label="Stop playback"><svg class="learn-icon btn-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1"/></svg><span class="btn-play-label">Stop</span></button>
-        <div id="translate-playback-status" class="tts-status translate-playback-status" hidden role="status" aria-live="polite"></div>
+
+      <div class="translator-playback-bar sans translate-playback-bar" role="group" aria-label="Transliteration playback">
+        <div class="translator-playback-bar__actions">
+          <button type="button" id="translate-play" class="btn btn--primary" aria-label="Listen to transliteration"><svg class="learn-icon btn-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><polygon points="6 4 20 12 6 20 6 4"/></svg><span class="btn-play-label">Listen</span></button>
+          <button type="button" id="translate-stop" class="btn" disabled aria-label="Stop playback"><svg class="learn-icon btn-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1"/></svg><span class="btn-play-label">Stop</span></button>
+        </div>
+        <p id="translate-playback-status" class="translator-playback-status sans translate-playback-status" hidden role="status" aria-live="polite"></p>
+        <div class="translator-playback-controls">
+          <label class="translator-playback-speed" for="translate-speed">
+            <span class="translator-playback-speed__label">Speech speed</span>
+            <input type="range" id="translate-speed" min="0.45" max="1" step="0.05" value="1" aria-valuemin="0.45" aria-valuemax="1" aria-valuenow="1">
+            <span id="translate-speed-val" class="translator-playback-speed__val">100%</span>
+          </label>
+          <label class="translator-playback-speed" for="translate-fluidity">
+            <span class="translator-playback-speed__label">Fluidity</span>
+            <input type="range" id="translate-fluidity" min="0" max="100" step="5" value="85" aria-valuemin="0" aria-valuemax="100" aria-valuenow="85">
+            <span id="translate-fluidity-val" class="translator-playback-speed__val">85%</span>
+          </label>
+          <label class="translator-playback-speed" id="translate-period-pause-wrap" for="translate-period-pause" hidden>
+            <span class="translator-playback-speed__label">Period pause</span>
+            <input type="range" id="translate-period-pause" min="0" max="200" step="10" value="100" aria-valuemin="0" aria-valuemax="200" aria-valuenow="100">
+            <span id="translate-period-pause-val" class="translator-playback-speed__val">100%</span>
+          </label>
+          <label class="translator-playback-mode">
+            <input type="checkbox" id="translate-syllable-by-syllable">
+            By syllable
+          </label>
+        </div>
       </div>
 
       <div id="translate-loading" class="tts-loading" hidden role="status" aria-live="polite">

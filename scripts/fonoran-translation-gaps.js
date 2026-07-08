@@ -25,6 +25,12 @@
  *   node scripts/fonoran-translation-gaps.js --corpus stranger   # stranger corpus gap report
  *   node scripts/fonoran-translation-gaps.js --corpus stranger --json
  *   node scripts/fonoran-translation-gaps.js --engine llm   # LLM semantic compiler
+ *   node scripts/fonoran-translation-gaps.js --engine llm --cache-only  # deterministic:
+ *                                                         #   read the committed cache,
+ *                                                         #   never call the API; a cache
+ *                                                         #   miss is a "needs warming"
+ *                                                         #   failure (warm with
+ *                                                         #   --update-golden --engine llm)
  */
 import {
   runTranslationGapReport,
@@ -47,12 +53,19 @@ const corpusIdx = argv.indexOf('--corpus');
 const corpusArg = corpusIdx !== -1 ? argv[corpusIdx + 1] : 'golden';
 const engineIdx = argv.indexOf('--engine');
 const engineArg = engineIdx !== -1 ? argv[engineIdx + 1] : 'legacy';
+const cacheOnly = argv.includes('--cache-only');
+const concurrencyIdx = argv.indexOf('--concurrency');
+// Parallel warm only makes sense for the API-backed LLM engine; default 6 there.
+const concurrency = concurrencyIdx !== -1
+  ? Math.max(1, Number(argv[concurrencyIdx + 1]) || 1)
+  : (engineArg === 'llm' ? 6 : 1);
 
 const gapReportOpts = () => ({
   level: onlyLevel,
   resetCache: true,
   corpus: corpusArg,
   engine: engineArg,
+  cacheOnly,
 });
 
 const C = {
@@ -72,7 +85,8 @@ async function runAssert() {
   const baseline = await loadGapBaseline();
   const gapDiff = baseline ? diffGapsAgainstBaseline(report, baseline) : null;
   const newGaps = gapDiff?.new ?? [];
-  const ok = mismatches.length === 0 && newGaps.length === 0;
+  const warmNeeded = report.warm_needed ?? [];
+  const ok = mismatches.length === 0 && newGaps.length === 0 && warmNeeded.length === 0;
 
   if (asJson) {
     console.log(JSON.stringify({
@@ -81,10 +95,19 @@ async function runAssert() {
       mismatches: mismatches.map(p => ({ phrase: p.phrase, expected: p.expected, got: p.roman })),
       new_gaps: newGaps,
       resolved_gaps: gapDiff?.resolved ?? [],
+      warm_needed: warmNeeded,
       quality: report.quality,
       collapses: report.collapses,
     }, null, 2));
     return ok;
+  }
+
+  if (warmNeeded.length) {
+    console.log(color(C.red + C.bold, `✗ ${warmNeeded.length} phrase(s) not warmed in the cache`) +
+      color(C.dim, ' (cache-only mode makes CI deterministic — no live API calls).'));
+    for (const p of warmNeeded.slice(0, 10)) console.log(`    ${color(C.dim, p)}`);
+    if (warmNeeded.length > 10) console.log(color(C.dim, `    …and ${warmNeeded.length - 10} more`));
+    console.log(color(C.dim, 'Warm them with an API key: npm run test:translator:warm\n'));
   }
 
   if (newGaps.length) {
@@ -97,6 +120,7 @@ async function runAssert() {
   }
 
   if (!graded.length) {
+    if (warmNeeded.length) return false;
     console.log(color(C.yellow, 'No golden `fon` values found in corpus — nothing to assert.'));
     console.log(color(C.dim, 'Seed them with: node scripts/fonoran-translation-gaps.js --update-golden'));
     return true;
@@ -132,7 +156,23 @@ async function runAssert() {
 }
 
 async function runUpdate() {
-  const { updated, levels, gaps } = await updateGoldenCorpus();
+  const startedAt = Date.now();
+  let lastLog = 0;
+  const onProgress = (d, total) => {
+    // Throttle progress lines so parallel workers don't flood the terminal.
+    if (d !== total && d - lastLog < 25) return;
+    lastLog = d;
+    const secs = (Date.now() - startedAt) / 1000;
+    const rate = d / Math.max(secs, 0.001);
+    const eta = rate > 0 ? Math.round((total - d) / rate) : 0;
+    console.log(color(C.dim, `  warmed ${d}/${total}  (${secs.toFixed(0)}s, ~${eta}s left)`));
+  };
+  const { updated, levels, gaps } = await updateGoldenCorpus({
+    engine: engineArg,
+    cacheOnly,
+    concurrency,
+    onProgress,
+  });
   console.log(color(C.green + C.bold, `Updated golden corpus`) +
     ` — ${updated} phrases across ${levels} levels rewritten from current output.`);
   console.log(color(C.dim, `Gap baseline refreshed — ${gaps} distinct honest gap(s).`));

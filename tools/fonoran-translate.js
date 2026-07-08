@@ -14,7 +14,7 @@ function resolveEngine(requested) {
 
 /**
  * @param {string} text
- * @param {{ sourceLang?: string, lab?: object, engine?: string, skipCache?: boolean }} [options]
+ * @param {{ sourceLang?: string, lab?: object, engine?: string, skipCache?: boolean, cacheOnly?: boolean, simplify?: boolean|'auto' }} [options]
  */
 export async function translate(text, options = {}) {
   const engine = resolveEngine(options.engine);
@@ -24,7 +24,8 @@ export async function translate(text, options = {}) {
     return { ...result, engine: 'legacy' };
   }
 
-  if (!translatorLlmConfigured()) {
+  // Cache-only mode never calls the API, so it does not require a configured key.
+  if (!options.cacheOnly && !translatorLlmConfigured()) {
     return {
       ok: false,
       error: `${ANTHROPIC_TRANSLATOR_API_KEY_ENV} not set. Configure translator API key or use engine=legacy.`,
@@ -37,6 +38,8 @@ export async function translate(text, options = {}) {
     sourceLang: options.sourceLang,
     lab: options.lab,
     skipCache: options.skipCache,
+    cacheOnly: options.cacheOnly,
+    simplify: options.simplify,
   });
 
   if (result.ok === false) {

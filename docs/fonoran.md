@@ -93,6 +93,7 @@ npm run fonoran:build    # assign roots + build curated compounds → lab
 | **Nesting** | Approved word `kaso` can combine with root `la` → `lakaso`. |
 | **Review states** | `draft` → `needs_review` → `approved` \| `rejected` \| `revised` |
 | **Live vocabulary** | PostgreSQL when `DATABASE_URL` is set; else `data/fonoran-sound-bucket.json` |
+| **Cardinal numerals** | 1–99 via phonetic compounds — see [fonoran-numerals.md](fonoran-numerals.md) |
 
 Legacy `parts: ["ka","so"]` is accepted; stored as typed `{ type, ref }` components.
 

@@ -54,7 +54,7 @@ export async function runResearchNotesStoreTests() {
               tools: [],
               source: [],
             },
-            body: '# Test Note\n\n> **TL;DR.** Testing.',
+            body: '# Test Note\n\nTesting.',
           },
           'test@local',
         );

@@ -143,6 +143,7 @@ const ipaFormatResult = test('ipaToEspeakSynthesisInput segments stress and unde
   assert(ipaToEspeakSynthesisInput('ðə') === 'ð_ˈə');
   assert(ipaToEspeakSynthesisInput('dʒeɪmz') === 'dʒ_ˈeɪ_m_z');
   assert(ipaToEspeakSynthesisInput('bɔɪ') === 'b_ˈɔɪ');
+  assert(ipaToEspeakSynthesisInput('nɑ gɪ sɑ') === 'n_ˈɑ ɡ_ˈɪ s_ˈɑ');
   assert(segmentIpa('sʌn').join(',') === 's,ʌ,n');
   assert(segmentIpa('bɪg').join(',') === 'b,ɪ,ɡ');
 });
@@ -155,6 +156,21 @@ const piperGResult = test('ipaToPiperPhonemeIds accepts ASCII g via IPA normaliz
   const ids = ipaToPiperPhonemeIds('bɪgɪnɪŋ', map);
   assert(ids.length > 0);
   assert(ids.includes(66), 'expected voiced velar stop phoneme id');
+});
+
+const piperMultiWordResult = test('ipaToPiperPhonemeIds keeps word boundaries in multi-word clauses', () => {
+  const map = {
+    _: [0], '^': [1], '$': [2], 'ˈ': [120],
+    n: [26], ɑ: [10], g: [66], ɡ: [66], ɪ: [74], s: [48],
+  };
+  const merged = ipaToPiperPhonemeIds('nɑgɪsɑ', map);
+  const spaced = ipaToPiperPhonemeIds('nɑ gɪ sɑ', map);
+  const stressId = 120;
+  const mergedStress = merged.filter((id) => id === stressId).length;
+  const spacedStress = spaced.filter((id) => id === stressId).length;
+  assert(mergedStress === 1, 'merged clause should stress only the first vowel');
+  assert(spacedStress === 3, 'spaced clause should stress each word');
+  assert(spaced.length > merged.length, 'spaced clause should not collapse into one word');
 });
 
 const sampleVoiceResult = test('getPiperVoiceForLang maps sample languages', () => {

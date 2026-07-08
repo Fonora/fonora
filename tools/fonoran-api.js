@@ -402,11 +402,17 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const url = new URL(req.url ?? '', 'http://localhost');
       const lab = await getLab();
       const engine = body.engine ?? url.searchParams.get('engine') ?? undefined;
+      const simplifyRaw = body.simplify ?? url.searchParams.get('simplify') ?? undefined;
+      const simplify = simplifyRaw === 'auto' ? 'auto'
+        : simplifyRaw === true || simplifyRaw === 'true' ? true
+          : simplifyRaw === false || simplifyRaw === 'false' ? false
+            : undefined;
       const result = await translate(body.text ?? '', {
         lab,
         sourceLang: body.sourceLang ?? url.searchParams.get('sourceLang') ?? 'auto',
         engine,
         skipCache: body.skipCache === true,
+        simplify,
       });
       if (result.ok === false) {
         return done(result.status ?? 503, { error: result.error, engine: result.engine ?? 'llm' });
@@ -531,9 +537,11 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const body = await readJsonBody(req);
       const lab = await getLab();
       const level = body.level != null ? Number(body.level) : null;
+      // Admin Translation Test mirrors the live app: LLM engine (cache-first,
+      // API on miss), so the report reflects what users actually get.
       // suggest: attach offline WordNet curation suggestions to each gap so the
       // lab GUI / concept editor can propose aliases for human approval.
-      return done(200, await runTranslationGapReport({ level, lab, suggest: true }));
+      return done(200, await runTranslationGapReport({ level, lab, engine: 'llm', suggest: true }));
     }
     if (pathname === '/api/fonoran/lab/health' && method === 'GET') {
       return done(200, await getHealth());

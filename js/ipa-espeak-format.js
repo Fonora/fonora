@@ -50,11 +50,8 @@ export function segmentIpa(ipa) {
   return segments;
 }
 
-/**
- * Convert compact IPA to eSpeak synthesis input (underscore-separated, primary stress on first vowel).
- */
-export function ipaToEspeakSynthesisInput(ipa) {
-  const segments = segmentIpa(ipa);
+function espeakWordInput(ipaWord) {
+  const segments = segmentIpa(ipaWord);
   if (!segments.length) return '';
 
   const out = [];
@@ -72,6 +69,16 @@ export function ipaToEspeakSynthesisInput(ipa) {
   }
 
   return out.join('_');
+}
+
+/**
+ * Convert compact IPA to eSpeak synthesis input (underscore-separated, primary stress on first vowel).
+ * Space-separated words keep word boundaries so consonants do not cross word edges.
+ */
+export function ipaToEspeakSynthesisInput(ipa) {
+  const words = String(ipa || '').trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return '';
+  return words.map((word) => espeakWordInput(word)).join(' ');
 }
 
 function isConsonantSchwaClip(segments) {

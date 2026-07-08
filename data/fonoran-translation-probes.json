@@ -157,6 +157,24 @@
       "target_frame": "water",
       "status": "pass",
       "note": "bring resolves via la; water object present"
+    },
+    {
+      "en": "No sentience can live inside it.",
+      "target_frame": "sentience · live · inside",
+      "status": "pass",
+      "note": "abstract 'sentience' composes (think+self); negation + inside path"
+    },
+    {
+      "en": "Machines act and do not learn.",
+      "target_frame": "machine · not · learn",
+      "status": "pass",
+      "note": "'machine' composes (make+thing) not animal; negation preserved"
+    },
+    {
+      "en": "Consciousness stays outside the system.",
+      "target_frame": "consciousness · outside · system",
+      "status": "pass",
+      "note": "consciousness (know+self) + system (all+thing) both compose"
     }
   ]
 }

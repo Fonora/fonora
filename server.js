@@ -181,6 +181,9 @@ function cacheControl(pathname) {
     return 'no-cache';
   }
   if (/\.(wasm|data|js|mjs|css)$/.test(pathname)) return 'public, max-age=31536000, immutable';
+  // Markdown docs are edited in place and fetched by the in-app viewer; revalidate
+  // so content updates appear immediately instead of being pinned for max-age.
+  if (/\.md$/.test(pathname)) return 'no-cache';
   return 'public, max-age=3600';
 }
 

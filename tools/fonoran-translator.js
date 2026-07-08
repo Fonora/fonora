@@ -54,6 +54,7 @@ import {
 import { getPosHint } from './fonoran-semantic-lookup.js';
 import { getParticleRuntime, resetParticleCache } from './fonoran-particles.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
+import { enforceModifierOrder } from './fonoran-grammar-spec.js';
 
 /**
  * Cached grammar-particle runtime: { index, byId, quantifiers }.
@@ -104,7 +105,7 @@ function isQuestionSentence(sentence) {
 }
 
 /** Trailing punctuation token so written questions surface a `?` (Rule 3/4). */
-function punctuationToken(mark) {
+export function punctuationToken(mark) {
   return {
     role: 'punctuation',
     english: mark,
@@ -869,7 +870,7 @@ const ROLE_TO_FRAME = {
  * Fonoran surface is generated from the resolved tokens, so this object is a
  * faithful description of what the surface actually says (never fabricates).
  */
-function buildFrame(tokens) {
+export function buildFrame(tokens) {
   const frame = {
     actor: [],
     action: [],
@@ -907,7 +908,7 @@ function buildFrame(tokens) {
   return frame;
 }
 
-function buildSurface(tokens) {
+export function buildSurface(tokens) {
   const romanWords = tokens.map(t => (t.resolved ? t.fonoran : `[${t.english}]`));
   const allParts = tokens.flatMap(t => (t.resolved ? t.parts : []));
   const sayParts = tokens.map(t => {
@@ -931,6 +932,31 @@ function buildSurface(tokens) {
 
 /** Particle surface forms the LLM may emit in frame slots. */
 const LLM_PARTICLE_FORMS = new Set(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
+
+/**
+ * Normalize an LLM `unresolved[]` entry into a short, reusable gap token. The
+ * compiler sometimes returns verbose reasoning ("second clause '…' omitted per
+ * rule 7") or an annotated head ("can (ability modal — no v1 form)"). Keep only
+ * the head token so the honest-gap baseline stays a clean list of missing
+ * English words; drop sentence-like descriptions and clause meta-labels.
+ * @param {string} raw
+ * @returns {string|null}
+ */
+export function cleanGapToken(raw) {
+  let s = String(raw ?? '').trim();
+  if (!s) return null;
+  // Strip an explanatory tail: "( … )", ": …", or " — …" / " - …".
+  s = s.split(/\s*[(:]|\s+[—-]\s+/)[0].trim();
+  s = s.replace(/^['"“”]+|['"“”]+$/g, '').trim();
+  if (!s) return null;
+  const lower = s.toLowerCase();
+  // Clause meta-labels ("and-clause", "compound clause", "subordinate_clause…")
+  // are structural notes, not gap words.
+  if (/^(second|compound|subordinate|and|but|or)[-\s_]?(clause|conjunction|clause_embedding)/.test(lower)) return null;
+  // Real gap words are short; sentence-like descriptions are noise.
+  if (lower.split(/\s+/).length > 2) return null;
+  return lower;
+}
 
 /**
  * Convert an LLM concept frame into internal grammar slots.
@@ -975,15 +1001,17 @@ export async function translateFromFrame(frame, options = {}) {
 
   ctx.isQuestion = Boolean(frame?.is_question);
   const semantic = frameSlotsToSemanticSlots(frame?.slots ?? {});
+  // Deterministic grammar enforcement: canonical modifier order (quality before
+  // place) so floating modifiers render the same regardless of LLM slot order.
+  enforceModifierOrder(semantic, ctx.inventory?.concepts ?? []);
   const tokens = await slotsToTokens(ctx, semantic);
   if (ctx.isQuestion) tokens.push(punctuationToken('?'));
 
   const surface = buildSurface(tokens);
-  const unresolved = [
-    ...(frame?.unresolved ?? []).map(w => String(w)),
-    ...tokens.filter(t => !t.resolved).map(t => t.english),
-  ];
-  const uniqueUnresolved = [...new Set(unresolved.map(w => String(w).toLowerCase()))];
+  // Frame gaps are cleaned to short tokens; token gaps are already single words.
+  const frameGaps = (frame?.unresolved ?? []).map(cleanGapToken).filter(Boolean);
+  const tokenGaps = tokens.filter(t => !t.resolved).map(t => String(t.english ?? '').toLowerCase());
+  const uniqueUnresolved = [...new Set([...frameGaps, ...tokenGaps])];
 
   const interpretations = tokens
     .filter(t => t.interpreted)

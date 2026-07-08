@@ -98,6 +98,20 @@ export function resolveFonoraPhoneticText(word, rules, index = -1) {
   return { text: ipa, mode, phonemeKeys: word.phonemeKeys, sourceIpa: sourceIpa || null };
 }
 
+/** Join recovered IPA for multiple Fonora words into one utterance. */
+export function resolveFonoraClauseIpa(symbolWords, rules, { wordSourceOffset = 0 } = {}) {
+  const ipaParts = [];
+  for (let i = 0; i < symbolWords.length; i++) {
+    const decoded = decodeFonoraWord(symbolWords[i], rules);
+    const target = resolveFonoraPhoneticText(decoded, rules, wordSourceOffset + i);
+    if (target?.text && !String(target.text).includes('?')) {
+      ipaParts.push(String(target.text).trim());
+    }
+  }
+  if (!ipaParts.length) return null;
+  return { text: ipaParts.join(' '), wordCount: symbolWords.length, skipped: symbolWords.length - ipaParts.length };
+}
+
 export function cancelSpeech() {
   cancelEspeakAudio();
 }
@@ -252,6 +266,79 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
   }
 
   return { words, spoken, skipped, cancelled: false };
+}
+
+/**
+ * Speak a run of Fonora words as one continuous neural clip (smoother language flow).
+ * @param {string[]} symbolWords space-separated Fonora script tokens
+ */
+export async function speakFonoraFluid(symbolWords, rules, options = {}) {
+  const {
+    engine = 'piper',
+    piperVoice = 'en_US-lessac-medium',
+    espeakVoice = 'en-us',
+    playbackRate = 1,
+    wordSourceOffset = 0,
+    shouldCancel = () => false,
+    onPrepare,
+  } = options;
+
+  const words = (symbolWords || []).map((symbols) => decodeFonoraWord(symbols, rules)).filter(Boolean);
+  if (!words.length) {
+    return { words, spoken: 0, cancelled: false, skipped: 0 };
+  }
+
+  if (shouldCancel()) {
+    return { words, spoken: 0, cancelled: true, skipped: words.length };
+  }
+
+  const clauseIpa = resolveFonoraClauseIpa(symbolWords, rules, { wordSourceOffset });
+  if (!clauseIpa?.text) {
+    return { words, spoken: 0, cancelled: false, skipped: words.length };
+  }
+
+  let piperReady = false;
+  if (usesPiperEngine(engine) && piperVoice) {
+    if (!isPiperAudioReady(piperVoice)) {
+      onPrepare?.('Loading neural voice…');
+    }
+    const piperInit = await initPiperAudio(piperVoice, onPrepare);
+    piperReady = piperInit.ok;
+    if (!piperInit.ok) {
+      throw new Error(piperInit.error || 'Neural voice failed to load');
+    }
+  }
+
+  let espeakReady = false;
+  if (engine === 'espeak') {
+    const espeakInit = await initEspeakAudio();
+    espeakReady = espeakInit.ok;
+    if (!espeakInit.ok) {
+      throw new Error(espeakInit.error || 'eSpeak audio failed to load');
+    }
+  }
+
+  if (shouldCancel()) {
+    return { words, spoken: 0, cancelled: true, skipped: words.length };
+  }
+
+  await speakResolvedAudio(clauseIpa.text, {
+    mode: 'fonora-ipa',
+    engine,
+    piperVoice,
+    espeakVoice,
+    onPrepare,
+    piperReady,
+    espeakReady,
+    playbackRate,
+  });
+
+  return {
+    words,
+    spoken: clauseIpa.wordCount - (clauseIpa.skipped || 0),
+    skipped: clauseIpa.skipped || 0,
+    cancelled: shouldCancel(),
+  };
 }
 
 const SLOW_PLAYBACK_RATE = 0.72;

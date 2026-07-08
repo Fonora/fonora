@@ -9,154 +9,207 @@
       "name": "First contact & identity",
       "phrases": [
         {
-          "en": "Hello."
+          "en": "Hello.",
+          "fon": ""
         },
         {
-          "en": "I am a person."
+          "en": "I am a person.",
+          "fon": "mi ba"
         },
         {
-          "en": "My name is this."
+          "en": "My name is this.",
+          "fon": "mi mal"
         },
         {
-          "en": "I will not hurt you."
+          "en": "I will not hurt you.",
+          "fon": "mi sa no tes be"
         },
         {
-          "en": "You are safe here."
+          "en": "You are safe here.",
+          "fon": "be tampe nam"
         },
         {
-          "en": "I am not dangerous."
+          "en": "I am not dangerous.",
+          "fon": "mi no pedal"
         },
         {
-          "en": "What is your name?"
+          "en": "What is your name?",
+          "fon": "no hu to mal ?"
         },
         {
-          "en": "Are you alone?"
+          "en": "Are you alone?",
+          "fon": "be nesfa ?"
         },
         {
-          "en": "I am alone too."
+          "en": "I am alone too.",
+          "fon": "mi nesfa [also]",
+          "note": "gap: also (needs a root)"
         },
         {
-          "en": "I do not understand your words."
+          "en": "I do not understand your words.",
+          "fon": "mi no hufel tose"
         },
         {
-          "en": "Please do not run away."
+          "en": "Please do not run away.",
+          "fon": "no ginek fet kugu"
         },
         {
-          "en": "I mean no harm."
+          "en": "I mean no harm.",
+          "fon": "mi sak no gam"
         },
         {
-          "en": "I am friendly."
+          "en": "I am friendly.",
+          "fon": "mi nes guba"
         },
         {
-          "en": "Are you hurt?"
+          "en": "Are you hurt?",
+          "fon": "be tes ?"
         },
         {
-          "en": "I feel afraid right now."
+          "en": "I feel afraid right now.",
+          "fon": "mi nes nespe gem"
         },
         {
-          "en": "Do you feel afraid?"
+          "en": "Do you feel afraid?",
+          "fon": "be nes nespe ?"
         },
         {
-          "en": "I am not your enemy."
+          "en": "I am not your enemy.",
+          "fon": "mi no paba be"
         },
         {
-          "en": "We can help each other."
+          "en": "We can help each other.",
+          "fon": "dan kas de"
         },
         {
-          "en": "Look at my hands."
+          "en": "Look at my hands.",
+          "fon": "be wi dak mi"
         },
         {
-          "en": "My hands are empty."
+          "en": "My hands are empty.",
+          "fon": "mi tam dak"
         },
         {
-          "en": "I will stay still."
+          "en": "I will stay still.",
+          "fon": "mi sa ti"
         },
         {
-          "en": "You can come closer."
+          "en": "You can come closer.",
+          "fon": "be ginam dal"
         },
         {
-          "en": "I will not move toward you."
+          "en": "I will not move toward you.",
+          "fon": "mi sa no gi nan be"
         },
         {
-          "en": "Can you hear me?"
+          "en": "Can you hear me?",
+          "fon": "be len mi ?"
         },
         {
-          "en": "I see you."
+          "en": "I see you.",
+          "fon": "mi wi be"
         },
         {
-          "en": "I am glad you are here."
+          "en": "I am glad you are here.",
+          "fon": "mi nes nam nesgu be"
         },
         {
-          "en": "We are both strangers here."
+          "en": "We are both strangers here.",
+          "fon": "dan bafet nam"
         },
         {
-          "en": "This is my name."
+          "en": "This is my name.",
+          "fon": "mi mal"
         },
         {
-          "en": "Please say your name again."
+          "en": "Please say your name again.",
+          "fon": "be se mal kugu moyi"
         },
         {
-          "en": "I will say my name slowly."
+          "en": "I will say my name slowly.",
+          "fon": "mi sa se mi mal gishanek"
         },
         {
-          "en": "Are you a person like me?"
+          "en": "Are you a person like me?",
+          "fon": "be ba ho mi ?"
         },
         {
-          "en": "I am a stranger and I need help."
+          "en": "I am a stranger and I need help.",
+          "fon": "mi bafet les kas"
         },
         {
-          "en": "I am lost and I am alone."
+          "en": "I am lost and I am alone.",
+          "fon": "mi nantam nesfa"
         },
         {
-          "en": "Can we sit together?"
+          "en": "Can we sit together?",
+          "fon": "dan tiju dan ?"
         },
         {
-          "en": "I will sit down now."
+          "en": "I will sit down now.",
+          "fon": "mi sa tiju ju gem"
         },
         {
-          "en": "Do you want me to move back?"
+          "en": "Do you want me to move back?",
+          "fon": "be sak mi gi so ?"
         },
         {
-          "en": "I feel relieved to see you."
+          "en": "I feel relieved to see you.",
+          "fon": "mi nes [tes+temkan] wi be",
+          "note": "gap: tes+temkan (needs a root)"
         },
         {
-          "en": "You do not need to be afraid."
+          "en": "You do not need to be afraid.",
+          "fon": "be no les nespe"
         },
         {
-          "en": "I come in peace."
+          "en": "I come in peace.",
+          "fon": "mi ginam mes tampa"
         },
         {
-          "en": "Can I speak to you?"
+          "en": "Can I speak to you?",
+          "fon": "mi se be ?"
         },
         {
-          "en": "I do not know your language."
+          "en": "I do not know your language.",
+          "fon": "mi no hu danse be"
         },
         {
-          "en": "Can we try to understand each other?"
+          "en": "Can we try to understand each other?",
+          "fon": "dan sakmo hufel ho ?"
         },
         {
-          "en": "Point to yourself and say your name."
+          "en": "Point to yourself and say your name.",
+          "fon": "chadak se de mal"
         },
         {
-          "en": "I am pointing to myself."
+          "en": "I am pointing to myself.",
+          "fon": "mi chadak mi de"
         },
         {
-          "en": "Are there other people near you?"
+          "en": "Are there other people near you?",
+          "fon": "honen balek dal be ?"
         },
         {
-          "en": "I have no weapon."
+          "en": "I have no weapon.",
+          "fon": "mi gat no daktopa"
         },
         {
-          "en": "I am not following you."
+          "en": "I am not following you.",
+          "fon": "mi no sogi be"
         },
         {
-          "en": "We are in the same place now."
+          "en": "We are in the same place now.",
+          "fon": "dan mes ho che gem"
         },
         {
-          "en": "I feel nervous and unsure."
+          "en": "I feel nervous and unsure.",
+          "fon": "mi nes [pemet] [metpa]",
+          "note": "gap: pemet, metpa (needs a root)"
         },
         {
-          "en": "Can we start again?"
+          "en": "Can we start again?",
+          "fon": "dan fakan moyi ?"
         }
       ]
     },
@@ -165,154 +218,205 @@
       "name": "Immediate needs",
       "phrases": [
         {
-          "en": "I am thirsty."
+          "en": "I am thirsty.",
+          "fon": "mi nes lesye"
         },
         {
-          "en": "I am hungry."
+          "en": "I am hungry.",
+          "fon": "mi saklo"
         },
         {
-          "en": "I am cold."
+          "en": "I am cold.",
+          "fon": "mi nes mak"
         },
         {
-          "en": "I am tired."
+          "en": "I am tired.",
+          "fon": "mi nes femtam"
         },
         {
-          "en": "I need water."
+          "en": "I need water.",
+          "fon": "mi les ye"
         },
         {
-          "en": "We need shelter."
+          "en": "We need shelter.",
+          "fon": "dan les temche"
         },
         {
-          "en": "There is water over there."
+          "en": "There is water over there.",
+          "fon": "ye"
         },
         {
-          "en": "Is that water safe?"
+          "en": "Is that water safe?",
+          "fon": "be tampe ye ?"
         },
         {
-          "en": "We need fire."
+          "en": "We need fire.",
+          "fon": "dan les dat"
         },
         {
-          "en": "I can make fire."
+          "en": "I can make fire.",
+          "fon": "mi kel dat"
         },
         {
-          "en": "Please drink this."
+          "en": "Please drink this.",
+          "fon": "ko kugu"
         },
         {
-          "en": "Do you want food?"
+          "en": "Do you want food?",
+          "fon": "be sak lo ?"
         },
         {
-          "en": "This food is safe."
+          "en": "This food is safe.",
+          "fon": "lo tampe"
         },
         {
-          "en": "Do not eat that."
+          "en": "Do not eat that.",
+          "fon": "no tel to"
         },
         {
-          "en": "Let us rest here."
+          "en": "Let us rest here.",
+          "fon": "dan tinal nam"
         },
         {
-          "en": "I am cold and hungry."
+          "en": "I am cold and hungry.",
+          "fon": "mi nes mak saklo"
         },
         {
-          "en": "We can sleep here tonight."
+          "en": "We can sleep here tonight.",
+          "fon": "dan sa nal nam gankan"
         },
         {
-          "en": "Are you thirsty?"
+          "en": "Are you thirsty?",
+          "fon": "be lesye ?"
         },
         {
-          "en": "Are you hungry?"
+          "en": "Are you hungry?",
+          "fon": "be saklo ?"
         },
         {
-          "en": "Are you cold?"
+          "en": "Are you cold?",
+          "fon": "be mak ?"
         },
         {
-          "en": "This place is dry."
+          "en": "This place is dry.",
+          "fon": "che tam"
         },
         {
-          "en": "We can stay here."
+          "en": "We can stay here.",
+          "fon": "dan tiche nam"
         },
         {
-          "en": "I found food."
+          "en": "I found food.",
+          "fon": "mi ta lanek lo"
         },
         {
-          "en": "I found water."
+          "en": "I found water.",
+          "fon": "mi ta lanek ye"
         },
         {
-          "en": "Take this and eat."
+          "en": "Take this and eat.",
+          "fon": "la tel"
         },
         {
-          "en": "The rain is coming."
+          "en": "The rain is coming.",
+          "fon": "yeju ginam"
         },
         {
-          "en": "We need to move now."
+          "en": "We need to move now.",
+          "fon": "dan les gi gem"
         },
         {
-          "en": "Is there more water?"
+          "en": "Is there more water?",
+          "fon": "mas ye ?"
         },
         {
-          "en": "I need to sleep."
+          "en": "I need to sleep.",
+          "fon": "mi les nal"
         },
         {
-          "en": "I am very weak."
+          "en": "I am very weak.",
+          "fon": "mi femsha ni"
         },
         {
-          "en": "Come and sit here."
+          "en": "Come and sit here.",
+          "fon": "ginam tiju nam"
         },
         {
-          "en": "The fire is warm."
+          "en": "The fire is warm.",
+          "fon": "dat lemgu"
         },
         {
-          "en": "Sit near the fire."
+          "en": "Sit near the fire.",
+          "fon": "tiju dal dat"
         },
         {
-          "en": "This water is not safe."
+          "en": "This water is not safe.",
+          "fon": "be no tampe"
         },
         {
-          "en": "I am tired and cold."
+          "en": "I am tired and cold.",
+          "fon": "mi nes femtam mak"
         },
         {
-          "en": "We need more wood."
+          "en": "We need more wood.",
+          "fon": "dan les mas [tetsas]",
+          "note": "gap: tetsas (needs a root)"
         },
         {
-          "en": "Can you carry this?"
+          "en": "Can you carry this?",
+          "fon": "be gigat to ?"
         },
         {
-          "en": "I will carry the water."
+          "en": "I will carry the water.",
+          "fon": "mi sa gigat ye"
         },
         {
-          "en": "Do not drink that water."
+          "en": "Do not drink that water.",
+          "fon": "no ko ye"
         },
         {
-          "en": "We must boil the water."
+          "en": "We must boil the water.",
+          "fon": "dan yedatgi ye"
         },
         {
-          "en": "This food is not good."
+          "en": "This food is not good.",
+          "fon": "lo gu no"
         },
         {
-          "en": "I will find food for us."
+          "en": "I will find food for us.",
+          "fon": "mi sa lanek lo dan"
         },
         {
-          "en": "Are you in pain?"
+          "en": "Are you in pain?",
+          "fon": "be tes ?"
         },
         {
-          "en": "I am in pain."
+          "en": "I am in pain.",
+          "fon": "mi nes tes"
         },
         {
-          "en": "We need to find shelter now."
+          "en": "We need to find shelter now.",
+          "fon": "dan les wi temche gem"
         },
         {
-          "en": "I see a dry place."
+          "en": "I see a dry place.",
+          "fon": "mi wi che tam"
         },
         {
-          "en": "Do you understand me?"
+          "en": "Do you understand me?",
+          "fon": "be hufel mi ?"
         },
         {
-          "en": "Please say that again."
+          "en": "Please say that again.",
+          "fon": "se kugu moyi"
         },
         {
-          "en": "We need food and water."
+          "en": "We need food and water.",
+          "fon": "dan les lo ye"
         },
         {
-          "en": "I will keep the fire burning."
+          "en": "I will keep the fire burning.",
+          "fon": "mi sa gat dat dat"
         }
       ]
     },
@@ -321,154 +425,205 @@
       "name": "Pain & injury",
       "phrases": [
         {
-          "en": "I am hurt."
+          "en": "I am hurt.",
+          "fon": "mi tes"
         },
         {
-          "en": "My leg is broken."
+          "en": "My leg is broken.",
+          "fon": "mi gamje nanfem"
         },
         {
-          "en": "I feel sick."
+          "en": "I feel sick.",
+          "fon": "mi nes femgam"
         },
         {
-          "en": "Do you have medicine?"
+          "en": "Do you have medicine?",
+          "fon": "be gat tetkas ?"
         },
         {
-          "en": "I am bleeding."
+          "en": "I am bleeding.",
+          "fon": "mi gites"
         },
         {
-          "en": "This wound is very deep."
+          "en": "This wound is very deep.",
+          "fon": "tesfem ni ju"
         },
         {
-          "en": "Please help me."
+          "en": "Please help me.",
+          "fon": "kugu kas mi"
         },
         {
-          "en": "My arm hurts a lot."
+          "en": "My arm hurts a lot.",
+          "fon": "mi tes dakfem lek"
         },
         {
-          "en": "I cannot walk."
+          "en": "I cannot walk.",
+          "fon": "mi no tigi"
         },
         {
-          "en": "The cut is still bleeding."
+          "en": "The cut is still bleeding.",
+          "fon": "temkel gites ti"
         },
         {
-          "en": "I need clean water for this wound."
+          "en": "I need clean water for this wound.",
+          "fon": "mi les natye tesfem"
         },
         {
-          "en": "My head hurts."
+          "en": "My head hurts.",
+          "fon": "mi tes kes"
         },
         {
-          "en": "Is your leg broken?"
+          "en": "Is your leg broken?",
+          "fon": "be pato nanfem ?"
         },
         {
-          "en": "I feel very weak."
+          "en": "I feel very weak.",
+          "fon": "mi nes femsha ni"
         },
         {
-          "en": "Please press here to stop the bleeding."
+          "en": "Please press here to stop the bleeding.",
+          "fon": "kugu timam nam giti gites"
         },
         {
-          "en": "This bone is broken."
+          "en": "This bone is broken.",
+          "fon": "je ta pato"
         },
         {
-          "en": "I am sick and very tired."
+          "en": "I am sick and very tired.",
+          "fon": "mi nes femgam femtam ni"
         },
         {
-          "en": "Do you feel pain here?"
+          "en": "Do you feel pain here?",
+          "fon": "be nes nam tes ?"
         },
         {
-          "en": "The wound needs to be covered."
+          "en": "The wound needs to be covered.",
+          "fon": "tesfem les yigat"
         },
         {
-          "en": "I will wrap your wound."
+          "en": "I will wrap your wound.",
+          "fon": "mi sa yigat tesfem be"
         },
         {
-          "en": "My stomach hurts."
+          "en": "My stomach hurts.",
+          "fon": "mi tes telmes"
         },
         {
-          "en": "Are you bleeding?"
+          "en": "Are you bleeding?",
+          "fon": "be gites ?"
         },
         {
-          "en": "I cannot move my arm."
+          "en": "I cannot move my arm.",
+          "fon": "mi no gi dakfem"
         },
         {
-          "en": "This plant may help the wound."
+          "en": "This plant may help the wound.",
+          "fon": "tet kas tesfem ketnat"
         },
         {
-          "en": "I feel hot and sick."
+          "en": "I feel hot and sick.",
+          "fon": "mi nes lem femgam"
         },
         {
-          "en": "Do you have cloth for the wound?"
+          "en": "Do you have cloth for the wound?",
+          "fon": "be gat tatkel tesfem ?"
         },
         {
-          "en": "Let me look at your injury."
+          "en": "Let me look at your injury.",
+          "fon": "mi wi be tesfem kugu"
         },
         {
-          "en": "The swelling is getting larger."
+          "en": "The swelling is getting larger.",
+          "fon": "tatni fomas ni"
         },
         {
-          "en": "I fell and hit my head."
+          "en": "I fell and hit my head.",
+          "fon": "mi ta jugi nekmam ju kes de"
         },
         {
-          "en": "Does this hurt?"
+          "en": "Does this hurt?",
+          "fon": "to tes ?"
         },
         {
-          "en": "I need to rest."
+          "en": "I need to rest.",
+          "fon": "mi les tinal"
         },
         {
-          "en": "The pain is very strong."
+          "en": "The pain is very strong.",
+          "fon": "tes ni femgu"
         },
         {
-          "en": "I am cold and I feel sick."
+          "en": "I am cold and I feel sick.",
+          "fon": "mi mak nes femgam"
         },
         {
-          "en": "Is the wound getting better?"
+          "en": "Is the wound getting better?",
+          "fon": "tesfem kasfem ?"
         },
         {
-          "en": "Please do not touch that."
+          "en": "Please do not touch that.",
+          "fon": "no mam to kugu"
         },
         {
-          "en": "My foot is injured."
+          "en": "My foot is injured.",
+          "fon": "mi tes gifem"
         },
         {
-          "en": "I cannot carry that, I am hurt."
+          "en": "I cannot carry that, I am hurt.",
+          "fon": "mi no gigat tes"
         },
         {
-          "en": "Do you feel sick today?"
+          "en": "Do you feel sick today?",
+          "fon": "be nes femgam kekdi ?"
         },
         {
-          "en": "The bleeding has stopped."
+          "en": "The bleeding has stopped.",
+          "fon": "gites ta giti"
         },
         {
-          "en": "I will help clean your wound."
+          "en": "I will help clean your wound.",
+          "fon": "mi sa kas be [tesfem] guye",
+          "note": "gap: tesfem (needs a root)"
         },
         {
-          "en": "This area is red and swollen."
+          "en": "This area is red and swollen.",
+          "fon": "mesche datwi tatni"
         },
         {
-          "en": "I am getting better slowly."
+          "en": "I am getting better slowly.",
+          "fon": "mi kasfem gishanek"
         },
         {
-          "en": "Did you mean this place hurts?"
+          "en": "Did you mean this place hurts?",
+          "fon": "be ta kuwimalhu che tes ?"
         },
         {
-          "en": "Show me where the pain is."
+          "en": "Show me where the pain is.",
+          "fon": "giwi no hu che mi tes ?"
         },
         {
-          "en": "Is the pain here or there?"
+          "en": "Is the pain here or there?",
+          "fon": "tes nam tak ?"
         },
         {
-          "en": "I do not understand, show me again."
+          "en": "I do not understand, show me again.",
+          "fon": "mi no hufel giwi mi moyi"
         },
         {
-          "en": "My back hurts and I cannot stand."
+          "en": "My back hurts and I cannot stand.",
+          "fon": "mi tes no tira so"
         },
         {
-          "en": "The wound is healing."
+          "en": "The wound is healing.",
+          "fon": "tesfem kasfem"
         },
         {
-          "en": "Are you feeling better now?"
+          "en": "Are you feeling better now?",
+          "fon": "be nes gu gem mas ?"
         },
         {
-          "en": "I feel very sick."
+          "en": "I feel very sick.",
+          "fon": "mi nes femgam ni"
         }
       ]
     },
@@ -477,154 +632,204 @@
       "name": "Fear & danger",
       "phrases": [
         {
-          "en": "I am afraid."
+          "en": "I am afraid.",
+          "fon": "mi nes nespe"
         },
         {
-          "en": "There is danger here."
+          "en": "There is danger here.",
+          "fon": "pedal nam"
         },
         {
-          "en": "We must run now."
+          "en": "We must run now.",
+          "fon": "dan ginek gem"
         },
         {
-          "en": "An animal is near."
+          "en": "An animal is near.",
+          "fon": "kal dal"
         },
         {
-          "en": "Hide behind that rock."
+          "en": "Hide behind that rock.",
+          "fon": "desonen nenso sas"
         },
         {
-          "en": "Do not move."
+          "en": "Do not move.",
+          "fon": "no gi"
         },
         {
-          "en": "This place is not safe."
+          "en": "This place is not safe.",
+          "fon": "che tampe no"
         },
         {
-          "en": "I hear something moving."
+          "en": "I hear something moving.",
+          "fon": "mi len to gi"
         },
         {
-          "en": "Are you afraid?"
+          "en": "Are you afraid?",
+          "fon": "be nespe ?"
         },
         {
-          "en": "We are safe here."
+          "en": "We are safe here.",
+          "fon": "dan tampe nam"
         },
         {
-          "en": "That animal is very large."
+          "en": "That animal is very large.",
+          "fon": "kal lek ni"
         },
         {
-          "en": "Be quiet and still."
+          "en": "Be quiet and still.",
+          "fon": "nesti ti"
         },
         {
-          "en": "I am very afraid right now."
+          "en": "I am very afraid right now.",
+          "fon": "mi nes nespe ni gem"
         },
         {
-          "en": "Run to the trees."
+          "en": "Run to the trees.",
+          "fon": "ginek nan tetni"
         },
         {
-          "en": "Something is watching us."
+          "en": "Something is watching us.",
+          "fon": "ket to wi dan"
         },
         {
-          "en": "Is it safe to go there?"
+          "en": "Is it safe to go there?",
+          "fon": "gi tak tampe ?"
         },
         {
-          "en": "I see tracks on the ground."
+          "en": "I see tracks on the ground.",
+          "fon": "mi wi fen wimal"
         },
         {
-          "en": "That sound is dangerous."
+          "en": "That sound is dangerous.",
+          "fon": "gifem pedal"
         },
         {
-          "en": "We must hide now."
+          "en": "We must hide now.",
+          "fon": "dan desonen gem"
         },
         {
-          "en": "My heart is beating fast."
+          "en": "My heart is beating fast.",
+          "fon": "mi pu pugi nek"
         },
         {
-          "en": "Do not go near that animal."
+          "en": "Do not go near that animal.",
+          "fon": "no gi dal kal"
         },
         {
-          "en": "The animal is moving closer."
+          "en": "The animal is moving closer.",
+          "fon": "kal gi dal"
         },
         {
-          "en": "Is that animal dangerous?"
+          "en": "Is that animal dangerous?",
+          "fon": "kal pedal ?"
         },
         {
-          "en": "I feel very unsafe here."
+          "en": "I feel very unsafe here.",
+          "fon": "mi nes nam no tampe ni"
         },
         {
-          "en": "Stay low and do not speak."
+          "en": "Stay low and do not speak.",
+          "fon": "ti no se ju"
         },
         {
-          "en": "There is a large animal ahead."
+          "en": "There is a large animal ahead.",
+          "fon": "ni kal nancha"
         },
         {
-          "en": "We need to leave this area."
+          "en": "We need to leave this area.",
+          "fon": "dan les gi fet che"
         },
         {
-          "en": "I am shaking with fear."
+          "en": "I am shaking with fear.",
+          "fon": "mi nes nespe femgu"
         },
         {
-          "en": "Did you see that?"
+          "en": "Did you see that?",
+          "fon": "be ta wi ?"
         },
         {
-          "en": "The danger is gone now."
+          "en": "The danger is gone now.",
+          "fon": "pedal fet gem"
         },
         {
-          "en": "Come with me to safety."
+          "en": "Come with me to safety.",
+          "fon": "be ginam nan tampe mi"
         },
         {
-          "en": "I see something in the dark."
+          "en": "I see something in the dark.",
+          "fon": "mi wi mes gan no hu to"
         },
         {
-          "en": "Are we safe now?"
+          "en": "Are we safe now?",
+          "fon": "dan tampe gem ?"
         },
         {
-          "en": "The animal has gone away."
+          "en": "The animal has gone away.",
+          "fon": "kal ta gi fet"
         },
         {
-          "en": "I do not feel safe here."
+          "en": "I do not feel safe here.",
+          "fon": "mi no nes nam tampe"
         },
         {
-          "en": "That path is not safe."
+          "en": "That path is not safe.",
+          "fon": "nan tampe no"
         },
         {
-          "en": "Do you see any danger?"
+          "en": "Do you see any danger?",
+          "fon": "be wi pedal ket ?"
         },
         {
-          "en": "We can rest here, it is safe."
+          "en": "We can rest here, it is safe.",
+          "fon": "dan tinal nam tampe"
         },
         {
-          "en": "I heard a loud noise nearby."
+          "en": "I heard a loud noise nearby.",
+          "fon": "mi ta len chedal ni len"
         },
         {
-          "en": "Wait here and do not move."
+          "en": "Wait here and do not move.",
+          "fon": "no tikan gi nam"
         },
         {
-          "en": "I think I said danger wrong."
+          "en": "I think I said danger wrong.",
+          "fon": "mi ta met mi se pedal gam"
         },
         {
-          "en": "Is there an animal near the water?"
+          "en": "Is there an animal near the water?",
+          "fon": "kal dal ye ?"
         },
         {
-          "en": "I am afraid and I want to leave."
+          "en": "I am afraid and I want to leave.",
+          "fon": "mi nes sak nespe fet"
         },
         {
-          "en": "Do not make that sound."
+          "en": "Do not make that sound.",
+          "fon": "no kel samlen"
         },
         {
-          "en": "The noise stopped."
+          "en": "The noise stopped.",
+          "fon": "samlen ta giti"
         },
         {
-          "en": "I meant that, not this."
+          "en": "I meant that, not this.",
+          "fon": "mi ta kuwimalhu tak no"
         },
         {
-          "en": "That animal is fast and large."
+          "en": "That animal is fast and large.",
+          "fon": "kal nek ni"
         },
         {
-          "en": "Can we go somewhere safer?"
+          "en": "Can we go somewhere safer?",
+          "fon": "dan gi ket che mas tampe ?"
         },
         {
-          "en": "I am cold and afraid."
+          "en": "I am cold and afraid.",
+          "fon": "mi nes mak nespe"
         },
         {
-          "en": "We ran and now we are safe."
+          "en": "We ran and now we are safe.",
+          "fon": "dan ta gem ginek tampe"
         }
       ]
     },
@@ -633,154 +838,206 @@
       "name": "Basic emotions",
       "phrases": [
         {
-          "en": "I am happy."
+          "en": "I am happy.",
+          "fon": "mi nes nesgu"
         },
         {
-          "en": "I feel sad."
+          "en": "I feel sad.",
+          "fon": "mi nes gamnes"
         },
         {
-          "en": "I am angry."
+          "en": "I am angry.",
+          "fon": "mi nes nesgam"
         },
         {
-          "en": "I feel calm now."
+          "en": "I feel calm now.",
+          "fon": "mi nes nesti gem"
         },
         {
-          "en": "I am lonely."
+          "en": "I am lonely.",
+          "fon": "mi nes nesfa"
         },
         {
-          "en": "I feel relieved."
+          "en": "I feel relieved.",
+          "fon": "mi nes tines"
         },
         {
-          "en": "I am worried."
+          "en": "I am worried.",
+          "fon": "mi nes pemet"
         },
         {
-          "en": "You look happy."
+          "en": "You look happy.",
+          "fon": "be wi nesgu"
         },
         {
-          "en": "You look sad."
+          "en": "You look sad.",
+          "fon": "be wi gamnes"
         },
         {
-          "en": "You seem angry."
+          "en": "You seem angry.",
+          "fon": "be nes nesgam"
         },
         {
-          "en": "Are you happy?"
+          "en": "Are you happy?",
+          "fon": "be nesgu ?"
         },
         {
-          "en": "Are you sad?"
+          "en": "Are you sad?",
+          "fon": "be gamnes ?"
         },
         {
-          "en": "Are you angry?"
+          "en": "Are you angry?",
+          "fon": "be nesgam ?"
         },
         {
-          "en": "Are you calm?"
+          "en": "Are you calm?",
+          "fon": "be nesti ?"
         },
         {
-          "en": "Are you lonely?"
+          "en": "Are you lonely?",
+          "fon": "be nesfa ?"
         },
         {
-          "en": "Are you worried?"
+          "en": "Are you worried?",
+          "fon": "be pemet ?"
         },
         {
-          "en": "I am not angry now."
+          "en": "I am not angry now.",
+          "fon": "mi nes nesgam no gem"
         },
         {
-          "en": "I am sad and lonely."
+          "en": "I am sad and lonely.",
+          "fon": "mi nes gamnes nesfa"
         },
         {
-          "en": "I am calm and relieved."
+          "en": "I am calm and relieved.",
+          "fon": "mi nes nesti no nespe"
         },
         {
-          "en": "I am happy and calm."
+          "en": "I am happy and calm.",
+          "fon": "mi nes nesgu nesti"
         },
         {
-          "en": "I was worried, but I am calm now."
+          "en": "I was worried, but I am calm now.",
+          "fon": "mi ta nes pemet nesti gem"
         },
         {
-          "en": "I feel worried about you."
+          "en": "I feel worried about you.",
+          "fon": "mi nes pemet be"
         },
         {
-          "en": "I feel happy with you."
+          "en": "I feel happy with you.",
+          "fon": "mi nes dal be nesgu"
         },
         {
-          "en": "I do not feel calm."
+          "en": "I do not feel calm.",
+          "fon": "mi no nes nesti"
         },
         {
-          "en": "I am very relieved."
+          "en": "I am very relieved.",
+          "fon": "mi nes tampe ni"
         },
         {
-          "en": "This makes me happy."
+          "en": "This makes me happy.",
+          "fon": "no hu to kel mi nesgu"
         },
         {
-          "en": "This makes me sad."
+          "en": "This makes me sad.",
+          "fon": "no hu to kel mi [gamnes]",
+          "note": "gap: gamnes (needs a root)"
         },
         {
-          "en": "This makes me angry."
+          "en": "This makes me angry.",
+          "fon": "no hu to nes nesgam"
         },
         {
-          "en": "I was very worried."
+          "en": "I was very worried.",
+          "fon": "mi ta nes pemet ni"
         },
         {
-          "en": "You are safe now."
+          "en": "You are safe now.",
+          "fon": "be tampe gem"
         },
         {
-          "en": "Please be calm."
+          "en": "Please be calm.",
+          "fon": "nesti kugu"
         },
         {
-          "en": "Please do not be angry."
+          "en": "Please do not be angry.",
+          "fon": "no nesgam kugu"
         },
         {
-          "en": "I want you to be calm."
+          "en": "I want you to be calm.",
+          "fon": "mi sak be nesti"
         },
         {
-          "en": "I want you to be happy."
+          "en": "I want you to be happy.",
+          "fon": "mi sak be nesgu"
         },
         {
-          "en": "You do not need to be sad."
+          "en": "You do not need to be sad.",
+          "fon": "be no les gamnes"
         },
         {
-          "en": "You are not alone."
+          "en": "You are not alone.",
+          "fon": "be no nesfa"
         },
         {
-          "en": "I am here with you."
+          "en": "I am here with you.",
+          "fon": "mi nam be"
         },
         {
-          "en": "I feel less lonely now."
+          "en": "I feel less lonely now.",
+          "fon": "mi nes nesfa sha gem"
         },
         {
-          "en": "I was angry, but I am calm now."
+          "en": "I was angry, but I am calm now.",
+          "fon": "mi ta nes nesgam nesti gem"
         },
         {
-          "en": "Do you feel lonely?"
+          "en": "Do you feel lonely?",
+          "fon": "be nes nesfa ?"
         },
         {
-          "en": "Do you feel relieved?"
+          "en": "Do you feel relieved?",
+          "fon": "be nes [nes+tampa] ?",
+          "note": "gap: nes+tampa (needs a root)"
         },
         {
-          "en": "I do not want to be alone."
+          "en": "I do not want to be alone.",
+          "fon": "mi no sak no nesfa"
         },
         {
-          "en": "I am still worried."
+          "en": "I am still worried.",
+          "fon": "mi nes pemet ti"
         },
         {
-          "en": "I am not sad anymore."
+          "en": "I am not sad anymore.",
+          "fon": "mi nes gamnes no moyi"
         },
         {
-          "en": "Did I make you angry?"
+          "en": "Did I make you angry?",
+          "fon": "mi ta kel be nesgam ?"
         },
         {
-          "en": "Did that make you sad?"
+          "en": "Did that make you sad?",
+          "fon": "ta kel be gamnes ?"
         },
         {
-          "en": "I see that you are sad."
+          "en": "I see that you are sad.",
+          "fon": "mi wi be gamnes"
         },
         {
-          "en": "I think you are worried."
+          "en": "I think you are worried.",
+          "fon": "mi met be pemet"
         },
         {
-          "en": "I am sad and worried."
+          "en": "I am sad and worried.",
+          "fon": "mi nes gamnes pemet"
         },
         {
-          "en": "I am angry but not at you."
+          "en": "I am angry but not at you.",
+          "fon": "mi nes nesgam no be"
         }
       ]
     },
@@ -789,154 +1046,205 @@
       "name": "Social bond",
       "phrases": [
         {
-          "en": "Thank you."
+          "en": "Thank you.",
+          "fon": "mi seguku be"
         },
         {
-          "en": "I am sorry."
+          "en": "I am sorry.",
+          "fon": "mi nes tesku"
         },
         {
-          "en": "I will help you."
+          "en": "I will help you.",
+          "fon": "mi sa kas be"
         },
         {
-          "en": "We can work together."
+          "en": "We can work together.",
+          "fon": "dan bakel ho"
         },
         {
-          "en": "I trust you."
+          "en": "I trust you.",
+          "fon": "mi hugukam be"
         },
         {
-          "en": "Do you trust me?"
+          "en": "Do you trust me?",
+          "fon": "be hugukam mi ?"
         },
         {
-          "en": "I promise."
+          "en": "I promise.",
+          "fon": "mi sekam"
         },
         {
-          "en": "We are friends now."
+          "en": "We are friends now.",
+          "fon": "dan guba gem"
         },
         {
-          "en": "Can I help you?"
+          "en": "Can I help you?",
+          "fon": "mi kas be ?"
         },
         {
-          "en": "I did not mean to hurt you."
+          "en": "I did not mean to hurt you.",
+          "fon": "mi ta no sakdi no tes be"
         },
         {
-          "en": "Please forgive me."
+          "en": "Please forgive me.",
+          "fon": "be nesgushu mi kugu"
         },
         {
-          "en": "You helped me a lot."
+          "en": "You helped me a lot.",
+          "fon": "be ta kas mi lek"
         },
         {
-          "en": "Are you my friend?"
+          "en": "Are you my friend?",
+          "fon": "be guba mi ?"
         },
         {
-          "en": "I will not leave you alone."
+          "en": "I will not leave you alone.",
+          "fon": "mi sa no gi fet be nesfa"
         },
         {
-          "en": "That was my mistake."
+          "en": "That was my mistake.",
+          "fon": "mi ta mogam"
         },
         {
-          "en": "I feel safe with you."
+          "en": "I feel safe with you.",
+          "fon": "mi nes dal be tampe"
         },
         {
-          "en": "Do you need help?"
+          "en": "Do you need help?",
+          "fon": "be les kas ?"
         },
         {
-          "en": "I am thankful for your help."
+          "en": "I am thankful for your help.",
+          "fon": "mi nes nesguku be kas"
         },
         {
-          "en": "Let us stay together."
+          "en": "Let us stay together.",
+          "fon": "dan tiche dan"
         },
         {
-          "en": "You are a good person."
+          "en": "You are a good person.",
+          "fon": "be ba gu"
         },
         {
-          "en": "Did I do something wrong?"
+          "en": "Did I do something wrong?",
+          "fon": "mi ta mo mogam ?"
         },
         {
-          "en": "I am sorry I took that."
+          "en": "I am sorry I took that.",
+          "fon": "mi ta nes la tesku to"
         },
         {
-          "en": "I promise I will return."
+          "en": "I promise I will return.",
+          "fon": "mi sa sekam giyinam"
         },
         {
-          "en": "Are you angry with me?"
+          "en": "Are you angry with me?",
+          "fon": "be nesgam mi ?"
         },
         {
-          "en": "I need your help today."
+          "en": "I need your help today.",
+          "fon": "mi les kas be kekdi"
         },
         {
-          "en": "We are stronger together."
+          "en": "We are stronger together.",
+          "fon": "dan femgu dan"
         },
         {
-          "en": "I will share with you."
+          "en": "I will share with you.",
+          "fon": "mi sa kuket be"
         },
         {
-          "en": "Do you forgive me?"
+          "en": "Do you forgive me?",
+          "fon": "be nesgushu mi ?"
         },
         {
-          "en": "I feel better near you."
+          "en": "I feel better near you.",
+          "fon": "mi nes dal be gu"
         },
         {
-          "en": "That was not your fault."
+          "en": "That was not your fault.",
+          "fon": "nan ta no segamba be"
         },
         {
-          "en": "I am here for you."
+          "en": "I am here for you.",
+          "fon": "mi nam be"
         },
         {
-          "en": "I did not want to fight."
+          "en": "I did not want to fight.",
+          "fon": "mi ta no sak pa"
         },
         {
-          "en": "You can trust me."
+          "en": "You can trust me.",
+          "fon": "be hugukam mi"
         },
         {
-          "en": "Is everything good between us?"
+          "en": "Is everything good between us?",
+          "fon": "mel to gu temtem dan ?"
         },
         {
-          "en": "I am glad we are together."
+          "en": "I am glad we are together.",
+          "fon": "mi nes nesgu dan dal"
         },
         {
-          "en": "Please do not go."
+          "en": "Please do not go.",
+          "fon": "no gi kugu"
         },
         {
-          "en": "I made a mistake."
+          "en": "I made a mistake.",
+          "fon": "mi ta kel mogam"
         },
         {
-          "en": "We can share this food."
+          "en": "We can share this food.",
+          "fon": "dan kuket lo"
         },
         {
-          "en": "Did I upset you?"
+          "en": "Did I upset you?",
+          "fon": "mi ta dikel be nesgam ?"
         },
         {
-          "en": "I will keep my promise."
+          "en": "I will keep my promise.",
+          "fon": "mi sa gat sekam"
         },
         {
-          "en": "I am not angry with you."
+          "en": "I am not angry with you.",
+          "fon": "mi no nes nesgam be"
         },
         {
-          "en": "Let me carry that for you."
+          "en": "Let me carry that for you.",
+          "fon": "mi gigat be kugu"
         },
         {
-          "en": "I feel lonely and scared."
+          "en": "I feel lonely and scared.",
+          "fon": "mi nes nesfa nespe"
         },
         {
-          "en": "I am cold and I need help."
+          "en": "I am cold and I need help.",
+          "fon": "mi nes les mak kas"
         },
         {
-          "en": "We survived and I am grateful."
+          "en": "We survived and I am grateful.",
+          "fon": "dan mi ta fo nes [nesguku] ti",
+          "note": "gap: nesguku (needs a root)"
         },
         {
-          "en": "I am sorry for that."
+          "en": "I am sorry for that.",
+          "fon": "mi nes tesku"
         },
         {
-          "en": "We can do this together."
+          "en": "We can do this together.",
+          "fon": "dan mo dan"
         },
         {
-          "en": "Can I help you with that?"
+          "en": "Can I help you with that?",
+          "fon": "mi kas be ?"
         },
         {
-          "en": "I promise I will not leave you."
+          "en": "I promise I will not leave you.",
+          "fon": "mi sekam"
         },
         {
-          "en": "Are we friends now?"
+          "en": "Are we friends now?",
+          "fon": "dan guba gem ?"
         }
       ]
     },
@@ -945,154 +1253,204 @@
       "name": "Refusal & boundaries",
       "phrases": [
         {
-          "en": "No."
+          "en": "No.",
+          "fon": "no"
         },
         {
-          "en": "Stop."
+          "en": "Stop.",
+          "fon": "giti"
         },
         {
-          "en": "Do not touch that."
+          "en": "Do not touch that.",
+          "fon": "no mam to"
         },
         {
-          "en": "This is mine."
+          "en": "This is mine.",
+          "fon": "nan de dela"
         },
         {
-          "en": "That is enough."
+          "en": "That is enough.",
+          "fon": "melto"
         },
         {
-          "en": "Leave me alone."
+          "en": "Leave me alone.",
+          "fon": "be gi fet mi"
         },
         {
-          "en": "Do not come closer."
+          "en": "Do not come closer.",
+          "fon": "no ginam dal"
         },
         {
-          "en": "I do not want that."
+          "en": "I do not want that.",
+          "fon": "mi no sak"
         },
         {
-          "en": "Step back, please."
+          "en": "Step back, please.",
+          "fon": "gi so kugu"
         },
         {
-          "en": "Do not take my food."
+          "en": "Do not take my food.",
+          "fon": "no la mi lo"
         },
         {
-          "en": "This space is mine."
+          "en": "This space is mine.",
+          "fon": "che mi dela"
         },
         {
-          "en": "I said no."
+          "en": "I said no.",
+          "fon": "mi ta se no"
         },
         {
-          "en": "Do not touch me."
+          "en": "Do not touch me.",
+          "fon": "no mam mi"
         },
         {
-          "en": "That belongs to me."
+          "en": "That belongs to me.",
+          "fon": "nan kamche mi"
         },
         {
-          "en": "I need you to stop now."
+          "en": "I need you to stop now.",
+          "fon": "mi les be giti gem"
         },
         {
-          "en": "Do not go there."
+          "en": "Do not go there.",
+          "fon": "no gi tak"
         },
         {
-          "en": "I am not ready."
+          "en": "I am not ready.",
+          "fon": "mi no gatdimo"
         },
         {
-          "en": "Please give that back."
+          "en": "Please give that back.",
+          "fon": "ku so kugu"
         },
         {
-          "en": "Do not open that bag."
+          "en": "Do not open that bag.",
+          "fon": "no tamtem tamgat"
         },
         {
-          "en": "I feel uncomfortable right now."
+          "en": "I feel uncomfortable right now.",
+          "fon": "mi nes gam gem"
         },
         {
-          "en": "Stay on your side."
+          "en": "Stay on your side.",
+          "fon": "be tiche be dela che"
         },
         {
-          "en": "Do not look at my things."
+          "en": "Do not look at my things.",
+          "fon": "no wi mi to"
         },
         {
-          "en": "That water is mine."
+          "en": "That water is mine.",
+          "fon": "be kamche mi"
         },
         {
-          "en": "I need space."
+          "en": "I need space.",
+          "fon": "mi les chetam"
         },
         {
-          "en": "Do not do that again."
+          "en": "Do not do that again.",
+          "fon": "no mo moyi"
         },
         {
-          "en": "Is this yours or mine?"
+          "en": "Is this yours or mine?",
+          "fon": "to kamche be mi ?"
         },
         {
-          "en": "Did you take my food?"
+          "en": "Did you take my food?",
+          "fon": "be ta la mi lo ?"
         },
         {
-          "en": "I will not share this."
+          "en": "I will not share this.",
+          "fon": "mi sa no kuket"
         },
         {
-          "en": "Do not wake me."
+          "en": "Do not wake me.",
+          "fon": "no no hu de mi"
         },
         {
-          "en": "That is too much."
+          "en": "That is too much.",
+          "fon": "mas ni"
         },
         {
-          "en": "I am angry and I need quiet."
+          "en": "I am angry and I need quiet.",
+          "fon": "mi nes les nesgam nesti"
         },
         {
-          "en": "Please do not shout."
+          "en": "Please do not shout.",
+          "fon": "no se kugu ni"
         },
         {
-          "en": "This side is mine and that side is yours."
+          "en": "This side is mine and that side is yours.",
+          "fon": "tem honen tem kamche mi be honen"
         },
         {
-          "en": "Are you taking my things?"
+          "en": "Are you taking my things?",
+          "fon": "be la mi to ?"
         },
         {
-          "en": "I do not agree."
+          "en": "I do not agree.",
+          "fon": "mi no sepa"
         },
         {
-          "en": "I said stop."
+          "en": "I said stop.",
+          "fon": "mi ta se giti"
         },
         {
-          "en": "That is not yours."
+          "en": "That is not yours.",
+          "fon": "tak kamche be no"
         },
         {
-          "en": "I will not go there."
+          "en": "I will not go there.",
+          "fon": "mi sa no gi tak"
         },
         {
-          "en": "Do not move my things."
+          "en": "Do not move my things.",
+          "fon": "no gi to mi"
         },
         {
-          "en": "I feel scared when you come close."
+          "en": "I feel scared when you come close.",
+          "fon": "mi nes dal nespe be ginam"
         },
         {
-          "en": "Did I say yes?"
+          "en": "Did I say yes?",
+          "fon": "mi ta se ya ?"
         },
         {
-          "en": "Please stop and listen."
+          "en": "Please stop and listen.",
+          "fon": "giti len kugu"
         },
         {
-          "en": "I need you to move back."
+          "en": "I need you to move back.",
+          "fon": "mi les so be gi"
         },
         {
-          "en": "Do not touch my shelter."
+          "en": "Do not touch my shelter.",
+          "fon": "no mam temche mi"
         },
         {
-          "en": "That is not acceptable."
+          "en": "That is not acceptable.",
+          "fon": "no tines"
         },
         {
-          "en": "I am tired and I need rest."
+          "en": "I am tired and I need rest.",
+          "fon": "mi nes femtam les tinal"
         },
         {
-          "en": "Do you hear me?"
+          "en": "Do you hear me?",
+          "fon": "be len mi ?"
         },
         {
-          "en": "I will not do that."
+          "en": "I will not do that.",
+          "fon": "mi sa no mo"
         },
         {
-          "en": "Is this clear to you?"
+          "en": "Is this clear to you?",
+          "fon": "be hufel ?"
         },
         {
-          "en": "Please do not come closer."
+          "en": "Please do not come closer.",
+          "fon": "no ginam dal kugu"
         }
       ]
     },
@@ -1101,154 +1459,207 @@
       "name": "What questions",
       "phrases": [
         {
-          "en": "What is this?"
+          "en": "What is this?",
+          "fon": "no hu to ?"
         },
         {
-          "en": "What is that?"
+          "en": "What is that?",
+          "fon": "no hu to ?"
         },
         {
-          "en": "What happened here?"
+          "en": "What happened here?",
+          "fon": "no hu to ta nam ?"
         },
         {
-          "en": "What do you want?"
+          "en": "What do you want?",
+          "fon": "be sak no hu to ?"
         },
         {
-          "en": "What is in there?"
+          "en": "What is in there?",
+          "fon": "no hu to mes tak ?"
         },
         {
-          "en": "What is that sound?"
+          "en": "What is that sound?",
+          "fon": "no hu to base ?"
         },
         {
-          "en": "What is that smell?"
+          "en": "What is that smell?",
+          "fon": "no hu to tek ?"
         },
         {
-          "en": "What do you need?"
+          "en": "What do you need?",
+          "fon": "no hu to les be ?"
         },
         {
-          "en": "What is happening?"
+          "en": "What is happening?",
+          "fon": "no hu to mo ?"
         },
         {
-          "en": "What is that animal?"
+          "en": "What is that animal?",
+          "fon": "no hu to kal ?"
         },
         {
-          "en": "What is that plant?"
+          "en": "What is that plant?",
+          "fon": "no hu to tet ?"
         },
         {
-          "en": "What is that noise at night?"
+          "en": "What is that noise at night?",
+          "fon": "no hu to gankan len ?"
         },
         {
-          "en": "What do you have there?"
+          "en": "What do you have there?",
+          "fon": "be gat tak no hu to ?"
         },
         {
-          "en": "What is this food?"
+          "en": "What is this food?",
+          "fon": "no hu to lo ?"
         },
         {
-          "en": "What is that mark on your arm?"
+          "en": "What is that mark on your arm?",
+          "fon": "no hu to dakfem wimal be ?"
         },
         {
-          "en": "I do not know what this is."
+          "en": "I do not know what this is.",
+          "fon": "mi no hu no hu to"
         },
         {
-          "en": "I do not know what that is."
+          "en": "I do not know what that is.",
+          "fon": "mi no hu no hu to"
         },
         {
-          "en": "What is this liquid?"
+          "en": "What is this liquid?",
+          "fon": "no hu to tofem ?"
         },
         {
-          "en": "What happened to your hand?"
+          "en": "What happened to your hand?",
+          "fon": "no hu to ta be dak ?"
         },
         {
-          "en": "What happened last night?"
+          "en": "What happened last night?",
+          "fon": "no hu to ta [gankan] daldi gankan ?",
+          "note": "gap: gankan (needs a root)"
         },
         {
-          "en": "What is that thing called?"
+          "en": "What is that thing called?",
+          "fon": "no hu to mal to ?"
         },
         {
-          "en": "What is the name of this?"
+          "en": "What is the name of this?",
+          "fon": "no hu to mal ?"
         },
         {
-          "en": "What do you see over there?"
+          "en": "What do you see over there?",
+          "fon": "no hu to wi tak be ?"
         },
         {
-          "en": "What is that light?"
+          "en": "What is that light?",
+          "fon": "no hu to kek ?"
         },
         {
-          "en": "What is this tool for?"
+          "en": "What is this tool for?",
+          "fon": "no hu to gek dakto ?"
         },
         {
-          "en": "Something happened here."
+          "en": "Something happened here.",
+          "fon": "ket to ta mo nam"
         },
         {
-          "en": "I want to know what this is."
+          "en": "I want to know what this is.",
+          "fon": "mi sak hu no hu to"
         },
         {
-          "en": "What is wrong with you?"
+          "en": "What is wrong with you?",
+          "fon": "no hu to gam be ?"
         },
         {
-          "en": "What is wrong with this?"
+          "en": "What is wrong with this?",
+          "fon": "no hu to gam ?"
         },
         {
-          "en": "What do you want me to do?"
+          "en": "What do you want me to do?",
+          "fon": "be sak mi no hu to mo ?"
         },
         {
-          "en": "I do not understand what you want."
+          "en": "I do not understand what you want.",
+          "fon": "mi no hufel no hu to be sak"
         },
         {
-          "en": "What is that over the water?"
+          "en": "What is that over the water?",
+          "fon": "no hu to ra ye ?"
         },
         {
-          "en": "What did you find?"
+          "en": "What did you find?",
+          "fon": "be ta lanek no hu to ?"
         },
         {
-          "en": "What did you eat?"
+          "en": "What did you eat?",
+          "fon": "be ta tel no hu to ?"
         },
         {
-          "en": "What is safe to eat here?"
+          "en": "What is safe to eat here?",
+          "fon": "no hu to tel nam tampe ?"
         },
         {
-          "en": "I am not sure what that is."
+          "en": "I am not sure what that is.",
+          "fon": "mi no nathu no hu to"
         },
         {
-          "en": "What is that on the ground?"
+          "en": "What is that on the ground?",
+          "fon": "no hu to fen ?"
         },
         {
-          "en": "What is that dark shape?"
+          "en": "What is that dark shape?",
+          "fon": "no hu to gan tonen ?"
         },
         {
-          "en": "I want to know what happened."
+          "en": "I want to know what happened.",
+          "fon": "mi ta sak hu no hu to"
         },
         {
-          "en": "What is this white powder?"
+          "en": "What is this white powder?",
+          "fon": "no hu to gen [tofem] ?",
+          "note": "gap: tofem (needs a root)"
         },
         {
-          "en": "What is that structure?"
+          "en": "What is that structure?",
+          "fon": "no hu to tonen ?"
         },
         {
-          "en": "What is in this bag?"
+          "en": "What is in this bag?",
+          "fon": "no hu to mes tamgat ?"
         },
         {
-          "en": "I feel afraid and I do not know what is there."
+          "en": "I feel afraid and I do not know what is there.",
+          "fon": "mi no nes hu tak nespe no hu to"
         },
         {
-          "en": "What do you want to show me?"
+          "en": "What do you want to show me?",
+          "fon": "be giwi mi no hu to ?"
         },
         {
-          "en": "What is that color in the sky?"
+          "en": "What is that color in the sky?",
+          "fon": "no hu to mes sam [kek+wimal] ?",
+          "note": "gap: kek+wimal (needs a root)"
         },
         {
-          "en": "Please show me what you mean."
+          "en": "Please show me what you mean.",
+          "fon": "be giwi mi kugu no hu to kuwimalhu be ?"
         },
         {
-          "en": "I see something and I do not know what it is."
+          "en": "I see something and I do not know what it is.",
+          "fon": "mi wi no hu ket to no hu to"
         },
         {
-          "en": "What is this word?"
+          "en": "What is this word?",
+          "fon": "no hu to tose ?"
         },
         {
-          "en": "What do you call this thing?"
+          "en": "What do you call this thing?",
+          "fon": "be semal no hu to ?"
         },
         {
-          "en": "What is that thing over there?"
+          "en": "What is that thing over there?",
+          "fon": "no hu to tak ?"
         }
       ]
     },
@@ -1257,154 +1668,207 @@
       "name": "Who questions",
       "phrases": [
         {
-          "en": "Who are you?"
+          "en": "Who are you?",
+          "fon": "no hu ba ?"
         },
         {
-          "en": "Who is that person?"
+          "en": "Who is that person?",
+          "fon": "no hu ba ?"
         },
         {
-          "en": "Who is hurt?"
+          "en": "Who is hurt?",
+          "fon": "no hu ba tes ?"
         },
         {
-          "en": "Who needs water?"
+          "en": "Who needs water?",
+          "fon": "no hu ba les ye ?"
         },
         {
-          "en": "I do not know you."
+          "en": "I do not know you.",
+          "fon": "mi no hu be"
         },
         {
-          "en": "Who is the child?"
+          "en": "Who is the child?",
+          "fon": "no hu ba bagen ?"
         },
         {
-          "en": "That person is a stranger to me."
+          "en": "That person is a stranger to me.",
+          "fon": "ba bafet mi"
         },
         {
-          "en": "Who is sleeping over there?"
+          "en": "Who is sleeping over there?",
+          "fon": "no hu ba nal tak ?"
         },
         {
-          "en": "I am a stranger here."
+          "en": "I am a stranger here.",
+          "fon": "mi bafet nam"
         },
         {
-          "en": "Who needs food now?"
+          "en": "Who needs food now?",
+          "fon": "no hu ba les lo gem ?"
         },
         {
-          "en": "Who is the old person?"
+          "en": "Who is the old person?",
+          "fon": "no hu ba ni kanfem ?"
         },
         {
-          "en": "Who is crying?"
+          "en": "Who is crying?",
+          "fon": "no hu ba [kemye] ?",
+          "note": "gap: kemye (needs a root)"
         },
         {
-          "en": "Who is with you?"
+          "en": "Who is with you?",
+          "fon": "no hu ba dal be ?"
         },
         {
-          "en": "I do not recognize that person."
+          "en": "I do not recognize that person.",
+          "fon": "mi no hu ba"
         },
         {
-          "en": "Who is sick?"
+          "en": "Who is sick?",
+          "fon": "no hu ba femgam ?"
         },
         {
-          "en": "Who can carry this?"
+          "en": "Who can carry this?",
+          "fon": "no hu ba gigat to ?"
         },
         {
-          "en": "I feel afraid of that person."
+          "en": "I feel afraid of that person.",
+          "fon": "mi nes nespe ba"
         },
         {
-          "en": "Who is making that sound?"
+          "en": "Who is making that sound?",
+          "fon": "no hu ba kel base ?"
         },
         {
-          "en": "That person is alone and looks lost."
+          "en": "That person is alone and looks lost.",
+          "fon": "ba nesfa nantam"
         },
         {
-          "en": "Who is in danger?"
+          "en": "Who is in danger?",
+          "fon": "no hu ba mes pedal ?"
         },
         {
-          "en": "Who is the leader here?"
+          "en": "Who is the leader here?",
+          "fon": "no hu ba kesba nam ?"
         },
         {
-          "en": "Please tell me who you are."
+          "en": "Please tell me who you are.",
+          "fon": "se mi no hu ba be kugu"
         },
         {
-          "en": "Who is bleeding?"
+          "en": "Who is bleeding?",
+          "fon": "no hu ba gites ?"
         },
         {
-          "en": "I am confused about who is here."
+          "en": "I am confused about who is here.",
+          "fon": "mi nes nam metgan no hu ba"
         },
         {
-          "en": "Who is that woman?"
+          "en": "Who is that woman?",
+          "fon": "no hu ba ?"
         },
         {
-          "en": "Who is that man?"
+          "en": "Who is that man?",
+          "fon": "no hu ba ?"
         },
         {
-          "en": "Point to who needs help."
+          "en": "Point to who needs help.",
+          "fon": "no hu ba les kas"
         },
         {
-          "en": "Who was here before us?"
+          "en": "Who was here before us?",
+          "fon": "no hu ba ta nam di dan ?"
         },
         {
-          "en": "I do not understand who that is."
+          "en": "I do not understand who that is.",
+          "fon": "mi no hufel no hu ba"
         },
         {
-          "en": "That person is cold and shaking."
+          "en": "That person is cold and shaking.",
+          "fon": "ba mak"
         },
         {
-          "en": "Who is coming toward us?"
+          "en": "Who is coming toward us?",
+          "fon": "no hu ba ginam nan dan ?"
         },
         {
-          "en": "Show me who needs medicine."
+          "en": "Show me who needs medicine.",
+          "fon": "giwi mi no hu ba les tetkas"
         },
         {
-          "en": "I feel uneasy about that person."
+          "en": "I feel uneasy about that person.",
+          "fon": "mi nes [pemet] honen ba",
+          "note": "gap: pemet (needs a root)"
         },
         {
-          "en": "Who is the youngest person here?"
+          "en": "Who is the youngest person here?",
+          "fon": "no hu ba nam gen kanfem ?"
         },
         {
-          "en": "That person is watching us."
+          "en": "That person is watching us.",
+          "fon": "ba wi dan"
         },
         {
-          "en": "Who is not eating?"
+          "en": "Who is not eating?",
+          "fon": "no hu ba tel no ?"
         },
         {
-          "en": "I want to know who you are."
+          "en": "I want to know who you are.",
+          "fon": "mi sak no hu ba be"
         },
         {
-          "en": "Who is standing guard tonight?"
+          "en": "Who is standing guard tonight?",
+          "fon": "gem gankan no hu ba tira wi tampe ?"
         },
         {
-          "en": "That person is not moving."
+          "en": "That person is not moving.",
+          "fon": "ba no gi"
         },
         {
-          "en": "Who is missing?"
+          "en": "Who is missing?",
+          "fon": "no hu ba nantam ?"
         },
         {
-          "en": "Tell me your name if you can."
+          "en": "Tell me your name if you can.",
+          "fon": "be se mi mal von"
         },
         {
-          "en": "I feel glad you are here."
+          "en": "I feel glad you are here.",
+          "fon": "mi nes nam [nesgu] be",
+          "note": "gap: nesgu (needs a root)"
         },
         {
-          "en": "Who is the strongest person here?"
+          "en": "Who is the strongest person here?",
+          "fon": "no hu ba nam femgu daldi ?"
         },
         {
-          "en": "That person is a friend or an enemy."
+          "en": "That person is a friend or an enemy.",
+          "fon": "ba guba paba"
         },
         {
-          "en": "Show me who you are."
+          "en": "Show me who you are.",
+          "fon": "be giwi mi no hu ba ?"
         },
         {
-          "en": "I did not understand who you meant."
+          "en": "I did not understand who you meant.",
+          "fon": "mi ta no hufel no hu ba be giwi"
         },
         {
-          "en": "Who is able to walk?"
+          "en": "Who is able to walk?",
+          "fon": "no hu ba tigi ?"
         },
         {
-          "en": "That person is hurt and needs us."
+          "en": "That person is hurt and needs us.",
+          "fon": "ba tes les dan"
         },
         {
-          "en": "Who is that person over there?"
+          "en": "Who is that person over there?",
+          "fon": "no hu ba tak ?"
         },
         {
-          "en": "Who needs help right now?"
+          "en": "Who needs help right now?",
+          "fon": "no hu ba les kas gem ?"
         }
       ]
     },
@@ -1413,154 +1877,204 @@
       "name": "Where questions",
       "phrases": [
         {
-          "en": "Where is the water?"
+          "en": "Where is the water?",
+          "fon": "no hu che ye ?"
         },
         {
-          "en": "Where are we?"
+          "en": "Where are we?",
+          "fon": "dan no hu che ?"
         },
         {
-          "en": "Where is the food?"
+          "en": "Where is the food?",
+          "fon": "no hu che lo ?"
         },
         {
-          "en": "The water is there."
+          "en": "The water is there.",
+          "fon": "ye tak"
         },
         {
-          "en": "The water is far away."
+          "en": "The water is far away.",
+          "fon": "ye fet"
         },
         {
-          "en": "Which way do we go?"
+          "en": "Which way do we go?",
+          "fon": "sakhuto nan dan gi ?"
         },
         {
-          "en": "I do not know where we are."
+          "en": "I do not know where we are.",
+          "fon": "mi no hu nam dan no hu che"
         },
         {
-          "en": "Where is the shelter?"
+          "en": "Where is the shelter?",
+          "fon": "no hu che temche ?"
         },
         {
-          "en": "We are near the trees."
+          "en": "We are near the trees.",
+          "fon": "dan dal tetni"
         },
         {
-          "en": "The shelter is over there."
+          "en": "The shelter is over there.",
+          "fon": "temche tak"
         },
         {
-          "en": "Where is the other person?"
+          "en": "Where is the other person?",
+          "fon": "no hu che honen ba ?"
         },
         {
-          "en": "I am here."
+          "en": "I am here.",
+          "fon": "mi nam"
         },
         {
-          "en": "You are there."
+          "en": "You are there.",
+          "fon": "be tak"
         },
         {
-          "en": "The fire is close to us."
+          "en": "The fire is close to us.",
+          "fon": "dat dal dan"
         },
         {
-          "en": "Where is the fire?"
+          "en": "Where is the fire?",
+          "fon": "no hu che dat ?"
         },
         {
-          "en": "Is the water near here?"
+          "en": "Is the water near here?",
+          "fon": "ye dal nam ?"
         },
         {
-          "en": "The river is below us."
+          "en": "The river is below us.",
+          "fon": "yenanye ju dan"
         },
         {
-          "en": "We should go that way."
+          "en": "We should go that way.",
+          "fon": "dan gi tak"
         },
         {
-          "en": "Where did you sleep?"
+          "en": "Where did you sleep?",
+          "fon": "be ta nal no hu che ?"
         },
         {
-          "en": "I slept near the big rock."
+          "en": "I slept near the big rock.",
+          "fon": "mi ta nal dal ni sas"
         },
         {
-          "en": "Point to where the water is."
+          "en": "Point to where the water is.",
+          "fon": "chadak nan ye"
         },
         {
-          "en": "The path goes to the left."
+          "en": "The path goes to the left.",
+          "fon": "nan gi nan gi"
         },
         {
-          "en": "Is the village far from here?"
+          "en": "Is the village far from here?",
+          "fon": "chekamdan fet diye nam ?"
         },
         {
-          "en": "I feel lost."
+          "en": "I feel lost.",
+          "fon": "mi nes nantam"
         },
         {
-          "en": "Where is the path?"
+          "en": "Where is the path?",
+          "fon": "no hu che nan ?"
         },
         {
-          "en": "The path is behind those trees."
+          "en": "The path is behind those trees.",
+          "fon": "nan nenso tetni lek"
         },
         {
-          "en": "Show me where the food is."
+          "en": "Show me where the food is.",
+          "fon": "giwi mi no hu che lo ?"
         },
         {
-          "en": "We are far from people."
+          "en": "We are far from people.",
+          "fon": "dan fet balek"
         },
         {
-          "en": "I am scared of this place."
+          "en": "I am scared of this place.",
+          "fon": "mi nes nam nespe"
         },
         {
-          "en": "Where is the high ground?"
+          "en": "Where is the high ground?",
+          "fon": "no hu che rafen ?"
         },
         {
-          "en": "The high ground is that way."
+          "en": "The high ground is that way.",
+          "fon": "rafen tak"
         },
         {
-          "en": "Let us go toward the light."
+          "en": "Let us go toward the light.",
+          "fon": "dan sa gi nan kek"
         },
         {
-          "en": "Is there water in that direction?"
+          "en": "Is there water in that direction?",
+          "fon": "ye nan ?"
         },
         {
-          "en": "I do not see the path."
+          "en": "I do not see the path.",
+          "fon": "mi no wi nan"
         },
         {
-          "en": "Stay here and wait for me."
+          "en": "Stay here and wait for me.",
+          "fon": "ti tikan nam mi"
         },
         {
-          "en": "Where is the old person?"
+          "en": "Where is the old person?",
+          "fon": "no hu che baso ?"
         },
         {
-          "en": "The old person is near the water."
+          "en": "The old person is near the water.",
+          "fon": "baso dal ye"
         },
         {
-          "en": "I am not sure which way."
+          "en": "I am not sure which way.",
+          "fon": "mi no hu nan"
         },
         {
-          "en": "The sun is in that direction."
+          "en": "The sun is in that direction.",
+          "fon": "samdat tak"
         },
         {
-          "en": "We came from over there."
+          "en": "We came from over there.",
+          "fon": "dan ta ginam diye tak"
         },
         {
-          "en": "Can you see water from here?"
+          "en": "Can you see water from here?",
+          "fon": "be wi diye nam ye ?"
         },
         {
-          "en": "The water and the food are there."
+          "en": "The water and the food are there.",
+          "fon": "ye lo tak"
         },
         {
-          "en": "I am relieved to find water."
+          "en": "I am relieved to find water.",
+          "fon": "mi nes nesti lanek ye"
         },
         {
-          "en": "Where is the child?"
+          "en": "Where is the child?",
+          "fon": "no hu che bagen ?"
         },
         {
-          "en": "The child is near the big tree."
+          "en": "The child is near the big tree.",
+          "fon": "bagen dal tetni ni"
         },
         {
-          "en": "Come here and look at this."
+          "en": "Come here and look at this.",
+          "fon": "ginam wi nam"
         },
         {
-          "en": "I meant that place, not this one."
+          "en": "I meant that place, not this one.",
+          "fon": "mi ta chadak tak no dal"
         },
         {
-          "en": "I am worried and I feel lost."
+          "en": "I am worried and I feel lost.",
+          "fon": "mi nes pemet nantam"
         },
         {
-          "en": "The dry land is to the right."
+          "en": "The dry land is to the right.",
+          "fon": "tam fen"
         },
         {
-          "en": "We go left and then up."
+          "en": "We go left and then up.",
+          "fon": "dan gi ra"
         }
       ]
     },
@@ -1569,154 +2083,206 @@
       "name": "When questions",
       "phrases": [
         {
-          "en": "Is it time to eat now?"
+          "en": "Is it time to eat now?",
+          "fon": "tel gem kan ?"
         },
         {
-          "en": "We should leave soon."
+          "en": "We should leave soon.",
+          "fon": "dan sa gi fet dalshu"
         },
         {
-          "en": "When do we go?"
+          "en": "When do we go?",
+          "fon": "dan no hu kan gi ?"
         },
         {
-          "en": "I am ready now."
+          "en": "I am ready now.",
+          "fon": "mi gatdimo gem"
         },
         {
-          "en": "We will eat later."
+          "en": "We will eat later.",
+          "fon": "dan sa gemshu tel"
         },
         {
-          "en": "Is it time to sleep?"
+          "en": "Is it time to sleep?",
+          "fon": "kan nal ?"
         },
         {
-          "en": "We must go before dark."
+          "en": "We must go before dark.",
+          "fon": "dan di gan gi les"
         },
         {
-          "en": "Wait here for now."
+          "en": "Wait here for now.",
+          "fon": "tikan nam gem"
         },
         {
-          "en": "After the rain, we can move."
+          "en": "After the rain, we can move.",
+          "fon": "dan shu yeju gi"
         },
         {
-          "en": "Is it morning or night now?"
+          "en": "Is it morning or night now?",
+          "fon": "kekshu gankan gem ?"
         },
         {
-          "en": "I will return soon."
+          "en": "I will return soon.",
+          "fon": "mi sa giyinam dalshu"
         },
         {
-          "en": "When will the rain stop?"
+          "en": "When will the rain stop?",
+          "fon": "yeju no hu kan sa giti ?"
         },
         {
-          "en": "Not now, later."
+          "en": "Not now, later.",
+          "fon": "no gem [gemshu]",
+          "note": "gap: gemshu (needs a root)"
         },
         {
-          "en": "We should rest before we walk."
+          "en": "We should rest before we walk.",
+          "fon": "dan di tigi tinal"
         },
         {
-          "en": "Is it time to go now?"
+          "en": "Is it time to go now?",
+          "fon": "kan gi gem ?"
         },
         {
-          "en": "I feel tired now."
+          "en": "I feel tired now.",
+          "fon": "mi nes femtam gem"
         },
         {
-          "en": "We can talk later."
+          "en": "We can talk later.",
+          "fon": "dan gemshu se"
         },
         {
-          "en": "Before we sleep, we need water."
+          "en": "Before we sleep, we need water.",
+          "fon": "dan di nal les ye"
         },
         {
-          "en": "When does the sun rise here?"
+          "en": "When does the sun rise here?",
+          "fon": "samdat no hu kan kekra nam ?"
         },
         {
-          "en": "Let us eat now."
+          "en": "Let us eat now.",
+          "fon": "gem dan tel kugu"
         },
         {
-          "en": "I was afraid before, not now."
+          "en": "I was afraid before, not now.",
+          "fon": "mi ta di no gem nes nespe"
         },
         {
-          "en": "After we eat, we can rest."
+          "en": "After we eat, we can rest.",
+          "fon": "dan shu tel tinal"
         },
         {
-          "en": "Is it too late to move?"
+          "en": "Is it too late to move?",
+          "fon": "shugu gi ?"
         },
         {
-          "en": "We should do this now."
+          "en": "We should do this now.",
+          "fon": "dan mo gem"
         },
         {
-          "en": "When did you last drink water?"
+          "en": "When did you last drink water?",
+          "fon": "be no hu kan ta daldi ko ye ?"
         },
         {
-          "en": "The fire was burning before."
+          "en": "The fire was burning before.",
+          "fon": "dat ta di dat"
         },
         {
-          "en": "I feel better now."
+          "en": "I feel better now.",
+          "fon": "mi nes gu gem"
         },
         {
-          "en": "We will find food soon."
+          "en": "We will find food soon.",
+          "fon": "dan sa lanek lo dalshu"
         },
         {
-          "en": "Can we leave after the rain?"
+          "en": "Can we leave after the rain?",
+          "fon": "dan sa shu yeju felnen ?"
         },
         {
-          "en": "Not yet, wait a little more."
+          "en": "Not yet, wait a little more.",
+          "fon": "be no digem tikan gen mas"
         },
         {
-          "en": "Before dark, we need shelter."
+          "en": "Before dark, we need shelter.",
+          "fon": "dan di gan les temche"
         },
         {
-          "en": "I will help you later."
+          "en": "I will help you later.",
+          "fon": "mi sa gemshu kas be"
         },
         {
-          "en": "When will it be light again?"
+          "en": "When will it be light again?",
+          "fon": "sa no hu kan kek moyi ?"
         },
         {
-          "en": "We move now and rest later."
+          "en": "We move now and rest later.",
+          "fon": "dan fagem gemshu gi tinal"
         },
         {
-          "en": "After you sleep, I will watch."
+          "en": "After you sleep, I will watch.",
+          "fon": "mi sa shu be nal wi"
         },
         {
-          "en": "I was not ready before."
+          "en": "I was not ready before.",
+          "fon": "mi ta no gatdimo di"
         },
         {
-          "en": "Is it safe to go now?"
+          "en": "Is it safe to go now?",
+          "fon": "gem gi tampe ?"
         },
         {
-          "en": "I feel hungry now."
+          "en": "I feel hungry now.",
+          "fon": "mi nes saklo gem"
         },
         {
-          "en": "We should eat before we walk."
+          "en": "We should eat before we walk.",
+          "fon": "dan di tigi tel"
         },
         {
-          "en": "Soon the sun will go down."
+          "en": "Soon the sun will go down.",
+          "fon": "samdat sa dalshu gi ju"
         },
         {
-          "en": "Did you sleep before?"
+          "en": "Did you sleep before?",
+          "fon": "be ta di nal ?"
         },
         {
-          "en": "I mean later, not right now."
+          "en": "I mean later, not right now.",
+          "fon": "mi kuwimalhu shu no gem"
         },
         {
-          "en": "After I rest, I will help."
+          "en": "After I rest, I will help.",
+          "fon": "mi sa [tinal] di kas",
+          "note": "gap: tinal (needs a root)"
         },
         {
-          "en": "When will the water come back?"
+          "en": "When will the water come back?",
+          "fon": "ye no hu kan sa giyinam ?"
         },
         {
-          "en": "I felt safe before, not now."
+          "en": "I felt safe before, not now.",
+          "fon": "gem ta no mi nes tampe di"
         },
         {
-          "en": "Let us decide later, not now."
+          "en": "Let us decide later, not now.",
+          "fon": "gem shu no dan hudimo"
         },
         {
-          "en": "The noise stopped just now."
+          "en": "The noise stopped just now.",
+          "fon": "samlen ta giti gem"
         },
         {
-          "en": "Is it still night?"
+          "en": "Is it still night?",
+          "fon": "gankan ti ?"
         },
         {
-          "en": "We can try again soon."
+          "en": "We can try again soon.",
+          "fon": "dan sakmo moyi dalshu"
         },
         {
-          "en": "Before we go, drink some water."
+          "en": "Before we go, drink some water.",
+          "fon": "di dan gi ko ket ye"
         }
       ]
     },
@@ -1725,154 +2291,207 @@
       "name": "Direction & motion",
       "phrases": [
         {
-          "en": "Come here."
+          "en": "Come here.",
+          "fon": "ginam nam"
         },
         {
-          "en": "Stay here."
+          "en": "Stay here.",
+          "fon": "ti nam"
         },
         {
-          "en": "Go there."
+          "en": "Go there.",
+          "fon": "gi tak"
         },
         {
-          "en": "Wait for me."
+          "en": "Wait for me.",
+          "fon": "tikan mi"
         },
         {
-          "en": "Follow me."
+          "en": "Follow me.",
+          "fon": "sogi mi"
         },
         {
-          "en": "I am leaving now."
+          "en": "I am leaving now.",
+          "fon": "mi gi fet gem"
         },
         {
-          "en": "You must stay here."
+          "en": "You must stay here.",
+          "fon": "be ti nam"
         },
         {
-          "en": "I will wait here."
+          "en": "I will wait here.",
+          "fon": "mi sa tikan nam"
         },
         {
-          "en": "Move away from there."
+          "en": "Move away from there.",
+          "fon": "gi fet tak"
         },
         {
-          "en": "Are you coming with me?"
+          "en": "Are you coming with me?",
+          "fon": "be ginam dal mi ?"
         },
         {
-          "en": "I am going to the water."
+          "en": "I am going to the water.",
+          "fon": "mi gi nan ye"
         },
         {
-          "en": "Please wait for me here."
+          "en": "Please wait for me here.",
+          "fon": "tikan nam mi kugu"
         },
         {
-          "en": "Do not enter that place."
+          "en": "Do not enter that place.",
+          "fon": "no felmes che"
         },
         {
-          "en": "I will follow you."
+          "en": "I will follow you.",
+          "fon": "mi sa sogi be"
         },
         {
-          "en": "We can go together."
+          "en": "We can go together.",
+          "fon": "dan gi ho"
         },
         {
-          "en": "You are moving too fast."
+          "en": "You are moving too fast.",
+          "fon": "be gi mas nek"
         },
         {
-          "en": "I feel afraid to go there."
+          "en": "I feel afraid to go there.",
+          "fon": "mi nes tak nespe gi"
         },
         {
-          "en": "Are you staying or leaving?"
+          "en": "Are you staying or leaving?",
+          "fon": "be tiche gi fet ?"
         },
         {
-          "en": "Move slowly and carefully."
+          "en": "Move slowly and carefully.",
+          "fon": "gi gishanek nathu"
         },
         {
-          "en": "I do not want to go alone."
+          "en": "I do not want to go alone.",
+          "fon": "mi no sak gi fa de"
         },
         {
-          "en": "Come with me now."
+          "en": "Come with me now.",
+          "fon": "be ginam dal mi gem"
         },
         {
-          "en": "I entered the shelter."
+          "en": "I entered the shelter.",
+          "fon": "mi ta felmes temche"
         },
         {
-          "en": "You can enter here."
+          "en": "You can enter here.",
+          "fon": "be felmes nam"
         },
         {
-          "en": "I am going and coming back."
+          "en": "I am going and coming back.",
+          "fon": "mi gi giyinam"
         },
         {
-          "en": "Do you want to follow me?"
+          "en": "Do you want to follow me?",
+          "fon": "be sak sogi mi ?"
         },
         {
-          "en": "I will stay and wait here."
+          "en": "I will stay and wait here.",
+          "fon": "mi sa tiche tikan nam"
         },
         {
-          "en": "We must leave this place."
+          "en": "We must leave this place.",
+          "fon": "dan felnen nam les"
         },
         {
-          "en": "That direction is not safe."
+          "en": "That direction is not safe.",
+          "fon": "no tampe"
         },
         {
-          "en": "I am scared and I want to stay."
+          "en": "I am scared and I want to stay.",
+          "fon": "mi nes sak nespe [tiche]",
+          "note": "gap: tiche (needs a root)"
         },
         {
-          "en": "Can you come back soon?"
+          "en": "Can you come back soon?",
+          "fon": "be giyinam dalshu ?"
         },
         {
-          "en": "Do not leave me alone."
+          "en": "Do not leave me alone.",
+          "fon": "no gi fet mi nesfa"
         },
         {
-          "en": "I will go and you stay."
+          "en": "I will go and you stay.",
+          "fon": "mi be sa gi ti"
         },
         {
-          "en": "Move closer to the fire."
+          "en": "Move closer to the fire.",
+          "fon": "gi dal dat"
         },
         {
-          "en": "Are you going to come back?"
+          "en": "Are you going to come back?",
+          "fon": "be sa giyinam ?"
         },
         {
-          "en": "I did not follow you on purpose."
+          "en": "I did not follow you on purpose.",
+          "fon": "mi ta no sogi be de mo"
         },
         {
-          "en": "Wait here until I return."
+          "en": "Wait here until I return.",
+          "fon": "be mi [giyinam] tikan nam",
+          "note": "gap: giyinam (needs a root)"
         },
         {
-          "en": "I feel relieved that you came back."
+          "en": "I feel relieved that you came back.",
+          "fon": "mi nes nesti be ta giyinam"
         },
         {
-          "en": "Do not move from that spot."
+          "en": "Do not move from that spot.",
+          "fon": "no gi nam"
         },
         {
-          "en": "I am coming back soon."
+          "en": "I am coming back soon.",
+          "fon": "mi sa giyinam dalshu"
         },
         {
-          "en": "You left and I was alone."
+          "en": "You left and I was alone.",
+          "fon": "be mi ta gi nesfa fet"
         },
         {
-          "en": "Can I enter this space?"
+          "en": "Can I enter this space?",
+          "fon": "mi felmes chetam ?"
         },
         {
-          "en": "I meant to go the other way."
+          "en": "I meant to go the other way.",
+          "fon": "mi ta gi [honen] nan hudimo",
+          "note": "gap: honen (needs a root)"
         },
         {
-          "en": "We should move together."
+          "en": "We should move together.",
+          "fon": "dan gi ho"
         },
         {
-          "en": "Is someone coming toward us?"
+          "en": "Is someone coming toward us?",
+          "fon": "ket ba ginam nan dan ?"
         },
         {
-          "en": "I feel tired but I must keep moving."
+          "en": "I feel tired but I must keep moving.",
+          "fon": "mi nes femtam les ti gi"
         },
         {
-          "en": "Do not follow that animal."
+          "en": "Do not follow that animal.",
+          "fon": "no sogi kal"
         },
         {
-          "en": "You went the wrong direction."
+          "en": "You went the wrong direction.",
+          "fon": "be ta gi gam nan"
         },
         {
-          "en": "Are we moving toward the water?"
+          "en": "Are we moving toward the water?",
+          "fon": "dan gi nan ye ?"
         },
         {
-          "en": "I stayed and waited for a long time."
+          "en": "I stayed and waited for a long time.",
+          "fon": "mi ta tiche tikan ninan kan"
         },
         {
-          "en": "Stay where you are."
+          "en": "Stay where you are.",
+          "fon": "be ti nam"
         }
       ]
     },
@@ -1881,154 +2500,205 @@
       "name": "Possession & trade",
       "phrases": [
         {
-          "en": "I have food."
+          "en": "I have food.",
+          "fon": "mi gat lo"
         },
         {
-          "en": "Do you have water?"
+          "en": "Do you have water?",
+          "fon": "be gat ye ?"
         },
         {
-          "en": "Take this."
+          "en": "Take this.",
+          "fon": "la to"
         },
         {
-          "en": "Give me that."
+          "en": "Give me that.",
+          "fon": "be ku mi"
         },
         {
-          "en": "I will return this to you."
+          "en": "I will return this to you.",
+          "fon": "mi sa giyinam nan be"
         },
         {
-          "en": "Can I borrow that tool?"
+          "en": "Can I borrow that tool?",
+          "fon": "mi sa lakam dakto ?"
         },
         {
-          "en": "This belongs to me."
+          "en": "This belongs to me.",
+          "fon": "nan kamche mi"
         },
         {
-          "en": "I give you this cloth."
+          "en": "I give you this cloth.",
+          "fon": "mi ku tatkel be"
         },
         {
-          "en": "Do you have more of this?"
+          "en": "Do you have more of this?",
+          "fon": "be gat mas ?"
         },
         {
-          "en": "I have no fire."
+          "en": "I have no fire.",
+          "fon": "mi gat dat"
         },
         {
-          "en": "Take some of my food."
+          "en": "Take some of my food.",
+          "fon": "be la ket mi lo"
         },
         {
-          "en": "I feel glad to share."
+          "en": "I feel glad to share.",
+          "fon": "mi nes nesgu kuket"
         },
         {
-          "en": "This is yours now."
+          "en": "This is yours now.",
+          "fon": "nan kamche be gem"
         },
         {
-          "en": "Can we exchange these things?"
+          "en": "Can we exchange these things?",
+          "fon": "dan kula to ?"
         },
         {
-          "en": "I will give you this rope."
+          "en": "I will give you this rope.",
+          "fon": "mi sa ku be tetkam"
         },
         {
-          "en": "I have a knife and a rope."
+          "en": "I have a knife and a rope.",
+          "fon": "mi gat fendatsastem tetkam"
         },
         {
-          "en": "Do you want to share this?"
+          "en": "Do you want to share this?",
+          "fon": "be sak kuket ?"
         },
         {
-          "en": "I borrowed this from you."
+          "en": "I borrowed this from you.",
+          "fon": "mi ta lakam be"
         },
         {
-          "en": "Here, take this piece."
+          "en": "Here, take this piece.",
+          "fon": "la nam togen"
         },
         {
-          "en": "I do not have enough water."
+          "en": "I do not have enough water.",
+          "fon": "mi no gat ye lemgu"
         },
         {
-          "en": "I feel uneasy taking your food."
+          "en": "I feel uneasy taking your food.",
+          "fon": "mi nes pemet la be lo"
         },
         {
-          "en": "You can keep this."
+          "en": "You can keep this.",
+          "fon": "be gat"
         },
         {
-          "en": "I have water and you have food."
+          "en": "I have water and you have food.",
+          "fon": "mi be kamche ye lo"
         },
         {
-          "en": "Let us share everything equally."
+          "en": "Let us share everything equally.",
+          "fon": "dan kuket mel to homas"
         },
         {
-          "en": "Can I take one of those?"
+          "en": "Can I take one of those?",
+          "fon": "mi la fa to ?"
         },
         {
-          "en": "I will return your container soon."
+          "en": "I will return your container soon.",
+          "fon": "mi sa giyinam be togat dalshu"
         },
         {
-          "en": "I feel good giving this to you."
+          "en": "I feel good giving this to you.",
+          "fon": "mi nes gu ku be"
         },
         {
-          "en": "Do not take that."
+          "en": "Do not take that.",
+          "fon": "no la to"
         },
         {
-          "en": "I have a small amount of this."
+          "en": "I have a small amount of this.",
+          "fon": "mi dela to gen ket"
         },
         {
-          "en": "Give me the large piece and take the small one."
+          "en": "Give me the large piece and take the small one.",
+          "fon": "be ku la mi ni togen gen togen ni gen"
         },
         {
-          "en": "Did you take my container?"
+          "en": "Did you take my container?",
+          "fon": "be ta la togat mi ?"
         },
         {
-          "en": "I want to exchange this for that."
+          "en": "I want to exchange this for that.",
+          "fon": "mi sak kula"
         },
         {
-          "en": "This is not mine."
+          "en": "This is not mine.",
+          "fon": "nan kamche mi no"
         },
         {
-          "en": "I feel worried that I have too little."
+          "en": "I feel worried that I have too little.",
+          "fon": "mi nes pemet mi gat sha"
         },
         {
-          "en": "Can you give me a little water?"
+          "en": "Can you give me a little water?",
+          "fon": "be ku mi gen be ?"
         },
         {
-          "en": "I will share my shelter with you."
+          "en": "I will share my shelter with you.",
+          "fon": "mi sa kuket be temche de"
         },
         {
-          "en": "Take this and give me that one."
+          "en": "Take this and give me that one.",
+          "fon": "la ku mi"
         },
         {
-          "en": "I gave you that already."
+          "en": "I gave you that already.",
+          "fon": "mi ta ku be digem"
         },
         {
-          "en": "Do you have a container I can borrow?"
+          "en": "Do you have a container I can borrow?",
+          "fon": "be gat togat mi [lakam] ?",
+          "note": "gap: lakam (needs a root)"
         },
         {
-          "en": "I am sorry, I took the wrong thing."
+          "en": "I am sorry, I took the wrong thing.",
+          "fon": "mi ta la to tesku gam"
         },
         {
-          "en": "We each have enough food now."
+          "en": "We each have enough food now.",
+          "fon": "gem dan gat lo mel"
         },
         {
-          "en": "I feel relieved that we can share."
+          "en": "I feel relieved that we can share.",
+          "fon": "mi nes nesti dan kuket"
         },
         {
-          "en": "Please return that to me."
+          "en": "Please return that to me.",
+          "fon": "giyinam nan mi kugu"
         },
         {
-          "en": "I think I took yours by mistake."
+          "en": "I think I took yours by mistake.",
+          "fon": "mi ta met la be to mogam"
         },
         {
-          "en": "Is there more food somewhere?"
+          "en": "Is there more food somewhere?",
+          "fon": "mas tel che ?"
         },
         {
-          "en": "I have fire and wood."
+          "en": "I have fire and wood.",
+          "fon": "mi gat dat tetsas"
         },
         {
-          "en": "You can borrow this but please return it."
+          "en": "You can borrow this but please return it.",
+          "fon": "be lakam giyinam kugu"
         },
         {
-          "en": "I have some food here."
+          "en": "I have some food here.",
+          "fon": "mi gat nam ket lo"
         },
         {
-          "en": "I will give you some of this."
+          "en": "I will give you some of this.",
+          "fon": "mi sa ku be ket nan"
         },
         {
-          "en": "Can we share this food?"
+          "en": "Can we share this food?",
+          "fon": "dan kuket lo ?"
         }
       ]
     },
@@ -2037,154 +2707,204 @@
       "name": "Food & eating",
       "phrases": [
         {
-          "en": "This food is good."
+          "en": "This food is good.",
+          "fon": "lo gu"
         },
         {
-          "en": "I am full."
+          "en": "I am full.",
+          "fon": "mi nes melto"
         },
         {
-          "en": "This tastes bad."
+          "en": "This tastes bad.",
+          "fon": "mi tal gam"
         },
         {
-          "en": "We must cook this meat."
+          "en": "We must cook this meat.",
+          "fon": "dan kel datlo"
         },
         {
-          "en": "That plant is poison."
+          "en": "That plant is poison.",
+          "fon": "tet gamtel"
         },
         {
-          "en": "This meat is raw."
+          "en": "This meat is raw.",
+          "fon": "lo lodidat"
         },
         {
-          "en": "I will cook the food."
+          "en": "I will cook the food.",
+          "fon": "mi sa kel datlo"
         },
         {
-          "en": "Can you eat this?"
+          "en": "Can you eat this?",
+          "fon": "be tel ?"
         },
         {
-          "en": "I am very hungry."
+          "en": "I am very hungry.",
+          "fon": "mi saklo mas"
         },
         {
-          "en": "This water is clean."
+          "en": "This water is clean.",
+          "fon": "ye natye"
         },
         {
-          "en": "That fruit is not safe."
+          "en": "That fruit is not safe.",
+          "fon": "tetlo tampe no"
         },
         {
-          "en": "Please eat something."
+          "en": "Please eat something.",
+          "fon": "tel ket to kugu"
         },
         {
-          "en": "I will share this food."
+          "en": "I will share this food.",
+          "fon": "mi sa kuket lo"
         },
         {
-          "en": "Is this safe to eat?"
+          "en": "Is this safe to eat?",
+          "fon": "to gutel ?"
         },
         {
-          "en": "This tastes very good."
+          "en": "This tastes very good.",
+          "fon": "nan tal ni gu"
         },
         {
-          "en": "I cannot eat raw fish."
+          "en": "I cannot eat raw fish.",
+          "fon": "mi no tel lodidat kalye"
         },
         {
-          "en": "We need to find water."
+          "en": "We need to find water.",
+          "fon": "dan les ye wi"
         },
         {
-          "en": "Do you want more food?"
+          "en": "Do you want more food?",
+          "fon": "be sak mas lo ?"
         },
         {
-          "en": "I am not full yet."
+          "en": "I am not full yet.",
+          "fon": "mi nes no saklo ti"
         },
         {
-          "en": "This smell is bad."
+          "en": "This smell is bad.",
+          "fon": "tek gam"
         },
         {
-          "en": "Cook it over the fire."
+          "en": "Cook it over the fire.",
+          "fon": "kel ra dat to"
         },
         {
-          "en": "This food is still raw."
+          "en": "This food is still raw.",
+          "fon": "lo lodidat"
         },
         {
-          "en": "I do not eat that animal."
+          "en": "I do not eat that animal.",
+          "fon": "mi no tel kal"
         },
         {
-          "en": "That berry made me sick."
+          "en": "That berry made me sick.",
+          "fon": "tetlo ta dikel mi femgam"
         },
         {
-          "en": "We can eat this together."
+          "en": "We can eat this together.",
+          "fon": "dan tel dan"
         },
         {
-          "en": "Is that water drinkable?"
+          "en": "Is that water drinkable?",
+          "fon": "ye gutel ?"
         },
         {
-          "en": "I am hungry and thirsty."
+          "en": "I am hungry and thirsty.",
+          "fon": "mi nes saklo lesye"
         },
         {
-          "en": "This food is cooked enough."
+          "en": "This food is cooked enough.",
+          "fon": "lo datlo"
         },
         {
-          "en": "Do not touch that plant."
+          "en": "Do not touch that plant.",
+          "fon": "no mam tet"
         },
         {
-          "en": "I will boil the water."
+          "en": "I will boil the water.",
+          "fon": "mi sa yedatgi ye"
         },
         {
-          "en": "This has a strange taste."
+          "en": "This has a strange taste.",
+          "fon": "to tal honen"
         },
         {
-          "en": "Take this food, please."
+          "en": "Take this food, please.",
+          "fon": "la lo kugu"
         },
         {
-          "en": "Did you eat today?"
+          "en": "Did you eat today?",
+          "fon": "be ta kekdi tel ?"
         },
         {
-          "en": "I am full and satisfied."
+          "en": "I am full and satisfied.",
+          "fon": "mi nes gu melto"
         },
         {
-          "en": "That food is rotten."
+          "en": "That food is rotten.",
+          "fon": "lo gamfo"
         },
         {
-          "en": "We have very little food."
+          "en": "We have very little food.",
+          "fon": "dan gat lo gen dalfet"
         },
         {
-          "en": "I tasted it and it is safe."
+          "en": "I tasted it and it is safe.",
+          "fon": "mi ta tal tampe"
         },
         {
-          "en": "Do not eat that red berry."
+          "en": "Do not eat that red berry.",
+          "fon": "no tel datwi tetlo"
         },
         {
-          "en": "This root is good to eat."
+          "en": "This root is good to eat.",
+          "fon": "tetju gutel gu"
         },
         {
-          "en": "Can we cook this together?"
+          "en": "Can we cook this together?",
+          "fon": "dan yedatgi dan ?"
         },
         {
-          "en": "I do not know this food."
+          "en": "I do not know this food.",
+          "fon": "mi no hu lo"
         },
         {
-          "en": "This meat smells bad."
+          "en": "This meat smells bad.",
+          "fon": "lo tek gam"
         },
         {
-          "en": "This food tastes good."
+          "en": "This food tastes good.",
+          "fon": "lo tal gu"
         },
         {
-          "en": "I am full now."
+          "en": "I am full now.",
+          "fon": "mi nes gutet gem"
         },
         {
-          "en": "That food may be poison."
+          "en": "That food may be poison.",
+          "fon": "lo gamtel ketnat"
         },
         {
-          "en": "This meat is still raw."
+          "en": "This meat is still raw.",
+          "fon": "lo lodidat"
         },
         {
-          "en": "We must cook this first."
+          "en": "We must cook this first.",
+          "fon": "dan les kel datlo di"
         },
         {
-          "en": "Do you want to eat now?"
+          "en": "Do you want to eat now?",
+          "fon": "be sak tel gem ?"
         },
         {
-          "en": "Please drink some water."
+          "en": "Please drink some water.",
+          "fon": "ko ket ye kugu"
         },
         {
-          "en": "This tastes very bad."
+          "en": "This tastes very bad.",
+          "fon": "mi tal ni gam"
         }
       ]
     },
@@ -2193,154 +2913,205 @@
       "name": "Weather & environment",
       "phrases": [
         {
-          "en": "It is raining."
+          "en": "It is raining.",
+          "fon": "yeju"
         },
         {
-          "en": "The night is very cold."
+          "en": "The night is very cold.",
+          "fon": "gankan mak ni"
         },
         {
-          "en": "It is dark here."
+          "en": "It is dark here.",
+          "fon": "gan nam"
         },
         {
-          "en": "The wind is strong."
+          "en": "The wind is strong.",
+          "fon": "gesgi femgu"
         },
         {
-          "en": "The sun is gone."
+          "en": "The sun is gone.",
+          "fon": "samdat fet"
         },
         {
-          "en": "Is it going to rain more?"
+          "en": "Is it going to rain more?",
+          "fon": "sa yeju mas ?"
         },
         {
-          "en": "The storm is coming closer."
+          "en": "The storm is coming closer.",
+          "fon": "sampa ginam dal"
         },
         {
-          "en": "Please help me make fire."
+          "en": "Please help me make fire.",
+          "fon": "mi kas kel dat kugu"
         },
         {
-          "en": "I am cold and wet."
+          "en": "I am cold and wet.",
+          "fon": "mi nes mak be"
         },
         {
-          "en": "The rain is very heavy."
+          "en": "The rain is very heavy.",
+          "fon": "yeju ni"
         },
         {
-          "en": "Is the storm dangerous?"
+          "en": "Is the storm dangerous?",
+          "fon": "sampa pedal ?"
         },
         {
-          "en": "We must stay near the fire."
+          "en": "We must stay near the fire.",
+          "fon": "dan ti dal dat"
         },
         {
-          "en": "The wind is getting stronger."
+          "en": "The wind is getting stronger.",
+          "fon": "gesgi fomas femgu"
         },
         {
-          "en": "Do you see the dark clouds?"
+          "en": "Do you see the dark clouds?",
+          "fon": "be wi gan yera ?"
         },
         {
-          "en": "The fire is going out."
+          "en": "The fire is going out.",
+          "fon": "dat temkan"
         },
         {
-          "en": "I am afraid of the storm."
+          "en": "I am afraid of the storm.",
+          "fon": "mi nes nespe sampa"
         },
         {
-          "en": "We need dry wood for fire."
+          "en": "We need dry wood for fire.",
+          "fon": "dan les tetni dat fentam"
         },
         {
-          "en": "The sun will come tomorrow."
+          "en": "The sun will come tomorrow.",
+          "fon": "gem sa shu samdat ginam"
         },
         {
-          "en": "Is the rain stopping?"
+          "en": "Is the rain stopping?",
+          "fon": "yeju giti ?"
         },
         {
-          "en": "It is too dark to move."
+          "en": "It is too dark to move.",
+          "fon": "gi gan mas no"
         },
         {
-          "en": "The ground is wet and cold."
+          "en": "The ground is wet and cold.",
+          "fon": "fen nes mak ye mak"
         },
         {
-          "en": "Come closer to the fire."
+          "en": "Come closer to the fire.",
+          "fon": "ginam dal dat"
         },
         {
-          "en": "The sky is very dark."
+          "en": "The sky is very dark.",
+          "fon": "sam gan ni"
         },
         {
-          "en": "Is it cold where you are?"
+          "en": "Is it cold where you are?",
+          "fon": "be mak che ?"
         },
         {
-          "en": "The storm is loud and strong."
+          "en": "The storm is loud and strong.",
+          "fon": "sampa nes ni femgu"
         },
         {
-          "en": "I feel the cold wind."
+          "en": "I feel the cold wind.",
+          "fon": "mi nes mak gesgi"
         },
         {
-          "en": "We must not let the fire die."
+          "en": "We must not let the fire die.",
+          "fon": "dan no mo temfo dat"
         },
         {
-          "en": "The rain stopped."
+          "en": "The rain stopped.",
+          "fon": "yeju ta giti"
         },
         {
-          "en": "Is the sun coming up?"
+          "en": "Is the sun coming up?",
+          "fon": "samdat gi ra ?"
         },
         {
-          "en": "I do not understand the weather here."
+          "en": "I do not understand the weather here.",
+          "fon": "mi no hufel nam [sampa]",
+          "note": "gap: sampa (needs a root)"
         },
         {
-          "en": "The air is cold and wet."
+          "en": "The air is cold and wet.",
+          "fon": "ges nes mak ye"
         },
         {
-          "en": "Please move away from the wind."
+          "en": "Please move away from the wind.",
+          "fon": "gi fet diye gesgi kugu"
         },
         {
-          "en": "The fire gives us warmth."
+          "en": "The fire gives us warmth.",
+          "fon": "dat ku dan lemgu"
         },
         {
-          "en": "Is it safe to go outside now?"
+          "en": "Is it safe to go outside now?",
+          "fon": "tampe nen gi gem ?"
         },
         {
-          "en": "I am very cold tonight."
+          "en": "I am very cold tonight.",
+          "fon": "mi gankan nes mak ni"
         },
         {
-          "en": "The storm passed."
+          "en": "The storm passed.",
+          "fon": "sampa ta felgi"
         },
         {
-          "en": "Can you see the sun?"
+          "en": "Can you see the sun?",
+          "fon": "be wi samdat ?"
         },
         {
-          "en": "The wind is cold and sharp."
+          "en": "The wind is cold and sharp.",
+          "fon": "gesgi nes mak gam"
         },
         {
-          "en": "We need shelter from the rain."
+          "en": "We need shelter from the rain.",
+          "fon": "dan les diye yeju temche"
         },
         {
-          "en": "I do not know this word."
+          "en": "I do not know this word.",
+          "fon": "mi no hu tose"
         },
         {
-          "en": "The night is long and cold."
+          "en": "The night is long and cold.",
+          "fon": "gankan ninan mak"
         },
         {
-          "en": "Is the wind stopping?"
+          "en": "Is the wind stopping?",
+          "fon": "gesgi giti ?"
         },
         {
-          "en": "I feel better near the fire."
+          "en": "I feel better near the fire.",
+          "fon": "mi nes dal dat gu"
         },
         {
-          "en": "The sun is warm today."
+          "en": "The sun is warm today.",
+          "fon": "samdat nes lemgu gem"
         },
         {
-          "en": "Give me wood for the fire."
+          "en": "Give me wood for the fire.",
+          "fon": "ku mi tetsas dat"
         },
         {
-          "en": "Are those storm clouds?"
+          "en": "Are those storm clouds?",
+          "fon": "sampa yera ?"
         },
         {
-          "en": "The darkness is frightening to me."
+          "en": "The darkness is frightening to me.",
+          "fon": "gan nes mi nespe"
         },
         {
-          "en": "The rain and wind came together."
+          "en": "The rain and wind came together.",
+          "fon": "yeju gesgi ta ginam dan"
         },
         {
-          "en": "It is raining very hard now."
+          "en": "It is raining very hard now.",
+          "fon": "gem yeju ni"
         },
         {
-          "en": "The night will be very cold."
+          "en": "The night will be very cold.",
+          "fon": "gankan sa ni mak"
         }
       ]
     },
@@ -2349,154 +3120,206 @@
       "name": "Body & health",
       "phrases": [
         {
-          "en": "I cannot sleep."
+          "en": "I cannot sleep.",
+          "fon": "mi no nal"
         },
         {
-          "en": "I feel strong today."
+          "en": "I feel strong today.",
+          "fon": "mi nes femgu kekdi"
         },
         {
-          "en": "Are you sick?"
+          "en": "Are you sick?",
+          "fon": "be femgam ?"
         },
         {
-          "en": "My leg hurts."
+          "en": "My leg hurts.",
+          "fon": "mi tes nanfem"
         },
         {
-          "en": "Please breathe slowly."
+          "en": "Please breathe slowly.",
+          "fon": "gesmes kugu gishanek"
         },
         {
-          "en": "I cannot breathe well."
+          "en": "I cannot breathe well.",
+          "fon": "mi gesmes no gu"
         },
         {
-          "en": "Are you well?"
+          "en": "Are you well?",
+          "fon": "be gu ?"
         },
         {
-          "en": "My arm is hurt."
+          "en": "My arm is hurt.",
+          "fon": "mi tes dakfem"
         },
         {
-          "en": "I slept a little."
+          "en": "I slept a little.",
+          "fon": "mi ta nal gen"
         },
         {
-          "en": "I did not sleep."
+          "en": "I did not sleep.",
+          "fon": "mi ta no nal"
         },
         {
-          "en": "You look very tired."
+          "en": "You look very tired.",
+          "fon": "be wi femtam ni"
         },
         {
-          "en": "My stomach hurts badly."
+          "en": "My stomach hurts badly.",
+          "fon": "mi tes telmes gam"
         },
         {
-          "en": "Can you walk?"
+          "en": "Can you walk?",
+          "fon": "be tigi ?"
         },
         {
-          "en": "Please let me sleep."
+          "en": "Please let me sleep.",
+          "fon": "mi nal kugu"
         },
         {
-          "en": "My back hurts a lot."
+          "en": "My back hurts a lot.",
+          "fon": "mi tes so lek"
         },
         {
-          "en": "I am not sick."
+          "en": "I am not sick.",
+          "fon": "mi no femgam"
         },
         {
-          "en": "You should rest now."
+          "en": "You should rest now.",
+          "fon": "be tinal gem"
         },
         {
-          "en": "Does your hand hurt?"
+          "en": "Does your hand hurt?",
+          "fon": "be dak tes ?"
         },
         {
-          "en": "I am strong enough."
+          "en": "I am strong enough.",
+          "fon": "mi femgu lemgu"
         },
         {
-          "en": "I need to breathe fresh air."
+          "en": "I need to breathe fresh air.",
+          "fon": "mi les gesmes dalkel ges dalkel"
         },
         {
-          "en": "My eyes are very heavy."
+          "en": "My eyes are very heavy.",
+          "fon": "mi nes femtam kem ni"
         },
         {
-          "en": "I cannot stand up."
+          "en": "I cannot stand up.",
+          "fon": "mi no [tira] ra",
+          "note": "gap: tira (needs a root)"
         },
         {
-          "en": "Are you breathing well?"
+          "en": "Are you breathing well?",
+          "fon": "be gesmes gu ?"
         },
         {
-          "en": "My foot is swollen."
+          "en": "My foot is swollen.",
+          "fon": "mi tatni gifem"
         },
         {
-          "en": "I feel weak and sick."
+          "en": "I feel weak and sick.",
+          "fon": "mi nes femsha femgam"
         },
         {
-          "en": "This person needs rest."
+          "en": "This person needs rest.",
+          "fon": "ba les tinal"
         },
         {
-          "en": "I slept and feel better."
+          "en": "I slept and feel better.",
+          "fon": "mi ta nal nes gu mas"
         },
         {
-          "en": "Do you feel pain?"
+          "en": "Do you feel pain?",
+          "fon": "be nes tes ?"
         },
         {
-          "en": "I mean I am unwell."
+          "en": "I mean I am unwell.",
+          "fon": "mi femgam"
         },
         {
-          "en": "My chest feels tight."
+          "en": "My chest feels tight.",
+          "fon": "mi nes punen femgu"
         },
         {
-          "en": "I am not strong today."
+          "en": "I am not strong today.",
+          "fon": "mi femgu no kekdi gem"
         },
         {
-          "en": "Can you breathe deeply?"
+          "en": "Can you breathe deeply?",
+          "fon": "be gesmes ni ?"
         },
         {
-          "en": "My body is very sore."
+          "en": "My body is very sore.",
+          "fon": "mi nes tes ni"
         },
         {
-          "en": "I need more sleep."
+          "en": "I need more sleep.",
+          "fon": "mi les nal mas"
         },
         {
-          "en": "The old person is sick."
+          "en": "The old person is sick.",
+          "fon": "baso femgam"
         },
         {
-          "en": "I said sick, not tired."
+          "en": "I said sick, not tired.",
+          "fon": "mi ta se femgam no femtam"
         },
         {
-          "en": "Are you tired or sick?"
+          "en": "Are you tired or sick?",
+          "fon": "be nes femtam femgam ?"
         },
         {
-          "en": "I feel pain in my side."
+          "en": "I feel pain in my side.",
+          "fon": "mi nes mes [togen] tes",
+          "note": "gap: togen (needs a root)"
         },
         {
-          "en": "Please carry this for me."
+          "en": "Please carry this for me.",
+          "fon": "be gigat to kugu mi"
         },
         {
-          "en": "I am well and strong."
+          "en": "I am well and strong.",
+          "fon": "mi nes gu femgu"
         },
         {
-          "en": "My knee cannot bend."
+          "en": "My knee cannot bend.",
+          "fon": "mi gije no diho"
         },
         {
-          "en": "Is the child well?"
+          "en": "Is the child well?",
+          "fon": "bagen gu ?"
         },
         {
-          "en": "I am tired but not sick."
+          "en": "I am tired but not sick.",
+          "fon": "mi femtam no femgam"
         },
         {
-          "en": "I am very tired."
+          "en": "I am very tired.",
+          "fon": "mi nes femtam ni"
         },
         {
-          "en": "I feel weak and cold."
+          "en": "I feel weak and cold.",
+          "fon": "mi nes femsha mak"
         },
         {
-          "en": "My leg is hurting."
+          "en": "My leg is hurting.",
+          "fon": "mi tes nanfem"
         },
         {
-          "en": "I need to sleep now."
+          "en": "I need to sleep now.",
+          "fon": "mi les nal gem"
         },
         {
-          "en": "Can you breathe normally?"
+          "en": "Can you breathe normally?",
+          "fon": "be gesmes gu ?"
         },
         {
-          "en": "My arm is injured."
+          "en": "My arm is injured.",
+          "fon": "mi tes dakfem"
         },
         {
-          "en": "I could not sleep last night."
+          "en": "I could not sleep last night.",
+          "fon": "mi ta no gankan nal"
         }
       ]
     },
@@ -2505,154 +3328,207 @@
       "name": "Family & children",
       "phrases": [
         {
-          "en": "The baby is crying."
+          "en": "The baby is crying.",
+          "fon": "bagen nes tes gen"
         },
         {
-          "en": "My child is missing."
+          "en": "My child is missing.",
+          "fon": "mi bagen nantam"
         },
         {
-          "en": "Is your mother here?"
+          "en": "Is your mother here?",
+          "fon": "be badi nam ?"
         },
         {
-          "en": "The old person needs help."
+          "en": "The old person needs help.",
+          "fon": "baso les kas"
         },
         {
-          "en": "My baby is very hungry."
+          "en": "My baby is very hungry.",
+          "fon": "mi bagen saklo ni"
         },
         {
-          "en": "Is the child safe?"
+          "en": "Is the child safe?",
+          "fon": "bagen tampe ?"
         },
         {
-          "en": "I am looking for my father."
+          "en": "I am looking for my father.",
+          "fon": "mi sak wi badi"
         },
         {
-          "en": "My mother is sick."
+          "en": "My mother is sick.",
+          "fon": "[badi] femgam",
+          "note": "gap: badi (needs a root)"
         },
         {
-          "en": "Please hold the baby."
+          "en": "Please hold the baby.",
+          "fon": "gat bagen kugu"
         },
         {
-          "en": "I am worried about my child."
+          "en": "I am worried about my child.",
+          "fon": "mi nes pemet dela bagen"
         },
         {
-          "en": "The child is sleeping."
+          "en": "The child is sleeping.",
+          "fon": "bagen nal"
         },
         {
-          "en": "Do you have children?"
+          "en": "Do you have children?",
+          "fon": "be gat bagen ?"
         },
         {
-          "en": "My family is not here."
+          "en": "My family is not here.",
+          "fon": "mi sanba no nam"
         },
         {
-          "en": "The baby needs water."
+          "en": "The baby needs water.",
+          "fon": "bagen les ye"
         },
         {
-          "en": "I miss my family."
+          "en": "I miss my family.",
+          "fon": "mi sakfet sanba"
         },
         {
-          "en": "Is the old person eating?"
+          "en": "Is the old person eating?",
+          "fon": "baso tel ?"
         },
         {
-          "en": "Please watch the child."
+          "en": "Please watch the child.",
+          "fon": "kugu wi bagen"
         },
         {
-          "en": "My father is very weak."
+          "en": "My father is very weak.",
+          "fon": "mi badi femsha ni"
         },
         {
-          "en": "The child is cold and scared."
+          "en": "The child is cold and scared.",
+          "fon": "bagen nes mak nespe"
         },
         {
-          "en": "Can you help the old person?"
+          "en": "Can you help the old person?",
+          "fon": "be kas ba baso ?"
         },
         {
-          "en": "The baby is not breathing well."
+          "en": "The baby is not breathing well.",
+          "fon": "bagen no gesmes gu"
         },
         {
-          "en": "Is your father alive?"
+          "en": "Is your father alive?",
+          "fon": "be badi fo ?"
         },
         {
-          "en": "I am the mother of this child."
+          "en": "I am the mother of this child.",
+          "fon": "mi badi bagen"
         },
         {
-          "en": "The old person cannot walk far."
+          "en": "The old person cannot walk far.",
+          "fon": "baso no tigi fet"
         },
         {
-          "en": "I feel afraid for my baby."
+          "en": "I feel afraid for my baby.",
+          "fon": "mi nes nespe de bagen"
         },
         {
-          "en": "Do you have a mother here?"
+          "en": "Do you have a mother here?",
+          "fon": "be kamche nam badi ?"
         },
         {
-          "en": "Give food to the child first."
+          "en": "Give food to the child first.",
+          "fon": "ku lo bagen di"
         },
         {
-          "en": "My child is very small."
+          "en": "My child is very small.",
+          "fon": "mi bagen lek gen"
         },
         {
-          "en": "The baby is sleeping now."
+          "en": "The baby is sleeping now.",
+          "fon": "bagen nal gem"
         },
         {
-          "en": "I do not understand you."
+          "en": "I do not understand you.",
+          "fon": "mi no hufel be"
         },
         {
-          "en": "Is this child your child?"
+          "en": "Is this child your child?",
+          "fon": "bagen kamche be ?"
         },
         {
-          "en": "My mother is old and tired."
+          "en": "My mother is old and tired.",
+          "fon": "[badi] nes femtam di [and]",
+          "note": "gap: badi, and (needs a root)"
         },
         {
-          "en": "Please stay near the child."
+          "en": "Please stay near the child.",
+          "fon": "tiche dal bagen kugu"
         },
         {
-          "en": "I am the father."
+          "en": "I am the father.",
+          "fon": "mi badi"
         },
         {
-          "en": "The child is hurt."
+          "en": "The child is hurt.",
+          "fon": "bagen tes"
         },
         {
-          "en": "Are you the mother?"
+          "en": "Are you the mother?",
+          "fon": "be badi ?"
         },
         {
-          "en": "I feel sad without my family."
+          "en": "I feel sad without my family.",
+          "fon": "mi nes gamnes no sanba"
         },
         {
-          "en": "The old person is in pain."
+          "en": "The old person is in pain.",
+          "fon": "baso tes"
         },
         {
-          "en": "Can I carry the baby?"
+          "en": "Can I carry the baby?",
+          "fon": "mi gigat bagen ?"
         },
         {
-          "en": "My child is not eating."
+          "en": "My child is not eating.",
+          "fon": "mi bagen no tel"
         },
         {
-          "en": "Please say that again slowly."
+          "en": "Please say that again slowly.",
+          "fon": "se moyi kugu gishanek"
         },
         {
-          "en": "The family is separated."
+          "en": "The family is separated.",
+          "fon": "sanba fet"
         },
         {
-          "en": "Is the baby a girl or boy?"
+          "en": "Is the baby a girl or boy?",
+          "fon": "bagen dehu ?"
         },
         {
-          "en": "The child is tired and hungry."
+          "en": "The child is tired and hungry.",
+          "fon": "bagen nes femtam saklo"
         },
         {
-          "en": "I need to find my mother."
+          "en": "I need to find my mother.",
+          "fon": "mi les wi de [badi]",
+          "note": "gap: badi (needs a root)"
         },
         {
-          "en": "I feel alone without my child."
+          "en": "I feel alone without my child.",
+          "fon": "mi nes nesfa no bagen"
         },
         {
-          "en": "The old person needs rest."
+          "en": "The old person needs rest.",
+          "fon": "baso les tinal"
         },
         {
-          "en": "Is your family near here?"
+          "en": "Is your family near here?",
+          "fon": "sanba dal nam be ?"
         },
         {
-          "en": "I am frightened for my family."
+          "en": "I am frightened for my family.",
+          "fon": "mi nes nespe sanba"
         },
         {
-          "en": "The child needs warmth and food."
+          "en": "The child needs warmth and food.",
+          "fon": "bagen les lemgu lo"
         }
       ]
     },
@@ -2661,154 +3537,205 @@
       "name": "Repair & clarification",
       "phrases": [
         {
-          "en": "I do not understand."
+          "en": "I do not understand.",
+          "fon": "mi no hufel"
         },
         {
-          "en": "Say that again."
+          "en": "Say that again.",
+          "fon": "se moyi"
         },
         {
-          "en": "Please speak more slowly."
+          "en": "Please speak more slowly.",
+          "fon": "se kugu gishanek mas"
         },
         {
-          "en": "Do you mean this one?"
+          "en": "Do you mean this one?",
+          "fon": "be kuwimalhu to ?"
         },
         {
-          "en": "That is wrong."
+          "en": "That is wrong.",
+          "fon": "gam"
         },
         {
-          "en": "Point to what you mean."
+          "en": "Point to what you mean.",
+          "fon": "be giwi kuwimalhu"
         },
         {
-          "en": "I did not hear you."
+          "en": "I did not hear you.",
+          "fon": "mi ta no len be"
         },
         {
-          "en": "Please repeat that."
+          "en": "Please repeat that.",
+          "fon": "yimo kugu"
         },
         {
-          "en": "I understood you wrongly."
+          "en": "I understood you wrongly.",
+          "fon": "mi ta hufel be gam"
         },
         {
-          "en": "Can you show me again?"
+          "en": "Can you show me again?",
+          "fon": "be giwi mi moyi ?"
         },
         {
-          "en": "That is not what I meant."
+          "en": "That is not what I meant.",
+          "fon": "mi ta no sak to"
         },
         {
-          "en": "Do you mean that thing?"
+          "en": "Do you mean that thing?",
+          "fon": "be kuwimalhu to ?"
         },
         {
-          "en": "I am confused."
+          "en": "I am confused.",
+          "fon": "mi nes metgan"
         },
         {
-          "en": "Please say it one more time."
+          "en": "Please say it one more time.",
+          "fon": "se to kugu moyi"
         },
         {
-          "en": "Point to it again."
+          "en": "Point to it again.",
+          "fon": "chadak moyi to"
         },
         {
-          "en": "Is this what you mean?"
+          "en": "Is this what you mean?",
+          "fon": "be kuwimalhu ?"
         },
         {
-          "en": "No, that is not right."
+          "en": "No, that is not right.",
+          "fon": "no nat"
         },
         {
-          "en": "I will say it again."
+          "en": "I will say it again.",
+          "fon": "mi sa se moyi"
         },
         {
-          "en": "Do you mean the big one?"
+          "en": "Do you mean the big one?",
+          "fon": "be kuwimalhu ni to ?"
         },
         {
-          "en": "Please speak slowly and clearly."
+          "en": "Please speak slowly and clearly.",
+          "fon": "kugu se gishanek winat"
         },
         {
-          "en": "Did I do that wrong?"
+          "en": "Did I do that wrong?",
+          "fon": "mi ta mo gam ?"
         },
         {
-          "en": "You spoke too fast."
+          "en": "You spoke too fast.",
+          "fon": "be ta se nek mas"
         },
         {
-          "en": "I am lost and confused."
+          "en": "I am lost and confused.",
+          "fon": "mi nantam metgan"
         },
         {
-          "en": "Please point to it slowly."
+          "en": "Please point to it slowly.",
+          "fon": "chadak kugu gishanek"
         },
         {
-          "en": "Do you mean this or that?"
+          "en": "Do you mean this or that?",
+          "fon": "be kuwimalhu ?"
         },
         {
-          "en": "That word is not clear to me."
+          "en": "That word is not clear to me.",
+          "fon": "[tose] no [winat] mi",
+          "note": "gap: tose, winat (needs a root)"
         },
         {
-          "en": "I do not understand this signal."
+          "en": "I do not understand this signal.",
+          "fon": "mi no hufel kuwimal"
         },
         {
-          "en": "Let me try again."
+          "en": "Let me try again.",
+          "fon": "mi sakmo moyi"
         },
         {
-          "en": "Is that the wrong place?"
+          "en": "Is that the wrong place?",
+          "fon": "che gam ?"
         },
         {
-          "en": "I think I understand now."
+          "en": "I think I understand now.",
+          "fon": "mi met hufel gem"
         },
         {
-          "en": "Please do that one more time."
+          "en": "Please do that one more time.",
+          "fon": "kugu mo moyi fa"
         },
         {
-          "en": "I was wrong about that."
+          "en": "I was wrong about that.",
+          "fon": "mi ta mogam"
         },
         {
-          "en": "Do you understand this sign?"
+          "en": "Do you understand this sign?",
+          "fon": "be hufel kuwimal ?"
         },
         {
-          "en": "I feel unsure and uncertain."
+          "en": "I feel unsure and uncertain.",
+          "fon": "mi nes no nathu"
         },
         {
-          "en": "That is not what I wanted."
+          "en": "That is not what I wanted.",
+          "fon": "ta no ho mi sak to"
         },
         {
-          "en": "Can you point more clearly?"
+          "en": "Can you point more clearly?",
+          "fon": "be chadak mas winat ?"
         },
         {
-          "en": "Please show me the correct one."
+          "en": "Please show me the correct one.",
+          "fon": "kugu giwi mi nat fa"
         },
         {
-          "en": "I do not know that word."
+          "en": "I do not know that word.",
+          "fon": "mi no hu tose"
         },
         {
-          "en": "Say the first part again."
+          "en": "Say the first part again.",
+          "fon": "se togen fakan moyi"
         },
         {
-          "en": "Did you mean the small one?"
+          "en": "Did you mean the small one?",
+          "fon": "be ta sak gen to ?"
         },
         {
-          "en": "I understand a little now."
+          "en": "I understand a little now.",
+          "fon": "mi hufel gen gem"
         },
         {
-          "en": "That action was not correct."
+          "en": "That action was not correct.",
+          "fon": "ta no mo nat"
         },
         {
-          "en": "I do not understand and I am sorry."
+          "en": "I do not understand and I am sorry.",
+          "fon": "mi no hufel tesku"
         },
         {
-          "en": "Please slow down and repeat."
+          "en": "Please slow down and repeat.",
+          "fon": "gi yimo kugu gishanek"
         },
         {
-          "en": "I was wrong and I will try again."
+          "en": "I was wrong and I will try again.",
+          "fon": "mi ta sa mogam sakmo moyi"
         },
         {
-          "en": "We do not understand each other yet."
+          "en": "We do not understand each other yet.",
+          "fon": "dan no hufel ho di"
         },
         {
-          "en": "Let us start that part again."
+          "en": "Let us start that part again.",
+          "fon": "dan fakan togen moyi"
         },
         {
-          "en": "I did not understand that."
+          "en": "I did not understand that.",
+          "fon": "mi ta no hufel no hu to"
         },
         {
-          "en": "Can you say that again?"
+          "en": "Can you say that again?",
+          "fon": "be se moyi ?"
         },
         {
-          "en": "Please repeat the last part."
+          "en": "Please repeat the last part.",
+          "fon": "kugu yimo togen daldi"
         }
       ]
     },
@@ -2817,154 +3744,208 @@
       "name": "Plans & intent",
       "phrases": [
         {
-          "en": "I want to leave this place."
+          "en": "I want to leave this place.",
+          "fon": "mi sak gi fet che"
         },
         {
-          "en": "We will rest here tonight."
+          "en": "We will rest here tonight.",
+          "fon": "dan sa gankan tinal nam"
         },
         {
-          "en": "Can you help me carry this?"
+          "en": "Can you help me carry this?",
+          "fon": "be kas mi gigat ?"
         },
         {
-          "en": "Maybe we can find water tomorrow."
+          "en": "Maybe we can find water tomorrow.",
+          "fon": "dan sa kekdi hunan ye ketnat"
         },
         {
-          "en": "I will try to start a fire."
+          "en": "I will try to start a fire.",
+          "fon": "mi sa sakmo kel dat"
         },
         {
-          "en": "Do you want to move now?"
+          "en": "Do you want to move now?",
+          "fon": "be sak gi gem ?"
         },
         {
-          "en": "I hope someone finds us soon."
+          "en": "I hope someone finds us soon.",
+          "fon": "mi sa gusak ket ba lanek dan dalshu"
         },
         {
-          "en": "We can sleep here and leave at light."
+          "en": "We can sleep here and leave at light.",
+          "fon": "dan [kekra] nal felnen nam",
+          "note": "gap: kekra (needs a root)"
         },
         {
-          "en": "I plan to go up that hill."
+          "en": "I plan to go up that hill.",
+          "fon": "mi sa hudimo ra fengen"
         },
         {
-          "en": "Can you try to climb that tree?"
+          "en": "Can you try to climb that tree?",
+          "fon": "be sakmo ragi tetni ?"
         },
         {
-          "en": "Maybe tomorrow will be better."
+          "en": "Maybe tomorrow will be better.",
+          "fon": "sa ketnat gu mas"
         },
         {
-          "en": "I want food and I want rest."
+          "en": "I want food and I want rest.",
+          "fon": "mi sak lo tinal"
         },
         {
-          "en": "Will you stay here with me?"
+          "en": "Will you stay here with me?",
+          "fon": "be sa tiche nam mi ?"
         },
         {
-          "en": "I can carry that for you."
+          "en": "I can carry that for you.",
+          "fon": "mi gigat be"
         },
         {
-          "en": "We will try to find the path."
+          "en": "We will try to find the path.",
+          "fon": "dan sa sakmo hunan nan"
         },
         {
-          "en": "Do you plan to go that way?"
+          "en": "Do you plan to go that way?",
+          "fon": "be hudimo tak gi ?"
         },
         {
-          "en": "I hope we find shelter before dark."
+          "en": "I hope we find shelter before dark.",
+          "fon": "mi di gan gusak dan lanek temche"
         },
         {
-          "en": "Maybe we should wait here."
+          "en": "Maybe we should wait here.",
+          "fon": "dan tikan nam ketnat"
         },
         {
-          "en": "I want to go toward the water."
+          "en": "I want to go toward the water.",
+          "fon": "mi sak nan be gi"
         },
         {
-          "en": "Can we rest for a short time?"
+          "en": "Can we rest for a short time?",
+          "fon": "dan tinal gen kan ?"
         },
         {
-          "en": "I will not go there alone."
+          "en": "I will not go there alone.",
+          "fon": "mi sa no gi tak nesfa"
         },
         {
-          "en": "Do you want to come with me?"
+          "en": "Do you want to come with me?",
+          "fon": "be sak ginam dan mi ?"
         },
         {
-          "en": "I think I can fix this."
+          "en": "I think I can fix this.",
+          "fon": "mi met mi kelgu"
         },
         {
-          "en": "We will need more wood for the fire."
+          "en": "We will need more wood for the fire.",
+          "fon": "dan sa les mas tetsas dat"
         },
         {
-          "en": "Can you try to signal for help?"
+          "en": "Can you try to signal for help?",
+          "fon": "be sakmo kuwimal kas ?"
         },
         {
-          "en": "I hope the rain stops soon."
+          "en": "I hope the rain stops soon.",
+          "fon": "mi gusak yeju giti dalshu"
         },
         {
-          "en": "Maybe we can share the work."
+          "en": "Maybe we can share the work.",
+          "fon": "dan kuket bakel ketnat"
         },
         {
-          "en": "I want to try a different path."
+          "en": "I want to try a different path.",
+          "fon": "mi sak nan [honen] sakmo",
+          "note": "gap: honen (needs a root)"
         },
         {
-          "en": "Will you watch while I sleep?"
+          "en": "Will you watch while I sleep?",
+          "fon": "be sa mi nal wi ?"
         },
         {
-          "en": "I plan to gather food in the morning."
+          "en": "I plan to gather food in the morning.",
+          "fon": "mi sa kekshu hudimo lo"
         },
         {
-          "en": "Can you show me what you plan?"
+          "en": "Can you show me what you plan?",
+          "fon": "be giwi no hu to hudimo mi ?"
         },
         {
-          "en": "I will try and I will not stop."
+          "en": "I will try and I will not stop.",
+          "fon": "mi sa sakmo no giti"
         },
         {
-          "en": "We can go together or stay here."
+          "en": "We can go together or stay here.",
+          "fon": "dan gi tiche nam ho"
         },
         {
-          "en": "I want to understand your plan."
+          "en": "I want to understand your plan.",
+          "fon": "mi hufel [hudimo] sak",
+          "note": "gap: hudimo (needs a root)"
         },
         {
-          "en": "Maybe we can build a shelter today."
+          "en": "Maybe we can build a shelter today.",
+          "fon": "dan kekdi kel temche ketnat"
         },
         {
-          "en": "Can we make a plan together?"
+          "en": "Can we make a plan together?",
+          "fon": "dan kel hudimo dan ?"
         },
         {
-          "en": "I hope we can find each other again."
+          "en": "I hope we can find each other again.",
+          "fon": "mi gusak moyi dan lanek de"
         },
         {
-          "en": "Will you try to find more food?"
+          "en": "Will you try to find more food?",
+          "fon": "be sa sakmo hunan mas lo ?"
         },
         {
-          "en": "I want to rest and then move."
+          "en": "I want to rest and then move.",
+          "fon": "mi sak tinal nankan gi"
         },
         {
-          "en": "Maybe that path leads to people."
+          "en": "Maybe that path leads to people.",
+          "fon": "ketnat nan gi nan balek ketnat"
         },
         {
-          "en": "I can try to make a signal."
+          "en": "I can try to make a signal.",
+          "fon": "mi sakmo kel kuwimal"
         },
         {
-          "en": "Do you want to stay or go?"
+          "en": "Do you want to stay or go?",
+          "fon": "be sak tiche gi ?"
         },
         {
-          "en": "I will wait here for you."
+          "en": "I will wait here for you.",
+          "fon": "mi sa tikan nam be"
         },
         {
-          "en": "We can try again tomorrow."
+          "en": "We can try again tomorrow.",
+          "fon": "dan sa kekdi shu sakmo moyi"
         },
         {
-          "en": "I hope this is the right way."
+          "en": "I hope this is the right way.",
+          "fon": "mi gusak nan nat"
         },
         {
-          "en": "Can you wait for me here?"
+          "en": "Can you wait for me here?",
+          "fon": "be tikan nam mi ?"
         },
         {
-          "en": "I plan to watch through the night."
+          "en": "I plan to watch through the night.",
+          "fon": "mi sa [gankan] hudimo wi fel",
+          "note": "gap: gankan (needs a root)"
         },
         {
-          "en": "Maybe we can try a different way."
+          "en": "Maybe we can try a different way.",
+          "fon": "dan sakmo nan ketnat honen"
         },
         {
-          "en": "Will we find people near the water?"
+          "en": "Will we find people near the water?",
+          "fon": "dan sa lanek dal ye balek ?"
         },
         {
-          "en": "I want to find higher ground."
+          "en": "I want to find higher ground.",
+          "fon": "mi sak rafen"
         }
       ]
     },
@@ -2973,154 +3954,206 @@
       "name": "Closure & gratitude",
       "phrases": [
         {
-          "en": "We are safe now."
+          "en": "We are safe now.",
+          "fon": "dan tampe gem"
         },
         {
-          "en": "That is enough for today."
+          "en": "That is enough for today.",
+          "fon": "gem kekdi melto"
         },
         {
-          "en": "Rest well."
+          "en": "Rest well.",
+          "fon": "tinal gu"
         },
         {
-          "en": "I am grateful for your help."
+          "en": "I am grateful for your help.",
+          "fon": "mi nes nesguku be kas"
         },
         {
-          "en": "We did enough today."
+          "en": "We did enough today.",
+          "fon": "dan ta mo lemgu kekdi"
         },
         {
-          "en": "I will go now."
+          "en": "I will go now.",
+          "fon": "mi sa gi gem"
         },
         {
-          "en": "Sleep well tonight."
+          "en": "Sleep well tonight.",
+          "fon": "sa nal gu gankan"
         },
         {
-          "en": "You helped me today."
+          "en": "You helped me today.",
+          "fon": "be ta kekdi kas mi"
         },
         {
-          "en": "We can stop now."
+          "en": "We can stop now.",
+          "fon": "dan giti gem"
         },
         {
-          "en": "This day is finished."
+          "en": "This day is finished.",
+          "fon": "kekdi temkan"
         },
         {
-          "en": "Will you be here tomorrow?"
+          "en": "Will you be here tomorrow?",
+          "fon": "be sa nam shu kekdi ?"
         },
         {
-          "en": "I will see you again."
+          "en": "I will see you again.",
+          "fon": "mi sa wi be moyi"
         },
         {
-          "en": "Please rest now."
+          "en": "Please rest now.",
+          "fon": "tinal kugu gem"
         },
         {
-          "en": "The work is done."
+          "en": "The work is done.",
+          "fon": "ta bakel melto"
         },
         {
-          "en": "We are both tired."
+          "en": "We are both tired.",
+          "fon": "dan femtam mel"
         },
         {
-          "en": "Are you ready to stop?"
+          "en": "Are you ready to stop?",
+          "fon": "be gatdimo giti ?"
         },
         {
-          "en": "I feel peaceful now."
+          "en": "I feel peaceful now.",
+          "fon": "mi nes tampa gem"
         },
         {
-          "en": "Thank you for staying with me."
+          "en": "Thank you for staying with me.",
+          "fon": "mi seguku be tiche dan"
         },
         {
-          "en": "We survived another day."
+          "en": "We survived another day.",
+          "fon": "dan ta gat fo honen kekdi"
         },
         {
-          "en": "I am going to sleep now."
+          "en": "I am going to sleep now.",
+          "fon": "mi sa nal gem"
         },
         {
-          "en": "We have enough food and water."
+          "en": "We have enough food and water.",
+          "fon": "dan no les lo ye"
         },
         {
-          "en": "Is this a good place to stop?"
+          "en": "Is this a good place to stop?",
+          "fon": "giti nam gu ?"
         },
         {
-          "en": "I am no longer afraid."
+          "en": "I am no longer afraid.",
+          "fon": "mi no nes nespe digem"
         },
         {
-          "en": "That was hard but we finished."
+          "en": "That was hard but we finished.",
+          "fon": "dan ta temkan"
         },
         {
-          "en": "I will not forget your help."
+          "en": "I will not forget your help.",
+          "fon": "mi sa no hutam kas be"
         },
         {
-          "en": "We can rest and then continue."
+          "en": "We can rest and then continue.",
+          "fon": "dan shu tinal [moyi+gi]",
+          "note": "gap: moyi+gi (needs a root)"
         },
         {
-          "en": "Do you want to stop here?"
+          "en": "Do you want to stop here?",
+          "fon": "be sak nam giti ?"
         },
         {
-          "en": "This is a good place to sleep."
+          "en": "This is a good place to sleep.",
+          "fon": "gu che nal"
         },
         {
-          "en": "We worked well together today."
+          "en": "We worked well together today.",
+          "fon": "dan ta [kekdi] gem bakel gu dan",
+          "note": "gap: kekdi (needs a root)"
         },
         {
-          "en": "Did I understand you correctly?"
+          "en": "Did I understand you correctly?",
+          "fon": "mi ta hufel be nathu ?"
         },
         {
-          "en": "I am glad this day is over."
+          "en": "I am glad this day is over.",
+          "fon": "mi nes nesgu kekdi temkan"
         },
         {
-          "en": "Let us not speak now."
+          "en": "Let us not speak now.",
+          "fon": "dan no gem se"
         },
         {
-          "en": "You kept me warm and safe."
+          "en": "You kept me warm and safe.",
+          "fon": "be ta gat mi lemgu tampe"
         },
         {
-          "en": "Are we finished for today?"
+          "en": "Are we finished for today?",
+          "fon": "dan kekdi temkan ?"
         },
         {
-          "en": "I will stay near you tonight."
+          "en": "I will stay near you tonight.",
+          "fon": "mi sa gankan tiche dal be"
         },
         {
-          "en": "Please show me that again."
+          "en": "Please show me that again.",
+          "fon": "giwi mi kugu moyi"
         },
         {
-          "en": "We are both alive and well."
+          "en": "We are both alive and well.",
+          "fon": "dan fo gu"
         },
         {
-          "en": "Thank you for the food today."
+          "en": "Thank you for the food today.",
+          "fon": "mi seguku be lo kekdi"
         },
         {
-          "en": "Is there more to do now?"
+          "en": "Is there more to do now?",
+          "fon": "mo mas gem ?"
         },
         {
-          "en": "I am ready to sleep."
+          "en": "I am ready to sleep.",
+          "fon": "mi gatdimo nal"
         },
         {
-          "en": "I see you and I am grateful."
+          "en": "I see you and I am grateful.",
+          "fon": "mi wi nes be nesguku"
         },
         {
-          "en": "Tomorrow we continue together."
+          "en": "Tomorrow we continue together.",
+          "fon": "dan sa gi ho"
         },
         {
-          "en": "You were good to me today."
+          "en": "You were good to me today.",
+          "fon": "be ta gu mi kekdi"
         },
         {
-          "en": "We can stop working now."
+          "en": "We can stop working now.",
+          "fon": "gem dan giti bakel"
         },
         {
-          "en": "I feel calm and at peace."
+          "en": "I feel calm and at peace.",
+          "fon": "mi nes nesti tampa"
         },
         {
-          "en": "This is enough for now."
+          "en": "This is enough for now.",
+          "fon": "no les gem"
         },
         {
-          "en": "You did not leave me alone."
+          "en": "You did not leave me alone.",
+          "fon": "be ta no gi fet mi nesfa"
         },
         {
-          "en": "Are you going to sleep now?"
+          "en": "Are you going to sleep now?",
+          "fon": "be sa nal gem ?"
         },
         {
-          "en": "I will come back to this place."
+          "en": "I will come back to this place.",
+          "fon": "mi sa giyinam nan che"
         },
         {
-          "en": "We made it through this day."
+          "en": "We made it through this day.",
+          "fon": "dan ta felgi fel kekdi"
         }
       ]
     }

@@ -3,7 +3,13 @@
  * Smoke tests for translateFromFrame (LLM frame renderer) and LLM frame repair.
  */
 import { translateFromFrame, frameSlotsToSemanticSlots } from '../tools/fonoran-translator.js';
-import { repairLlmFrame, frameUsesWhComposition, hasWhContentWord, validateLlmFrame } from '../tools/fonoran-llm-translate.js';
+import {
+  repairLlmFrame,
+  frameUsesWhComposition,
+  hasWhContentWord,
+  validateLlmFrame,
+  mergeSentenceResults,
+} from '../tools/fonoran-llm-translate.js';
 import { normalizeFrameParticles, checkLlmGrammarViolations } from '../tools/fonoran-llm-grammar-brief.js';
 import {
   normalizeWePrimaryFrame,
@@ -106,8 +112,47 @@ async function main() {
   assert(withAlts.alternates[0].roman?.includes('mi be'), `dyadic alternate: ${withAlts.alternates[0].roman}`);
   assert(withAlts.surface?.roman?.includes('dan'), `collective primary: ${withAlts.surface?.roman}`);
 
+  // Grammar enforcement: canonical modifier order (quality before place).
+  // "You are safe here" — LLM frame lists modifiers [here, safe]; enforcement
+  // reorders to [safe, here] so the surface is deterministically `be tampe nam`.
+  const safeHereFrame = {
+    slots: { subject: ['addressee'], event: [], object: [], path: [], time: [], modifiers: ['here', 'safe'] },
+    is_question: false,
+    unresolved: [],
+  };
+  const safeHere = await translateFromFrame(safeHereFrame, { input: 'You are safe here' });
+  assert(
+    safeHere.surface?.roman === 'be tampe nam',
+    `safe-here modifier order (quality before place): ${safeHere.surface?.roman}`,
+  );
+
+  // Sentence segmentation: multiple single-sentence frames compose into discrete
+  // Fonoran sentences with a period terminator each — never one run-on stream.
+  const sentA = await translateFromFrame(
+    { slots: { event: ['move'], path: ['here'] }, is_question: false, unresolved: [] },
+    { input: 'It moves here.' },
+  );
+  const sentB = await translateFromFrame(
+    { slots: { subject: ['ba'], event: ['move'] }, is_question: false, unresolved: [] },
+    { input: 'A person moves.' },
+  );
+  const mergedTwo = await mergeSentenceResults(
+    [sentA, sentB],
+    ['It moves here.', 'A person moves.'],
+    { input: 'It moves here. A person moves.' },
+  );
+  const expectedTwo = `${sentA.surface.roman}. ${sentB.surface.roman}.`;
+  assert(mergedTwo.sentences?.length === 2, `two discrete sentences: ${mergedTwo.sentences?.length}`);
+  assert(
+    mergedTwo.surface.roman === expectedTwo,
+    `segmented surface (discrete sentences): "${mergedTwo.surface.roman}" != "${expectedTwo}"`,
+  );
+  assert(mergedTwo.mode === 'discourse', `multi-sentence mode is discourse: ${mergedTwo.mode}`);
+
   console.log('translateFromFrame:', phraseResult.surface.roman);
+  console.log('segmented two:', mergedTwo.surface.roman);
   console.log('existential repair:', repairedResult.surface.roman);
+  console.log('safe-here order:', safeHere.surface.roman);
   console.log('equal parts:', equalToken?.parts?.join(' + '));
   console.log('OK');
 }

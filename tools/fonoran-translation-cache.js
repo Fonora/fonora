@@ -59,20 +59,31 @@ export async function lookupCachedTranslation(sourceLang, sourceText) {
   return doc.entries[key] ?? null;
 }
 
+// Serialize cache writes in-process. Each write is a full read-modify-write of
+// the cache file, so concurrent callers (e.g. a parallel warm) would otherwise
+// clobber each other's entries (last-writer-wins on the whole file). Chaining
+// writes guarantees every entry is merged.
+let writeChain = Promise.resolve();
+
 /**
  * @param {object} entry
  * @returns {Promise<object>}
  */
-export async function writeCachedTranslation(entry) {
+export function writeCachedTranslation(entry) {
   const key = cacheKey(entry.sourceLang, entry.sourceText);
-  const doc = await loadTranslationCache();
-  doc.entries[key] = {
-    ...entry,
-    cache_key: key,
-    updated_at: new Date().toISOString(),
-  };
-  await saveTranslationCache(doc);
-  return doc.entries[key];
+  const run = writeChain.then(async () => {
+    const doc = await loadTranslationCache();
+    doc.entries[key] = {
+      ...entry,
+      cache_key: key,
+      updated_at: new Date().toISOString(),
+    };
+    await saveTranslationCache(doc);
+    return doc.entries[key];
+  });
+  // Keep the chain alive even if an individual write rejects.
+  writeChain = run.then(() => {}, () => {});
+  return run;
 }
 
 /** CLI entry when run directly. */

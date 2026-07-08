@@ -2345,6 +2345,16 @@
       });
       $('dict-picker-empty')?.toggleAttribute('hidden', showRoots || showWords || showParticles);
 
+      const visibleCount = (showRoots ? roots.length : 0)
+        + (showWords ? words.length : 0)
+        + (showParticles ? particles.length : 0);
+      const countEl = $('dict-count');
+      if (countEl) {
+        countEl.textContent = emptyAll
+          ? ''
+          : (visibleCount === 1 ? '1 result' : `${visibleCount} results`);
+      }
+
       $('dict-roots-h')?.toggleAttribute('hidden', !showRoots);
       $('dict-words-h')?.toggleAttribute('hidden', !showWords);
       $('dict-particles-h')?.toggleAttribute('hidden', !showParticles);
@@ -2507,6 +2517,34 @@
           ${engineHtml}
         </div>
       </div>`;
+    }
+
+    function translatorLegendHtml(result) {
+      const kinds = new Set((result?.tokens ?? []).map(t => translatorResolutionKind(t)));
+      const items = [];
+      if (kinds.has('composed')) items.push('<span class="translator-resolved--composed">composed</span> from roots');
+      if (kinds.has('loan')) items.push('<span class="translator-resolved--loan">«loan»</span> phonetic borrow');
+      if (kinds.has('interpreted')) items.push('<span class="translator-resolved--interpreted">interpreted</span>');
+      if (kinds.has('unknown')) items.push('<span class="translator-unresolved-sample">gap</span>');
+      if (items.length < 1) return '';
+      return `<p class="translator-output__legend sans">${items.join(' · ')}</p>`;
+    }
+
+    function translatorSimplifiedHtml(result) {
+      const simplified = result?.simplified;
+      const clauses = Array.isArray(simplified?.clauses) ? simplified.clauses.filter(Boolean) : [];
+      if (!clauses.length) return '';
+      const items = clauses.map(c => `<li>${escapeHtml(c)}</li>`).join('');
+      const note = simplified.note
+        ? `<p class="translator-output__plain-note sans">${escapeHtml(simplified.note)}</p>`
+        : '';
+      return `<details class="translator-output__plain sans">
+        <summary>Plain meaning <span class="translator-output__plain-hint">(what we translated)</span></summary>
+        <div class="translator-output__plain-body">
+          <ol class="translator-output__plain-list">${items}</ol>
+          ${note}
+        </div>
+      </details>`;
     }
 
     function translatorPronHtml(pron) {
@@ -2711,6 +2749,8 @@
 
     function translatorResolutionClass(kind) {
       if (kind === 'unknown') return 'translator-unresolved-sample';
+      if (kind === 'composed') return 'translator-resolved--composed';
+      if (kind === 'loan') return 'translator-resolved--loan';
       if (kind === 'interpreted') return 'translator-resolved--interpreted';
       if (kind === 'semantic') return 'translator-resolved--semantic';
       if (kind === 'alias_weak') return 'translator-resolved--alias_weak';
@@ -2720,6 +2760,8 @@
     function translatorTokenClass(token) {
       const kind = translatorResolutionKind(token);
       if (kind === 'unknown') return ' translator-token--unresolved';
+      if (kind === 'composed') return ' translator-token--composed';
+      if (kind === 'loan') return ' translator-token--loan';
       if (kind === 'interpreted') return ' translator-token--interpreted';
       if (kind === 'semantic') return ' translator-token--semantic';
       if (kind === 'alias_weak') return ' translator-token--semantic';
@@ -2853,11 +2895,13 @@
       syncTranslatorOutputHeader(result);
 
       out.innerHTML = `
+        ${translatorSimplifiedHtml(result)}
         <div class="translator-output__surface">
           ${playbackScript ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(playbackScript)}</div>` : ''}
           <p class="translator-output__roman">${romanHtml}</p>
           ${pronHtml}
         </div>
+        ${translatorLegendHtml(result)}
         <ul class="translator-token-list translator-token-list--primary">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>
         ${translatorAlternatesHtml(result)}`;
 
@@ -2900,6 +2944,7 @@
           body: JSON.stringify({
             text,
             sourceLang: readTranslatorSourceLang(),
+            simplify: 'auto',
           }),
         });
         if (token !== translatorToken) return;

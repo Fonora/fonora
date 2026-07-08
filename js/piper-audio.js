@@ -166,18 +166,9 @@ function isConsonantSchwaClip(segments) {
   return nuclei.length === 1 && nuclei[0] === 'ə' && segments.includes('ə');
 }
 
-/** Map compact IPA to Piper phoneme ID sequence (^ … $ with pad tokens). */
-export function ipaToPiperPhonemeIds(ipa, phonemeIdMap, options = {}) {
-  const pad = phonemeIdMap._?.[0];
-  const bos = phonemeIdMap['^']?.[0];
-  const eos = phonemeIdMap['$']?.[0];
-  if (pad == null || bos == null || eos == null) {
-    throw new Error('Invalid Piper phoneme map');
-  }
-
-  const segments = expandSegmentsForPiper(segmentIpa(ipa));
+function appendPiperWordPhonemeIds(ids, ipaWord, phonemeIdMap, pad, options = {}) {
+  const segments = expandSegmentsForPiper(segmentIpa(ipaWord));
   const schwaClip = Boolean(options.teachingClip) && isConsonantSchwaClip(segments);
-  const ids = [bos];
   let stressed = false;
 
   for (const segment of segments) {
@@ -194,6 +185,22 @@ export function ipaToPiperPhonemeIds(ipa, phonemeIdMap, options = {}) {
       throw new Error(`Piper has no phoneme for “${segment}”`);
     }
     ids.push(pad, mapped[0]);
+  }
+}
+
+/** Map compact IPA to Piper phoneme ID sequence (^ … $ with pad tokens). */
+export function ipaToPiperPhonemeIds(ipa, phonemeIdMap, options = {}) {
+  const pad = phonemeIdMap._?.[0];
+  const bos = phonemeIdMap['^']?.[0];
+  const eos = phonemeIdMap['$']?.[0];
+  if (pad == null || bos == null || eos == null) {
+    throw new Error('Invalid Piper phoneme map');
+  }
+
+  const words = String(ipa || '').trim().split(/\s+/).filter(Boolean);
+  const ids = [bos];
+  for (const word of words) {
+    appendPiperWordPhonemeIds(ids, word, phonemeIdMap, pad, options);
   }
 
   ids.push(pad, eos);
