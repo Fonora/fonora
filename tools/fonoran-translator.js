@@ -78,26 +78,38 @@ const GRAMMAR_SKELETON = 'Actor · Action · Target · Place · Time';
 /**
  * TRANSLATOR/VOCABULARY POLICY — NOT grammar.
  * Content (wh) questions have no grammatical particle in v1. They are expressed
- * compositionally from ordinary concepts: an "unknown" (not + know) applied to a
- * category concept (person/thing/place/time). Grammar only states that questions
- * are compositional (docs/fonoran-grammar.md Rule 3); the concrete mapping lives
- * here and MAY CHANGE as the lexicon evolves (e.g. if a dedicated `unknown` root
- * or `reason`/`method` concept is later justified by usage).
- *   who   -> no hu ba   (not-known person)
- *   what  -> no hu to    (not-known thing)
- *   where -> no hu che   (not-known place)
- *   when  -> no hu kan   (not-known time)
+ * with the lexicalized word **nohu** "unknown" (fused from no + hu, playtest
+ * decision 2026-07: separated `no hu` read as clause negation, the fused word
+ * reads as one learnable concept) applied to a category concept
+ * (person/thing/place/time). Grammar only states that questions are
+ * compositional (docs/fonoran-grammar.md Rule 3); the concrete mapping lives
+ * here and MAY CHANGE as the lexicon evolves (e.g. if a `reason`/`method`
+ * concept is later justified by usage).
+ *   who   -> nohu ba    (unknown person)
+ *   what  -> nohu to    (unknown thing)
+ *   where -> nohu che   (unknown place)
+ *   when  -> nohu kan   (unknown time)
  * why/how are intentionally absent: Fonoran has no robust reason/method concept yet.
  * Applied only in interrogative sentences (source marked with `?`) so relative /
  * subordinate "who"/"when" are left alone.
  */
 const WH_QUESTION_COMPOSITION = {
-  who: ['neg', 'know', 'person'],
-  whom: ['neg', 'know', 'person'],
-  what: ['neg', 'know', 'thing'],
-  where: ['neg', 'know', 'place'],
-  when: ['neg', 'know', 'time'],
+  who: ['unknown', 'person'],
+  whom: ['unknown', 'person'],
+  what: ['unknown', 'thing'],
+  where: ['unknown', 'place'],
+  when: ['unknown', 'time'],
 };
+
+/**
+ * Spelling of the lexicalized "unknown" word: negation form + the `know` root.
+ * Deliberately transparent (a learner can still decompose it) but written and
+ * taught as ONE word so it is not misread as clause negation.
+ */
+const UNKNOWN_WORD = { spelling: 'nohu', parts: ['no', 'hu'] };
+
+/** Category concepts that mark a within-slot no+know sequence as an "unknown" composition. */
+const UNKNOWN_CATEGORY_IDS = new Set(['person', 'thing', 'place', 'time']);
 
 /** A source sentence is a written question when it ends with `?`. */
 function isQuestionSentence(sentence) {
@@ -216,7 +228,9 @@ function pronunciationForParts(parts) {
 function particleToken(role, placeholder, english) {
   const parts = [placeholder];
   return {
-    role,
+    // Negation is clause grammar, not a time element: label it honestly even
+    // when it rides in the internal time slot (display + frame provenance).
+    role: placeholder === 'no' ? 'negation' : role,
     english,
     fonoran: placeholder,
     parts,
@@ -229,6 +243,29 @@ function particleToken(role, placeholder, english) {
     confidence: 'high',
     guessed: false,
     pronunciation: pronunciationForParts(parts),
+  };
+}
+
+/**
+ * The lexicalized "unknown" word (nohu). Surfaces as ONE word: unlike quantifier
+ * pronouns it is written fused, per the WH policy note above.
+ */
+function unknownWordToken(role, english) {
+  return {
+    role,
+    english: english || 'unknown',
+    fonoran: UNKNOWN_WORD.spelling,
+    parts: [...UNKNOWN_WORD.parts],
+    resolved: true,
+    kind: 'compound',
+    source: 'vocabulary',
+    gloss: 'unknown (no + hu, not-known)',
+    concept_id: 'unknown',
+    interpreted: false,
+    resolution_kind: 'direct',
+    confidence: 'high',
+    guessed: false,
+    pronunciation: pronunciationForParts(UNKNOWN_WORD.parts),
   };
 }
 
@@ -710,7 +747,9 @@ async function expandQuantifier(ctx, parts, role, surface) {
   const out = [];
   for (let i = 0; i < parts.length; i += 1) {
     const piece = parts[i];
-    if (piece === 'neg') {
+    if (piece === 'unknown') {
+      out.push(unknownWordToken(role, i === 0 ? surface : 'unknown'));
+    } else if (piece === 'neg') {
       const neg = PARTICLES?.byId.get('logic_not');
       if (neg?.form) out.push(particleToken(role, neg.form, i === 0 ? surface : 'not'));
     } else {
@@ -733,6 +772,10 @@ async function resolveSlot(ctx, slot, role) {
     return particleToken(role, slot.particle, surface || slot.particle);
   }
 
+  if (slot.unknown_word) {
+    return unknownWordToken(role, surface);
+  }
+
   if (slot.concept_id) {
     const token = resolveConceptId(slot.concept_id, ctx, role);
     return { ...token, role };
@@ -740,6 +783,11 @@ async function resolveSlot(ctx, slot, role) {
 
   if (PRONOUNS[lower]) {
     return particleToken(role, PRONOUNS[lower], surface);
+  }
+
+  // Lexicalized "unknown" (nohu) is a word in its own right, not just the WH base.
+  if (lower === 'unknown') {
+    return unknownWordToken(role, surface);
   }
 
   // Content-question composition (translator/vocabulary policy, NOT grammar).
@@ -796,6 +844,7 @@ async function slotsToTokens(ctx, slots) {
       const expanded = await expandQuantifier(ctx, WH_QUESTION_COMPOSITION[lower], 'concept', english);
       if (expanded) return expanded;
     }
+    if (lower === 'unknown') return [unknownWordToken('concept', english)];
     const particle = PARTICLES && !lower.includes(' ') ? PARTICLES.index.get(lower) : null;
     if (particle?.form) return [particleToken('concept', particle.form, english)];
     return [await resolveEnglishToken(english, ctx, { role: 'concept', allowSemantic: true, allowGuess: true })];
@@ -963,11 +1012,31 @@ export function cleanGapToken(raw) {
  * @param {object} frameSlots
  */
 export function frameSlotsToSemanticSlots(frameSlots) {
+  // Lexicalize WH "unknown": a within-slot no/neg + know sequence followed by a
+  // category concept (person/thing/place/time) is the WH composition and fuses
+  // to the single word nohu. Other no+know sequences (e.g. "I do not know…")
+  // stay as clause negation.
+  const collapseUnknown = (ids) => {
+    const out = [];
+    for (let i = 0; i < ids.length; i += 1) {
+      const isNeg = ids[i] === 'no' || ids[i] === 'neg';
+      if (isNeg && ids[i + 1] === 'know' && UNKNOWN_CATEGORY_IDS.has(ids[i + 2])) {
+        out.push('unknown');
+        i += 1;
+      } else {
+        out.push(ids[i]);
+      }
+    }
+    return out;
+  };
+
   const convert = (items, role) => {
     const list = Array.isArray(items) ? items : [];
-    return list.map((raw) => {
-      const id = String(raw ?? '').trim().toLowerCase();
-      if (!id) return null;
+    const ids = list.map(raw => String(raw ?? '').trim().toLowerCase()).filter(Boolean);
+    return collapseUnknown(ids).map((id) => {
+      if (id === 'unknown') {
+        return { english: 'unknown', role, unknown_word: true };
+      }
       if (id === 'neg') {
         return { english: 'not', role, particle: 'no' };
       }
@@ -975,7 +1044,7 @@ export function frameSlotsToSemanticSlots(frameSlots) {
         return { english: id, role, particle: id };
       }
       return { english: id, role, concept_id: id };
-    }).filter(Boolean);
+    });
   };
 
   return {

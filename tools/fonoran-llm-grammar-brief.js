@@ -44,6 +44,8 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('The ONLY grammatical particles: mi (I), ta (past), sa (future), no (not), ya (yes), von (if).');
   lines.push('Present tense: leave time slot EMPTY (no particle). Past: ta in time. Future: sa in time.');
   lines.push('Negation no attaches near the action, clause-scoped. Map internal "neg" to form "no".');
+  lines.push('Clause negation goes at the FRONT of the event slot: "do not want to see" → event [no, want], object [see, …].');
+  lines.push('Never park no in time or modifiers; no belongs in a non-event slot ONLY for quantifier composition (nobody → [no, person]).');
   lines.push('Particles never fuse into lexical spellings. Do NOT emit removed v1 forms (wo, vus, zas, etc.).');
   lines.push('');
   lines.push('## Lexical, NOT particles');
@@ -71,9 +73,15 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('');
   lines.push('## Questions (Rule 3)');
   lines.push('No question particle. Set is_question true; surface gets ?.');
-  lines.push('WH content questions ONLY when source contains who/whom/what/where/when:');
-  lines.push('  who/whom → [no,know,person]  what → [no,know,thing]  where → [no,know,place]  when → [no,know,time]');
+  lines.push('WH content questions ONLY when source contains who/whom/what/where/when.');
+  lines.push('Use the lexicalized word unknown (nohu) + a category concept:');
+  lines.push('  who/whom → [unknown,person]  what → [unknown,thing]  where → [unknown,place]  when → [unknown,time]');
+  lines.push('unknown is ONE word (nohu) — do NOT spell it as no + know.');
   lines.push('Yes/no questions (Are you…?, Is there…?, Do you…?, Can we…?) must NOT use WH composition.');
+  lines.push('Embedded "where X is" in a STATEMENT or imperative is possession, not a question:');
+  lines.push('  compile as [X, place] — "nobody knows where we are" → object [collective, place] (= our place);');
+  lines.push('  "show me where the food is" → object [food, place]. is_question stays false; no ?.');
+  lines.push('Embedded identity "what X is" keeps [unknown, thing]: "I do not know what it is" → object [unknown, thing].');
   lines.push('Existential "Are there…" / "There are…": English dummy there has NO meaning — do NOT emit concept there (tak).');
   lines.push('  Compile only the entities and relations being asserted (e.g. other + people + near + addressee + ?).');
   lines.push('  Use there (tak) ONLY for deictic pointing at a place ("over there", "put it there").');
@@ -103,6 +111,37 @@ export function normalizeFrameParticles(frame) {
       return id === 'neg' ? 'no' : x;
     });
   }
+
+  // Negation attaches near the action (Rule 3): LLMs sometimes park a clause-
+  // scoped `no` in time, in modifiers, or trailing in another slot. Move it to
+  // the event front so the frame validates and renders before the Action.
+  // `no` + a CATEGORY concept in the same slot is local composition sanctioned
+  // by the grammar (nobody = no+person, nothing = no+thing, different =
+  // no+same, false = no+true) and is left alone; `no` + anything else (verbs,
+  // adjectives) is misplaced clause negation.
+  const isNo = x => String(x ?? '').trim().toLowerCase() === 'no';
+  // person/thing/place/time: quantifier pronouns; same/true: polarity antonyms;
+  // know: legacy WH composition [no, know, X] that fuses to nohu downstream.
+  const NO_COMPOSITION_TARGETS = new Set(['person', 'thing', 'place', 'time', 'same', 'true', 'know']);
+  let misplacedNegation = false;
+  for (const role of Object.keys(slots)) {
+    if (role === 'event' || !Array.isArray(slots[role])) continue;
+    const items = slots[role];
+    const kept = [];
+    for (let i = 0; i < items.length; i += 1) {
+      const nextId = String(items[i + 1] ?? '').trim().toLowerCase();
+      if (isNo(items[i]) && (role === 'time' || !NO_COMPOSITION_TARGETS.has(nextId))) {
+        misplacedNegation = true;
+        continue;
+      }
+      kept.push(items[i]);
+    }
+    slots[role] = kept;
+  }
+  if (misplacedNegation && !(Array.isArray(slots.event) && slots.event.some(isNo))) {
+    slots.event = ['no', ...(Array.isArray(slots.event) ? slots.event : [])];
+  }
+
   return { ...frame, slots };
 }
 
@@ -152,6 +191,10 @@ export function checkLlmGrammarViolations(frame, sourceText = '') {
         ['no', 'know', 'thing'],
         ['no', 'know', 'place'],
         ['no', 'know', 'time'],
+        ['unknown', 'person'],
+        ['unknown', 'thing'],
+        ['unknown', 'place'],
+        ['unknown', 'time'],
       ];
       for (const pattern of whPatterns) {
         if (ids.length >= pattern.length && pattern.every((p, i) => ids[i] === p)) {

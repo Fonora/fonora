@@ -896,6 +896,32 @@ const COORD_CLAUSE_VERBS = new Set([
   'run', 'runs', 'ran', 'running', 'bark', 'barks', 'barked', 'barking',
 ]);
 
+/**
+ * Additional verbs recognized when checking whether a word group IS a clause
+ * (looksLikeClause). Kept separate from COORD_CLAUSE_VERBS because many double
+ * as nouns (rest, work, help…) and must never act as clause-STARTERS after a
+ * conjunction ("I want food and rest" is noun coordination, one clause).
+ */
+const CLAUSE_BODY_VERBS = new Set([
+  'hurt', 'hurts', 'hurting',
+  'stand', 'stands', 'stood', 'standing',
+  'stay', 'stays', 'stayed', 'staying',
+  'stop', 'stops', 'stopped', 'stopping',
+  'try', 'tries', 'tried', 'trying',
+  'help', 'helps', 'helped', 'helping',
+  'live', 'lives', 'lived', 'living',
+  'sleep', 'sleeps', 'slept', 'sleeping',
+  'come', 'comes', 'came', 'coming',
+  'wait', 'waits', 'waited', 'waiting',
+  'rest', 'rests', 'rested', 'resting',
+  'speak', 'speaks', 'spoke', 'speaking',
+  'work', 'works', 'worked', 'working',
+  'keep', 'keeps', 'kept', 'keeping',
+  'understand', 'understands', 'understood', 'understanding',
+  'survive', 'survives', 'survived', 'surviving',
+  'finish', 'finishes', 'finished', 'finishing',
+]);
+
 /** Modals — start a new coordinated clause when followed by a main verb. */
 export const MODALS = new Set(['should', 'must', 'may', 'might', 'can', 'could', 'would', 'shall']);
 
@@ -939,6 +965,93 @@ export function peelQuestionAuxiliary(tokens, { pronounWords = null } = {}) {
     return { tokens: tokens.slice(2), peeled: true, subjectWord: tokens[1] };
   }
   return { tokens, peeled: false };
+}
+
+/** Auxiliaries/tense carriers that mark a word group as a full clause. */
+const CLAUSE_VERB_MARKERS = new Set([
+  ...BE_FORMS,
+  ...MODALS,
+  'do', 'does', 'did', 'have', 'has', 'had', 'will', 'cannot',
+  'need', 'needs', 'needed', 'needing',
+]);
+
+const CLAUSE_SUBJECT_PRONOUNS = new Set(['i', 'you', 'we', 'they', 'he', 'she', 'it']);
+
+/** WH words open a coordinated content-question clause ("…and where is the food?"). */
+const CLAUSE_WH_STARTERS = new Set(['who', 'whom', 'what', 'where', 'when']);
+
+/** Connectives that join full clauses; handled structurally (docs/fonoran-grammar.md Rule 3). */
+const CLAUSE_CONNECTIVES = new Set(['and', 'but', 'so', 'because']);
+
+const normalizeWord = w => String(w ?? '').toLowerCase().replace(/[^a-z']/g, '');
+
+function looksLikeClause(words) {
+  return words.some((w) => {
+    const n = normalizeWord(w);
+    return CLAUSE_VERB_MARKERS.has(n) || COORD_CLAUSE_VERBS.has(n)
+      || CLAUSE_BODY_VERBS.has(n) || n.endsWith("n't");
+  });
+}
+
+/**
+ * Split ONE sentence string on coordinated-clause connectives (and/but/so/because)
+ * so each clause compiles as its own frame instead of a run-on
+ * ("I am thirsty and I want to drink water" → 2 clauses).
+ *
+ * Deliberately conservative: splits only when BOTH sides look like full clauses
+ * (each contains a verb marker) and the connective is followed by a subject
+ * pronoun or a clause-starting verb — so noun coordination ("the water and the
+ * food", "you and I are friends") is never torn apart. The connective itself is
+ * dropped: conjunctions are structural in Fonoran, never surface particles.
+ * @param {string} sentence
+ * @returns {string[]}
+ */
+export function splitCoordinatedClauses(sentence) {
+  const text = String(sentence ?? '').trim();
+  if (!text) return [];
+  const words = text.split(/\s+/);
+  if (words.length < 5) return [text];
+
+  // Preserve a trailing terminator so per-clause question detection still works.
+  const terminator = /[?!]$/.test(text) ? text.slice(-1) : '';
+
+  const clauses = [];
+  let cur = [];
+  for (let i = 0; i < words.length; i += 1) {
+    const w = normalizeWord(words[i]);
+    const next = normalizeWord(words[i + 1]);
+    const afterNext = normalizeWord(words[i + 2]);
+
+    const startsClause = CLAUSE_SUBJECT_PRONOUNS.has(next)
+      || next === 'the'
+      || COORD_CLAUSE_VERBS.has(next)
+      || CLAUSE_WH_STARTERS.has(next)
+      || (MODALS.has(next) && COORD_CLAUSE_VERBS.has(afterNext));
+
+    if (
+      CLAUSE_CONNECTIVES.has(w)
+      && i + 1 < words.length
+      && startsClause
+      && looksLikeClause(cur)
+      && looksLikeClause(words.slice(i + 1))
+    ) {
+      clauses.push(cur);
+      cur = [];
+      continue;
+    }
+
+    cur.push(words[i]);
+  }
+  if (cur.length) clauses.push(cur);
+  if (clauses.length <= 1) return [text];
+
+  return clauses.map((clause, idx) => {
+    let out = clause.join(' ').replace(/[,;]\s*$/, '').trim();
+    if (terminator && !/[?!.]$/.test(out) && idx < clauses.length - 1) {
+      out = `${out}${terminator}`;
+    }
+    return out;
+  }).filter(Boolean);
 }
 
 /**
