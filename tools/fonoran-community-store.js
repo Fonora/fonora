@@ -691,6 +691,279 @@ function buildMetricBlock(items, dateField) {
   };
 }
 
+const LEARN_SKILL_IDS = [
+  'script-sounds',
+  'script-writing',
+  'script-words',
+  'fonoran-reading',
+  'fonoran-writing',
+  'fonoran-hearing',
+  'fonoran-grammar',
+  'fonoran-speaking',
+];
+
+/** @type {Record<string, 'script' | 'language'>} */
+const SKILL_TRACK = {
+  'script-sounds': 'script',
+  'script-writing': 'script',
+  'script-words': 'script',
+  'fonoran-reading': 'language',
+  'fonoran-writing': 'language',
+  'fonoran-hearing': 'language',
+  'fonoran-grammar': 'language',
+  'fonoran-speaking': 'language',
+};
+
+function todayUtcDateString() {
+  const d = new Date();
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, '0')}-${String(d.getUTCDate()).padStart(2, '0')}`;
+}
+
+function parsePracticeDate(value) {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const d = new Date(`${value}T12:00:00.000Z`);
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
+function countPracticeSince(rows, since) {
+  return rows.filter((row) => {
+    const d = parsePracticeDate(row.last_practice_date);
+    return d && d >= since;
+  }).length;
+}
+
+function buildPracticeSeries(rows, period) {
+  const dated = rows
+    .map((row) => ({ row, d: parsePracticeDate(row.last_practice_date) }))
+    .filter((x) => x.d);
+  if (period === 'day') {
+    const todayStr = todayUtcDateString();
+    const count = rows.filter((row) => row.last_practice_date === todayStr).length;
+    return [{
+      start: startOfUtcDay(new Date()).toISOString(),
+      label: 'Today',
+      count,
+    }];
+  }
+  if (period === 'week') {
+    return buildDailySeries(rows, 'last_practice_date', 7);
+  }
+  if (period === 'month') {
+    return buildDailySeries(rows, 'last_practice_date', 30);
+  }
+  return buildMonthlySeries(rows, 'last_practice_date');
+}
+
+function masteryPct(mastery) {
+  if (!mastery || typeof mastery !== 'object') return 0;
+  const entries = Object.values(mastery).filter((v) => v && typeof v === 'object' && (v.seen ?? 0) > 0);
+  if (!entries.length) return 0;
+  const mastered = entries.filter((v) => (v.correct ?? 0) > 0).length;
+  return Math.round((mastered / entries.length) * 100);
+}
+
+function skillSessions(skill) {
+  return typeof skill?.sessions === 'number' ? skill.sessions : 0;
+}
+
+function skillLessonIndex(skill) {
+  return typeof skill?.lessonIndex === 'number' && skill.lessonIndex >= 0
+    ? Math.floor(skill.lessonIndex)
+    : 0;
+}
+
+function skillTotalLessons(skill) {
+  return typeof skill?.curriculum?.totalLessons === 'number' ? skill.curriculum.totalLessons : 0;
+}
+
+function skillCompletionPct(skill) {
+  const total = skillTotalLessons(skill);
+  if (!total) return 0;
+  return Math.round((skillLessonIndex(skill) / total) * 100);
+}
+
+function isActiveLearner(payload) {
+  if (!payload || typeof payload !== 'object') return false;
+  if (typeof payload.totalXp === 'number' && payload.totalXp > 0) return true;
+  const skills = payload.skills;
+  if (!skills || typeof skills !== 'object') return false;
+  return LEARN_SKILL_IDS.some((id) => skillSessions(skills[id]) > 0);
+}
+
+function trackHasActivity(payload, track) {
+  const skills = payload?.skills;
+  if (!skills || typeof skills !== 'object') return false;
+  return LEARN_SKILL_IDS.some((id) => SKILL_TRACK[id] === track && skillSessions(skills[id]) > 0);
+}
+
+function aggregateLearnMetrics(rows) {
+  const todayStart = startOfUtcDay(new Date());
+  const weekStart = new Date(Date.now() - 7 * MS_DAY);
+  const monthStart = new Date(Date.now() - 30 * MS_DAY);
+  const todayStr = todayUtcDateString();
+
+  const practiceRows = rows.map((row) => ({
+    last_practice_date: row.payload?.lastPracticeDate ?? null,
+    updated_at: row.updated_at,
+  }));
+
+  const syncRows = rows.map((row) => ({ updated_at: row.updated_at }));
+
+  /** @type {Record<string, { learners: number, sessions: number, lessons_advanced: number, completion_pcts: number[], mastery_pcts: number[] }>} */
+  const trackStats = {
+    script: { learners: 0, sessions: 0, lessons_advanced: 0, completion_pcts: [], mastery_pcts: [] },
+    language: { learners: 0, sessions: 0, lessons_advanced: 0, completion_pcts: [], mastery_pcts: [] },
+  };
+
+  /** @type {Record<string, { learners: number, sessions: number, lesson_indexes: number[], completion_pcts: number[], mastery_pcts: number[] }>} */
+  const skillStats = {};
+  for (const id of LEARN_SKILL_IDS) {
+    skillStats[id] = { learners: 0, sessions: 0, lesson_indexes: [], completion_pcts: [], mastery_pcts: [] };
+  }
+
+  let activeLearners = 0;
+  let totalSessions = 0;
+  let reviewModeUsers = 0;
+  let dailyGoalHits = 0;
+  let streakSum = 0;
+  let streakMax = 0;
+  let streakActiveToday = 0;
+  let scriptLearners = 0;
+  let languageLearners = 0;
+
+  for (const row of rows) {
+    const payload = row.payload ?? {};
+    if (!isActiveLearner(payload)) continue;
+    activeLearners += 1;
+
+    const streak = typeof payload.streak === 'number' ? payload.streak : 0;
+    streakSum += streak;
+    streakMax = Math.max(streakMax, streak);
+    if (streak > 0 && payload.lastPracticeDate === todayStr) streakActiveToday += 1;
+
+    const dailyGoal = typeof payload.dailyGoalXp === 'number' ? payload.dailyGoalXp : 50;
+    const dailyEarned = typeof payload.dailyXpEarned === 'number' ? payload.dailyXpEarned : 0;
+    const dailyDate = typeof payload.dailyXpDate === 'string' ? payload.dailyXpDate : '';
+    if (dailyDate === todayStr && dailyEarned >= dailyGoal) dailyGoalHits += 1;
+
+    let inReviewMode = false;
+    const skills = payload.skills ?? {};
+
+    if (trackHasActivity(payload, 'script')) scriptLearners += 1;
+    if (trackHasActivity(payload, 'language')) languageLearners += 1;
+
+    for (const id of LEARN_SKILL_IDS) {
+      const skill = skills[id];
+      const sessions = skillSessions(skill);
+      totalSessions += sessions;
+      const track = SKILL_TRACK[id];
+      trackStats[track].sessions += sessions;
+      trackStats[track].lessons_advanced += skillLessonIndex(skill);
+
+      if (sessions > 0) {
+        skillStats[id].learners += 1;
+        skillStats[id].sessions += sessions;
+        skillStats[id].lesson_indexes.push(skillLessonIndex(skill));
+        const completion = skillCompletionPct(skill);
+        skillStats[id].completion_pcts.push(completion);
+        trackStats[track].completion_pcts.push(completion);
+      }
+      const mastery = masteryPct(skill?.mastery);
+      if (sessions > 0 || mastery > 0) {
+        skillStats[id].mastery_pcts.push(mastery);
+        if (sessions > 0) trackStats[track].mastery_pcts.push(mastery);
+      }
+
+      const totalLessons = skillTotalLessons(skill);
+      if (totalLessons > 0 && skillLessonIndex(skill) >= totalLessons) inReviewMode = true;
+    }
+    if (inReviewMode) reviewModeUsers += 1;
+  }
+
+  trackStats.script.learners = scriptLearners;
+  trackStats.language.learners = languageLearners;
+
+  const avg = (nums) => (nums.length ? Math.round(nums.reduce((a, b) => a + b, 0) / nums.length) : 0);
+
+  function finalizeTrack(track) {
+    const s = trackStats[track];
+    return {
+      learners: s.learners,
+      sessions: s.sessions,
+      lessons_advanced: s.lessons_advanced,
+      avg_completion_pct: avg(s.completion_pcts),
+      avg_mastery_pct: avg(s.mastery_pcts),
+    };
+  }
+
+  return {
+    synced_users: rows.length,
+    active_learners: activeLearners,
+    total_sessions: totalSessions,
+    active_today: countPracticeSince(practiceRows, todayStart),
+    active_week: countPracticeSince(practiceRows, weekStart),
+    active_month: countPracticeSince(practiceRows, monthStart),
+    tracks: {
+      script: finalizeTrack('script'),
+      language: finalizeTrack('language'),
+    },
+    skills: LEARN_SKILL_IDS.map((id) => ({
+      id,
+      track: SKILL_TRACK[id],
+      learners: skillStats[id].learners,
+      sessions: skillStats[id].sessions,
+      avg_lesson_index: avg(skillStats[id].lesson_indexes),
+      avg_completion_pct: avg(skillStats[id].completion_pcts),
+      avg_mastery_pct: avg(skillStats[id].mastery_pcts),
+    })),
+    streaks: {
+      avg: activeLearners ? Math.round((streakSum / activeLearners) * 10) / 10 : 0,
+      max: streakMax,
+      active_today: streakActiveToday,
+    },
+    daily_goal_hit_rate: activeLearners ? Math.round((dailyGoalHits / activeLearners) * 100) : 0,
+    review_mode_users: reviewModeUsers,
+    sync_activity: buildMetricBlock(syncRows, 'updated_at'),
+    practice_activity: {
+      today: countPracticeSince(practiceRows, todayStart),
+      week: countPracticeSince(practiceRows, weekStart),
+      month: countPracticeSince(practiceRows, monthStart),
+      series: {
+        day: buildPracticeSeries(practiceRows, 'day'),
+        week: buildPracticeSeries(practiceRows, 'week'),
+        month: buildPracticeSeries(practiceRows, 'month'),
+        all_time: buildPracticeSeries(practiceRows, 'all_time'),
+      },
+    },
+  };
+}
+
+function buildEngagementBlock(users) {
+  const now = new Date();
+  const todayStart = startOfUtcDay(now);
+  const weekStart = new Date(now.getTime() - 7 * MS_DAY);
+  const monthStart = new Date(now.getTime() - 30 * MS_DAY);
+  const loginRows = users.filter((u) => u.last_login).map((u) => ({ last_login: u.last_login }));
+
+  let returning = 0;
+  let referralSignups = 0;
+  for (const user of users) {
+    if (user.referred_by) referralSignups += 1;
+    const created = parseDate(user.created_at);
+    const login = parseDate(user.last_login);
+    if (created && login && login.getTime() > created.getTime() + MS_DAY) returning += 1;
+  }
+
+  return {
+    dau: countSince(loginRows, 'last_login', todayStart),
+    wau: countSince(loginRows, 'last_login', weekStart),
+    mau: countSince(loginRows, 'last_login', monthStart),
+    returning_pct: users.length ? Math.round((returning / users.length) * 100) : 0,
+    referral_signups: referralSignups,
+    logins: buildMetricBlock(loginRows, 'last_login'),
+  };
+}
+
 async function readAnalyticsRows() {
   await ensureCommunitySchema();
   if (resolveStorageMode() === 'postgres') {
@@ -698,11 +971,17 @@ async function readAnalyticsRows() {
     const client = await pool.connect();
     try {
       const [usersRes, votesRes] = await Promise.all([
-        client.query('SELECT created_at FROM fonoran_users ORDER BY created_at ASC'),
+        client.query(
+          'SELECT created_at, last_login, referred_by FROM fonoran_users ORDER BY created_at ASC',
+        ),
         client.query('SELECT created_at FROM fonoran_votes WHERE vote = 1 ORDER BY created_at ASC'),
       ]);
       return {
-        users: usersRes.rows.map((r) => ({ created_at: toIso(r.created_at) })),
+        users: usersRes.rows.map((r) => ({
+          created_at: toIso(r.created_at),
+          last_login: toIso(r.last_login),
+          referred_by: r.referred_by ?? null,
+        })),
         upvotes: votesRes.rows.map((r) => ({ created_at: toIso(r.created_at) })),
       };
     } finally {
@@ -711,19 +990,58 @@ async function readAnalyticsRows() {
   }
   const doc = await readJsonDoc();
   return {
-    users: doc.users.map((u) => ({ created_at: u.created_at })),
+    users: doc.users.map((u) => ({
+      created_at: u.created_at,
+      last_login: u.last_login ?? u.created_at,
+      referred_by: u.referred_by ?? null,
+    })),
     upvotes: doc.votes.filter((v) => v.vote === 1).map((v) => ({ created_at: v.created_at })),
   };
 }
 
+async function readLearnProgressRows() {
+  await ensureCommunitySchema();
+  if (resolveStorageMode() === 'postgres') {
+    const pool = await getPool();
+    const client = await pool.connect();
+    try {
+      const { rows } = await client.query(
+        'SELECT user_id, payload_json, updated_at FROM fonoran_learn_progress ORDER BY updated_at ASC',
+      );
+      return rows.map((r) => ({
+        user_id: r.user_id,
+        payload: r.payload_json ?? {},
+        updated_at: toIso(r.updated_at),
+      }));
+    } finally {
+      client.release();
+    }
+  }
+  const doc = await readJsonDoc();
+  return Object.entries(doc.learn_progress ?? {}).map(([userId, entry]) => ({
+    user_id: userId,
+    payload: entry?.payload ?? {},
+    updated_at: entry?.updated_at ?? new Date().toISOString(),
+  }));
+}
+
 export async function getUserAnalytics() {
-  const { users, upvotes } = await readAnalyticsRows();
+  const [{ users, upvotes }, learnRows] = await Promise.all([
+    readAnalyticsRows(),
+    readLearnProgressRows(),
+  ]);
+  const signupUsers = users.map((u) => ({ created_at: u.created_at }));
+  const learn = aggregateLearnMetrics(learnRows);
+  const engagement = buildEngagementBlock(users);
+
   return {
     generated_at: new Date().toISOString(),
     users: {
       total: users.length,
-      ...buildMetricBlock(users, 'created_at'),
+      ...buildMetricBlock(signupUsers, 'created_at'),
     },
     upvotes: buildMetricBlock(upvotes, 'created_at'),
+    learn,
+    engagement,
   };
 }

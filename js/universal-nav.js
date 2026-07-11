@@ -63,7 +63,7 @@ const TOOLS_TITLES = {
   'word-manager': 'Words',
   'gap-workshop': 'Review',
   'translation-test': 'Translation Test',
-  'user-analytics': 'User analytics',
+  'user-analytics': 'Analytics',
   health: 'Health',
   progress: 'Lab progress',
   advanced: 'Advanced',
