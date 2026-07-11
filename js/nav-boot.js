@@ -130,6 +130,16 @@
   }
 
   if (path === '/tools' || path.startsWith('/tools/')) {
+    if (hash === 'listening') {
+      window.location.replace(`/tools#samples${window.location.search}`);
+      return;
+    }
+    // Tools-native tabs must stay on /tools (samples is also in LEARN_REDIRECT_HASHES).
+    if (hash && TOOLS_TABS.has(hash)) {
+      html.setAttribute('data-fonora-nav', 'tools');
+      html.setAttribute('data-fonora-tab', hash);
+      return;
+    }
     if (hash && learnRouting.LEARN_REDIRECT_HASHES.includes(hash)) {
       let tab = LEARN_DEFAULT_TAB;
       if (hash === LEARN_DEFAULT_TAB) tab = LEARN_DEFAULT_TAB;
