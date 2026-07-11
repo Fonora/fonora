@@ -12,6 +12,7 @@ import { maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { scoreUnderstandability } from './fonoran-understandability.js';
 import { rankCandidates, ASSOCIATION_SEEDS } from './fonoran-expression-candidates.js';
 import { pickConsensus, compositionKey as llmCompositionKey, llmScoresForConcept } from './fonoran-llm-aggregate.js';
+import { computeBoundaryQuality } from './fonoran-compound-confusability.js';
 
 const LOCKED_SOURCES = new Set(['playtest', 'human']);
 const DEFAULT_SCORE_MARGIN = 0.02;
@@ -229,7 +230,20 @@ export function selectPreferred(conceptId, {
       if (b.understandability !== a.understandability) return b.understandability - a.understandability;
       const aFlat = a.validation.flat_count ?? flatCountFor(a.composition) ?? 99;
       const bFlat = b.validation.flat_count ?? flatCountFor(b.composition) ?? 99;
-      return aFlat - bFlat;
+      if (aFlat !== bFlat) return aFlat - bFlat;
+      const aBoundary = computeBoundaryQuality(a.validation.rootSeq ?? []).score;
+      const bBoundary = computeBoundaryQuality(b.validation.rootSeq ?? []).score;
+      return bBoundary - aBoundary;
+    });
+  } else {
+    validRanked = validRanked.sort((a, b) => {
+      if (b.understandability !== a.understandability) return b.understandability - a.understandability;
+      const aFlat = a.validation.flat_count ?? flatCountFor(a.composition) ?? 99;
+      const bFlat = b.validation.flat_count ?? flatCountFor(b.composition) ?? 99;
+      if (aFlat !== bFlat) return aFlat - bFlat;
+      const aBoundary = computeBoundaryQuality(a.validation.rootSeq ?? []).score;
+      const bBoundary = computeBoundaryQuality(b.validation.rootSeq ?? []).score;
+      return bBoundary - aBoundary;
     });
   }
 

@@ -20,9 +20,9 @@ import '../load-env.js';
 import { readDoc } from './fonoran-store.js';
 import { createCompoundProposals } from './fonoran-compound-proposals.js';
 import { buildCompositionResolver, detectRedundantRootPattern } from './fonoran-composition-resolve.js';
+import { anthropicModelForRole, completeJson } from './fonoran-llm-client.js';
+import { phoneticPromptBrief } from './fonoran-phonetic-weights.js';
 
-const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
-const MODEL = process.env.ANTHROPIC_MODEL?.trim() || 'claude-sonnet-4-6';
 const MAX_TOKENS = 4096;
 
 /**
@@ -95,10 +95,14 @@ const SURVEY_DOMAINS = [
   },
 ];
 
-function buildGlossary(primitives) {
+function buildGlossary(primitives, rootById = {}) {
   return primitives
     .filter(p => p.suggested_status === 'primitive')
-    .map(p => `  ${p.id}: ${p.plain_description ?? p.description ?? p.id}`)
+    .map(p => {
+      const spelling = rootById[p.id];
+      const suffix = spelling ? ` — spoken "${spelling}"` : '';
+      return `  ${p.id}: ${p.plain_description ?? p.description ?? p.id}${suffix}`;
+    })
     .join('\n');
 }
 
@@ -111,7 +115,9 @@ function buildExistingList(compoundsDoc, primitives) {
 }
 
 function buildSurveyPrompt(domain, glossary, existingConcepts) {
-  const existing = existingConcepts.slice(0, 80).join(', ') + (existingConcepts.length > 80 ? '...' : '');
+  // Full existing list — truncating it caused duplicate proposals for concepts
+  // the model could not see.
+  const existing = existingConcepts.join(', ');
   return [
     `You are helping design Fonoran, a constructed language built on ~89 primitive roots.`,
     ``,
@@ -121,6 +127,8 @@ function buildSurveyPrompt(domain, glossary, existingConcepts) {
     ``,
     `PRIMITIVE ROOTS (complete list — use ONLY these as composition components):`,
     glossary,
+    ``,
+    phoneticPromptBrief(),
     ``,
     `Already defined concepts (do NOT propose these again):`,
     existing,
@@ -135,6 +143,8 @@ function buildSurveyPrompt(domain, glossary, existingConcepts) {
     `- Prefer 2-component compositions. Use 3 only when 2 is unclear. Never more than 4.`,
     `- Order: modifier before head (descriptive part first, then the core concept).`,
     `- The composition must be intuitively recoverable: a stranger guesses the meaning.`,
+    `- The composition must also SOUND clear: follow the phonetic rules above and avoid`,
+    `  root sequences that blur together when spoken.`,
     `- Concept ids must be English snake_case, NOT already in the "already defined" list.`,
     `- Propose CONCEPTS (meaning-units), not words. "behind" is a concept; don't propose`,
     `  "tree behind rock" (that's a sentence, not a concept).`,
@@ -154,42 +164,15 @@ function buildSurveyPrompt(domain, glossary, existingConcepts) {
 }
 
 async function callLlm(prompt) {
-  const apiKey = process.env.ANTHROPIC_API_KEY?.trim();
-  if (!apiKey) throw new Error('ANTHROPIC_API_KEY not set');
-
-  const res = await fetch(ANTHROPIC_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: MAX_TOKENS,
-      temperature: 0.4,
-      system: 'You output only valid JSON matching the requested schema. No commentary, no markdown fences.',
-      messages: [{ role: 'user', content: prompt }],
-    }),
+  const result = await completeJson({
+    role: 'proposer',
+    maxTokens: MAX_TOKENS,
+    temperature: 0.4,
+    system: 'You output only valid JSON matching the requested schema. No commentary, no markdown fences.',
+    user: prompt,
   });
-
-  if (!res.ok) {
-    const body = await res.text().catch(() => '');
-    throw new Error(`Anthropic API ${res.status}: ${body.slice(0, 300)}`);
-  }
-
-  const payload = await res.json();
-  const raw = (payload.content ?? [])
-    .filter(b => b.type === 'text')
-    .map(b => b.text)
-    .join('\n')
-    .trim();
-
-  // Strip markdown fences if present
-  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const jsonText = fenced ? fenced[1].trim() : raw;
-
-  return JSON.parse(jsonText);
+  if (!result.ok) throw new Error(result.error);
+  return result.data;
 }
 
 function validateProposal(proposal, allowedIds, resolver, existingSet) {
@@ -306,12 +289,13 @@ async function main() {
     || args.find((a, i) => args[i - 1] === '--domain');
 
   console.log('Fonoran Vocabulary Survey');
-  console.log(`Model: ${MODEL} | Max tokens: ${MAX_TOKENS}`);
+  console.log(`Model: ${anthropicModelForRole('proposer')} (proposer role) | Max tokens: ${MAX_TOKENS}`);
   if (dryRun) console.log('DRY RUN — proposals will not be saved.\n');
 
-  const [inventory, compoundsDoc] = await Promise.all([
+  const [inventory, compoundsDoc, approved] = await Promise.all([
     readDoc('concept_inventory'),
     readDoc('compounds'),
+    readDoc('approved_roots'),
   ]);
 
   if (!inventory) throw new Error('Concept inventory not found');
@@ -321,9 +305,10 @@ async function main() {
   const allowedIds = new Set(primitiveIds);
   for (const c of compoundsDoc?.compounds ?? []) allowedIds.add(c.concept);
 
+  const rootById = Object.fromEntries((approved?.roots ?? []).map(r => [r.id, r.spelling]));
   const existingSet = new Set(allowedIds);
   const resolver = buildCompositionResolver(primitiveIds, compoundsDoc?.compounds ?? []);
-  const glossary = buildGlossary(inventory.primitives ?? []);
+  const glossary = buildGlossary(inventory.primitives ?? [], rootById);
   const existingConcepts = buildExistingList(compoundsDoc, inventory.primitives ?? []);
 
   console.log(`Primitives: ${primitiveIds.length}`);
