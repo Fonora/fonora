@@ -425,9 +425,16 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/puzzle/challenge' && method === 'GET') {
       const url = new URL(req.url ?? '', 'http://localhost');
       const coreOnly = ['1', 'true', 'yes'].includes((url.searchParams.get('core') ?? '').toLowerCase());
-      const conceptId = url.searchParams.get('concept');
+      const missed = url.searchParams.has('missed');
+      const conceptId = missed ? null : url.searchParams.get('concept');
+      const missedIndex = missed ? Number(url.searchParams.get('index') ?? 0) : null;
       const lab = await getLab();
-      return done(200, await buildPuzzleChallenge({ lab, coreOnly, conceptId: conceptId || null }));
+      return done(200, await buildPuzzleChallenge({
+        lab,
+        coreOnly,
+        conceptId: conceptId || null,
+        missedIndex,
+      }));
     }
     if (pathname === '/api/fonoran/puzzle/guess' && method === 'POST') {
       const body = await readJsonBody(req);

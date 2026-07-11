@@ -130,7 +130,7 @@
         ],
         "gloss": "what is known and held"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -154,7 +154,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Semantic foundation teaching tree Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "memory",
@@ -166,7 +166,7 @@
         ],
         "gloss": "knowledge kept inside over time"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -191,7 +191,7 @@
         }
       ],
       "understandability": 0.77,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Semantic foundation teaching tree Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "remember",
@@ -370,7 +370,7 @@
         ],
         "gloss": "moving in water"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -395,7 +395,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Semantic foundation teaching tree Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "fly",
@@ -406,7 +406,7 @@
         ],
         "gloss": "moving in air"
       },
-      "preferred_source": "llm_consensus",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -430,7 +430,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Semantic foundation teaching tree Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "flow",
@@ -441,7 +441,7 @@
         ],
         "gloss": "water moving along a path"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -466,7 +466,7 @@
         }
       ],
       "understandability": 0.76,
-      "notes": "Retired-to-compound / gap concept (vocabulary remediation)"
+      "notes": "Retired-to-compound / gap concept (vocabulary remediation) Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "river",
@@ -985,7 +985,7 @@
         ],
         "gloss": "good that is wanted"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -1021,7 +1021,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Semantic foundation teaching tree Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "shared_meaning",
@@ -1032,7 +1032,7 @@
         ],
         "gloss": "many knowing the same"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -1058,7 +1058,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Semantic foundation teaching tree Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "tribe",
@@ -1141,7 +1141,7 @@
         ],
         "gloss": "community at a place"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -1166,7 +1166,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "Teaching tree (depth 2): place + community"
+      "notes": "Teaching tree (depth 2): place + community Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "language",
@@ -1177,7 +1177,7 @@
         ],
         "gloss": "speaking with shared meaning"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -1202,7 +1202,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Teaching tree (depth 2): speak + shared_meaning"
+      "notes": "Teaching tree (depth 2): speak + shared_meaning Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "equal",
@@ -1286,7 +1286,7 @@
         ],
         "gloss": "person who gives knowledge"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -1311,7 +1311,7 @@
         }
       ],
       "understandability": 0.77,
-      "notes": "Teaching tree (depth 2): person + knowledge + give"
+      "notes": "Teaching tree (depth 2): person + knowledge + give Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "book",
@@ -1538,7 +1538,7 @@
         ],
         "gloss": "having a powerful body"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -1562,7 +1562,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Retired-to-compound / gap concept (vocabulary remediation)"
+      "notes": "Retired-to-compound / gap concept (vocabulary remediation) Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "government",
@@ -1573,7 +1573,7 @@
         ],
         "gloss": "community held by strength"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -1599,7 +1599,7 @@
         }
       ],
       "understandability": 0.74,
-      "notes": "Teaching tree (depth 2): community + hold + strong"
+      "notes": "Teaching tree (depth 2): community + hold + strong Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "law",
@@ -1646,7 +1646,7 @@
         ],
         "gloss": "where something begins"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -1670,7 +1670,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Retired-to-compound / gap concept (vocabulary remediation)"
+      "notes": "Retired-to-compound / gap concept (vocabulary remediation) Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "religion",
@@ -2122,7 +2122,7 @@
         ],
         "gloss": "speaking to seek knowing"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -2148,7 +2148,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Semantic foundation teaching tree Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "answer",
@@ -2194,7 +2194,7 @@
         ],
         "gloss": "collective without conflict"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -2219,7 +2219,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Semantic foundation teaching tree Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "nation",
@@ -2443,7 +2443,7 @@
         ],
         "gloss": "a bad feeling"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -2467,7 +2467,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "teach",
@@ -3183,7 +3183,7 @@
         ],
         "gloss": "water falling down"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -3208,7 +3208,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "cloud",
@@ -3254,7 +3254,7 @@
         ],
         "gloss": "earth within water"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -3279,7 +3279,7 @@
         }
       ],
       "understandability": 0.78,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "star",
@@ -3433,7 +3433,7 @@
         ],
         "gloss": "a hot body"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -3459,7 +3459,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "wound",
@@ -3470,7 +3470,7 @@
         ],
         "gloss": "a body in pain"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -3494,7 +3494,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "heal",
@@ -3505,7 +3505,7 @@
         ],
         "gloss": "to make good"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -3529,7 +3529,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "journey",
@@ -3575,7 +3575,7 @@
         ],
         "gloss": "a place of many"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -3599,7 +3599,7 @@
         }
       ],
       "understandability": 0.82,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "birthplace",
@@ -3610,7 +3610,7 @@
         ],
         "gloss": "the place of birth"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -3634,7 +3634,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "open",
@@ -3892,7 +3892,7 @@
         ],
         "gloss": "good to see"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -3916,7 +3916,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "almost",
@@ -4178,7 +4178,7 @@
         ],
         "gloss": "a parent's parent, an elder"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -4203,7 +4203,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "doctor",
@@ -4288,7 +4288,7 @@
         ],
         "gloss": "one who makes plants grow"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -4314,7 +4314,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
+      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "fisherman",
@@ -4785,7 +4785,7 @@
         ],
         "gloss": "feeling bad strongly"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -4810,7 +4810,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "Demoted from primitive — feel + bad captures the core experience."
+      "notes": "Demoted from primitive — feel + bad captures the core experience. Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "calm",
@@ -5216,7 +5216,7 @@
         ],
         "gloss": "doing in a cycle"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -5241,7 +5241,7 @@
         }
       ],
       "understandability": 0.82,
-      "notes": "Around-powered compound — the cycle concept applied to action."
+      "notes": "Around-powered compound — the cycle concept applied to action. Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "return",
@@ -5436,7 +5436,7 @@
         ],
         "gloss": "feeling the need to eat; hunger"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -5450,7 +5450,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — communicating who needs food first is essential for rationing"
+      "notes": "Vocab survey proposal — communicating who needs food first is essential for rationing Playtest-locked 3 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "thirsty",
@@ -5461,7 +5461,7 @@
         ],
         "gloss": "feeling the need to drink; thirst"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -5485,7 +5485,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — dehydration kills faster than starvation; must be expressible"
+      "notes": "Vocab survey proposal — dehydration kills faster than starvation; must be expressible Playtest-locked 4 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "shelter",
@@ -5786,7 +5786,7 @@
         ],
         "gloss": "comfortable heat; the feeling of being warm enough"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -5800,7 +5800,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — staying warm prevents hypothermia in cold environments"
+      "notes": "Vocab survey proposal — staying warm prevents hypothermia in cold environments Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "cold_exposure",
@@ -6401,7 +6401,7 @@
         ],
         "gloss": "a location where clean water can be found; a spring or stream"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -6425,7 +6425,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "Vocab survey proposal — finding a reliable water source is the first camp-siting priority"
+      "notes": "Vocab survey proposal — finding a reliable water source is the first camp-siting priority Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "warmth_sharing",
@@ -6489,10 +6489,10 @@
         ],
         "gloss": "moving in the direction of something"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.8,
-      "notes": "Vocab survey proposal — Signaling to move toward the water source or shelter"
+      "notes": "Vocab survey proposal — Signaling to move toward the water source or shelter Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "away",
@@ -6737,10 +6737,10 @@
         ],
         "gloss": "a place that is close"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.82,
-      "notes": "Vocab survey proposal — Telling your partner there is water nearby so they don't panic"
+      "notes": "Vocab survey proposal — Telling your partner there is water nearby so they don't panic Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "distant_place",
@@ -6941,10 +6941,10 @@
         ],
         "gloss": "directly above; close overhead"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — Warning about a branch or rock overhead that could fall"
+      "notes": "Vocab survey proposal — Warning about a branch or rock overhead that could fall Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "underfoot",
@@ -6997,10 +6997,10 @@
         ],
         "gloss": "the exterior region surrounding something"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.82,
-      "notes": "Vocab survey proposal — Warning that the outer area of the camp is exposed to wind"
+      "notes": "Vocab survey proposal — Warning that the outer area of the camp is exposed to wind Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "straight_path",
@@ -7053,10 +7053,10 @@
         ],
         "gloss": "a safe, favorable location"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.82,
-      "notes": "Vocab survey proposal — Identifying safe ground to sleep on away from flooding or predators"
+      "notes": "Vocab survey proposal — Identifying safe ground to sleep on away from flooding or predators Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "dangerous_ground",
@@ -7081,10 +7081,10 @@
         ],
         "gloss": "the route back to where one came from"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — Memorizing the return path so you can find camp after exploring"
+      "notes": "Vocab survey proposal — Memorizing the return path so you can find camp after exploring Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "nose",
@@ -7134,7 +7134,7 @@
         ],
         "gloss": "the foot; base of the leg used for walking"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -7148,7 +7148,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — a hurt foot stops all travel and foraging — critical to communicate"
+      "notes": "Vocab survey proposal — a hurt foot stops all travel and foraging — critical to communicate Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "leg",
@@ -7219,10 +7219,10 @@
         ],
         "gloss": "the shoulder; upper joint where arm meets torso"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — shoulder injuries affect carrying loads and building shelter"
+      "notes": "Vocab survey proposal — shoulder injuries affect carrying loads and building shelter Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "stomach",
@@ -7556,7 +7556,7 @@
         ],
         "gloss": "tired; the body is drained of energy and needs rest"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -7570,7 +7570,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — communicating exhaustion prevents dangerous overexertion in survival situations"
+      "notes": "Vocab survey proposal — communicating exhaustion prevents dangerous overexertion in survival situations Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "weak",
@@ -7631,7 +7631,7 @@
         ],
         "gloss": "dizzy; a spinning sensation in the head; loss of balance"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -7645,7 +7645,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — dizziness signals dehydration, head injury, or illness — critical to name"
+      "notes": "Vocab survey proposal — dizziness signals dehydration, head injury, or illness — critical to name Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "blind",
@@ -7858,10 +7858,10 @@
         ],
         "gloss": "the hip; the joint connecting the leg to the torso"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — hip injuries prevent walking and must be distinguished from leg or back pain"
+      "notes": "Vocab survey proposal — hip injuries prevent walking and must be distinguished from leg or back pain Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "wrist",
@@ -7911,7 +7911,7 @@
         ],
         "gloss": "an older person; one who came before"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -7935,7 +7935,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — referring to someone with more experience or seniority"
+      "notes": "Vocab survey proposal — referring to someone with more experience or seniority Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "partner",
@@ -7960,7 +7960,7 @@
         ],
         "gloss": "a person welcomed into your space"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -7974,7 +7974,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — distinguishing someone you have invited from an intruder"
+      "notes": "Vocab survey proposal — distinguishing someone you have invited from an intruder Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "rival",
@@ -8584,10 +8584,10 @@
         ],
         "gloss": "one who takes knowledge; a learner"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.77,
-      "notes": "Vocab survey proposal — the person learning skills from a more experienced one"
+      "notes": "Vocab survey proposal — the person learning skills from a more experienced one Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "mediator",
@@ -8653,10 +8653,10 @@
         ],
         "gloss": "feeling bad about oneself; shame"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — admitting you made a mistake that hurt the group"
+      "notes": "Vocab survey proposal — admitting you made a mistake that hurt the group Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "curious",
@@ -8851,10 +8851,10 @@
         ],
         "gloss": "knowing something suddenly; surprise"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.77,
-      "notes": "Vocab survey proposal — reacting to an unexpected animal or person appearing"
+      "notes": "Vocab survey proposal — reacting to an unexpected animal or person appearing Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "relief",
@@ -8980,10 +8980,10 @@
         ],
         "gloss": "feeling good about the past; nostalgia"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.77,
-      "notes": "Vocab survey proposal — warmly recalling life before being stranded"
+      "notes": "Vocab survey proposal — warmly recalling life before being stranded Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "obsession",
@@ -9050,10 +9050,10 @@
         ],
         "gloss": "knowing nothing; ignorance"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.8,
-      "notes": "Vocab survey proposal — admitting you have no idea how to navigate by stars"
+      "notes": "Vocab survey proposal — admitting you have no idea how to navigate by stars Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "acceptance",
@@ -9317,10 +9317,10 @@
         ],
         "gloss": "to come apart; to shatter or fracture"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.78,
-      "notes": "Vocab survey proposal — A broken tool is a crisis — we need a word for this immediately."
+      "notes": "Vocab survey proposal — A broken tool is a crisis — we need a word for this immediately. Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "fix",
@@ -9477,10 +9477,10 @@
         ],
         "gloss": "sooner than expected; ahead of the right time"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — Waking early to catch fish before the heat drives them deep."
+      "notes": "Vocab survey proposal — Waking early to catch fish before the heat drives them deep. Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "late",
@@ -9589,10 +9589,10 @@
         ],
         "gloss": "newly made or recently occurring; not old"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.82,
-      "notes": "Vocab survey proposal — Fresh tracks mean the animal is near — critical hunting information."
+      "notes": "Vocab survey proposal — Fresh tracks mean the animal is near — critical hunting information. Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "old",
@@ -9947,10 +9947,10 @@
         ],
         "gloss": "edible growth of a plant; fruit"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — identifying fruit is essential for finding safe food in the wild"
+      "notes": "Vocab survey proposal — identifying fruit is essential for finding safe food in the wild Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "root",
@@ -10155,8 +10155,8 @@
       "concept": "bag",
       "preferred": {
         "composition": [
-          "empty",
-          "hold"
+          "thing",
+          "inside"
         ],
         "gloss": "a container for carrying things"
       },
@@ -10169,22 +10169,12 @@
           ],
           "understandability": 0.77,
           "label": "likely understood",
-          "status": "plausible",
-          "source": "vocab_survey"
-        },
-        {
-          "composition": [
-            "thing",
-            "inside"
-          ],
-          "understandability": 0.74,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "demoted_heuristic"
+          "status": "confusing",
+          "source": "demoted_playtest"
         }
       ],
-      "understandability": 0.84,
-      "notes": "Vocab survey proposal — needed to carry gathered food, tools, and supplies"
+      "understandability": 0.74,
+      "notes": "Promoted thing+inside after playtest miss on empty+hold (tamgat); blind retest pending"
     },
     {
       "concept": "bowl",
@@ -10320,7 +10310,7 @@
         ],
         "gloss": "a vessel for traveling on water"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -10344,7 +10334,7 @@
         }
       ],
       "understandability": 0.82,
-      "notes": "Vocab survey proposal — needed to cross rivers or fish from open water"
+      "notes": "Vocab survey proposal — needed to cross rivers or fish from open water Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "wheel",
@@ -10594,12 +10584,12 @@
           ],
           "understandability": 0.77,
           "label": "likely understood",
-          "status": "plausible",
-          "source": "vocab_survey"
+          "status": "confusing",
+          "source": "demoted_playtest"
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — needed to fell trees and split wood for shelter and fire"
+      "notes": "Kept stone+plant; hand+make blocked by boundary. Playtest hint-only — needs new seed"
     },
     {
       "concept": "needle",
@@ -10655,8 +10645,8 @@
       "concept": "log",
       "preferred": {
         "composition": [
-          "plant",
-          "stone"
+          "big",
+          "plant"
         ],
         "gloss": "a large cut section of a tree trunk"
       },
@@ -10664,17 +10654,17 @@
       "alternates": [
         {
           "composition": [
-            "big",
-            "plant"
+            "plant",
+            "stone"
           ],
           "understandability": 0.77,
           "label": "likely understood",
-          "status": "plausible",
-          "source": "vocab_survey"
+          "status": "confusing",
+          "source": "demoted_playtest"
         }
       ],
-      "understandability": 0.84,
-      "notes": "Vocab survey proposal — the primary building and fuel material in the wilderness"
+      "understandability": 0.77,
+      "notes": "Promoted big+plant after playtest miss on plant+stone (tetsas); new spelling not yet blind-tested"
     },
     {
       "concept": "plank",
@@ -10809,10 +10799,10 @@
         ],
         "gloss": "a flat floating platform made of logs or wood"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — needed to cross rivers when no boat is available"
+      "notes": "Vocab survey proposal — needed to cross rivers when no boat is available Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "ladder",
@@ -10898,7 +10888,7 @@
         ],
         "gloss": "a device that blows air to intensify fire"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -10912,7 +10902,7 @@
         }
       ],
       "understandability": 0.8,
-      "notes": "Vocab survey proposal — needed to get fire hot enough for cooking and metalwork"
+      "notes": "Vocab survey proposal — needed to get fire hot enough for cooking and metalwork Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "lever",
@@ -10943,8 +10933,8 @@
       "concept": "peg",
       "preferred": {
         "composition": [
-          "small",
-          "hold"
+          "hold",
+          "stone"
         ],
         "gloss": "a small pin or stake used to fasten things"
       },
@@ -10952,17 +10942,17 @@
       "alternates": [
         {
           "composition": [
-            "hold",
-            "stone"
+            "small",
+            "hold"
           ],
           "understandability": 0.77,
           "label": "likely understood",
-          "status": "plausible",
-          "source": "vocab_survey"
+          "status": "confusing",
+          "source": "demoted_playtest"
         }
       ],
-      "understandability": 0.84,
-      "notes": "Vocab survey proposal — needed to secure ropes, tents, and joints in construction"
+      "understandability": 0.77,
+      "notes": "Promoted hold+stone after playtest miss on small+hold (gengat); new spelling not yet blind-tested"
     },
     {
       "concept": "sack",
@@ -11196,7 +11186,7 @@
         ],
         "gloss": "to rotate or change direction"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -11232,7 +11222,7 @@
         }
       ],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — directing someone to turn around on a path"
+      "notes": "Vocab survey proposal — directing someone to turn around on a path Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "stop",
@@ -11288,7 +11278,7 @@
       "preferred_source": "heuristic",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — tying branches together to build a shelter or raft"
+      "notes": "Playtest miss (kamdak): bond+hand did not recover — needs new seed composition"
     },
     {
       "concept": "cut",
@@ -11436,7 +11426,7 @@
       "preferred_source": "heuristic",
       "alternates": [],
       "understandability": 0.84,
-      "notes": "Vocab survey proposal — leaning branches against a tree to form a shelter wall"
+      "notes": "Playtest hint-only (chati): front+still is gloss-stretch, not campfire-coinable — needs new seed"
     },
     {
       "concept": "crawl",
@@ -11515,7 +11505,7 @@
         ],
         "gloss": "fonoran"
       },
-      "preferred_source": "proposal",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -11534,7 +11524,7 @@
           "source": "proposal"
         }
       ],
-      "notes": "Fonoran as a modifier means 'of/relating to the Fonoran language', which can be expressed as 'language + name' (the named language) or 'shared_meaning + name' (the named shared meaning system). The mo"
+      "notes": "Fonoran as a modifier means 'of/relating to the Fonoran language', which can be expressed as 'language + name' (the named language) or 'shared_meaning + name' (the named shared meaning system). The mo Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "raindrop",
@@ -11622,7 +11612,7 @@
         ],
         "gloss": "please"
       },
-      "preferred_source": "proposal",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -11649,7 +11639,7 @@
           "source": "proposal"
         }
       ],
-      "notes": "Please is a politeness softener meaning 'I want this in a good/kind way' — best conveyed as want+good, which a campfire stranger would read as 'wanting with goodwill' rather than demanding. Concrete a"
+      "notes": "Please is a politeness softener meaning 'I want this in a good/kind way' — best conveyed as want+good, which a campfire stranger would read as 'wanting with goodwill' rather than demanding. Concrete a Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "try",
@@ -11698,7 +11688,7 @@
         ],
         "gloss": "show"
       },
-      "preferred_source": "proposal",
+      "preferred_source": "playtest",
       "alternates": [
         {
           "composition": [
@@ -11725,7 +11715,7 @@
           "source": "proposal"
         }
       ],
-      "notes": "Show means making something visible to another person — a stranger would guess 'give+see' as 'make someone see something', which is the core campfire act of showing. Concrete and directional."
+      "notes": "Show means making something visible to another person — a stranger would guess 'give+see' as 'make someone see something', which is the core campfire act of showing. Concrete and directional. Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "worried",
@@ -12056,20 +12046,22 @@
       "concept": "other",
       "preferred": {
         "composition": [
-          "same",
-          "outside"
+          "opposite",
+          "same"
         ],
         "gloss": "other"
       },
-      "preferred_source": "proposal",
+      "preferred_source": "heuristic",
       "alternates": [
         {
           "composition": [
-            "opposite",
-            "same"
+            "same",
+            "outside"
           ],
-          "status": "plausible",
-          "source": "proposal"
+          "understandability": 0.7,
+          "label": "likely understood",
+          "status": "confusing",
+          "source": "demoted_playtest"
         },
         {
           "composition": [
@@ -12088,7 +12080,7 @@
           "source": "proposal"
         }
       ],
-      "notes": "Other means 'not this one, a different one' — best captured as opposite+same (the one that is not the same) or different+thing. A stranger at a campfire pointing to one object and gesturing 'not same'"
+      "notes": "Promoted opposite+same after playtest miss on same+outside; stranger points at 'not the same one'"
     },
     {
       "concept": "boil",
@@ -12301,9 +12293,9 @@
         ],
         "gloss": "one who gives knowledge; a teacher or guide"
       },
-      "preferred_source": "proposal",
+      "preferred_source": "playtest",
       "alternates": [],
-      "notes": "the person who teaches you skills you need to survive"
+      "notes": "the person who teaches you skills you need to survive Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "long",
