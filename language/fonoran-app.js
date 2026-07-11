@@ -248,6 +248,8 @@
         feedbackNote: '',
         session: { played: 0, recovered: 0 },
         summary: null,
+        missedMode: false,
+        missedIndex: null,
       },
       rootCandidates: null,
     };

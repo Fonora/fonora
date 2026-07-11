@@ -86,8 +86,39 @@ export function buildMeaningPoolFromCompounds(compounds) {
  * @param {object} [opts.lab]        lab snapshot (sounds + compounds); loaded if omitted.
  * @param {boolean} [opts.coreOnly]  restrict to communicative-core compounds (50-root challenge).
  * @param {string} [opts.conceptId]  request a specific concept instead of random.
+ * @param {number} [opts.missedIndex]  pick from the missed-word queue (blind retest).
  */
-export async function buildPuzzleChallenge({ lab = null, coreOnly = false, conceptId = null } = {}) {
+export async function buildMissedConceptQueue({ lab = null } = {}) {
+  const liveLab = lab ?? await getLab(await loadBucket());
+  const compounds = (liveLab?.compounds ?? [])
+    .filter(c => c.state !== 'rejected' && (c.parts?.length ?? 0) >= 2);
+  const labConcepts = new Set(compounds.map(c => c.concept_id));
+  const liveSpelling = new Map(compounds.map(c => [c.concept_id, c.spelling]));
+
+  const doc = await loadPlaytests();
+  const latest = new Map();
+  for (const r of doc.rounds ?? []) {
+    const prev = latest.get(r.concept_id);
+    if (!prev || r.at > prev.at) latest.set(r.concept_id, r);
+  }
+
+  return [...latest.entries()]
+    .filter(([id, r]) => {
+      if (!labConcepts.has(id)) return false;
+      if (!r.recovered) return true;
+      const current = liveSpelling.get(id);
+      return Boolean(current && r.shown_spelling && r.shown_spelling !== current);
+    })
+    .sort((a, b) => b[1].at.localeCompare(a[1].at))
+    .map(([id]) => id);
+}
+
+export async function buildPuzzleChallenge({
+  lab = null,
+  coreOnly = false,
+  conceptId = null,
+  missedIndex = null,
+} = {}) {
   const liveLab = lab ?? await getLab(await loadBucket());
   const sounds = liveLab?.sounds ?? [];
   const compounds = (liveLab?.compounds ?? []).filter(c => c.state !== 'rejected' && (c.parts?.length ?? 0) >= 2 && meaningOf(c));
@@ -98,6 +129,21 @@ export async function buildPuzzleChallenge({ lab = null, coreOnly = false, conce
   if (!pool.length) pool = compounds;
   if (!pool.length) {
     throw new Error('No compounds available to play. Run the converged build first.');
+  }
+
+  let puzzleMode = conceptId ? 'concept' : 'random';
+  let queueIndex = null;
+  let queueTotal = null;
+
+  if (missedIndex != null && Number.isFinite(Number(missedIndex))) {
+    const queue = await buildMissedConceptQueue({ lab: liveLab });
+    if (!queue.length) {
+      throw new Error('No missed words to retest. Play random words or clear old misses.');
+    }
+    queueTotal = queue.length;
+    queueIndex = ((Number(missedIndex) % queue.length) + queue.length) % queue.length;
+    conceptId = queue[queueIndex];
+    puzzleMode = 'missed';
   }
 
   const target = conceptId
@@ -139,6 +185,9 @@ export async function buildPuzzleChallenge({ lab = null, coreOnly = false, conce
     alternate_forms: alternateForms,
     choices,
     core_only: Boolean(coreOnly),
+    puzzle_mode: puzzleMode,
+    queue_index: queueIndex,
+    queue_total: queueTotal,
   };
 }
 

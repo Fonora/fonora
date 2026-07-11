@@ -18,7 +18,6 @@ import {
   translateEnglishLegacy,
   buildSurface,
   buildFrame,
-  punctuationToken,
   splitSentences,
 } from './fonoran-translator.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
@@ -38,6 +37,7 @@ import {
   normalizeWePrimaryFrame,
   attachTranslateAlternates,
 } from './fonoran-translate-alternates.js';
+import { splitCoordinatedClauses } from './fonoran-interpretation.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const GRAMMAR_PARTICLES_PATH = join(ROOT, 'data/fonoran-grammar-particles.json');
@@ -161,6 +161,10 @@ const WH_COMPOSITION_PREFIXES = [
   ['neg', 'know', 'thing'],
   ['neg', 'know', 'place'],
   ['neg', 'know', 'time'],
+  ['unknown', 'person'],
+  ['unknown', 'thing'],
+  ['unknown', 'place'],
+  ['unknown', 'time'],
 ];
 
 /** True when source text is a content question (who/what/where/when). */
@@ -204,10 +208,56 @@ async function repairFromLegacySlots(frame, sourceText, lab, reason) {
   };
 }
 
+/** True when any slot carries the negation particle (no / internal neg alias). */
+function frameHasNegation(frame) {
+  for (const items of Object.values(frame?.slots ?? {})) {
+    if (!Array.isArray(items)) continue;
+    if (items.some(x => {
+      const id = String(x ?? '').trim().toLowerCase();
+      return id === 'no' || id === 'neg';
+    })) return true;
+  }
+  return false;
+}
+
+/**
+ * Explicit English verbal negation (not/never/cannot/n't). Excludes bare "no"
+ * (quantifiers like nobody/nothing already compose with the particle) and the
+ * WH word nohu, which is a lexical unit, not clause negation.
+ */
+function sourceHasVerbalNegation(text) {
+  return /(?:\bnot\b|\bnever\b|\bcannot\b|n't\b)/i.test(String(text ?? ''));
+}
+
+/**
+ * Deterministic negation repair: polarity is grammar in Fonoran (no antonym
+ * roots), so a source with explicit verbal negation whose frame carries no `no`
+ * particle has silently flipped meaning (e.g. "I do not know…" → "I know…").
+ * Restore it clause-scoped, before the Action (Rule 3).
+ */
+function restoreDroppedNegation(frame, sourceText) {
+  if (!frame?.slots || !sourceHasVerbalNegation(sourceText) || frameHasNegation(frame)) {
+    return frame;
+  }
+  const event = Array.isArray(frame.slots.event) ? frame.slots.event : [];
+  return {
+    ...frame,
+    slots: { ...frame.slots, event: ['no', ...event] },
+    reasoning: [
+      frame.reasoning,
+      '[Grammar repair] Source has explicit negation but frame dropped the no particle — restored before the Action.',
+    ].filter(Boolean).join(' '),
+    _repaired_negation: true,
+  };
+}
+
 export async function repairLlmFrame(frame, sourceText, lab = null) {
-  let normalized = normalizeWePrimaryFrame(
-    stripExistentialThereFromFrame(
-      normalizeFrameParticles(frame),
+  let normalized = restoreDroppedNegation(
+    normalizeWePrimaryFrame(
+      stripExistentialThereFromFrame(
+        normalizeFrameParticles(frame),
+        sourceText,
+      ),
       sourceText,
     ),
     sourceText,
@@ -399,13 +449,59 @@ Output JSON only:
   "note": "one short sentence on what you simplified"
 }`;
 
-/** Heuristic: is this input abstract/long enough that a plain-meaning pass helps? */
+const CLUSTER_PRONOUNS = new Set(['i', 'you', 'we', 'they', 'he', 'she', 'it']);
+const CLUSTER_BE_AUX = new Set(['am', 'is', 'are', 'was', 'were']);
+const CLUSTER_FINITE_VERBS = new Set([
+  'am', 'is', 'are', 'was', 'were', 'do', 'does', 'did', 'have', 'has', 'had',
+  'will', 'would', 'can', 'could', 'cannot', 'must', 'should', 'may', 'might', 'shall',
+  'want', 'wants', 'wanted', 'need', 'needs', 'needed', 'feel', 'feels', 'felt',
+  'think', 'thinks', 'thought', 'know', 'knows', 'knew', 'see', 'sees', 'saw',
+  'go', 'goes', 'went', 'like', 'likes', 'liked',
+  "don't", "doesn't", "didn't", "can't", "won't", "isn't", "aren't", "wasn't", "weren't",
+]);
+
+/**
+ * Count probable finite clauses in one sentence (no punctuation splitting).
+ * Two signals, each strong evidence of a finite clause:
+ *   - subject pronoun + finite verb ("i am…", "we need…")
+ *   - a be-auxiliary with a NON-pronoun subject ("the fire is dying") — not
+ *     double-counted when the pronoun cluster already claimed it.
+ * Two or more in one sentence means a probable run-on, which a single concept
+ * frame cannot represent.
+ */
+export function countFiniteClauseClusters(text) {
+  const words = String(text ?? '').toLowerCase().split(/\s+/)
+    .map(w => w.replace(/[^a-z']/g, ''))
+    .filter(Boolean);
+  let count = 0;
+  for (let i = 0; i < words.length; i += 1) {
+    if (CLUSTER_PRONOUNS.has(words[i]) && CLUSTER_FINITE_VERBS.has(words[i + 1])) {
+      count += 1;
+      i += 1;
+    } else if (CLUSTER_BE_AUX.has(words[i]) && !CLUSTER_PRONOUNS.has(words[i - 1])) {
+      count += 1;
+    }
+  }
+  return count;
+}
+
+/**
+ * Heuristic gate for the plain-meaning pre-pass. Fires on: long input, abstract
+ * vocabulary, or a sentence that looks like an unpunctuated multi-clause run-on
+ * (2+ pronoun+finite-verb clusters in one sentence). The pre-pass LLM then
+ * segments by MEANING — the deterministic splitter only handles clean surface
+ * patterns, and meaning-level segmentation must not depend on English quirks.
+ */
 export function shouldAutoSimplify(text) {
   const s = String(text ?? '').trim();
   if (!s) return false;
   const words = s.split(/\s+/).filter(Boolean);
   if (words.length >= 16) return true;
-  return /\b(sentien|conscious|autonom|comput|execut|instantiat|propagat|infrastructure|interface|boundary|abstract|cognit|algorithm)\w*/i.test(s);
+  if (/\b(sentien|conscious|autonom|comput|execut|instantiat|propagat|infrastructure|interface|boundary|abstract|cognit|algorithm)\w*/i.test(s)) return true;
+  // Run-on: 2+ finite clauses in one sentence that the deterministic
+  // connective splitter cannot separate — needs meaning-level segmentation.
+  return splitSentences(s).some(sentence =>
+    countFiniteClauseClusters(sentence) >= 2 && splitCoordinatedClauses(sentence).length < 2);
 }
 
 /**
@@ -464,6 +560,8 @@ export async function validateLlmFrame(frame, lab = null, sourceText = '') {
       const id = String(raw ?? '').trim().toLowerCase();
       if (!id) continue;
       if (id === 'neg') continue;
+      // Lexicalized WH word (nohu) — resolved by the translator, not the lab inventory.
+      if (id === 'unknown') continue;
       if (allowedParticles.has(id)) continue;
       if (ctx.rootById.has(id) || ctx.compoundByConceptId.has(id)) continue;
       if (ctx.spellingByConceptId?.has(id)) continue;
@@ -633,13 +731,10 @@ export async function mergeSentenceResults(results, segments, { input }) {
 
   results.forEach((r, i) => {
     const segTokens = Array.isArray(r.tokens) ? r.tokens : [];
-    // Terminate each sentence: keep an existing trailing "?", else add a period,
-    // so sentences render discretely ("... fetdi. ... chefet.") not as a run-on.
-    const last = segTokens[segTokens.length - 1];
-    const withTerminator = last?.kind === 'punctuation'
-      ? segTokens
-      : [...segTokens, punctuationToken('.')];
-    tokens.push(...withTerminator);
+    // No period terminators: Fonoran writing carries no sentence punctuation
+    // except the question `?` (Rule 3). Sentence boundaries stay available to
+    // consumers via `sentences[]`; the printed surface is just the words.
+    tokens.push(...segTokens);
 
     const segSlots = r.semantic?.slots ?? {};
     for (const key of Object.keys(slots)) {
@@ -710,7 +805,12 @@ export async function translateViaLlm(text, options = {}) {
   }
 
   const compileText = simplified?.text || input;
+  // Sentence split, then coordinated-clause split (and/but/so/because joining
+  // two full clauses): each clause compiles as its OWN frame. Prevents run-on
+  // frames like "I am thirsty and I want to drink water" collapsing into one
+  // scrambled slot set (conjunctions are structural, Rule 3).
   const segments = (simplified?.clauses?.length ? simplified.clauses : splitSentences(compileText))
+    .flatMap(s => splitCoordinatedClauses(s))
     .map(s => String(s ?? '').trim())
     .filter(Boolean);
 

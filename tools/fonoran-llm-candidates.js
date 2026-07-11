@@ -64,6 +64,7 @@ function buildProposerPrompt(conceptId, gloss, allowed, maxFlattened, count) {
 
 async function proposeViaAnthropic(prompt) {
   const result = await completeJson({
+    role: 'proposer',
     system: 'You output only JSON arrays of concept ids, one per line. No commentary.',
     user: prompt,
     temperature: 0.4,

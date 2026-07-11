@@ -1,52 +1,57 @@
 # LLM synthetic playtest experiment
 
-> **Status:** v3 Compositional Intuition Battery — **full inventory complete, 22 promotions applied**  
-> **Last run:** 2026-07-02 · 2,432 API calls · `data/fonoran-llm-evaluations.json` (prompt v3)  
-> **Command:** `npm run fonoran:llm-intuition`  
-> **Research note:** [RN-20 · Synthetic intuition ranking](/research/notes/synthetic-intuition-ranking)  
+> **Status:** v4 Compositional Intuition Battery — **synthetic-only validity strategy (RN-30)**  
+> **Battery:** `cib-v4` · prompt v5 · judge default `claude-fable-5`  
+> **Command:** `npm run fonoran:llm-intuition` · reliability: `npm run fonoran:llm-reliability`  
+> **Research notes:** [RN-30 · Synthetic-only LLM validity](/research/notes/synthetic-only-llm-validity) · [RN-20](/research/notes/synthetic-intuition-ranking)  
 > **Related:** [fonoran-constitution.md](fonoran-constitution.md) · [fonoran.md](fonoran.md)
 
 ---
 
 ## Executive summary — is it working?
 
-**Yes, for ranking seed candidates — with caveats.** v3 Task B (composition naturalness) separates competing constructions without v2's MC answer-key failure. Full inventory + optimize pipeline complete; **human Puzzle Conversation is the next gate.**
+**v4 retargets the pipeline for synthetic-only validity** when human playtest volume is insufficient. The architecture from RN-20 still ranks seed candidates; v4 fixes the methodological holes that made LLM scores a weak proxy for human intuitiveness.
 
-| Hypothesis | Full-inventory result | Verdict |
+| Hypothesis | v4 change | Verdict |
 | --- | --- | --- |
-| Task B discriminates across inventory | 88/111 concepts with ≥0.10 naturalness spread | **Pass** |
-| Conservative auto-promote | 22/111 promoted (~20%) | **Pass** (at target boundary) |
-| Build integrity after optimize | 111/111, 0 dropped | **Pass** |
-| Task A cold recovery discriminates | Still saturated on several concepts | **Fail** — do not rely on cold alone |
-| Human correlation on calibration | Not yet measured | **Pending** — Session 4 in learning log |
+| Propose/judge separation | Proposer (Sonnet) ≠ Judge (Fable) | **Shipped** |
+| Task A cold recovery discriminates | Blind grader replaces English substring matcher | **Shipped** — re-run needed |
+| Cross-cultural listeners | L1 personas (es/zh/ar/hi/sw) + translated glossaries | **Shipped** |
+| Inter-model reliability | Spearman ρ between two judge models | **Shipped** — `fonoran:llm-reliability` |
+| Spoken distinctness | Phoneme-feature confusability audit (deterministic) | **Shipped** |
+| Human correlation | Not available at project scale | **Replaced** by inter-model agreement |
 
-**Use Task B `intuition_weight` for candidate ranking.** Task A cold recovery needs tightening before it should drive promotion alone.
+**Use `intuition_weight` from cib-v4 rounds only** (`prompt_version: 5`, `battery: cib-v4`). Legacy v3 rounds remain in `fonoran-llm-evaluations.json` but must not drive new promotions.
 
-**Next:** Human-test LLM-promoted compounds in [Puzzle Conversation](/language#puzzle) — use `#puzzle?concept=<id>` for targeted rounds.
+**Promotion path:** intuition battery (both judge models on calibration/full set) → reliability report (ρ + winner agreement) → `optimize-compounds --use-llm` only for reliable concepts.
 
-### v3 CIB protocol (active)
+### v4 CIB protocol (active)
 
 ```mermaid
 flowchart TB
-  subgraph tasks [Three tasks per candidate]
-    A["Task A — cold recovery\nno decomposition shown"]
-    B["Task B — composition naturalness\nrank seed candidates"]
-    C["Task C — repair dialogue\nafter failed recovery"]
+  subgraph propose [Proposer model]
+    Gap["gap analyzer / vocab survey"]
   end
-  subgraph personas [Four fixed personas]
-    P1["literal"]
-    P2["skeptical"]
-    P3["cross_lingual"]
-    P4["repair_focused"]
+  subgraph judge [Judge model Fable]
+    A["Task A — cold hearing L1 persona"]
+    B["Task B — composition naturalness"]
+    G["Blind meaning grader"]
   end
-  subgraph output [Promotion signal]
-    IW["intuition_weight\nTask B primary"]
-    Promo["optimize --use-llm\n≥75% recovery + ≥15% margin"]
+  subgraph reliability [Inter-model gate]
+    R["Second judge model"]
+    S["Spearman rank agreement"]
   end
-  tasks --> personas
-  B --> IW
-  IW --> Promo
-  Playtest["human / playtest lock\nconstitutional authority"] -.->|"overrides"| Promo
+  subgraph distinct [Deterministic]
+    C["phoneme confusability audit"]
+  end
+  Gap --> A
+  Gap --> B
+  A --> G
+  B --> G
+  G --> S
+  R --> S
+  C -.->|"soft signal"| Promo
+  S --> Promo["optimize --use-llm"]
 ```
 
 ---
@@ -55,25 +60,24 @@ flowchart TB
 
 | Version | Instrument | Status |
 | --- | --- | --- |
-| v1 `revealed` | Decomposition visible, free-text | Superseded — everything scored as “tool” |
-| v2 `puzzle` | MC + repair (mirrors human GUI) | Superseded for ranking — shared MC answer key |
-| **v3 `cib-v3`** | Tasks A/B/C, no MC, `intuition_weight` | **Active** — use `npm run fonoran:llm-intuition` |
+| v1 `revealed` | Decomposition visible, free-text | Superseded |
+| v2 `puzzle` | MC + repair | Superseded for ranking |
+| v3 `cib-v3` | English personas, substring cold match | Superseded — cold saturation |
+| **v4 `cib-v4`** | L1 personas, blind grader, dual-model reliability | **Active** |
 
-Legacy v2 runner remains (`npm run fonoran:llm-playtest`) for comparison only; do not use for promotion decisions.
+Legacy v2 runner remains (`npm run fonoran:llm-playtest`) for comparison only.
 
 ---
 
 ## 1. Research question
 
-**Can synthetic root-knower playtests reliably rank pre-seeded compound candidates by meaning recovery, so the dictionary promotes forms that a human listener would likely understand?**
+**Can synthetic root-knower evaluation rank pre-seeded compound candidates well enough to guide preferred-form selection when human playtest data is unavailable — without mistaking LLM semantic pattern-matching for human cross-cultural intuitiveness?**
 
-This is not asking whether an LLM can *invent* good Fonoran words. It asks whether an LLM, constrained to known roots and glosses, can *simulate* the Puzzle Conversation recovery task at enough volume to guide preferred-form selection when human playtest data is sparse.
-
-The constitutional criterion remains unchanged:
+The constitutional criterion remains:
 
 > If someone only knew the roots, would this expression probably help them recover the intended meaning?
 
-Human playtests are the authority. LLM playtests are a **scalable pre-filter and ranking signal** — advisory until calibrated against real Puzzle Conversation rounds.
+When human data exists, playtests override synthetic signals. When it does not, **inter-model agreement** and **deterministic confusability** are the reliability substitutes — not a claim that LLMs *are* humans.
 
 ---
 
@@ -81,23 +85,58 @@ Human playtests are the authority. LLM playtests are a **scalable pre-filter and
 
 | Layer | Question | Method |
 | --- | --- | --- |
-| **Candidate quality** | Among build-valid seed compositions for concept *C*, which one do root-knowers recover most often? | 4 fixed personas × each candidate → recovery rate |
-| **Promotion policy** | When recovery rates diverge clearly, does `--use-llm` promote a better preferred form than heuristic-only selection? | Compare `optimize-compounds` with/without `--use-llm` |
-| **Safety** | Does the layer refuse to auto-promote when evidence is weak or split? | Count `llm_split` findings; verify 0 promotions below threshold |
-| **Build integrity** | After LLM-guided optimization, does the full inventory still build? | `npm run fonoran:build:approved` → 111 compounds, 0 dropped |
+| **Candidate quality** | Which seed composition would root-knowers recover? | 5 L1 personas × Tasks A/B + blind grader |
+| **Ranking stability** | Do two judge models agree on winner order? | Spearman ρ per concept (`fonoran:llm-reliability`) |
+| **Spoken ease** | Are compound surfaces confusable by ear? | Phoneme-feature pairwise audit |
+| **Promotion policy** | Does `--use-llm` promote only reliable consensus? | Reliability gate + `pickConsensus` margin |
+| **Build integrity** | Inventory still builds after optimize? | `npm run fonoran:build:approved` |
 
 ### What we are *not* testing
 
-- Whether LLMs can replace human Puzzle Conversation (they cannot; `human` / `playtest` locks are preserved).
-- Whether LLMs should propose new compositions (proposer stays optional/disabled).
-- Phonetic ease, segmentation collisions, or teaching-tree depth in isolation — those remain separate audit dimensions.
-- Cross-linguistic validity beyond one synthetic non-English persona (`cross_lingual`).
+- Whether LLMs replace human listeners (they do not).
+- Whether LLM evaluators "hear" words (they see romanized text only; confusability is deterministic).
+- Perfect cross-cultural simulation (L1 personas are the best available proxy).
 
 ---
 
-## 3. Hypotheses
+## 3. Commands
 
-### H1 — Discrimination (primary)
+```bash
+# Smoke (3 concepts)
+npm run fonoran:llm-intuition -- --pilot
+
+# Calibration (10 concepts) + resume
+npm run fonoran:llm-intuition -- --calibration --resume
+
+# Inter-model reliability report (existing dual-model rounds)
+npm run fonoran:llm-reliability -- --calibration
+
+# Run both judge models then report
+npm run fonoran:llm-reliability:run
+
+# Spoken confusability audit
+npm run fonoran:compound-confusability
+
+# Promote (after reliability pass)
+npm run fonoran:optimize-compounds -- --use-llm
+```
+
+### Environment
+
+| Variable | Default | Role |
+| --- | --- | --- |
+| `ANTHROPIC_MODEL_PROPOSER` | `claude-sonnet-4-6` | gap/vocab generation |
+| `ANTHROPIC_MODEL_JUDGE` | `claude-fable-5` | intuition + blind grader |
+| `ANTHROPIC_JUDGE_EFFORT` | `medium` | Fable reasoning effort |
+| `ANTHROPIC_MODEL_RELIABILITY` | `claude-sonnet-5` | second judge for ρ gate |
+| `LLM_RELIABILITY_MIN_SPEARMAN` | `0.6` | promotion eligibility threshold |
+
+---
+
+## 4. Legacy v3 content below
+
+The sections below document the v3 run (July 2026) for historical reference. **Do not use v3 promotion criteria for new work.**
+
 
 For concepts where heuristic ranking and communicative intuition disagree, LLM playtests will assign **meaningfully different recovery rates** to seed candidates, not uniform scores.
 

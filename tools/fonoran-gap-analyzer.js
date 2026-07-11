@@ -12,6 +12,7 @@
 
 import { anthropicConfigured, completeJson } from './fonoran-llm-client.js';
 import { buildCompositionResolver, detectRedundantRootPattern } from './fonoran-composition-resolve.js';
+import { phoneticPromptBrief } from './fonoran-phonetic-weights.js';
 import { readDoc } from './fonoran-store.js';
 import { loadConceptInventory } from './fonoran-concepts.js';
 
@@ -27,12 +28,14 @@ function allowedConceptIds(primitiveIds, compoundDefs) {
   return [...ids].sort();
 }
 
-function buildGlossary(primitiveIds, inventory) {
+function buildGlossary(primitiveIds, inventory, rootById = null) {
   const concepts = inventory?.concepts ?? [];
   const entries = [];
   for (const c of concepts) {
     if (primitiveIds.includes(c.id)) {
-      entries.push(`  ${c.id}: ${c.gloss ?? c.description ?? c.id}`);
+      const spelling = rootById?.[c.id];
+      const suffix = spelling ? ` — spoken "${spelling}"` : '';
+      entries.push(`  ${c.id}: ${c.gloss ?? c.description ?? c.id}${suffix}`);
     }
   }
   return entries.join('\n');
@@ -52,16 +55,18 @@ function buildGlossary(primitiveIds, inventory) {
 export async function analyzeGap(word, role, primitiveIds, compoundDefs, inventory, opts = {}) {
   const allowed = allowedConceptIds(primitiveIds, compoundDefs);
   const resolver = buildCompositionResolver(primitiveIds, compoundDefs);
-  const glossary = buildGlossary(primitiveIds, inventory);
+  const glossary = buildGlossary(primitiveIds, inventory, opts.rootById ?? null);
   const maxFlattened = opts.maxFlattened ?? 4;
-  const count = opts.count ?? 4;
+  const count = opts.count ?? 6;
 
   const prompt = [
     `You are helping grow a constructed language called Fonoran for two strangers with no shared language.`,
     `Success = campfire recovery: another root-knower would GUESS the meaning, not perfect semantic taxonomy.`,
     ``,
-    `Primitive root glossary (id: meaning):`,
+    `Primitive root glossary (id: meaning — spoken form):`,
     glossary,
+    ``,
+    phoneticPromptBrief(),
     ``,
     `Allowed concept IDs (primitives + approved compounds):`,
     allowed.join(', '),
@@ -114,6 +119,7 @@ export async function analyzeGap(word, role, primitiveIds, compoundDefs, invento
 
   try {
     const result = await completeJson({
+      role: 'proposer',
       system: 'You output only valid JSON. Optimize for campfire stranger recovery, not semantic taxonomy. No commentary.',
       user: prompt,
       temperature: 0.35,
@@ -180,17 +186,21 @@ export async function analyzeGaps(gaps, opts = {}) {
     return [];
   }
 
-  let { primitiveIds, compoundDefs, inventory } = opts;
+  let { primitiveIds, compoundDefs, inventory, rootById } = opts;
 
   // Load from store if not provided
-  if (!primitiveIds || !compoundDefs || !inventory) {
-    const [inv, compoundsDoc] = await Promise.all([
+  if (!primitiveIds || !compoundDefs || !inventory || !rootById) {
+    const [inv, compoundsDoc, approved] = await Promise.all([
       inventory ? Promise.resolve({ concepts: [] }) : loadConceptInventory(),
       compoundDefs ? Promise.resolve({ compounds: [] }) : readDoc('compounds'),
+      rootById ? Promise.resolve(null) : readDoc('approved_roots'),
     ]);
     if (!primitiveIds) primitiveIds = (inv?.concepts ?? []).map(c => c.id);
     if (!compoundDefs) compoundDefs = compoundsDoc?.compounds ?? [];
     if (!inventory) inventory = inv;
+    if (!rootById) {
+      rootById = Object.fromEntries((approved?.roots ?? []).map(r => [r.id, r.spelling]));
+    }
   }
 
   const concurrency = opts.concurrency ?? 3;
@@ -205,7 +215,7 @@ export async function analyzeGaps(gaps, opts = {}) {
         primitiveIds,
         compoundDefs,
         inventory,
-        opts,
+        { ...opts, rootById },
       )),
     );
     results.push(...batchResults);

@@ -157,11 +157,14 @@ async function main() {
         continue;
       }
 
-      // Check cache before making an LLM call.
+      // Check cache before making an LLM call. Cached frames are recompiled
+      // through the live compiler (translateViaLlm is cache-first) so vocabulary
+      // policy changes (e.g. lexicalized nohu) propagate without API calls.
       let fonoranField;
       const cached = await lookupCachedTranslation('en', phrase.en);
-      if (cached?.result && !force) {
-        fonoranField = buildFonoranField(cached.result);
+      if (cached?.result) {
+        const result = await translateViaLlm(phrase.en, { sourceLang: 'en' });
+        fonoranField = buildFonoranField(result);
         console.log(`[cache ] ${domain.id}: ${phrase.id} → ${fonoranField.roman || '(gap)'}`);
       } else if (needsLlm) {
         try {

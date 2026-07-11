@@ -258,6 +258,7 @@ async function runPuzzleProtocolRound(opts) {
 
   const cold = buildColdPrompt({ persona, spelling, choices });
   const turn1 = await completeJson({
+    role: 'judge',
     system: cold.system,
     user: cold.user,
     temperature,
@@ -291,6 +292,7 @@ async function runPuzzleProtocolRound(opts) {
     wrongChoice: first.guess || '(no choice)',
   });
   const turn2 = await completeJson({
+    role: 'judge',
     system: repair.system,
     user: repair.user,
     temperature,
@@ -337,6 +339,7 @@ async function runRevealedProtocolRound(opts) {
   });
 
   const result = await completeJson({
+    role: 'judge',
     system: prompt.system,
     user: prompt.user,
     temperature,

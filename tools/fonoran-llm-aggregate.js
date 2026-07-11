@@ -4,12 +4,15 @@
 
 import '../load-env.js';
 
-export const PROMPT_VERSION = '4';
+// '5' = cib-v4 (blind grader + L1 personas). '4' and '3' were cib-v3 rounds.
+export const PROMPT_VERSION = '5';
 export const LEGACY_PROMPT_VERSION = '2';
 export const V3_PROMPT_VERSION = '3';
+export const V4_PROMPT_VERSION = '4';
 
 function isIntuitionRound(round) {
-  return round?.battery === 'cib-v3' || round?.task === 'A' || round?.task === 'B' || round?.task === 'C';
+  return round?.battery === 'cib-v3' || round?.battery === 'cib-v4'
+    || round?.task === 'A' || round?.task === 'B' || round?.task === 'C';
 }
 
 /** Read a weight override from the environment, falling back to the default. */
@@ -20,25 +23,41 @@ function envWeight(name, def) {
 }
 
 /**
- * Composite ranking weight. Component weights default to the historical values so
- * existing aggregates are unchanged, but each is overridable via env (e.g.
- * LLM_WEIGHT_COLD) so a run can down-weight the known-saturated cold-recovery signal.
+ * Composite ranking weight (cib-v4 defaults).
+ *
+ * Cold recovery is down-weighted to 0.30 (docs recommended ≤0.35; the old 0.45
+ * default over-weighted the signal that v3's loose matcher had saturated) and
+ * naturalness carries 0.40. When no Task C pairwise data exists the pairwise
+ * term is OMITTED and the remaining positive weights are renormalized — v3
+ * injected a constant 0.5 which only added noise to the composite.
+ *
+ * Each weight is overridable via env (e.g. LLM_WEIGHT_COLD).
  */
 export function computeIntuitionWeight(stats) {
   const cold = stats.cold_recovery_rate ?? 0;
   const nat = stats.mean_naturalness ?? 0;
-  const pair = stats.pairwise_score ?? 0.5;
+  const pair = stats.pairwise_score; // null/undefined = no Task C data
   const vag = stats.mean_vagueness ?? 0;
   const n = Math.max(stats.n ?? 1, 1);
   const tooLong = (stats.tags?.too_long ?? 0) / n;
   const hardPronounce = (stats.tags?.hard_pronounce ?? 0) / n;
-  const wCold = envWeight('LLM_WEIGHT_COLD', 0.45);
-  const wNat = envWeight('LLM_WEIGHT_NATURALNESS', 0.30);
+  const wCold = envWeight('LLM_WEIGHT_COLD', 0.30);
+  const wNat = envWeight('LLM_WEIGHT_NATURALNESS', 0.40);
   const wPair = envWeight('LLM_WEIGHT_PAIRWISE', 0.25);
   const wVag = envWeight('LLM_WEIGHT_VAGUENESS', 0.15);
   const wTooLong = envWeight('LLM_WEIGHT_TOO_LONG', 0.12);
   const wHard = envWeight('LLM_WEIGHT_HARD_PRONOUNCE', 0.08);
-  return wCold * cold + wNat * nat + wPair * pair - wVag * vag - wTooLong * tooLong - wHard * hardPronounce;
+
+  let positive;
+  if (pair != null) {
+    positive = wCold * cold + wNat * nat + wPair * pair;
+  } else {
+    const denom = wCold + wNat;
+    positive = denom > 0
+      ? (wCold * cold + wNat * nat) * ((wCold + wNat + wPair) / denom)
+      : 0;
+  }
+  return positive - wVag * vag - wTooLong * tooLong - wHard * hardPronounce;
 }
 
 export function compositionKey(comp) {
@@ -49,8 +68,11 @@ export function compositionKey(comp) {
  * Aggregate v3 Compositional Intuition Battery rounds.
  */
 export function aggregateIntuitionRounds(rounds, options = {}) {
-  const { promptVersion = PROMPT_VERSION } = options;
-  const filtered = (rounds ?? []).filter(r => (r.prompt_version ?? '1') === promptVersion && isIntuitionRound(r));
+  const { promptVersion = PROMPT_VERSION, model = null } = options;
+  const filtered = (rounds ?? []).filter(r =>
+    (r.prompt_version ?? '1') === promptVersion
+    && isIntuitionRound(r)
+    && (!model || r.model === model));
 
   /** @type {Record<string, Record<string, object>>} */
   const buckets = {};
@@ -80,29 +102,32 @@ export function aggregateIntuitionRounds(rounds, options = {}) {
 
     buckets[conceptId] ??= {};
     buckets[conceptId][key] ??= {
-      coldRecovered: 0,
+      coldScoreSum: 0,
       coldN: 0,
       confidenceSum: 0,
       naturalnessSum: 0,
       naturalnessN: 0,
       vaguenessSum: 0,
       vaguenessN: 0,
-      compRecovered: 0,
+      compScoreSum: 0,
       compRecN: 0,
       tags: {},
     };
     const slot = buckets[conceptId][key];
 
-    // The cross_lingual persona reasons in Spanish, but strictMeaningMatch only
-    // checks English tokens/synonyms — so its recovered/composition_recovery flags
-    // are systematically wrong. Exclude it from the strict-match recovery metrics
-    // (its naturalness/vagueness self-reports and raw reasoning are still kept).
-    const trustStrictMatch = round.persona !== 'cross_lingual';
+    // cib-v4 rounds carry a blind-grader grade_score (1 / 0.5 / 0) that works
+    // in any language. Legacy v3 rounds only have the English strict-match
+    // boolean; for those, the cross_lingual persona's recovery flags are
+    // systematically wrong (it reasons in Spanish) and stay excluded.
+    const hasGrade = typeof round.grade_score === 'number';
+    const trustRecovery = hasGrade || round.persona !== 'cross_lingual';
+    const recoveryScoreA = hasGrade ? round.grade_score : (round.recovered ? 1 : 0);
+    const recoveryScoreB = hasGrade ? round.grade_score : (round.composition_recovery ? 1 : 0);
 
     if (round.task === 'A') {
-      if (trustStrictMatch) {
+      if (trustRecovery) {
         slot.coldN += 1;
-        if (round.recovered) slot.coldRecovered += 1;
+        slot.coldScoreSum += recoveryScoreA;
         if (typeof round.confidence === 'number') slot.confidenceSum += round.confidence;
       }
     }
@@ -113,9 +138,9 @@ export function aggregateIntuitionRounds(rounds, options = {}) {
       slot.naturalnessSum += Number(round.naturalness ?? 0);
       slot.vaguenessN += vagWeight;
       slot.vaguenessSum += Number(round.vagueness ?? 0) * vagWeight;
-      if (trustStrictMatch) {
+      if (trustRecovery) {
         slot.compRecN += 1;
-        if (round.composition_recovery) slot.compRecovered += 1;
+        slot.compScoreSum += recoveryScoreB;
       }
     }
 
@@ -132,11 +157,11 @@ export function aggregateIntuitionRounds(rounds, options = {}) {
       const pw = pairwise[conceptId]?.[key];
       const pairwise_score = pw?.total ? pw.wins / pw.total : null;
       const stats = {
-        cold_recovery_rate: slot.coldN ? slot.coldRecovered / slot.coldN : 0,
+        cold_recovery_rate: slot.coldN ? slot.coldScoreSum / slot.coldN : 0,
         mean_confidence: slot.coldN ? slot.confidenceSum / slot.coldN : 0,
         mean_naturalness: slot.naturalnessN ? slot.naturalnessSum / slot.naturalnessN : 0,
         mean_vagueness: slot.vaguenessN ? slot.vaguenessSum / slot.vaguenessN : 0,
-        composition_recovery_rate: slot.compRecN ? slot.compRecovered / slot.compRecN : 0,
+        composition_recovery_rate: slot.compRecN ? slot.compScoreSum / slot.compRecN : 0,
         pairwise_score,
         cold_n: slot.coldN,
         naturalness_n: slot.naturalnessN,
@@ -144,10 +169,9 @@ export function aggregateIntuitionRounds(rounds, options = {}) {
         tags: { ...slot.tags },
       };
       stats.recovery_rate = stats.cold_recovery_rate;
-      stats.intuition_weight = computeIntuitionWeight({
-        ...stats,
-        pairwise_score: pairwise_score ?? 0.5,
-      });
+      // pairwise_score passes through as null when Task C never ran — the
+      // weight formula renormalizes instead of injecting a constant.
+      stats.intuition_weight = computeIntuitionWeight(stats);
       aggregates[conceptId][key] = stats;
     }
   }
@@ -171,7 +195,7 @@ export function aggregateAllRounds(rounds, options = {}) {
  * Keeps v3 data for concepts not yet re-run on v4+.
  */
 export function mergePromptAggregates(rounds, options = {}) {
-  const versions = options.versions ?? [PROMPT_VERSION, V3_PROMPT_VERSION];
+  const versions = options.versions ?? [PROMPT_VERSION, V4_PROMPT_VERSION, V3_PROMPT_VERSION];
   const merged = {};
   for (const version of versions) {
     const chunk = aggregateIntuitionRounds(rounds, { ...options, promptVersion: version });
@@ -354,7 +378,7 @@ function printIntuitionReport(conceptId, aggregates) {
   const ranked = Object.entries(byKey)
     .sort((a, b) => (b[1].intuition_weight ?? 0) - (a[1].intuition_weight ?? 0));
 
-  console.log(`Compositional Intuition Battery — "${conceptId}" (v3)\n`);
+  console.log(`Compositional Intuition Battery — "${conceptId}" (v4)\n`);
   console.log('  weight  cold  natural  vague  pair   composition');
   for (const [key, s] of ranked) {
     console.log(

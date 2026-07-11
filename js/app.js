@@ -50,6 +50,7 @@ import { registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRule
 import { renderAlphabetInventory } from './alphabet-inventory.js';
 import { normalizeSymbolInput, decodeToPhonemeKeys } from './decode.js';
 import { translateIpaPhrase } from './ipa-pipeline.js';
+import { prepareChineseForPipeline } from './cjk-text.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
 import { getPiperVoiceForLang, initPiperAudio } from './piper-audio.js';
 import { loadLanguagePreference } from './language-preferences.js';
@@ -600,9 +601,10 @@ function setupTranslator() {
 
     const lang = langEl.value || 'en';
     const pipelineOptions = englishPipelineOptions();
+    const pipelineText = lang === 'zh' ? prepareChineseForPipeline(text).spacedText : text;
 
     try {
-      const result = await translateIpaPhrase(text, rules, lang, pipelineOptions);
+      const result = await translateIpaPhrase(pipelineText, rules, lang, pipelineOptions);
 
       if (generation !== applyGeneration) return;
 
@@ -686,6 +688,14 @@ function migrateLegacyUrl() {
     }
   }
   if (path === '/tools') {
+    if (hash === 'listening') {
+      history.replaceState(null, '', `/tools#samples${window.location.search}`);
+      return;
+    }
+    // Tools-native tabs (e.g. samples) should stay on /tools — avoid /learn ↔ /tools churn.
+    if (hash && BUILDER_TOOLS_TAB_IDS.has(hash)) {
+      return;
+    }
     if (hash && LEARN_REDIRECT_HASHES.includes(hash)) {
       const navTab =
         hash === LEARN_DEFAULT_TAB
@@ -1184,6 +1194,9 @@ function applyRulesBundle(loaded) {
   setupTranslatePlayback(rules);
   setupSamples(rules);
   setupHomeSample(rules);
+  if (document.querySelector('.tab-panel--active[data-tab-panel="samples"]')) {
+    void ensureSamplesLoaded();
+  }
   void setupScriptWriting(rules);
   void setupScriptReadingWords(rules);
   void setupFonoranReading(rules);

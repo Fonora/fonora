@@ -14,6 +14,7 @@ import {
   isExcludedSpelling,
   PHONETIC_SCORE_PASS,
 } from './fonoran-phonetic-weights.js';
+import { confusabilityPenalty } from './fonoran-compound-confusability.js';
 import {
   runTaskA,
   PERSONAS,
@@ -102,7 +103,14 @@ export function scoreComposition(composition, ctx) {
   }
 
   const { flatIds, spellings, flatCount } = hard.resolved;
-  const phonetic = computePhoneticScore(spellings, { analytics: ctx.analytics });
+  const conf = confusabilityPenalty(spellings, {
+    surface: hard.resolved.surface,
+    existingSurfaces: ctx.existingSurfaces ?? [],
+  });
+  const phonetic = computePhoneticScore(spellings, {
+    analytics: ctx.analytics,
+    boundaryPenalty: conf.penalty,
+  });
   const collisionKey = composition.join('+');
   const collisionCount = ctx.collisionCounts?.get(collisionKey) ?? 1;
   const u = scoreUnderstandability(flatIds, {
@@ -118,6 +126,7 @@ export function scoreComposition(composition, ctx) {
     pass: false,
     hard,
     phonetic,
+    confusability: conf,
     understandability: u,
     antiAbstract,
     combined,
@@ -306,6 +315,15 @@ export async function loadGateContext(analytics = null) {
   const resolver = buildCompositionResolver(primitiveIds, compoundDefs);
   const rootSpellings = [...new Set(Object.values(rootById))];
   const segInventory = rootSpellings.map(root => ({ root, id: root }));
+  const existingSurfaces = (compoundDefs ?? [])
+    .map(c => {
+      const comp = c.preferred?.composition ?? c.composition ?? [];
+      const flat = resolver.flatRoots(comp);
+      if (!flat) return null;
+      const spellings = flat.map(id => rootById[id]).filter(Boolean);
+      return spellings.length ? spellings.join('') : null;
+    })
+    .filter(Boolean);
 
   const glossById = new Map();
   for (const p of inventory?.primitives ?? []) {
@@ -337,6 +355,7 @@ export async function loadGateContext(analytics = null) {
     agentiveMultisetIndex,
     interpretRules,
     resolver,
+    existingSurfaces,
     buildCtx: createBuildValidationContext({ rootById, rootSpellings, primitiveIds }),
     glossById,
     metaFor,

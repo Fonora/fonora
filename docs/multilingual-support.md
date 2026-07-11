@@ -107,7 +107,7 @@ Note: eSpeak often transcribes Arabic **خ** as `x` (→ `⌀∪`), not `χ` (�
 
 - **Experimental**: non-English mappings may change; Samples mark non-English excerpts as experimental.
 - **Unmapped IPA**: Arabic (`ʔ`, `ħ`), tones, emphatics, and other inventory gaps still fall back to `?` or default vowel `a`. Arabic **ʕ** is documented on reserved grid cell **ᵔ⊃** but has no encoder key yet. See [IPA-PIPELINE-REPORT.md](IPA-PIPELINE-REPORT.md).
-- **CJK**: Japanese Samples disable audio; Chinese is split into clauses for rendering. Native-script IPA quality varies.
+- **CJK**: Japanese Samples disable audio; Chinese is split into clauses and word-segmented with a Mandarin lexicon plus `Intl.Segmenter` before encoding. Native-script IPA quality varies.
 - **No per-language vowel tables**: only English has an engineering overlay; other languages rely on shared rules.
 - **Internal helpers**: `encodeFromIpa()` and the English lexicon builder omit `lang` and default to English normalization (tests/tools only).
 

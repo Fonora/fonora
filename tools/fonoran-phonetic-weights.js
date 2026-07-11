@@ -193,6 +193,21 @@ export function pickEasiestSyllable(syllablePool, opts = {}) {
 }
 
 /**
+ * Phonetic guidance for LLM generation prompts (gap analyzer, vocab survey).
+ * Steers the proposer toward easy-sound, distinct compounds up front instead
+ * of relying on the downstream gate to throw proposals away.
+ */
+export function phoneticPromptBrief() {
+  return [
+    'Phonetic rules (compounds are judged on SPOKEN ease and distinctness):',
+    `- Every root is one syllable. Onsets by cross-linguistic ease: very safe = ${[...VERY_SAFE_ONSETS].join(' ')}; fairly safe = ${[...FAIRLY_SAFE_ONSETS].join(' ')}; difficult (avoid when an alternative exists) = ${[...DIFFICULT_ONSETS].join(' ')}.`,
+    '- A compound is the roots spoken back-to-back with no pause. Two identical consonants meeting at a join (e.g. bem + mam) are INVALID — pick a different root order or composition.',
+    '- Prefer 2-root compounds; every extra syllable makes the word harder to follow by ear.',
+    '- Prefer compositions whose roots differ clearly in sound (different onsets and vowels), so a listener can hear where one root ends and the next begins.',
+  ].join('\n');
+}
+
+/**
  * Onset letter counts → tier shares for analytics.
  * @param {Record<string, number>} onsetFrequency
  */

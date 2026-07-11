@@ -21,6 +21,7 @@ import { checkCompoundBoundary } from './fonoran-gen3-readability.js';
 import { buildCompositionResolver, maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { isPreferredLocked, optimizeCompoundInventory } from './fonoran-preferred-select.js';
 import { pickConsensus, mergePromptAggregates } from './fonoran-llm-aggregate.js';
+import { auditCompoundConfusability } from './fonoran-compound-confusability.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -297,6 +298,26 @@ export async function runCompoundAudit() {
     })),
   };
 
+  // --- Spoken confusability (phoneme-feature pairs + boundary quality) ---
+  const rootByIdMap = Object.fromEntries(roots.map(r => [r.id, r.spelling]));
+  const confusability = auditCompoundConfusability(
+    compoundsDoc?.compounds ?? [],
+    rootByIdMap,
+    resolver,
+  );
+
+  for (const pair of confusability.near_pairs.slice(0, 25)) {
+    add('medium', 'near_confusable_pair', pair.a,
+      `Surface "${pair.surfaceA}" is phonetically near "${pair.surfaceB}" (${pair.b}, distinctness ${(pair.distinctness * 100).toFixed(0)}%)`,
+      pair);
+  }
+
+  for (const issue of confusability.boundary_issues.filter(b => b.score < 0.75).slice(0, 20)) {
+    add('low', 'boundary_quality', issue.concept,
+      `Boundary quality ${(issue.score * 100).toFixed(0)}% on "${issue.surface}" (${issue.issues.join('; ')})`,
+      issue);
+  }
+
   // --- Playtest coverage ---
   const playtested = new Set((playtestsDoc?.rounds ?? []).map(r => r.concept_id));
   const untested = live.filter(c => !playtested.has(c.concept)).map(c => c.concept);
@@ -335,6 +356,8 @@ export async function runCompoundAudit() {
     heuristic_preferred_count: live.filter(c => (c.preferred_source ?? 'heuristic') === 'heuristic').length,
     locked_preferred_count: live.filter(c => isPreferredLocked(c.preferred_source)).length,
     max_flattened_roots: maxFlat,
+    confusability_near_pairs: confusability.near_pair_count,
+    confusability_avg_boundary: confusability.avg_boundary_score,
     findings_by_severity: {
       critical: findings.filter(f => f.severity === 'critical').length,
       high: findings.filter(f => f.severity === 'high').length,

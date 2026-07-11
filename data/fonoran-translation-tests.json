@@ -34,7 +34,7 @@
         },
         {
           "en": "What is your name?",
-          "fon": "no hu to mal ?"
+          "fon": "nohu to mal ?"
         },
         {
           "en": "Are you alone?",
@@ -55,7 +55,7 @@
         },
         {
           "en": "I mean no harm.",
-          "fon": "mi sak no gam"
+          "fon": "mi no sak gam"
         },
         {
           "en": "I am friendly.",
@@ -135,11 +135,11 @@
         },
         {
           "en": "I am a stranger and I need help.",
-          "fon": "mi bafet les kas"
+          "fon": "mi bafet mi les kas"
         },
         {
           "en": "I am lost and I am alone.",
-          "fon": "mi nantam nesfa"
+          "fon": "mi nantam mi nesfa"
         },
         {
           "en": "Can we sit together?",
@@ -155,8 +155,8 @@
         },
         {
           "en": "I feel relieved to see you.",
-          "fon": "mi nes [tes+temkan] wi be",
-          "note": "gap: tes+temkan (needs a root)"
+          "fon": "mi nes testemkan wi be",
+          "note": "review: tes+temkan→testemkan(composed)"
         },
         {
           "en": "You do not need to be afraid.",
@@ -188,11 +188,11 @@
         },
         {
           "en": "Are there other people near you?",
-          "fon": "honen balek dal be ?"
+          "fon": "fel balek dal be ?"
         },
         {
           "en": "I have no weapon.",
-          "fon": "mi gat no daktopa"
+          "fon": "mi no gat daktopa"
         },
         {
           "en": "I am not following you.",
@@ -204,8 +204,7 @@
         },
         {
           "en": "I feel nervous and unsure.",
-          "fon": "mi nes [pemet] [metpa]",
-          "note": "gap: pemet, metpa (needs a root)"
+          "fon": "mi nes pemet metpa"
         },
         {
           "en": "Can we start again?",
@@ -380,7 +379,7 @@
         },
         {
           "en": "This food is not good.",
-          "fon": "lo gu no"
+          "fon": "lo no gu"
         },
         {
           "en": "I will find food for us.",
@@ -554,7 +553,7 @@
         },
         {
           "en": "I am cold and I feel sick.",
-          "fon": "mi mak nes femgam"
+          "fon": "mi nes mak mi nes femgam"
         },
         {
           "en": "Is the wound getting better?",
@@ -582,8 +581,7 @@
         },
         {
           "en": "I will help clean your wound.",
-          "fon": "mi sa kas be [tesfem] guye",
-          "note": "gap: tesfem (needs a root)"
+          "fon": "mi sa kas be tesfem guye"
         },
         {
           "en": "This area is red and swollen.",
@@ -599,7 +597,7 @@
         },
         {
           "en": "Show me where the pain is.",
-          "fon": "giwi no hu che mi tes ?"
+          "fon": "giwi tes che"
         },
         {
           "en": "Is the pain here or there?",
@@ -611,7 +609,7 @@
         },
         {
           "en": "My back hurts and I cannot stand.",
-          "fon": "mi tes no tira so"
+          "fon": "mi tes so mi no tira"
         },
         {
           "en": "The wound is healing.",
@@ -619,7 +617,7 @@
         },
         {
           "en": "Are you feeling better now?",
-          "fon": "be nes gu gem mas ?"
+          "fon": "be nes gu mas gem ?"
         },
         {
           "en": "I feel very sick.",
@@ -657,7 +655,7 @@
         },
         {
           "en": "This place is not safe.",
-          "fon": "che tampe no"
+          "fon": "che no tampe"
         },
         {
           "en": "I hear something moving.",
@@ -725,7 +723,7 @@
         },
         {
           "en": "I feel very unsafe here.",
-          "fon": "mi nes nam no tampe ni"
+          "fon": "mi no nes nam tampe ni"
         },
         {
           "en": "Stay low and do not speak.",
@@ -757,7 +755,7 @@
         },
         {
           "en": "I see something in the dark.",
-          "fon": "mi wi mes gan no hu to"
+          "fon": "mi wi mes gan nohu to"
         },
         {
           "en": "Are we safe now?",
@@ -773,7 +771,7 @@
         },
         {
           "en": "That path is not safe.",
-          "fon": "nan tampe no"
+          "fon": "nan no tampe"
         },
         {
           "en": "Do you see any danger?",
@@ -801,7 +799,7 @@
         },
         {
           "en": "I am afraid and I want to leave.",
-          "fon": "mi nes sak nespe fet"
+          "fon": "mi nes nespe mi sak gi fet"
         },
         {
           "en": "Do not make that sound.",
@@ -813,7 +811,7 @@
         },
         {
           "en": "I meant that, not this.",
-          "fon": "mi ta kuwimalhu tak no"
+          "fon": "mi ta no kuwimalhu tak"
         },
         {
           "en": "That animal is fast and large.",
@@ -903,7 +901,7 @@
         },
         {
           "en": "I am not angry now.",
-          "fon": "mi nes nesgam no gem"
+          "fon": "mi no nes nesgam gem"
         },
         {
           "en": "I am sad and lonely.",
@@ -911,7 +909,7 @@
         },
         {
           "en": "I am calm and relieved.",
-          "fon": "mi nes nesti no nespe"
+          "fon": "mi no nes nesti nespe"
         },
         {
           "en": "I am happy and calm.",
@@ -919,7 +917,7 @@
         },
         {
           "en": "I was worried, but I am calm now.",
-          "fon": "mi ta nes pemet nesti gem"
+          "fon": "mi ta nes pemet mi nes nesti gem"
         },
         {
           "en": "I feel worried about you.",
@@ -939,16 +937,15 @@
         },
         {
           "en": "This makes me happy.",
-          "fon": "no hu to kel mi nesgu"
+          "fon": "nohu to kel mi nesgu"
         },
         {
           "en": "This makes me sad.",
-          "fon": "no hu to kel mi [gamnes]",
-          "note": "gap: gamnes (needs a root)"
+          "fon": "nohu to kel mi gamnes"
         },
         {
           "en": "This makes me angry.",
-          "fon": "no hu to nes nesgam"
+          "fon": "nohu to nes nesgam"
         },
         {
           "en": "I was very worried.",
@@ -992,7 +989,7 @@
         },
         {
           "en": "I was angry, but I am calm now.",
-          "fon": "mi ta nes nesgam nesti gem"
+          "fon": "mi ta nes nesgam mi nes nesti gem"
         },
         {
           "en": "Do you feel lonely?",
@@ -1000,12 +997,12 @@
         },
         {
           "en": "Do you feel relieved?",
-          "fon": "be nes [nes+tampa] ?",
-          "note": "gap: nes+tampa (needs a root)"
+          "fon": "be nes nestampa ?",
+          "note": "review: nes+tampa→nestampa(composed)"
         },
         {
           "en": "I do not want to be alone.",
-          "fon": "mi no sak no nesfa"
+          "fon": "mi no sak nesfa"
         },
         {
           "en": "I am still worried.",
@@ -1013,7 +1010,7 @@
         },
         {
           "en": "I am not sad anymore.",
-          "fon": "mi nes gamnes no moyi"
+          "fon": "mi no nes gamnes moyi"
         },
         {
           "en": "Did I make you angry?",
@@ -1037,7 +1034,7 @@
         },
         {
           "en": "I am angry but not at you.",
-          "fon": "mi nes nesgam no be"
+          "fon": "mi no nes nesgam be"
         }
       ]
     },
@@ -1083,7 +1080,7 @@
         },
         {
           "en": "I did not mean to hurt you.",
-          "fon": "mi ta no sakdi no tes be"
+          "fon": "mi ta no tes be sakdi"
         },
         {
           "en": "Please forgive me.",
@@ -1219,12 +1216,11 @@
         },
         {
           "en": "I am cold and I need help.",
-          "fon": "mi nes les mak kas"
+          "fon": "mi nes mak mi les kas"
         },
         {
           "en": "We survived and I am grateful.",
-          "fon": "dan mi ta fo nes [nesguku] ti",
-          "note": "gap: nesguku (needs a root)"
+          "fon": "dan ta gat fo mi nes nesguku"
         },
         {
           "en": "I am sorry for that.",
@@ -1240,7 +1236,7 @@
         },
         {
           "en": "I promise I will not leave you.",
-          "fon": "mi sekam"
+          "fon": "mi no sekam"
         },
         {
           "en": "Are we friends now?",
@@ -1298,7 +1294,7 @@
         },
         {
           "en": "I said no.",
-          "fon": "mi ta se no"
+          "fon": "mi ta no se"
         },
         {
           "en": "Do not touch me.",
@@ -1326,7 +1322,7 @@
         },
         {
           "en": "Do not open that bag.",
-          "fon": "no tamtem tamgat"
+          "fon": "no tamtem tomes"
         },
         {
           "en": "I feel uncomfortable right now.",
@@ -1366,7 +1362,7 @@
         },
         {
           "en": "Do not wake me.",
-          "fon": "no no hu de mi"
+          "fon": "no hu de mi"
         },
         {
           "en": "That is too much.",
@@ -1374,7 +1370,7 @@
         },
         {
           "en": "I am angry and I need quiet.",
-          "fon": "mi nes les nesgam nesti"
+          "fon": "mi nes nesgam mi les nesti"
         },
         {
           "en": "Please do not shout.",
@@ -1382,7 +1378,7 @@
         },
         {
           "en": "This side is mine and that side is yours.",
-          "fon": "tem honen tem kamche mi be honen"
+          "fon": "tem fel tem kamche mi be fel"
         },
         {
           "en": "Are you taking my things?",
@@ -1398,7 +1394,7 @@
         },
         {
           "en": "That is not yours.",
-          "fon": "tak kamche be no"
+          "fon": "tak no kamche be"
         },
         {
           "en": "I will not go there.",
@@ -1434,7 +1430,7 @@
         },
         {
           "en": "I am tired and I need rest.",
-          "fon": "mi nes femtam les tinal"
+          "fon": "mi femtam mi les tinal"
         },
         {
           "en": "Do you hear me?",
@@ -1460,104 +1456,103 @@
       "phrases": [
         {
           "en": "What is this?",
-          "fon": "no hu to ?"
+          "fon": "nohu to ?"
         },
         {
           "en": "What is that?",
-          "fon": "no hu to ?"
+          "fon": "nohu to ?"
         },
         {
           "en": "What happened here?",
-          "fon": "no hu to ta nam ?"
+          "fon": "nohu to ta nam ?"
         },
         {
           "en": "What do you want?",
-          "fon": "be sak no hu to ?"
+          "fon": "be sak nohu to ?"
         },
         {
           "en": "What is in there?",
-          "fon": "no hu to mes tak ?"
+          "fon": "nohu to mes tak ?"
         },
         {
           "en": "What is that sound?",
-          "fon": "no hu to base ?"
+          "fon": "nohu to base ?"
         },
         {
           "en": "What is that smell?",
-          "fon": "no hu to tek ?"
+          "fon": "nohu to tek ?"
         },
         {
           "en": "What do you need?",
-          "fon": "no hu to les be ?"
+          "fon": "nohu to les be ?"
         },
         {
           "en": "What is happening?",
-          "fon": "no hu to mo ?"
+          "fon": "nohu to mo ?"
         },
         {
           "en": "What is that animal?",
-          "fon": "no hu to kal ?"
+          "fon": "nohu to kal ?"
         },
         {
           "en": "What is that plant?",
-          "fon": "no hu to tet ?"
+          "fon": "nohu to tet ?"
         },
         {
           "en": "What is that noise at night?",
-          "fon": "no hu to gankan len ?"
+          "fon": "nohu to gankan len ?"
         },
         {
           "en": "What do you have there?",
-          "fon": "be gat tak no hu to ?"
+          "fon": "be gat tak nohu to ?"
         },
         {
           "en": "What is this food?",
-          "fon": "no hu to lo ?"
+          "fon": "nohu to lo ?"
         },
         {
           "en": "What is that mark on your arm?",
-          "fon": "no hu to dakfem wimal be ?"
+          "fon": "nohu to dakfem wimal be ?"
         },
         {
           "en": "I do not know what this is.",
-          "fon": "mi no hu no hu to"
+          "fon": "mi no hu nohu to"
         },
         {
           "en": "I do not know what that is.",
-          "fon": "mi no hu no hu to"
+          "fon": "mi no hu nohu to"
         },
         {
           "en": "What is this liquid?",
-          "fon": "no hu to tofem ?"
+          "fon": "nohu to tofem ?"
         },
         {
           "en": "What happened to your hand?",
-          "fon": "no hu to ta be dak ?"
+          "fon": "nohu to ta be dak ?"
         },
         {
           "en": "What happened last night?",
-          "fon": "no hu to ta [gankan] daldi gankan ?",
-          "note": "gap: gankan (needs a root)"
+          "fon": "nohu to ta gankan daldi gankan ?"
         },
         {
           "en": "What is that thing called?",
-          "fon": "no hu to mal to ?"
+          "fon": "nohu to semal ?"
         },
         {
           "en": "What is the name of this?",
-          "fon": "no hu to mal ?"
+          "fon": "nohu to mal ?"
         },
         {
           "en": "What do you see over there?",
-          "fon": "no hu to wi tak be ?"
+          "fon": "nohu to wi tak be ?"
         },
         {
           "en": "What is that light?",
-          "fon": "no hu to kek ?"
+          "fon": "nohu to kek ?"
         },
         {
           "en": "What is this tool for?",
-          "fon": "no hu to gek dakto ?"
+          "fon": "nohu to gek dakto ?"
         },
         {
           "en": "Something happened here.",
@@ -1565,101 +1560,99 @@
         },
         {
           "en": "I want to know what this is.",
-          "fon": "mi sak hu no hu to"
+          "fon": "mi sak hu nohu to"
         },
         {
           "en": "What is wrong with you?",
-          "fon": "no hu to gam be ?"
+          "fon": "nohu to gam be ?"
         },
         {
           "en": "What is wrong with this?",
-          "fon": "no hu to gam ?"
+          "fon": "nohu to gam ?"
         },
         {
           "en": "What do you want me to do?",
-          "fon": "be sak mi no hu to mo ?"
+          "fon": "be sak mi nohu to mo ?"
         },
         {
           "en": "I do not understand what you want.",
-          "fon": "mi no hufel no hu to be sak"
+          "fon": "mi no hufel nohu to be sak"
         },
         {
           "en": "What is that over the water?",
-          "fon": "no hu to ra ye ?"
+          "fon": "nohu to ra ye ?"
         },
         {
           "en": "What did you find?",
-          "fon": "be ta lanek no hu to ?"
+          "fon": "be ta lanek nohu to ?"
         },
         {
           "en": "What did you eat?",
-          "fon": "be ta tel no hu to ?"
+          "fon": "be ta tel nohu to ?"
         },
         {
           "en": "What is safe to eat here?",
-          "fon": "no hu to tel nam tampe ?"
+          "fon": "nohu to tel nam tampe ?"
         },
         {
           "en": "I am not sure what that is.",
-          "fon": "mi no nathu no hu to"
+          "fon": "mi no nathu nohu to"
         },
         {
           "en": "What is that on the ground?",
-          "fon": "no hu to fen ?"
+          "fon": "nohu to fen ?"
         },
         {
           "en": "What is that dark shape?",
-          "fon": "no hu to gan tonen ?"
+          "fon": "nohu to gan tonen ?"
         },
         {
           "en": "I want to know what happened.",
-          "fon": "mi ta sak hu no hu to"
+          "fon": "mi ta sak hu nohu to"
         },
         {
           "en": "What is this white powder?",
-          "fon": "no hu to gen [tofem] ?",
-          "note": "gap: tofem (needs a root)"
+          "fon": "nohu to gen tofem ?"
         },
         {
           "en": "What is that structure?",
-          "fon": "no hu to tonen ?"
+          "fon": "nohu to tonen ?"
         },
         {
           "en": "What is in this bag?",
-          "fon": "no hu to mes tamgat ?"
+          "fon": "nohu to mes tomes ?"
         },
         {
           "en": "I feel afraid and I do not know what is there.",
-          "fon": "mi no nes hu tak nespe no hu to"
+          "fon": "mi nes nespe mi no hu tak nohu to"
         },
         {
           "en": "What do you want to show me?",
-          "fon": "be giwi mi no hu to ?"
+          "fon": "be giwi mi nohu to ?"
         },
         {
           "en": "What is that color in the sky?",
-          "fon": "no hu to mes sam [kek+wimal] ?",
-          "note": "gap: kek+wimal (needs a root)"
+          "fon": "nohu to sam ?"
         },
         {
           "en": "Please show me what you mean.",
-          "fon": "be giwi mi kugu no hu to kuwimalhu be ?"
+          "fon": "be giwi mi kugu nohu to kuwimalhu be ?"
         },
         {
           "en": "I see something and I do not know what it is.",
-          "fon": "mi wi no hu ket to no hu to"
+          "fon": "mi wi ket to mi no hu nohu to"
         },
         {
           "en": "What is this word?",
-          "fon": "no hu to tose ?"
+          "fon": "nohu to tose ?"
         },
         {
           "en": "What do you call this thing?",
-          "fon": "be semal no hu to ?"
+          "fon": "be semal nohu to ?"
         },
         {
           "en": "What is that thing over there?",
-          "fon": "no hu to tak ?"
+          "fon": "nohu to tak ?"
         }
       ]
     },
@@ -1669,19 +1662,19 @@
       "phrases": [
         {
           "en": "Who are you?",
-          "fon": "no hu ba ?"
+          "fon": "nohu ba ?"
         },
         {
           "en": "Who is that person?",
-          "fon": "no hu ba ?"
+          "fon": "nohu ba ?"
         },
         {
           "en": "Who is hurt?",
-          "fon": "no hu ba tes ?"
+          "fon": "nohu ba tes ?"
         },
         {
           "en": "Who needs water?",
-          "fon": "no hu ba les ye ?"
+          "fon": "nohu ba les ye ?"
         },
         {
           "en": "I do not know you.",
@@ -1689,7 +1682,7 @@
         },
         {
           "en": "Who is the child?",
-          "fon": "no hu ba bagen ?"
+          "fon": "nohu ba bagen ?"
         },
         {
           "en": "That person is a stranger to me.",
@@ -1697,7 +1690,7 @@
         },
         {
           "en": "Who is sleeping over there?",
-          "fon": "no hu ba nal tak ?"
+          "fon": "nohu ba nal tak ?"
         },
         {
           "en": "I am a stranger here.",
@@ -1705,20 +1698,19 @@
         },
         {
           "en": "Who needs food now?",
-          "fon": "no hu ba les lo gem ?"
+          "fon": "nohu ba les lo gem ?"
         },
         {
           "en": "Who is the old person?",
-          "fon": "no hu ba ni kanfem ?"
+          "fon": "nohu ba ni kanfem ?"
         },
         {
           "en": "Who is crying?",
-          "fon": "no hu ba [kemye] ?",
-          "note": "gap: kemye (needs a root)"
+          "fon": "nohu ba kemye ?"
         },
         {
           "en": "Who is with you?",
-          "fon": "no hu ba dal be ?"
+          "fon": "nohu ba dal be ?"
         },
         {
           "en": "I do not recognize that person.",
@@ -1726,11 +1718,11 @@
         },
         {
           "en": "Who is sick?",
-          "fon": "no hu ba femgam ?"
+          "fon": "nohu ba femgam ?"
         },
         {
           "en": "Who can carry this?",
-          "fon": "no hu ba gigat to ?"
+          "fon": "nohu ba gigat to ?"
         },
         {
           "en": "I feel afraid of that person.",
@@ -1738,7 +1730,7 @@
         },
         {
           "en": "Who is making that sound?",
-          "fon": "no hu ba kel base ?"
+          "fon": "nohu ba kel base ?"
         },
         {
           "en": "That person is alone and looks lost.",
@@ -1746,43 +1738,43 @@
         },
         {
           "en": "Who is in danger?",
-          "fon": "no hu ba mes pedal ?"
+          "fon": "nohu ba mes pedal ?"
         },
         {
           "en": "Who is the leader here?",
-          "fon": "no hu ba kesba nam ?"
+          "fon": "nohu ba kesba nam ?"
         },
         {
           "en": "Please tell me who you are.",
-          "fon": "se mi no hu ba be kugu"
+          "fon": "be se mi kugu nohu ba ?"
         },
         {
           "en": "Who is bleeding?",
-          "fon": "no hu ba gites ?"
+          "fon": "nohu ba gites ?"
         },
         {
           "en": "I am confused about who is here.",
-          "fon": "mi nes nam metgan no hu ba"
+          "fon": "mi nes nam metgan nohu ba"
         },
         {
           "en": "Who is that woman?",
-          "fon": "no hu ba ?"
+          "fon": "nohu ba ?"
         },
         {
           "en": "Who is that man?",
-          "fon": "no hu ba ?"
+          "fon": "nohu ba ?"
         },
         {
           "en": "Point to who needs help.",
-          "fon": "no hu ba les kas"
+          "fon": "nohu ba les kas"
         },
         {
           "en": "Who was here before us?",
-          "fon": "no hu ba ta nam di dan ?"
+          "fon": "nohu ba ta nam di dan ?"
         },
         {
           "en": "I do not understand who that is.",
-          "fon": "mi no hufel no hu ba"
+          "fon": "mi no hufel nohu ba"
         },
         {
           "en": "That person is cold and shaking.",
@@ -1790,20 +1782,19 @@
         },
         {
           "en": "Who is coming toward us?",
-          "fon": "no hu ba ginam nan dan ?"
+          "fon": "nohu ba ginam nan dan ?"
         },
         {
           "en": "Show me who needs medicine.",
-          "fon": "giwi mi no hu ba les tetkas"
+          "fon": "giwi mi nohu ba les tetkas"
         },
         {
           "en": "I feel uneasy about that person.",
-          "fon": "mi nes [pemet] honen ba",
-          "note": "gap: pemet (needs a root)"
+          "fon": "mi nes pemet fel ba"
         },
         {
           "en": "Who is the youngest person here?",
-          "fon": "no hu ba nam gen kanfem ?"
+          "fon": "nohu ba nam gen kanfem ?"
         },
         {
           "en": "That person is watching us.",
@@ -1811,15 +1802,15 @@
         },
         {
           "en": "Who is not eating?",
-          "fon": "no hu ba tel no ?"
+          "fon": "nohu ba no tel ?"
         },
         {
           "en": "I want to know who you are.",
-          "fon": "mi sak no hu ba be"
+          "fon": "mi sak hu nohu ba be"
         },
         {
           "en": "Who is standing guard tonight?",
-          "fon": "gem gankan no hu ba tira wi tampe ?"
+          "fon": "gem gankan nohu ba tira wi tampe ?"
         },
         {
           "en": "That person is not moving.",
@@ -1827,7 +1818,7 @@
         },
         {
           "en": "Who is missing?",
-          "fon": "no hu ba nantam ?"
+          "fon": "nohu ba nantam ?"
         },
         {
           "en": "Tell me your name if you can.",
@@ -1835,12 +1826,11 @@
         },
         {
           "en": "I feel glad you are here.",
-          "fon": "mi nes nam [nesgu] be",
-          "note": "gap: nesgu (needs a root)"
+          "fon": "mi nes nam nesgu be"
         },
         {
           "en": "Who is the strongest person here?",
-          "fon": "no hu ba nam femgu daldi ?"
+          "fon": "nohu ba nam femgu daldi ?"
         },
         {
           "en": "That person is a friend or an enemy.",
@@ -1848,15 +1838,15 @@
         },
         {
           "en": "Show me who you are.",
-          "fon": "be giwi mi no hu ba ?"
+          "fon": "be giwi mi nohu ba ?"
         },
         {
           "en": "I did not understand who you meant.",
-          "fon": "mi ta no hufel no hu ba be giwi"
+          "fon": "mi ta no hufel nohu ba be giwi"
         },
         {
           "en": "Who is able to walk?",
-          "fon": "no hu ba tigi ?"
+          "fon": "nohu ba tigi ?"
         },
         {
           "en": "That person is hurt and needs us.",
@@ -1864,11 +1854,11 @@
         },
         {
           "en": "Who is that person over there?",
-          "fon": "no hu ba tak ?"
+          "fon": "nohu ba tak ?"
         },
         {
           "en": "Who needs help right now?",
-          "fon": "no hu ba les kas gem ?"
+          "fon": "nohu ba les kas gem ?"
         }
       ]
     },
@@ -1878,15 +1868,15 @@
       "phrases": [
         {
           "en": "Where is the water?",
-          "fon": "no hu che ye ?"
+          "fon": "nohu che ye ?"
         },
         {
           "en": "Where are we?",
-          "fon": "dan no hu che ?"
+          "fon": "dan nohu che ?"
         },
         {
           "en": "Where is the food?",
-          "fon": "no hu che lo ?"
+          "fon": "nohu che lo ?"
         },
         {
           "en": "The water is there.",
@@ -1902,11 +1892,11 @@
         },
         {
           "en": "I do not know where we are.",
-          "fon": "mi no hu nam dan no hu che"
+          "fon": "mi no hu dan che"
         },
         {
           "en": "Where is the shelter?",
-          "fon": "no hu che temche ?"
+          "fon": "nohu che temche ?"
         },
         {
           "en": "We are near the trees.",
@@ -1918,7 +1908,7 @@
         },
         {
           "en": "Where is the other person?",
-          "fon": "no hu che honen ba ?"
+          "fon": "nohu che fel ba ?"
         },
         {
           "en": "I am here.",
@@ -1934,7 +1924,7 @@
         },
         {
           "en": "Where is the fire?",
-          "fon": "no hu che dat ?"
+          "fon": "nohu che dat ?"
         },
         {
           "en": "Is the water near here?",
@@ -1950,7 +1940,7 @@
         },
         {
           "en": "Where did you sleep?",
-          "fon": "be ta nal no hu che ?"
+          "fon": "be ta nal nohu che ?"
         },
         {
           "en": "I slept near the big rock.",
@@ -1974,7 +1964,7 @@
         },
         {
           "en": "Where is the path?",
-          "fon": "no hu che nan ?"
+          "fon": "nohu che nan ?"
         },
         {
           "en": "The path is behind those trees.",
@@ -1982,7 +1972,7 @@
         },
         {
           "en": "Show me where the food is.",
-          "fon": "giwi mi no hu che lo ?"
+          "fon": "giwi lo che"
         },
         {
           "en": "We are far from people.",
@@ -1994,7 +1984,7 @@
         },
         {
           "en": "Where is the high ground?",
-          "fon": "no hu che rafen ?"
+          "fon": "nohu che rafen ?"
         },
         {
           "en": "The high ground is that way.",
@@ -2018,7 +2008,7 @@
         },
         {
           "en": "Where is the old person?",
-          "fon": "no hu che baso ?"
+          "fon": "nohu che baso ?"
         },
         {
           "en": "The old person is near the water.",
@@ -2050,7 +2040,7 @@
         },
         {
           "en": "Where is the child?",
-          "fon": "no hu che bagen ?"
+          "fon": "nohu che bagen ?"
         },
         {
           "en": "The child is near the big tree.",
@@ -2058,15 +2048,15 @@
         },
         {
           "en": "Come here and look at this.",
-          "fon": "ginam wi nam"
+          "fon": "ginam nam wi to"
         },
         {
           "en": "I meant that place, not this one.",
-          "fon": "mi ta chadak tak no dal"
+          "fon": "mi ta no chadak tak dal"
         },
         {
           "en": "I am worried and I feel lost.",
-          "fon": "mi nes pemet nantam"
+          "fon": "mi nes pemet mi nes nantam"
         },
         {
           "en": "The dry land is to the right.",
@@ -2092,7 +2082,7 @@
         },
         {
           "en": "When do we go?",
-          "fon": "dan no hu kan gi ?"
+          "fon": "dan hu kan no gi ?"
         },
         {
           "en": "I am ready now.",
@@ -2128,16 +2118,15 @@
         },
         {
           "en": "When will the rain stop?",
-          "fon": "yeju no hu kan sa giti ?"
+          "fon": "yeju hu kan sa no giti ?"
         },
         {
           "en": "Not now, later.",
-          "fon": "no gem [gemshu]",
-          "note": "gap: gemshu (needs a root)"
+          "fon": "gem gemshu no"
         },
         {
           "en": "We should rest before we walk.",
-          "fon": "dan di tigi tinal"
+          "fon": "dan tinal di tigi"
         },
         {
           "en": "Is it time to go now?",
@@ -2157,7 +2146,7 @@
         },
         {
           "en": "When does the sun rise here?",
-          "fon": "samdat no hu kan kekra nam ?"
+          "fon": "samdat hu kan no kekra nam ?"
         },
         {
           "en": "Let us eat now.",
@@ -2165,7 +2154,7 @@
         },
         {
           "en": "I was afraid before, not now.",
-          "fon": "mi ta di no gem nes nespe"
+          "fon": "mi ta di gem no nes nespe"
         },
         {
           "en": "After we eat, we can rest.",
@@ -2181,7 +2170,7 @@
         },
         {
           "en": "When did you last drink water?",
-          "fon": "be no hu kan ta daldi ko ye ?"
+          "fon": "be hu kan ta daldi no ko ye ?"
         },
         {
           "en": "The fire was burning before.",
@@ -2201,7 +2190,7 @@
         },
         {
           "en": "Not yet, wait a little more.",
-          "fon": "be no digem tikan gen mas"
+          "fon": "be digem no tikan gen mas"
         },
         {
           "en": "Before dark, we need shelter.",
@@ -2213,7 +2202,7 @@
         },
         {
           "en": "When will it be light again?",
-          "fon": "sa no hu kan kek moyi ?"
+          "fon": "sa hu kan no kek moyi ?"
         },
         {
           "en": "We move now and rest later.",
@@ -2249,24 +2238,23 @@
         },
         {
           "en": "I mean later, not right now.",
-          "fon": "mi kuwimalhu shu no gem"
+          "fon": "mi no kuwimal shu gem"
         },
         {
           "en": "After I rest, I will help.",
-          "fon": "mi sa [tinal] di kas",
-          "note": "gap: tinal (needs a root)"
+          "fon": "mi sa tinal di kas"
         },
         {
           "en": "When will the water come back?",
-          "fon": "ye no hu kan sa giyinam ?"
+          "fon": "ye hu kan sa no giyinam ?"
         },
         {
           "en": "I felt safe before, not now.",
-          "fon": "gem ta no mi nes tampe di"
+          "fon": "gem ta mi no nes tampe di"
         },
         {
           "en": "Let us decide later, not now.",
-          "fon": "gem shu no dan hudimo"
+          "fon": "gem shu dan no hudimo"
         },
         {
           "en": "The noise stopped just now.",
@@ -2316,7 +2304,7 @@
         },
         {
           "en": "You must stay here.",
-          "fon": "be ti nam"
+          "fon": "be tiche nam"
         },
         {
           "en": "I will wait here.",
@@ -2404,8 +2392,7 @@
         },
         {
           "en": "I am scared and I want to stay.",
-          "fon": "mi nes sak nespe [tiche]",
-          "note": "gap: tiche (needs a root)"
+          "fon": "mi nes nespe mi sak tiche"
         },
         {
           "en": "Can you come back soon?",
@@ -2417,7 +2404,7 @@
         },
         {
           "en": "I will go and you stay.",
-          "fon": "mi be sa gi ti"
+          "fon": "mi sa gi be tiche"
         },
         {
           "en": "Move closer to the fire.",
@@ -2433,8 +2420,7 @@
         },
         {
           "en": "Wait here until I return.",
-          "fon": "be mi [giyinam] tikan nam",
-          "note": "gap: giyinam (needs a root)"
+          "fon": "be mi giyinam tikan nam"
         },
         {
           "en": "I feel relieved that you came back.",
@@ -2450,7 +2436,7 @@
         },
         {
           "en": "You left and I was alone.",
-          "fon": "be mi ta gi nesfa fet"
+          "fon": "be ta gi fet mi ta nesfa"
         },
         {
           "en": "Can I enter this space?",
@@ -2471,7 +2457,7 @@
         },
         {
           "en": "I feel tired but I must keep moving.",
-          "fon": "mi nes femtam les ti gi"
+          "fon": "mi nes femtam mi gi les ti"
         },
         {
           "en": "Do not follow that animal.",
@@ -2589,7 +2575,7 @@
         },
         {
           "en": "I have water and you have food.",
-          "fon": "mi be kamche ye lo"
+          "fon": "mi gat ye be gat lo"
         },
         {
           "en": "Let us share everything equally.",
@@ -2617,7 +2603,7 @@
         },
         {
           "en": "Give me the large piece and take the small one.",
-          "fon": "be ku la mi ni togen gen togen ni gen"
+          "fon": "ku mi togen ni la gen fa"
         },
         {
           "en": "Did you take my container?",
@@ -2629,7 +2615,7 @@
         },
         {
           "en": "This is not mine.",
-          "fon": "nan kamche mi no"
+          "fon": "nan no kamche mi"
         },
         {
           "en": "I feel worried that I have too little.",
@@ -2645,7 +2631,7 @@
         },
         {
           "en": "Take this and give me that one.",
-          "fon": "la ku mi"
+          "fon": "la to ku mi fa"
         },
         {
           "en": "I gave you that already.",
@@ -2653,8 +2639,7 @@
         },
         {
           "en": "Do you have a container I can borrow?",
-          "fon": "be gat togat mi [lakam] ?",
-          "note": "gap: lakam (needs a root)"
+          "fon": "be gat togat mi lakam ?"
         },
         {
           "en": "I am sorry, I took the wrong thing.",
@@ -2682,7 +2667,7 @@
         },
         {
           "en": "I have fire and wood.",
-          "fon": "mi gat dat tetsas"
+          "fon": "mi gat dat nitet"
         },
         {
           "en": "You can borrow this but please return it.",
@@ -2748,7 +2733,7 @@
         },
         {
           "en": "That fruit is not safe.",
-          "fon": "tetlo tampe no"
+          "fon": "tetlo no tampe"
         },
         {
           "en": "Please eat something.",
@@ -2780,7 +2765,7 @@
         },
         {
           "en": "I am not full yet.",
-          "fon": "mi nes no saklo ti"
+          "fon": "mi no nes saklo ti"
         },
         {
           "en": "This smell is bad.",
@@ -2828,7 +2813,7 @@
         },
         {
           "en": "This has a strange taste.",
-          "fon": "to tal honen"
+          "fon": "to tal fel"
         },
         {
           "en": "Take this food, please.",
@@ -2852,7 +2837,7 @@
         },
         {
           "en": "I tasted it and it is safe.",
-          "fon": "mi ta tal tampe"
+          "fon": "mi ta tal to tampe"
         },
         {
           "en": "Do not eat that red berry.",
@@ -2990,7 +2975,7 @@
         },
         {
           "en": "It is too dark to move.",
-          "fon": "gi gan mas no"
+          "fon": "no gi gan mas"
         },
         {
           "en": "The ground is wet and cold.",
@@ -3030,8 +3015,7 @@
         },
         {
           "en": "I do not understand the weather here.",
-          "fon": "mi no hufel nam [sampa]",
-          "note": "gap: sampa (needs a root)"
+          "fon": "mi no hufel nam sampa"
         },
         {
           "en": "The air is cold and wet.",
@@ -3091,7 +3075,7 @@
         },
         {
           "en": "Give me wood for the fire.",
-          "fon": "ku mi tetsas dat"
+          "fon": "ku mi nitet dat"
         },
         {
           "en": "Are those storm clouds?",
@@ -3141,7 +3125,7 @@
         },
         {
           "en": "I cannot breathe well.",
-          "fon": "mi gesmes no gu"
+          "fon": "mi no gesmes gu"
         },
         {
           "en": "Are you well?",
@@ -3205,8 +3189,7 @@
         },
         {
           "en": "I cannot stand up.",
-          "fon": "mi no [tira] ra",
-          "note": "gap: tira (needs a root)"
+          "fon": "mi no tira ra"
         },
         {
           "en": "Are you breathing well?",
@@ -3226,7 +3209,7 @@
         },
         {
           "en": "I slept and feel better.",
-          "fon": "mi ta nal nes gu mas"
+          "fon": "mi ta nal nes gu"
         },
         {
           "en": "Do you feel pain?",
@@ -3242,7 +3225,7 @@
         },
         {
           "en": "I am not strong today.",
-          "fon": "mi femgu no kekdi gem"
+          "fon": "mi no femgu kekdi gem"
         },
         {
           "en": "Can you breathe deeply?",
@@ -3262,7 +3245,7 @@
         },
         {
           "en": "I said sick, not tired.",
-          "fon": "mi ta se femgam no femtam"
+          "fon": "mi ta no se femgam femtam"
         },
         {
           "en": "Are you tired or sick?",
@@ -3270,8 +3253,7 @@
         },
         {
           "en": "I feel pain in my side.",
-          "fon": "mi nes mes [togen] tes",
-          "note": "gap: togen (needs a root)"
+          "fon": "mi nes mes togen tes"
         },
         {
           "en": "Please carry this for me.",
@@ -3319,7 +3301,7 @@
         },
         {
           "en": "I could not sleep last night.",
-          "fon": "mi ta no gankan nal"
+          "fon": "mi ta gankan no nal"
         }
       ]
     },
@@ -3357,8 +3339,7 @@
         },
         {
           "en": "My mother is sick.",
-          "fon": "[badi] femgam",
-          "note": "gap: badi (needs a root)"
+          "fon": "badi femgam"
         },
         {
           "en": "Please hold the baby.",
@@ -3454,8 +3435,8 @@
         },
         {
           "en": "My mother is old and tired.",
-          "fon": "[badi] nes femtam di [and]",
-          "note": "gap: badi, and (needs a root)"
+          "fon": "badi nes femtam di [and]",
+          "note": "gap: and (needs a root)"
         },
         {
           "en": "Please stay near the child.",
@@ -3475,7 +3456,7 @@
         },
         {
           "en": "I feel sad without my family.",
-          "fon": "mi nes gamnes no sanba"
+          "fon": "mi no nes gamnes sanba"
         },
         {
           "en": "The old person is in pain.",
@@ -3507,12 +3488,11 @@
         },
         {
           "en": "I need to find my mother.",
-          "fon": "mi les wi de [badi]",
-          "note": "gap: badi (needs a root)"
+          "fon": "mi les wi de badi"
         },
         {
           "en": "I feel alone without my child.",
-          "fon": "mi nes nesfa no bagen"
+          "fon": "mi no nes nesfa bagen"
         },
         {
           "en": "The old person needs rest.",
@@ -3638,8 +3618,7 @@
         },
         {
           "en": "That word is not clear to me.",
-          "fon": "[tose] no [winat] mi",
-          "note": "gap: tose, winat (needs a root)"
+          "fon": "tose no winat mi"
         },
         {
           "en": "I do not understand this signal.",
@@ -3671,7 +3650,7 @@
         },
         {
           "en": "I feel unsure and uncertain.",
-          "fon": "mi nes no nathu"
+          "fon": "mi no nes nathu"
         },
         {
           "en": "That is not what I wanted.",
@@ -3707,7 +3686,7 @@
         },
         {
           "en": "I do not understand and I am sorry.",
-          "fon": "mi no hufel tesku"
+          "fon": "mi no hufel mi nes tesku"
         },
         {
           "en": "Please slow down and repeat.",
@@ -3715,7 +3694,7 @@
         },
         {
           "en": "I was wrong and I will try again.",
-          "fon": "mi ta sa mogam sakmo moyi"
+          "fon": "mi ta mo gam mi sa sakmo moyi"
         },
         {
           "en": "We do not understand each other yet.",
@@ -3727,7 +3706,7 @@
         },
         {
           "en": "I did not understand that.",
-          "fon": "mi ta no hufel no hu to"
+          "fon": "mi ta no hufel nohu to"
         },
         {
           "en": "Can you say that again?",
@@ -3773,8 +3752,7 @@
         },
         {
           "en": "We can sleep here and leave at light.",
-          "fon": "dan [kekra] nal felnen nam",
-          "note": "gap: kekra (needs a root)"
+          "fon": "dan nal nam mi kek felnen"
         },
         {
           "en": "I plan to go up that hill.",
@@ -3790,7 +3768,7 @@
         },
         {
           "en": "I want food and I want rest.",
-          "fon": "mi sak lo tinal"
+          "fon": "mi sak lo mi sak tinal"
         },
         {
           "en": "Will you stay here with me?",
@@ -3838,7 +3816,7 @@
         },
         {
           "en": "We will need more wood for the fire.",
-          "fon": "dan sa les mas tetsas dat"
+          "fon": "dan sa les mas nitet dat"
         },
         {
           "en": "Can you try to signal for help?",
@@ -3867,11 +3845,11 @@
         },
         {
           "en": "Can you show me what you plan?",
-          "fon": "be giwi no hu to hudimo mi ?"
+          "fon": "be giwi nohu to hudimo mi ?"
         },
         {
           "en": "I will try and I will not stop.",
-          "fon": "mi sa sakmo no giti"
+          "fon": "mi sa sakmo mi sa no giti"
         },
         {
           "en": "We can go together or stay here.",
@@ -3879,8 +3857,7 @@
         },
         {
           "en": "I want to understand your plan.",
-          "fon": "mi hufel [hudimo] sak",
-          "note": "gap: hudimo (needs a root)"
+          "fon": "mi hufel hudimo sak"
         },
         {
           "en": "Maybe we can build a shelter today.",
@@ -3932,12 +3909,11 @@
         },
         {
           "en": "I plan to watch through the night.",
-          "fon": "mi sa [gankan] hudimo wi fel",
-          "note": "gap: gankan (needs a root)"
+          "fon": "mi sa gankan hudimo wi fel"
         },
         {
           "en": "Maybe we can try a different way.",
-          "fon": "dan sakmo nan ketnat honen"
+          "fon": "dan sakmo nan ketnat fel"
         },
         {
           "en": "Will we find people near the water?",
@@ -4027,7 +4003,7 @@
         },
         {
           "en": "We survived another day.",
-          "fon": "dan ta gat fo honen kekdi"
+          "fon": "dan ta gat fo fel kekdi"
         },
         {
           "en": "I am going to sleep now.",
@@ -4047,7 +4023,7 @@
         },
         {
           "en": "That was hard but we finished.",
-          "fon": "dan ta temkan"
+          "fon": "ta gam ni dan ta temkan"
         },
         {
           "en": "I will not forget your help.",
@@ -4055,8 +4031,8 @@
         },
         {
           "en": "We can rest and then continue.",
-          "fon": "dan shu tinal [moyi+gi]",
-          "note": "gap: moyi+gi (needs a root)"
+          "fon": "dan shu tinal moyigi",
+          "note": "review: moyi+gi→moyigi(composed)"
         },
         {
           "en": "Do you want to stop here?",
@@ -4068,8 +4044,7 @@
         },
         {
           "en": "We worked well together today.",
-          "fon": "dan ta [kekdi] gem bakel gu dan",
-          "note": "gap: kekdi (needs a root)"
+          "fon": "dan ta kekdi gem bakel gu dan"
         },
         {
           "en": "Did I understand you correctly?",
@@ -4081,7 +4056,7 @@
         },
         {
           "en": "Let us not speak now.",
-          "fon": "dan no gem se"
+          "fon": "dan gem no se"
         },
         {
           "en": "You kept me warm and safe.",
@@ -4117,7 +4092,7 @@
         },
         {
           "en": "I see you and I am grateful.",
-          "fon": "mi wi nes be nesguku"
+          "fon": "mi wi be mi nes nesguku"
         },
         {
           "en": "Tomorrow we continue together.",

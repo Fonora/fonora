@@ -57,6 +57,14 @@ export function createPuzzlePage(deps) {
     return `<span class="puzzle-word__roman mono">${escapeHtml(spelling)}</span>`;
   }
 
+  function puzzleLiteralHintHtml(literalParts) {
+    if (!literalParts?.length) return '';
+    const lines = literalParts.map((lp) =>
+      `<p class="sans puzzle-breakdown__headline"><span class="mono puzzle-breakdown__word">${escapeHtml(lp.spelling)}</span><span class="puzzle-breakdown__arrow" aria-hidden="true">→</span><span class="puzzle-breakdown__meaning">${escapeHtml(lp.meaning)}</span></p>`,
+    ).join('');
+    return `<div class="puzzle-breakdown">${lines}</div>`;
+  }
+
   function puzzleBreakdownHtml(b, { reveal = false, parts = null } = {}) {
     if (!b?.spelling && !b?.spellings_line) return '';
     const cls = reveal ? ' puzzle-breakdown--reveal' : '';
@@ -131,17 +139,30 @@ export function createPuzzlePage(deps) {
     p.lastRoundId = null;
   }
 
-  function puzzleConceptFromHash() {
+  function puzzleHashParams() {
     const raw = window.location.hash.replace(/^#/, '');
     const query = raw.includes('?') ? raw.slice(raw.indexOf('?') + 1) : '';
-    return new URLSearchParams(query).get('concept')?.trim() || null;
+    return new URLSearchParams(query);
+  }
+
+  function puzzleConceptFromHash() {
+    return puzzleHashParams().get('concept')?.trim() || null;
+  }
+
+  function puzzleMissedModeFromHash() {
+    return puzzleHashParams().has('missed');
   }
 
   function puzzleChallengeQuery(p) {
     const params = new URLSearchParams();
     if (p.coreOnly) params.set('core', '1');
-    const concept = puzzleConceptFromHash();
-    if (concept) params.set('concept', concept);
+    if (p.missedMode) {
+      params.set('missed', '1');
+      params.set('index', String(p.missedIndex ?? 0));
+    } else {
+      const concept = puzzleConceptFromHash();
+      if (concept) params.set('concept', concept);
+    }
     const q = params.toString();
     return q ? `?${q}` : '';
   }
@@ -149,6 +170,10 @@ export function createPuzzlePage(deps) {
   async function loadPuzzleChallenge() {
     const STATE = getState();
     const p = STATE.puzzle;
+    p._hashKey = window.location.hash;
+    p.missedMode = puzzleMissedModeFromHash();
+    if (p.missedMode && p.missedIndex == null) p.missedIndex = 0;
+    if (!p.missedMode) p.missedIndex = null;
     p.busy = true;
     p.revealed = false;
     p.recorded = false;
@@ -268,6 +293,10 @@ export function createPuzzlePage(deps) {
     const host = $('puzzle-body');
     if (!host) return;
     const p = STATE.puzzle;
+    if (p._hashKey !== window.location.hash && !p.busy) {
+      void loadPuzzleChallenge();
+      return;
+    }
     const c = p.challenge;
     const mode = p.difficultyMode ?? 'normal';
 
@@ -306,7 +335,7 @@ export function createPuzzlePage(deps) {
         p.repairTurns > 0 && !p.revealed
           ? `<div class="puzzle-repair">
                <p class="sans puzzle-repair__lead">Not quite — you picked <strong>${escapeHtml(p.repairWrong ?? '')}</strong>. Here's the literal breakdown; try again.</p>
-               ${puzzleBreakdownHtml(c.breakdown)}
+               ${puzzleLiteralHintHtml(c.literal_parts)}
                ${puzzleAlternatesHtml(c.alternate_forms)}
              </div>`
           : '';
@@ -321,10 +350,12 @@ export function createPuzzlePage(deps) {
              </div>`
           : '';
 
-      const conceptFocus = puzzleConceptFromHash();
-      const focusBanner = conceptFocus
-        ? `<p class="sans puzzle-focus">Testing concept: <strong>${escapeHtml(conceptFocus)}</strong> · <a href="#puzzle">clear filter</a></p>`
-        : '';
+      const conceptFocus = !p.missedMode && puzzleConceptFromHash();
+      const focusBanner = p.missedMode && c?.queue_total
+        ? `<p class="sans puzzle-focus">Blind retest · word <strong>${(c.queue_index ?? 0) + 1}</strong> of <strong>${c.queue_total}</strong> (misses &amp; updated spellings) · <a href="#puzzle">random mode</a></p>`
+        : conceptFocus
+          ? `<p class="sans puzzle-focus">Dev target: <strong>${escapeHtml(conceptFocus)}</strong> (answer visible in URL) · <a href="#puzzle">clear</a> · <a href="#puzzle?missed">blind missed queue</a></p>`
+          : `<p class="sans puzzle-focus puzzle-focus--muted"><a href="#puzzle?missed">Retest missed words</a> (blind)</p>`;
 
       card = `<div class="puzzle-card">
             <div class="puzzle-card__toolbar">
@@ -366,6 +397,7 @@ export function createPuzzlePage(deps) {
       void loadPuzzleChallenge();
     });
     $('puzzle-next')?.addEventListener('click', () => {
+      if (p.missedMode) p.missedIndex = (p.missedIndex ?? 0) + 1;
       void loadPuzzleChallenge();
     });
     $('puzzle-core')?.addEventListener('change', (e) => {

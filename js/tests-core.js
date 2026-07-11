@@ -30,6 +30,7 @@ import { buildRomanPartsBreakdown, buildScriptBreakdown } from './breakdown.js';
 import { romanToFonoraScript, fonoraScriptToRoman, romanTextToFonoraScript, tokenizeFonoraScriptInput, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
 import { chunkSymbolWordsForFluidity } from './fonora-tts-ui.js';
 import { ASCII_EQUALS } from './load-language-rules.js';
+import { segmentChineseWords, prepareChineseForPipeline } from './cjk-text.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -840,6 +841,30 @@ export function runTests(options) {
     assert(html.includes('class="mermaid"'));
     assert(html.includes('flowchart TD'));
     assert(!html.includes('language-mermaid'));
+  });
+
+  t('segmentChineseWords splits 人人生而自由 into idiomatic phrases', () => {
+    const segmented = segmentChineseWords('人人生而自由');
+    assert(segmented === '人人 生而 自由', `expected idiomatic phrasing, got "${segmented}"`);
+  });
+
+  t('prepareChineseForPipeline segments UDHR Mandarin into more than clause-sized chunks', () => {
+    const udhr =
+      '人人生而自由，在尊严和权利上一律平等。他们赋有理性和良心，并应以兄弟关系的精神相对待。';
+    const { spacedText, clauses } = prepareChineseForPipeline(udhr);
+    assert(clauses.length === 4);
+    assert(spacedText.split(/\s+/).length > clauses.length);
+  });
+
+  t('segmentChineseWords falls back to single characters when Intl.Segmenter is unavailable', () => {
+    const originalSegmenter = Intl.Segmenter;
+    try {
+      Object.defineProperty(Intl, 'Segmenter', { value: undefined, configurable: true });
+      assert(segmentChineseWords('人人生而自由') === '人人 生而 自由');
+      assert(segmentChineseWords('谘谘谘谘') === '谘 谘 谘 谘');
+    } finally {
+      Object.defineProperty(Intl, 'Segmenter', { value: originalSegmenter, configurable: true });
+    }
   });
 
   const passed = results.filter((r) => r.ok).length;

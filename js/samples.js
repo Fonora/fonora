@@ -1,22 +1,15 @@
 import { translateIpaPhrase } from './ipa-pipeline.js';
 import { escapeHtml } from './utils.js';
-import { speakFonoraPhrase, cancelSpeech, setReaderWordSources, tokenizeFonoraPhrase } from './fonora-tts.js';
+import { speakFonoraPhrase, speakFonoraFluid, cancelSpeech, setReaderWordSources, tokenizeFonoraPhrase } from './fonora-tts.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
 import { primeAudioContext } from './espeak-audio.js';
 import { DEFAULT_ENGLISH_VOICE } from './language-preferences.js';
 import { getSamplePlaybackPlan } from './piper-audio.js';
 import { playButtonMarkup, setPlayButtonLabel, setPlayButtonText, setStopButtonLabel } from './play-button-ui.js';
+import { splitCjkClauses, segmentChineseClause, countChineseClauseWords } from './cjk-text.js';
 
-/** Split CJK samples into phrases for Fonora rendering and word-by-word playback. */
-function splitCjkClauses(text, lang) {
-  const pattern =
-    lang === 'zh'
-      ? /(?<=[。！？；，])/u
-      : /(?<=[。！？])/u;
-  return String(text || '')
-    .split(pattern)
-    .map((clause) => clause.trim())
-    .filter(Boolean);
+function sleepMs(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function translateSampleText(text, rules, lang) {
@@ -28,7 +21,8 @@ async function translateSampleText(text, rules, lang) {
   const clauses = splitCjkClauses(text, lang);
   const phraseResults = [];
   for (const clause of clauses) {
-    phraseResults.push(await translateIpaPhrase(clause, rules, lang, pipelineOptions));
+    const pipelineClause = lang === 'zh' ? segmentChineseClause(clause) : clause;
+    phraseResults.push(await translateIpaPhrase(pipelineClause, rules, lang, pipelineOptions));
   }
 
   return {
@@ -117,6 +111,7 @@ let rulesRef = null;
 let loadPromise = null;
 let loadedForRules = null;
 let playingId = null;
+let playingMode = 'word';
 let cancelPlayback = false;
 let samplesUiReady = false;
 
@@ -132,8 +127,16 @@ function renderSampleAudioControls(sample) {
   }
 
   const engineLabel = playbackEngineLabel(sample);
+  if (sample.lang === 'zh') {
+    return `
+        <button type="button" class="btn btn--primary sample-audio-btn" data-sample-play="${escapeHtml(sample.id)}" data-sample-play-mode="word" disabled aria-label="Listen to ${escapeHtml(sample.language)} Fonora sample word by word">${playButtonMarkup('Listen (words)')}</button>
+        <button type="button" class="btn btn--secondary sample-audio-btn" data-sample-play="${escapeHtml(sample.id)}" data-sample-play-mode="phrase" disabled aria-label="Listen to ${escapeHtml(sample.language)} Fonora sample phrase by phrase">${playButtonMarkup('Listen (phrases)')}</button>
+        <span class="sample-audio-engine">${escapeHtml(engineLabel)}</span>
+        <span class="sample-audio-status" id="sample-${escapeHtml(sample.id)}-status" hidden role="status"></span>`;
+  }
+
   return `
-        <button type="button" class="btn btn--primary sample-audio-btn" data-sample-play="${escapeHtml(sample.id)}" disabled aria-label="Listen to ${escapeHtml(sample.language)} Fonora sample">${playButtonMarkup('Listen')}</button>
+        <button type="button" class="btn btn--primary sample-audio-btn" data-sample-play="${escapeHtml(sample.id)}" data-sample-play-mode="word" disabled aria-label="Listen to ${escapeHtml(sample.language)} Fonora sample">${playButtonMarkup('Listen')}</button>
         <span class="sample-audio-engine">${escapeHtml(engineLabel)}</span>
         <span class="sample-audio-status" id="sample-${escapeHtml(sample.id)}-status" hidden role="status"></span>`;
 }
@@ -145,11 +148,13 @@ function bindSamplesUi() {
   document.addEventListener('click', (event) => {
     const playBtn = event.target.closest('[data-sample-play]');
     if (!playBtn || playBtn.disabled) return;
-    if (playingId === playBtn.dataset.samplePlay) {
+    const sampleId = playBtn.dataset.samplePlay;
+    const playbackMode = playBtn.dataset.samplePlayMode || 'word';
+    if (playingId === sampleId) {
       stopSamplePlayback();
       return;
     }
-    playSample(playBtn.dataset.samplePlay);
+    playSample(sampleId, playbackMode);
   });
 }
 
@@ -261,20 +266,28 @@ function setSampleFonoraPlaybackState(sampleId, { loading = false } = {}) {
   }
 }
 
+function defaultPlayButtonLabel(sample, mode = 'word') {
+  if (sample?.lang === 'zh' && mode === 'phrase') return 'Listen (phrases)';
+  if (sample?.lang === 'zh') return 'Listen (words)';
+  return 'Listen';
+}
+
 function resetPlayButtons() {
   document.querySelectorAll('[data-sample-play]').forEach((btn) => {
     const sample = SAMPLES.find((item) => item.id === btn.dataset.samplePlay);
+    const mode = btn.dataset.samplePlayMode || 'word';
     const ready = sample?.audioEnabled !== false && sampleResults.has(btn.dataset.samplePlay);
     btn.disabled = !ready;
-    setPlayButtonLabel(btn, 'Listen');
+    setPlayButtonLabel(btn, defaultPlayButtonLabel(sample, mode));
   });
 }
 
-function setPlayButtonsLocked(locked, activeId = null) {
+function setPlayButtonsLocked(locked, activeId = null, activeMode = null) {
   document.querySelectorAll('[data-sample-play]').forEach((btn) => {
     const sample = SAMPLES.find((item) => item.id === btn.dataset.samplePlay);
     if (sample?.audioEnabled === false) return;
-    const isActive = btn.dataset.samplePlay === activeId;
+    const mode = btn.dataset.samplePlayMode || 'word';
+    const isActive = btn.dataset.samplePlay === activeId && mode === (activeMode || 'word');
     if (locked && isActive) {
       btn.disabled = false;
       return;
@@ -321,7 +334,7 @@ async function renderSampleFonora(sample, rules) {
       metaParts.push('Japanese audio playback is not available yet, Fonora phonetic read-aloud requires a compatible neural voice.');
     }
     if (sample.lang === 'zh') {
-      metaParts.push('Chinese is rendered in phrases (not one block) for clearer playback and highlighting.');
+      metaParts.push('Chinese text is word-segmented for rendering. Use Listen (words) or Listen (phrases) to compare playback.');
     }
     if (sample.audioEnabled !== false) {
       metaParts.push('Playback uses neural voices and reads recovered Fonora phonetics.');
@@ -360,7 +373,58 @@ async function loadAllSamples(rules) {
   }
 }
 
-async function playSample(sampleId) {
+async function playChineseSampleFluid(sampleId, data, plan, { shouldCancel, onPrepare, onLoading }) {
+  const symbolWords = tokenizeFonoraPhrase(data.symbols);
+  const clauses = data.clauses || [];
+  let wordIndex = 0;
+  let spoken = 0;
+  let skipped = 0;
+
+  for (let clauseIndex = 0; clauseIndex < clauses.length; clauseIndex += 1) {
+    if (shouldCancel()) {
+      return { spoken, skipped, cancelled: true };
+    }
+
+    const clauseWordCount = countChineseClauseWords(clauses[clauseIndex]);
+    const clauseSymbols = symbolWords.slice(wordIndex, wordIndex + clauseWordCount);
+    if (!clauseSymbols.length) continue;
+
+    for (let index = wordIndex; index < wordIndex + clauseWordCount; index += 1) {
+      highlightSampleWord(sampleId, index, { active: true });
+    }
+
+    const clauseResult = await speakFonoraFluid(clauseSymbols, rulesRef, {
+      engine: 'piper',
+      piperVoice: plan.piperVoice,
+      wordSourceOffset: wordIndex,
+      shouldCancel,
+      onPrepare: (message) => {
+        onLoading?.();
+        onPrepare?.(message);
+      },
+    });
+
+    for (let index = wordIndex; index < wordIndex + clauseWordCount; index += 1) {
+      highlightSampleWord(sampleId, index, { active: false, done: true });
+    }
+
+    spoken += clauseResult.spoken;
+    skipped += clauseResult.skipped;
+    wordIndex += clauseWordCount;
+
+    if (shouldCancel()) {
+      return { spoken, skipped, cancelled: true };
+    }
+
+    if (clauseIndex < clauses.length - 1) {
+      await sleepMs(280);
+    }
+  }
+
+  return { spoken, skipped, cancelled: false };
+}
+
+async function playSample(sampleId, playbackMode = 'word') {
   if (!rulesRef || playingId) return;
 
   const sample = SAMPLES.find((item) => item.id === sampleId);
@@ -372,8 +436,9 @@ async function playSample(sampleId) {
   const playBtns = document.querySelectorAll(`[data-sample-play="${sampleId}"]`);
 
   playingId = sampleId;
+  playingMode = playbackMode;
   cancelPlayback = false;
-  setPlayButtonsLocked(true, sampleId);
+  setPlayButtonsLocked(true, sampleId, playbackMode);
   for (const playBtn of playBtns) setPlayButtonText(playBtn, 'Loading…');
   setAudioStatus(sampleId, '');
 
@@ -381,21 +446,35 @@ async function playSample(sampleId) {
     await primeAudioContext();
     clearSampleWordHighlight(sampleId);
     setSampleFonoraPlaybackState(sampleId, { loading: true });
-    for (const playBtn of playBtns) setStopButtonLabel(playBtn, 'Stop');
+    for (const playBtn of playBtns) {
+      if ((playBtn.dataset.samplePlayMode || 'word') === playbackMode) {
+        setStopButtonLabel(playBtn, 'Stop');
+      }
+    }
 
     let result;
     setReaderWordSources(data.words);
-    result = await speakFonoraPhrase(data.symbols, rulesRef, {
-      engine: 'piper',
-      piperVoice: plan.piperVoice,
-      shouldCancel: () => cancelPlayback,
-      onPrepare: (message) => setAudioStatus(sampleId, message),
-      onWordStart: (index) => {
-        setSampleFonoraPlaybackState(sampleId, { loading: false });
-        highlightSampleWord(sampleId, index, { active: true });
-      },
-      onWordEnd: (index) => highlightSampleWord(sampleId, index, { active: false, done: true }),
-    });
+    const usePhrasePlayback = sample.lang === 'zh' && playbackMode === 'phrase' && data.clauses?.length;
+    if (usePhrasePlayback) {
+      result = await playChineseSampleFluid(sampleId, data, plan, {
+        shouldCancel: () => cancelPlayback,
+        onPrepare: (message) => setAudioStatus(sampleId, message),
+        onLoading: () => setSampleFonoraPlaybackState(sampleId, { loading: false }),
+      });
+    } else {
+      result = await speakFonoraPhrase(data.symbols, rulesRef, {
+        engine: 'piper',
+        piperVoice: plan.piperVoice,
+        wordGapMs: sample.lang === 'zh' ? 130 : 0,
+        shouldCancel: () => cancelPlayback,
+        onPrepare: (message) => setAudioStatus(sampleId, message),
+        onWordStart: (index) => {
+          setSampleFonoraPlaybackState(sampleId, { loading: false });
+          highlightSampleWord(sampleId, index, { active: true });
+        },
+        onWordEnd: (index) => highlightSampleWord(sampleId, index, { active: false, done: true }),
+      });
+    }
     if (!cancelPlayback) {
       const suffix = result.skipped > 0 ? ` (${result.skipped} word${result.skipped === 1 ? '' : 's'} skipped)` : '';
       setAudioStatus(sampleId, `Playback complete${suffix}.`);
@@ -408,6 +487,7 @@ async function playSample(sampleId) {
   } finally {
     setSampleFonoraPlaybackState(sampleId, { loading: false });
     playingId = null;
+    playingMode = 'word';
     cancelPlayback = false;
     resetPlayButtons();
   }
@@ -422,6 +502,7 @@ function stopSamplePlayback() {
   clearSampleWordHighlight(id);
   setSampleFonoraPlaybackState(id, { loading: false });
   playingId = null;
+  playingMode = 'word';
   resetPlayButtons();
 }
 
@@ -475,7 +556,7 @@ export function setupSamples(rules) {
   loadedForRules = null;
   sampleResults.clear();
 
-  if (window.location.hash === '#samples') {
+  if (window.location.hash === '#samples' || window.location.hash === '#listening') {
     ensureSamplesLoaded();
   }
 }
