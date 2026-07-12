@@ -163,7 +163,11 @@ export function selectPreferred(conceptId, {
   llmAggregates = null,
   options = {},
 }) {
-  const scoreMargin = options.scoreMargin ?? DEFAULT_SCORE_MARGIN;
+  const scoreMarginDefault = options.scoreMargin ?? DEFAULT_SCORE_MARGIN;
+  const difficultRootIdsEarly = options.difficultRootIds ?? new Set();
+  // If the current preferred uses a difficult-onset root, waive the score margin so
+  // any clean alternative of equal or higher score can replace it.
+  const scoreMargin = current.some(r => difficultRootIdsEarly.has(r)) ? 0 : scoreMarginDefault;
   const maxFlat = options.maxFlattened ?? maxFlattenedRoots();
   const flatCountFor = rankCtx.flatCountFor ?? (() => null);
   const useLlm = Boolean(options.useLlm && llmAggregates);
@@ -176,11 +180,13 @@ export function selectPreferred(conceptId, {
   const currentFlat = currentValid
     ? currentValidation.flat_count
     : flatCountFor(current);
-  const currentScore = scoreUnderstandability(current, {
+  const difficultRootIds = rankCtx.difficultRootIds ?? new Set();
+  const currentPhoneticPenalty = current.some(r => difficultRootIds.has(r)) ? 0.005 : 0;
+  const currentScore = Math.max(0, scoreUnderstandability(current, {
     metaFor: rankCtx.metaFor,
     collisionCount: rankCtx.collisionCounts?.get(currentKey) ?? 1,
     flatCount: currentFlat,
-  }).score;
+  }).score - currentPhoneticPenalty);
 
   if (isPreferredLocked(preferredSource)) {
     return {
@@ -421,6 +427,8 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
   const promotions = [];
   const demoTrees = ctx.demoTrees ?? new Map();
   const llmAggregates = options.useLlm ? (ctx.llmAggregates ?? null) : null;
+  // Pass difficultRootIds through options so selectPreferred can waive its score margin.
+  const effectiveOptions = { ...options, difficultRootIds: ctx.difficultRootIds ?? new Set() };
 
   const sorted = topologicalSortCompounds(rows);
 
@@ -440,6 +448,7 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
       metaFor: ctx.metaFor,
       collisionCounts: ctx.collisionCounts,
       flatCountFor,
+      difficultRootIds: ctx.difficultRootIds,
     };
 
     buildCtx.clearCompound(row.concept);
@@ -452,7 +461,7 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
       buildCtx,
       rankCtx,
       llmAggregates,
-      options,
+      options: effectiveOptions,
     });
 
     const preferredComposition = selection.preferred.composition;

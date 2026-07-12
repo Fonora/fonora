@@ -725,6 +725,20 @@
         </header>
       </div>
       <div class="box advanced-page">
+        <section class="lpw-wizard" id="lpw-wizard" aria-labelledby="lpw-heading">
+          <h2 class="lpw-heading" id="lpw-heading">LLM evaluation wizard</h2>
+          <p class="sans lpw-lead">Step-by-step pipeline from pilot smoke test through production deploy. Run expensive steps from this server; follow the verify checklist before continuing.</p>
+          <div id="lpw-reliability" class="lpw-panel" aria-live="polite"></div>
+          <div id="lpw-confusability" class="lpw-panel" aria-live="polite"></div>
+          <div id="lpw-seed-quality" class="lpw-panel" aria-live="polite"></div>
+          <details class="lpw-winners-details">
+            <summary class="sans">Calibration winners (spot-check your intuition)</summary>
+            <div id="lpw-winners" class="lpw-winners"></div>
+          </details>
+          <div id="lpw-steps" class="lpw-steps" aria-live="polite">Loading pipeline status…</div>
+        </section>
+
+        <h2 class="lpw-heading lpw-heading--secondary">Dictionary pipeline</h2>
         <ol class="adv-pipeline">
           <li class="adv-step">
             <div class="adv-step__number">1</div>

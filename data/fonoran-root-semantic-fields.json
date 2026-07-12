@@ -1,0 +1,1148 @@
+{
+  "version": "1.1-root-semantic-fields",
+  "updated_at": "2026-07-11T22:00:00.000Z",
+  "philosophy": "Roots are ideas/concepts, not English words. association_ideas are recoverability hints for composition — what does this root evoke as a concept cluster? Not lemmas, not inflections.",
+  "lazy_glue_roots": [
+    "make",
+    "do",
+    "thing",
+    "form",
+    "part",
+    "change",
+    "source",
+    "substance",
+    "mark"
+  ],
+  "roots": {
+    "person": {
+      "core_idea": "a person; someone",
+      "roles": ["entity", "personhood"],
+      "association_ideas": [
+        "a human being",
+        "an individual person",
+        "a member of a group",
+        "someone present",
+        "a human who can act or feel"
+      ],
+      "pairs_well_with": ["collective", "body", "name", "self", "bond", "speak"]
+    },
+    "self": {
+      "core_idea": "oneself; me, myself",
+      "roles": ["entity", "personhood"],
+      "association_ideas": [
+        "oneself",
+        "the individual self",
+        "first person",
+        "one's own identity",
+        "me as distinct from others"
+      ],
+      "pairs_well_with": ["person", "name", "know", "body", "inside"]
+    },
+    "collective": {
+      "core_idea": "a group seen as one; togetherness",
+      "roles": ["entity", "personhood"],
+      "association_ideas": [
+        "a group as one unit",
+        "community",
+        "people gathered together",
+        "shared membership",
+        "tribe or village as a whole",
+        "many treated as one"
+      ],
+      "pairs_well_with": ["person", "bond", "many", "speak", "place"]
+    },
+    "body": {
+      "core_idea": "your body",
+      "roles": ["entity", "body"],
+      "association_ideas": [
+        "physical form",
+        "flesh and limbs",
+        "the whole organism",
+        "trunk or torso",
+        "one's physical self",
+        "organic matter that moves and feels"
+      ],
+      "pairs_well_with": ["skin", "bone", "hand", "head", "pain", "feel", "move"]
+    },
+    "life": {
+      "core_idea": "being alive",
+      "roles": ["entity", "personhood"],
+      "association_ideas": [
+        "being alive",
+        "vitality",
+        "existence as a living thing",
+        "animation and breath",
+        "what distinguishes living from dead"
+      ],
+      "pairs_well_with": ["body", "water", "food", "breath", "feel"]
+    },
+    "addressee": {
+      "core_idea": "the entity spoken to; you",
+      "roles": ["entity", "personhood"],
+      "association_ideas": [
+        "the person being spoken to",
+        "you — the listener",
+        "the other person here",
+        "direct target of speech",
+        "second person"
+      ],
+      "pairs_well_with": ["person", "speak", "near", "give", "name"]
+    },
+    "food": {
+      "core_idea": "food; something to eat",
+      "roles": ["entity", "substance"],
+      "association_ideas": [
+        "something to eat",
+        "nourishment",
+        "sustenance",
+        "edible plant or animal",
+        "provisions for survival",
+        "what you gather or hunt"
+      ],
+      "pairs_well_with": ["eat", "want", "need", "good", "plant", "animal", "give"]
+    },
+    "move": {
+      "core_idea": "to go from one place to another",
+      "roles": ["action", "motion"],
+      "association_ideas": [
+        "to go somewhere",
+        "to travel or shift position",
+        "physical displacement",
+        "locomotion",
+        "to go toward or away from",
+        "motion itself"
+      ],
+      "pairs_well_with": ["path", "fast", "body", "water", "air", "far", "near"]
+    },
+    "give": {
+      "core_idea": "to give something to someone",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to hand over",
+        "to transfer possession",
+        "to offer or present",
+        "to share with another",
+        "to extend something toward someone"
+      ],
+      "pairs_well_with": ["take", "person", "hand", "good", "food", "want"]
+    },
+    "take": {
+      "core_idea": "to take something",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to grab or seize",
+        "to receive",
+        "to pick up",
+        "to claim or acquire",
+        "to pull toward oneself"
+      ],
+      "pairs_well_with": ["give", "hand", "hold", "want", "stone", "bound"]
+    },
+    "hold": {
+      "core_idea": "to keep something in your grasp",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to grip in the hand",
+        "to keep in grasp",
+        "to contain within",
+        "to restrain or secure",
+        "to not let go of",
+        "a container that holds"
+      ],
+      "pairs_well_with": ["hand", "stone", "take", "inside", "bound", "water", "fire"]
+    },
+    "use": {
+      "core_idea": "to use something",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to employ a tool or object",
+        "to apply for a purpose",
+        "to work with",
+        "to operate",
+        "putting something to its function"
+      ],
+      "pairs_well_with": ["hand", "stone", "tool", "bound", "take", "good"]
+    },
+    "help": {
+      "core_idea": "to help someone",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to assist",
+        "to aid someone in need",
+        "to support",
+        "to lend a hand",
+        "cooperative action for another's benefit"
+      ],
+      "pairs_well_with": ["person", "good", "give", "need", "collective"]
+    },
+    "make": {
+      "core_idea": "to make something",
+      "roles": ["creation", "building"],
+      "association_ideas": [
+        "to build or construct",
+        "to create from materials",
+        "to produce something new",
+        "a process of assembly or shaping"
+      ],
+      "pairs_well_with": [],
+      "lazy_glue": true,
+      "anti_patterns": [
+        "Do not name a specific tool (hammer, knife, rope, bag, cup, bowl) as material+make. Tools need functional anchors: use/hand/hold/take/bound/conflict.",
+        "material+make describes a manufacturing process, not the resulting object — a stranger recovers the process, not the tool name."
+      ]
+    },
+    "do": {
+      "core_idea": "to do something",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to carry out an action",
+        "to perform or enact",
+        "an unspecified activity"
+      ],
+      "pairs_well_with": [],
+      "lazy_glue": true,
+      "anti_patterns": [
+        "do is the most abstract action root — avoid as the only verb in a compound naming a specific activity."
+      ]
+    },
+    "speak": {
+      "core_idea": "to speak; to talk",
+      "roles": ["action", "communication"],
+      "association_ideas": [
+        "to say words",
+        "to talk to someone",
+        "to communicate verbally",
+        "to voice something",
+        "verbal expression",
+        "to address or announce"
+      ],
+      "pairs_well_with": ["person", "know", "name", "hear", "near", "collective"]
+    },
+    "see": {
+      "core_idea": "to see",
+      "roles": ["action", "perception"],
+      "association_ideas": [
+        "to look at",
+        "to observe",
+        "to notice or spot",
+        "to perceive visually",
+        "to witness",
+        "the act of visual perception"
+      ],
+      "pairs_well_with": ["eye", "body", "light", "know", "far", "place"]
+    },
+    "hear": {
+      "core_idea": "to hear",
+      "roles": ["action", "perception"],
+      "association_ideas": [
+        "to listen",
+        "to pick up sound",
+        "to perceive aurally",
+        "to receive verbal communication",
+        "the ear receiving sound"
+      ],
+      "pairs_well_with": ["speak", "body", "know", "near", "head"]
+    },
+    "touch": {
+      "core_idea": "to touch",
+      "roles": ["action", "perception"],
+      "association_ideas": [
+        "to feel with the hand",
+        "to make contact",
+        "to reach and graze",
+        "physical contact between surfaces",
+        "the sense of touch"
+      ],
+      "pairs_well_with": ["hand", "body", "skin", "near", "feel"]
+    },
+    "smell": {
+      "core_idea": "to smell",
+      "roles": ["action", "perception"],
+      "association_ideas": [
+        "to detect odor",
+        "to sniff",
+        "the nose's sense",
+        "perceiving scent through air",
+        "detecting food or danger by odor"
+      ],
+      "pairs_well_with": ["body", "air", "food", "near", "good", "bad"]
+    },
+    "taste": {
+      "core_idea": "to taste",
+      "roles": ["action", "perception"],
+      "association_ideas": [
+        "to sample with the mouth",
+        "to detect flavor",
+        "the tongue's sense",
+        "to experience food quality",
+        "tasting to check if something is good"
+      ],
+      "pairs_well_with": ["eat", "mouth", "food", "good", "bad"]
+    },
+    "know": {
+      "core_idea": "to know something",
+      "roles": ["action", "cognition"],
+      "association_ideas": [
+        "to understand",
+        "to have knowledge of",
+        "to be certain of something",
+        "to recognize",
+        "to be familiar with",
+        "stored understanding in the mind"
+      ],
+      "pairs_well_with": ["think", "speak", "person", "name", "true", "hold"]
+    },
+    "think": {
+      "core_idea": "to use your mind",
+      "roles": ["action", "cognition"],
+      "association_ideas": [
+        "to reason or ponder",
+        "to figure out",
+        "to plan or imagine",
+        "mental activity",
+        "reflecting on something",
+        "working through ideas"
+      ],
+      "pairs_well_with": ["know", "inside", "head", "self", "want", "good"]
+    },
+    "feel": {
+      "core_idea": "to feel something inside",
+      "roles": ["action", "emotion"],
+      "association_ideas": [
+        "inner emotion or sensation",
+        "to sense something emotionally",
+        "to experience internally",
+        "the subjective feeling state",
+        "heart and gut reactions"
+      ],
+      "pairs_well_with": ["good", "bad", "pain", "love", "fear", "body", "inside", "want"]
+    },
+    "want": {
+      "core_idea": "to wish for something",
+      "roles": ["action", "emotion"],
+      "association_ideas": [
+        "to desire",
+        "to wish for",
+        "to crave or long for",
+        "to feel pulled toward something",
+        "to lack and wish to have"
+      ],
+      "pairs_well_with": ["feel", "good", "take", "need", "food", "water"]
+    },
+    "eat": {
+      "core_idea": "to eat",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to consume food",
+        "to chew and swallow",
+        "to feed oneself",
+        "the act of eating for survival",
+        "putting food into the mouth"
+      ],
+      "pairs_well_with": ["food", "mouth", "good", "need", "plant", "animal"]
+    },
+    "sleep": {
+      "core_idea": "to sleep",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to rest unconsciously",
+        "to slumber",
+        "to be dormant",
+        "the resting state of the body",
+        "closing eyes and going unconscious"
+      ],
+      "pairs_well_with": ["body", "still", "inside", "dark", "place", "good"]
+    },
+    "drink": {
+      "core_idea": "to drink",
+      "roles": ["action", "doing"],
+      "association_ideas": [
+        "to ingest liquid",
+        "to swallow water",
+        "to consume by drinking",
+        "taking liquid into the mouth"
+      ],
+      "pairs_well_with": ["water", "mouth", "good", "need", "inside"]
+    },
+    "thing": {
+      "core_idea": "any object or item",
+      "roles": ["abstract", "entity"],
+      "association_ideas": [
+        "an unspecified object",
+        "any physical item",
+        "something whose specific nature is vague"
+      ],
+      "pairs_well_with": [],
+      "lazy_glue": true,
+      "anti_patterns": [
+        "thing is the vaguer root in the language — a compound like 'X+thing' rarely tells a stranger what the specific object is.",
+        "Prefer a functional anchor (hold, use, hand, eat, drink) over thing when naming a specific object."
+      ]
+    },
+    "empty": {
+      "core_idea": "having nothing inside",
+      "roles": ["property", "spatial"],
+      "association_ideas": [
+        "hollow",
+        "containing nothing",
+        "void or vacant",
+        "blank or absent",
+        "the absence of content",
+        "a container with nothing in it"
+      ],
+      "pairs_well_with": ["inside", "place", "hand", "know", "feel", "hold"]
+    },
+    "water": {
+      "core_idea": "water",
+      "roles": ["material", "substance", "nature"],
+      "association_ideas": [
+        "liquid",
+        "flowing substance",
+        "rain or river",
+        "the sea",
+        "wetness",
+        "what you drink and find in nature",
+        "cleansing and nourishing liquid"
+      ],
+      "pairs_well_with": ["fire", "earth", "cold", "inside", "path", "move", "drink", "plant"]
+    },
+    "fire": {
+      "core_idea": "fire; a hot burning flame",
+      "roles": ["material", "substance", "nature"],
+      "association_ideas": [
+        "burning flame",
+        "a heat source",
+        "light source",
+        "combustion",
+        "dangerous heat that destroys",
+        "campfire or cooking fire",
+        "warmth"
+      ],
+      "pairs_well_with": ["hot", "light", "air", "stone", "water", "dark", "hold"]
+    },
+    "earth": {
+      "core_idea": "the ground or soil",
+      "roles": ["material", "substance", "nature"],
+      "association_ideas": [
+        "the ground underfoot",
+        "soil or dirt",
+        "the land surface",
+        "what you dig in",
+        "the physical world",
+        "where plants grow"
+      ],
+      "pairs_well_with": ["stone", "water", "plant", "down", "path", "place", "inside"]
+    },
+    "air": {
+      "core_idea": "the air we breathe",
+      "roles": ["material", "substance", "nature"],
+      "association_ideas": [
+        "the air",
+        "wind",
+        "breath",
+        "invisible gas around us",
+        "what moves in wind",
+        "what carries sound and smell"
+      ],
+      "pairs_well_with": ["sky", "move", "inside", "speak", "body", "life"]
+    },
+    "light": {
+      "core_idea": "light; what lets you see",
+      "roles": ["material", "substance", "nature"],
+      "association_ideas": [
+        "illumination",
+        "brightness",
+        "visible radiance",
+        "what lets you see",
+        "sunlight or firelight",
+        "a glow"
+      ],
+      "pairs_well_with": ["fire", "see", "sky", "dark", "good", "hold", "through"]
+    },
+    "dark": {
+      "core_idea": "darkness; no light",
+      "roles": ["material", "substance", "nature"],
+      "association_ideas": [
+        "darkness",
+        "absence of light",
+        "night",
+        "shadow",
+        "hidden from sight",
+        "what you fear when lost"
+      ],
+      "pairs_well_with": ["light", "inside", "fear", "know", "still"]
+    },
+    "hot": {
+      "core_idea": "hot; warm to burning",
+      "roles": ["property", "nature"],
+      "association_ideas": [
+        "warm temperature",
+        "burning heat",
+        "high temperature sensation",
+        "what fire produces",
+        "uncomfortable warmth"
+      ],
+      "pairs_well_with": ["fire", "water", "bad", "body", "air"]
+    },
+    "cold": {
+      "core_idea": "cold; chilly to freezing",
+      "roles": ["property", "nature"],
+      "association_ideas": [
+        "chilly",
+        "freezing temperature",
+        "low temperature sensation",
+        "what winter brings",
+        "ice cold"
+      ],
+      "pairs_well_with": ["water", "earth", "stone", "body", "bad"]
+    },
+    "stone": {
+      "core_idea": "a hard rock",
+      "roles": ["material", "hardness", "weight"],
+      "association_ideas": [
+        "hard material",
+        "weight",
+        "a grinding or striking surface",
+        "a held rock",
+        "building material",
+        "something dense and durable"
+      ],
+      "pairs_well_with": ["hand", "use", "hold", "take", "bound", "earth"],
+      "weak_as": ["creation_verb"],
+      "anti_patterns": [
+        "stone+make does not name a tool — stone is a material, make is a process; the result is not recoverable.",
+        "stone is best paired with a functional verb (hold, use, take, hand, bound) to name a stone-based object."
+      ]
+    },
+    "plant": {
+      "core_idea": "a plant",
+      "roles": ["material", "substance", "nature"],
+      "association_ideas": [
+        "vegetation",
+        "a tree or shrub",
+        "grass or fiber",
+        "organic growing material",
+        "wood",
+        "what grows from earth",
+        "the source of food, rope, and wood"
+      ],
+      "pairs_well_with": ["earth", "water", "animal", "food", "bound", "skin", "stone"]
+    },
+    "animal": {
+      "core_idea": "an animal",
+      "roles": ["entity", "nature"],
+      "association_ideas": [
+        "a living creature",
+        "a beast",
+        "non-human organism",
+        "wildlife",
+        "a creature that moves and feels",
+        "prey or companion"
+      ],
+      "pairs_well_with": ["person", "body", "move", "eat", "place", "food"]
+    },
+    "sky": {
+      "core_idea": "the sky above",
+      "roles": ["material", "substance", "nature"],
+      "association_ideas": [
+        "the heavens above",
+        "overhead space",
+        "where sun and clouds are",
+        "the open space above earth",
+        "where birds fly",
+        "direction of the sun"
+      ],
+      "pairs_well_with": ["air", "light", "up", "far", "fire", "move"]
+    },
+    "inside": {
+      "core_idea": "in; within something",
+      "roles": ["location", "spatial"],
+      "association_ideas": [
+        "contained within",
+        "interior space",
+        "inner part of something",
+        "sheltered inside",
+        "enclosed"
+      ],
+      "pairs_well_with": ["body", "place", "bound", "hold", "empty", "dark", "earth"]
+    },
+    "outside": {
+      "core_idea": "out; beyond something's edge",
+      "roles": ["location", "spatial"],
+      "association_ideas": [
+        "exterior",
+        "beyond the boundary",
+        "out in the open",
+        "exposed to the world",
+        "the outer surface"
+      ],
+      "pairs_well_with": ["inside", "place", "bound", "far", "body", "skin"]
+    },
+    "here": {
+      "core_idea": "at this place",
+      "roles": ["location", "spatial"],
+      "association_ideas": [
+        "this location",
+        "right here",
+        "this spot",
+        "nearby reference",
+        "where we are now"
+      ],
+      "pairs_well_with": ["place", "now", "person", "near"]
+    },
+    "there": {
+      "core_idea": "at that place",
+      "roles": ["location", "spatial"],
+      "association_ideas": [
+        "that location",
+        "over there",
+        "a distant reference point",
+        "yonder",
+        "where they are"
+      ],
+      "pairs_well_with": ["place", "far", "person", "here"]
+    },
+    "near": {
+      "core_idea": "close by",
+      "roles": ["location", "spatial"],
+      "association_ideas": [
+        "close by",
+        "proximate",
+        "adjacent",
+        "not far",
+        "within reach",
+        "a short distance"
+      ],
+      "pairs_well_with": ["person", "place", "here", "good", "speak", "touch"]
+    },
+    "far": {
+      "core_idea": "a long way off",
+      "roles": ["location", "spatial"],
+      "association_ideas": [
+        "distant",
+        "remote",
+        "a long way away",
+        "separated by distance",
+        "hard to reach",
+        "the horizon"
+      ],
+      "pairs_well_with": ["place", "path", "there", "fear", "before", "move"]
+    },
+    "up": {
+      "core_idea": "toward a higher place",
+      "roles": ["location", "direction"],
+      "association_ideas": [
+        "higher position",
+        "above",
+        "overhead direction",
+        "elevated",
+        "rising",
+        "toward the sky"
+      ],
+      "pairs_well_with": ["move", "place", "sky", "body", "path", "earth"]
+    },
+    "down": {
+      "core_idea": "toward a lower place",
+      "roles": ["location", "direction"],
+      "association_ideas": [
+        "lower position",
+        "below",
+        "toward ground",
+        "falling or descending",
+        "sinking",
+        "the underside"
+      ],
+      "pairs_well_with": ["move", "place", "earth", "body", "path", "water"]
+    },
+    "path": {
+      "core_idea": "a way or route to travel along",
+      "roles": ["location", "direction", "spatial"],
+      "association_ideas": [
+        "a route or trail",
+        "a walkway",
+        "the direction of travel",
+        "a passageway",
+        "how you get from one place to another",
+        "a road"
+      ],
+      "pairs_well_with": ["move", "place", "water", "earth", "through", "far", "bound"]
+    },
+    "place": {
+      "core_idea": "a spot or location",
+      "roles": ["location", "spatial"],
+      "association_ideas": [
+        "a spot",
+        "a location",
+        "a site or area",
+        "where something is or happens",
+        "a position in space"
+      ],
+      "pairs_well_with": ["person", "inside", "path", "here", "there", "many", "move"]
+    },
+    "bound": {
+      "core_idea": "an edge; where something ends; also tied or fastened",
+      "roles": ["location", "spatial", "relationship"],
+      "association_ideas": [
+        "an edge or boundary",
+        "where one thing ends and another begins",
+        "a limit",
+        "tied or fastened together",
+        "a joint or connection point",
+        "what closes or contains"
+      ],
+      "pairs_well_with": ["inside", "outside", "stone", "plant", "path", "hold", "take", "many"]
+    },
+    "around": {
+      "core_idea": "encircling; going in a circle; again",
+      "roles": ["location", "direction", "spatial"],
+      "association_ideas": [
+        "encircling something",
+        "surrounding",
+        "going in a circle",
+        "looping back",
+        "rotating",
+        "repeated or cyclic"
+      ],
+      "pairs_well_with": ["move", "body", "path", "many", "bound"]
+    },
+    "front": {
+      "core_idea": "forward; the front side; ahead",
+      "roles": ["location", "direction"],
+      "association_ideas": [
+        "the forward-facing side",
+        "ahead",
+        "in front of",
+        "leading side",
+        "where you face"
+      ],
+      "pairs_well_with": ["move", "body", "path", "here", "near"]
+    },
+    "back": {
+      "core_idea": "behind; the back side; rear",
+      "roles": ["location", "direction"],
+      "association_ideas": [
+        "the rear",
+        "behind",
+        "the backside",
+        "what's behind you",
+        "receding side",
+        "the return direction"
+      ],
+      "pairs_well_with": ["before", "body", "inside", "self", "move"]
+    },
+    "through": {
+      "core_idea": "through; passing from one side to the other",
+      "roles": ["location", "direction", "spatial"],
+      "association_ideas": [
+        "passing from one side to the other",
+        "penetrating",
+        "going across or inside",
+        "a passage",
+        "from entry to exit"
+      ],
+      "pairs_well_with": ["path", "move", "bound", "inside", "light", "see"]
+    },
+    "before": {
+      "core_idea": "earlier; in the past",
+      "roles": ["temporal"],
+      "association_ideas": [
+        "earlier",
+        "in the past",
+        "prior to now",
+        "what came before",
+        "memory or history",
+        "the past state"
+      ],
+      "pairs_well_with": ["now", "know", "after", "time", "far"]
+    },
+    "after": {
+      "core_idea": "later; coming next",
+      "roles": ["temporal"],
+      "association_ideas": [
+        "later",
+        "in the future",
+        "coming next",
+        "subsequent",
+        "what follows",
+        "eventually"
+      ],
+      "pairs_well_with": ["now", "before", "time", "want", "good", "near"]
+    },
+    "now": {
+      "core_idea": "right now; this moment",
+      "roles": ["temporal"],
+      "association_ideas": [
+        "at this moment",
+        "currently happening",
+        "the present",
+        "this point in time",
+        "happening right here"
+      ],
+      "pairs_well_with": ["before", "after", "here", "time", "do"]
+    },
+    "time": {
+      "core_idea": "time; how long things last",
+      "roles": ["temporal"],
+      "association_ideas": [
+        "duration",
+        "a period or span",
+        "how long something lasts",
+        "a point in history",
+        "the passing of events"
+      ],
+      "pairs_well_with": ["before", "after", "now", "many", "one"]
+    },
+    "one": {
+      "core_idea": "a single one",
+      "roles": ["amount", "degree"],
+      "association_ideas": [
+        "a single instance",
+        "alone",
+        "just one",
+        "individual",
+        "solitary",
+        "undivided"
+      ],
+      "pairs_well_with": ["person", "place", "time", "self", "still"]
+    },
+    "many": {
+      "core_idea": "a lot; lots of them",
+      "roles": ["amount", "degree"],
+      "association_ideas": [
+        "numerous",
+        "a lot",
+        "lots of",
+        "multiple",
+        "a crowd",
+        "more than a few"
+      ],
+      "pairs_well_with": ["person", "collective", "place", "time", "bond"]
+    },
+    "all": {
+      "core_idea": "every one of them",
+      "roles": ["amount", "degree"],
+      "association_ideas": [
+        "every one",
+        "the whole set",
+        "entirely",
+        "complete",
+        "nothing excluded"
+      ],
+      "pairs_well_with": ["person", "collective", "time", "place", "know"]
+    },
+    "some": {
+      "core_idea": "a few; part of them",
+      "roles": ["amount", "degree"],
+      "association_ideas": [
+        "a few",
+        "partial",
+        "not all",
+        "certain ones",
+        "an unspecified portion"
+      ],
+      "pairs_well_with": ["person", "place", "food", "time"]
+    },
+    "more": {
+      "core_idea": "a greater amount",
+      "roles": ["amount", "degree"],
+      "association_ideas": [
+        "greater in quantity",
+        "additional",
+        "extra",
+        "increased amount",
+        "comparative increase",
+        "beyond what was"
+      ],
+      "pairs_well_with": ["good", "food", "water", "want", "same"]
+    },
+    "less": {
+      "core_idea": "a smaller amount",
+      "roles": ["amount", "degree"],
+      "association_ideas": [
+        "smaller amount",
+        "reduced",
+        "fewer",
+        "diminished",
+        "not as much as before"
+      ],
+      "pairs_well_with": ["good", "food", "want", "pain", "same"]
+    },
+    "fast": {
+      "core_idea": "quick; moving at high speed",
+      "roles": ["property", "degree"],
+      "association_ideas": [
+        "quickly",
+        "at speed",
+        "rapidly",
+        "without delay",
+        "swift movement",
+        "urgency"
+      ],
+      "pairs_well_with": ["move", "time", "want", "now", "body"]
+    },
+    "love": {
+      "core_idea": "to deeply care for someone",
+      "roles": ["feeling", "affect"],
+      "association_ideas": [
+        "deep caring",
+        "affection",
+        "emotional attachment",
+        "treasuring another",
+        "strong positive bond",
+        "what connects family and mates"
+      ],
+      "pairs_well_with": ["person", "bond", "feel", "good", "want"]
+    },
+    "fear": {
+      "core_idea": "to be afraid",
+      "roles": ["feeling", "affect"],
+      "association_ideas": [
+        "fright",
+        "dread",
+        "alarm",
+        "the feeling of danger",
+        "terror",
+        "the urge to flee",
+        "what you feel before conflict"
+      ],
+      "pairs_well_with": ["bad", "dark", "conflict", "body", "feel", "person"]
+    },
+    "pain": {
+      "core_idea": "hurting; physical or emotional hurt",
+      "roles": ["feeling", "affect"],
+      "association_ideas": [
+        "physical hurt",
+        "suffering",
+        "aching",
+        "injury sensation",
+        "emotional hurt or distress",
+        "what you signal when wounded"
+      ],
+      "pairs_well_with": ["body", "bad", "feel", "inside", "good", "help"]
+    },
+    "good": {
+      "core_idea": "good; works well or is wanted",
+      "roles": ["judgment", "value"],
+      "association_ideas": [
+        "beneficial",
+        "wanted",
+        "right or correct",
+        "healthy or functioning well",
+        "positive in quality",
+        "what you seek"
+      ],
+      "pairs_well_with": ["feel", "food", "give", "want", "body", "know", "near"]
+    },
+    "bad": {
+      "core_idea": "bad; harmful or unwanted",
+      "roles": ["judgment", "value"],
+      "association_ideas": [
+        "harmful",
+        "unwanted",
+        "wrong or broken",
+        "dangerous",
+        "negative in quality",
+        "what you avoid"
+      ],
+      "pairs_well_with": ["pain", "feel", "fear", "conflict", "body", "know"]
+    },
+    "true": {
+      "core_idea": "true; matches what's real",
+      "roles": ["judgment", "value"],
+      "association_ideas": [
+        "factual",
+        "real",
+        "accurate",
+        "honest",
+        "what actually is",
+        "matching reality"
+      ],
+      "pairs_well_with": ["know", "speak", "same", "good", "self"]
+    },
+    "bond": {
+      "core_idea": "a bond; a tie between things",
+      "roles": ["relation", "connection"],
+      "association_ideas": [
+        "a connection",
+        "a tie between people or things",
+        "attachment or relationship",
+        "what holds things or people together",
+        "link or commitment"
+      ],
+      "pairs_well_with": ["person", "collective", "love", "near", "hold", "many"]
+    },
+    "conflict": {
+      "core_idea": "a clash or fight between sides",
+      "roles": ["relation", "connection"],
+      "association_ideas": [
+        "a clash or fight",
+        "opposition between forces",
+        "war or struggle",
+        "fighting or attacking",
+        "opposing actions",
+        "the act of striking at"
+      ],
+      "pairs_well_with": ["person", "collective", "pain", "bad", "take", "tool"]
+    },
+    "same": {
+      "core_idea": "the same; not different",
+      "roles": ["relation", "connection"],
+      "association_ideas": [
+        "identical",
+        "matching",
+        "equivalent",
+        "not different",
+        "shared quality",
+        "like each other"
+      ],
+      "pairs_well_with": ["person", "know", "bond", "true", "time"]
+    },
+    "still": {
+      "core_idea": "not moving; staying put",
+      "roles": ["property", "process"],
+      "association_ideas": [
+        "motionless",
+        "stopped",
+        "not moving",
+        "at rest",
+        "calm and quiet",
+        "frozen in place"
+      ],
+      "pairs_well_with": ["body", "place", "inside", "empty", "before", "dark"]
+    },
+    "hand": {
+      "core_idea": "your hand",
+      "roles": ["body", "physical"],
+      "association_ideas": [
+        "the hand",
+        "tool-using limb",
+        "the grasping organ",
+        "the palm and fingers",
+        "what you use to hold, give, take"
+      ],
+      "pairs_well_with": ["stone", "use", "hold", "take", "bound", "body"]
+    },
+    "eye": {
+      "core_idea": "your eye",
+      "roles": ["body", "physical"],
+      "association_ideas": [
+        "the eye",
+        "the visual organ",
+        "what looks and sees",
+        "the organ of sight on the head",
+        "eyes open or closed"
+      ],
+      "pairs_well_with": ["see", "body", "light", "know", "head"]
+    },
+    "skin": {
+      "core_idea": "skin",
+      "roles": ["body", "physical"],
+      "association_ideas": [
+        "outer covering of the body",
+        "surface of flesh",
+        "membrane or hide",
+        "what you touch when touching a person",
+        "barrier between inside and outside"
+      ],
+      "pairs_well_with": ["body", "outside", "touch", "plant", "bound"]
+    },
+    "bone": {
+      "core_idea": "a bone",
+      "roles": ["body", "physical"],
+      "association_ideas": [
+        "hard internal structure",
+        "skeleton",
+        "the solid frame inside the body",
+        "structural support",
+        "what remains when flesh is gone"
+      ],
+      "pairs_well_with": ["body", "inside", "stone", "hold", "hard"]
+    },
+    "head": {
+      "core_idea": "your head",
+      "roles": ["body", "physical"],
+      "association_ideas": [
+        "the head or skull",
+        "the upper part of the body",
+        "where the mind is",
+        "the top of the body",
+        "where eyes, ears, mouth are"
+      ],
+      "pairs_well_with": ["body", "think", "eye", "mouth", "up", "hear", "see"]
+    },
+    "heart": {
+      "core_idea": "your heart",
+      "roles": ["body", "physical"],
+      "association_ideas": [
+        "the heart organ",
+        "the emotional center",
+        "vital inner organ",
+        "the pulse or heartbeat",
+        "the core of feeling"
+      ],
+      "pairs_well_with": ["body", "feel", "love", "inside", "move", "life"]
+    },
+    "mouth": {
+      "core_idea": "your mouth",
+      "roles": ["body", "physical"],
+      "association_ideas": [
+        "the mouth opening",
+        "where speech and eating happen",
+        "lips and teeth",
+        "the organ of tasting and talking",
+        "the opening in the face"
+      ],
+      "pairs_well_with": ["speak", "eat", "body", "taste", "head", "inside"]
+    },
+    "big": {
+      "core_idea": "big; large in size",
+      "roles": ["property"],
+      "association_ideas": [
+        "large",
+        "great in size",
+        "massive or extensive",
+        "imposing in scale",
+        "more than average size"
+      ],
+      "pairs_well_with": ["person", "body", "place", "many", "stone", "water", "animal"]
+    },
+    "small": {
+      "core_idea": "small; little in size",
+      "roles": ["property"],
+      "association_ideas": [
+        "little",
+        "tiny",
+        "slight",
+        "minor in size",
+        "not much space",
+        "compact"
+      ],
+      "pairs_well_with": ["one", "person", "body", "place", "stone", "animal"]
+    },
+    "need": {
+      "core_idea": "to need something",
+      "roles": ["cognition", "emotion"],
+      "association_ideas": [
+        "to require",
+        "necessity",
+        "a must-have",
+        "essential want",
+        "lacking something vital",
+        "urgency of lack"
+      ],
+      "pairs_well_with": ["want", "food", "water", "help", "good", "pain"]
+    },
+    "name": {
+      "core_idea": "a name",
+      "roles": ["communication", "identity"],
+      "association_ideas": [
+        "a word that identifies someone",
+        "a label",
+        "an identity marker",
+        "what you say to address someone",
+        "the spoken word for a thing"
+      ],
+      "pairs_well_with": ["person", "self", "speak", "know", "mark"]
+    }
+  }
+}

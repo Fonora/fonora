@@ -127,11 +127,11 @@ export function firstSentence(text, maxLen = 160) {
 /**
  * Description = the first real paragraph after the H1.
  *
- * Research notes intentionally have NO "TL;DR" (or any other) summary line —
- * they open straight into `## Research Question` in the lab-notebook voice
+ * Research notes intentionally have NO "TL;DR" (or any other) summary line.
+ * They open straight into `## Research Question` in the lab-notebook voice
  * described in docs/research-notes-authoring.md. Do not reintroduce a TL;DR
  * blockquote or special-case it here; `research:verify-md` rejects notes that
- * contain one.
+ * contain one. Notes must also avoid em dashes (U+2014); see the same doc.
  * @param {string} markdown
  */
 export function extractDescription(markdown) {

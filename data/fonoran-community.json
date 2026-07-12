@@ -8,7 +8,7 @@
       "email": "info@fonora.org",
       "name": "James Calhoun",
       "created_at": "2026-07-03T19:24:02.107Z",
-      "last_login": "2026-07-05T00:05:21.498Z"
+      "last_login": "2026-07-12T02:20:42.598Z"
     },
     {
       "id": "usr-mr5e5763-05fa58e9",
@@ -153,9 +153,9 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 0,
-              "totalLessons": 0,
-              "ring": ""
+              "total": 39,
+              "totalLessons": 4,
+              "ring": "Places of articulation"
             }
           },
           "script-writing": {
@@ -165,9 +165,9 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 0,
-              "totalLessons": 0,
-              "ring": ""
+              "total": 1476,
+              "totalLessons": 100,
+              "ring": "First contact & identity"
             }
           },
           "script-words": {
@@ -177,9 +177,9 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 0,
-              "totalLessons": 0,
-              "ring": ""
+              "total": 1476,
+              "totalLessons": 100,
+              "ring": "First contact & identity"
             }
           },
           "fonoran-reading": {
@@ -198,7 +198,7 @@
               }
             },
             "curriculum": {
-              "total": 176,
+              "total": 1476,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -215,7 +215,7 @@
               }
             },
             "curriculum": {
-              "total": 176,
+              "total": 1476,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -227,7 +227,7 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 176,
+              "total": 1476,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -244,7 +244,7 @@
               }
             },
             "curriculum": {
-              "total": 78,
+              "total": 665,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -256,14 +256,14 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 78,
+              "total": 665,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
           }
         }
       },
-      "updated_at": "2026-07-05T00:57:43.587Z"
+      "updated_at": "2026-07-12T02:22:21.127Z"
     }
   },
   "proposals": [],

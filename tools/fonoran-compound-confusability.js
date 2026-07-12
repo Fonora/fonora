@@ -269,6 +269,12 @@ export function findNearConfusablePairs(entries, threshold = NEAR_PAIR_THRESHOLD
           b: b.concept,
           surfaceA: a.surface,
           surfaceB: b.surface,
+          glossA: a.gloss,
+          glossB: b.gloss,
+          partsA: a.parts,
+          partsB: b.parts,
+          partsLabelA: a.partsLabel,
+          partsLabelB: b.partsLabel,
           distance: dist,
           distinctness: 1 - dist,
         });
@@ -331,7 +337,16 @@ export function auditCompoundConfusability(compounds, rootById, resolver) {
         issues: boundary.issues,
       });
     }
-    entries.push({ concept: c.concept, surface, flatCount: flatIds.length, boundary });
+    entries.push({
+      concept: c.concept,
+      gloss: c.preferred?.gloss ?? c.gloss ?? c.concept.replace(/_/g, ' '),
+      composition: flatIds,
+      parts: flatIds.map(id => ({ id, spelling: rootById[id] ?? '?' })),
+      partsLabel: flatIds.map(id => rootById[id] ?? id).join(' + '),
+      surface,
+      flatCount: flatIds.length,
+      boundary,
+    });
   }
 
   const nearPairs = findNearConfusablePairs(entries);

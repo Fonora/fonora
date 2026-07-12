@@ -42,6 +42,7 @@ const MIN_SPEARMAN = Number(process.env.LLM_RELIABILITY_MIN_SPEARMAN ?? 0.6);
 function parseArgs(argv) {
   return {
     calibration: argv.includes('--calibration'),
+    fresh: argv.includes('--fresh'),
     report: argv.includes('--report') || (!argv.includes('--run') && !argv.includes('--calibration')),
     run: argv.includes('--run'),
     dryRun: argv.includes('--dry-run'),
@@ -148,14 +149,15 @@ export function compareModelAggregates(primaryAgg, secondaryAgg, conceptIds) {
   };
 }
 
-function runIntuitionForModel(model, concepts) {
+function runIntuitionForModel(model, concepts, { fresh = false } = {}) {
   return new Promise((resolve, reject) => {
     const args = [
       'scripts/fonoran-llm-intuition.js',
       '--concepts', concepts.join(','),
-      '--resume',
       '--concurrency', '4',
     ];
+    if (fresh) args.push('--fresh');
+    else args.push('--resume');
     const child = spawn('node', args, {
       cwd: ROOT,
       env: { ...process.env, ANTHROPIC_MODEL_JUDGE: model },
@@ -246,20 +248,26 @@ async function main() {
     conceptIds = [...new Set((doc?.rounds ?? []).map(r => r.concept_id).filter(Boolean))];
   }
 
+  const { computeSeedBankFingerprint } = await import('../tools/fonoran-seed-fingerprint.js');
+  const { fingerprint: seedFingerprint } = await computeSeedBankFingerprint();
+
   if (opts.run && !opts.dryRun) {
     const primary = DEFAULT_PRIMARY();
     const secondary = DEFAULT_SECONDARY();
     console.log(`Running calibration on ${conceptIds.length} concepts…`);
+    if (opts.fresh) console.log('  Mode: fresh (discard stale rounds for these concepts)');
     console.log(`  Pass 1: ${primary}`);
-    await runIntuitionForModel(primary, conceptIds);
+    await runIntuitionForModel(primary, conceptIds, { fresh: opts.fresh });
     console.log(`  Pass 2: ${secondary}`);
-    await runIntuitionForModel(secondary, conceptIds);
+    await runIntuitionForModel(secondary, conceptIds, { fresh: false });
   } else if (opts.run && opts.dryRun) {
     console.log('Dry run — would run both judge models on:', conceptIds.join(', '));
     return;
   }
 
   const report = await buildReport(conceptIds);
+  report.seed_bank_fingerprint = seedFingerprint;
+  report.seed_bank_fingerprint_at = new Date().toISOString();
   mkdirSync(dirname(REPORT_PATH), { recursive: true });
   writeFileSync(REPORT_PATH, JSON.stringify(report, null, 2) + '\n');
   printReport(report);

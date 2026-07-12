@@ -56,7 +56,7 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
       lines.push(`  ${row}`);
     }
   } else {
-    lines.push('  in/inside→inside (mes), here→here (nam), there→there (tak), toward→path (nan), from→source (lo), near→near (dal), far→far (fet), up→up (ra), down→down (ju)');
+    lines.push('  in/inside→inside (mes), here→here (nam), there→there (tak), toward→path (nan), from→source (lo), near→near (dal), far→far (fet), up→up (wa), down→down (do)');
   }
   lines.push('Personal pronouns except mi resolve lexically: you→addressee (be), self→self (de).');
   lines.push('First-person plural we/us — default subject: collective (dan). Optional alternate: mi + addressee (I + you) when the source explicitly signals a dyad (each other, you and I, both of us). Do not infer dyadic vs group from topic alone.');

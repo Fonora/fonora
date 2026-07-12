@@ -4,6 +4,7 @@
 
 import { escapeHtml } from './utils.js';
 import { refreshAuth } from './auth-session.js';
+import { initLlmPipelineWizard } from './fonoran-llm-pipeline-wizard.js';
 
 const TAB_ROOT = () => document.getElementById('tab-advanced');
 
@@ -289,5 +290,5 @@ function wireAdvancedPage() {
 
 export async function onAdvancedTabActivated() {
   wireAdvancedPage();
-  await refreshAdvancedPage();
+  await Promise.all([refreshAdvancedPage(), initLlmPipelineWizard()]);
 }

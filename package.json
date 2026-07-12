@@ -58,6 +58,7 @@
     "fonoran:build:approved": "node tools/fonoran-build.js --approve-all",
     "fonoran:compound-audit": "node tools/fonoran-compound-audit.js",
     "fonoran:compound-confusability": "node scripts/fonoran-compound-confusability.js",
+    "fonoran:seed-quality-audit": "node scripts/fonoran-seed-quality-audit.js",
     "fonoran:translation-gaps": "node scripts/fonoran-translation-gaps.js",
     "fonoran:translate:cache-warm": "node scripts/fonoran-translate-cache-warm.js",
     "fonoran:translate:cache": "node tools/fonoran-translation-cache.js",

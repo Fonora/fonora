@@ -696,6 +696,7 @@ export function makeIntuitionRoundRecord({
   result,
   model,
   pair = null,
+  seedBankFingerprint = null,
 }) {
   const base = {
     id: `llm-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
@@ -710,6 +711,7 @@ export function makeIntuitionRoundRecord({
     prompt_version: PROMPT_VERSION,
     battery: BATTERY_VERSION,
     model,
+    seed_bank_fingerprint: seedBankFingerprint,
     tags: result.tags ?? [],
     reasoning: result.reasoning ?? '',
   };

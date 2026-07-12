@@ -126,12 +126,15 @@ export function understandabilityLabel(score) {
  *        Returns experience metadata for a component id, or null if unknown.
  * @param {number} [ctx.collisionCount]  how many concepts claim this exact combination.
  * @param {number} [ctx.flatCount]       flattened atomic root count (when known).
+ * @param {string} [ctx.conceptId]       target concept — enables campfire role penalty.
+ * @param {number} [ctx.campfireScore]     precomputed campfire score 0..1.
  * @returns {{ score:number, label:string, breakdown:object, flatCount:number|null }}
  */
 export function scoreUnderstandability(composition, ctx = {}) {
   const parts = Array.isArray(composition) ? composition.filter(Boolean) : [];
   const metaFor = ctx.metaFor ?? (() => null);
   const flatCount = ctx.flatCount ?? null;
+  const campfireScore = ctx.campfireScore ?? 1;
 
   const breakdown = {
     familiarity: clamp01(familiarity(parts, metaFor)),
@@ -144,6 +147,10 @@ export function scoreUnderstandability(composition, ctx = {}) {
 
   let score = 0;
   for (const [k, w] of Object.entries(WEIGHTS)) score += breakdown[k] * w;
+  if (ctx.conceptId && campfireScore < 1) {
+    breakdown.campfire_penalty = campfireScore;
+    score *= 0.5 + 0.5 * campfireScore;
+  }
   score = clamp01(score);
 
   return {

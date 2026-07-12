@@ -1,0 +1,230 @@
+{
+  "generated_at": "2026-07-12T02:50:22.473Z",
+  "phonetic_seed_pass": true,
+  "dirty_seeds": [],
+  "total": 484,
+  "pass_count": 457,
+  "failure_count": 0,
+  "warning_count": 27,
+  "pass_rate": 0.9442148760330579,
+  "failures": [],
+  "warnings": [
+    {
+      "concept": "money",
+      "composition": "thing+exchange",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (thing+exchange) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "document",
+      "composition": "thing+mark",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (thing+mark) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "religion",
+      "composition": "bond+source",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (bond+source) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "whole",
+      "composition": "all+thing",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (all+thing) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "part",
+      "composition": "thing+small",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (thing+small) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "signal",
+      "composition": "give+mark",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (give+mark) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "container",
+      "composition": "thing+hold",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (thing+hold) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "open",
+      "composition": "empty+bound",
+      "score": 0.65,
+      "issues": [
+        "open (action verb) needs one of: move, give, take, hold, use, make, do, speak…"
+      ]
+    },
+    {
+      "concept": "bridge",
+      "composition": "path+water",
+      "score": 0.65,
+      "issues": [
+        "bridge (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "again",
+      "composition": "do+around",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (do+around) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "hide",
+      "composition": "self+back+outside",
+      "score": 0.65,
+      "issues": [
+        "hide (action verb) needs one of: move, give, take, hold, use, make, do, speak…"
+      ]
+    },
+    {
+      "concept": "tongue",
+      "composition": "taste+mouth",
+      "score": 0.65,
+      "issues": [
+        "tongue (body part) needs one of: body, move, feel, touch, smell, hear, see, eat…"
+      ]
+    },
+    {
+      "concept": "blood",
+      "composition": "life+water",
+      "score": 0.65,
+      "issues": [
+        "blood (body part) needs one of: body, move, feel, touch, smell, hear, see, eat…"
+      ]
+    },
+    {
+      "concept": "imagine",
+      "composition": "think+make",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (think+make) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "break",
+      "composition": "conflict+thing",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (conflict+thing) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "repeat",
+      "composition": "around+do",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (around+do) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "bowl",
+      "composition": "empty+eat",
+      "score": 0.65,
+      "issues": [
+        "bowl (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "cup",
+      "composition": "empty+drink",
+      "score": 0.65,
+      "issues": [
+        "cup (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "window",
+      "composition": "light+through",
+      "score": 0.65,
+      "issues": [
+        "window (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "floor",
+      "composition": "earth+inside",
+      "score": 0.65,
+      "issues": [
+        "floor (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "boat",
+      "composition": "thing+water",
+      "score": 0.65,
+      "issues": [
+        "boat (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "thread",
+      "composition": "small+bond",
+      "score": 0.65,
+      "issues": [
+        "thread (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "net",
+      "composition": "bond+many",
+      "score": 0.65,
+      "issues": [
+        "net (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "needle",
+      "composition": "small+through",
+      "score": 0.65,
+      "issues": [
+        "needle (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "plank",
+      "composition": "plant+stone",
+      "score": 0.65,
+      "issues": [
+        "plank (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+      ]
+    },
+    {
+      "concept": "tie",
+      "composition": "bond+hand",
+      "score": 0.65,
+      "issues": [
+        "tie (action verb) needs one of: move, give, take, hold, use, make, do, speak…"
+      ]
+    },
+    {
+      "concept": "cut",
+      "composition": "bound+make",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (bound+make) — need a concrete functional anchor"
+      ]
+    }
+  ],
+  "gate_pass": true
+}

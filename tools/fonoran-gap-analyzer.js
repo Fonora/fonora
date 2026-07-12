@@ -13,6 +13,7 @@
 import { anthropicConfigured, completeJson } from './fonoran-llm-client.js';
 import { buildCompositionResolver, detectRedundantRootPattern } from './fonoran-composition-resolve.js';
 import { phoneticPromptBrief } from './fonoran-phonetic-weights.js';
+import { semanticFieldsPromptBrief, loadRootSemanticFields } from './fonoran-root-semantic-fields.js';
 import { readDoc } from './fonoran-store.js';
 import { loadConceptInventory } from './fonoran-concepts.js';
 
@@ -59,10 +60,14 @@ export async function analyzeGap(word, role, primitiveIds, compoundDefs, invento
   const maxFlattened = opts.maxFlattened ?? 4;
   const count = opts.count ?? 6;
 
+  const fields = opts.semanticFields ?? await loadRootSemanticFields().catch(() => null);
+  const semanticBrief = fields ? semanticFieldsPromptBrief(fields) : '';
+
   const prompt = [
     `You are helping grow a constructed language called Fonoran for two strangers with no shared language.`,
     `Success = campfire recovery: another root-knower would GUESS the meaning, not perfect semantic taxonomy.`,
     ``,
+    semanticBrief ? `${semanticBrief}\n` : '',
     `Primitive root glossary (id: meaning — spoken form):`,
     glossary,
     ``,

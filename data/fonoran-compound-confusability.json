@@ -1,0 +1,2241 @@
+{
+  "generated_at": "2026-07-12T01:04:47.290Z",
+  "seed_bank_fingerprint": "7f2b72c7e9d98eaf",
+  "compound_count": 484,
+  "near_pair_count": 108,
+  "near_pairs": [
+    {
+      "a": "meeting_point",
+      "b": "dangerous_ground",
+      "surfaceA": "chekam",
+      "surfaceB": "chegam",
+      "glossA": "an agreed spot where people come together",
+      "glossB": "a hazardous or unsafe location",
+      "partsA": [
+        {
+          "id": "place",
+          "spelling": "che"
+        },
+        {
+          "id": "bond",
+          "spelling": "kam"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "place",
+          "spelling": "che"
+        },
+        {
+          "id": "bad",
+          "spelling": "gam"
+        }
+      ],
+      "partsLabelA": "che + kam",
+      "partsLabelB": "che + gam",
+      "distance": 0.049999999999999996,
+      "distinctness": 0.95
+    },
+    {
+      "a": "enemy",
+      "b": "partner",
+      "surfaceA": "gamba",
+      "surfaceB": "kamba",
+      "glossA": "person in conflict",
+      "glossB": "a bonded companion; a close partner",
+      "partsA": [
+        {
+          "id": "bad",
+          "spelling": "gam"
+        },
+        {
+          "id": "person",
+          "spelling": "ba"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "bond",
+          "spelling": "kam"
+        },
+        {
+          "id": "person",
+          "spelling": "ba"
+        }
+      ],
+      "partsLabelA": "gam + ba",
+      "partsLabelB": "kam + ba",
+      "distance": 0.06,
+      "distinctness": 0.94
+    },
+    {
+      "a": "wait",
+      "b": "hidden",
+      "surfaceA": "tikan",
+      "surfaceB": "tigan",
+      "glossA": "staying still through time",
+      "glossB": "concealed from view; not visible to others",
+      "partsA": [
+        {
+          "id": "still",
+          "spelling": "ti"
+        },
+        {
+          "id": "time",
+          "spelling": "kan"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "still",
+          "spelling": "ti"
+        },
+        {
+          "id": "dark",
+          "spelling": "gan"
+        }
+      ],
+      "partsLabelA": "ti + kan",
+      "partsLabelB": "ti + gan",
+      "distance": 0.06,
+      "distinctness": 0.94
+    },
+    {
+      "a": "old",
+      "b": "still_raw",
+      "surfaceA": "femdi",
+      "surfaceB": "femti",
+      "glossA": "having existed for a long time; ancient or aged",
+      "glossB": "still raw",
+      "partsA": [
+        {
+          "id": "body",
+          "spelling": "fem"
+        },
+        {
+          "id": "before",
+          "spelling": "di"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "body",
+          "spelling": "fem"
+        },
+        {
+          "id": "still",
+          "spelling": "ti"
+        }
+      ],
+      "partsLabelA": "fem + di",
+      "partsLabelB": "fem + ti",
+      "distance": 0.06,
+      "distinctness": 0.94
+    },
+    {
+      "a": "void",
+      "b": "belongs",
+      "surfaceA": "tamche",
+      "surfaceB": "kamche",
+      "glossA": "empty place; nothingness",
+      "glossB": "belongs",
+      "partsA": [
+        {
+          "id": "empty",
+          "spelling": "tam"
+        },
+        {
+          "id": "place",
+          "spelling": "che"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "bond",
+          "spelling": "kam"
+        },
+        {
+          "id": "place",
+          "spelling": "che"
+        }
+      ],
+      "partsLabelA": "tam + che",
+      "partsLabelB": "kam + che",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "fever",
+      "b": "ear",
+      "surfaceA": "lemfem",
+      "surfaceB": "lenfem",
+      "glossA": "a hot body",
+      "glossB": "the ear; organ of hearing",
+      "partsA": [
+        {
+          "id": "hot",
+          "spelling": "lem"
+        },
+        {
+          "id": "body",
+          "spelling": "fem"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "hear",
+          "spelling": "len"
+        },
+        {
+          "id": "body",
+          "spelling": "fem"
+        }
+      ],
+      "partsLabelA": "lem + fem",
+      "partsLabelB": "len + fem",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "fire_making",
+      "b": "fist",
+      "surfaceA": "dakdat",
+      "surfaceB": "dakgat",
+      "glossA": "the act of creating fire; starting a fire",
+      "glossB": "a fist; the hand closed tightly",
+      "partsA": [
+        {
+          "id": "hand",
+          "spelling": "dak"
+        },
+        {
+          "id": "fire",
+          "spelling": "dat"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "hand",
+          "spelling": "dak"
+        },
+        {
+          "id": "hold",
+          "spelling": "gat"
+        }
+      ],
+      "partsLabelA": "dak + dat",
+      "partsLabelB": "dak + gat",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "trap",
+      "b": "duration",
+      "surfaceA": "gatkal",
+      "surfaceB": "gatkan",
+      "glossA": "a device or method to catch animals for food",
+      "glossB": "how long something lasts; the length of time something continues",
+      "partsA": [
+        {
+          "id": "hold",
+          "spelling": "gat"
+        },
+        {
+          "id": "animal",
+          "spelling": "kal"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "hold",
+          "spelling": "gat"
+        },
+        {
+          "id": "time",
+          "spelling": "kan"
+        }
+      ],
+      "partsLabelA": "gat + kal",
+      "partsLabelB": "gat + kan",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "infection",
+      "b": "basket",
+      "surfaceA": "tesmes",
+      "surfaceB": "tetmes",
+      "glossA": "a wound or body part that has become diseased or corrupted inside",
+      "glossB": "a woven container made from plant material",
+      "partsA": [
+        {
+          "id": "pain",
+          "spelling": "tes"
+        },
+        {
+          "id": "inside",
+          "spelling": "mes"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "plant",
+          "spelling": "tet"
+        },
+        {
+          "id": "inside",
+          "spelling": "mes"
+        }
+      ],
+      "partsLabelA": "tes + mes",
+      "partsLabelB": "tet + mes",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "high_ground",
+      "b": "desert",
+      "surfaceA": "fensam",
+      "surfaceB": "fentam",
+      "glossA": "elevated land; a place higher than the surrounding area",
+      "glossB": "dry barren land with little life; a desert",
+      "partsA": [
+        {
+          "id": "earth",
+          "spelling": "fen"
+        },
+        {
+          "id": "sky",
+          "spelling": "sam"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "earth",
+          "spelling": "fen"
+        },
+        {
+          "id": "empty",
+          "spelling": "tam"
+        }
+      ],
+      "partsLabelA": "fen + sam",
+      "partsLabelB": "fen + tam",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "enter",
+      "b": "floor",
+      "surfaceA": "felmes",
+      "surfaceB": "fenmes",
+      "glossA": "to go into something",
+      "glossB": "the flat bottom surface of a space",
+      "partsA": [
+        {
+          "id": "through",
+          "spelling": "fel"
+        },
+        {
+          "id": "inside",
+          "spelling": "mes"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "earth",
+          "spelling": "fen"
+        },
+        {
+          "id": "inside",
+          "spelling": "mes"
+        }
+      ],
+      "partsLabelA": "fel + mes",
+      "partsLabelB": "fen + mes",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "high_place",
+      "b": "open_space",
+      "surfaceA": "chesam",
+      "surfaceB": "chetam",
+      "glossA": "an elevated location; a high spot",
+      "glossB": "a clearing; an open area with nothing in it",
+      "partsA": [
+        {
+          "id": "place",
+          "spelling": "che"
+        },
+        {
+          "id": "sky",
+          "spelling": "sam"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "place",
+          "spelling": "che"
+        },
+        {
+          "id": "empty",
+          "spelling": "tam"
+        }
+      ],
+      "partsLabelA": "che + sam",
+      "partsLabelB": "che + tam",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "open_space",
+      "b": "meeting_point",
+      "surfaceA": "chetam",
+      "surfaceB": "chekam",
+      "glossA": "a clearing; an open area with nothing in it",
+      "glossB": "an agreed spot where people come together",
+      "partsA": [
+        {
+          "id": "place",
+          "spelling": "che"
+        },
+        {
+          "id": "empty",
+          "spelling": "tam"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "place",
+          "spelling": "che"
+        },
+        {
+          "id": "bond",
+          "spelling": "kam"
+        }
+      ],
+      "partsLabelA": "che + tam",
+      "partsLabelB": "che + kam",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "hidden_place",
+      "b": "dangerous_ground",
+      "surfaceA": "chegan",
+      "surfaceB": "chegam",
+      "glossA": "a concealed or sheltered spot",
+      "glossB": "a hazardous or unsafe location",
+      "partsA": [
+        {
+          "id": "place",
+          "spelling": "che"
+        },
+        {
+          "id": "dark",
+          "spelling": "gan"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "place",
+          "spelling": "che"
+        },
+        {
+          "id": "bad",
+          "spelling": "gam"
+        }
+      ],
+      "partsLabelA": "che + gan",
+      "partsLabelB": "che + gam",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "tired",
+      "b": "desert",
+      "surfaceA": "femtam",
+      "surfaceB": "fentam",
+      "glossA": "tired; the body is drained of energy and needs rest",
+      "glossB": "dry barren land with little life; a desert",
+      "partsA": [
+        {
+          "id": "body",
+          "spelling": "fem"
+        },
+        {
+          "id": "empty",
+          "spelling": "tam"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "earth",
+          "spelling": "fen"
+        },
+        {
+          "id": "empty",
+          "spelling": "tam"
+        }
+      ],
+      "partsLabelA": "fem + tam",
+      "partsLabelB": "fen + tam",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "bruise",
+      "b": "rash",
+      "surfaceA": "tatgan",
+      "surfaceB": "tatgam",
+      "glossA": "a bruise; dark discoloration under skin from impact injury",
+      "glossB": "a rash; irritated or inflamed area of skin",
+      "partsA": [
+        {
+          "id": "skin",
+          "spelling": "tat"
+        },
+        {
+          "id": "dark",
+          "spelling": "gan"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "skin",
+          "spelling": "tat"
+        },
+        {
+          "id": "bad",
+          "spelling": "gam"
+        }
+      ],
+      "partsLabelA": "tat + gan",
+      "partsLabelB": "tat + gam",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "nail",
+      "b": "coal",
+      "surfaceA": "gatsas",
+      "surfaceB": "datsas",
+      "glossA": "a fingernail; hard protective covering at the tip of a finger",
+      "glossB": "a hard black material that burns as fuel",
+      "partsA": [
+        {
+          "id": "hold",
+          "spelling": "gat"
+        },
+        {
+          "id": "stone",
+          "spelling": "sas"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "fire",
+          "spelling": "dat"
+        },
+        {
+          "id": "stone",
+          "spelling": "sas"
+        }
+      ],
+      "partsLabelA": "gat + sas",
+      "partsLabelB": "dat + sas",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "imagine",
+      "b": "close",
+      "surfaceA": "metkel",
+      "surfaceB": "meskel",
+      "glossA": "making something in the mind; imagination",
+      "glossB": "to shut or seal something",
+      "partsA": [
+        {
+          "id": "think",
+          "spelling": "met"
+        },
+        {
+          "id": "make",
+          "spelling": "kel"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "inside",
+          "spelling": "mes"
+        },
+        {
+          "id": "make",
+          "spelling": "kel"
+        }
+      ],
+      "partsLabelA": "met + kel",
+      "partsLabelB": "mes + kel",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "focus",
+      "b": "bag",
+      "surfaceA": "gatmet",
+      "surfaceB": "gatmes",
+      "glossA": "holding the mind on one thing; focus; concentration",
+      "glossB": "a container for carrying things",
+      "partsA": [
+        {
+          "id": "hold",
+          "spelling": "gat"
+        },
+        {
+          "id": "think",
+          "spelling": "met"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "hold",
+          "spelling": "gat"
+        },
+        {
+          "id": "inside",
+          "spelling": "mes"
+        }
+      ],
+      "partsLabelA": "gat + met",
+      "partsLabelB": "gat + mes",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "instant",
+      "b": "insect",
+      "surfaceA": "kangen",
+      "surfaceB": "kalgen",
+      "glossA": "a very brief moment; happening in no time",
+      "glossB": "a small crawling or flying creature; an insect or bug",
+      "partsA": [
+        {
+          "id": "time",
+          "spelling": "kan"
+        },
+        {
+          "id": "small",
+          "spelling": "gen"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "animal",
+          "spelling": "kal"
+        },
+        {
+          "id": "small",
+          "spelling": "gen"
+        }
+      ],
+      "partsLabelA": "kan + gen",
+      "partsLabelB": "kal + gen",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "temporary",
+      "b": "thread",
+      "surfaceA": "genkan",
+      "surfaceB": "genkam",
+      "glossA": "lasting only a short while; not permanent",
+      "glossB": "a thin strand used for sewing or binding",
+      "partsA": [
+        {
+          "id": "small",
+          "spelling": "gen"
+        },
+        {
+          "id": "time",
+          "spelling": "kan"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "small",
+          "spelling": "gen"
+        },
+        {
+          "id": "bond",
+          "spelling": "kam"
+        }
+      ],
+      "partsLabelA": "gen + kan",
+      "partsLabelB": "gen + kam",
+      "distance": 0.06666666666666667,
+      "distinctness": 0.9333333333333333
+    },
+    {
+      "a": "hope",
+      "b": "try",
+      "surfaceA": "gusak",
+      "surfaceB": "gisak",
+      "glossA": "good that is wanted",
+      "glossB": "try",
+      "partsA": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "want",
+          "spelling": "sak"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "want",
+          "spelling": "sak"
+        }
+      ],
+      "partsLabelA": "gu + sak",
+      "partsLabelB": "gi + sak",
+      "distance": 0.06999999999999999,
+      "distinctness": 0.93
+    },
+    {
+      "a": "fresh_water_source",
+      "b": "pour",
+      "surfaceA": "guye",
+      "surfaceB": "kuye",
+      "glossA": "a location where clean water can be found; a spring or stream",
+      "glossB": "to cause liquid to flow from a container",
+      "partsA": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "water",
+          "spelling": "ye"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "give",
+          "spelling": "ku"
+        },
+        {
+          "id": "water",
+          "spelling": "ye"
+        }
+      ],
+      "partsLabelA": "gu + ye",
+      "partsLabelB": "ku + ye",
+      "distance": 0.075,
+      "distinctness": 0.925
+    },
+    {
+      "a": "acceptance",
+      "b": "ready",
+      "surfaceA": "guti",
+      "surfaceB": "gudi",
+      "glossA": "feeling settled and still; acceptance; peace with what is",
+      "glossB": "ready",
+      "partsA": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "still",
+          "spelling": "ti"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "before",
+          "spelling": "di"
+        }
+      ],
+      "partsLabelA": "gu + ti",
+      "partsLabelB": "gu + di",
+      "distance": 0.075,
+      "distinctness": 0.925
+    },
+    {
+      "a": "equal",
+      "b": "grow",
+      "surfaceA": "homas",
+      "surfaceB": "fomas",
+      "glossA": "the same amount",
+      "glossB": "life changing larger",
+      "partsA": [
+        {
+          "id": "same",
+          "spelling": "ho"
+        },
+        {
+          "id": "more",
+          "spelling": "mas"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "life",
+          "spelling": "fo"
+        },
+        {
+          "id": "more",
+          "spelling": "mas"
+        }
+      ],
+      "partsLabelA": "ho + mas",
+      "partsLabelB": "fo + mas",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "peace",
+      "b": "storm",
+      "surfaceA": "tampa",
+      "surfaceB": "sampa",
+      "glossA": "collective without conflict",
+      "glossB": "violent weather; a storm",
+      "partsA": [
+        {
+          "id": "empty",
+          "spelling": "tam"
+        },
+        {
+          "id": "conflict",
+          "spelling": "pa"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "sky",
+          "spelling": "sam"
+        },
+        {
+          "id": "conflict",
+          "spelling": "pa"
+        }
+      ],
+      "partsLabelA": "tam + pa",
+      "partsLabelB": "sam + pa",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "cross",
+      "b": "fall",
+      "surfaceA": "gifel",
+      "surfaceB": "gifen",
+      "glossA": "moving through from one side to the other",
+      "glossB": "to drop downward unintentionally",
+      "partsA": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "through",
+          "spelling": "fel"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "earth",
+          "spelling": "fen"
+        }
+      ],
+      "partsLabelA": "gi + fel",
+      "partsLabelB": "gi + fen",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "edible",
+      "b": "fix",
+      "surfaceA": "gutel",
+      "surfaceB": "gukel",
+      "glossA": "safe to eat; not poisonous or harmful when consumed",
+      "glossB": "to repair; to restore something to working order",
+      "partsA": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "eat",
+          "spelling": "tel"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "make",
+          "spelling": "kel"
+        }
+      ],
+      "partsLabelA": "gu + tel",
+      "partsLabelB": "gu + kel",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "carrying",
+      "b": "torch",
+      "surfaceA": "gatgi",
+      "surfaceB": "datgi",
+      "glossA": "moving while holding something or someone; transporting",
+      "glossB": "a handheld fire-bearing light source",
+      "partsA": [
+        {
+          "id": "hold",
+          "spelling": "gat"
+        },
+        {
+          "id": "move",
+          "spelling": "gi"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "fire",
+          "spelling": "dat"
+        },
+        {
+          "id": "move",
+          "spelling": "gi"
+        }
+      ],
+      "partsLabelA": "gat + gi",
+      "partsLabelB": "dat + gi",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "away",
+      "b": "long_ago",
+      "surfaceA": "gifet",
+      "surfaceB": "difet",
+      "glossA": "moving in the direction away from something",
+      "glossB": "a long time in the past; ancient",
+      "partsA": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "far",
+          "spelling": "fet"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "before",
+          "spelling": "di"
+        },
+        {
+          "id": "far",
+          "spelling": "fet"
+        }
+      ],
+      "partsLabelA": "gi + fet",
+      "partsLabelB": "di + fet",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "downward",
+      "b": "pass",
+      "surfaceA": "fengi",
+      "surfaceB": "felgi",
+      "glossA": "moving toward a lower place",
+      "glossB": "to move through or past something",
+      "partsA": [
+        {
+          "id": "earth",
+          "spelling": "fen"
+        },
+        {
+          "id": "move",
+          "spelling": "gi"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "through",
+          "spelling": "fel"
+        },
+        {
+          "id": "move",
+          "spelling": "gi"
+        }
+      ],
+      "partsLabelA": "fen + gi",
+      "partsLabelB": "fel + gi",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "foot",
+      "b": "fall",
+      "surfaceA": "gifem",
+      "surfaceB": "gifen",
+      "glossA": "the foot; base of the leg used for walking",
+      "glossB": "to drop downward unintentionally",
+      "partsA": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "body",
+          "spelling": "fem"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "earth",
+          "spelling": "fen"
+        }
+      ],
+      "partsLabelA": "gi + fem",
+      "partsLabelB": "gi + fen",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "chest",
+      "b": "spread",
+      "surfaceA": "punen",
+      "surfaceB": "kunen",
+      "glossA": "the chest; front of the torso housing heart and lungs",
+      "glossB": "to expand outward; to extend over a wider area over time",
+      "partsA": [
+        {
+          "id": "heart",
+          "spelling": "pu"
+        },
+        {
+          "id": "outside",
+          "spelling": "nen"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "give",
+          "spelling": "ku"
+        },
+        {
+          "id": "outside",
+          "spelling": "nen"
+        }
+      ],
+      "partsLabelA": "pu + nen",
+      "partsLabelB": "ku + nen",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "scar",
+      "b": "swollen",
+      "surfaceA": "tatdi",
+      "surfaceB": "tatni",
+      "glossA": "a scar; healed mark left on skin after a wound",
+      "glossB": "swollen; a body part enlarged due to injury or infection",
+      "partsA": [
+        {
+          "id": "skin",
+          "spelling": "tat"
+        },
+        {
+          "id": "before",
+          "spelling": "di"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "skin",
+          "spelling": "tat"
+        },
+        {
+          "id": "big",
+          "spelling": "ni"
+        }
+      ],
+      "partsLabelA": "tat + di",
+      "partsLabelB": "tat + ni",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "distraction",
+      "b": "plan",
+      "surfaceA": "gimet",
+      "surfaceB": "dimet",
+      "glossA": "mind moving away; distraction; losing focus",
+      "glossB": "plan",
+      "partsA": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "think",
+          "spelling": "met"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "before",
+          "spelling": "di"
+        },
+        {
+          "id": "think",
+          "spelling": "met"
+        }
+      ],
+      "partsLabelA": "gi + met",
+      "partsLabelB": "di + met",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "gather",
+      "b": "catch",
+      "surfaceA": "lalek",
+      "surfaceB": "lanek",
+      "glossA": "to come together; to collect into one place",
+      "glossB": "to grab something moving through the air",
+      "partsA": [
+        {
+          "id": "take",
+          "spelling": "la"
+        },
+        {
+          "id": "many",
+          "spelling": "lek"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "take",
+          "spelling": "la"
+        },
+        {
+          "id": "fast",
+          "spelling": "nek"
+        }
+      ],
+      "partsLabelA": "la + lek",
+      "partsLabelB": "la + nek",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "throw",
+      "b": "scatter",
+      "surfaceA": "kunek",
+      "surfaceB": "kulek",
+      "glossA": "to propel something through the air with force",
+      "glossB": "to spread things out in many directions",
+      "partsA": [
+        {
+          "id": "give",
+          "spelling": "ku"
+        },
+        {
+          "id": "fast",
+          "spelling": "nek"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "give",
+          "spelling": "ku"
+        },
+        {
+          "id": "many",
+          "spelling": "lek"
+        }
+      ],
+      "partsLabelA": "ku + nek",
+      "partsLabelB": "ku + lek",
+      "distance": 0.08,
+      "distinctness": 0.92
+    },
+    {
+      "a": "swim",
+      "b": "fresh_water_source",
+      "surfaceA": "giye",
+      "surfaceB": "guye",
+      "glossA": "moving in water",
+      "glossB": "a location where clean water can be found; a spring or stream",
+      "partsA": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "water",
+          "spelling": "ye"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "water",
+          "spelling": "ye"
+        }
+      ],
+      "partsLabelA": "gi + ye",
+      "partsLabelB": "gu + ye",
+      "distance": 0.0875,
+      "distinctness": 0.9125
+    },
+    {
+      "a": "voice",
+      "b": "elder",
+      "surfaceA": "base",
+      "surfaceB": "baso",
+      "glossA": "speaking on breath",
+      "glossB": "an older person; one who came before",
+      "partsA": [
+        {
+          "id": "person",
+          "spelling": "ba"
+        },
+        {
+          "id": "speak",
+          "spelling": "se"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "person",
+          "spelling": "ba"
+        },
+        {
+          "id": "back",
+          "spelling": "so"
+        }
+      ],
+      "partsLabelA": "ba + se",
+      "partsLabelB": "ba + so",
+      "distance": 0.0875,
+      "distinctness": 0.9125
+    },
+    {
+      "a": "beautiful",
+      "b": "show",
+      "surfaceA": "guwi",
+      "surfaceB": "giwi",
+      "glossA": "good to see",
+      "glossB": "show",
+      "partsA": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "see",
+          "spelling": "wi"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "see",
+          "spelling": "wi"
+        }
+      ],
+      "partsLabelA": "gu + wi",
+      "partsLabelB": "gi + wi",
+      "distance": 0.0875,
+      "distinctness": 0.9125
+    },
+    {
+      "a": "acceptance",
+      "b": "stop",
+      "surfaceA": "guti",
+      "surfaceB": "giti",
+      "glossA": "feeling settled and still; acceptance; peace with what is",
+      "glossB": "to cease moving",
+      "partsA": [
+        {
+          "id": "good",
+          "spelling": "gu"
+        },
+        {
+          "id": "still",
+          "spelling": "ti"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "move",
+          "spelling": "gi"
+        },
+        {
+          "id": "still",
+          "spelling": "ti"
+        }
+      ],
+      "partsLabelA": "gu + ti",
+      "partsLabelB": "gi + ti",
+      "distance": 0.0875,
+      "distinctness": 0.9125
+    },
+    {
+      "a": "equal",
+      "b": "wisdom",
+      "surfaceA": "homas",
+      "surfaceB": "humas",
+      "glossA": "the same amount",
+      "glossB": "strong knowing",
+      "partsA": [
+        {
+          "id": "same",
+          "spelling": "ho"
+        },
+        {
+          "id": "more",
+          "spelling": "mas"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "know",
+          "spelling": "hu"
+        },
+        {
+          "id": "more",
+          "spelling": "mas"
+        }
+      ],
+      "partsLabelA": "ho + mas",
+      "partsLabelB": "hu + mas",
+      "distance": 0.09,
+      "distinctness": 0.91
+    },
+    {
+      "a": "question",
+      "b": "envy",
+      "surfaceA": "sakhu",
+      "surfaceB": "sakho",
+      "glossA": "speaking to seek knowing",
+      "glossB": "wanting the same as another has; envy",
+      "partsA": [
+        {
+          "id": "want",
+          "spelling": "sak"
+        },
+        {
+          "id": "know",
+          "spelling": "hu"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "want",
+          "spelling": "sak"
+        },
+        {
+          "id": "same",
+          "spelling": "ho"
+        }
+      ],
+      "partsLabelA": "sak + hu",
+      "partsLabelB": "sak + ho",
+      "distance": 0.09,
+      "distinctness": 0.91
+    },
+    {
+      "a": "lake",
+      "b": "wrap",
+      "surfaceA": "yegat",
+      "surfaceB": "yigat",
+      "glossA": "still water",
+      "glossB": "to cover or encircle something by winding material around it",
+      "partsA": [
+        {
+          "id": "water",
+          "spelling": "ye"
+        },
+        {
+          "id": "hold",
+          "spelling": "gat"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "around",
+          "spelling": "yi"
+        },
+        {
+          "id": "hold",
+          "spelling": "gat"
+        }
+      ],
+      "partsLabelA": "ye + gat",
+      "partsLabelB": "yi + gat",
+      "distance": 0.09,
+      "distinctness": 0.91
+    },
+    {
+      "a": "bridge",
+      "b": "circular_path",
+      "surfaceA": "nanye",
+      "surfaceB": "nanyi",
+      "glossA": "a way over water",
+      "glossB": "a route that loops back to its start",
+      "partsA": [
+        {
+          "id": "path",
+          "spelling": "nan"
+        },
+        {
+          "id": "water",
+          "spelling": "ye"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "path",
+          "spelling": "nan"
+        },
+        {
+          "id": "around",
+          "spelling": "yi"
+        }
+      ],
+      "partsLabelA": "nan + ye",
+      "partsLabelB": "nan + yi",
+      "distance": 0.09,
+      "distinctness": 0.91
+    },
+    {
+      "a": "sun",
+      "b": "above",
+      "surfaceA": "samdat",
+      "surfaceB": "samdal",
+      "glossA": "source of light and hot",
+      "glossB": "at a position higher than something",
+      "partsA": [
+        {
+          "id": "sky",
+          "spelling": "sam"
+        },
+        {
+          "id": "fire",
+          "spelling": "dat"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "sky",
+          "spelling": "sam"
+        },
+        {
+          "id": "near",
+          "spelling": "dal"
+        }
+      ],
+      "partsLabelA": "sam + dat",
+      "partsLabelB": "sam + dal",
+      "distance": 0.09166666666666667,
+      "distinctness": 0.9083333333333333
+    },
+    {
+      "a": "world",
+      "b": "floor",
+      "surfaceA": "fenmel",
+      "surfaceB": "fenmes",
+      "glossA": "whole place of earth and life",
+      "glossB": "the flat bottom surface of a space",
+      "partsA": [
+        {
+          "id": "earth",
+          "spelling": "fen"
+        },
+        {
+          "id": "all",
+          "spelling": "mel"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "earth",
+          "spelling": "fen"
+        },
+        {
+          "id": "inside",
+          "spelling": "mes"
+        }
+      ],
+      "partsLabelA": "fen + mel",
+      "partsLabelB": "fen + mes",
+      "distance": 0.09166666666666667,
+      "distinctness": 0.9083333333333333
+    },
+    {
+      "a": "star",
+      "b": "window",
+      "surfaceA": "kekfet",
+      "surfaceB": "kekfel",
+      "glossA": "distant light",
+      "glossB": "an opening in a wall that lets light and sight pass through",
+      "partsA": [
+        {
+          "id": "light",
+          "spelling": "kek"
+        },
+        {
+          "id": "far",
+          "spelling": "fet"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "light",
+          "spelling": "kek"
+        },
+        {
+          "id": "through",
+          "spelling": "fel"
+        }
+      ],
+      "partsLabelA": "kek + fet",
+      "partsLabelB": "kek + fel",
+      "distance": 0.09166666666666667,
+      "distinctness": 0.9083333333333333
+    },
+    {
+      "a": "night",
+      "b": "duration",
+      "surfaceA": "gankan",
+      "surfaceB": "gatkan",
+      "glossA": "the time of dark",
+      "glossB": "how long something lasts; the length of time something continues",
+      "partsA": [
+        {
+          "id": "dark",
+          "spelling": "gan"
+        },
+        {
+          "id": "time",
+          "spelling": "kan"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "hold",
+          "spelling": "gat"
+        },
+        {
+          "id": "time",
+          "spelling": "kan"
+        }
+      ],
+      "partsLabelA": "gan + kan",
+      "partsLabelB": "gat + kan",
+      "distance": 0.09166666666666667,
+      "distinctness": 0.9083333333333333
+    },
+    {
+      "a": "heal",
+      "b": "age",
+      "surfaceA": "kasfem",
+      "surfaceB": "kanfem",
+      "glossA": "to make good",
+      "glossB": "how old something or someone is; the passage of time on a being",
+      "partsA": [
+        {
+          "id": "help",
+          "spelling": "kas"
+        },
+        {
+          "id": "body",
+          "spelling": "fem"
+        }
+      ],
+      "partsB": [
+        {
+          "id": "time",
+          "spelling": "kan"
+        },
+        {
+          "id": "body",
+          "spelling": "fem"
+        }
+      ],
+      "partsLabelA": "kas + fem",
+      "partsLabelB": "kan + fem",
+      "distance": 0.09166666666666667,
+      "distinctness": 0.9083333333333333
+    }
+  ],
+  "boundary_issues": [
+    {
+      "concept": "cloth",
+      "surface": "tettat",
+      "score": 0,
+      "issues": [
+        "Rejected: identical consonant boundary t + t between \"tet\" and \"tat\""
+      ]
+    },
+    {
+      "concept": "lamp",
+      "surface": "kekgat",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: k+g"
+      ]
+    },
+    {
+      "concept": "world",
+      "surface": "fenmel",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: n+m"
+      ]
+    },
+    {
+      "concept": "sad",
+      "surface": "gamnes",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: m+n"
+      ]
+    },
+    {
+      "concept": "sunrise",
+      "surface": "samdatdi",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: t+d"
+      ]
+    },
+    {
+      "concept": "campfire",
+      "surface": "datdal",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: t+d"
+      ]
+    },
+    {
+      "concept": "inward",
+      "surface": "nanmes",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: n+m"
+      ]
+    },
+    {
+      "concept": "edge",
+      "surface": "temnen",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: m+n"
+      ]
+    },
+    {
+      "concept": "leg",
+      "surface": "femnan",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: m+n"
+      ]
+    },
+    {
+      "concept": "scar",
+      "surface": "tatdi",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: t+d"
+      ]
+    },
+    {
+      "concept": "fist",
+      "surface": "dakgat",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: k+g"
+      ]
+    },
+    {
+      "concept": "disgust",
+      "surface": "gamnestal",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: m+n"
+      ]
+    },
+    {
+      "concept": "regret",
+      "surface": "gamnesdi",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: m+n"
+      ]
+    },
+    {
+      "concept": "determination",
+      "surface": "sakgat",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: k+g"
+      ]
+    },
+    {
+      "concept": "sudden",
+      "surface": "nekgem",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: k+g"
+      ]
+    },
+    {
+      "concept": "floor",
+      "surface": "fenmes",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: n+m"
+      ]
+    },
+    {
+      "concept": "lift",
+      "surface": "dakgisam",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: k+g"
+      ]
+    },
+    {
+      "concept": "chase",
+      "surface": "chanekgi",
+      "score": 0.86,
+      "issues": [
+        "same-place consonants: k+g"
+      ]
+    }
+  ],
+  "avg_boundary_score": 0.9930165289256202,
+  "surfaces": [
+    "kamdan",
+    "sanba",
+    "kula",
+    "hugat",
+    "hugatmes",
+    "hudi",
+    "tamhu",
+    "dehu",
+    "gugek",
+    "ginek",
+    "giye",
+    "giges",
+    "yenan",
+    "yenanye",
+    "gesgi",
+    "nalche",
+    "guba",
+    "gamba",
+    "nangi",
+    "gito",
+    "lotel",
+    "kekgat",
+    "dakto",
+    "gesyenan",
+    "base",
+    "mesmet",
+    "gusak",
+    "seho",
+    "kamdankam",
+    "kamdankampa",
+    "chekamdan",
+    "danse",
+    "homas",
+    "tokula",
+    "kuhuba",
+    "sehugat",
+    "wimal",
+    "towimal",
+    "pugi",
+    "gunes",
+    "pugigu",
+    "femgu",
+    "kamdanfemgu",
+    "danti",
+    "diye",
+    "kamdiye",
+    "guku",
+    "kulaba",
+    "desak",
+    "bakel",
+    "daktopa",
+    "lektetche",
+    "sasniti",
+    "yeni",
+    "samdat",
+    "melto",
+    "fenmel",
+    "sakhu",
+    "sehu",
+    "tampa",
+    "danche",
+    "diho",
+    "fomas",
+    "togen",
+    "temfo",
+    "fodi",
+    "gamnes",
+    "kuhu",
+    "lahu",
+    "kuwimal",
+    "gentet",
+    "kanyi",
+    "tamche",
+    "bamo",
+    "togat",
+    "balek",
+    "kesba",
+    "bakas",
+    "lahuba",
+    "nifem",
+    "mesho",
+    "metmesho",
+    "humas",
+    "kuwimalhu",
+    "tose",
+    "yegat",
+    "yemelto",
+    "samye",
+    "samyeti",
+    "cheye",
+    "kekfet",
+    "kekmak",
+    "kekdi",
+    "gankan",
+    "lemfem",
+    "tesfem",
+    "kasfem",
+    "fetgi",
+    "lekche",
+    "fodiche",
+    "tamtem",
+    "samdatdi",
+    "samdatshu",
+    "gankankek",
+    "kekshu",
+    "makshu",
+    "nanye",
+    "guwi",
+    "dalfet",
+    "chetem",
+    "datdal",
+    "kalye",
+    "fendatsas",
+    "fendatsasba",
+    "badi",
+    "dibadi",
+    "kasfemba",
+    "lakalba",
+    "tetba",
+    "kalyeba",
+    "fendatsastem",
+    "datwi",
+    "yeginek",
+    "tofem",
+    "tonen",
+    "dikel",
+    "dakfet",
+    "ginam",
+    "shukan",
+    "dela",
+    "kamgu",
+    "nesgu",
+    "nesgam",
+    "nesti",
+    "hugukam",
+    "femgam",
+    "hufel",
+    "tikan",
+    "tetni",
+    "bagen",
+    "nentem",
+    "nenso",
+    "nancha",
+    "giyi",
+    "moyi",
+    "giyinam",
+    "yinen",
+    "desonen",
+    "gifel",
+    "felwi",
+    "saklo",
+    "lesye",
+    "temche",
+    "pedal",
+    "tetkas",
+    "tinal",
+    "dakdat",
+    "natye",
+    "gamtel",
+    "gatkal",
+    "lodat",
+    "datlo",
+    "lemgu",
+    "makfem",
+    "gites",
+    "tatgat",
+    "tesmes",
+    "lesnal",
+    "kasfet",
+    "gutel",
+    "leslo",
+    "lesko",
+    "lekye",
+    "fensam",
+    "kalpe",
+    "tigan",
+    "hunan",
+    "hufet",
+    "gesdat",
+    "femtesgam",
+    "nalgam",
+    "gatgi",
+    "shatel",
+    "guye",
+    "danlem",
+    "daltem",
+    "temtem",
+    "gidal",
+    "gifet",
+    "felmes",
+    "felnen",
+    "samdal",
+    "dalfen",
+    "temfet",
+    "yiche",
+    "dalnan",
+    "gisam",
+    "fengi",
+    "nanmes",
+    "nengi",
+    "chedal",
+    "chefet",
+    "chesam",
+    "fendal",
+    "temnen",
+    "felnan",
+    "nanlek",
+    "chehu",
+    "chanan",
+    "nansha",
+    "nantam",
+    "chetam",
+    "chegan",
+    "dalsam",
+    "nanfen",
+    "nenfet",
+    "chemes",
+    "nenche",
+    "nanfa",
+    "nanyi",
+    "chekam",
+    "chegu",
+    "chegam",
+    "nanso",
+    "tekfem",
+    "lenfem",
+    "gifem",
+    "femnan",
+    "dakfem",
+    "gatfem",
+    "telmes",
+    "telsas",
+    "taldam",
+    "semes",
+    "dakfa",
+    "dakni",
+    "femtemgi",
+    "punen",
+    "gesmes",
+    "foye",
+    "femlem",
+    "kemye",
+    "tatdi",
+    "femtam",
+    "femsha",
+    "mamtam",
+    "kesyi",
+    "witam",
+    "lentam",
+    "tatni",
+    "tatgan",
+    "tatsak",
+    "tatgam",
+    "femso",
+    "dakgat",
+    "gatsas",
+    "femyi",
+    "daktem",
+    "banen",
+    "baso",
+    "kamba",
+    "bames",
+    "bapa",
+    "baho",
+    "bahobadi",
+    "basankam",
+    "sedal",
+    "seshu",
+    "sekam",
+    "sesak",
+    "seguku",
+    "hose",
+    "sepa",
+    "sepe",
+    "semal",
+    "kuket",
+    "kamgam",
+    "nesgushu",
+    "seguba",
+    "segamba",
+    "semalba",
+    "sebafet",
+    "sedegu",
+    "gamsenat",
+    "humes",
+    "seketnat",
+    "semo",
+    "laso",
+    "sekula",
+    "dandalmoyi",
+    "banentem",
+    "bahula",
+    "bapakas",
+    "pefem",
+    "gude",
+    "gamde",
+    "husak",
+    "nathu",
+    "metpa",
+    "metgan",
+    "saktam",
+    "nesgamfet",
+    "sakfet",
+    "nesfa",
+    "metgamba",
+    "nesguku",
+    "sakla",
+    "gamnestal",
+    "nesnekhu",
+    "gushunes",
+    "gamnesdi",
+    "tisak",
+    "neksak",
+    "gipe",
+    "peti",
+    "nalmet",
+    "metkel",
+    "nesgudi",
+    "gatsak",
+    "gatmet",
+    "gimet",
+    "kekmet",
+    "tamhu",
+    "guti",
+    "sakho",
+    "nesgamba",
+    "sakgat",
+    "fakan",
+    "temkan",
+    "melkan",
+    "tamkan",
+    "gemdi",
+    "dalshu",
+    "difet",
+    "fetshu",
+    "fagem",
+    "hokan",
+    "shani",
+    "pato",
+    "gukel",
+    "kelho",
+    "yimo",
+    "nankan",
+    "tigem",
+    "gatkan",
+    "kangen",
+    "nikan",
+    "digu",
+    "gushu",
+    "nekgem",
+    "gamfo",
+    "yifo",
+    "ketkan",
+    "yikan",
+    "kanfem",
+    "dalkel",
+    "femdi",
+    "shudal",
+    "daldi",
+    "timel",
+    "genkan",
+    "kunen",
+    "lalek",
+    "gutet",
+    "makye",
+    "maksas",
+    "yeges",
+    "sampa",
+    "samlen",
+    "datsam",
+    "fengen",
+    "mesfen",
+    "yetem",
+    "fenye",
+    "fentam",
+    "sasmes",
+    "sasninen",
+    "tetgen",
+    "tetkek",
+    "tetlo",
+    "fentet",
+    "tetnen",
+    "tetfen",
+    "kalsam",
+    "kalgen",
+    "kalnan",
+    "meskal",
+    "yeyi",
+    "gankek",
+    "datfen",
+    "yemak",
+    "temtet",
+    "gatmes",
+    "tamtel",
+    "tamko",
+    "kekfel",
+    "fentem",
+    "fenmes",
+    "toye",
+    "yigi",
+    "tettat",
+    "genkam",
+    "geksas",
+    "fetpa",
+    "kamlek",
+    "tetmes",
+    "lemgat",
+    "sastet",
+    "genfel",
+    "latem",
+    "nitet",
+    "tetsas",
+    "yefen",
+    "datsas",
+    "sasgek",
+    "datgi",
+    "tetye",
+    "nangisam",
+    "fempa",
+    "sasgat",
+    "gesdat",
+    "gini",
+    "gengat",
+    "nimes",
+    "tigi",
+    "femsamgi",
+    "gifen",
+    "gigesnek",
+    "kunek",
+    "lanek",
+    "chagi",
+    "sola",
+    "dakgisam",
+    "gigat",
+    "kufen",
+    "chanekgi",
+    "sogi",
+    "felgi",
+    "yicha",
+    "giti",
+    "lafen",
+    "kuye",
+    "kamdak",
+    "temkel",
+    "yigat",
+    "meskel",
+    "femyinek",
+    "chadak",
+    "nekmam",
+    "timam",
+    "kulek",
+    "chati",
+    "femgiti",
+    "pala",
+    "gudi",
+    "maldanse",
+    "samyegen",
+    "nesgubase",
+    "kugu",
+    "gisak",
+    "giwi",
+    "pemet",
+    "shanek",
+    "tampe",
+    "tohutam",
+    "dalmas",
+    "tesku",
+    "dimet",
+    "femfenti",
+    "lakam",
+    "fetho",
+    "yelem",
+    "mesges",
+    "femtini",
+    "hugam",
+    "meskam",
+    "times",
+    "bahuku",
+    "ninan",
+    "femti",
+    "winat",
+    "samyelek",
+    "kamche",
+    "ketnat"
+  ]
+}
