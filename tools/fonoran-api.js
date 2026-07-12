@@ -103,6 +103,12 @@ import {
 } from './fonoran-regen.js';
 import { importEditorialFromSeedPaths } from './fonoran-store.js';
 import { sanitizeForJsonResponse } from '../js/utils.js';
+import {
+  getLlmPipelineStatus,
+  getLlmPipelineJob,
+  startLlmPipelineJob,
+  getConfusabilityResult,
+} from './fonoran-llm-pipeline.js';
 
 function writeJsonPayload(res, status, payload) {
   res.writeHead(status, {
@@ -579,6 +585,29 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     if (pathname === '/api/fonoran/lab/regen/status' && method === 'GET') {
       return done(200, await getRegenStatus());
+    }
+    if (pathname === '/api/fonoran/llm-pipeline/status' && method === 'GET') {
+      const confusability = await getConfusabilityResult();
+      return done(200, await getLlmPipelineStatus({ confusabilityCache: confusability }));
+    }
+    const pipelineJobMatch = pathname.match(/^\/api\/fonoran\/llm-pipeline\/job\/([^/]+)$/);
+    if (pipelineJobMatch && method === 'GET') {
+      const job = getLlmPipelineJob(decodeURIComponent(pipelineJobMatch[1]));
+      if (!job) return done(404, { error: 'Job not found' });
+      return done(200, job);
+    }
+    if (pathname === '/api/fonoran/llm-pipeline/run' && method === 'POST') {
+      const body = await readJsonBody(req);
+      const step = String(body.step ?? '').trim();
+      if (!step) return done(400, { error: 'step is required' });
+      try {
+        return done(202, await startLlmPipelineJob(step, {
+          reviewAcknowledged: Boolean(body.review_acknowledged),
+          spotCheck: Boolean(body.spot_check),
+        }));
+      } catch (err) {
+        return done(err.status ?? 400, { error: err.message });
+      }
     }
     if (pathname === '/api/fonoran/lab/editorial/import' && method === 'POST') {
       const body = await readJsonBody(req);

@@ -1,7 +1,7 @@
 {
   "version": "2.0-editorial-workflow",
   "status": "proposal",
-  "generated_at": "2026-07-11T16:17:24.682Z",
+  "generated_at": "2026-07-12T02:47:00.350Z",
   "collision_profile": "en",
   "philosophy": {
     "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
@@ -12,7 +12,8 @@
     "total": 105,
     "pending": 16,
     "approved": 89,
-    "rejected": 0
+    "rejected": 0,
+    "compound_candidates": 16
   },
   "candidates": [
     {
@@ -1833,7 +1834,7 @@
       "status": "approved",
       "concept": "toward a higher place",
       "priority": 79953,
-      "spelling": "ra",
+      "spelling": "wa",
       "generation": {
         "tier": "tertiary-cv",
         "eligible": true,
@@ -1874,7 +1875,7 @@
       "status": "approved",
       "concept": "toward a lower place",
       "priority": 79952,
-      "spelling": "ju",
+      "spelling": "do",
       "generation": {
         "tier": "tertiary-cv",
         "eligible": true,
@@ -3243,7 +3244,7 @@
       "status": "approved",
       "concept": "a bone",
       "priority": 59912,
-      "spelling": "je",
+      "spelling": "bu",
       "generation": {
         "tier": "tertiary-cv",
         "eligible": true,

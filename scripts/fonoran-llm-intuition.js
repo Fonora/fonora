@@ -13,6 +13,7 @@
  *   npm run fonoran:llm-intuition -- --dry-run --pilot
  *   npm run fonoran:llm-intuition -- --tasks A,B,C --pilot
  *   npm run fonoran:llm-intuition -- --concurrency 6 --resume
+ *   npm run fonoran:llm-intuition -- --pilot --fresh   # discard stale rounds for target concepts
  *   ANTHROPIC_MODEL_JUDGE=claude-sonnet-5 npm run fonoran:llm-intuition -- --resume   # reliability arm
  */
 
@@ -81,7 +82,8 @@ async function buildGlossById() {
 }
 
 function parseArgs(argv) {
-  const resume = argv.includes('--resume');
+  const fresh = argv.includes('--fresh');
+  const resume = !fresh && argv.includes('--resume');
   const dryRun = argv.includes('--dry-run');
   const pilot = argv.includes('--pilot');
   const calibration = argv.includes('--calibration');
@@ -112,7 +114,16 @@ function parseArgs(argv) {
   else if (pilot) concepts = PILOT_CONCEPTS;
   else if (calibration) concepts = CALIBRATION_CONCEPTS;
 
-  return { resume, dryRun, tasks, concepts, conceptFilter, concurrency };
+  return { fresh, resume, dryRun, tasks, concepts, conceptFilter, concurrency };
+}
+
+function purgeConceptRounds(doc, conceptIds) {
+  const drop = new Set(conceptIds);
+  const before = doc.rounds?.length ?? 0;
+  doc.rounds = (doc.rounds ?? []).filter(r => !drop.has(r.concept_id));
+  const removed = before - doc.rounds.length;
+  doc.aggregates = mergePromptAggregates(doc.rounds);
+  return removed;
 }
 
 function buildResumeSet(rounds, model) {
@@ -241,7 +252,7 @@ function makeLocalizer(glossaryCache, glossById, rootGraph) {
   };
 }
 
-async function runJob(job, { localizer, glossById }) {
+async function runJob(job, { localizer, glossById, seedBankFingerprint }) {
   const judgeModel = anthropicModelForRole('judge');
   if (job.type === 'A') {
     const loc = localizer.forPersona(job.persona, job.target);
@@ -264,6 +275,7 @@ async function runJob(job, { localizer, glossById }) {
         task: 'A',
         result,
         model: result.model ?? judgeModel,
+        seedBankFingerprint,
       }),
     };
   }
@@ -292,6 +304,7 @@ async function runJob(job, { localizer, glossById }) {
         task: 'B',
         result,
         model: result.model ?? judgeModel,
+        seedBankFingerprint,
       }),
     };
   }
@@ -319,6 +332,7 @@ async function runJob(job, { localizer, glossById }) {
       result,
       model: result.model ?? judgeModel,
       pair: result.pair,
+      seedBankFingerprint,
     }),
   };
 }
@@ -363,7 +377,7 @@ async function runJobs(todo, doc, ctx, concurrency) {
 }
 
 async function main() {
-  const { resume, dryRun, tasks, concepts, conceptFilter, concurrency } = parseArgs(process.argv.slice(2));
+  const { fresh, resume, dryRun, tasks, concepts, conceptFilter, concurrency } = parseArgs(process.argv.slice(2));
 
   const [compoundsDoc, rootGraph, demoTrees, glossById] = await Promise.all([
     readDoc('compounds'),
@@ -382,6 +396,7 @@ async function main() {
   const personas = batteryPersonaIds();
   const abJobs = planAbJobs(targets, personas, tasks);
   const conceptSet = new Set(targets.map(t => t.conceptId));
+  const conceptList = [...conceptSet];
   const judgeModel = anthropicModelForRole('judge');
   const { minMargin } = llmThresholds();
 
@@ -396,6 +411,21 @@ async function main() {
       aggregates: {},
     };
   }
+
+  if (fresh && conceptList.length) {
+    if (!filter) {
+      const removed = doc.rounds?.length ?? 0;
+      doc.rounds = [];
+      doc.aggregates = mergePromptAggregates([]);
+      console.log(`  Fresh run: cleared ${removed} stale round(s) for full inventory.`);
+    } else {
+      const removed = purgeConceptRounds(doc, conceptList);
+      console.log(`  Fresh run: removed ${removed} stale round(s) for ${conceptList.length} concept(s).`);
+    }
+  }
+
+  const { fingerprint: seedBankFingerprint } = await import('../tools/fonoran-seed-fingerprint.js')
+    .then(m => m.computeSeedBankFingerprint());
 
   const resumeSet = resume ? buildResumeSet(doc.rounds, judgeModel) : new Set();
   const abTodo = filterTodo(abJobs, resumeSet);
@@ -414,7 +444,8 @@ async function main() {
   console.log(`  Concurrency: ${concurrency}`);
   console.log(`  Planned A/B calls: ${abJobs.length} (+ graders ≈ ${abJobs.length * graderMultiplier} total)`);
   console.log(`  Remaining A/B: ${abTodo.length} (≈ ${estCalls} calls with graders)`);
-  console.log(`  Estimated cost: ~$${(estimateCallCost({ model: judgeModel }) * estCalls).toFixed(2)} (${judgeModel})`);
+  console.log(`  Mode: ${fresh ? 'fresh (discard stale rounds)' : resume ? 'resume' : 'full pass'}`);
+  console.log(`  Seed fingerprint: ${seedBankFingerprint}`);
 
   if (dryRun) {
     console.log('\nDry run — no API calls made.');
@@ -431,7 +462,7 @@ async function main() {
   console.log(`\nWarming glossary translations (${langs.length} languages × ${texts.length} texts)…`);
   const glossaryCache = await ensureTranslations(langs, texts);
   const localizer = makeLocalizer(glossaryCache, glossById, rootGraph);
-  const ctx = { localizer, glossById };
+  const ctx = { localizer, glossById, seedBankFingerprint };
 
   let completed = 0;
   let failed = 0;
@@ -461,6 +492,8 @@ async function main() {
   doc.model = judgeModel;
   doc.prompt_version = PROMPT_VERSION;
   doc.battery = BATTERY_VERSION;
+  doc.seed_bank_fingerprint = seedBankFingerprint;
+  doc.seed_bank_fingerprint_at = new Date().toISOString();
   await writeDoc('llm_evaluations', doc);
 
   console.log(`\nDone. ${completed} calls ok, ${failed} failed.`);

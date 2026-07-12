@@ -55,6 +55,7 @@ async function main() {
     ...rootGraph,
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    difficultRootIds: candidateCtx.difficultRootIds,
     demoTrees,
     llmAggregates,
   }, { useLlm: lengthOnly ? false : useLlm, lengthOnly });

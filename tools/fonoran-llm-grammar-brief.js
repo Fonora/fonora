@@ -56,7 +56,7 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
       lines.push(`  ${row}`);
     }
   } else {
-    lines.push('  in/inside→inside (mes), here→here (nam), there→there (tak), toward→path (nan), from→source (lo), near→near (dal), far→far (fet), up→up (ra), down→down (ju)');
+    lines.push('  in/inside→inside (mes), here→here (nam), there→there (tak), toward→path (nan), from→source (lo), near→near (dal), far→far (fet), up→up (wa), down→down (do)');
   }
   lines.push('Personal pronouns except mi resolve lexically: you→addressee (be), self→self (de).');
   lines.push('First-person plural we/us — default subject: collective (dan). Optional alternate: mi + addressee (I + you) when the source explicitly signals a dyad (each other, you and I, both of us). Do not infer dyadic vs group from topic alone.');
@@ -88,12 +88,23 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('Why/how are NOT expressible in v1 — list in unresolved[], do not approximate.');
   lines.push('');
   lines.push('## Compounding (Rule 5)');
-  lines.push('Prefer approved compound concept ids (e.g. people, war, tribe) over listing raw roots.');
-  lines.push('Semantic economy: omit implied concepts unless needed for disambiguation.');
+  lines.push('Prefer approved compound concept ids (e.g. rain, thirsty, happy) over listing raw roots.');
+  lines.push('Semantic economy: if a compound concept already encodes a locative (e.g. "staying" = still+inside), do NOT also emit that locative separately in the path slot — it would be expressed twice.');
   lines.push('');
   lines.push('## Motion & locatives (Rule 7)');
   lines.push('Motion frames: event=move/run/etc, path slot holds direction/landmark concepts (path, source, far, near, up, inside).');
   lines.push('Static locatives ("X is near Y"): place concepts in path/modifiers, not collapsed head nouns only.');
+  lines.push('');
+  lines.push('## Weather / impersonal events');
+  lines.push('English weather verbs use a dummy "it" subject that has no meaning — drop it entirely.');
+  lines.push('"It rains" / "It is raining" → event=[rain], subject empty.');
+  lines.push('"It will rain" / "It is going to rain" → time=[sa], event=[rain], subject empty.');
+  lines.push('"It rained yesterday" → time=[ta], event=[rain], subject empty.');
+  lines.push('');
+  lines.push('## Future tense — "going to" and "about to"');
+  lines.push('"going to [verb]" and "about to [verb]" are English future markers, NOT motion.');
+  lines.push('Map them to sa in the time slot, not as the verb "come" or "go" in the event slot.');
+  lines.push('When sa (future) is in the time slot, do NOT also add now (gem) — they contradict.');
 
   return lines.join('\n');
 }
@@ -110,6 +121,16 @@ export function normalizeFrameParticles(frame) {
       const id = String(x ?? '').trim().toLowerCase();
       return id === 'neg' ? 'no' : x;
     });
+  }
+
+  // "now" alongside an explicit tense particle is a contradiction: "going to rain"
+  // triggers sa (future) but the LLM sometimes also emits "now" because the source
+  // uses the present-continuous form "is going to". Strip it.
+  if (Array.isArray(slots.time)) {
+    const timeIds = slots.time.map(x => String(x ?? '').trim().toLowerCase());
+    if ((timeIds.includes('sa') || timeIds.includes('ta')) && timeIds.includes('now')) {
+      slots.time = slots.time.filter(x => String(x ?? '').trim().toLowerCase() !== 'now');
+    }
   }
 
   // Negation attaches near the action (Rule 3): LLMs sometimes park a clause-
@@ -222,10 +243,16 @@ export function checkLlmGrammarViolations(frame, sourceText = '') {
   }
 
   const timeItems = (slots.time ?? []).map(x => String(x ?? '').trim().toLowerCase());
+  const hasFuture = timeItems.includes('sa');
+  const hasPast = timeItems.includes('ta');
   for (const id of timeItems) {
     if (!id) continue;
     if (RESERVED_PARTICLE_FORMS.has(id) && id !== 'ta' && id !== 'sa') {
       violations.push({ kind: 'particle_in_time', id, message: `Only ta/sa or time concepts belong in time slot, not "${id}".` });
+    }
+    // "now" contradicts an explicit tense particle — flag it for repair.
+    if (id === 'now' && (hasFuture || hasPast)) {
+      violations.push({ kind: 'now_with_tense', id, message: `"now" (gem) must not appear alongside ${hasFuture ? 'sa (future)' : 'ta (past)'}.` });
     }
   }
 

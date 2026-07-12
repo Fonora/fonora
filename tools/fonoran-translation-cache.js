@@ -24,26 +24,39 @@ export function cacheKey(sourceLang, sourceText) {
   return `${lang}|${text}`;
 }
 
+// In-process read cache: load the JSON file once and serve lookups from memory.
+// Writes always go back to disk AND update this map so reads stay coherent.
+let _memCache = null;
+let _memCacheVersion = '1.0';
+
+/** Invalidate the in-process read cache (e.g. after external file writes). */
+export function invalidateTranslationCache() {
+  _memCache = null;
+}
+
 /** @returns {Promise<{ version: string, entries: Record<string, object> }>} */
 export async function loadTranslationCache() {
+  if (_memCache) return { version: _memCacheVersion, entries: _memCache };
   try {
     const raw = JSON.parse(await readFile(translationCachePath(), 'utf8'));
-    return {
-      version: raw.version ?? '1.0',
-      entries: raw.entries && typeof raw.entries === 'object' ? raw.entries : {},
-    };
+    _memCacheVersion = raw.version ?? '1.0';
+    _memCache = raw.entries && typeof raw.entries === 'object' ? raw.entries : {};
   } catch {
-    return { version: '1.0', entries: {} };
+    _memCacheVersion = '1.0';
+    _memCache = {};
   }
+  return { version: _memCacheVersion, entries: _memCache };
 }
 
 /** @param {{ version?: string, entries: Record<string, object> }} doc */
 export async function saveTranslationCache(doc) {
   const path = translationCachePath();
+  _memCacheVersion = doc.version ?? '1.0';
+  _memCache = doc.entries ?? {};
   await mkdir(dirname(path), { recursive: true });
   await writeFile(
     path,
-    `${JSON.stringify({ version: doc.version ?? '1.0', entries: doc.entries ?? {} }, null, 2)}\n`,
+    `${JSON.stringify({ version: _memCacheVersion, entries: _memCache }, null, 2)}\n`,
     'utf8',
   );
 }

@@ -14,7 +14,8 @@ import {
   isExcludedSpelling,
   PHONETIC_SCORE_PASS,
 } from './fonoran-phonetic-weights.js';
-import { confusabilityPenalty } from './fonoran-compound-confusability.js';
+import { evaluateCampfireComposition } from './fonoran-campfire-composition.js';
+
 import {
   runTaskA,
   PERSONAS,
@@ -102,6 +103,22 @@ export function scoreComposition(composition, ctx) {
     return { pass: false, hard, phonetic: null, understandability: null, combined: 0 };
   }
 
+  const conceptId = ctx.conceptId ?? null;
+  const campfire = conceptId
+    ? evaluateCampfireComposition(conceptId, composition, { fields: ctx.semanticFields })
+    : { pass: true, score: 1, issues: [] };
+  if (!campfire.pass && campfire.score < 0.5) {
+    return {
+      pass: false,
+      hard,
+      campfire,
+      phonetic: null,
+      understandability: null,
+      combined: 0,
+      reject_reason: campfire.issues[0] ?? 'campfire composition gate',
+    };
+  }
+
   const { flatIds, spellings, flatCount } = hard.resolved;
   const conf = confusabilityPenalty(spellings, {
     surface: hard.resolved.surface,
@@ -117,10 +134,12 @@ export function scoreComposition(composition, ctx) {
     metaFor,
     collisionCount,
     flatCount,
+    conceptId: conceptId ?? undefined,
+    campfireScore: campfire.score,
   });
 
   const antiAbstract = passesAntiAbstractHeuristic(composition, metaFor);
-  const combined = phonetic.score * u.score * (antiAbstract ? 1 : 0.5);
+  const combined = phonetic.score * u.score * (antiAbstract ? 1 : 0.5) * (campfire.score ?? 1);
 
   return {
     pass: false,
@@ -129,6 +148,7 @@ export function scoreComposition(composition, ctx) {
     confusability: conf,
     understandability: u,
     antiAbstract,
+    campfire,
     combined,
     composition,
     surface: hard.resolved.surface,

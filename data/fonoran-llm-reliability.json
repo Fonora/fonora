@@ -1,22 +1,22 @@
 {
-  "generated_at": "2026-07-10T01:28:49.586Z",
+  "generated_at": "2026-07-12T01:04:25.258Z",
   "prompt_version": "5",
   "primary_model": "claude-fable-5",
   "secondary_model": "claude-sonnet-4-6",
   "comparison": {
     "concept_count": 10,
-    "promotion_eligible": 1,
-    "split_queue": 9,
-    "mean_spearman": 0.5599999999999999,
+    "promotion_eligible": 0,
+    "split_queue": 10,
+    "mean_spearman": 0.6900000000000001,
     "min_spearman_threshold": 0.6,
     "per_concept": [
       {
-        "concept_id": "knowledge",
-        "candidate_count": 3,
-        "spearman_rho": -0.5,
+        "concept_id": "tool",
+        "candidate_count": 4,
+        "spearman_rho": 0.4,
         "reliable": false,
         "primary_winner": null,
-        "secondary_winner": "know+hold",
+        "secondary_winner": null,
         "winners_agree": null
       },
       {
@@ -47,12 +47,12 @@
         "winners_agree": null
       },
       {
-        "concept_id": "exchange",
+        "concept_id": "knowledge",
         "candidate_count": 3,
         "spearman_rho": 0.5,
         "reliable": false,
         "primary_winner": null,
-        "secondary_winner": "take+give",
+        "secondary_winner": "know+hold",
         "winners_agree": null
       },
       {
@@ -60,15 +60,6 @@
         "candidate_count": 3,
         "spearman_rho": 0.5,
         "reliable": false,
-        "primary_winner": null,
-        "secondary_winner": null,
-        "winners_agree": null
-      },
-      {
-        "concept_id": "tool",
-        "candidate_count": 4,
-        "spearman_rho": 0.6,
-        "reliable": null,
         "primary_winner": null,
         "secondary_winner": null,
         "winners_agree": null
@@ -83,13 +74,22 @@
         "winners_agree": null
       },
       {
+        "concept_id": "exchange",
+        "candidate_count": 3,
+        "spearman_rho": 1,
+        "reliable": null,
+        "primary_winner": null,
+        "secondary_winner": "take+give",
+        "winners_agree": null
+      },
+      {
         "concept_id": "memory",
         "candidate_count": 2,
         "spearman_rho": 1,
-        "reliable": true,
+        "reliable": null,
         "primary_winner": "know+hold+inside",
-        "secondary_winner": "know+hold+inside",
-        "winners_agree": true
+        "secondary_winner": null,
+        "winners_agree": null
       },
       {
         "concept_id": "teacher",
@@ -104,12 +104,6 @@
   },
   "llm_consensus_review": [
     {
-      "concept_id": "fly",
-      "live_composition": "move+air",
-      "still_reliable": null,
-      "spearman_rho": null
-    },
-    {
       "concept_id": "teach",
       "live_composition": "give+know",
       "still_reliable": null,
@@ -121,5 +115,7 @@
       "still_reliable": null,
       "spearman_rho": null
     }
-  ]
+  ],
+  "seed_bank_fingerprint": "7f2b72c7e9d98eaf",
+  "seed_bank_fingerprint_at": "2026-07-12T01:04:25.259Z"
 }

@@ -32,7 +32,9 @@ phase: phase-1
 
 Everything else is derived from the markdown body: title from the H1, description from the opening paragraph, related slugs from `/research/notes/...` links.
 
-**No summary line.** Do not add a `> **TL;DR.**` (or similar) blockquote — notes open straight into `## Research Question` in the lab-notebook voice. `npm run research:verify-md` fails if a TL;DR blockquote is present.
+**No summary line.** Do not add a `> **TL;DR.**` (or similar) blockquote. Notes open straight into `## Research Question` in the lab-notebook voice. `npm run research:verify-md` fails if a TL;DR blockquote is present.
+
+**No em dashes.** Do not use the em dash character (`—`, U+2014) anywhere in research note prose, tables, or lists. Use commas, colons, semicolons, or separate sentences instead. En dashes (`–`) are fine only for numeric ranges (e.g. `~$150–300`, `phase-1`). `npm run research:verify-md` fails if an em dash appears in **RN-31 and later** notes (older notes are grandfathered until touched).
 
 ---
 

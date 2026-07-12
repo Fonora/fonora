@@ -22,6 +22,8 @@ import { createCompoundProposals } from './fonoran-compound-proposals.js';
 import { buildCompositionResolver, detectRedundantRootPattern } from './fonoran-composition-resolve.js';
 import { anthropicModelForRole, completeJson } from './fonoran-llm-client.js';
 import { phoneticPromptBrief } from './fonoran-phonetic-weights.js';
+import { semanticFieldsPromptBrief, loadRootSemanticFields } from './fonoran-root-semantic-fields.js';
+import { evaluateCampfireComposition } from './fonoran-campfire-composition.js';
 
 const MAX_TOKENS = 4096;
 
@@ -114,17 +116,18 @@ function buildExistingList(compoundsDoc, primitives) {
   return [...existing].sort();
 }
 
-function buildSurveyPrompt(domain, glossary, existingConcepts) {
+function buildSurveyPrompt(domain, glossary, existingConcepts, semanticBrief = '') {
   // Full existing list — truncating it caused duplicate proposals for concepts
   // the model could not see.
   const existing = existingConcepts.join(', ');
   return [
     `You are helping design Fonoran, a constructed language built on ~89 primitive roots.`,
     ``,
-    `Fonoran's core idea: ANY concept can be expressed as a combination of primitives.`,
-    `Compositions must be intuitive — a stranger who knows the roots should be able to`,
-    `GUESS the meaning without being taught it. This is the "campfire test."`,
+    `Fonoran's core idea: roots are IDEAS/CONCEPTS, not English words. Compositions express`,
+    `communicative strategies — a stranger who knows the roots must GUESS the meaning.`,
+    `This is the "campfire test." Etymology and English taxonomy are WRONG guides.`,
     ``,
+    semanticBrief ? `${semanticBrief}\n` : '',
     `PRIMITIVE ROOTS (complete list — use ONLY these as composition components):`,
     glossary,
     ``,
@@ -143,6 +146,8 @@ function buildSurveyPrompt(domain, glossary, existingConcepts) {
     `- Prefer 2-component compositions. Use 3 only when 2 is unclear. Never more than 4.`,
     `- Order: modifier before head (descriptive part first, then the core concept).`,
     `- The composition must be intuitively recoverable: a stranger guesses the meaning.`,
+    `- Tools/objects: use functional anchors (hand, use, hold, take, bound, conflict) —`,
+    `  NEVER name a tool as material+make (e.g. stone+make is NOT hammer).`,
     `- The composition must also SOUND clear: follow the phonetic rules above and avoid`,
     `  root sequences that blur together when spoken.`,
     `- Concept ids must be English snake_case, NOT already in the "already defined" list.`,
@@ -183,17 +188,26 @@ function validateProposal(proposal, allowedIds, resolver, existingSet) {
 
   const validComps = [];
   const redundancyWarnings = [];
+  const campfireIssues = [];
   for (const comp of compositions) {
     if (!Array.isArray(comp) || comp.length < 2) continue;
     if (!comp.every(c => allowedIds.has(c))) continue;
     const flatRoots = resolver.flatRoots(comp);
     if (flatRoots == null || flatRoots.length > 4) continue;
+    const campfire = evaluateCampfireComposition(id, comp);
+    if (!campfire.pass && campfire.score < 0.5) {
+      campfireIssues.push(`${comp.join('+')}: ${campfire.issues[0] ?? 'campfire fail'}`);
+      continue;
+    }
     validComps.push(comp);
     const redundancy = detectRedundantRootPattern(flatRoots);
     redundancyWarnings.push(redundancy ? redundancy.pattern : null);
   }
 
-  if (!validComps.length) return { valid: false, reason: 'no valid compositions (check primitive IDs)' };
+  if (!validComps.length) {
+    const reason = campfireIssues[0] ?? 'no valid compositions (check primitive IDs)';
+    return { valid: false, reason };
+  }
   return { valid: true, validCompositions: validComps, redundancyWarnings };
 }
 
@@ -211,7 +225,7 @@ async function runDomain(domain, context, opts) {
   console.log(`Domain: ${domain.label}`);
   console.log(`${'='.repeat(52)}\n`);
 
-  const prompt = buildSurveyPrompt(domain, glossary, existingConcepts);
+  const prompt = buildSurveyPrompt(domain, glossary, existingConcepts, context.semanticBrief ?? '');
 
   let parsed;
   try {
@@ -315,6 +329,9 @@ async function main() {
   console.log(`Existing compounds: ${(compoundsDoc?.compounds ?? []).length}`);
   console.log(`Total allowed concept IDs: ${allowedIds.size}\n`);
 
+  const semanticFields = await loadRootSemanticFields();
+  const semanticBrief = semanticFieldsPromptBrief(semanticFields);
+
   const domains = domainFilter
     ? SURVEY_DOMAINS.filter(d => d.id === domainFilter)
     : SURVEY_DOMAINS;
@@ -324,7 +341,7 @@ async function main() {
     process.exit(1);
   }
 
-  const context = { primitiveIds, allowedIds, resolver, existingSet, glossary, existingConcepts, dryRun, printSeeds };
+  const context = { primitiveIds, allowedIds, resolver, existingSet, glossary, existingConcepts, dryRun, printSeeds, semanticBrief };
 
   let totalProposed = 0;
   let totalValid = 0;

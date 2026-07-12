@@ -329,11 +329,7 @@ export function resetLlmTranslateCache() {
   bridgeBlockCache = null;
 }
 
-const SYSTEM_PROMPT = `You are the Fonoran semantic compiler defined in docs/fonoran-grammar.md (Rule 7).
-Map source text in ANY language into a language-neutral concept frame using ONLY approved concept ids and the six v1 grammar particles.
-
-Output JSON only with this schema:
-{
+const FRAME_SCHEMA = `{
   "slots": {
     "subject": [],
     "event": [],
@@ -346,9 +342,34 @@ Output JSON only with this schema:
   "detected_lang": "en",
   "unresolved": [],
   "reasoning": "one sentence citing which grammar rules you applied"
-}
+}`;
 
-Slot semantics (Rule 4 / Rule 7):
+const SYSTEM_PROMPT = `You are the Fonoran semantic compiler defined in docs/fonoran-grammar.md (Rule 7).
+Map source text in ANY language into a language-neutral concept frame using ONLY approved concept ids and the six v1 grammar particles.
+
+## Output format
+
+Single clause → output one JSON OBJECT:
+${FRAME_SCHEMA}
+
+Multiple independent clauses → output a JSON ARRAY of frame objects, one per clause:
+[frame1, frame2, ...]
+
+Each element in the array uses the exact same schema as the single-frame object above.
+
+## When to use the array format
+
+Split into separate frames whenever the source contains two or more independent propositions that each have their own actor, action, and/or tense — regardless of the source language. Common signals (in any language):
+
+- Causal/result connectives: "that is why", "therefore", "so", "thus", "hence", "c'est pourquoi", "por eso", "deshalb", "因此", "だから", etc.
+- Sequential events with a clear boundary: "I did X and then I did Y" (different tenses or actors)
+- Adversative contrast with separate predicates: "I wanted X but I got Y"
+
+Do NOT split for:
+- Simple noun coordination: "I want food and water"
+- Shared-subject action chains with the same tense: "She stood up and walked away"
+
+## Slot semantics (Rule 4 / Rule 7)
 - subject = Actor
 - event = Action (event, state, or predicate concept)
 - object = Target
@@ -356,9 +377,9 @@ Slot semantics (Rule 4 / Rule 7):
 - time = Time (ta past, sa future, or time concepts; EMPTY for present)
 - modifiers = peripheral modifiers (modifier-before-head chains)
 
-Mandatory rules:
+## Mandatory rules
 - Compile MEANING, not word-for-word English (Rule 7).
-- The source is ONE sentence: compile ALL of its content — NEVER drop or omit a clause. Coordinating conjunctions (and, or, but, then) have no v1 particle, so fold the concepts of EVERY coordinated clause into the slots rather than discarding the second clause.
+- Never mix concepts from different clauses into one slot set — that produces scrambled output.
 - Demonstratives (this/that/these/those) and articles have NO Fonoran form — never emit a concept for them; leave them to inference (Rule 7).
 - Particles ONLY: mi, ta, sa, no, ya, von — map neg→no (Rule 3).
 - Present tense: leave time slot empty (Rule 3).
@@ -428,6 +449,16 @@ Return the JSON frame.`;
   });
 
   if (!result.ok) return result;
+  // Array response → multi-clause: one frame per element.
+  if (Array.isArray(result.data)) {
+    return {
+      ok: true,
+      frames: result.data.map(f => normalizeFrameParticles(f)),
+      raw: result.raw,
+      model: anthropicModel(),
+      usage: result.usage ?? null,
+    };
+  }
   return { ok: true, frame: normalizeFrameParticles(result.data), raw: result.raw, model: anthropicModel(), usage: result.usage ?? null };
 }
 
@@ -458,6 +489,24 @@ const CLUSTER_FINITE_VERBS = new Set([
   'think', 'thinks', 'thought', 'know', 'knows', 'knew', 'see', 'sees', 'saw',
   'go', 'goes', 'went', 'like', 'likes', 'liked',
   "don't", "doesn't", "didn't", "can't", "won't", "isn't", "aren't", "wasn't", "weren't",
+  // Common transitive/stative verbs and their irregular past forms that frequently
+  // appear in multi-clause run-ons but were not counted as finite-verb evidence.
+  'love', 'loves', 'loved', 'hate', 'hates', 'hated',
+  'buy', 'buys', 'bought', 'sell', 'sells', 'sold',
+  'find', 'finds', 'found', 'lose', 'loses', 'lost',
+  'tell', 'tells', 'told', 'send', 'sends', 'sent',
+  'bring', 'brings', 'brought', 'hold', 'holds', 'held',
+  'build', 'builds', 'built', 'keep', 'keeps', 'kept',
+  'take', 'takes', 'took', 'give', 'gives', 'gave',
+  'make', 'makes', 'made', 'get', 'gets', 'got',
+  'come', 'comes', 'came', 'leave', 'leaves', 'left',
+  'run', 'runs', 'ran', 'hear', 'hears', 'heard',
+  'speak', 'speaks', 'spoke', 'write', 'writes', 'wrote',
+  'read', 'reads', 'eat', 'eats', 'ate', 'drink', 'drinks', 'drank',
+  'show', 'shows', 'showed', 'meet', 'meets', 'met',
+  'catch', 'catches', 'caught', 'live', 'lives', 'lived',
+  'try', 'tries', 'tried', 'help', 'helps', 'helped',
+  'use', 'uses', 'used', 'own', 'owns', 'owned',
 ]);
 
 /**
@@ -659,6 +708,37 @@ async function translateViaLlmCore(text, options = {}) {
   const llm = await compileFrameViaLlm(input, options);
   if (!llm.ok) {
     return { ok: false, error: llm.error, engine: 'llm', status: llm.status ?? 503 };
+  }
+
+  // Multi-clause path: LLM returned an array of frames (one per clause).
+  if (llm.frames) {
+    const segResults = [];
+    for (const rawFrame of llm.frames) {
+      const clauseFrame = await repairLlmFrame(rawFrame, input, options.lab);
+      const clauseResult = await translateFromFrame(clauseFrame, {
+        lab: options.lab,
+        input,
+        sourceLang: clauseFrame.detected_lang ?? sourceLang,
+      });
+      segResults.push({
+        ...clauseResult,
+        engine: 'llm',
+        model: llm.model,
+        reasoning: clauseFrame.reasoning ?? null,
+        detected_lang: clauseFrame.detected_lang ?? sourceLang,
+        llm_frame: clauseFrame,
+        unresolved: clauseResult.unresolved ?? [],
+      });
+    }
+    // Use frame indices as segment labels; the real source text is tracked on the merged result.
+    const segments = llm.frames.map((_, i) => `clause ${i + 1}`);
+    const merged = await mergeSentenceResults(segResults, segments, { input });
+    return finalizeWithAlternates(
+      { ...merged, engine: 'llm', model: llm.model },
+      llm.frames[0],
+      input,
+      options,
+    );
   }
 
   const frame = await repairLlmFrame(llm.frame, input, options.lab);

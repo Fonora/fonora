@@ -463,13 +463,20 @@ export async function buildResolveContext(lab = null) {
     if (s.state === 'rejected' || !s.spelling || !s.concept_id) continue;
     spellingByConceptId.set(String(s.spelling).toLowerCase(), s.concept_id);
   }
+  // Include all non-rejected compounds in the translator context — approved/revised
+  // are fully ratified; needs_review are machine-generated with valid spellings that
+  // are visible in the dictionary. Hiding them from the translator causes the LLM to
+  // fall back to raw roots for concepts that already have named compound forms.
+  const TRANSLATOR_COMPOUND_STATES = [...REUSABLE_WORD_STATES, 'needs_review'];
   for (const c of liveLab.compounds ?? []) {
-    if (!REUSABLE_WORD_STATES.includes(c.state) || !c.concept_id || !c.spelling) continue;
+    if (!TRANSLATOR_COMPOUND_STATES.includes(c.state) || !c.concept_id || !c.spelling) continue;
+    if (compoundByConceptId.has(c.concept_id)) continue; // approved takes priority
     compoundByConceptId.set(c.concept_id, {
       id: c.id,
       spelling: c.spelling,
       gloss: c.meaning ?? c.gloss ?? c.concept_id,
       parts: c.parts?.length ? [...c.parts] : null,
+      state: c.state,
     });
     spellingByConceptId.set(String(c.spelling).toLowerCase(), c.concept_id);
     parseInventory.push({ root: c.spelling, id: c.concept_id });
