@@ -8,7 +8,7 @@
       "email": "info@fonora.org",
       "name": "James Calhoun",
       "created_at": "2026-07-03T19:24:02.107Z",
-      "last_login": "2026-07-12T02:20:42.598Z"
+      "last_login": "2026-07-12T03:12:59.558Z"
     },
     {
       "id": "usr-mr5e5763-05fa58e9",
@@ -139,7 +139,7 @@
     },
     "usr-mr5bnmik-a2214bda": {
       "payload": {
-        "totalXp": 800,
+        "totalXp": 1205,
         "streak": 2,
         "lastPracticeDate": "2026-07-03",
         "dailyGoalXp": 50,
@@ -165,7 +165,7 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1476,
+              "total": 1467,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -177,16 +177,16 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1476,
+              "total": 1467,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
           },
           "fonoran-reading": {
-            "xp": 30,
-            "sessions": 0,
+            "xp": 435,
+            "sessions": 3,
             "lastPlayed": "2026-07-03",
-            "lessonIndex": 0,
+            "lessonIndex": 2,
             "mastery": {
               "ba": {
                 "seen": 2,
@@ -195,10 +195,130 @@
               "be": {
                 "seen": 1,
                 "correct": 1
+              },
+              "p-0-mi": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-be": {
+                "seen": 1,
+                "correct": 1
+              },
+              "p-0-no": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-mal": {
+                "seen": 1,
+                "correct": 1
+              },
+              "p-0-sa": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-nes": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-gem": {
+                "seen": 1,
+                "correct": 0
+              },
+              "w-0-se": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-ba": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-tes": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-nam": {
+                "seen": 2,
+                "correct": 1
+              },
+              "w-0-nesfa": {
+                "seen": 2,
+                "correct": 1
+              },
+              "w-0-kugu": {
+                "seen": 2,
+                "correct": 1
+              },
+              "w-0-sak": {
+                "seen": 2,
+                "correct": 1
+              },
+              "w-0-wi": {
+                "seen": 2,
+                "correct": 1
+              },
+              "w-0-dak": {
+                "seen": 2,
+                "correct": 2
+              },
+              "w-0-gi": {
+                "seen": 2,
+                "correct": 1
+              },
+              "w-0-les": {
+                "seen": 2,
+                "correct": 1
+              },
+              "w-0-mes": {
+                "seen": 2,
+                "correct": 1
+              },
+              "w-0-chadak": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-de": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-ho": {
+                "seen": 1,
+                "correct": 0
+              },
+              "w-0-tampe": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-pedal": {
+                "seen": 1,
+                "correct": 0
+              },
+              "w-0-to": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-hufel": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-tose": {
+                "seen": 1,
+                "correct": 0
+              },
+              "w-0-ginek": {
+                "seen": 1,
+                "correct": 0
+              },
+              "w-0-fet": {
+                "seen": 1,
+                "correct": 1
+              },
+              "w-0-gam": {
+                "seen": 1,
+                "correct": 1
               }
             },
             "curriculum": {
-              "total": 1476,
+              "total": 1467,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -215,7 +335,7 @@
               }
             },
             "curriculum": {
-              "total": 1476,
+              "total": 1467,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -227,7 +347,7 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1476,
+              "total": 1467,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -263,7 +383,7 @@
           }
         }
       },
-      "updated_at": "2026-07-12T02:22:21.127Z"
+      "updated_at": "2026-07-12T03:13:33.303Z"
     }
   },
   "proposals": [],

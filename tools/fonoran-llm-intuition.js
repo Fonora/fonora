@@ -32,6 +32,15 @@ export const CALIBRATION_CONCEPTS = [
 /** Small-scale smoke set before full calibration. */
 export const PILOT_CONCEPTS = ['tool', 'weapon', 'tribe'];
 
+/**
+ * Spot-check set: remediated compounds (compositions changed this sprint)
+ * plus high-frequency communicative concepts. Runs in ~460 API calls (~$5-15).
+ * Answers: do the clean-onset compositions score as well as the old ones?
+ */
+export const SPOT_CHECK_CONCEPTS = [
+  'mountain', 'rain', 'cloud', 'climb', 'sit', 'stand', 'overhead', 'fall', 'danger',
+];
+
 const CONCEPT_SYNONYMS = {
   tool: ['tool', 'useful thing', 'implement', 'instrument', 'useful thing for the hand', 'a tool'],
   weapon: ['weapon', 'tool for conflict', 'arm', 'arms', 'fighting tool'],

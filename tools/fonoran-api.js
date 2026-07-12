@@ -603,6 +603,7 @@ export async function handleFonoranApi(req, res, pathname, method) {
       try {
         return done(202, await startLlmPipelineJob(step, {
           reviewAcknowledged: Boolean(body.review_acknowledged),
+          spotCheck: Boolean(body.spot_check),
         }));
       } catch (err) {
         return done(err.status ?? 400, { error: err.message });

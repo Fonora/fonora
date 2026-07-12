@@ -129,6 +129,11 @@ function renderStep(step) {
       || (step.needs_review_ack && !STATE.reviewAck);
     actions = `<button type="button" class="btn btn--sm btn--primary lpw-run" data-step="${escapeHtml(step.id)}"
       data-write ${disabled ? 'disabled' : ''}>${escapeHtml(step.run_label ?? (step.inline ? 'Run audit' : 'Run on server'))}</button>`;
+    if (step.id === 'full') {
+      actions += ` <button type="button" class="btn btn--sm lpw-run" data-step="full" data-spot-check
+        data-write title="Run on 9 remediated concepts only (~$5–15)" ${disabled ? 'disabled' : ''}>Spot check</button>`;
+      actions += `<span class="lpw-detail sans" style="font-size:0.78rem;color:var(--muted)">Spot check: 9 remediated compounds · ~$5–15 · ~460 calls</span>`;
+    }
     if (step.needs_review_ack && !STATE.reviewAck) {
       actions += `<span class="lpw-hint sans">Check the box in “Your judgment call” above first.</span>`;
     } else if (step.blocked && step.blocked_reason) {
@@ -373,10 +378,11 @@ async function refreshPipelineStatus() {
   }
 }
 
-async function runStep(stepId) {
+async function runStep(stepId, { spotCheck = false } = {}) {
   try {
     const body = { step: stepId };
     if (stepId === 'full') body.review_acknowledged = STATE.reviewAck;
+    if (spotCheck) body.spot_check = true;
     const r = await api('/api/fonoran/llm-pipeline/run', {
       method: 'POST',
       body: JSON.stringify(body),
@@ -406,7 +412,7 @@ function wireWizardEvents() {
   TAB_ROOT()?.addEventListener('click', (e) => {
     const runBtn = e.target.closest('.lpw-run');
     if (runBtn && !runBtn.disabled) {
-      runStep(runBtn.dataset.step);
+      runStep(runBtn.dataset.step, { spotCheck: runBtn.hasAttribute('data-spot-check') });
       return;
     }
     if (e.target.closest('#lpw-jump-regenerate')) {

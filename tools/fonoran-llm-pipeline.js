@@ -13,6 +13,7 @@ import { resolveDataPath } from './fonoran-data-paths.js';
 import {
   PILOT_CONCEPTS,
   CALIBRATION_CONCEPTS,
+  SPOT_CHECK_CONCEPTS,
   BATTERY_VERSION,
   PROMPT_VERSION,
 } from './fonoran-llm-intuition.js';
@@ -243,6 +244,9 @@ function buildStepArgv(step, ctx) {
   const useResume = !useFresh && (step.id === 'calibration' || step.id === 'full');
   if (useResume) argv.push('--resume');
   if (useFresh) argv.push('--fresh');
+  if (ctx.spotCheck && step.id === 'full') {
+    argv.push(`--concepts=${SPOT_CHECK_CONCEPTS.join(',')}`);
+  }
   return argv;
 }
 
@@ -258,7 +262,10 @@ function formatStepCommand(step, ctx) {
   }
   if (step.id === 'full') {
     const mode = argv.includes('--fresh') ? '--fresh' : '--resume';
-    return `npm run fonoran:llm-intuition -- ${mode}`;
+    const conceptsFlag = argv.find(a => a.startsWith('--concepts='));
+    return conceptsFlag
+      ? `npm run fonoran:llm-intuition -- ${mode} ${conceptsFlag}`
+      : `npm run fonoran:llm-intuition -- ${mode}`;
   }
   if (step.id === 'reliability') {
     return `npm run fonoran:llm-reliability:run${argv.includes('--fresh') ? ' -- --fresh' : ''}`;
@@ -646,7 +653,7 @@ function pruneJobs() {
   for (const [id] of sorted.slice(8)) jobs.delete(id);
 }
 
-export async function startLlmPipelineJob(stepId, { reviewAcknowledged = false } = {}) {
+export async function startLlmPipelineJob(stepId, { reviewAcknowledged = false, spotCheck = false } = {}) {
   if (activeJobId) {
     const active = jobs.get(activeJobId);
     if (active?.status === 'running') {
@@ -676,6 +683,7 @@ export async function startLlmPipelineJob(stepId, { reviewAcknowledged = false }
     pilotDone,
     calDone,
     reliabilityStale: isReportStale(await readReliabilityReport(), status.seed_bank?.fingerprint),
+    spotCheck: spotCheck && stepId === 'full',
   };
   const argv = step.inline ? step.argv : buildStepArgv(step, cmdCtx);
 
