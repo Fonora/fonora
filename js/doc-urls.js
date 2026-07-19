@@ -130,10 +130,11 @@ function buildDocCatalog() {
     { path: 'docs/ipa-normalize.md', label: 'IPA normalization', layer: 'script' },
 
     { path: 'docs/fonoran-constitution.md', label: 'Fonoran constitution', layer: 'language' },
+    { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
+    { path: 'docs/fonoran-philosophy.md', label: 'Fonoran philosophy', layer: 'language' },
     { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
     { path: 'docs/fonoran-compound-workflow.md', label: 'Compound workflow', layer: 'language' },
     { path: 'docs/fonoran-cli-tools.md', label: 'CLI tools reference', layer: 'language' },
-    { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
     { path: 'docs/fonoran-numerals.md', label: 'Fonoran numerals', layer: 'language' },
     { path: 'docs/fonoran-learn.md', label: 'Fonoran Learn', layer: 'language' },
     { path: 'docs/fonoran-translator.md', label: 'Fonoran translator', layer: 'language' },

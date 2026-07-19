@@ -28,6 +28,13 @@
     import { getStoredTheme, isDarkTheme } from '../js/theme.js';
     import { buildMermaidPanZoomHtml } from '../js/mermaid-pan-zoom.js';
     import { playButtonMarkup, setPlayButtonLabel, setPlayButtonText } from '../js/play-button-ui.js';
+    import {
+      dictStateToFilters,
+      isFilterActive,
+      passesLabFilters,
+      toggleFilterKey,
+      UI_TIER_LABELS,
+    } from './lab-filters.js';
 
     const AUTH = {
       required: false,
@@ -223,6 +230,7 @@
       dictShowNeedsReview: false,
       dictShowApproved: false,
       dictShowRejected: false,
+      dictShowReconsider: false,
       dictCoreOnly: false,
       conceptTiers: null,
       lexicon: null,
@@ -578,9 +586,10 @@
     }
 
     const LANGUAGE_TIER_LABELS = {
-      communicative_core: 'Communicative core',
-      extended_core: 'Extended core',
-      complete: 'Complete language',
+      communicative_core: UI_TIER_LABELS.communicative_core,
+      extended_core: 'Ring 2 — Everyday (100)',
+      fluent_core: 'Ring 3 — Fluency (150 max)',
+      complete: 'Ring 3 — Fluency (150 max)',
     };
     const EXPERIENCE_TIER_LABELS = {
       survival_body: 'Survival & body', space_motion: 'Space & motion', social: 'Social',
@@ -598,6 +607,8 @@
             experience_tier: c.experience_tier ?? null,
             language_tier: c.language_tier ?? null,
             campfire_pass: c.campfire_pass ?? null,
+            reconsider: Boolean(c.reconsider),
+            reconsider_reason: c.reconsider_reason ?? null,
           });
         }
       } catch { /* tiers are optional decoration */ }
@@ -610,6 +621,7 @@
       const cached = STATE.conceptTiers?.get(conceptId);
       if (cached?.language_tier) return cached;
       const meta = experienceMetaFor(conceptId);
+      if (!meta) return null;
       return {
         experience_tier: meta.experience_tier,
         language_tier: meta.language_tier,
@@ -1957,6 +1969,15 @@
     }
 
 
+    function conceptReconsider(conceptId) {
+      return Boolean(STATE.conceptTiers?.get(conceptId)?.reconsider);
+    }
+
+    function isLocalDevHost() {
+      const h = window.location.hostname;
+      return h === 'localhost' || h === '127.0.0.1';
+    }
+
     /* ---------- DICTIONARY ---------- */
     function dictEntries() {
       const base = STATE.lab.sounds.map(s => ({ kind: 'sound', id: s.spelling, word: s.spelling, english: s.meaning || '(unnamed)', gloss: s.gloss || '', aliases: (s.aliases ?? []).join(' '), concept_id: s.concept_id ?? '', type: 'base', state: s.state, hint: s.say_bold }));
@@ -1972,35 +1993,19 @@
         state: c.state,
         hint: (c.part_details ?? []).map(p => p.spelling).join(' + ') || (c.parts ?? []).join(' + '),
       }));
-      let list = [...base, ...comp];
-      const statusFilters = [];
-      if (STATE.dictShowNeedsReview) statusFilters.push('needs_review', 'draft');
-      if (STATE.dictShowApproved) statusFilters.push('approved', 'revised');
-      if (STATE.dictShowRejected) statusFilters.push('rejected');
-      if (statusFilters.length) {
-        list = list.filter(e => statusFilters.includes(e.state));
-      } else {
-        list = list.filter(e => e.state !== 'rejected');
-      }
-
-      // Communicative-core view: only the ~50 core roots (the set the experiment measures).
-      if (STATE.dictCoreOnly) {
-        list = list.filter(e => e.kind === 'sound' && tierFor(e.concept_id)?.language_tier === 'communicative_core');
-        const q0 = STATE.dictQuery.trim();
-        if (q0) list = list.filter(e => labEntryMatchesQuery(q0, {
-          word: e.word,
-          english: e.english,
-          gloss: e.gloss,
-          aliases: e.aliases,
+      const filters = dictStateToFilters(STATE);
+      let list = [...base, ...comp].filter((e) => {
+        const entry = {
+          kind: e.kind,
+          state: e.state,
           concept_id: e.concept_id,
-          hint: e.hint,
-        }));
-        return list.sort((a, b) => a.word.localeCompare(b.word));
-      }
+          reconsider: conceptReconsider(e.concept_id),
+        };
+        return passesLabFilters(entry, filters, tierFor);
+      });
 
-      // Particles are a curated closed class: independent of the lab status filters.
       const particles = dictParticleEntries();
-      list = [...list, ...particles];
+      if (filters.showParticles) list = [...list, ...particles];
 
       const q = STATE.dictQuery.trim();
       if (q) list = list.filter(e => labEntryMatchesQuery(q, {
@@ -2336,14 +2341,7 @@
 
       $('dict-filters')?.querySelectorAll('[data-dict-filter]').forEach(chip => {
         const key = chip.dataset.dictFilter;
-        const on = key === 'roots' ? showRoots
-          : key === 'words' ? showWords
-            : key === 'particles' ? showParticles
-              : key === 'core' ? STATE.dictCoreOnly
-                : key === 'needs_review' ? STATE.dictShowNeedsReview
-                  : key === 'approved' ? STATE.dictShowApproved
-                    : STATE.dictShowRejected;
-        chip.classList.toggle('active', on);
+        chip.classList.toggle('active', isFilterActive(key, dictStateToFilters(STATE)));
       });
       $('dict-picker-empty')?.toggleAttribute('hidden', showRoots || showWords || showParticles);
 
@@ -2947,6 +2945,7 @@
             text,
             sourceLang: readTranslatorSourceLang(),
             simplify: 'auto',
+            dev_lab: isLocalDevHost(),
           }),
         });
         if (token !== translatorToken) return;
@@ -2969,6 +2968,8 @@
     }
 
     function renderTranslator() {
+      const devBanner = $('tr-dev-banner');
+      if (devBanner) devBanner.hidden = !isLocalDevHost();
       const input = $('tr-input');
       if (input && input.value !== STATE.translatorInput) input.value = STATE.translatorInput;
       const speedEl = $('tr-speed');
@@ -3203,13 +3204,16 @@
       const chip = e.target.closest('[data-dict-filter]');
       if (!chip) return;
       const key = chip.dataset.dictFilter;
-      if (key === 'roots') STATE.dictShowRoots = !STATE.dictShowRoots;
-      else if (key === 'words') STATE.dictShowWords = !STATE.dictShowWords;
-      else if (key === 'particles') STATE.dictShowParticles = !STATE.dictShowParticles;
-      else if (key === 'core') STATE.dictCoreOnly = !STATE.dictCoreOnly;
-      else if (key === 'needs_review') STATE.dictShowNeedsReview = !STATE.dictShowNeedsReview;
-      else if (key === 'approved') STATE.dictShowApproved = !STATE.dictShowApproved;
-      else if (key === 'rejected') STATE.dictShowRejected = !STATE.dictShowRejected;
+      const filters = dictStateToFilters(STATE);
+      if (!toggleFilterKey(key, filters)) return;
+      STATE.dictCoreOnly = filters.showCore;
+      STATE.dictShowRoots = filters.showRoots;
+      STATE.dictShowWords = filters.showWords;
+      STATE.dictShowParticles = filters.showParticles;
+      STATE.dictShowNeedsReview = filters.showNeedsReview;
+      STATE.dictShowApproved = filters.showApproved;
+      STATE.dictShowRejected = filters.showRejected;
+      STATE.dictShowReconsider = filters.showReconsider;
       renderDictionary();
     });
     bindModalDismiss({

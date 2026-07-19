@@ -4,12 +4,7 @@
 
 > **Start here** for the experimental Fonoran language and its builder at [`/language`](/language). For structured learner drills (Script + Fonoran skills), see [`/learn`](/learn) and [fonoran-learn.md](fonoran-learn.md); this document covers the builder/lab side.
 >
-> **Why Fonoran exists:** it is an experiment in whether people from different native
-> languages can communicate basic meaning by combining a small shared set of roots. The
-> success metric is whether *another* root-knower can recover the intended meaning — not
-> whether a compound is the most technically correct decomposition. Read the
-> [Fonoran Constitution](fonoran-constitution.md) for the philosophy, the campfire test,
-> and the tiered language model.
+> **Why Fonoran exists:** read the one-page [Fonoran Constitution](fonoran-constitution.md). Extended rationale → [fonoran-philosophy.md](fonoran-philosophy.md).
 
 **Fonoran** is a constructed language written in the [Fonora phonetic script](platform-overview.md). You assign CV/CVC sounds to semantic concepts, compose roots into compound words, and approve what enters the live vocabulary. Human review is canonical: generators propose, you decide. Compounds are treated as **meaning-attempts** with a *preferred* form and tracked *alternate understandable* forms, not as single canonical answers.
 

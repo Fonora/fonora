@@ -104,11 +104,11 @@ export async function getRootCandidate(id) {
   return findCandidate(store, id);
 }
 
-export async function regenerateRootCandidate(id) {
+export async function regenerateRootCandidate(id, { force = false } = {}) {
   const store = await readDoc('root_candidates');
   if (!store) throw new Error('No root candidates file');
   const candidate = findCandidate(store, id);
-  if (candidate.status === 'approved') throw new Error('Cannot regenerate an approved root');
+  if (!force && candidate.status === 'approved') throw new Error('Cannot regenerate an approved root');
   if (candidate.suggested_status === 'compound_candidate') {
     throw new Error('Compound candidates are not eligible for a root. Promote to a primitive first.');
   }

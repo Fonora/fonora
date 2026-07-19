@@ -1,19 +1,10 @@
 # Grammar
 
-> **Read the research.** Why grammar lives in closed-class particles instead of the lexicon is told in the research notebook: [RN-14 · Grammar as particles, not words](/research/notes/grammar-as-particles-not-words).
+> **Read [the Fonoran Constitution](fonoran-constitution.md) first** — hypothesis, four rules, vocabulary tiers, and grammar skeleton. For extended rationale see [fonoran-philosophy.md](fonoran-philosophy.md). Why grammar lives in closed-class particles: [RN-14 · Grammar as particles, not words](/research/notes/grammar-as-particles-not-words).
 
-> **Status**: Living specification. This is the authoritative reference for humans and the future Fonoran Translator. Sections marked *Under Development* are intentional placeholders, not omissions.
->
-> **Read [the Fonoran Constitution](fonoran-constitution.md) first.** It states what
-> Fonoran is *for*: an experiment in whether people from different native languages can
-> communicate by combining a small shared set of roots. Compounds are **meaning-attempts**,
-> not canonical answers; the test for any expression is *"if someone only knew the roots,
-> would this probably help them recover the intended meaning?"* This grammar describes the
-> minimal machinery that makes those attempts mutually intelligible.
+> **Status**: Living specification. Authoritative syntax reference for humans and the Fonoran Translator. Sections marked *Under Development* are intentional placeholders.
 
-Fonoran is a language of **concepts**.
-
-Every lexical item represents a semantic concept. Grammar exists only to describe **relationships between concepts**. Complexity should live in semantic composition, not grammatical exceptions.
+Fonoran is a language of **concepts**. Every lexical item represents a semantic concept. Grammar describes **relationships between concepts** only.
 
 ## Design Rule 0: Grammar is the last resort
 

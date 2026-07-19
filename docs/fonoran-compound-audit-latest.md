@@ -1,54 +1,55 @@
 # Fonoran compound audit
 
-> **Generated snapshot** — 2026-07-03. Run `npm run fonoran:compound-audit` to regenerate. This file is overwritten on each audit run; do not edit manually.
+> Generated: 2026-07-12T10:31:45.511Z
 
 ## Summary
 
 | Metric | Value |
 | --- | --- |
-| Live compounds | 127 |
+| Live compounds | 484 |
 | Demo reference trees | 53 |
-| Missing from live | 2 |
-| Tree mismatches | 30 |
+| Missing from live | 1 |
+| Tree mismatches | 35 |
 | Broken dependencies | 0 |
-| Tree-aware preferred forms | 22 |
-| Seed coverage | 127/127 |
+| Tree-aware preferred forms | 32 |
+| Seed coverage | 484/484 |
 | Empty alternates | 0 |
 | Flattened length warnings (>4 roots) | 0 |
-| Would promote (run optimize) | 0 |
-| LLM evaluated / consensus / split | 109 / 16 / 76 |
-| LLM would promote / low recovery | 33 / 46 |
-| Heuristic preferred / locked | 122 / 0 |
-| Playtested concepts | 70 |
+| Would promote (run optimize) | 2 |
+| LLM evaluated / consensus / split | 134 / 21 / 87 |
+| LLM would promote / low recovery | 43 / 62 |
+| Heuristic preferred / locked | 421 / 60 |
+| Playtested concepts | 181 |
 
 ### Findings by severity
 
 - **critical**: 0
-- **high**: 29
-- **medium**: 153
-- **low**: 0
+- **high**: 27
+- **medium**: 213
+- **low**: 1
 
 ### Phonetic ease
 
-- Communicative-core roots: 50 (avg cost 39.2)
-- Core on tertiary onsets: 5
-- Extended-core avg cost: 46.4
+- Communicative-core roots: 50 (avg cost 37.8)
+- Core on tertiary onsets: 3
+- Extended-core avg cost: 43.6
 
 Tertiary-onset roots:
-- `up` → ra (communicative_core)
-- `down` → ju (communicative_core)
-- `place` → che (communicative_core)
 - `after` → shu (extended_core)
-- `less` → sha (extended_core)
-- `fear` → pe (communicative_core)
+- `angry` → she (extended_core)
+- `calm` → ja (extended_core)
+- `child` → ra (extended_core)
 - `conflict` → pa (extended_core)
-- `bone` → je (extended_core)
+- `fear` → pe (communicative_core)
+- `front` → cha (extended_core)
+- `happy` → je (extended_core)
 - `heart` → pu (extended_core)
-- `metal` → ja (extended_core)
-- `tree` → she (extended_core)
-- `left` → chu (extended_core)
-- `understand` → cha (communicative_core)
-- `child` → re (extended_core)
+- `less` → sha (fluent_core)
+- `lonely` → ju (fluent_core)
+- `metal` → re (fluent_core)
+- `place` → che (communicative_core)
+- `sick` → ru (communicative_core)
+- `understand` → chu (extended_core)
 
 ## Findings
 
@@ -64,7 +65,6 @@ Tertiary-onset roots:
 - **document** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `mark+thing+know`
   - live: `thing+mark`
-- **down** (core_tertiary_onset): Communicative-core root "ju" uses tertiary onset (j)
 - **fear** (core_tertiary_onset): Communicative-core root "pe" uses tertiary onset (p)
 - **government** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `community+hold+strong`
@@ -92,6 +92,7 @@ Tertiary-onset roots:
 - **religion** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `collective+bond+source`
   - live: `bond+source`
+- **sick** (core_tertiary_onset): Communicative-core root "ru" uses tertiary onset (r)
 - **teacher** (flat_when_hierarchical): Demo depth 2 but preferred uses only primitive roots
 - **teacher** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `person+knowledge+give`
@@ -103,8 +104,6 @@ Tertiary-onset roots:
 - **tribe** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `community+identity`
   - live: `community+bond`
-- **understand** (core_tertiary_onset): Communicative-core root "cha" uses tertiary onset (ch)
-- **up** (core_tertiary_onset): Communicative-core root "ra" uses tertiary onset (r)
 - **work** (flat_when_hierarchical): Demo depth 2 but preferred uses only primitive roots
 - **work** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `person+do+will`
@@ -115,6 +114,7 @@ Tertiary-onset roots:
   - live: `earth+all`
 ### Medium
 
+- **acceptance** (near_confusable_pair): Surface "guti" is phonetically near "gudi" (ready, distinctness 93%)
 - **agent** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **agent** (llm_split): LLM playtests have no clear consensus winner
 - **almost** (llm_split): LLM playtests have no clear consensus winner
@@ -123,53 +123,80 @@ Tertiary-onset roots:
 - **beautiful** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **beautiful** (llm_split): LLM playtests have no clear consensus winner
 - **birth** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **birth** (llm_split): LLM playtests have no clear consensus winner
+- **birth** (llm_would_promote): LLM consensus would promote life + before → source + life
 - **birthplace** (llm_split): LLM playtests have no clear consensus winner
 - **blacksmith** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **blacksmith** (llm_would_promote): LLM consensus would promote metal + person → metal + make + person
 - **book** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **book** (llm_split): LLM playtests have no clear consensus winner
+- **breath** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **breath** (llm_split): LLM playtests have no clear consensus winner
 - **bridge** (llm_split): LLM playtests have no clear consensus winner
+- **bruise** (near_confusable_pair): Surface "tatgan" is phonetically near "tatgam" (rash, distinctness 93%)
 - **campfire** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **campfire** (llm_would_promote): LLM consensus would promote fire + near → fire + place
+- **cause** (llm_split): LLM playtests have no clear consensus winner
+- **change** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **change** (llm_split): LLM playtests have no clear consensus winner
+- **child** (llm_low_recovery): Live preferred recovers at 33% in LLM playtests
 - **city** (llm_split): LLM playtests have no clear consensus winner
-- **cloud** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **climb** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
+- **climb** (llm_split): LLM playtests have no clear consensus winner
 - **cloud** (llm_split): LLM playtests have no clear consensus winner
-- **community** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
-- **community** (llm_would_promote): LLM consensus would promote bond + collective → collective + person
+- **come** (llm_split): LLM playtests have no clear consensus winner
+- **community** (llm_split): LLM playtests have no clear consensus winner
 - **community** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `collective+person`
   - live: `bond+collective`
 - **container** (llm_split): LLM playtests have no clear consensus winner
-- **cycle** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **cycle** (llm_split): LLM playtests have no clear consensus winner
-- **day** (llm_low_recovery): Live preferred recovers at 25% in LLM playtests
+- **danger** (llm_would_promote): LLM consensus would promote fear + near → bad + near
+- **day** (llm_low_recovery): Live preferred recovers at 33% in LLM playtests
 - **day** (llm_split): LLM playtests have no clear consensus winner
 - **doctor** (llm_split): LLM playtests have no clear consensus winner
 - **document** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **document** (llm_split): LLM playtests have no clear consensus winner
+- **document** (near_confusable_pair): Surface "token" is phonetically near "togen" (part, distinctness 94%)
+- **door** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **door** (llm_split): LLM playtests have no clear consensus winner
+- **enemy** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
 - **enemy** (llm_split): LLM playtests have no clear consensus winner
+- **enemy** (near_confusable_pair): Surface "gamba" is phonetically near "kamba" (partner, distinctness 94%)
+- **enemy** (tree_mismatch): Preferred tree differs from semantic foundation
+  - expected: `person+conflict`
+  - live: `bad+person`
+- **enter** (near_confusable_pair): Surface "felmes" is phonetically near "fenmes" (floor, distinctness 93%)
+- **equal** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **equal** (llm_split): LLM playtests have no clear consensus winner
+- **exchange** (llm_low_recovery): Live preferred recovers at 67% in LLM playtests
 - **exchange** (llm_split): LLM playtests have no clear consensus winner
-- **family** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **family** (llm_would_promote): LLM consensus would promote person + bond → parent + collective
-- **farmer** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
-- **farmer** (llm_would_promote): LLM consensus would promote plant + person → make + plant + person
+- **fall** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **fall** (llm_split): LLM playtests have no clear consensus winner
+- **family** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
+- **family** (llm_would_promote): LLM consensus would promote love + person → person + bond
+- **family** (tree_mismatch): Preferred tree differs from semantic foundation
+  - expected: `person+bond`
+  - live: `love+person`
+- **farmer** (llm_low_recovery): Live preferred recovers at 67% in LLM playtests
+- **fever** (near_confusable_pair): Surface "lemfem" is phonetically near "lenfem" (ear, distinctness 93%)
+- **fire_making** (near_confusable_pair): Surface "dakdat" is phonetically near "dakgat" (fist, distinctness 93%)
 - **fisherman** (llm_split): LLM playtests have no clear consensus winner
-- **fly** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **fly** (llm_would_promote): LLM consensus would promote move + air → sky + move
+- **flow** (llm_split): LLM playtests have no clear consensus winner
+- **fly** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
+- **focus** (near_confusable_pair): Surface "gatmet" is phonetically near "gatmes" (bag, distinctness 93%)
+- **forest** (llm_low_recovery): Live preferred recovers at 67% in LLM playtests
 - **forest** (llm_split): LLM playtests have no clear consensus winner
-- **forest** (tree_mismatch): Preferred tree differs from semantic foundation
-  - expected: `many+plant+place`
-  - live: `many+tree`
 - **forget** (llm_split): LLM playtests have no clear consensus winner
-- **friend** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **forget** (tree_mismatch): Preferred tree differs from semantic foundation
+  - expected: `know+empty`
+  - live: `empty+know`
+- **form** (llm_split): LLM playtests have no clear consensus winner
+- **fresh_water_source** (near_confusable_pair): Surface "guye" is phonetically near "kuye" (pour, distinctness 93%)
+- **friend** (llm_low_recovery): Live preferred recovers at 60% in LLM playtests
 - **friend** (llm_would_promote): LLM consensus would promote good + person → person + bond + good
 - **friend** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `person+bond+good`
   - live: `good+person`
-- **gift** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
+- **gift** (llm_low_recovery): Live preferred recovers at 67% in LLM playtests
 - **gift** (llm_split): LLM playtests have no clear consensus winner
 - **gift** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `give+thing+good`
@@ -178,82 +205,108 @@ Tertiary-onset roots:
 - **government** (llm_split): LLM playtests have no clear consensus winner
 - **grandparent** (llm_split): LLM playtests have no clear consensus winner
 - **grow** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **grow** (llm_would_promote): LLM consensus would promote life + more → life + change + more
+- **grow** (llm_split): LLM playtests have no clear consensus winner
 - **grow** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `life+change+more`
   - live: `life+more`
+- **heal** (llm_low_recovery): Live preferred recovers at 67% in LLM playtests
 - **heal** (llm_split): LLM playtests have no clear consensus winner
-- **helper** (llm_split): LLM playtests have no clear consensus winner
-- **home** (llm_split): LLM playtests have no clear consensus winner
+- **helper** (llm_low_recovery): Live preferred recovers at 67% in LLM playtests
+- **helper** (llm_would_promote): LLM consensus would promote person + help → help + person
+- **hidden_place** (near_confusable_pair): Surface "chegan" is phonetically near "chegam" (dangerous_ground, distinctness 93%)
+- **high_ground** (near_confusable_pair): Surface "fensam" is phonetically near "fentam" (desert, distinctness 93%)
+- **high_place** (near_confusable_pair): Surface "chesam" is phonetically near "chetam" (open_space, distinctness 93%)
+- **home** (llm_low_recovery): Live preferred recovers at 40% in LLM playtests
+- **home** (llm_would_promote): LLM consensus would promote sleep + place → place + bond
+- **home** (tree_mismatch): Preferred tree differs from semantic foundation
+  - expected: `place+bond`
+  - live: `sleep+place`
+- **hope** (near_confusable_pair): Surface "gusak" is phonetically near "gisak" (try, distinctness 93%)
 - **hunter** (llm_split): LLM playtests have no clear consensus winner
-- **identity** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **identity** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
 - **identity** (llm_split): LLM playtests have no clear consensus winner
-- **island** (llm_split): LLM playtests have no clear consensus winner
+- **imagine** (near_confusable_pair): Surface "metkel" is phonetically near "meskel" (close, distinctness 93%)
+- **infection** (near_confusable_pair): Surface "tesmes" is phonetically near "tetmes" (basket, distinctness 93%)
+- **instant** (near_confusable_pair): Surface "kangen" is phonetically near "kalgen" (insect, distinctness 93%)
+- **island** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **journey** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **journey** (llm_would_promote): LLM consensus would promote far + move → move + path
 - **joy** (llm_split): LLM playtests have no clear consensus winner
 - **knife** (llm_split): LLM playtests have no clear consensus winner
-- **lake** (llm_low_recovery): Live preferred recovers at 25% in LLM playtests
-- **lake** (llm_split): LLM playtests have no clear consensus winner
+- **knowledge** (llm_split): LLM playtests have no clear consensus winner
+- **lake** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **lake** (llm_would_promote): LLM consensus would promote water + hold → water + still
 - **lamp** (llm_split): LLM playtests have no clear consensus winner
-- **language** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **language** (llm_would_promote): LLM consensus would promote collective + speak → speak + collective + know
+- **lamp** (tree_mismatch): Preferred tree differs from semantic foundation
+  - expected: `light+thing`
+  - live: `light+hold`
+- **language** (llm_low_recovery): Live preferred recovers at 30% in LLM playtests
+- **language** (llm_split): LLM playtests have no clear consensus winner
+- **later** (llm_low_recovery): Live preferred recovers at 33% in LLM playtests
+- **later** (llm_split): LLM playtests have no clear consensus winner
+- **laugh** (would_promote): Optimizer would promote happy + voice → feel + good + speak
 - **law** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **law** (llm_split): LLM playtests have no clear consensus winner
 - **learn** (llm_split): LLM playtests have no clear consensus winner
+- **mark** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **meal** (llm_low_recovery): Live preferred recovers at 60% in LLM playtests
 - **meal** (llm_split): LLM playtests have no clear consensus winner
 - **meal** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `food+thing`
   - live: `food+eat`
 - **meaning** (llm_split): LLM playtests have no clear consensus winner
-- **memory** (llm_split): LLM playtests have no clear consensus winner
+- **meeting_point** (near_confusable_pair): Surface "chekam" is phonetically near "chegam" (dangerous_ground, distinctness 95%)
+- **meeting_point** (would_promote): Optimizer would promote place + bond → place + near + bond
 - **money** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **money** (llm_split): LLM playtests have no clear consensus winner
+- **money** (llm_would_promote): LLM consensus would promote thing + exchange → give + take + equal
 - **moonlight** (llm_split): LLM playtests have no clear consensus winner
 - **morning** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **morning** (llm_split): LLM playtests have no clear consensus winner
-- **mountain** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **mountain** (llm_split): LLM playtests have no clear consensus winner
 - **mountain** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `earth+up+still`
-  - live: `earth+up`
+  - live: `stone+big+still`
 - **music** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **music** (llm_split): LLM playtests have no clear consensus winner
 - **music** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `speak+pulse+joy`
   - live: `pulse+good`
+- **nail** (near_confusable_pair): Surface "gatsas" is phonetically near "datsas" (coal, distinctness 93%)
 - **nation** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **nation** (llm_split): LLM playtests have no clear consensus winner
 - **ocean** (llm_split): LLM playtests have no clear consensus winner
 - **ocean** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `water+place+many`
   - live: `water+big`
-- **open** (llm_split): LLM playtests have no clear consensus winner
-- **peace** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **old** (near_confusable_pair): Surface "femdi" is phonetically near "femti" (still_raw, distinctness 94%)
+- **open** (llm_would_promote): LLM consensus would promote empty + bound → make + path
+- **open_space** (near_confusable_pair): Surface "chetam" is phonetically near "chekam" (meeting_point, distinctness 93%)
+- **overhead** (llm_split): LLM playtests have no clear consensus winner
+- **part** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **part** (llm_split): LLM playtests have no clear consensus winner
 - **peace** (llm_split): LLM playtests have no clear consensus winner
 - **peace** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `collective+conflict+empty`
-  - live: `collective+good`
+  - live: `empty+conflict`
 - **people** (llm_split): LLM playtests have no clear consensus winner
 - **question** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **question** (llm_split): LLM playtests have no clear consensus winner
 - **question** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `speak+know+empty`
   - live: `want+know`
-- **rain** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **rain** (llm_would_promote): LLM consensus would promote water + down → sky + water
+- **rain** (llm_split): LLM playtests have no clear consensus winner
 - **red** (llm_split): LLM playtests have no clear consensus winner
 - **religion** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **religion** (llm_split): LLM playtests have no clear consensus winner
-- **remember** (llm_split): LLM playtests have no clear consensus winner
+- **river** (llm_would_promote): LLM consensus would promote flow + water → water + move
 - **river** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `water+flow+path`
   - live: `flow+water`
+- **road** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
 - **road** (llm_split): LLM playtests have no clear consensus winner
-- **run** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **run** (llm_would_promote): LLM consensus would promote move + fast → fast + move
+- **run** (llm_split): LLM playtests have no clear consensus winner
 - **sad** (llm_split): LLM playtests have no clear consensus winner
-- **sea** (llm_split): LLM playtests have no clear consensus winner
+- **sea** (llm_would_promote): LLM consensus would promote water + whole → water + all
+- **seed** (llm_low_recovery): Live preferred recovers at 67% in LLM playtests
 - **seed** (llm_split): LLM playtests have no clear consensus winner
 - **shared_meaning** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **shared_meaning** (llm_split): LLM playtests have no clear consensus winner
@@ -262,23 +315,33 @@ Tertiary-onset roots:
   - live: `speak+same`
 - **signal** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **signal** (llm_split): LLM playtests have no clear consensus winner
+- **sit** (llm_split): LLM playtests have no clear consensus winner
+- **source** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **source** (llm_split): LLM playtests have no clear consensus winner
+- **stand** (llm_low_recovery): Live preferred recovers at 30% in LLM playtests
+- **stand** (llm_split): LLM playtests have no clear consensus winner
+- **star** (llm_low_recovery): Live preferred recovers at 67% in LLM playtests
 - **star** (llm_split): LLM playtests have no clear consensus winner
+- **strong** (llm_split): LLM playtests have no clear consensus winner
 - **student** (llm_split): LLM playtests have no clear consensus winner
+- **substance** (llm_split): LLM playtests have no clear consensus winner
 - **sun** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `source+light+hot`
   - live: `sky+fire`
-- **sunrise** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **sunrise** (llm_split): LLM playtests have no clear consensus winner
-- **sunset** (llm_low_recovery): Live preferred recovers at 25% in LLM playtests
 - **sunset** (llm_split): LLM playtests have no clear consensus winner
+- **swim** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
 - **swim** (llm_split): LLM playtests have no clear consensus winner
-- **teacher** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **teacher** (llm_split): LLM playtests have no clear consensus winner
+- **teacher** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
+- **temporary** (near_confusable_pair): Surface "genkan" is phonetically near "genkam" (thread, distinctness 93%)
 - **thought** (llm_split): LLM playtests have no clear consensus winner
+- **thought** (tree_mismatch): Preferred tree differs from semantic foundation
+  - expected: `think+inside`
+  - live: `inside+think`
+- **tired** (near_confusable_pair): Surface "femtam" is phonetically near "fentam" (desert, distinctness 93%)
 - **tool** (llm_split): LLM playtests have no clear consensus winner
 - **trade** (llm_split): LLM playtests have no clear consensus winner
-- **tribe** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **tribe** (llm_split): LLM playtests have no clear consensus winner
+- **trap** (near_confusable_pair): Surface "gatkal" is phonetically near "gatkan" (duration, distinctness 93%)
 - **vehicle** (llm_split): LLM playtests have no clear consensus winner
 - **village** (llm_split): LLM playtests have no clear consensus winner
 - **voice** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
@@ -286,47 +349,65 @@ Tertiary-onset roots:
 - **voice** (tree_mismatch): Preferred tree differs from semantic foundation
   - expected: `speak+breath`
   - live: `person+speak`
+- **void** (near_confusable_pair): Surface "tamche" is phonetically near "kamche" (belongs, distinctness 93%)
+- **wait** (near_confusable_pair): Surface "tikan" is phonetically near "tigan" (hidden, distinctness 94%)
+- **war** (llm_low_recovery): Live preferred recovers at 45% in LLM playtests
 - **war** (llm_split): LLM playtests have no clear consensus winner
 - **weapon** (llm_split): LLM playtests have no clear consensus winner
 - **whole** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **whole** (llm_split): LLM playtests have no clear consensus winner
-- **winter** (llm_low_recovery): Live preferred recovers at 50% in LLM playtests
+- **will** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
+- **will** (llm_split): LLM playtests have no clear consensus winner
+- **winter** (llm_low_recovery): Live preferred recovers at 33% in LLM playtests
 - **winter** (llm_would_promote): LLM consensus would promote cold + after → time + cold
+- **wisdom** (llm_would_promote): LLM consensus would promote know + more → strong + know
 - **word** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **word** (llm_would_promote): LLM consensus would promote thing + speak → speak + mark
 - **work** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
 - **work** (llm_split): LLM playtests have no clear consensus winner
 - **wound** (llm_low_recovery): Live preferred recovers at 0% in LLM playtests
-- **wound** (llm_would_promote): LLM consensus would promote pain + body → bad + skin
+- **wound** (llm_split): LLM playtests have no clear consensus winner
+### Low
+
+- **cloth** (boundary_quality): Boundary quality 0% on "tettat" (Rejected: identical consonant boundary t + t between "tet" and "tat")
 ### Info
 
-- **blacksmith** (llm_would_promote): LLM consensus prefers metal + make + person (25% recovery) over live preferred
-- **campfire** (llm_would_promote): LLM consensus prefers fire + place (25% recovery) over live preferred
-- **community** (llm_would_promote): LLM consensus prefers collective + person (100% recovery) over live preferred
-- **family** (llm_would_promote): LLM consensus prefers parent + collective (100% recovery) over live preferred
+- **birth** (llm_would_promote): LLM consensus prefers source + life (0% recovery) over live preferred
+- **blacksmith** (llm_would_promote): LLM consensus prefers metal + make + person (0% recovery) over live preferred
+- **campfire** (llm_would_promote): LLM consensus prefers fire + place (33% recovery) over live preferred
+- **child** (llm_would_promote): LLM consensus prefers small + person (100% recovery) over live preferred
+- **cycle** (llm_would_promote): LLM consensus prefers time + pulse (33% recovery) over live preferred
+- **danger** (llm_would_promote): LLM consensus prefers bad + near (100% recovery) over live preferred
+- **family** (llm_would_promote): LLM consensus prefers person + bond (100% recovery) over live preferred
 - **farmer** (llm_would_promote): LLM consensus prefers make + plant + person (100% recovery) over live preferred
 - **fly** (llm_would_promote): LLM consensus prefers sky + move (100% recovery) over live preferred
 - **friend** (llm_would_promote): LLM consensus prefers person + bond + good (100% recovery) over live preferred
-- **grow** (llm_would_promote): LLM consensus prefers life + change + more (50% recovery) over live preferred
-- **journey** (llm_would_promote): LLM consensus prefers move + path (25% recovery) over live preferred
-- **language** (llm_would_promote): LLM consensus prefers speak + collective + know (50% recovery) over live preferred
-- **rain** (llm_would_promote): LLM consensus prefers sky + water (100% recovery) over live preferred
-- **river** (llm_would_promote): LLM consensus prefers water + flow + path (100% recovery) over live preferred
-- **run** (llm_would_promote): LLM consensus prefers fast + move (50% recovery) over live preferred
-- **voice** (llm_would_promote): LLM consensus prefers speak + breath (50% recovery) over live preferred
+- **helper** (llm_would_promote): LLM consensus prefers help + person (100% recovery) over live preferred
+- **home** (llm_would_promote): LLM consensus prefers place + bond (100% recovery) over live preferred
+- **island** (llm_would_promote): LLM consensus prefers earth + inside + water (0% recovery) over live preferred
+- **journey** (llm_would_promote): LLM consensus prefers move + path (33% recovery) over live preferred
+- **lake** (llm_would_promote): LLM consensus prefers water + still (33% recovery) over live preferred
+- **mark** (llm_would_promote): LLM consensus prefers name + thing (67% recovery) over live preferred
+- **money** (llm_would_promote): LLM consensus prefers give + take + equal (0% recovery) over live preferred
+- **open** (llm_would_promote): LLM consensus prefers make + path (0% recovery) over live preferred
+- **river** (llm_would_promote): LLM consensus prefers water + move (100% recovery) over live preferred
+- **safe** (llm_would_promote): LLM consensus prefers trust + good (67% recovery) over live preferred
+- **sea** (llm_would_promote): LLM consensus prefers water + all (0% recovery) over live preferred
+- **voice** (llm_would_promote): LLM consensus prefers speak + breath (33% recovery) over live preferred
+- **wave** (llm_would_promote): LLM consensus prefers water + move (0% recovery) over live preferred
 - **winter** (llm_would_promote): LLM consensus prefers time + cold (100% recovery) over live preferred
+- **wisdom** (llm_would_promote): LLM consensus prefers strong + know (33% recovery) over live preferred
 - **word** (llm_would_promote): LLM consensus prefers speak + mark (100% recovery) over live preferred
-- **wound** (llm_would_promote): LLM consensus prefers bad + skin (100% recovery) over live preferred
 
 ## Teaching-tree dependency order
 
 - `community` = bond + collective
-- `family` = person + bond
+- `family` = love + person
 - `exchange` = give + take
 - `knowledge` = know + hold
 - `memory` = know + hold + inside
 - `remember` = know + before
-- `forget` = know + empty
+- `forget` = empty + know
 - `identity` = self + know
 - `useful` = good + use
 - `run` = move + fast
@@ -335,17 +416,18 @@ Tertiary-onset roots:
 - `flow` = water + path
 - `river` = flow + water [via: flow]
 - `wind` = air + move
-- `home` = place + bond
+- `home` = sleep + place
 - `friend` = good + person
-- `enemy` = person + conflict
+- `enemy` = bad + person
 - `road` = path + move
 - `vehicle` = move + thing
 - `meal` = food + eat
-- `lamp` = light + thing
+- `lamp` = light + hold
 - `tool` = hand + thing
-- `breath` = air + inside
+- `breath` = air + flow [via: flow]
 - `voice` = person + speak
-- `thought` = think + inside
+- `thought` = inside + think
+- `hope` = good + want
 - `shared_meaning` = speak + same
 - `tribe` = community + bond [via: community]
 - `war` = tribe + conflict [via: tribe]
@@ -359,5 +441,4 @@ Tertiary-onset roots:
 - `document` = thing + mark [via: mark]
 - `pulse` = heart + move
 - `joy` = good + feel
-- `music` = pulse + good [via: pulse]
-- … and 87 more
+- … and 444 more

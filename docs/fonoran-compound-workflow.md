@@ -1,6 +1,8 @@
 # Fonoran compound workflow (local + production)
 
-> Sequential commands for producing and shipping vocabulary from editorial inputs through build, audit, optional LLM ranking, and deploy.
+> **Read first:** [fonoran-constitution.md](fonoran-constitution.md) (one page) · Agent rules: [CLAUDE.md](../CLAUDE.md)
+
+> Sequential commands for producing and shipping vocabulary from editorial inputs through **deterministic four-rules regeneration**, build, audit, and deploy. LLM scripts are optional advisory tools — not validators.
 >
 > See also: [fonoran.md](fonoran.md) (pipeline overview), [deploy.md](deploy.md) (Heroku), [fonoran-constitution.md](fonoran-constitution.md) (success criteria).
 
@@ -101,23 +103,23 @@ Use after editing seeds or `compounds.json` — e.g. compressing `world`, fixing
 #    tools/fonoran-expression-candidates.js  → ASSOCIATION_SEEDS
 #    data/fonoran-compounds.json             → preferred / alternates / gloss
 
-# 1. Length-only promotion (safe bulk: only flat > 4 with shorter seed)
-npm run fonoran:optimize-compounds -- --length-only
-
-#    Alternatives (use deliberately, not blind bulk):
-#    npm run fonoran:optimize-compounds              # heuristic score winners
-#    npm run fonoran:optimize-compounds -- --use-llm   # after v4 calibration only
+# 1. Deterministic four-rules regeneration (default path — no LLM)
+npm run fonoran:regen:four-rules -- --dry-run
+npm run fonoran:regen:four-rules -- --apply
+#    Skips playtest/human/locked rows; ranks by campfire + four rules.
+#    Legacy: npm run fonoran:optimize-compounds -- --length-only
 
 # 2. Rebuild lab from editorial JSON
 npm run fonoran:build:approved
 
-# 3. Audit + tests
+# 3. Audit + tests (free gates — no API spend)
+npm run fonoran:seed-quality-audit
+npm run fonoran:compound-confusability
 npm run fonoran:compound-audit -- --out=docs/fonoran-compound-audit-latest.md
 npm test
 
-# 4. Optional: LLM intuition on changed concepts only (needs ANTHROPIC_API_KEY)
-npm run fonoran:llm-intuition -- world
-#    npm run fonoran:llm-intuition -- --calibration   # 10-concept v4 calibration (~$1)
+# 4. Optional advisory only (needs ANTHROPIC_API_KEY) — does NOT set preferred forms
+#    npm run fonoran:llm-intuition -- world
 
 # 5. Human playtest (constitutional authority)
 npm start
@@ -129,10 +131,11 @@ git add data/fonoran-compounds.json tools/fonoran-expression-candidates.js ...
 git commit -m "..."
 ```
 
-### Expected audit after length-only pass
+### Expected audit after four-rules pass
 
 - **Flattened length warnings (>4 roots):** `0`
-- Review promotion log: e.g. `world: whole+place+earth+life → earth+all (5→2 roots)`
+- **Seed-quality gate:** ≥92% pass, 0 hard failures
+- Tree mismatches vs old semantic-demo trees are informational (preferred forms follow ASSOCIATION_SEEDS + four rules)
 
 ---
 

@@ -1,493 +1,16 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-07-11T16:17:24.668Z",
+  "updated_at": "2026-07-19T06:19:15.016Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
-  "root_count": 89,
+  "root_count": 135,
   "roots": [
     {
-      "id": "person",
-      "spelling": "ba",
-      "ipa": "/bʌ/",
-      "concept": "a person; someone",
+      "id": "addressee",
+      "spelling": "be",
+      "ipa": "/bɛ/",
+      "concept": "the entity spoken to; you",
       "domain": "being",
-      "reason": "a person — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "self",
-      "spelling": "de",
-      "ipa": "/dɛ/",
-      "concept": "oneself; me, myself",
-      "domain": "being",
-      "reason": "oneself — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "collective",
-      "spelling": "dan",
-      "ipa": "/dʌn/",
-      "concept": "a group seen as one; togetherness",
-      "domain": "being",
-      "reason": "a group seen as one — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "body",
-      "spelling": "fem",
-      "ipa": "/fɛm/",
-      "concept": "your body",
-      "domain": "being",
-      "reason": "your body — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "life",
-      "spelling": "fo",
-      "ipa": "/fɑ/",
-      "concept": "being alive",
-      "domain": "being",
-      "reason": "being alive — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "move",
-      "spelling": "gi",
-      "ipa": "/gɪ/",
-      "concept": "to go from one place to another",
-      "domain": "action",
-      "reason": "to go from one place to another — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "give",
-      "spelling": "ku",
-      "ipa": "/kʊ/",
-      "concept": "to give something to someone",
-      "domain": "action",
-      "reason": "to give something to someone — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "take",
-      "spelling": "la",
-      "ipa": "/lʌ/",
-      "concept": "to take something",
-      "domain": "action",
-      "reason": "to take something — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "hold",
-      "spelling": "gat",
-      "ipa": "/gʌt/",
-      "concept": "to keep something in your grasp",
-      "domain": "action",
-      "reason": "to keep something in your grasp — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "use",
-      "spelling": "gek",
-      "ipa": "/gɛk/",
-      "concept": "to use something",
-      "domain": "action",
-      "reason": "to use something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "help",
-      "spelling": "kas",
-      "ipa": "/kʌs/",
-      "concept": "to help someone",
-      "domain": "action",
-      "reason": "to help someone — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "make",
-      "spelling": "kel",
-      "ipa": "/kɛl/",
-      "concept": "to make something",
-      "domain": "action",
-      "reason": "to make something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "do",
-      "spelling": "mo",
-      "ipa": "/mɑ/",
-      "concept": "to do something",
-      "domain": "action",
-      "reason": "to do something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "speak",
-      "spelling": "se",
-      "ipa": "/sɛ/",
-      "concept": "to speak; to talk",
-      "domain": "action",
-      "reason": "to speak — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "see",
-      "spelling": "wi",
-      "ipa": "/wɪ/",
-      "concept": "to see",
-      "domain": "action",
-      "reason": "to see — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "hear",
-      "spelling": "len",
-      "ipa": "/lɛn/",
-      "concept": "to hear",
-      "domain": "action",
-      "reason": "to hear — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "touch",
-      "spelling": "mam",
-      "ipa": "/mʌm/",
-      "concept": "to touch",
-      "domain": "action",
-      "reason": "to touch — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "smell",
-      "spelling": "tek",
-      "ipa": "/tɛk/",
-      "concept": "to smell",
-      "domain": "action",
-      "reason": "to smell — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "taste",
-      "spelling": "tal",
-      "ipa": "/tʌl/",
-      "concept": "to taste",
-      "domain": "action",
-      "reason": "to taste — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "know",
-      "spelling": "hu",
-      "ipa": "/hʊ/",
-      "concept": "to know something",
-      "domain": "action",
-      "reason": "to know something — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "think",
-      "spelling": "met",
-      "ipa": "/mɛt/",
-      "concept": "to use your mind",
-      "domain": "action",
-      "reason": "to use your mind — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "feel",
-      "spelling": "nes",
-      "ipa": "/nɛs/",
-      "concept": "to feel something inside",
-      "domain": "action",
-      "reason": "to feel something inside — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "want",
-      "spelling": "sak",
-      "ipa": "/sʌk/",
-      "concept": "to wish for something",
-      "domain": "action",
-      "reason": "to wish for something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "eat",
-      "spelling": "tel",
-      "ipa": "/tɛl/",
-      "concept": "to eat",
-      "domain": "action",
-      "reason": "to eat — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "sleep",
-      "spelling": "nal",
-      "ipa": "/nʌl/",
-      "concept": "to sleep",
-      "domain": "action",
-      "reason": "to sleep — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "thing",
-      "spelling": "to",
-      "ipa": "/tɑ/",
-      "concept": "any object or item",
-      "domain": "ontology",
-      "reason": "any object or item — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "empty",
-      "spelling": "tam",
-      "ipa": "/tʌm/",
-      "concept": "having nothing inside",
-      "domain": "ontology",
-      "reason": "having nothing inside — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "water",
-      "spelling": "ye",
-      "ipa": "/jɛ/",
-      "concept": "water",
-      "domain": "element",
-      "reason": "water — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "fire",
-      "spelling": "dat",
-      "ipa": "/dʌt/",
-      "concept": "fire; a hot burning flame",
-      "domain": "element",
-      "reason": "fire — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "earth",
-      "spelling": "fen",
-      "ipa": "/fɛn/",
-      "concept": "the ground or soil",
-      "domain": "element",
-      "reason": "the ground or soil — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "air",
-      "spelling": "ges",
-      "ipa": "/gɛs/",
-      "concept": "the air we breathe",
-      "domain": "element",
-      "reason": "the air we breathe — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "light",
-      "spelling": "kek",
-      "ipa": "/kɛk/",
-      "concept": "light; what lets you see",
-      "domain": "element",
-      "reason": "light — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "dark",
-      "spelling": "gan",
-      "ipa": "/gʌn/",
-      "concept": "darkness; no light",
-      "domain": "element",
-      "reason": "darkness — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "hot",
-      "spelling": "lem",
-      "ipa": "/lɛm/",
-      "concept": "hot; warm to burning",
-      "domain": "element",
-      "reason": "hot — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "cold",
-      "spelling": "mak",
-      "ipa": "/mʌk/",
-      "concept": "cold; chilly to freezing",
-      "domain": "element",
-      "reason": "cold — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "stone",
-      "spelling": "sas",
-      "ipa": "/sʌs/",
-      "concept": "a hard rock",
-      "domain": "element",
-      "reason": "a hard rock — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "plant",
-      "spelling": "tet",
-      "ipa": "/tɛt/",
-      "concept": "a plant",
-      "domain": "element",
-      "reason": "a plant — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "animal",
-      "spelling": "kal",
-      "ipa": "/kʌl/",
-      "concept": "an animal",
-      "domain": "element",
-      "reason": "an animal — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "inside",
-      "spelling": "mes",
-      "ipa": "/mɛs/",
-      "concept": "in; within something",
-      "domain": "space",
-      "reason": "in — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "outside",
-      "spelling": "nen",
-      "ipa": "/nɛn/",
-      "concept": "out; beyond something's edge",
-      "domain": "space",
-      "reason": "out — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "here",
-      "spelling": "nam",
-      "ipa": "/nʌm/",
-      "concept": "at this place",
-      "domain": "space",
-      "reason": "at this place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "there",
-      "spelling": "tak",
-      "ipa": "/tʌk/",
-      "concept": "at that place",
-      "domain": "space",
-      "reason": "at that place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "near",
-      "spelling": "dal",
-      "ipa": "/dʌl/",
-      "concept": "close by",
-      "domain": "space",
-      "reason": "close by — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "far",
-      "spelling": "fet",
-      "ipa": "/fɛt/",
-      "concept": "a long way off",
-      "domain": "space",
-      "reason": "a long way off — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "up",
-      "spelling": "ra",
-      "ipa": "/rʌ/",
-      "concept": "toward a higher place",
-      "domain": "space",
-      "reason": "toward a higher place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "down",
-      "spelling": "ju",
-      "ipa": "/dʒʊ/",
-      "concept": "toward a lower place",
-      "domain": "space",
-      "reason": "toward a lower place — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "path",
-      "spelling": "nan",
-      "ipa": "/nʌn/",
-      "concept": "a way or route to travel along",
-      "domain": "space",
-      "reason": "a way or route to travel along — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "place",
-      "spelling": "che",
-      "ipa": "/tʃɛ/",
-      "concept": "a spot or location",
-      "domain": "space",
-      "reason": "a spot or location — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "bound",
-      "spelling": "tem",
-      "ipa": "/tɛm/",
-      "concept": "an edge; where something ends",
-      "domain": "space",
-      "reason": "an edge — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "around",
-      "spelling": "yi",
-      "ipa": "/jɪ/",
-      "concept": "encircling; going in a circle; again",
-      "domain": "space",
-      "reason": "encircling — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-04T00:18:06.508638Z"
-    },
-    {
-      "id": "front",
-      "spelling": "cha",
-      "ipa": "/tʃʌ/",
-      "concept": "forward; the front side; ahead",
-      "domain": "space",
-      "reason": "forward — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-04T00:18:06.508638Z"
-    },
-    {
-      "id": "back",
-      "spelling": "so",
-      "ipa": "/sɑ/",
-      "concept": "behind; the back side; rear",
-      "domain": "space",
-      "reason": "behind — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-04T00:18:06.508638Z"
-    },
-    {
-      "id": "through",
-      "spelling": "fel",
-      "ipa": "/fɛl/",
-      "concept": "through; passing from one side to the other",
-      "domain": "space",
-      "reason": "through — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-04T00:18:06.508638Z"
-    },
-    {
-      "id": "before",
-      "spelling": "di",
-      "ipa": "/dɪ/",
-      "concept": "earlier; in the past",
-      "domain": "time",
-      "reason": "earlier — shows up a lot in compounds, so it needs its own root.",
+      "reason": "the entity spoken to — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
@@ -500,39 +23,21 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "now",
-      "spelling": "gem",
-      "ipa": "/gɛm/",
-      "concept": "right now; this moment",
-      "domain": "time",
-      "reason": "right now — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
+      "id": "aggression",
+      "spelling": "sal",
+      "ipa": "/sʌl/",
+      "concept": "hostile force; attacking energy",
+      "domain": "emotion",
+      "reason": "hostile force — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
-      "id": "time",
-      "spelling": "kan",
-      "ipa": "/kʌn/",
-      "concept": "time; how long things last",
-      "domain": "time",
-      "reason": "time — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "one",
-      "spelling": "fa",
-      "ipa": "/fʌ/",
-      "concept": "a single one",
-      "domain": "quantity",
-      "reason": "a single one — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "many",
-      "spelling": "lek",
-      "ipa": "/lɛk/",
-      "concept": "a lot; lots of them",
-      "domain": "quantity",
-      "reason": "a lot — basic everyday idea that deserves its own root.",
+      "id": "air",
+      "spelling": "ges",
+      "ipa": "/gɛs/",
+      "concept": "the air we breathe",
+      "domain": "element",
+      "reason": "the air we breathe — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
@@ -545,76 +50,40 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "some",
-      "spelling": "ket",
-      "ipa": "/kɛt/",
-      "concept": "a few; part of them",
-      "domain": "quantity",
-      "reason": "a few — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "more",
-      "spelling": "mas",
-      "ipa": "/mʌs/",
-      "concept": "a greater amount",
-      "domain": "quantity",
-      "reason": "a greater amount — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "less",
-      "spelling": "sha",
-      "ipa": "/ʃʌ/",
-      "concept": "a smaller amount",
-      "domain": "quantity",
-      "reason": "a smaller amount — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "fast",
-      "spelling": "nek",
-      "ipa": "/nɛk/",
-      "concept": "quick; moving at high speed",
-      "domain": "quantity",
-      "reason": "quick — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "love",
-      "spelling": "san",
-      "ipa": "/sʌn/",
-      "concept": "to deeply care for someone",
+      "id": "angry",
+      "spelling": "she",
+      "ipa": "/ʃɛ/",
+      "concept": "feeling mad or hostile",
       "domain": "emotion",
-      "reason": "to deeply care for someone — basic everyday idea that deserves its own root.",
+      "reason": "feeling mad or hostile — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "animal",
+      "spelling": "kal",
+      "ipa": "/kʌl/",
+      "concept": "an animal",
+      "domain": "element",
+      "reason": "an animal — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "fear",
-      "spelling": "pe",
-      "ipa": "/pɛ/",
-      "concept": "to be afraid",
-      "domain": "emotion",
-      "reason": "to be afraid — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
+      "id": "around",
+      "spelling": "yi",
+      "ipa": "/jɪ/",
+      "concept": "encircling; going in a circle; again",
+      "domain": "space",
+      "reason": "encircling — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-04T00:18:06.508638Z"
     },
     {
-      "id": "pain",
-      "spelling": "tes",
-      "ipa": "/tɛs/",
-      "concept": "hurting; physical or emotional hurt",
-      "domain": "emotion",
-      "reason": "hurting — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "good",
-      "spelling": "gu",
-      "ipa": "/gʊ/",
-      "concept": "good; works well or is wanted",
-      "domain": "evaluation",
-      "reason": "good — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
+      "id": "back",
+      "spelling": "so",
+      "ipa": "/sɑ/",
+      "concept": "behind; the back side; rear",
+      "domain": "space",
+      "reason": "behind — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-04T00:18:06.508638Z"
     },
     {
       "id": "bad",
@@ -626,84 +95,12 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "true",
-      "spelling": "nat",
-      "ipa": "/nʌt/",
-      "concept": "true; matches what's real",
-      "domain": "evaluation",
-      "reason": "true — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "bond",
-      "spelling": "kam",
-      "ipa": "/kʌm/",
-      "concept": "a bond; a tie between things",
-      "domain": "relationships",
-      "reason": "a bond — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "conflict",
-      "spelling": "pa",
-      "ipa": "/pʌ/",
-      "concept": "a clash or fight between sides",
-      "domain": "relationships",
-      "reason": "a clash or fight between sides — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "same",
-      "spelling": "ho",
-      "ipa": "/hɑ/",
-      "concept": "the same; not different",
-      "domain": "relationships",
-      "reason": "the same — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "still",
-      "spelling": "ti",
-      "ipa": "/tɪ/",
-      "concept": "not moving; staying put",
-      "domain": "process",
-      "reason": "not moving — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "hand",
-      "spelling": "dak",
-      "ipa": "/dʌk/",
-      "concept": "your hand",
-      "domain": "body",
-      "reason": "your hand — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "eye",
-      "spelling": "kem",
-      "ipa": "/kɛm/",
-      "concept": "your eye",
-      "domain": "body",
-      "reason": "your eye — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "skin",
-      "spelling": "tat",
-      "ipa": "/tʌt/",
-      "concept": "skin",
-      "domain": "body",
-      "reason": "your skin — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "bone",
-      "spelling": "je",
-      "ipa": "/dʒɛ/",
-      "concept": "a bone",
-      "domain": "body",
-      "reason": "a bone — basic everyday idea that deserves its own root.",
+      "id": "before",
+      "spelling": "di",
+      "ipa": "/dɪ/",
+      "concept": "earlier; in the past",
+      "domain": "time",
+      "reason": "earlier — shows up a lot in compounds, so it needs its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
@@ -716,66 +113,147 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "small",
-      "spelling": "gen",
-      "ipa": "/gɛn/",
-      "concept": "small; little in size",
-      "domain": "quality",
-      "reason": "small — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "head",
-      "spelling": "kes",
-      "ipa": "/kɛs/",
-      "concept": "your head",
-      "domain": "body",
-      "reason": "your head — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "heart",
-      "spelling": "pu",
-      "ipa": "/pʊ/",
-      "concept": "your heart",
-      "domain": "body",
-      "reason": "your heart — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "mouth",
-      "spelling": "dam",
-      "ipa": "/dʌm/",
-      "concept": "your mouth",
-      "domain": "body",
-      "reason": "your mouth — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "need",
-      "spelling": "les",
-      "ipa": "/lɛs/",
-      "concept": "to need something",
-      "domain": "cognition",
-      "reason": "to need something — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "name",
-      "spelling": "mal",
-      "ipa": "/mʌl/",
-      "concept": "a name",
-      "domain": "communication",
-      "reason": "a name — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "addressee",
-      "spelling": "be",
-      "ipa": "/bɛ/",
-      "concept": "the entity spoken to; you",
+      "id": "body",
+      "spelling": "fem",
+      "ipa": "/fɛm/",
+      "concept": "your body",
       "domain": "being",
-      "reason": "the entity spoken to — basic everyday idea that deserves its own root.",
+      "reason": "your body — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "bond",
+      "spelling": "kam",
+      "ipa": "/kʌm/",
+      "concept": "a bond; a tie between things",
+      "domain": "relationships",
+      "reason": "a bond — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "bone",
+      "spelling": "bu",
+      "ipa": "/dʒɛ/",
+      "concept": "a bone",
+      "domain": "body",
+      "reason": "a bone — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "bound",
+      "spelling": "tem",
+      "ipa": "/tɛm/",
+      "concept": "an edge; where something ends",
+      "domain": "space",
+      "reason": "an edge — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "calm",
+      "spelling": "bi",
+      "ipa": "/bɪ/",
+      "concept": "feeling settled and at peace",
+      "domain": "emotion",
+      "reason": "feeling settled and at peace — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:38:20.707Z"
+    },
+    {
+      "id": "cause",
+      "spelling": "gak",
+      "ipa": "/gʌk/",
+      "concept": "cause",
+      "domain": "abstract",
+      "reason": "cause — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "center",
+      "spelling": "he",
+      "ipa": "/hɛ/",
+      "concept": "the middle",
+      "domain": "space",
+      "reason": "the middle — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "change",
+      "spelling": "nel",
+      "ipa": "/nɛl/",
+      "concept": "change",
+      "domain": "abstract",
+      "reason": "change — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "child",
+      "spelling": "fe",
+      "ipa": "/fɛ/",
+      "concept": "a child; a young person",
+      "domain": "being",
+      "reason": "a child — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:38:20.707Z"
+    },
+    {
+      "id": "cold",
+      "spelling": "mak",
+      "ipa": "/mʌk/",
+      "concept": "cold; chilly to freezing",
+      "domain": "element",
+      "reason": "cold — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "collective",
+      "spelling": "dan",
+      "ipa": "/dʌn/",
+      "concept": "a group seen as one; togetherness",
+      "domain": "being",
+      "reason": "a group seen as one — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "conflict",
+      "spelling": "pa",
+      "ipa": "/pʌ/",
+      "concept": "a clash or fight between sides",
+      "domain": "relationships",
+      "reason": "a clash or fight between sides — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "dark",
+      "spelling": "gan",
+      "ipa": "/gʌn/",
+      "concept": "darkness; no light",
+      "domain": "element",
+      "reason": "darkness — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "depression",
+      "spelling": "net",
+      "ipa": "/nɛt/",
+      "concept": "heavy sadness; spirit pressed down",
+      "domain": "emotion",
+      "reason": "heavy sadness — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "do",
+      "spelling": "mo",
+      "ipa": "/mɑ/",
+      "concept": "to do something",
+      "domain": "action",
+      "reason": "to do something — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "down",
+      "spelling": "do",
+      "ipa": "/dʒʊ/",
+      "concept": "toward a lower place",
+      "domain": "space",
+      "reason": "toward a lower place — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
@@ -788,13 +266,112 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "sky",
-      "spelling": "sam",
-      "ipa": "/sʌm/",
-      "concept": "the sky above",
+      "id": "earth",
+      "spelling": "fen",
+      "ipa": "/fɛn/",
+      "concept": "the ground or soil",
       "domain": "element",
-      "reason": "the sky above — basic everyday idea that deserves its own root.",
+      "reason": "the ground or soil — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "eat",
+      "spelling": "tel",
+      "ipa": "/tɛl/",
+      "concept": "to eat",
+      "domain": "action",
+      "reason": "to eat — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "empty",
+      "spelling": "tam",
+      "ipa": "/tʌm/",
+      "concept": "having nothing inside",
+      "domain": "ontology",
+      "reason": "having nothing inside — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "equal",
+      "spelling": "kat",
+      "ipa": "/kʌt/",
+      "concept": "equal",
+      "domain": "abstract",
+      "reason": "equal — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "exclude",
+      "spelling": "mek",
+      "ipa": "/mɛk/",
+      "concept": "to keep out of a group",
+      "domain": "social",
+      "reason": "to keep out of a group — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "eye",
+      "spelling": "kem",
+      "ipa": "/kɛm/",
+      "concept": "your eye",
+      "domain": "body",
+      "reason": "your eye — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "far",
+      "spelling": "fet",
+      "ipa": "/fɛt/",
+      "concept": "a long way off",
+      "domain": "space",
+      "reason": "a long way off — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "fast",
+      "spelling": "nek",
+      "ipa": "/nɛk/",
+      "concept": "quick; moving at high speed",
+      "domain": "quantity",
+      "reason": "quick — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "fear",
+      "spelling": "pe",
+      "ipa": "/pɛ/",
+      "concept": "to be afraid",
+      "domain": "emotion",
+      "reason": "to be afraid — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "feel",
+      "spelling": "nes",
+      "ipa": "/nɛs/",
+      "concept": "to feel something inside",
+      "domain": "action",
+      "reason": "to feel something inside — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "fire",
+      "spelling": "dat",
+      "ipa": "/dʌt/",
+      "concept": "fire; a hot burning flame",
+      "domain": "element",
+      "reason": "fire — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "flow",
+      "spelling": "hi",
+      "ipa": "/hɪ/",
+      "concept": "flow",
+      "domain": "abstract",
+      "reason": "flow — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
       "id": "food",
@@ -804,6 +381,843 @@
       "domain": "being",
       "reason": "food — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-03T03:40:11.102Z"
+    },
+    {
+      "id": "form",
+      "spelling": "yu",
+      "ipa": "/jʊ/",
+      "concept": "form",
+      "domain": "abstract",
+      "reason": "form — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "front",
+      "spelling": "cha",
+      "ipa": "/tʃʌ/",
+      "concept": "forward; the front side; ahead",
+      "domain": "space",
+      "reason": "forward — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-04T00:18:06.508638Z"
+    },
+    {
+      "id": "give",
+      "spelling": "ku",
+      "ipa": "/kʊ/",
+      "concept": "to give something to someone",
+      "domain": "action",
+      "reason": "to give something to someone — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "good",
+      "spelling": "gu",
+      "ipa": "/gʊ/",
+      "concept": "good; works well or is wanted",
+      "domain": "evaluation",
+      "reason": "good — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "hand",
+      "spelling": "dak",
+      "ipa": "/dʌk/",
+      "concept": "your hand",
+      "domain": "body",
+      "reason": "your hand — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "happy",
+      "spelling": "tu",
+      "ipa": "/tʊ/",
+      "concept": "feeling glad and content",
+      "domain": "emotion",
+      "reason": "feeling glad and content — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:38:20.707Z"
+    },
+    {
+      "id": "head",
+      "spelling": "kes",
+      "ipa": "/kɛs/",
+      "concept": "your head",
+      "domain": "body",
+      "reason": "your head — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "hear",
+      "spelling": "len",
+      "ipa": "/lɛn/",
+      "concept": "to hear",
+      "domain": "action",
+      "reason": "to hear — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "heart",
+      "spelling": "pu",
+      "ipa": "/pʊ/",
+      "concept": "your heart",
+      "domain": "body",
+      "reason": "your heart — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "help",
+      "spelling": "kas",
+      "ipa": "/kʌs/",
+      "concept": "to help someone",
+      "domain": "action",
+      "reason": "to help someone — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "here",
+      "spelling": "nam",
+      "ipa": "/nʌm/",
+      "concept": "at this place",
+      "domain": "space",
+      "reason": "at this place — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "hold",
+      "spelling": "gat",
+      "ipa": "/gʌt/",
+      "concept": "to keep something in your grasp",
+      "domain": "action",
+      "reason": "to keep something in your grasp — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "hope",
+      "spelling": "we",
+      "ipa": "/wɛ/",
+      "concept": "to wish and expect something good",
+      "domain": "emotion",
+      "reason": "to wish and expect something good — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "hot",
+      "spelling": "lem",
+      "ipa": "/lɛm/",
+      "concept": "hot; warm to burning",
+      "domain": "element",
+      "reason": "hot — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "include",
+      "spelling": "nas",
+      "ipa": "/nʌs/",
+      "concept": "to bring in as part of a group",
+      "domain": "social",
+      "reason": "to bring in as part of a group — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "inside",
+      "spelling": "mes",
+      "ipa": "/mɛs/",
+      "concept": "in; within something",
+      "domain": "space",
+      "reason": "in — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "journey",
+      "spelling": "let",
+      "ipa": "/lɛt/",
+      "concept": "the experience of traveling; a path through life",
+      "domain": "space",
+      "reason": "the experience of traveling — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "joy",
+      "spelling": "lel",
+      "ipa": "/lɛl/",
+      "concept": "deep gladness; joyful feeling",
+      "domain": "emotion",
+      "reason": "deep gladness — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "justice",
+      "spelling": "tas",
+      "ipa": "/tʌs/",
+      "concept": "fair treatment; equal rules for all",
+      "domain": "social",
+      "reason": "fair treatment — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "know",
+      "spelling": "hu",
+      "ipa": "/hʊ/",
+      "concept": "to know something",
+      "domain": "action",
+      "reason": "to know something — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "left",
+      "spelling": "go",
+      "ipa": "/gɑ/",
+      "concept": "the left side",
+      "domain": "space",
+      "reason": "the left side — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "less",
+      "spelling": "sha",
+      "ipa": "/ʃʌ/",
+      "concept": "a smaller amount",
+      "domain": "quantity",
+      "reason": "a smaller amount — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "life",
+      "spelling": "fo",
+      "ipa": "/fɑ/",
+      "concept": "being alive",
+      "domain": "being",
+      "reason": "being alive — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "light",
+      "spelling": "kek",
+      "ipa": "/kɛk/",
+      "concept": "light; what lets you see",
+      "domain": "element",
+      "reason": "light — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "lonely",
+      "spelling": "ga",
+      "ipa": "/gʌ/",
+      "concept": "lonely",
+      "domain": "abstract",
+      "reason": "lonely — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:38:20.707Z"
+    },
+    {
+      "id": "love",
+      "spelling": "san",
+      "ipa": "/sʌn/",
+      "concept": "to deeply care for someone",
+      "domain": "emotion",
+      "reason": "to deeply care for someone — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "make",
+      "spelling": "kel",
+      "ipa": "/kɛl/",
+      "concept": "to make something",
+      "domain": "action",
+      "reason": "to make something — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "many",
+      "spelling": "lek",
+      "ipa": "/lɛk/",
+      "concept": "a lot; lots of them",
+      "domain": "quantity",
+      "reason": "a lot — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "mark",
+      "spelling": "ken",
+      "ipa": "/kɛn/",
+      "concept": "mark",
+      "domain": "abstract",
+      "reason": "mark — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "metal",
+      "spelling": "ge",
+      "ipa": "/gɛ/",
+      "concept": "a hard shiny material you can shape, like iron",
+      "domain": "element",
+      "reason": "a hard shiny material you can shape, like iron — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:38:20.707Z"
+    },
+    {
+      "id": "more",
+      "spelling": "mas",
+      "ipa": "/mʌs/",
+      "concept": "a greater amount",
+      "domain": "quantity",
+      "reason": "a greater amount — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "motion",
+      "spelling": "si",
+      "ipa": "/sɪ/",
+      "concept": "movement itself; something in motion",
+      "domain": "space",
+      "reason": "movement itself — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "mouth",
+      "spelling": "dam",
+      "ipa": "/dʌm/",
+      "concept": "your mouth",
+      "domain": "body",
+      "reason": "your mouth — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "move",
+      "spelling": "gi",
+      "ipa": "/gɪ/",
+      "concept": "to go from one place to another",
+      "domain": "action",
+      "reason": "to go from one place to another — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "name",
+      "spelling": "mal",
+      "ipa": "/mʌl/",
+      "concept": "a name",
+      "domain": "communication",
+      "reason": "a name — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "near",
+      "spelling": "dal",
+      "ipa": "/dʌl/",
+      "concept": "close by",
+      "domain": "space",
+      "reason": "close by — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "need",
+      "spelling": "les",
+      "ipa": "/lɛs/",
+      "concept": "to need something",
+      "domain": "cognition",
+      "reason": "to need something — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "now",
+      "spelling": "gem",
+      "ipa": "/gɛm/",
+      "concept": "right now; this moment",
+      "domain": "time",
+      "reason": "right now — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "one",
+      "spelling": "fa",
+      "ipa": "/fʌ/",
+      "concept": "a single one",
+      "domain": "quantity",
+      "reason": "a single one — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "outside",
+      "spelling": "nen",
+      "ipa": "/nɛn/",
+      "concept": "out; beyond something's edge",
+      "domain": "space",
+      "reason": "out — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "pain",
+      "spelling": "tes",
+      "ipa": "/tɛs/",
+      "concept": "hurting; physical or emotional hurt",
+      "domain": "emotion",
+      "reason": "hurting — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "parent",
+      "spelling": "fes",
+      "ipa": "/fɛs/",
+      "concept": "a mother or father",
+      "domain": "being",
+      "reason": "a mother or father — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "part",
+      "spelling": "mem",
+      "ipa": "/mɛm/",
+      "concept": "part",
+      "domain": "abstract",
+      "reason": "part — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "path",
+      "spelling": "nan",
+      "ipa": "/nʌn/",
+      "concept": "a way or route to travel along",
+      "domain": "space",
+      "reason": "a way or route to travel along — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "person",
+      "spelling": "ba",
+      "ipa": "/bʌ/",
+      "concept": "a person; someone",
+      "domain": "being",
+      "reason": "a person — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "place",
+      "spelling": "che",
+      "ipa": "/tʃɛ/",
+      "concept": "a spot or location",
+      "domain": "space",
+      "reason": "a spot or location — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "plant",
+      "spelling": "tet",
+      "ipa": "/tɛt/",
+      "concept": "a plant",
+      "domain": "element",
+      "reason": "a plant — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "point",
+      "spelling": "li",
+      "ipa": "/lɪ/",
+      "concept": "a sharp aim or exact spot",
+      "domain": "space",
+      "reason": "a sharp aim or exact spot — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "proud",
+      "spelling": "yo",
+      "ipa": "/jɑ/",
+      "concept": "proud",
+      "domain": "abstract",
+      "reason": "proud — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "reach",
+      "spelling": "das",
+      "ipa": "/dʌs/",
+      "concept": "reach",
+      "domain": "abstract",
+      "reason": "reach — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "right",
+      "spelling": "fu",
+      "ipa": "/fʊ/",
+      "concept": "the right side",
+      "domain": "space",
+      "reason": "the right side — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "rule",
+      "spelling": "ha",
+      "ipa": "/hʌ/",
+      "concept": "a pattern to follow; how things must be done",
+      "domain": "social",
+      "reason": "a pattern to follow — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "sad",
+      "spelling": "nem",
+      "ipa": "/nɛm/",
+      "concept": "sad",
+      "domain": "abstract",
+      "reason": "sad — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "same",
+      "spelling": "ho",
+      "ipa": "/hɑ/",
+      "concept": "the same; not different",
+      "domain": "relationships",
+      "reason": "the same — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "scared",
+      "spelling": "nak",
+      "ipa": "/nʌk/",
+      "concept": "feeling afraid; pulled back by fear",
+      "domain": "emotion",
+      "reason": "feeling afraid — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "see",
+      "spelling": "wi",
+      "ipa": "/wɪ/",
+      "concept": "to see",
+      "domain": "action",
+      "reason": "to see — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "self",
+      "spelling": "de",
+      "ipa": "/dɛ/",
+      "concept": "oneself; me, myself",
+      "domain": "being",
+      "reason": "oneself — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "sick",
+      "spelling": "da",
+      "ipa": "/dʌ/",
+      "concept": "sick; ill in the body",
+      "domain": "being",
+      "reason": "sick — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:38:20.707Z"
+    },
+    {
+      "id": "skin",
+      "spelling": "tat",
+      "ipa": "/tʌt/",
+      "concept": "skin",
+      "domain": "body",
+      "reason": "your skin — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "sky",
+      "spelling": "sam",
+      "ipa": "/sʌm/",
+      "concept": "the sky above",
+      "domain": "element",
+      "reason": "the sky above — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "sleep",
+      "spelling": "nal",
+      "ipa": "/nʌl/",
+      "concept": "to sleep",
+      "domain": "action",
+      "reason": "to sleep — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "small",
+      "spelling": "gen",
+      "ipa": "/gɛn/",
+      "concept": "small; little in size",
+      "domain": "quality",
+      "reason": "small — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "smell",
+      "spelling": "tek",
+      "ipa": "/tɛk/",
+      "concept": "to smell",
+      "domain": "action",
+      "reason": "to smell — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "some",
+      "spelling": "ket",
+      "ipa": "/kɛt/",
+      "concept": "a few; part of them",
+      "domain": "quantity",
+      "reason": "a few — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "source",
+      "spelling": "ki",
+      "ipa": "/kɪ/",
+      "concept": "source",
+      "domain": "abstract",
+      "reason": "source — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "speak",
+      "spelling": "se",
+      "ipa": "/sɛ/",
+      "concept": "to speak; to talk",
+      "domain": "action",
+      "reason": "to speak — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "still",
+      "spelling": "ti",
+      "ipa": "/tɪ/",
+      "concept": "not moving; staying put",
+      "domain": "process",
+      "reason": "not moving — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "stone",
+      "spelling": "sas",
+      "ipa": "/sʌs/",
+      "concept": "a hard rock",
+      "domain": "element",
+      "reason": "a hard rock — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "straight",
+      "spelling": "wu",
+      "ipa": "/wʊ/",
+      "concept": "a direct line without bend",
+      "domain": "space",
+      "reason": "a direct line without bend — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "strong",
+      "spelling": "bo",
+      "ipa": "/bɑ/",
+      "concept": "strong",
+      "domain": "abstract",
+      "reason": "strong — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "substance",
+      "spelling": "get",
+      "ipa": "/gɛt/",
+      "concept": "substance",
+      "domain": "abstract",
+      "reason": "substance — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "surface",
+      "spelling": "ten",
+      "ipa": "/tɛn/",
+      "concept": "the outer side you touch",
+      "domain": "space",
+      "reason": "the outer side you touch — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "take",
+      "spelling": "la",
+      "ipa": "/lʌ/",
+      "concept": "to take something",
+      "domain": "action",
+      "reason": "to take something — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "taste",
+      "spelling": "tal",
+      "ipa": "/tʌl/",
+      "concept": "to taste",
+      "domain": "action",
+      "reason": "to taste — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "there",
+      "spelling": "tak",
+      "ipa": "/tʌk/",
+      "concept": "at that place",
+      "domain": "space",
+      "reason": "at that place — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "thing",
+      "spelling": "to",
+      "ipa": "/tɑ/",
+      "concept": "any object or item",
+      "domain": "ontology",
+      "reason": "any object or item — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "think",
+      "spelling": "met",
+      "ipa": "/mɛt/",
+      "concept": "to use your mind",
+      "domain": "action",
+      "reason": "to use your mind — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "through",
+      "spelling": "fel",
+      "ipa": "/fɛl/",
+      "concept": "through; passing from one side to the other",
+      "domain": "space",
+      "reason": "through — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-04T00:18:06.508638Z"
+    },
+    {
+      "id": "time",
+      "spelling": "kan",
+      "ipa": "/kʌn/",
+      "concept": "time; how long things last",
+      "domain": "time",
+      "reason": "time — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "timid",
+      "spelling": "men",
+      "ipa": "/mɛn/",
+      "concept": "shy fear; hesitation from fear",
+      "domain": "emotion",
+      "reason": "shy fear — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "touch",
+      "spelling": "mam",
+      "ipa": "/mʌm/",
+      "concept": "to touch",
+      "domain": "action",
+      "reason": "to touch — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "travel",
+      "spelling": "fi",
+      "ipa": "/fɪ/",
+      "concept": "going from one place to another",
+      "domain": "space",
+      "reason": "going from one place to another — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "tree",
+      "spelling": "nu",
+      "ipa": "/nʊ/",
+      "concept": "a tree",
+      "domain": "element",
+      "reason": "a tree — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "true",
+      "spelling": "nat",
+      "ipa": "/nʌt/",
+      "concept": "true; matches what's real",
+      "domain": "evaluation",
+      "reason": "true — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "trust",
+      "spelling": "man",
+      "ipa": "/mʌn/",
+      "concept": "to believe someone is safe and reliable",
+      "domain": "emotion",
+      "reason": "to believe someone is safe and reliable — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "understand",
+      "spelling": "chu",
+      "ipa": "/tʃʊ/",
+      "concept": "to understand; to grasp a meaning",
+      "domain": "action",
+      "reason": "to understand — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "up",
+      "spelling": "wa",
+      "ipa": "/rʌ/",
+      "concept": "toward a higher place",
+      "domain": "space",
+      "reason": "toward a higher place — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "use",
+      "spelling": "gek",
+      "ipa": "/gɛk/",
+      "concept": "to use something",
+      "domain": "action",
+      "reason": "to use something — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "wait",
+      "spelling": "sat",
+      "ipa": "/sʌt/",
+      "concept": "to wait; to stay until later",
+      "domain": "action",
+      "reason": "to wait — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "want",
+      "spelling": "sak",
+      "ipa": "/sʌk/",
+      "concept": "to wish for something",
+      "domain": "action",
+      "reason": "to wish for something — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "water",
+      "spelling": "ye",
+      "ipa": "/jɛ/",
+      "concept": "water",
+      "domain": "element",
+      "reason": "water — shows up a lot in compounds, so it needs its own root.",
+      "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "will",
+      "spelling": "gal",
+      "ipa": "/gʌl/",
+      "concept": "will",
+      "domain": "abstract",
+      "reason": "will — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "work",
+      "spelling": "mu",
+      "ipa": "/mʊ/",
+      "concept": "effort done toward a goal",
+      "domain": "action",
+      "reason": "effort done toward a goal — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-12T10:31:34.918Z"
     }
   ]
 }

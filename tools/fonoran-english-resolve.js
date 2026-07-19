@@ -420,13 +420,16 @@ function gapToken(surface, role, { reason = 'no confident concept', suggestion =
 /**
  * Build shared resolution context (alias index + roots + compounds + rules).
  */
-export async function buildResolveContext(lab = null) {
+export async function buildResolveContext(lab = null, { devLab = false } = {}) {
   const liveLab = lab ?? await getLab();
   const inventory = await loadRuntimeConceptInventory({ lab: liveLab });
   const rules = await loadInterpretationRules().catch(() => null);
   const locData = await loadLocalization('en');
   const bridges = await loadConceptBridges();
-  const aliasIndex = buildConceptAliasIndex(inventory.concepts, liveLab, locData, { labFirst: true });
+  const aliasIndex = buildConceptAliasIndex(inventory.concepts, liveLab, locData, {
+    labFirst: !devLab,
+    devLab,
+  });
 
   for (const compound of liveLab?.compounds ?? []) {
     const meaning = String(compound.meaning ?? '').trim().toLowerCase();
@@ -463,14 +466,22 @@ export async function buildResolveContext(lab = null) {
     if (s.state === 'rejected' || !s.spelling || !s.concept_id) continue;
     spellingByConceptId.set(String(s.spelling).toLowerCase(), s.concept_id);
   }
-  // Include all non-rejected compounds in the translator context — approved/revised
-  // are fully ratified; needs_review are machine-generated with valid spellings that
-  // are visible in the dictionary. Hiding them from the translator causes the LLM to
-  // fall back to raw roots for concepts that already have named compound forms.
-  const TRANSLATOR_COMPOUND_STATES = [...REUSABLE_WORD_STATES, 'needs_review'];
+  // Include compounds for translator context. Dev mode uses the full non-rejected lab.
+  const TRANSLATOR_COMPOUND_STATES = devLab
+    ? ['draft', 'needs_review', 'approved', 'revised']
+    : [...REUSABLE_WORD_STATES, 'needs_review'];
+  const compoundStateRank = (st) => {
+    if (devLab) {
+      const order = { approved: 4, revised: 3, needs_review: 2, draft: 1 };
+      return order[st] ?? 0;
+    }
+    const order = { approved: 3, revised: 2, needs_review: 1 };
+    return order[st] ?? 0;
+  };
   for (const c of liveLab.compounds ?? []) {
     if (!TRANSLATOR_COMPOUND_STATES.includes(c.state) || !c.concept_id || !c.spelling) continue;
-    if (compoundByConceptId.has(c.concept_id)) continue; // approved takes priority
+    const existing = compoundByConceptId.get(c.concept_id);
+    if (existing && compoundStateRank(existing.state) >= compoundStateRank(c.state)) continue;
     compoundByConceptId.set(c.concept_id, {
       id: c.id,
       spelling: c.spelling,

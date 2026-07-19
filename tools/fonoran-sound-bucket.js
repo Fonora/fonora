@@ -681,6 +681,9 @@ export async function recomposeCompound(id, input = {}) {
     c.meaning = input.meaning?.trim() || null;
     c.named_at = input.meaning?.trim() ? new Date().toISOString() : null;
   }
+  if (input.concept_id !== undefined) {
+    c.concept_id = input.concept_id?.trim() || null;
+  }
   markDdaStale(c);
   markDescendantsDdaStale(c.id, bucket);
   pushEvent(bucket, 'recipe', 'compound', spelling, c.meaning);
@@ -793,6 +796,7 @@ export async function addCompound(input) {
     derivation: buildDerivationTree(components, bucket),
     phonetic: { form: spelling },
     meaning: input.meaning?.trim() || null,
+    concept_id: input.concept_id?.trim() || null,
     aliases: (() => {
       const list = normalizeCompoundAliases(input.aliases);
       return list.length ? list : undefined;

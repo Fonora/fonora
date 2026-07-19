@@ -28,6 +28,7 @@ import {
   optimizeCompoundInventory,
 } from './fonoran-preferred-select.js';
 import { runTranslationGapReport } from './fonoran-translation-gaps.js';
+import { loadPrimitiveConceptIds, pruneShadowCompounds } from './fonoran-compound-prune.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -96,8 +97,16 @@ export async function getRegenStatus({ baseDir = ROOT } = {}) {
 
 /** Apply LLM rankings from stored eval doc to compounds inventory. */
 export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = false } = {}) {
-  const doc = await readDoc('compounds');
+  let doc = await readDoc('compounds');
   if (!doc?.compounds) throw new Error('compounds doc missing compounds array');
+
+  const inventory = await readDoc('concept_inventory');
+  const primitiveIds = loadPrimitiveConceptIds(inventory);
+  const { doc: prunedDoc, pruned: shadowPruned } = pruneShadowCompounds(doc, primitiveIds);
+  if (shadowPruned.length) {
+    doc = prunedDoc;
+    await writeDoc('compounds', doc);
+  }
 
   const [candidateCtx, rootGraph, demoTrees, llmDoc] = await Promise.all([
     loadCandidateContext(),
@@ -154,6 +163,7 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
     compounds: compounds.length,
     promotions: promotions.length,
     promotion_details: promotions,
+    pruned_shadow_compounds: shadowPruned.length,
     mode: lengthOnly ? 'length-only' : (useLlm ? 'llm_consensus' : 'heuristic'),
     llm_rounds: llmDoc?.rounds?.length ?? 0,
   };

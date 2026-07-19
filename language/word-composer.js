@@ -11,6 +11,16 @@ import {
   romanToIpa,
 } from '../tools/fonoran-pronunciation.js';
 import { playButtonMarkup } from '../js/play-button-ui.js';
+import {
+  createDefaultFilterState,
+  isFilterActive,
+  toggleFilterKey,
+  passesLabFilters,
+  isCoreConcept,
+} from './lab-filters.js';
+import { experienceMetaFor } from '../tools/fonoran-experience-tiers.js';
+import { buildSuggestionPanelHtml, buildRootSoundPanelHtml } from './suggestion-panel.js';
+import { patchCompoundProposal } from '../js/proposal-actions.js';
 
 /**
  * @param {object} ctx
@@ -33,10 +43,15 @@ export function createWordComposer(ctx) {
     compoundEdit: false,
     editSnapshot: null,
     filter: '',
-    showRoots: true,
-    showWords: true,
-    showUnapproved: false,
-    showUnnamed: false,
+    filters: createDefaultFilterState('words'),
+    openProposals: [],
+    selectedProposalId: null,
+    compoundSuggestions: [],
+    rootSoundCandidates: [],
+    compoundLocked: false,
+    reconsider: false,
+    reconsiderReason: null,
+    suggestionsLoading: false,
     analysis: null,
   };
 
@@ -119,6 +134,32 @@ export function createWordComposer(ctx) {
     </div>`;
   }
 
+  function tierFor(conceptId) {
+    if (!conceptId) return null;
+    const meta = ctx.getConceptMeta?.()?.get(conceptId);
+    if (meta?.language_tier) return { language_tier: meta.language_tier };
+    return experienceMetaFor(conceptId);
+  }
+
+  function conceptReconsider(conceptId) {
+    return Boolean(ctx.getConceptMeta?.()?.get(conceptId)?.reconsider);
+  }
+
+  function pickerBadges({ state: reviewState, conceptId, isProposal = false }) {
+    const parts = [];
+    if (isProposal) parts.push('<span class="badge badge-proposal">proposal</span>');
+    if (conceptId && isCoreConcept(conceptId, tierFor)) {
+      parts.push('<span class="badge badge-core">Core</span>');
+    }
+    if (conceptReconsider(conceptId)) {
+      parts.push('<span class="badge badge-reconsider">reconsider</span>');
+    }
+    if (reviewState === 'needs_review' || reviewState === 'draft') {
+      parts.push(`<span class="badge badge-${reviewState}">${reviewState === 'needs_review' ? 'needs review' : reviewState}</span>`);
+    }
+    return parts.join('');
+  }
+
   function pickerMeaningShort(phrase) {
     if (!phrase || phrase === '(unnamed)') return 'unnamed';
     return String(phrase).split(';')[0].trim() || 'unnamed';
@@ -132,11 +173,19 @@ export function createWordComposer(ctx) {
     return pickerMeaningShort(c.meaning);
   }
 
-  function pickableRoots(query, { omit = [], showUnnamed = false } = {}) {
+  function pickableRoots(query, { omit = [] } = {}) {
     const q = (query ?? '').trim();
     const skip = new Set(omit);
     return (lab()?.sounds ?? []).filter(s => s.state !== 'rejected' && !skip.has(s.spelling))
-      .filter(s => showUnnamed || hasMeaning(s))
+      .filter(s => {
+        const entry = {
+          kind: 'sound',
+          state: s.state,
+          concept_id: s.concept_id,
+          reconsider: conceptReconsider(s.concept_id),
+        };
+        return passesLabFilters(entry, state.filters, tierFor);
+      })
       .filter(s => ctx.labEntryMatchesQuery(q, {
         spelling: s.spelling, meaning: s.meaning, legacy_label: s.legacy_label,
         gloss: s.gloss, concept_id: s.concept_id, aliases: s.aliases ?? [],
@@ -144,13 +193,20 @@ export function createWordComposer(ctx) {
       .sort((a, b) => (a.meaning || a.spelling).localeCompare(b.meaning || b.spelling));
   }
 
-  function pickableWords(query, { omitIds = [], showUnnamed = false } = {}) {
+  function pickableWords(query, { omitIds = [] } = {}) {
     const q = (query ?? '').trim();
     const skip = new Set(omitIds);
-    let list = userWords().filter(c => !skip.has(c.id));
-    if (state.showUnapproved) list = [...list, ...generatedLabWords().filter(c => !skip.has(c.id))];
+    let list = [...userWords(), ...generatedLabWords()].filter(c => !skip.has(c.id));
     return list
-      .filter(c => showUnnamed || hasMeaning(c))
+      .filter(c => {
+        const entry = {
+          kind: 'compound',
+          state: c.state,
+          concept_id: c.concept_id,
+          reconsider: conceptReconsider(c.concept_id),
+        };
+        return passesLabFilters(entry, state.filters, tierFor);
+      })
       .filter(c => ctx.labEntryMatchesQuery(q, {
         spelling: c.spelling, meaning: c.meaning, gloss: c.gloss, concept_id: c.concept_id,
         aliases: c.aliases ?? [], composition_readable: c.composition_readable,
@@ -159,7 +215,21 @@ export function createWordComposer(ctx) {
       .sort((a, b) => (a.meaning || a.spelling).localeCompare(b.meaning || b.spelling));
   }
 
-  function pickerCellHtml({ spelling, meaning, glyphs, type, attrs, selected }) {
+  function pickableProposals(query) {
+    const q = (query ?? '').trim();
+    if (!state.filters.showProposals) return [];
+    return (state.openProposals ?? []).filter(p => {
+      const word = p.word ?? p.concept_id ?? '';
+      return ctx.labEntryMatchesQuery(q, {
+        spelling: word,
+        meaning: word,
+        concept_id: p.concept_id ?? word,
+        gloss: p.rationale ?? '',
+      });
+    });
+  }
+
+  function pickerCellHtml({ spelling, meaning, glyphs, type, attrs, selected, badges = '' }) {
     const displayMeaning = meaning === '(unnamed)' ? 'unnamed' : (meaning || 'unnamed');
     const unnamed = !meaning || displayMeaning === 'unnamed';
     const attrParts = Object.entries(attrs)
@@ -167,6 +237,7 @@ export function createWordComposer(ctx) {
       .map(([k, v]) => `${k}="${escapeHtml(String(v))}"`);
     return `<button type="button" class="root-cell${selected ? ' is-selected' : ''}" ${attrParts.join(' ')} data-write>
       ${typeBadge(type)}
+      ${badges ? `<span class="root-cell__badges">${badges}</span>` : ''}
       <span class="sp">${escapeHtml(spelling)}</span>
       ${glyphs ? `<span class="root-glyphs symbol-text" aria-hidden="true">${escapeHtml(glyphs)}</span>` : ''}
       <span class="mn${unnamed ? ' unnamed' : ''}">${escapeHtml(displayMeaning)}</span>
@@ -179,6 +250,7 @@ export function createWordComposer(ctx) {
       meaning: pickerMeaningForSound(s),
       type: 'root',
       selected: state.mode === 'root' && state.editingRootSpelling === s.spelling,
+      badges: pickerBadges({ state: s.state, conceptId: s.concept_id }),
       attrs: { 'data-pick-root': s.spelling, 'data-concept-id': s.concept_id ?? '' },
     })).join('') : '<p class="empty" style="grid-column:1/-1">No match.</p>';
   }
@@ -193,9 +265,78 @@ export function createWordComposer(ctx) {
         glyphs,
         type: 'word',
         selected: state.mode === 'compound' && state.editingId === c.id,
+        badges: pickerBadges({ state: c.state, conceptId: c.concept_id }),
         attrs: { 'data-pick-word': c.id },
       });
     }).join('') : '<p class="empty" style="grid-column:1/-1">No words match.</p>';
+  }
+
+  function proposalPickerMarkup(proposals) {
+    return proposals.length ? proposals.map(p => {
+      const id = p.id ?? p.proposal_id;
+      const word = p.word ?? p.concept_id ?? '?';
+      const comp = p.valid_compositions?.[0]?.join(' + ') ?? p.chosen_composition?.join(' + ') ?? '';
+      return pickerCellHtml({
+        spelling: comp || word,
+        meaning: word,
+        type: 'word',
+        selected: state.selectedProposalId === id,
+        badges: pickerBadges({ isProposal: true, conceptId: p.concept_id ?? word }),
+        attrs: { 'data-pick-proposal': id },
+      });
+    }).join('') : '<p class="empty" style="grid-column:1/-1">No open proposals.</p>';
+  }
+
+  function compositionToComposer(composition) {
+    if (!Array.isArray(composition) || composition.length < 2) return null;
+    const picks = [];
+    for (const cid of composition) {
+      const sound = lab()?.sounds?.find(s => s.concept_id === cid);
+      if (sound) {
+        picks.push({ type: 'root', ref: sound.spelling, spelling: sound.spelling });
+        continue;
+      }
+      const word = lab()?.compounds?.find(c => c.concept_id === cid);
+      if (word) {
+        picks.push({
+          type: 'word',
+          ref: word.id,
+          spelling: word.spelling,
+          meaning: word.meaning,
+        });
+        continue;
+      }
+      return null;
+    }
+    return picks;
+  }
+
+  function openProposalPrefill({ conceptId, word, composition, gloss }) {
+    const cid = conceptId ?? word;
+    const existing = lab()?.compounds?.find(c => c.concept_id === cid);
+    if (existing) {
+      openCompound(existing);
+      if (gloss && $(`${PREFIX}-meaning`)) $(`${PREFIX}-meaning`).value = gloss;
+      enterCompoundEdit();
+      const picks = compositionToComposer(composition);
+      if (picks) state.composer = picks;
+      render();
+      return;
+    }
+    startNewCompound();
+    if ($(`${PREFIX}-meaning`)) {
+      $(`${PREFIX}-meaning`).value = gloss ?? word ?? cid ?? '';
+    }
+    state.pendingConceptId = cid ?? null;
+    const picks = compositionToComposer(composition);
+    if (picks) state.composer = picks;
+    render();
+  }
+
+  function editorialToastSuffix(res) {
+    if (res?.editorial?.seeds_written) return ' · seeds saved';
+    if (res?.editorial?.skipped) return ` · seeds not synced (${res.editorial.reason})`;
+    return '';
   }
 
   function composerFromCompound(c) {
@@ -393,14 +534,20 @@ export function createWordComposer(ctx) {
       const c = lab()?.compounds?.find(x => x.id === state.editingId);
       body = { type: 'compound', spelling: c?.spelling, components: c?.parts, meaning: c?.meaning };
     } else {
-      state.analysis = null;
+      state.compoundSuggestions = [];
+    state.rootSoundCandidates = [];
+    state.selectedProposalId = null;
+    state.compoundLocked = false;
       renderAnalysis();
       return;
     }
     try {
       state.analysis = await ctx.api('/api/fonoran/analyze/word', { method: 'POST', body: JSON.stringify(body) });
     } catch {
-      state.analysis = null;
+      state.compoundSuggestions = [];
+    state.rootSoundCandidates = [];
+    state.selectedProposalId = null;
+    state.compoundLocked = false;
     }
     renderAnalysis();
   }
@@ -435,6 +582,12 @@ export function createWordComposer(ctx) {
     const reject = $(`${PREFIX}-reject`);
     const reopen = $(`${PREFIX}-reopen`);
     const approveCand = $(`${PREFIX}-approve-candidate`);
+    const suggestAlts = $(`${PREFIX}-suggest-alts`);
+    const regenSound = $(`${PREFIX}-regen-sound`);
+    const reconsiderBtn = $(`${PREFIX}-reconsider`);
+    const clearReconsider = $(`${PREFIX}-clear-reconsider`);
+    const demoteCore = $(`${PREFIX}-demote-core`);
+    const lockBtn = $(`${PREFIX}-lock`);
 
     if (state.mode === 'idle') {
       head.hidden = true;
@@ -455,10 +608,29 @@ export function createWordComposer(ctx) {
 
     const alreadyApproved = state.itemState === 'approved';
     const alreadyRejected = state.itemState === 'rejected';
+    const conceptId = state.mode === 'root' ? state.editingRootId : lab()?.compounds?.find(c => c.id === state.editingId)?.concept_id;
+    state.reconsider = conceptReconsider(conceptId);
+    state.reconsiderReason = ctx.getConceptMeta?.()?.get(conceptId)?.reconsider_reason ?? null;
+
+    if (suggestAlts) suggestAlts.hidden = state.mode !== 'compound' && state.mode !== 'compose';
+    if (regenSound) regenSound.hidden = state.mode !== 'root' || state.editingRootIsNew;
+    if (reconsiderBtn) reconsiderBtn.hidden = state.reconsider || !conceptId;
+    if (clearReconsider) clearReconsider.hidden = !state.reconsider;
+    if (demoteCore) {
+      demoteCore.hidden = !(state.mode === 'root' && conceptId && isCoreConcept(conceptId, tierFor));
+    }
+    if (lockBtn) {
+      lockBtn.hidden = state.mode !== 'compound' || !state.editingId;
+      lockBtn.textContent = state.compoundLocked ? 'Unlock' : 'Lock';
+      lockBtn.classList.toggle('btn--primary', state.compoundLocked);
+    }
 
     if (state.mode === 'root') {
       label.textContent = 'Root';
       badge.innerHTML = state.itemState ? stateBadge(state.itemState) : '';
+      if (state.reconsider) {
+        badge.innerHTML += `<span class="badge badge-reconsider">reconsider</span>`;
+      }
       approve.hidden = alreadyApproved;
       approve.textContent = 'Approve root';
       reject.hidden = alreadyRejected;
@@ -468,6 +640,9 @@ export function createWordComposer(ctx) {
     } else {
       label.textContent = state.compoundEdit ? 'Editing' : 'Compound';
       badge.innerHTML = state.itemState ? stateBadge(state.itemState) : '';
+      if (state.reconsider) {
+        badge.innerHTML += `<span class="badge badge-reconsider">reconsider</span>`;
+      }
       approve.hidden = alreadyApproved;
       approve.textContent = 'Approve word';
       reject.hidden = alreadyRejected;
@@ -475,6 +650,60 @@ export function createWordComposer(ctx) {
       reopen.hidden = !alreadyRejected;
       approveCand.hidden = true;
     }
+  }
+
+  function renderCompoundSuggestions() {
+    const el = $(`${PREFIX}-suggestions`);
+    if (!el) return;
+    if (state.mode !== 'compound' && state.mode !== 'compose') {
+      el.innerHTML = '';
+      return;
+    }
+    if (state.suggestionsLoading) {
+      el.innerHTML = '<p class="sans dict-alternates-panel__empty">Generating suggestions…</p>';
+      return;
+    }
+    el.innerHTML = buildSuggestionPanelHtml({
+      title: 'Suggestions',
+      hint: 'Ranked transparent compositions — pick one or edit manually.',
+      candidates: state.compoundSuggestions,
+      prefix: `${PREFIX}-compound`,
+    });
+    el.querySelectorAll('[data-suggestion-use]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.suggestionUse);
+        void applyCompoundSuggestion(state.compoundSuggestions[idx], { edit: false });
+      });
+    });
+    el.querySelectorAll('[data-suggestion-edit]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.suggestionEdit);
+        void applyCompoundSuggestion(state.compoundSuggestions[idx], { edit: true });
+      });
+    });
+  }
+
+  function renderRootSuggestions() {
+    const el = $(`${PREFIX}-root-suggestions`);
+    if (!el) return;
+    if (state.mode !== 'root') {
+      el.innerHTML = '';
+      return;
+    }
+    if (state.suggestionsLoading) {
+      el.innerHTML = '<p class="sans dict-alternates-panel__empty">Regenerating sounds…</p>';
+      return;
+    }
+    el.innerHTML = buildRootSoundPanelHtml({
+      candidates: state.rootSoundCandidates,
+      prefix: `${PREFIX}-root`,
+    });
+    el.querySelectorAll('[data-sound-apply]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = Number(btn.dataset.soundApply);
+        void applyRootSound(state.rootSoundCandidates[idx]);
+      });
+    });
   }
 
   function syncCompoundHear() {
@@ -541,6 +770,8 @@ export function createWordComposer(ctx) {
     renderScriptLine();
     renderMeta();
     renderAnalysis();
+    renderCompoundSuggestions();
+    renderRootSuggestions();
   }
 
   function isCompoundBrowseMode() {
@@ -729,26 +960,35 @@ export function createWordComposer(ctx) {
     }
 
     $(`${PREFIX}-filters`)?.querySelectorAll('[data-wc-filter]').forEach(chip => {
-      const key = chip.dataset.wcFilter;
-      const on = key === 'roots' ? state.showRoots
-        : key === 'words' ? state.showWords
-          : key === 'unapproved' ? state.showUnapproved
-            : state.showUnnamed;
-      chip.classList.toggle('active', on);
+      chip.classList.toggle('active', isFilterActive(chip.dataset.wcFilter, state.filters));
     });
 
-    const showRoots = state.showRoots;
-    const showWords = state.showWords;
+    const showRoots = state.filters.showRoots || state.filters.showCore;
+    const showWords = state.filters.showWords;
+    const showProposals = state.filters.showProposals;
+    const anyType = showRoots || showWords || showProposals || state.filters.showParticles;
     $(`${PREFIX}-roots-h`)?.toggleAttribute('hidden', !showRoots);
     $(`${PREFIX}-roots`)?.toggleAttribute('hidden', !showRoots);
     $(`${PREFIX}-words-h`)?.toggleAttribute('hidden', !showWords);
     $(`${PREFIX}-words`)?.toggleAttribute('hidden', !showWords);
-    $(`${PREFIX}-picker-empty`)?.toggleAttribute('hidden', showRoots || showWords);
+    $(`${PREFIX}-proposals-h`)?.toggleAttribute('hidden', !showProposals);
+    $(`${PREFIX}-proposals`)?.toggleAttribute('hidden', !showProposals);
+    $(`${PREFIX}-picker-empty`)?.toggleAttribute('hidden', anyType);
 
-    const pickerOpts = { showUnnamed: state.showUnnamed };
+    const pickerOpts = {};
     // Only omit words that are already in the recipe — never omit the editing compound
     // itself (that was hiding the active item from the picker in compound-edit mode).
     const omitIds = recipe.filter(c => c.type === 'word').map(c => c.ref);
+
+    if (showProposals) {
+      $(`${PREFIX}-proposals`).innerHTML = proposalPickerMarkup(pickableProposals(state.filter));
+      wirePickerClick($(`${PREFIX}-proposals`), (btn) => {
+        const proposal = state.openProposals.find(p => (p.id ?? p.proposal_id) === btn.dataset.pickProposal);
+        if (proposal) void openProposal(proposal);
+      });
+    } else {
+      $(`${PREFIX}-proposals`).innerHTML = '';
+    }
 
     if (showRoots) {
       $(`${PREFIX}-roots`).innerHTML = rootPickerWithBadge(pickableRoots(state.filter, pickerOpts));
@@ -794,6 +1034,10 @@ export function createWordComposer(ctx) {
     state.candidateId = null;
     state.itemState = null;
     state.pendingFields = null;
+    state.compoundSuggestions = [];
+    state.rootSoundCandidates = [];
+    state.selectedProposalId = null;
+    state.compoundLocked = false;
     state.analysis = null;
     state.compoundEdit = false;
     state.editSnapshot = null;
@@ -812,6 +1056,10 @@ export function createWordComposer(ctx) {
     state.candidateId = null;
     state.itemState = null;
     state.pendingFields = null;
+    state.compoundSuggestions = [];
+    state.rootSoundCandidates = [];
+    state.selectedProposalId = null;
+    state.compoundLocked = false;
     state.analysis = null;
     state.compoundEdit = false;
     state.editSnapshot = null;
@@ -925,6 +1173,10 @@ export function createWordComposer(ctx) {
     state.itemState = c.state ?? null;
     state.composer = composerFromCompound(c);
     state.editingRootId = null;
+    state.compoundSuggestions = [];
+    state.rootSoundCandidates = [];
+    state.selectedProposalId = null;
+    state.compoundLocked = c.locked === true;
     state.pendingFields = {
       meaning: c.meaning ?? '',
       aliases: (c.aliases ?? []).join('\n'),
@@ -948,11 +1200,12 @@ export function createWordComposer(ctx) {
             body: JSON.stringify({
               components: composerToApi(state.composer),
               meaning,
-              allow_unapproved: state.showUnapproved,
+              allow_unapproved: true,
+              concept_id: existing?.concept_id ?? state.pendingConceptId ?? undefined,
             }),
           });
           state.editingId = res.id ?? editingId;
-          toast(`Saved ${res.spelling ?? spelling}`);
+          toast(`Saved ${res.spelling ?? spelling}${editorialToastSuffix(res)}`);
           state.itemState = res.state ?? state.itemState;
         } else {
           const changed = meaning !== (existing?.meaning ?? '');
@@ -962,10 +1215,11 @@ export function createWordComposer(ctx) {
               meaning,
               aliases: aliases || undefined,
               state: changed && existing?.meaning ? 'revised' : undefined,
+              concept_id: existing?.concept_id ?? state.pendingConceptId ?? undefined,
             }),
           });
           state.editingId = res.id ?? editingId;
-          toast(`Saved ${spelling}`);
+          toast(`Saved ${spelling}${editorialToastSuffix(res)}`);
           state.itemState = res.state ?? state.itemState;
         }
       } else {
@@ -975,13 +1229,15 @@ export function createWordComposer(ctx) {
             components: composerToApi(state.composer),
             meaning,
             aliases: aliases || undefined,
-            allow_unapproved: state.showUnapproved,
+            allow_unapproved: true,
+            concept_id: state.pendingConceptId ?? undefined,
           }),
         });
         state.editingId = res.id;
         state.mode = 'compound';
         state.itemState = res.state ?? 'draft';
-        toast(`Saved ${res.spelling ?? meaning}`);
+        state.pendingConceptId = res.concept_id ?? state.pendingConceptId;
+        toast(`Saved ${res.spelling ?? meaning}${editorialToastSuffix(res)}`);
       }
       state.compoundEdit = false;
       state.editSnapshot = null;
@@ -1093,6 +1349,211 @@ export function createWordComposer(ctx) {
     syncStickyOffsets();
   }
 
+  async function fetchCompoundSuggestions() {
+    const conceptId = state.pendingConceptId
+      ?? lab()?.compounds?.find(c => c.id === state.editingId)?.concept_id;
+    if (!conceptId) {
+      toast('Save or select a word with a concept id first.');
+      return;
+    }
+    state.suggestionsLoading = true;
+    renderCompoundSuggestions();
+    try {
+      const res = await ctx.api('/api/fonoran/expressions/candidates', {
+        method: 'POST',
+        body: JSON.stringify({ concept_id: conceptId, llm: true }),
+      });
+      state.compoundSuggestions = res.candidates ?? [];
+    } catch (e) {
+      state.compoundSuggestions = [];
+      toast(e.message);
+    } finally {
+      state.suggestionsLoading = false;
+      renderCompoundSuggestions();
+    }
+  }
+
+  async function applyCompoundSuggestion(candidate, { edit = false } = {}) {
+    if (!candidate?.composition?.length) return;
+    const picks = compositionToComposer(candidate.composition);
+    if (!picks) {
+      toast('Could not map suggestion to recipe.');
+      return;
+    }
+    if (state.mode === 'compound' && !state.compoundEdit) enterCompoundEdit();
+    if (state.mode === 'idle') startNewCompound();
+    state.composer = picks;
+    if (edit) {
+      state.compoundEdit = true;
+    }
+    render();
+    if (!edit) await saveWord();
+  }
+
+  async function fetchRegenerateSound() {
+    const conceptId = state.editingRootId;
+    if (!conceptId) {
+      toast('Select a saved root first.');
+      return;
+    }
+    state.suggestionsLoading = true;
+    renderRootSuggestions();
+    try {
+      const candidate = await ctx.api(
+        `/api/fonoran/roots/candidates/${encodeURIComponent(conceptId)}/regenerate`,
+        { method: 'POST', body: JSON.stringify({ force: true }) },
+      );
+      state.rootSoundCandidates = [candidate];
+    } catch (e) {
+      state.rootSoundCandidates = [];
+      toast(e.message);
+    } finally {
+      state.suggestionsLoading = false;
+      renderRootSuggestions();
+    }
+  }
+
+  async function applyRootSound(candidate) {
+    if (!candidate?.spelling || !state.editingRootId) return;
+    const gloss = $(`${PREFIX}-gloss`)?.value.trim();
+    try {
+      await ctx.api(`/api/fonoran/concepts/${encodeURIComponent(state.editingRootId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ spelling: candidate.spelling, description: gloss || undefined }),
+      });
+      toast(`Applied sound ${candidate.spelling}`);
+      await ctx.reloadLab?.();
+      await ctx.reloadConceptMeta?.();
+      const s = lab()?.sounds?.find(x => x.concept_id === state.editingRootId);
+      if (s) openRootEditor(s);
+    } catch (e) {
+      toast(e.message);
+    }
+  }
+
+  async function markReconsider() {
+    const conceptId = state.mode === 'root'
+      ? state.editingRootId
+      : lab()?.compounds?.find(c => c.id === state.editingId)?.concept_id;
+    if (!conceptId) return;
+    const reason = window.prompt(
+      'Why reconsider? Enter: wrong_tier, wrong_sound, or wrong_composition',
+      state.reconsiderReason ?? 'wrong_sound',
+    );
+    if (!reason) return;
+    const normalized = reason.trim().toLowerCase();
+    if (!['wrong_tier', 'wrong_sound', 'wrong_composition'].includes(normalized)) {
+      toast('Use wrong_tier, wrong_sound, or wrong_composition.');
+      return;
+    }
+    try {
+      await ctx.api(`/api/fonoran/concepts/${encodeURIComponent(conceptId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ reconsider: true, reconsider_reason: normalized }),
+      });
+      await ctx.reloadConceptMeta?.();
+      toast('Marked for reconsider');
+      render();
+    } catch (e) {
+      toast(e.message);
+    }
+  }
+
+  async function clearReconsiderFlag() {
+    const conceptId = state.mode === 'root'
+      ? state.editingRootId
+      : lab()?.compounds?.find(c => c.id === state.editingId)?.concept_id;
+    if (!conceptId) return;
+    try {
+      await ctx.api(`/api/fonoran/concepts/${encodeURIComponent(conceptId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ reconsider: false }),
+      });
+      await ctx.reloadConceptMeta?.();
+      toast('Cleared reconsider');
+      render();
+    } catch (e) {
+      toast(e.message);
+    }
+  }
+
+  async function demoteFromCore() {
+    if (!state.editingRootId) return;
+    if (!window.confirm(`Remove "${state.editingRootId}" from Core (Ring 1)?`)) return;
+    try {
+      await ctx.api(`/api/fonoran/concepts/${encodeURIComponent(state.editingRootId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ language_tier: 'extended_core', reconsider: false }),
+      });
+      await ctx.reloadConceptMeta?.();
+      toast('Moved to Ring 2');
+      render();
+    } catch (e) {
+      toast(e.message);
+    }
+  }
+
+  async function toggleCompoundLock() {
+    if (!state.editingId) return;
+    const compound = lab()?.compounds?.find(c => c.id === state.editingId);
+    if (!compound?.concept_id) {
+      toast('Assign a concept id before locking.');
+      return;
+    }
+    const next = !state.compoundLocked;
+    try {
+      await ctx.api(`/api/fonoran/lab/compounds/${encodeURIComponent(state.editingId)}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ locked: next }),
+      });
+      state.compoundLocked = next;
+      toast(next ? 'Compound locked' : 'Compound unlocked');
+      renderMeta();
+    } catch (e) {
+      toast(e.message);
+    }
+  }
+
+  async function openProposal(proposal) {
+    const id = proposal.id ?? proposal.proposal_id;
+    state.selectedProposalId = id;
+    const conceptId = proposal.concept_id ?? proposal.word;
+    const composition = proposal.chosen_composition
+      ?? proposal.valid_compositions?.[0]
+      ?? proposal.compositions?.[0];
+    if (composition?.length >= 2) {
+      openProposalPrefill({
+        conceptId,
+        word: proposal.word ?? conceptId,
+        composition,
+        gloss: proposal.rationale ?? proposal.gloss ?? proposal.word,
+      });
+      state.selectedProposalId = id;
+      render();
+      return;
+    }
+    toast('Proposal has no valid composition.');
+    render();
+  }
+
+  async function acceptSelectedProposal() {
+    if (!state.selectedProposalId) return;
+    try {
+      await patchCompoundProposal({
+        api: ctx.api,
+        proposalId: state.selectedProposalId,
+        action: 'accepted',
+      });
+      toast('Proposal accepted');
+      await ctx.loadProposals?.();
+      state.openProposals = ctx.getOpenProposals?.() ?? [];
+      await ctx.reloadLab?.();
+      render();
+    } catch (e) {
+      toast(e.message);
+    }
+  }
+
   function wire() {
     if (wired) return;
     wired = true;
@@ -1110,10 +1571,7 @@ export function createWordComposer(ctx) {
     $(`${PREFIX}-filters`)?.addEventListener('click', (e) => {
       const chip = e.target.closest('[data-wc-filter]');
       if (!chip) return;
-      if (chip.dataset.wcFilter === 'roots') state.showRoots = !state.showRoots;
-      else if (chip.dataset.wcFilter === 'words') state.showWords = !state.showWords;
-      else if (chip.dataset.wcFilter === 'unapproved') state.showUnapproved = !state.showUnapproved;
-      else if (chip.dataset.wcFilter === 'unnamed') state.showUnnamed = !state.showUnnamed;
+      toggleFilterKey(chip.dataset.wcFilter, state.filters);
       render();
     });
 
@@ -1156,6 +1614,12 @@ export function createWordComposer(ctx) {
       }
     });
     $(`${PREFIX}-approve-candidate`)?.addEventListener('click', () => void approveCandidate());
+    $(`${PREFIX}-suggest-alts`)?.addEventListener('click', () => void fetchCompoundSuggestions());
+    $(`${PREFIX}-regen-sound`)?.addEventListener('click', () => void fetchRegenerateSound());
+    $(`${PREFIX}-reconsider`)?.addEventListener('click', () => void markReconsider());
+    $(`${PREFIX}-clear-reconsider`)?.addEventListener('click', () => void clearReconsiderFlag());
+    $(`${PREFIX}-demote-core`)?.addEventListener('click', () => void demoteFromCore());
+    $(`${PREFIX}-lock`)?.addEventListener('click', () => void toggleCompoundLock());
 
     // Domain select ↔ custom input toggle
     $(`${PREFIX}-domain`)?.addEventListener('change', () => {
@@ -1187,6 +1651,12 @@ export function createWordComposer(ctx) {
     startNewCompound,
     openCompound,
     openRootEditor,
+    openProposalPrefill,
+    loadProposals: async () => {
+      if (ctx.loadProposals) {
+        state.openProposals = await ctx.loadProposals();
+      }
+    },
     selectRef: (ref) => {
       const c = lab()?.compounds?.find(x => x.id === ref);
       if (c) openCompound(c);

@@ -11,6 +11,7 @@ import {
 } from './fonoran-gen3-distinctiveness.js';
 import { scoreEditorialCollision, collisionSafetyScore } from './fonoran-root-collision.js';
 import { scoreCompoundBoundary, boundaryPenalty } from './fonoran-root-boundary-score.js';
+import { isBannedPrimitiveSpelling } from './fonoran-phonetic-weights.js';
 
 const GRAMMAR_PARTICLE_PHRASES = [
   ['mi'],
@@ -32,6 +33,7 @@ export function buildSyllablePool(config) {
   const add = (form, template, cost, tier) => {
     const f = form.toLowerCase();
     if (!f || reserved.has(f) || isExcludedSyllable(f, excluded)) return;
+    if (isBannedPrimitiveSpelling(f)) return;
     if (pool.some(p => p.form === f)) return;
     pool.push({ form: f, template, phonetic_cost: cost, tier });
   };
@@ -168,6 +170,7 @@ function pickBestSyllable(concept, syllablePool, config, usedRoots, rhymeCounts,
   let best = null;
   for (const syllable of syllablePool) {
     if (usedRoots.includes(syllable.form)) continue;
+    if (isBannedPrimitiveSpelling(syllable.form)) continue;
 
     const collision = scoreEditorialCollision(syllable.form, collisionProfile);
     if (collision.blocked) continue;
@@ -225,6 +228,7 @@ function pickBestSyllable(concept, syllablePool, config, usedRoots, rhymeCounts,
   if (!best) {
     for (const syllable of syllablePool) {
       if (usedRoots.includes(syllable.form)) continue;
+      if (isBannedPrimitiveSpelling(syllable.form)) continue;
       if (scoreEditorialCollision(syllable.form, collisionProfile).blocked) continue;
       const collision = scoreEditorialCollision(syllable.form, collisionProfile);
       const boundary = scoreCompoundBoundary(concept.id, syllable.form, partnerMap, spellingByConcept);

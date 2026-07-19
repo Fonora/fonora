@@ -14,7 +14,7 @@ function resolveEngine(requested) {
 
 /**
  * @param {string} text
- * @param {{ sourceLang?: string, lab?: object, engine?: string, skipCache?: boolean, cacheOnly?: boolean, simplify?: boolean|'auto' }} [options]
+ * @param {{ sourceLang?: string, lab?: object, engine?: string, skipCache?: boolean, cacheOnly?: boolean, simplify?: boolean|'auto', devLab?: boolean }} [options]
  */
 export async function translate(text, options = {}) {
   const engine = resolveEngine(options.engine);
@@ -40,6 +40,7 @@ export async function translate(text, options = {}) {
     skipCache: options.skipCache,
     cacheOnly: options.cacheOnly,
     simplify: options.simplify,
+    devLab: options.devLab,
   });
 
   if (result.ok === false) {

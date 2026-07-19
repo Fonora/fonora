@@ -2576,7 +2576,8 @@ html[data-edu-debug='true']::after {
 code {
   font-family: var(--font-mono);
   font-size: 0.9em;
-  background: #f0f0f0;
+  background: var(--doc-code-bg);
+  color: var(--color-text);
   padding: 0.1em 0.35em;
   border-radius: 3px;
 }

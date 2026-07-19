@@ -10,6 +10,7 @@
 import { escapeHtml } from './utils.js';
 import { loadLanguageRules } from './load-language-rules.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
+import { patchCompoundProposal } from './proposal-actions.js';
 
 const TAB_ROOT = () => document.getElementById('tab-gap-workshop');
 
@@ -578,6 +579,7 @@ function renderAnalysisResult(analysis, proposal) {
         <div class="gw-proposal-actions" data-proposal-id="${escapeHtml(proposalId)}">
           <span class="sans gw-proposal-id">Proposal ${escapeHtml(proposalId)}</span>
           <div class="gw-action-row">
+            <button type="button" class="btn btn--sm" data-gw-edit>Edit in Word Manager</button>
             <button type="button" class="btn btn--sm btn--primary" data-action="accepted">Accept</button>
             <button type="button" class="btn btn--sm gw-btn--skip" data-action="skipped">Skip</button>
             <button type="button" class="btn btn--sm wm-btn--reject" data-action="rejected">Reject</button>
@@ -618,6 +620,7 @@ function renderProposalDetail(panel, prop) {
     ${prop.status === 'open' ? `
     <div class="gw-proposal-actions" data-proposal-id="${escapeHtml(prop.id)}">
       <div class="gw-action-row">
+        <button type="button" class="btn" data-gw-edit>Edit in Word Manager</button>
         <button type="button" class="btn btn--primary" data-action="accepted">Accept</button>
         <button type="button" class="btn gw-btn--skip" data-action="skipped">Skip</button>
         <button type="button" class="btn wm-btn--reject" data-action="rejected">Reject</button>
@@ -671,18 +674,38 @@ function renderPromotionDetail(panel, promo) {
 function wireProposalActions(container, proposalId, analysisOrProp) {
   if (!proposalId) return;
   wireCompositionSelection(container);
+
+  container.querySelectorAll('[data-gw-edit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const validComps = (analysisOrProp?.valid_compositions ?? []).filter(Array.isArray);
+      const idx = getSelectedCompositionIndex(container);
+      const composition = validComps[idx] ?? validComps[0];
+      if (!composition?.length) {
+        toast('No composition to edit.', true);
+        return;
+      }
+      sessionStorage.setItem('wm-proposal-prefill', JSON.stringify({
+        conceptId: analysisOrProp.word ?? analysisOrProp.concept_id,
+        word: analysisOrProp.word,
+        composition,
+        gloss: analysisOrProp.rationale ?? '',
+      }));
+      window.location.hash = 'word-manager';
+    });
+  });
+
   container.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', async () => {
       const action = btn.dataset.action;
       btn.disabled = true;
       try {
-        const body = { action };
-        if (action === 'accepted') {
-          body.chosen_composition_index = getSelectedCompositionIndex(container);
-        }
-        await api(`/api/fonoran/compound-proposals/${encodeURIComponent(proposalId)}`, {
-          method: 'PATCH',
-          body: JSON.stringify(body),
+        await patchCompoundProposal({
+          api,
+          proposalId,
+          action,
+          chosenCompositionIndex: action === 'accepted'
+            ? getSelectedCompositionIndex(container)
+            : 0,
         });
 
         // Replace action buttons with a confirmation — keep the gap selected
@@ -692,15 +715,15 @@ function wireProposalActions(container, proposalId, analysisOrProp) {
             actionsEl.innerHTML = `
               <div class="gw-confirmation">
                 <span class="gw-badge badge--green">✓ Accepted</span>
-                <span class="sans gw-hint" style="margin-left:0.5rem">Run <strong>Step 4 — Regenerate dictionary</strong> in Advanced to publish this word.</span>
-                <a href="/tools#advanced" class="btn btn--sm" style="margin-left:auto">Go to Advanced →</a>
+                <span class="sans gw-hint" style="margin-left:0.5rem">Seeds updated when composition was written. Run <strong>Build dictionary</strong> in Word Manager to refresh the lab.</span>
+                <a href="/tools#word-manager" class="btn btn--sm" style="margin-left:auto">Word Manager →</a>
               </div>`;
           } else {
             const label = action === 'rejected' ? '✗ Rejected' : '→ Skipped';
             actionsEl.innerHTML = `<span class="gw-badge badge--muted">${label}</span>`;
           }
         }
-        toast(action === 'accepted' ? 'Accepted. Regenerate dictionary to publish.' : `Proposal ${action}.`);
+        toast(action === 'accepted' ? 'Accepted · check seeds in Word Manager' : `Proposal ${action}.`);
         await loadProposals();
         renderQueue();
         // Keep selectedId — user stays on this gap and clicks the next one when ready

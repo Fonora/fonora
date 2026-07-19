@@ -107,6 +107,8 @@ export function conceptRecord(candidate, approvedRoot = null, primitive = null, 
     experience_tier: primitive?.experience_tier ?? candidate.experience_tier ?? null,
     language_tier: primitive?.language_tier ?? candidate.language_tier ?? null,
     campfire_pass: primitive?.campfire_pass ?? candidate.campfire_pass ?? null,
+    reconsider: Boolean(primitive?.reconsider ?? candidate.reconsider),
+    reconsider_reason: primitive?.reconsider_reason ?? candidate.reconsider_reason ?? null,
   };
 }
 
@@ -282,7 +284,7 @@ export function buildRootById(concepts, lab = null) {
 }
 
 /** Build translator lookup: alias → concept entry with fonoran spelling. */
-export function buildConceptAliasIndex(concepts, lab = null, locData = {}, { labFirst = false } = {}) {
+export function buildConceptAliasIndex(concepts, lab = null, locData = {}, { labFirst = false, devLab = false } = {}) {
   const index = new Map();
 
   // Alias strength controls shadowing. `strong` aliases are authoritative
@@ -375,12 +377,18 @@ export function buildConceptAliasIndex(concepts, lab = null, locData = {}, { lab
     }
   };
 
-  const canonicalLabSounds = [...labSoundsByConceptId(lab).values()].filter(
-    s => s.state === 'approved' || s.state === 'revised',
-  );
+  const canonicalLabSounds = devLab
+    ? [...labSoundsByConceptId(lab).values()].filter(s => s.state !== 'rejected')
+    : [...labSoundsByConceptId(lab).values()].filter(
+      s => s.state === 'approved' || s.state === 'revised',
+    );
+  const registeredConceptIds = new Set();
 
-  if (labFirst) {
-    for (const sound of canonicalLabSounds) registerLabSound(sound, { force: true });
+  if (labFirst || devLab) {
+    for (const sound of canonicalLabSounds) {
+      registerLabSound(sound, { force: true });
+      if (sound.concept_id) registeredConceptIds.add(sound.concept_id);
+    }
   }
 
   for (const c of concepts) {
@@ -396,7 +404,9 @@ export function buildConceptAliasIndex(concepts, lab = null, locData = {}, { lab
 
   const bestByConcept = labSoundsByConceptId(lab);
   for (const sound of lab?.sounds ?? []) {
-    if (labFirst && (sound.state === 'approved' || sound.state === 'revised')) continue;
+    if (sound.state === 'rejected') continue;
+    if (sound.concept_id && registeredConceptIds.has(sound.concept_id)) continue;
+    if (labFirst && !devLab && (sound.state === 'approved' || sound.state === 'revised')) continue;
     if (sound.concept_id && bestByConcept.get(sound.concept_id) !== sound) continue;
     registerLabSound(sound);
   }

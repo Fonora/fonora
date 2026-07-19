@@ -16,9 +16,10 @@ import {
   effectiveState,
   consolidateConceptSound,
 } from './fonoran-sound-bucket.js';
-
 const SUGGESTED_STATUSES = new Set(['primitive', 'compound_candidate', 'unclear']);
 const PRIORITY_CLASSES = new Set(['essential', 'common', 'useful', 'extended', 'questionable']);
+const LANGUAGE_TIERS = new Set(['communicative_core', 'extended_core', 'fluent_core']);
+const RECONSIDER_REASONS = new Set(['wrong_tier', 'wrong_sound', 'wrong_composition']);
 
 /** Apply optional editorial fields from a request body to a primitive + candidate pair. */
 function applyEditorialFields(body, primitive, candidate) {
@@ -45,6 +46,34 @@ function applyEditorialFields(body, primitive, candidate) {
     if (candidate) {
       candidate.priority_class = pc;
       candidate.priority_weight = priorityWeight(pc);
+    }
+  }
+  if (body.language_tier != null) {
+    const tier = String(body.language_tier).trim().toLowerCase();
+    if (!LANGUAGE_TIERS.has(tier)) throw new Error(`Invalid language_tier: ${tier}`);
+    primitive.language_tier = tier;
+    primitive.campfire_pass = tier === 'communicative_core';
+    if (candidate) {
+      candidate.language_tier = tier;
+      candidate.campfire_pass = tier === 'communicative_core';
+    }
+  }
+  if (body.reconsider != null) {
+    primitive.reconsider = Boolean(body.reconsider);
+    if (!primitive.reconsider) {
+      delete primitive.reconsider_reason;
+      if (candidate) delete candidate.reconsider_reason;
+    }
+    if (candidate) candidate.reconsider = primitive.reconsider;
+  }
+  if (body.reconsider_reason != null) {
+    const reason = String(body.reconsider_reason).trim().toLowerCase();
+    if (!RECONSIDER_REASONS.has(reason)) throw new Error(`Invalid reconsider_reason: ${reason}`);
+    primitive.reconsider = true;
+    primitive.reconsider_reason = reason;
+    if (candidate) {
+      candidate.reconsider = true;
+      candidate.reconsider_reason = reason;
     }
   }
 }

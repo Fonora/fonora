@@ -14,7 +14,7 @@ import { rankCandidates, ASSOCIATION_SEEDS } from './fonoran-expression-candidat
 import { pickConsensus, compositionKey as llmCompositionKey, llmScoresForConcept } from './fonoran-llm-aggregate.js';
 import { computeBoundaryQuality } from './fonoran-compound-confusability.js';
 
-const LOCKED_SOURCES = new Set(['playtest', 'human']);
+const LOCKED_SOURCES = new Set(['playtest', 'human', 'locked']);
 const DEFAULT_SCORE_MARGIN = 0.02;
 
 function compositionKey(comp) {
@@ -27,6 +27,7 @@ function normalizeCompoundRow(c) {
     composition: c.preferred?.composition ?? c.composition ?? [],
     gloss: c.preferred?.gloss ?? c.gloss ?? '',
     preferred_source: c.preferred_source ?? 'heuristic',
+    locked: c.locked === true,
     alternates: c.alternates ?? [],
     notes: c.notes ?? '',
     understandability: c.understandability ?? null,
@@ -35,6 +36,13 @@ function normalizeCompoundRow(c) {
 
 export function isPreferredLocked(source) {
   return LOCKED_SOURCES.has(source);
+}
+
+/** Compound row lock: explicit flag or playtest/human/locked source. */
+export function isCompoundEditoriallyLocked(row) {
+  if (!row) return false;
+  if (row.locked === true) return true;
+  return isPreferredLocked(row.preferred_source ?? 'heuristic');
 }
 
 /** @param {Record<string, string>} rootById  concept id → root spelling */
@@ -152,12 +160,17 @@ function pickShortestLengthAlternate(validRanked, maxFlat, currentKey) {
 
 /**
  * Select preferred composition for one concept.
+ *
+ * Ranking is deterministic four-rules scoring (campfire + understandability heuristics +
+ * phonetic/boundary tie-breaks). LLM aggregates are opt-in via options.useLlm and are not
+ * part of the default regeneration path.
  */
 export function selectPreferred(conceptId, {
   candidates = [],
   current = [],
   gloss = '',
   preferredSource = 'heuristic',
+  locked = false,
   buildCtx,
   rankCtx = {},
   llmAggregates = null,
@@ -170,9 +183,12 @@ export function selectPreferred(conceptId, {
   const scoreMargin = current.some(r => difficultRootIdsEarly.has(r)) ? 0 : scoreMarginDefault;
   const maxFlat = options.maxFlattened ?? maxFlattenedRoots();
   const flatCountFor = rankCtx.flatCountFor ?? (() => null);
+  // LLM path is opt-in advisory only — four-rules regen never sets useLlm.
   const useLlm = Boolean(options.useLlm && llmAggregates);
   const llmScores = useLlm ? llmScoresForConcept(llmAggregates, conceptId) : null;
   const llmConsensus = useLlm ? pickConsensus(llmAggregates, conceptId, options.llmThresholds) : null;
+  const force = Boolean(options.force)
+    || (options.forceConcepts instanceof Set && options.forceConcepts.has(conceptId));
 
   const currentKey = compositionKey(current);
   const currentValidation = validateComposition(conceptId, current, buildCtx);
@@ -188,7 +204,7 @@ export function selectPreferred(conceptId, {
     flatCount: currentFlat,
   }).score - currentPhoneticPenalty);
 
-  if (isPreferredLocked(preferredSource)) {
+  if (locked || isPreferredLocked(preferredSource)) {
     return {
       preferred: { composition: current, gloss },
       preferred_source: preferredSource,
@@ -215,8 +231,9 @@ export function selectPreferred(conceptId, {
     .map(r => ({ ...r, validation: validateComposition(conceptId, r.composition, buildCtx) }))
     .filter(r => r.validation.valid);
 
-  if (llmScores?.size) {
-    validRanked = validRanked.sort((a, b) => {
+  // Prefer campfire-passing candidates, then heuristic understandability / flat / boundary.
+  validRanked = validRanked.sort((a, b) => {
+    if (useLlm && llmScores?.size) {
       const aKey = compositionKey(a.composition);
       const bKey = compositionKey(b.composition);
       const aStats = llmScores.get(aKey);
@@ -233,25 +250,18 @@ export function selectPreferred(conceptId, {
       const aRepair = aStats?.mean_repair_turns ?? 99;
       const bRepair = bStats?.mean_repair_turns ?? 99;
       if (aRepair !== bRepair) return aRepair - bRepair;
-      if (b.understandability !== a.understandability) return b.understandability - a.understandability;
-      const aFlat = a.validation.flat_count ?? flatCountFor(a.composition) ?? 99;
-      const bFlat = b.validation.flat_count ?? flatCountFor(b.composition) ?? 99;
-      if (aFlat !== bFlat) return aFlat - bFlat;
-      const aBoundary = computeBoundaryQuality(a.validation.rootSeq ?? []).score;
-      const bBoundary = computeBoundaryQuality(b.validation.rootSeq ?? []).score;
-      return bBoundary - aBoundary;
-    });
-  } else {
-    validRanked = validRanked.sort((a, b) => {
-      if (b.understandability !== a.understandability) return b.understandability - a.understandability;
-      const aFlat = a.validation.flat_count ?? flatCountFor(a.composition) ?? 99;
-      const bFlat = b.validation.flat_count ?? flatCountFor(b.composition) ?? 99;
-      if (aFlat !== bFlat) return aFlat - bFlat;
-      const aBoundary = computeBoundaryQuality(a.validation.rootSeq ?? []).score;
-      const bBoundary = computeBoundaryQuality(b.validation.rootSeq ?? []).score;
-      return bBoundary - aBoundary;
-    });
-  }
+    }
+    const aCamp = a.campfire_score ?? 0;
+    const bCamp = b.campfire_score ?? 0;
+    if (bCamp !== aCamp) return bCamp - aCamp;
+    if (b.understandability !== a.understandability) return b.understandability - a.understandability;
+    const aFlat = a.validation.flat_count ?? flatCountFor(a.composition) ?? 99;
+    const bFlat = b.validation.flat_count ?? flatCountFor(b.composition) ?? 99;
+    if (aFlat !== bFlat) return aFlat - bFlat;
+    const aBoundary = computeBoundaryQuality(a.validation.rootSeq ?? []).score;
+    const bBoundary = computeBoundaryQuality(b.validation.rootSeq ?? []).score;
+    return bBoundary - aBoundary;
+  });
 
   if (!validRanked.length) {
     return {
@@ -275,7 +285,12 @@ export function selectPreferred(conceptId, {
   let promoteReason = currentTooLong && !beatScore ? 'flattened length' : 'score';
   let promoteSource = 'heuristic';
 
-  if (lengthOnly) {
+  if (force) {
+    shouldPromote = topKey !== currentKey;
+    promoteReason = 'four_rules_force';
+    promoteSource = 'heuristic';
+    winner = top;
+  } else if (lengthOnly) {
     if (currentTooLong) {
       const lengthPick = pickShortestLengthAlternate(validRanked, maxFlat, currentKey);
       if (lengthPick) {
@@ -458,6 +473,7 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
       current,
       gloss: row.gloss,
       preferredSource: row.preferred_source,
+      locked: isCompoundEditoriallyLocked(row),
       buildCtx,
       rankCtx,
       llmAggregates,

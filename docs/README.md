@@ -44,15 +44,16 @@ Read in this order for a new contributor:
 
 | # | Topic | Document |
 | --- | --- | --- |
-| 1 | **Fonoran constitution** | [fonoran-constitution.md](fonoran-constitution.md) |
-| 2 | **Fonoran guide** | [fonoran.md](fonoran.md) |
-| 2b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
-| 2c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
-| 3 | Fonoran grammar | [fonoran-grammar.md](fonoran-grammar.md) |
-| 3a | **Fonoran numerals** (1–99) | [fonoran-numerals.md](fonoran-numerals.md) |
-| 3b | **Fonoran Learn** (`/learn`) | [fonoran-learn.md](fonoran-learn.md) |
-| 4 | **Translator (live)** | [fonoran-translator.md](fonoran-translator.md) |
-| 5 | Interpretive translator (legacy) | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
+| 1 | **Fonoran constitution** (read first — one page) | [fonoran-constitution.md](fonoran-constitution.md) |
+| 2 | **Fonoran grammar** | [fonoran-grammar.md](fonoran-grammar.md) |
+| 3 | **Philosophy & rationale** (optional deep read) | [fonoran-philosophy.md](fonoran-philosophy.md) |
+| 4 | **Fonoran guide** (builder pipeline) | [fonoran.md](fonoran.md) |
+| 4b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
+| 4c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
+| 5 | **Fonoran numerals** (1–99) | [fonoran-numerals.md](fonoran-numerals.md) |
+| 6 | **Fonoran Learn** (`/learn`) | [fonoran-learn.md](fonoran-learn.md) |
+| 7 | **Translator (live)** | [fonoran-translator.md](fonoran-translator.md) |
+| 8 | Interpretive translator (legacy) | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
 
 ---
 
