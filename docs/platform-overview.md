@@ -3,9 +3,7 @@
 Fonora is an open research project exploring new approaches to writing systems, language
 design, and language learning through open-source experiments.
 
-**Our hypothesis:** can a language designed from first principles be learned quickly enough
-that two people with no shared native language can achieve practical communication after only
-a short period of study?
+**Our hypothesis:** see [fonoran-constitution.md](fonoran-constitution.md) — two strangers with ~50 shared roots can communicate after ~1 hour.
 
 Fonora has three projects plus a public research notebook, surfaced as four top-level tabs (five when signed in):
 
@@ -13,7 +11,7 @@ Fonora has three projects plus a public research notebook, surfaced as four top-
 | --- | --- | --- | --- |
 | **Fonora** | [`/`](/) | Platform home: the project, the hypothesis, research notebook | This document · [`/research`](/research) · [`/research/timeline`](/research/timeline) |
 | **Script** | [`/script`](/script) | Fonora Script: phonetic writing system | [language-rules.md](language-rules.md) · [Sound Grid](/script#grid) |
-| **Language** | [`/language`](/language) | Fonoran: experimental language built on Fonora Script | [fonoran-constitution.md](fonoran-constitution.md) · [fonoran.md](fonoran.md) |
+| **Language** | [`/language`](/language) | Fonoran: experimental language built on Fonora Script | [fonoran-constitution.md](fonoran-constitution.md) · [fonoran-grammar.md](fonoran-grammar.md) |
 | **Learn** | [`/learn`](/learn) | Structured drills: Fonora Script + Fonoran language skills | [fonoran-learn.md](fonoran-learn.md) · [`/learn`](/learn) |
 | **Tools** | [`/tools`](/tools) | QA/build tooling for Script and Language (sign-in required when OAuth is configured) | [`/tools#tools-home`](/tools#tools-home) |
 
