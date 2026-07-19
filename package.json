@@ -1,6 +1,6 @@
 {
   "name": "fonora",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Open-source research exploring phonetic writing, constructed language design, and fast cross-linguistic communication",
   "homepage": "https://fonora.org",
   "repository": {
@@ -56,7 +56,11 @@
     "fonoran:editorial:import": "node scripts/fonoran-editorial-import.js",
     "fonoran:build": "node tools/fonoran-build.js",
     "fonoran:build:approved": "node tools/fonoran-build.js --approve-all",
+    "fonoran:compound-iterate": "node scripts/fonoran-compound-iterate.js",
+    "fonoran:compound-prune": "node scripts/fonoran-compound-prune.js",
     "fonoran:compound-audit": "node tools/fonoran-compound-audit.js",
+    "fonoran:concept-gap-audit": "node scripts/fonoran-concept-gap-audit.js",
+    "fonoran:root-rings:apply": "node scripts/fonoran-root-rings-apply.js",
     "fonoran:compound-confusability": "node scripts/fonoran-compound-confusability.js",
     "fonoran:seed-quality-audit": "node scripts/fonoran-seed-quality-audit.js",
     "fonoran:translation-gaps": "node scripts/fonoran-translation-gaps.js",
@@ -64,6 +68,7 @@
     "fonoran:translate:cache": "node tools/fonoran-translation-cache.js",
     "fonoran:translate:frame-test": "node scripts/fonoran-translate-frame-test.js",
     "fonoran:regen-compounds": "node scripts/fonoran-regen-compounds.js",
+    "fonoran:regen:four-rules": "node scripts/fonoran-regen-four-rules.js",
     "fonoran:optimize-compounds": "node scripts/fonoran-optimize-compounds.js",
     "fonoran:llm-playtest": "node scripts/fonoran-llm-playtest.js",
     "fonoran:llm-intuition": "node scripts/fonoran-llm-intuition.js",
