@@ -169,9 +169,9 @@ export async function runCompoundAudit() {
     const liveKey = compKey(c.composition);
     const demoKey = compKey(d.tree);
     if (liveKey !== demoKey) {
-      const sev = (d.depth ?? 1) >= 2 ? 'high' : 'medium';
-      add(sev, 'tree_mismatch', d.id,
-        `Preferred tree differs from semantic foundation`,
+      // Informational: preferred forms follow four-rules ASSOCIATION_SEEDS, not demo trees.
+      add('low', 'tree_mismatch', d.id,
+        `Preferred tree differs from reference demo tree (advisory)`,
         { live: c.composition, expected: d.tree, depth: d.depth });
     }
   }
@@ -188,8 +188,9 @@ export async function runCompoundAudit() {
     const c = liveById.get(d.id);
     if (!c || (d.depth ?? 1) < 2) continue;
     if (!usesIntermediateCompound(c.composition, compoundIds)) {
-      add('high', 'flat_when_hierarchical', d.id,
-        `Demo depth ${d.depth} but preferred uses only primitive roots`,
+      // Flat primitive stacks are preferred under four-rules recoverability.
+      add('low', 'flat_when_hierarchical', d.id,
+        `Demo depth ${d.depth} but preferred uses only primitive roots (allowed)`,
         { composition: c.composition, expected_depth: d.depth });
     }
   }

@@ -492,8 +492,17 @@ const fonoranTranslatorResult = await (async () => {
 
     const seafoodA = await translateEnglish('I want to eat seafood.');
     const seafoodB = await translateEnglish('I want to eat sea food.');
-    assert(seafoodA.surface.roman === 'mi sak tel yemelto tel', `seafood roman: ${seafoodA.surface.roman}`);
+    // Spelling is a regen artifact (food+fish / food+sea); assert structure + convergence.
+    assert(seafoodA.unresolved.length === 0, `seafood unresolved: ${seafoodA.unresolved.join(', ')}`);
+    assert(
+      seafoodA.surface.roman.startsWith('mi sak tel '),
+      `seafood roman should be want+eat+seafood: ${seafoodA.surface.roman}`,
+    );
     assert(seafoodB.surface.roman === seafoodA.surface.roman, `sea food diverged: ${seafoodB.surface.roman}`);
+    assert(
+      seafoodA.tokens.some(t => t.concept_id === 'seafood' || t.concept_id === 'sea' || t.concept_id === 'fish'),
+      `seafood must keep a sea/fish concept: ${JSON.stringify(seafoodA.tokens)}`,
+    );
     assert(!seafoodA.tokens.some(t => t.interpret_reason?.includes('hypernym:eat')), 'seafood must not collapse to eat');
 
     // Concept-first honest gaps (docs Design Rule 0): `behind` is a preposition
