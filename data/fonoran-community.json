@@ -8,7 +8,7 @@
       "email": "info@fonora.org",
       "name": "James Calhoun",
       "created_at": "2026-07-03T19:24:02.107Z",
-      "last_login": "2026-07-12T20:56:23.455Z"
+      "last_login": "2026-07-19T06:25:41.918Z"
     },
     {
       "id": "usr-mr5e5763-05fa58e9",
@@ -139,7 +139,7 @@
     },
     "usr-mr5bnmik-a2214bda": {
       "payload": {
-        "totalXp": 1770,
+        "totalXp": 1780,
         "streak": 2,
         "lastPracticeDate": "2026-07-03",
         "dailyGoalXp": 50,
@@ -165,7 +165,7 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1461,
+              "total": 1443,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -177,13 +177,13 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1461,
+              "total": 1443,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
           },
           "fonoran-reading": {
-            "xp": 1000,
+            "xp": 1010,
             "sessions": 8,
             "lastPlayed": "2026-07-03",
             "lessonIndex": 6,
@@ -441,8 +441,8 @@
                 "correct": 1
               },
               "w-1-dat": {
-                "seen": 2,
-                "correct": 2
+                "seen": 3,
+                "correct": 3
               },
               "w-1-kamgu": {
                 "seen": 1,
@@ -482,7 +482,7 @@
               }
             },
             "curriculum": {
-              "total": 1461,
+              "total": 1443,
               "totalLessons": 100,
               "ring": "Immediate needs"
             }
@@ -499,7 +499,7 @@
               }
             },
             "curriculum": {
-              "total": 1461,
+              "total": 1443,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -511,7 +511,7 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1461,
+              "total": 1443,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
@@ -547,7 +547,7 @@
           }
         }
       },
-      "updated_at": "2026-07-13T21:26:51.864Z"
+      "updated_at": "2026-07-19T06:27:40.653Z"
     }
   },
   "proposals": [],
