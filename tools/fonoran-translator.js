@@ -1065,7 +1065,7 @@ export function frameSlotsToSemanticSlots(frameSlots) {
  */
 export async function translateFromFrame(frame, options = {}) {
   const input = String(options.input ?? '').trim();
-  const ctx = await buildResolveContext(options.lab);
+  const ctx = await buildResolveContext(options.lab, { devLab: Boolean(options.devLab) });
   if (!PARTICLES) PARTICLES = await getParticleRuntime();
 
   ctx.isQuestion = Boolean(frame?.is_question);
@@ -1130,7 +1130,7 @@ export async function translateEnglishLegacy(text, options = {}) {
     };
   }
 
-  const ctx = await buildResolveContext(options.lab);
+  const ctx = await buildResolveContext(options.lab, { devLab: Boolean(options.devLab) });
   const rules = ctx.rules ?? await loadInterpretationRules();
   ctx.rules = rules;
   if (!PARTICLES) PARTICLES = await getParticleRuntime();

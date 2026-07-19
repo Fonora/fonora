@@ -43,6 +43,11 @@ import {
   patchConcept,
 } from './fonoran-concept-store.js';
 import {
+  syncCompoundFromLab,
+  syncCompoundGlossFromLab,
+  updateCompoundEditorial,
+} from './fonoran-editorial-sync.js';
+import {
   getSessionUser,
   isAdminWriteRequired,
   isCommunityWriteRequired,
@@ -75,6 +80,7 @@ import {
   getSnapshotStatus,
   importSnapshotZip,
   previewSnapshotZip,
+  exportSnapshotToDir,
 } from './fonoran-snapshot.js';
 import {
   buildPuzzleChallenge,
@@ -419,6 +425,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
         engine,
         skipCache: body.skipCache === true,
         simplify,
+        devLab: body.dev_lab === true
+          || process.env.FONORAN_DEV_LAB === '1'
+          || process.env.FONORAN_DEV_LAB === 'true',
       });
       if (result.ok === false) {
         return done(result.status ?? 503, { error: result.error, engine: result.engine ?? 'llm' });
@@ -488,8 +497,19 @@ export async function handleFonoranApi(req, res, pathname, method) {
         resolvedBy: user?.email ?? 'admin',
         note: body.note ?? null,
         chosenCompositionIndex: body.chosen_composition_index ?? null,
+        chosenComposition: body.chosen_composition ?? null,
       });
-      return done(200, proposal);
+      let editorial = null;
+      if (action === 'accepted' && proposal.classification === 'compound' && proposal.chosen_composition?.length >= 2) {
+        const conceptId = String(proposal.word ?? proposal.concept_id ?? '').trim().toLowerCase();
+        if (conceptId) {
+          editorial = await updateCompoundEditorial(conceptId, {
+            composition: proposal.chosen_composition,
+            gloss: proposal.rationale ?? proposal.gloss ?? '',
+          });
+        }
+      }
+      return done(200, { ...proposal, editorial });
     }
     if (pathname === '/api/fonoran/gaps/suggest' && method === 'POST') {
       const body = await readJsonBody(req);
@@ -616,6 +636,10 @@ export async function handleFonoranApi(req, res, pathname, method) {
       }
       return done(200, await importEditorialFromSeedPaths());
     }
+    if (pathname === '/api/fonoran/editorial/export-seeds' && method === 'POST') {
+      const summary = await exportSnapshotToDir();
+      return done(200, { exported: true, ...summary });
+    }
     if (pathname === '/api/fonoran/lab/optimize-compounds' && method === 'POST') {
       const body = await readJsonBody(req);
       return done(200, await optimizeCompoundsInStore({
@@ -694,14 +718,41 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (labCompoundMatch && method === 'PATCH') {
       const id = decodeURIComponent(labCompoundMatch[1]);
       const body = await readJsonBody(req);
+      let compound;
+      let editorial;
       if (Array.isArray(body.components) || Array.isArray(body.parts)) {
-        return done(200, await recomposeCompound(id, body));
+        compound = await recomposeCompound(id, body);
+        editorial = await syncCompoundFromLab(compound);
+      } else {
+        compound = await assignCompoundMeaning(id, body.meaning, { state: body.state, aliases: body.aliases });
+        editorial = await syncCompoundGlossFromLab(compound);
       }
-      return done(200, await assignCompoundMeaning(id, body.meaning, { state: body.state, aliases: body.aliases }));
+      if (body.concept_id && editorial?.skipped) {
+        const bucket = await loadBucket();
+        const row = bucket.compounds.find(c => c.id === compound.id);
+        if (row) {
+          row.concept_id = String(body.concept_id).trim().toLowerCase();
+          const { writeBucketRaw } = await import('./fonoran-store.js');
+          await writeBucketRaw(bucket);
+          compound.concept_id = row.concept_id;
+          editorial = await syncCompoundFromLab(compound, bucket);
+        }
+      }
+      if (typeof body.locked === 'boolean' && compound.concept_id) {
+        const lockEditorial = await updateCompoundEditorial(compound.concept_id, { locked: body.locked });
+        editorial = { ...editorial, ...lockEditorial };
+      }
+      return done(200, { ...compound, editorial });
     }
     if (pathname === '/api/fonoran/lab/compounds' && method === 'POST') {
       const body = await readJsonBody(req);
-      return done(201, await addCompound(body));
+      const compound = await addCompound(body);
+      let editorial = { seeds_written: false, skipped: true, reason: 'no concept_id' };
+      if (compound.concept_id) {
+        const bucket = await loadBucket();
+        editorial = await syncCompoundFromLab(compound, bucket);
+      }
+      return done(201, { ...compound, editorial });
     }
     if (pathname === '/api/fonoran/roots/candidates' && method === 'GET') {
       const url = new URL(req.url ?? '', 'http://localhost');
@@ -726,7 +777,8 @@ export async function handleFonoranApi(req, res, pathname, method) {
     const rootRegenMatch = pathname.match(/^\/api\/fonoran\/roots\/candidates\/([^/]+)\/regenerate$/);
     if (rootRegenMatch && method === 'POST') {
       const id = decodeURIComponent(rootRegenMatch[1]);
-      return done(200, await regenerateRootCandidate(id));
+      const body = await readJsonBody(req).catch(() => ({}));
+      return done(200, await regenerateRootCandidate(id, { force: body?.force === true }));
     }
     return false;
   } catch (err) {

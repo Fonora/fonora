@@ -95,13 +95,17 @@ async function buildBridgeBlock() {
   return bridgeBlockCache;
 }
 
-/** Compact concept list for the LLM prompt (approved lab entries only). */
-async function buildConceptInventoryBlock(lab) {
-  const ctx = await buildResolveContext(lab);
+/** Compact concept list for the LLM prompt. */
+async function buildConceptInventoryBlock(lab, { devLab = false } = {}) {
+  const ctx = await buildResolveContext(lab, { devLab });
   const lines = [];
+  const allowedRootStates = devLab
+    ? ['draft', 'needs_review', 'approved', 'revised']
+    : ['approved', 'revised', 'needs_review'];
 
   for (const [conceptId, spec] of ctx.rootById.entries()) {
     if (!spec?.root) continue;
+    if (spec.state && !allowedRootStates.includes(spec.state)) continue;
     lines.push(`${conceptId}: ${spec.gloss ?? conceptId} → ${spec.root}`);
   }
   for (const [conceptId, compound] of ctx.compoundByConceptId.entries()) {
@@ -304,13 +308,13 @@ async function loadGrammarSummary(particlesDoc) {
   return buildLlmGrammarBrief(particlesDoc);
 }
 
-async function buildPromptContext(lab) {
-  if (promptContextCache) return promptContextCache;
+async function buildPromptContext(lab, { devLab = false } = {}) {
+  if (!devLab && promptContextCache) return promptContextCache;
   const particlesRaw = await readFile(GRAMMAR_PARTICLES_PATH, 'utf8').catch(() => '{}');
   const particlesDoc = JSON.parse(particlesRaw);
   const [grammar, concepts, fewShot, bridges] = await Promise.all([
     loadGrammarSummary(particlesDoc),
-    buildConceptInventoryBlock(lab),
+    buildConceptInventoryBlock(lab, { devLab }),
     buildFewShotExamples(lab),
     buildBridgeBlock(),
   ]);
@@ -319,8 +323,8 @@ async function buildPromptContext(lab) {
     .map(p => `${p.form} (${p.id}): ${p.gloss}`)
     .join('\n');
 
-  promptContextCache = { grammar, particleLines, concepts, fewShot, bridges, particlesDoc };
-  return promptContextCache;
+  if (!devLab) promptContextCache = { grammar, particleLines, concepts, fewShot, bridges, particlesDoc };
+  return { grammar, particleLines, concepts, fewShot, bridges, particlesDoc };
 }
 
 export function resetLlmTranslateCache() {
@@ -409,7 +413,7 @@ export async function compileFrameViaLlm(text, options = {}) {
   }
 
   const sourceLang = normalizeSourceLang(options.sourceLang);
-  const ctx = await buildPromptContext(options.lab);
+  const ctx = await buildPromptContext(options.lab, { devLab: Boolean(options.devLab) });
   const langHint = sourceLang === 'auto'
     ? 'Detect the source language and set detected_lang.'
     : `Source language code: ${sourceLang}. Set detected_lang to "${sourceLang}".`;
@@ -589,8 +593,8 @@ export async function simplifyForFonoran(text, options = {}) {
 }
 
 /** Validate LLM frame concept ids, particles, and grammar rules from fonoran-grammar.md. */
-export async function validateLlmFrame(frame, lab = null, sourceText = '') {
-  const ctx = await buildResolveContext(lab);
+export async function validateLlmFrame(frame, lab = null, sourceText = '', { devLab = false } = {}) {
+  const ctx = await buildResolveContext(lab, { devLab });
   const particles = await getParticleRuntime();
   const allowedParticles = new Set(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
   for (const p of particles.data?.particles ?? []) {
@@ -659,6 +663,7 @@ async function translateViaLlmCore(text, options = {}) {
       const frame = await repairLlmFrame(cached.frame, input, options.lab);
       const refreshed = await translateFromFrame(frame, {
         lab: options.lab,
+        devLab: options.devLab,
         input,
         sourceLang: cached.result?.detected_lang ?? cached.frame.detected_lang ?? sourceLang,
       });
@@ -679,6 +684,7 @@ async function translateViaLlmCore(text, options = {}) {
       const withPlayback = frame
         ? await translateFromFrame(frame, {
           lab: options.lab,
+          devLab: options.devLab,
           input,
           sourceLang: cached.result?.detected_lang ?? cached.frame.detected_lang ?? sourceLang,
         })
@@ -717,6 +723,7 @@ async function translateViaLlmCore(text, options = {}) {
       const clauseFrame = await repairLlmFrame(rawFrame, input, options.lab);
       const clauseResult = await translateFromFrame(clauseFrame, {
         lab: options.lab,
+        devLab: options.devLab,
         input,
         sourceLang: clauseFrame.detected_lang ?? sourceLang,
       });
@@ -744,11 +751,12 @@ async function translateViaLlmCore(text, options = {}) {
   const frame = await repairLlmFrame(llm.frame, input, options.lab);
   const result = await translateFromFrame(frame, {
     lab: options.lab,
+    devLab: options.devLab,
     input,
     sourceLang: frame.detected_lang ?? sourceLang,
   });
 
-  const validation = await validateLlmFrame(frame, options.lab, input);
+  const validation = await validateLlmFrame(frame, options.lab, input, { devLab: Boolean(options.devLab) });
   const enriched = {
     ...result,
     engine: 'llm',

@@ -222,6 +222,7 @@
       <section id="page-translator" class="page">
         <div class="translator-page content-page">
           <div class="translator-playback-bar sans" role="group" aria-label="Translation playback">
+            <p id="tr-dev-banner" class="translator-dev-banner sans" hidden>Dev mode — Translator uses the full lab (not the production-approved set).</p>
             <div class="translator-playback-bar__actions">
               <button type="button" class="btn btn--primary" id="tr-hear" disabled aria-label="Listen to Fonoran translation"><svg class="learn-icon btn-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><polygon points="6 4 20 12 6 20 6 4"/></svg><span class="btn-play-label">Listen</span></button>
               <button type="button" class="btn" id="tr-stop" disabled aria-label="Stop playback"><svg class="learn-icon btn-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1"/></svg><span class="btn-play-label">Stop</span></button>
@@ -286,10 +287,11 @@
               <button type="button" class="chip active" data-dict-filter="roots">Roots</button>
               <button type="button" class="chip active" data-dict-filter="words">Words</button>
               <button type="button" class="chip" data-dict-filter="particles">Particles</button>
-              <button type="button" class="chip" data-dict-filter="core" title="Show only communicative-core roots (the ~50 the experiment measures)">Communicative core</button>
+              <button type="button" class="chip" data-dict-filter="core" title="Ring 1 — campfire core (50 roots)">Core</button>
               <button type="button" class="chip" data-dict-filter="needs_review">Needs review</button>
               <button type="button" class="chip" data-dict-filter="approved">Approved</button>
               <button type="button" class="chip" data-dict-filter="rejected">Rejected</button>
+              <button type="button" class="chip" data-dict-filter="reconsider">Reconsider</button>
               <span class="dict-count sans" id="dict-count" role="status" aria-live="polite"></span>
             </div>
           </div>

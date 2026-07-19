@@ -24,6 +24,8 @@ import { analyzeAmbiguity, auditScores, segmentCompound, checkCompoundBoundary }
 import { maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { aliasesForConcept, loadLocalization } from './fonoran-concepts.js';
 import { parseSyllable } from './fonoran-pronunciation.js';
+import { isBannedPrimitiveSpelling } from './fonoran-phonetic-weights.js';
+import { loadPrimitiveConceptIds, pruneShadowCompounds } from './fonoran-compound-prune.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -282,11 +284,31 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
     );
   }
 
+  const phoneticViolations = candidates.filter(c => isBannedPrimitiveSpelling(c.spelling));
+  if (phoneticViolations.length > 0) {
+    const list = phoneticViolations.map(c => `  ${c.spelling} (${c.id})`).join('\n');
+    throw new Error(
+      `Build halted: ${phoneticViolations.length} primitive root(s) use banned r/j onsets.\n` +
+      `Re-run root generation — locked spellings with difficult onsets are auto-reassigned.\n` +
+      `Violations:\n${list}`
+    );
+  }
+
   const rootById = Object.fromEntries(candidates.map(c => [c.id, c.spelling]));
   const rootSpellings = candidates.map(c => c.spelling);
 
-  // 2. Compounds — build + validate unique segmentation.
-  const compoundDoc = (await readDoc('compounds')) ?? { compounds: [] };
+  // 2. Compounds — prune stale rows, then build + validate unique segmentation.
+  const [compoundDocRaw, inventoryDoc] = await Promise.all([
+    readDoc('compounds'),
+    readDoc('concept_inventory'),
+  ]);
+  const primitiveIds = loadPrimitiveConceptIds(inventoryDoc);
+  let compoundDoc = compoundDocRaw ?? { compounds: [] };
+  const { doc: prunedDoc, pruned: shadowPruned } = pruneShadowCompounds(compoundDoc, primitiveIds);
+  if (shadowPruned.length) {
+    compoundDoc = prunedDoc;
+    await writeDoc('compounds', compoundDoc);
+  }
   const { resolved, dropped } = resolveCompounds(compoundDoc.compounds ?? [], rootById, rootSpellings);
 
   const maxFlat = maxFlattenedRoots();
@@ -386,6 +408,7 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
     compounds: mergedCompounds.length,
     preserved_compounds: preservedCompounds.length,
     preserved_sounds: preservedSounds.length,
+    pruned_shadow_compounds: shadowPruned,
     dropped,
     lengthWarnings,
     health,
@@ -401,6 +424,9 @@ async function main() {
   if (r.approveAll) console.log('  Mode:      APPROVE-ALL (everything imported pre-approved, for testing)');
   console.log(`  Roots:     ${r.roots} (${r.approved} approved${r.approveAll ? '' : '/locked'})`);
   console.log(`  Compounds: ${r.compounds} built${r.approveAll ? ' (all approved)' : ''}, ${r.dropped.length} dropped`);
+  if (r.pruned_shadow_compounds?.length) {
+    console.log(`  Pruned:    ${r.pruned_shadow_compounds.length} shadow compound(s) removed from fonoran-compounds.json`);
+  }
   if (r.preserved_compounds || r.preserved_sounds) {
     console.log(`  Preserved: ${r.preserved_sounds ?? 0} user roots, ${r.preserved_compounds ?? 0} user words`);
   }

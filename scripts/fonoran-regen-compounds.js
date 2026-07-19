@@ -96,6 +96,10 @@ async function main() {
 
   for (const c of live) {
     if (demoIds.has(c.concept)) continue;
+    if (primitiveIds.has(c.concept)) {
+      console.warn(`Skipping live compound "${c.concept}" — id is a primitive root`);
+      continue;
+    }
     entries.push({
       concept: c.concept,
       composition: c.composition,

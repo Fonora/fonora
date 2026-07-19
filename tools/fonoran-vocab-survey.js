@@ -362,9 +362,16 @@ async function main() {
   if (dryRun) {
     console.log('\nDry run — run without --dry-run to save proposals.');
   } else {
-    console.log('\nProposals saved. Review in Word Manager queue (npm start → Language Lab).');
-    console.log('After review, run: node tools/fonoran-expression-candidates.js <concept> to rank compositions.');
-    console.log('Then run: npm run fonoran:regenerate to rebuild with approved compounds.');
+    if (totalSaved === 0) {
+      const err = new Error(
+        'Vocab survey completed but wrote 0 proposals. '
+        + 'No durable output — do not treat this run as successful.',
+      );
+      err.code = 'LLM_NO_OUTPUT';
+      throw err;
+    }
+    console.log('\nProposals saved. Review in Gap Workshop (/tools#gap-workshop).');
+    console.log('Edit in Word Manager, then Build dictionary. Commit data/*.json when ready.');
   }
 }
 

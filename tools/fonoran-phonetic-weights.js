@@ -1,6 +1,7 @@
 /**
  * Research-backed articulatory ease weights for Fonoran roots and compounds.
- * Weight, never ban (for sounds in the pool). See RN-27 / automated refine loop plan.
+ * Primitive roots: r/j onsets are hard-banned (constitution rule 1, RN-32).
+ * Compounds inherit clean roots; difficult onsets are tie-break penalties only.
  */
 
 import { parseSyllable } from './fonoran-pronunciation.js';
@@ -12,7 +13,7 @@ export const VERY_SAFE_ONSETS = new Set(['m', 'n', 'p', 'b', 't', 'd', 'k', 'g',
 /** Fairly safe — globally common, slightly below very-safe stops/nasals. */
 export const FAIRLY_SAFE_ONSETS = new Set(['f', 'l', 'ch', 'sh']);
 
-/** Difficult — weighted down, never banned. Fonoran `j` = English /dʒ/, not IPA /j/ (that is `y`). */
+/** Banned for primitive roots. Fonoran `j` = English /dʒ/, not IPA /j/ (that is `y`). */
 export const DIFFICULT_ONSETS = new Set(['r', 'j']);
 
 /** Research "possibly avoid" — not in generator pool; block new primitive proposals. */
@@ -60,6 +61,16 @@ export function isExcludedSpelling(spelling) {
     if (lower.startsWith(pat) || lower.includes(pat)) return true;
   }
   return false;
+}
+
+/**
+ * Primitive root spellings must not use excluded patterns or difficult (r/j) onsets.
+ * @param {string} spelling
+ * @returns {boolean}
+ */
+export function isBannedPrimitiveSpelling(spelling) {
+  if (isExcludedSpelling(spelling)) return true;
+  return onsetResearchTier(spelling) === 'difficult';
 }
 
 /**

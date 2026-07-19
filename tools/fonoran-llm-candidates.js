@@ -1,12 +1,10 @@
 /**
  * Optional LLM proposer for compound composition candidates.
- *
- * Advisory only — output is ranked by understandability and must pass build validation
- * before any human/playtest promotion. Requires ANTHROPIC_API_KEY or LLM_API_KEY.
  */
 
 import { anthropicConfigured, completeJson } from './fonoran-llm-client.js';
 import { buildCompositionResolver } from './fonoran-composition-resolve.js';
+import { phoneticPromptBrief } from './fonoran-phonetic-weights.js';
 
 function llmConfigured() {
   return anthropicConfigured() || Boolean(process.env.LLM_API_KEY?.trim());
@@ -47,33 +45,62 @@ function parseCompositionsFromText(text, allowed) {
   return out;
 }
 
-function buildProposerPrompt(conceptId, gloss, allowed, maxFlattened, count) {
+function extractCompositionsFromJson(data, allowed, seen) {
+  const allowedSet = new Set(allowed);
+  const out = [];
+  const push = (comp) => {
+    if (!Array.isArray(comp) || !comp.length) return;
+    if (!comp.every(id => typeof id === 'string' && allowedSet.has(id))) return;
+    const key = comp.join('+');
+    if (seen.has(key)) return;
+    seen.add(key);
+    out.push(comp);
+  };
+  if (Array.isArray(data?.compositions)) {
+    for (const comp of data.compositions) push(comp);
+  }
+  if (Array.isArray(data)) {
+    for (const comp of data) push(comp);
+  }
+  return out;
+}
+
+function buildProposerPrompt(conceptId, gloss, allowed, maxFlattened, count, opts = {}) {
+  const glossary = opts.glossaryLines?.length
+    ? ['Available primitives (id = meaning):', ...opts.glossaryLines, '']
+    : [];
+  const reject = opts.rejectComposition?.length
+    ? [`REJECTED — do NOT propose this composition or close variants: ${JSON.stringify(opts.rejectComposition)}`, '']
+    : [];
+  const hint = opts.conceptHint ? [`Concept guidance: ${opts.conceptHint}`, ''] : [];
   return [
-    `You propose Fonoran compound compositions: arrays of concept ids joined in speech.`,
-    `Target concept: "${conceptId}" (${gloss})`,
+    `You propose Fonoran compound compositions for a constructed language experiment.`,
+    `Two strangers with no shared language combine ~150 primitive roots like LEGO to communicate.`,
+    ``,
+    `Target concept: "${conceptId}"`,
+    `English gloss to express: ${gloss}`,
+    ...reject,
+    ...hint,
     `Rules:`,
-    `- Return exactly ${count} lines, each a JSON array of concept ids.`,
+    `- Return exactly ${count} DIFFERENT compositions as JSON arrays of concept ids.`,
     `- Use ONLY ids from this allowed list: ${allowed.join(', ')}`,
-    `- Prefer 2–3 direct components; flattened spelling must stay ≤ ${maxFlattened} atomic roots.`,
-    `- Favor intuitive, recoverable meanings over deep semantic trees.`,
-    `Format (one per line):`,
-    `["collective", "person"]`,
-    `["community", "bond"]`,
-  ].join('\n');
+    `- Prefer 2–3 direct components; flattened atomic roots must stay ≤ ${maxFlattened}.`,
+    `- Culture-neutral: express human experience, not English idiom or religion.`,
+    `- A root-knower hearing the parts should plausibly recover the meaning.`,
+    `- Avoid lazy glue pairs (thing+make, give+mark) unless functionally necessary.`,
+    phoneticPromptBrief(),
+    ...glossary,
+    `Respond as JSON: { "compositions": [["id1","id2"], ...] }`,
+  ].filter(Boolean).join('\n');
 }
 
 async function proposeViaAnthropic(prompt) {
-  const result = await completeJson({
+  return completeJson({
     role: 'proposer',
-    system: 'You output only JSON arrays of concept ids, one per line. No commentary.',
+    system: 'You output JSON only: { "compositions": [ ["concept_id", ...], ... ] }. No commentary.',
     user: prompt,
-    temperature: 0.4,
+    temperature: 0.5,
   });
-  if (!result.ok) return '';
-  if (Array.isArray(result.data?.compositions)) {
-    return result.data.compositions.map(c => JSON.stringify(c)).join('\n');
-  }
-  return typeof result.raw === 'string' ? result.raw : JSON.stringify(result.data);
 }
 
 async function proposeViaOpenAI(prompt) {
@@ -87,44 +114,73 @@ async function proposeViaOpenAI(prompt) {
     },
     body: JSON.stringify({
       model,
-      temperature: 0.4,
+      temperature: 0.5,
+      response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: 'You output only JSON arrays of concept ids, one per line. No commentary.' },
+        { role: 'system', content: 'You output JSON only: { "compositions": [ ["concept_id", ...], ... ] }.' },
         { role: 'user', content: prompt },
       ],
     }),
   });
-  if (!res.ok) return '';
+  if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
   const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? '';
+  const content = data.choices?.[0]?.message?.content ?? '';
+  try {
+    return { ok: true, data: JSON.parse(content), raw: content };
+  } catch {
+    return { ok: true, raw: content };
+  }
 }
 
 /**
- * Ask an LLM for 1–3 composition proposals using only approved concept ids.
- * Returns [] when no API key is set or the request fails.
+ * Ask an LLM for composition proposals using only approved concept ids.
+ * @returns {Promise<{ compositions: string[][], error?: string, raw?: string }>}
  */
 export async function proposeLlmCandidates(conceptId, opts = {}) {
-  if (!llmConfigured()) return [];
+  if (!llmConfigured()) return { compositions: [], error: 'no API key' };
 
   const allowed = allowedConceptIds(opts.primitiveIds ?? [], opts.compoundDefs ?? []);
   const maxFlattened = opts.maxFlattened ?? 4;
-  const count = opts.count ?? 3;
+  const count = opts.count ?? 5;
   const gloss = opts.gloss ?? conceptId;
   const resolver = buildCompositionResolver(opts.primitiveIds ?? [], opts.compoundDefs ?? []);
-  const prompt = buildProposerPrompt(conceptId, gloss, allowed, maxFlattened, count);
+  const glossaryLines = (opts.glossaryLines ?? []).length
+    ? opts.glossaryLines
+    : buildGlossaryLines(opts.primitiveIds ?? [], opts.glossById ?? {});
+  const prompt = buildProposerPrompt(conceptId, gloss, allowed, maxFlattened, count, {
+    rejectComposition: opts.rejectComposition,
+    conceptHint: opts.conceptHint,
+    glossaryLines,
+  });
 
   try {
-    const text = anthropicConfigured()
+    const result = anthropicConfigured()
       ? await proposeViaAnthropic(prompt)
       : await proposeViaOpenAI(prompt);
-    const parsed = parseCompositionsFromText(text, allowed);
-    return parsed.filter(comp => {
+
+    if (!result.ok) {
+      return { compositions: [], error: result.error ?? 'LLM request failed', raw: result.raw };
+    }
+
+    const seen = new Set();
+    const parsed = [
+      ...extractCompositionsFromJson(result.data, allowed, seen),
+      ...parseCompositionsFromText(result.raw ?? '', allowed),
+    ];
+
+    const compositions = parsed.filter(comp => {
       const flat = resolver.flatCount(comp);
       return flat != null && flat <= maxFlattened;
     }).slice(0, count);
-  } catch {
-    return [];
+
+    return { compositions, raw: result.raw, error: compositions.length ? undefined : 'no valid compositions parsed' };
+  } catch (err) {
+    return { compositions: [], error: err instanceof Error ? err.message : String(err) };
   }
 }
 
 export { llmConfigured };
+
+function buildGlossaryLines(primitiveIds, glossById) {
+  return primitiveIds.map(id => `- ${id}: ${glossById[id] ?? id}`);
+}

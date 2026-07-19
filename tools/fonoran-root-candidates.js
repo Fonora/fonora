@@ -20,6 +20,7 @@ import {
 import { derivePriority, priorityWeight, DEFAULT_PRIORITY_CLASS } from './fonoran-priority.js';
 import { loadCollisionProfile } from './fonoran-root-collision.js';
 import { buildCompoundPartnerMap } from './fonoran-root-boundary-score.js';
+import { isBannedPrimitiveSpelling } from './fonoran-phonetic-weights.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUTPUT_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
@@ -180,8 +181,12 @@ export async function generateRootCandidates({ preserveReview = true } = {}) {
   if (preserveReview && existing?.candidates) {
     for (const c of existing.candidates) {
       if (c.status === 'approved') {
-        if (c.spelling) lockedRoots[c.id] = c.spelling;
-        preserved.set(c.id, c);
+        // Re-lock only spellings that pass the primitive phonetic rule.
+        // Bad r/j onsets from older runs are regenerated on the next build.
+        if (c.spelling && !isBannedPrimitiveSpelling(c.spelling)) {
+          lockedRoots[c.id] = c.spelling;
+          preserved.set(c.id, c);
+        }
       } else if (c.status === 'rejected') {
         preserved.set(c.id, c);
         if (c.spelling) reservedForms.push(c.spelling.toLowerCase());
@@ -234,6 +239,15 @@ export async function generateRootCandidates({ preserveReview = true } = {}) {
     if (!assignment) return semanticOnlyCandidate(meta);
     return assignmentToCandidate(assignment, meta, highLeverage);
   });
+
+  const bannedAssignments = candidates.filter(c => c.spelling && isBannedPrimitiveSpelling(c.spelling));
+  if (bannedAssignments.length) {
+    const list = bannedAssignments.map(c => `${c.id}=${c.spelling}`).join(', ');
+    throw new Error(
+      `Root generator produced ${bannedAssignments.length} primitive(s) with banned r/j onsets: ${list}. ` +
+      'Expand the syllable pool or reduce locked roots.',
+    );
+  }
 
   const summary = {
     total: candidates.length,
