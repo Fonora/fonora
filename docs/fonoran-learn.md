@@ -96,7 +96,7 @@ Teaches roots and compounds from the live lab, ordered by **language rings** (ca
 | Reading | `#fonoran-reading` | Fonoran script/roman → English meaning (MCQ) · **Listen** on prompt |
 | Writing | `#fonoran-writing` | English meaning → type Fonoran roman · **Listen** for target word |
 | Hearing | `#fonoran-hearing` | TTS of Fonoran → English meaning (MCQ) — no inline hear (exercise is listening) |
-| Grammar | `#fonoran-grammar` | Sentence translation drills · **Listen** for Fonoran phrase |
+| Grammar | `#fonoran-grammar` | Rule 4 basics lesson (order, particles, want+go, bare destinations) then phrase drills · **Listen** for Fonoran |
 | Speaking | `#fonoran-speaking` | Stub — not yet on Learn home |
 
 Ring labels and tier assignment come from [`tools/fonoran-experience-tiers.js`](../tools/fonoran-experience-tiers.js). Curriculum ordering is implemented in [`js/fonoran-learn-curriculum.js`](../js/fonoran-learn-curriculum.js): tier rank → root before compound → alphabetical.
@@ -152,7 +152,7 @@ Learn and the Translator share **vocabulary** but not the **exercise engine**:
 | Grading | Exact match on expected roman / English gloss | N/A (exploration) |
 | Particles | `fonoran-grammar-particles.json` | Same inventory |
 
-Grammar Learn drills teach a **small, hand-authored pattern set** aligned with [fonoran-grammar.md](fonoran-grammar.md). They do not exercise open-ended phrase compilation like the Translator. For production-style translation practice, use [`/language#translator`](/language#translator).
+Grammar Learn starts with a **hand-authored Rule 4 lesson** (`data/fonoran-grammar-lessons.json`) — preferred order, `mi`/`ta`/`sa`/`no`, serial want+go, bare destinations, casual Actor drop — then continues into reorder / particle / translation drills from course phrases. It does not replace the full [fonoran-grammar.md](fonoran-grammar.md) reference. For open-ended translation, use [`/language#translator`](/language#translator).
 
 Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 

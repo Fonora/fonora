@@ -65,7 +65,8 @@ export function buildPlaybackFromTokens(tokens, rules, { syllableBySyllable = fa
   const segments = [];
   const wordSources = [];
   const tokenIndices = [];
-  const scriptWords = [];
+  /** @type {string[]} script chunks; punctuation attaches to the previous word */
+  const scriptChunks = [];
 
   if (!Array.isArray(tokens)) {
     return { phrase: '', script: '', segments, wordSources, tokenIndices, wordCount: 0, playable: false };
@@ -73,7 +74,15 @@ export function buildPlaybackFromTokens(tokens, rules, { syllableBySyllable = fa
 
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
-    if (isSkippablePlaybackToken(token)) continue;
+    if (isSkippablePlaybackToken(token)) {
+      const ch = String(token?.fonoran || token?.english || '').trim();
+      if (!ch) continue;
+      segments.push({ kind: 'pause', char: ch, tokenIndex: i });
+      tokenIndices.push(i);
+      if (scriptChunks.length) scriptChunks[scriptChunks.length - 1] += ch;
+      else scriptChunks.push(ch);
+      continue;
+    }
 
     const fallbackEnglish = englishFallbackLabel(token);
 
@@ -117,7 +126,7 @@ export function buildPlaybackFromTokens(tokens, rules, { syllableBySyllable = fa
         input: parts.join(' '),
       };
       wordSources.push(wordSource);
-      scriptWords.push(symbols);
+      scriptChunks.push(symbols);
       tokenIndices.push(i);
       segments.push({
         kind: 'fonora',
@@ -129,14 +138,15 @@ export function buildPlaybackFromTokens(tokens, rules, { syllableBySyllable = fa
     }
   }
 
-  const phrase = scriptWords.join(' ');
+  const phrase = scriptChunks.join(' ');
+  const speakable = segments.filter((s) => s.kind === 'fonora' || s.kind === 'english').length;
   return {
     phrase,
     script: phrase,
     segments,
     wordSources,
     tokenIndices,
-    wordCount: segments.length,
-    playable: segments.length > 0,
+    wordCount: speakable,
+    playable: speakable > 0,
   };
 }

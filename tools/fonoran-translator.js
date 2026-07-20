@@ -117,7 +117,7 @@ function isQuestionSentence(sentence) {
   return String(sentence ?? '').trim().endsWith('?');
 }
 
-/** Trailing punctuation token so written questions surface a `?` (Rule 3/4). */
+/** Trailing punctuation token (`.` `!` `?`) for surface + readback pauses. */
 export function punctuationToken(mark) {
   return {
     role: 'punctuation',
@@ -134,6 +134,23 @@ export function punctuationToken(mark) {
     guessed: false,
     pronunciation: { sayLine: '', englishLine: '' },
   };
+}
+
+/** Terminal `.` `!` or `?` from a source sentence, if present. */
+export function terminalPunctuationFromText(text) {
+  const m = String(text ?? '').trim().match(/([.!?])\s*$/);
+  return m ? m[1] : null;
+}
+
+function isPunctuationToken(token) {
+  return token?.kind === 'punctuation' || token?.role === 'punctuation';
+}
+
+/** Drop trailing punctuation tokens so we can re-attach the source terminator. */
+export function stripTrailingPunctuationTokens(tokens) {
+  const out = Array.isArray(tokens) ? [...tokens] : [];
+  while (out.length && isPunctuationToken(out[out.length - 1])) out.pop();
+  return out;
 }
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -959,22 +976,41 @@ export function buildFrame(tokens) {
 }
 
 export function buildSurface(tokens) {
-  const romanWords = tokens.map(t => (t.resolved ? t.fonoran : `[${t.english}]`));
-  const allParts = tokens.flatMap(t => (t.resolved ? t.parts : []));
-  const sayParts = tokens.map(t => {
-    if (!t.resolved) return `[${t.english.toUpperCase()}]`;
-    return t.pronunciation?.sayLine || t.fonoran.toUpperCase();
-  });
-  const englishParts = tokens.map(t => {
-    if (!t.resolved) return '';
-    return t.pronunciation?.englishLine || '';
-  }).filter(Boolean);
+  const romanChunks = [];
+  const sayChunks = [];
+  const englishParts = [];
+  const allParts = [];
+
+  for (const t of tokens ?? []) {
+    const punct = isPunctuationToken(t);
+    const roman = t.resolved ? t.fonoran : `[${t.english}]`;
+    if (punct) {
+      if (romanChunks.length) romanChunks[romanChunks.length - 1] += roman;
+      else romanChunks.push(roman);
+    } else {
+      romanChunks.push(roman);
+    }
+
+    if (t.resolved && Array.isArray(t.parts)) allParts.push(...t.parts);
+
+    if (punct) {
+      if (sayChunks.length) sayChunks[sayChunks.length - 1] += roman;
+      else sayChunks.push(roman);
+      continue;
+    }
+    if (!t.resolved) {
+      sayChunks.push(`[${String(t.english).toUpperCase()}]`);
+      continue;
+    }
+    sayChunks.push(t.pronunciation?.sayLine || String(t.fonoran).toUpperCase());
+    if (t.pronunciation?.englishLine) englishParts.push(t.pronunciation.englishLine);
+  }
 
   return {
-    roman: romanWords.join(' '),
+    roman: romanChunks.join(' '),
     parts: allParts,
     pronunciation: {
-      sayLine: sayParts.join(' · '),
+      sayLine: sayChunks.join(' · '),
       englishLine: englishParts.join(' · '),
     },
   };
@@ -1075,7 +1111,9 @@ export async function translateFromFrame(frame, options = {}) {
   // place) so floating modifiers render the same regardless of LLM slot order.
   enforceModifierOrder(semantic, ctx.inventory?.concepts ?? []);
   const tokens = await slotsToTokens(ctx, semantic);
-  if (ctx.isQuestion) tokens.push(punctuationToken('?'));
+  const mark = terminalPunctuationFromText(input)
+    || (ctx.isQuestion ? '?' : null);
+  if (mark) tokens.push(punctuationToken(mark));
 
   // Full form still includes Actor; flag recoverable addressee for UI highlight.
   if (isAddresseeDroppable(frame, input, options)) {
@@ -1159,7 +1197,8 @@ export async function translateEnglishLegacy(text, options = {}) {
       const semantic = await compileSemanticSlots(englishTokens, rules);
       appendSlots(mergedSlots, semantic);
       allTokens.push(...await slotsToTokens(ctx, semantic));
-      if (ctx.isQuestion) allTokens.push(punctuationToken('?'));
+      const mark = terminalPunctuationFromText(sent) || (ctx.isQuestion ? '?' : null);
+      if (mark) allTokens.push(punctuationToken(mark));
     }
     const tokens = allTokens;
     const surface = buildSurface(tokens);
@@ -1194,7 +1233,8 @@ export async function translateEnglishLegacy(text, options = {}) {
   const englishTokens = mergePhrasalTokens(mergeEnglishCompounds(tokenizeEnglish(sentences[0] ?? input), ctx.aliasIndex));
   const semantic = await compileSemanticSlots(englishTokens, rules);
   const tokens = await slotsToTokens(ctx, semantic);
-  if (ctx.isQuestion) tokens.push(punctuationToken('?'));
+  const mark = terminalPunctuationFromText(sentences[0] ?? input) || (ctx.isQuestion ? '?' : null);
+  if (mark) tokens.push(punctuationToken(mark));
   const surface = buildSurface(tokens);
   const unresolved = tokens.filter(t => !t.resolved).map(t => t.english);
   const interpretations = tokens

@@ -1,6 +1,6 @@
     import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, isValidSyllable, romanToIpa } from '../tools/fonoran-pronunciation.js';
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
-    import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
+    import { romanToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
     import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
@@ -2701,29 +2701,36 @@
           const seg = playback.segments[i];
           highlightTranslatorToken(seg.tokenIndex ?? -1, { alternateIndex });
 
+          if (seg.kind === 'pause') {
+            const pauseMs = pauseMsForPunctuation(
+              seg.char,
+              playbackOpts.playbackRate,
+              1,
+            );
+            if (pauseMs > 0) await sleepMs(pauseMs);
+            continue;
+          }
+
           if (seg.kind === 'english') {
             await speakAsync(seg.text, sourceBcp47);
           } else {
             setReaderWordSources([seg.wordSource]);
-            let spokeFonora = false;
             try {
-              const wordResult = await speakFonoraPhrase(seg.phrase, STATE.rules, {
+              await speakFonoraPhrase(seg.phrase, STATE.rules, {
                 ...playbackOpts,
                 wordGapMs: 0,
                 shouldCancel: () => STATE.translatorCancel,
               });
-              spokeFonora = (wordResult.spoken ?? 0) > 0;
             } catch {
-              spokeFonora = false;
-            }
-            if (!spokeFonora && seg.fallbackEnglish) {
-              await speakAsync(seg.fallbackEnglish, sourceBcp47);
+              // Never fall back to English orthography TTS for Fonoran tokens
+              // (roman "mi" would be read as English "mee"). Skip the word.
             }
           }
 
           if (STATE.translatorCancel) break;
           if (wordGapMs > 0 && i < playback.segments.length - 1) {
-            await sleepMs(wordGapMs);
+            const next = playback.segments[i + 1];
+            if (next?.kind !== 'pause') await sleepMs(wordGapMs);
           }
         }
       } catch (err) {
@@ -2888,20 +2895,29 @@
       const playbackScript = result.playback?.script
         || (STATE.rules ? resolveTranslatorPlayback(result).phrase : '');
 
-      const romanHtml = result.tokens.map(t => {
+      const romanChunks = [];
+      for (const t of result.tokens) {
+        const isPunct = t.kind === 'punctuation' || t.role === 'punctuation';
+        let piece;
         if (!t.resolved) {
-          return `<span class="translator-unresolved-sample">${escapeHtml(t.english)}</span>`;
+          piece = `<span class="translator-unresolved-sample">${escapeHtml(t.english)}</span>`;
+        } else if (isPunct) {
+          piece = escapeHtml(t.fonoran);
+        } else {
+          const kindCls = translatorResolutionClass(translatorResolutionKind(t));
+          const dropCls = t.droppable ? ' translator-roman--droppable' : '';
+          const classes = `${kindCls || ''}${dropCls}`.trim();
+          const title = t.droppable
+            ? ` title="${escapeHtml(t.droppable_note || 'Can drop in casual speech')}"`
+            : '';
+          piece = classes
+            ? `<span class="${classes}"${title}>${escapeHtml(t.fonoran)}</span>`
+            : escapeHtml(t.fonoran);
         }
-        const kindCls = translatorResolutionClass(translatorResolutionKind(t));
-        const dropCls = t.droppable ? ' translator-roman--droppable' : '';
-        const classes = `${kindCls || ''}${dropCls}`.trim();
-        const title = t.droppable
-          ? ` title="${escapeHtml(t.droppable_note || 'Can drop in casual speech')}"`
-          : '';
-        return classes
-          ? `<span class="${classes}"${title}>${escapeHtml(t.fonoran)}</span>`
-          : escapeHtml(t.fonoran);
-      }).join(' ');
+        if (isPunct && romanChunks.length) romanChunks[romanChunks.length - 1] += piece;
+        else romanChunks.push(piece);
+      }
+      const romanHtml = romanChunks.join(' ');
 
       const pron = result.surface?.pronunciation;
       const pronHtml = translatorPronHtml(pron);

@@ -1,0 +1,127 @@
+{
+  "version": "1.0-rule4-basics",
+  "title": "Grammar basics",
+  "description": "A short Rule 4 lesson: preferred order, particles, serial want+go, bare destinations, and casual Actor drop. Uses the live lexicon.",
+  "lessons": [
+    {
+      "id": "rule4-basics",
+      "title": "The five-minute grammar",
+      "exercises": [
+        {
+          "id": "gb-present",
+          "kind": "translate-to-fonoran",
+          "tip": "Present has no time particle. Past = ta · Future = sa. The action word never changes.",
+          "promptLang": "I love you. (now)",
+          "answerRoman": "mi san be",
+          "promptFonoran": "mi san be",
+          "answerLang": "I love you.",
+          "parts": ["mi", "san", "be"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-past",
+          "kind": "translate-to-fonoran",
+          "tip": "Put ta next to the action for past. Still: Actor → Action → Target.",
+          "promptLang": "I loved you.",
+          "answerRoman": "mi ta san be",
+          "promptFonoran": "mi ta san be",
+          "answerLang": "I loved you.",
+          "parts": ["mi", "ta", "san", "be"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-future-neg",
+          "kind": "particles",
+          "tip": "Particles are tiny and closed: mi, ta, sa, no, ya, von. Type only the grammar particles you see.",
+          "promptLang": "Type the grammar particles in: mi sa no sak lo",
+          "answerRoman": "mi sa no",
+          "promptFonoran": "mi sa no sak lo",
+          "answerLang": "mi sa no",
+          "parts": ["mi", "sa", "no", "sak", "lo"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-negation",
+          "kind": "translate-to-fonoran",
+          "tip": "Negation no sits in front of the action: mi no sak …",
+          "promptLang": "I do not want food.",
+          "answerRoman": "mi no sak lo",
+          "promptFonoran": "mi no sak lo",
+          "answerLang": "I do not want food.",
+          "parts": ["mi", "no", "sak", "lo"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-serial",
+          "kind": "reorder",
+          "tip": "Want + go stacks in the Action: sak gi. Do not park the second verb as the object.",
+          "promptLang": "Put these in order: gi · sak · mi · ye",
+          "answerRoman": "mi sak gi ye",
+          "promptFonoran": "gi · sak · mi · ye",
+          "answerLang": "I want to go to the water.",
+          "parts": ["mi", "sak", "gi", "ye"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-bare-dest",
+          "kind": "choose",
+          "tip": "Plain “go to X” needs no nan. Destination sits bare after the motion.",
+          "promptLang": "Which means “I go to the water”?",
+          "answerRoman": "mi gi ye",
+          "promptFonoran": "mi gi ye",
+          "answerLang": "I go to the water.",
+          "parts": ["mi", "gi", "ye"],
+          "choices": ["mi gi ye", "mi gi nan ye"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-toward",
+          "kind": "translate-to-fonoran",
+          "tip": "Use nan only for real direction contrast — toward / from / away — not for plain “to”.",
+          "promptLang": "I want to go toward the water.",
+          "answerRoman": "mi sak gi nan ye",
+          "promptFonoran": "mi sak gi nan ye",
+          "answerLang": "I want to go toward the water.",
+          "parts": ["mi", "sak", "gi", "nan", "ye"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-beach",
+          "kind": "translate-to-fonoran",
+          "tip": "Preferred order: Actor → Action → Place. Serial want+go, bare beach.",
+          "promptLang": "Do you want to go to the beach?",
+          "answerRoman": "be sak gi yetem ?",
+          "promptFonoran": "be sak gi yetem ?",
+          "answerLang": "Do you want to go to the beach?",
+          "parts": ["be", "sak", "gi", "yetem"],
+          "alternates": ["be sak gi yetem", "sak gi yetem ?", "sak gi yetem"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-drop",
+          "kind": "choose",
+          "tip": "In casual yes/no to “you”, Actor be can drop. Full form still includes it.",
+          "promptLang": "Which is also OK for “want to go to the beach?” (casual)",
+          "answerRoman": "sak gi yetem ?",
+          "promptFonoran": "sak gi yetem ?",
+          "answerLang": "Want to go to the beach?",
+          "parts": ["sak", "gi", "yetem"],
+          "choices": ["sak gi yetem ?", "be sak nan yetem gi ?"],
+          "alternates": ["sak gi yetem"],
+          "tierRank": 0
+        },
+        {
+          "id": "gb-tribe",
+          "kind": "translate-to-fonoran",
+          "tip": "Words never inflect. Tribe and war are compounds from roots — same spelling every time.",
+          "promptLang": "The tribe is at war.",
+          "answerRoman": "danbakam danpaba",
+          "promptFonoran": "danbakam danpaba",
+          "answerLang": "The tribe is at war.",
+          "parts": ["danbakam", "danpaba"],
+          "tierRank": 0
+        }
+      ]
+    }
+  ]
+}
