@@ -1,6 +1,6 @@
 {
   "name": "fonora",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Open-source research exploring phonetic writing, constructed language design, and fast cross-linguistic communication",
   "homepage": "https://fonora.org",
   "repository": {
@@ -18,7 +18,7 @@
   "scripts": {
     "postinstall": "node scripts/copy-espeak.js && node scripts/copy-espeak-audio.js && node scripts/copy-onnx-wasm.js && node scripts/copy-piper.js && node scripts/fonoran-data-fetch.js",
     "start": "node server.js",
-    "test": "node js/tests.js && npm run test:translator",
+    "test": "node js/tests.js && npm run fonoran:prefix-safe -- --check && npm run test:translator",
     "test:translator": "node scripts/fonoran-grammar-spec-test.js && node scripts/fonoran-translation-gaps.js --assert --engine llm --cache-only && node scripts/fonoran-translation-probes.js --assert",
     "test:translator:grammar-spec": "node scripts/fonoran-grammar-spec-test.js",
     "test:translator:golden": "node scripts/fonoran-translation-gaps.js --assert --engine llm --cache-only",
@@ -91,6 +91,8 @@
     "fonoran:reconcile-inventory": "node scripts/fonoran-reconcile-inventory.js",
     "fonoran:root-capacity": "node scripts/fonoran-root-capacity.js",
     "fonoran:root-capacity:tiers": "node scripts/fonoran-root-capacity-tiers.js",
+    "fonoran:prefix-safe": "node scripts/fonoran-prefix-safe-inventory.js",
+    "fonoran:cv-density:project": "node scripts/fonoran-cv-density-project.js",
     "fonoran:primitive-roots": "node -e \"console.error('DEPRECATED: use npm run fonoran:build (converged pipeline). See docs/fonoran.md')\" && exit 1",
     "fonoran:primitive-roots:gen": "node -e \"console.error('DEPRECATED: use npm run fonoran:build')\" && exit 1",
     "fonoran:primitive-roots:import": "node -e \"console.error('DEPRECATED: use npm run fonoran:build')\" && exit 1"

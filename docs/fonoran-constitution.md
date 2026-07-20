@@ -12,7 +12,7 @@ Two strangers anywhere on Earth, with zero shared language, can achieve basic co
 ## Four rules (enforced at seed level)
 
 1. **Universal phonetics** — roots use sounds anyone can say easily
-2. **Audible distinction** — compounds must be distinguishable when heard
+2. **Audible distinction** — compounds must be distinguishable when heard (prefix-family exclusivity: no root may be a string prefix of another — structural slot conflict, not a semantic ban; see [prefix-safe CV/CVC](fonoran-prefix-safe-roots.md))
 3. **Lego recoverability** — a root-knower can guess the meaning; 2–3 roots preferred, 4 max
 4. **No double consonants** — hard reject at build
 

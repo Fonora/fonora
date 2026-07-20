@@ -50,6 +50,7 @@ Read in this order for a new contributor:
 | 4 | **Fonoran guide** (builder pipeline) | [fonoran.md](fonoran.md) |
 | 4b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
 | 4c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
+| 4d | **Prefix-safe CV / CVC roots** | [fonoran-prefix-safe-roots.md](fonoran-prefix-safe-roots.md) |
 | 5 | **Fonoran numerals** (1–99) | [fonoran-numerals.md](fonoran-numerals.md) |
 | 6 | **Fonoran Learn** (`/learn`) | [fonoran-learn.md](fonoran-learn.md) |
 | 7 | **Translator (live)** | [fonoran-translator.md](fonoran-translator.md) |
@@ -67,7 +68,7 @@ Narrative research notes (one per major experiment), authored in `docs/research-
 | Phase II: Inventing a language | Gen 1/2 roots, Gen 3 DDA, Gen 3.1 distinctiveness, the 200-primitive allocation |
 | Phase III: A usable language | semantic foundation, the Constitution, the editorial pipeline, grammar particles, the translator, typing, puzzle conversation |
 | Phase IV: Reconstructing compounds | teaching trees, meaning-attempts, seed expansion, playtest-driven preferred forms |
-| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, **RN-26** LLM-assisted word generation (foundational pipeline), **RN-27** automated refine loop (corpus experiment), **RN-28** multilingual semantic compiler, **RN-33** seeds-are-truth + four-rules preferred regen |
+| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, **RN-26** LLM-assisted word generation (foundational pipeline), **RN-27** automated refine loop (corpus experiment), **RN-28** multilingual semantic compiler, **RN-33** seeds-are-truth + four-rules preferred regen, **RN-35** CV density vs CVC audibility (thought experiment) |
 
 ---
 

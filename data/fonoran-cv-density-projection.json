@@ -1,0 +1,510 @@
+{
+  "version": "1.0-cv-density-projection",
+  "generated_at": "2026-07-20T20:15:46.853Z",
+  "purpose": "Thought experiment only — no seed writes. Documents CV density vs CVC audibility tradeoffs.",
+  "baseline": {
+    "approved_roots": 135,
+    "shapes": {
+      "CV": 57,
+      "CVC": 78,
+      "other": 0
+    },
+    "cv_pct": 42.2,
+    "by_priority_class": {
+      "essential": {
+        "CV": 25,
+        "CVC": 0,
+        "other": 0,
+        "cv_pct": 100
+      },
+      "extended": {
+        "CV": 0,
+        "CVC": 3,
+        "other": 0,
+        "cv_pct": 0
+      },
+      "common": {
+        "CV": 27,
+        "CVC": 66,
+        "other": 0,
+        "cv_pct": 29
+      },
+      "useful": {
+        "CV": 5,
+        "CVC": 9,
+        "other": 0,
+        "cv_pct": 35.7
+      }
+    },
+    "rings": [
+      {
+        "ring": 1,
+        "id": "communicative_core",
+        "label": "Ring 1 — Campfire core",
+        "concept_count": 50,
+        "present": 50,
+        "missing": [],
+        "CV": 23,
+        "CVC": 27,
+        "other": 0,
+        "cv_pct": 46,
+        "cv_sample": [
+          "ba=person",
+          "de=self",
+          "be=addressee",
+          "ko=drink",
+          "lo=food",
+          "du=sick",
+          "wi=see",
+          "se=speak",
+          "gu=good",
+          "pe=fear",
+          "to=thing",
+          "gi=move"
+        ],
+        "cvc_sample": [
+          "fem=body",
+          "tel=eat",
+          "nal=sleep",
+          "tes=pain",
+          "lem=hot",
+          "mak=cold",
+          "len=hear",
+          "mam=touch",
+          "dak=hand",
+          "kes=head",
+          "les=need",
+          "sak=want"
+        ]
+      },
+      {
+        "ring": 2,
+        "id": "extended_core",
+        "label": "Ring 2 — Everyday fluency",
+        "concept_count": 50,
+        "present": 50,
+        "missing": [],
+        "CV": 21,
+        "CVC": 29,
+        "other": 0,
+        "cv_pct": 42,
+        "cv_sample": [
+          "fa=child",
+          "pa=conflict",
+          "she=angry",
+          "tu=happy",
+          "bi=calm",
+          "we=hope",
+          "shu=after",
+          "chu=understand",
+          "yi=around",
+          "so=back",
+          "cha=front",
+          "nu=tree"
+        ],
+        "cvc_sample": [
+          "kam=bond",
+          "fes=parent",
+          "nem=sad",
+          "man=trust",
+          "kan=time",
+          "met=think",
+          "kel=make",
+          "gek=use",
+          "gat=hold",
+          "sat=wait",
+          "fel=through",
+          "ges=air"
+        ]
+      },
+      {
+        "ring": 3,
+        "id": "fluent_core",
+        "label": "Ring 3 — Broad fluency",
+        "concept_count": 35,
+        "present": 35,
+        "missing": [],
+        "CV": 13,
+        "CVC": 22,
+        "other": 0,
+        "cv_pct": 37.1,
+        "cv_sample": [
+          "sha=less",
+          "si=motion",
+          "li=point",
+          "fi=travel",
+          "wo=lonely",
+          "yo=proud",
+          "bo=strong",
+          "ti=still",
+          "hi=flow",
+          "su=metal",
+          "yu=form",
+          "ki=source"
+        ],
+        "cvc_sample": [
+          "kat=equal",
+          "nel=change",
+          "gak=cause",
+          "mem=part",
+          "mel=all",
+          "mas=more",
+          "gal=will",
+          "ken=mark",
+          "tas=justice",
+          "nas=include",
+          "mek=exclude",
+          "let=journey"
+        ]
+      }
+    ],
+    "compounds": {
+      "preferred_count": 454,
+      "part_shapes": {
+        "CV": 418,
+        "CVC": 544,
+        "other": 0,
+        "miss": 10,
+        "total": 972
+      },
+      "part_cv_pct": 43.5,
+      "composition_length_hist": {
+        "2": 390,
+        "3": 64
+      },
+      "top_join_patterns": [
+        {
+          "pattern": "CVC+CVC",
+          "count": 130
+        },
+        {
+          "pattern": "CV+CVC",
+          "count": 99
+        },
+        {
+          "pattern": "CVC+CV",
+          "count": 94
+        },
+        {
+          "pattern": "CV+CV",
+          "count": 58
+        },
+        {
+          "pattern": "CVC+CV+CV",
+          "count": 11
+        },
+        {
+          "pattern": "CV+CV+CV",
+          "count": 10
+        },
+        {
+          "pattern": "CVC+CVC+CV",
+          "count": 9
+        },
+        {
+          "pattern": "CVC+CV+CVC",
+          "count": 8
+        },
+        {
+          "pattern": "CV+CV+CVC",
+          "count": 8
+        },
+        {
+          "pattern": "CV+CVC+CVC",
+          "count": 7
+        },
+        {
+          "pattern": "CV+CVC+CV",
+          "count": 5
+        },
+        {
+          "pattern": "CVC+CVC+CVC",
+          "count": 5
+        }
+      ],
+      "mean_compound_chars_from_parts": 5.53
+    },
+    "health_from_seeds": {
+      "learnability": 100,
+      "pronounceability": 100,
+      "memorability": 100,
+      "parseability": 100,
+      "prefix_overlap_warnings": 0,
+      "high_severity": 0
+    },
+    "prefix_safe_pool": {
+      "free_CV_prefix_safe": 0,
+      "free_CV_blocked": 12,
+      "free_CVC_prefix_safe": 6,
+      "free_CVC_blocked": 30,
+      "free_CVC_prefix_safe_forms": [
+        "fek",
+        "gas",
+        "gel",
+        "kak",
+        "mat",
+        "tan"
+      ]
+    },
+    "assigner_policy_note": "tools/fonoran-root-sound-assign.js tierGate: priority ≥92nd percentile hard-prefers CV (CVC penalty 4000); ≥75th penalizes CVC (2500). Essential class is entirely CV today."
+  },
+  "exclusivity_framing": {
+    "rule": "Prefix-family exclusivity: a CV and any longer root starting with that CV cannot both be approved. This is structural (segmentation), not a semantic ban on the concept.",
+    "examples_of_arbitrary_feeling_blocks": [
+      {
+        "wanted_cv": "da",
+        "blocked_by": [
+          "dak",
+          "dal",
+          "dam",
+          "dan",
+          "das",
+          "dat"
+        ],
+        "note": "Assigning CV \"da\" is blocked while dak, dal, dam, dan… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "fe",
+        "blocked_by": [
+          "fel",
+          "fem",
+          "fen",
+          "fes",
+          "fet"
+        ],
+        "note": "Assigning CV \"fe\" is blocked while fel, fem, fen, fes… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "ga",
+        "blocked_by": [
+          "gak",
+          "gal",
+          "gam",
+          "gan",
+          "gat"
+        ],
+        "note": "Assigning CV \"ga\" is blocked while gak, gal, gam, gan… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "ge",
+        "blocked_by": [
+          "gek",
+          "gem",
+          "gen",
+          "ges",
+          "get"
+        ],
+        "note": "Assigning CV \"ge\" is blocked while gek, gem, gen, ges… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "ka",
+        "blocked_by": [
+          "kal",
+          "kam",
+          "kan",
+          "kas",
+          "kat"
+        ],
+        "note": "Assigning CV \"ka\" is blocked while kal, kam, kan, kas… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "ke",
+        "blocked_by": [
+          "kek",
+          "kel",
+          "kem",
+          "ken",
+          "kes",
+          "ket"
+        ],
+        "note": "Assigning CV \"ke\" is blocked while kek, kel, kem, ken… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "le",
+        "blocked_by": [
+          "lek",
+          "lel",
+          "lem",
+          "len",
+          "les",
+          "let"
+        ],
+        "note": "Assigning CV \"le\" is blocked while lek, lel, lem, len… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "ma",
+        "blocked_by": [
+          "mak",
+          "mal",
+          "mam",
+          "man",
+          "mas"
+        ],
+        "note": "Assigning CV \"ma\" is blocked while mak, mal, mam, man… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "me",
+        "blocked_by": [
+          "mek",
+          "mel",
+          "mem",
+          "men",
+          "mes",
+          "met"
+        ],
+        "note": "Assigning CV \"me\" is blocked while mek, mel, mem, men… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "na",
+        "blocked_by": [
+          "nak",
+          "nal",
+          "nam",
+          "nan",
+          "nas",
+          "nat"
+        ],
+        "note": "Assigning CV \"na\" is blocked while nak, nal, nam, nan… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "ne",
+        "blocked_by": [
+          "nek",
+          "nel",
+          "nem",
+          "nen",
+          "nes",
+          "net"
+        ],
+        "note": "Assigning CV \"ne\" is blocked while nek, nel, nem, nen… exist — not a judgment about the concept's meaning."
+      },
+      {
+        "wanted_cv": "te",
+        "blocked_by": [
+          "tek",
+          "tel",
+          "tem",
+          "ten",
+          "tes",
+          "tet"
+        ],
+        "note": "Assigning CV \"te\" is blocked while tek, tel, tem, ten… exist — not a judgment about the concept's meaning."
+      }
+    ]
+  },
+  "counterfactual_A_relax_essential_cv_gate": {
+    "description": "Relax essential→CV assigner gate: each essential CV root could move to a distinct free prefix-safe CVC (pool today), without touching other roots.",
+    "essential_cv_count": 25,
+    "free_prefix_safe_cvc_available": 6,
+    "free_prefix_safe_cvc": [
+      "fek",
+      "gas",
+      "gel",
+      "kak",
+      "mat",
+      "tan"
+    ],
+    "essentials_that_could_move_today": 6,
+    "bottleneck": "Only 6 free prefix-safe CVCs; 19 essentials would need new CVC invent / family reshuffle.",
+    "sample_moves": [
+      {
+        "id": "addressee",
+        "from": "be",
+        "to": "fek"
+      },
+      {
+        "id": "after",
+        "from": "shu",
+        "to": "gas"
+      },
+      {
+        "id": "around",
+        "from": "yi",
+        "to": "gel"
+      },
+      {
+        "id": "back",
+        "from": "so",
+        "to": "kak"
+      },
+      {
+        "id": "before",
+        "from": "di",
+        "to": "mat"
+      },
+      {
+        "id": "do",
+        "from": "mo",
+        "to": "tan"
+      }
+    ]
+  },
+  "counterfactual_B_ring1_cv_budget": {
+    "description": "Cap Ring 1 at 12 CV roots (particles/deixis-scale closed set); excess Ring-1 CVs would need CVC alternatives.",
+    "ring1_cv_budget": 12,
+    "ring1_cv_today": 23,
+    "ring1_cvc_today": 27,
+    "would_need_cvc_alternatives": 11,
+    "excess_cv_sample": [
+      {
+        "spelling": "che",
+        "id": "place"
+      },
+      {
+        "spelling": "wa",
+        "id": "up"
+      },
+      {
+        "spelling": "do",
+        "id": "down"
+      },
+      {
+        "spelling": "go",
+        "id": "left"
+      },
+      {
+        "spelling": "fu",
+        "id": "right"
+      },
+      {
+        "spelling": "ye",
+        "id": "water"
+      },
+      {
+        "spelling": "ku",
+        "id": "give"
+      },
+      {
+        "spelling": "la",
+        "id": "take"
+      },
+      {
+        "spelling": "di",
+        "id": "before"
+      },
+      {
+        "spelling": "hu",
+        "id": "know"
+      },
+      {
+        "spelling": "mo",
+        "id": "do"
+      }
+    ],
+    "estimated_compound_char_delta_if_excess_gain_one_coda": {
+      "compound_part_occurrences": 135,
+      "approx_extra_chars_across_compounds": 135,
+      "excess_roots": 11,
+      "note": "Each CV→CVC move adds ~1 character per surface that embeds that root."
+    }
+  },
+  "provisional_policy_to_evaluate": {
+    "summary": "Prefer CVC for new non-particle primitives; reserve CV for grammar particles, pronouns, and a small closed ultra-high-frequency set. Resolve prefix-family conflicts by choosing the better of CV vs its CVC family — not by unexplained ban.",
+    "go_no_go_for_pilot": [
+      "Projections show free CVC headroom or a clear reshuffle path for Ring-1 excess CV",
+      "Estimated compound length delta stays campfire-friendly (mean compound chars ideally ≤7)",
+      "Production ease (RN-32 CVC×0.62) does not collapse pronounceability Health below ~90",
+      "Only then consider a 5–10 root non-Ring-1 CV→CVC pilot with Learn/golden refresh"
+    ]
+  }
+}

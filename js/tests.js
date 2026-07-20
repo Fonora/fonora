@@ -52,6 +52,11 @@ import { priorityWeight, derivePriority } from '../tools/fonoran-priority.js';
 import { loadCollisionProfile, scoreEditorialCollision, collisionSafetyScore } from '../tools/fonoran-root-collision.js';
 import { buildCompoundPartnerMap, scoreCompoundBoundary } from '../tools/fonoran-root-boundary-score.js';
 import { assignRoots, buildSyllablePool, regenerateRoot } from '../tools/fonoran-root-sound-assign.js';
+import {
+  findPrefixConflicts,
+  isPrefixSafe,
+  buildPrefixSafeInventory,
+} from '../tools/fonoran-prefix-safe.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -776,6 +781,18 @@ const boundaryDigraphResult = test('checkCompoundBoundary handles digraph bounda
   assert(ngN.valid, 'beng+nal should be valid (ng+n)');
 });
 
+const prefixSafeResult = test('prefix-safe inventory: no approved root prefixes another', () => {
+  assert(isPrefixSafe('du', ['dak', 'dal', 'fa']), 'du does not conflict with dak family');
+  assert(!isPrefixSafe('da', ['dak', 'dal']), 'da prefixes dak/dal');
+  assert(findPrefixConflicts('dak', ['da', 'fa']).includes('da'), 'dak reports da blocker');
+
+  const approvedRoots = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../data/fonoran-approved-roots.json'), 'utf8'));
+  const phoneticsConfig = JSON.parse(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../data/fonoran-primitive-roots-config.json'), 'utf8'));
+  const inv = buildPrefixSafeInventory({ approvedRoots, phoneticsConfig });
+  assert(inv.prefix_pairs.length === 0, `expected 0 prefix pairs, got ${inv.prefix_pairs.length}`);
+  assert(inv.approved_prefix_unsafe.length === 0, 'no approved root should be prefix-unsafe');
+});
+
 const rootWorkflowResult = await (async () => {
   const name = 'Root editorial workflow: priority, collision, boundary, assignment';
   try {
@@ -874,6 +891,7 @@ const allFailed = [
   ...(boundaryPassResult.ok ? [] : [boundaryPassResult]),
   ...(boundaryMultiResult.ok ? [] : [boundaryMultiResult]),
   ...(boundaryDigraphResult.ok ? [] : [boundaryDigraphResult]),
+  ...(prefixSafeResult.ok ? [] : [prefixSafeResult]),
   ...(labSearchResult.ok ? [] : [labSearchResult]),
   ...coursePhrasesFailed,
 ];
@@ -909,9 +927,10 @@ const allPassed =
   + (boundaryPassResult.ok ? 1 : 0)
   + (boundaryMultiResult.ok ? 1 : 0)
   + (boundaryDigraphResult.ok ? 1 : 0)
+  + (prefixSafeResult.ok ? 1 : 0)
   + (rootWorkflowResult.ok ? 1 : 0)
   + (labSearchResult.ok ? 1 : 0);
-const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + 26;
+const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + 27;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);
