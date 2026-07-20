@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated_at": "2026-07-20T06:43:55.974Z",
+  "generated_at": "2026-07-20T20:03:50.335Z",
   "total_domains": 20,
   "total_phrases": 1000,
   "translated": 662,
@@ -129,10 +129,10 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "be ga?",
+            "roman": "be wo?",
             "tokens": [
               "be",
-              "ga?"
+              "wo?"
             ],
             "status": "translated"
           }
@@ -144,10 +144,10 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi ga [also].",
+            "roman": "mi wo [also].",
             "tokens": [
               "mi",
-              "ga",
+              "wo",
               "[also]."
             ],
             "status": "gap",
@@ -849,12 +849,12 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi hufet mi ga.",
+            "roman": "mi hufet mi wo.",
             "tokens": [
               "mi",
               "hufet",
               "mi",
-              "ga."
+              "wo."
             ],
             "status": "translated"
           }
@@ -1757,11 +1757,11 @@
           "type": "feeling",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi nes da.",
+            "roman": "mi nes du.",
             "tokens": [
               "mi",
               "nes",
-              "da."
+              "du."
             ],
             "status": "translated"
           }
@@ -1985,12 +1985,12 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "kekdi be nes da?",
+            "roman": "kekdi be nes du?",
             "tokens": [
               "kekdi",
               "be",
               "nes",
-              "da?"
+              "du?"
             ],
             "status": "gap",
             "unresolved": [
@@ -2052,11 +2052,11 @@
           "type": "feeling",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi nes da ni.",
+            "roman": "mi nes du ni.",
             "tokens": [
               "mi",
               "nes",
-              "da",
+              "du",
               "ni."
             ],
             "status": "translated"
@@ -2461,11 +2461,11 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi nes da femtam ni.",
+            "roman": "mi nes du femtam ni.",
             "tokens": [
               "mi",
               "nes",
-              "da",
+              "du",
               "femtam",
               "ni."
             ],
@@ -2479,12 +2479,12 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi nes lem da.",
+            "roman": "mi nes lem du.",
             "tokens": [
               "mi",
               "nes",
               "lem",
-              "da."
+              "du."
             ],
             "status": "translated"
           }
@@ -2516,14 +2516,14 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi nes mak mi nes da.",
+            "roman": "mi nes mak mi nes du.",
             "tokens": [
               "mi",
               "nes",
               "mak",
               "mi",
               "nes",
-              "da."
+              "du."
             ],
             "status": "translated"
           }
@@ -3558,11 +3558,11 @@
           "type": "feeling",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi nes ga.",
+            "roman": "mi nes wo.",
             "tokens": [
               "mi",
               "nes",
-              "ga."
+              "wo."
             ],
             "status": "translated"
           }
@@ -3669,10 +3669,10 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "be ga?",
+            "roman": "be wo?",
             "tokens": [
               "be",
-              "ga?"
+              "wo?"
             ],
             "status": "translated"
           }
@@ -3714,11 +3714,11 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "be nes ga?",
+            "roman": "be nes wo?",
             "tokens": [
               "be",
               "nes",
-              "ga?"
+              "wo?"
             ],
             "status": "translated"
           }
@@ -4070,11 +4070,11 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "be no ga.",
+            "roman": "be no wo.",
             "tokens": [
               "be",
               "no",
-              "ga."
+              "wo."
             ],
             "status": "translated"
           }
@@ -4105,12 +4105,12 @@
           "type": "feeling",
           "complexity": 2,
           "fonoran": {
-            "roman": "gem mi nes ga sha.",
+            "roman": "gem mi nes wo sha.",
             "tokens": [
               "gem",
               "mi",
               "nes",
-              "ga",
+              "wo",
               "sha."
             ],
             "status": "translated"
@@ -4123,12 +4123,12 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi no sak ga.",
+            "roman": "mi no sak wo.",
             "tokens": [
               "mi",
               "no",
               "sak",
-              "ga."
+              "wo."
             ],
             "status": "translated"
           }
@@ -4244,12 +4244,12 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi nes nem ga.",
+            "roman": "mi nes nem wo.",
             "tokens": [
               "mi",
               "nes",
               "nem",
-              "ga."
+              "wo."
             ],
             "status": "translated"
           }
@@ -4907,7 +4907,7 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi sa no gi fet be ga.",
+            "roman": "mi sa no gi fet be wo.",
             "tokens": [
               "mi",
               "sa",
@@ -4915,7 +4915,7 @@
               "gi",
               "fet",
               "be",
-              "ga."
+              "wo."
             ],
             "status": "gap",
             "unresolved": [
@@ -5232,11 +5232,11 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi nes ga pefem.",
+            "roman": "mi nes wo pefem.",
             "tokens": [
               "mi",
               "nes",
-              "ga",
+              "wo",
               "pefem."
             ],
             "status": "translated"
@@ -7151,11 +7151,11 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "hu ba fe?",
+            "roman": "hu ba fa?",
             "tokens": [
               "hu",
               "ba",
-              "fe?"
+              "fa?"
             ],
             "status": "translated"
           }
@@ -7274,11 +7274,11 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "hu ba da?",
+            "roman": "hu ba du?",
             "tokens": [
               "hu",
               "ba",
-              "da?"
+              "du?"
             ],
             "status": "translated"
           }
@@ -7909,10 +7909,10 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "ba ga hufet.",
+            "roman": "ba wo hufet.",
             "tokens": [
               "ba",
-              "ga",
+              "wo",
               "hufet."
             ],
             "status": "gap",
@@ -8263,11 +8263,11 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "nohu che fe?",
+            "roman": "nohu che fa?",
             "tokens": [
               "nohu",
               "che",
-              "fe?"
+              "fa?"
             ],
             "status": "translated"
           }
@@ -8711,9 +8711,9 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "fe dal nu ni.",
+            "roman": "fa dal nu ni.",
             "tokens": [
-              "fe",
+              "fa",
               "dal",
               "nu",
               "ni."
@@ -10335,13 +10335,13 @@
           "type": "request",
           "complexity": 2,
           "fonoran": {
-            "roman": "no gi fet mi ga.",
+            "roman": "no gi fet mi wo.",
             "tokens": [
               "no",
               "gi",
               "fet",
               "mi",
-              "ga."
+              "wo."
             ],
             "status": "gap",
             "unresolved": [
@@ -10611,7 +10611,7 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "be ta gi fet mi ta ga.",
+            "roman": "be ta gi fet mi ta wo.",
             "tokens": [
               "be",
               "ta",
@@ -10619,7 +10619,7 @@
               "fet",
               "mi",
               "ta",
-              "ga."
+              "wo."
             ],
             "status": "translated"
           }
@@ -11159,11 +11159,11 @@
           "type": "question",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi la lu to?",
+            "roman": "mi la fa to?",
             "tokens": [
               "mi",
               "la",
-              "lu",
+              "fa",
               "to?"
             ],
             "status": "gap",
@@ -11425,11 +11425,11 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi gat getem daktet.",
+            "roman": "mi gat sutem daktet.",
             "tokens": [
               "mi",
               "gat",
-              "getem",
+              "sutem",
               "daktet."
             ],
             "status": "translated"
@@ -11880,13 +11880,13 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "tetlo ta gak mi da.",
+            "roman": "tetlo ta gak mi du.",
             "tokens": [
               "tetlo",
               "ta",
               "gak",
               "mi",
-              "da."
+              "du."
             ],
             "status": "gap",
             "unresolved": [
@@ -13434,10 +13434,10 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "be da?",
+            "roman": "be du?",
             "tokens": [
               "be",
-              "da?"
+              "du?"
             ],
             "status": "translated"
           }
@@ -13589,11 +13589,11 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi no da.",
+            "roman": "mi no du.",
             "tokens": [
               "mi",
               "no",
-              "da."
+              "du."
             ],
             "status": "translated"
           }
@@ -13678,9 +13678,9 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "fe gu?",
+            "roman": "fa gu?",
             "tokens": [
-              "fe",
+              "fa",
               "gu?"
             ],
             "status": "translated"
@@ -13997,10 +13997,10 @@
           "type": "repair",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi da.",
+            "roman": "mi du.",
             "tokens": [
               "mi",
-              "da."
+              "du."
             ],
             "status": "gap",
             "unresolved": [
@@ -14112,10 +14112,10 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "baso da.",
+            "roman": "baso du.",
             "tokens": [
               "baso",
-              "da."
+              "du."
             ],
             "status": "translated"
           }
@@ -14184,12 +14184,12 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi nes femsha da.",
+            "roman": "mi nes femsha du.",
             "tokens": [
               "mi",
               "nes",
               "femsha",
-              "da."
+              "du."
             ],
             "status": "translated"
           }
@@ -14219,12 +14219,12 @@
           "type": "repair",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi ta se da no femtam.",
+            "roman": "mi ta se du no femtam.",
             "tokens": [
               "mi",
               "ta",
               "se",
-              "da",
+              "du",
               "no",
               "femtam."
             ],
@@ -14238,12 +14238,12 @@
           "type": "question",
           "complexity": 3,
           "fonoran": {
-            "roman": "be nes femtam da?",
+            "roman": "be nes femtam du?",
             "tokens": [
               "be",
               "nes",
               "femtam",
-              "da?"
+              "du?"
             ],
             "status": "gap",
             "unresolved": [
@@ -14275,12 +14275,12 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi femtam no da.",
+            "roman": "mi femtam no du.",
             "tokens": [
               "mi",
               "femtam",
               "no",
-              "da."
+              "du."
             ],
             "status": "gap",
             "unresolved": [
@@ -14302,9 +14302,9 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "fe nes tes gen.",
+            "roman": "fa nes tes gen.",
             "tokens": [
-              "fe",
+              "fa",
               "nes",
               "tes",
               "gen."
@@ -14322,10 +14322,10 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi fe hufet.",
+            "roman": "mi fa hufet.",
             "tokens": [
               "mi",
-              "fe",
+              "fa",
               "hufet."
             ],
             "status": "translated"
@@ -14373,9 +14373,9 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "fe kamgu?",
+            "roman": "fa kamgu?",
             "tokens": [
-              "fe",
+              "fa",
               "kamgu?"
             ],
             "status": "translated"
@@ -14408,10 +14408,10 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "[badi] da.",
+            "roman": "[badi] du.",
             "tokens": [
               "[badi]",
-              "da."
+              "du."
             ],
             "status": "gap",
             "unresolved": [
@@ -14427,10 +14427,10 @@
           "type": "request",
           "complexity": 1,
           "fonoran": {
-            "roman": "gat fe kugu.",
+            "roman": "gat fa kugu.",
             "tokens": [
               "gat",
-              "fe",
+              "fa",
               "kugu."
             ],
             "status": "translated"
@@ -14443,13 +14443,13 @@
           "type": "feeling",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi nes pemet dela fe.",
+            "roman": "mi nes pemet dela fa.",
             "tokens": [
               "mi",
               "nes",
               "pemet",
               "dela",
-              "fe."
+              "fa."
             ],
             "status": "gap",
             "unresolved": [
@@ -14464,9 +14464,9 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "fe nal.",
+            "roman": "fa nal.",
             "tokens": [
-              "fe",
+              "fa",
               "nal."
             ],
             "status": "translated"
@@ -14479,11 +14479,11 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "be gat fe?",
+            "roman": "be gat fa?",
             "tokens": [
               "be",
               "gat",
-              "fe?"
+              "fa?"
             ],
             "status": "translated"
           }
@@ -14512,9 +14512,9 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "fe les ye.",
+            "roman": "fa les ye.",
             "tokens": [
-              "fe",
+              "fa",
               "les",
               "ye."
             ],
@@ -14562,11 +14562,11 @@
           "type": "request",
           "complexity": 1,
           "fonoran": {
-            "roman": "kugu wi fe.",
+            "roman": "kugu wi fa.",
             "tokens": [
               "kugu",
               "wi",
-              "fe."
+              "fa."
             ],
             "status": "gap",
             "unresolved": [
@@ -14620,11 +14620,11 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi fes fe.",
+            "roman": "mi fes fa.",
             "tokens": [
               "mi",
               "fes",
-              "fe."
+              "fa."
             ],
             "status": "gap",
             "unresolved": [
@@ -14639,13 +14639,13 @@
           "type": "feeling",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi nes pefem de fe.",
+            "roman": "mi nes pefem de fa.",
             "tokens": [
               "mi",
               "nes",
               "pefem",
               "de",
-              "fe."
+              "fa."
             ],
             "status": "gap",
             "unresolved": [
@@ -14680,12 +14680,12 @@
           "type": "request",
           "complexity": 1,
           "fonoran": {
-            "roman": "di ku lo fe.",
+            "roman": "di ku lo fa.",
             "tokens": [
               "di",
               "ku",
               "lo",
-              "fe."
+              "fa."
             ],
             "status": "gap",
             "unresolved": [
@@ -14717,9 +14717,9 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "fe meskam be?",
+            "roman": "fa meskam be?",
             "tokens": [
-              "fe",
+              "fa",
               "meskam",
               "be?"
             ],
@@ -14733,11 +14733,11 @@
           "type": "request",
           "complexity": 1,
           "fonoran": {
-            "roman": "times dal fe kugu.",
+            "roman": "times dal fa kugu.",
             "tokens": [
               "times",
               "dal",
-              "fe",
+              "fa",
               "kugu."
             ],
             "status": "translated"
@@ -14768,9 +14768,9 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "fe tes.",
+            "roman": "fa tes.",
             "tokens": [
-              "fe",
+              "fa",
               "tes."
             ],
             "status": "translated"
@@ -14816,11 +14816,11 @@
           "type": "request",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi gigat fe?",
+            "roman": "mi gigat fa?",
             "tokens": [
               "mi",
               "gigat",
-              "fe?"
+              "fa?"
             ],
             "status": "gap",
             "unresolved": [
@@ -14835,10 +14835,10 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi fe no tel.",
+            "roman": "mi fa no tel.",
             "tokens": [
               "mi",
-              "fe",
+              "fa",
               "no",
               "tel."
             ],
@@ -14870,9 +14870,9 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "fe dehu?",
+            "roman": "fa dehu?",
             "tokens": [
-              "fe",
+              "fa",
               "dehu?"
             ],
             "status": "gap",
@@ -14965,10 +14965,10 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi fe saklo ni.",
+            "roman": "mi fa saklo ni.",
             "tokens": [
               "mi",
-              "fe",
+              "fa",
               "saklo",
               "ni."
             ],
@@ -15002,9 +15002,9 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "fe no geshi gu.",
+            "roman": "fa no geshi gu.",
             "tokens": [
-              "fe",
+              "fa",
               "no",
               "geshi",
               "gu."
@@ -15043,10 +15043,10 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi fe lek gen.",
+            "roman": "mi fa lek gen.",
             "tokens": [
               "mi",
-              "fe",
+              "fa",
               "lek",
               "gen."
             ],
@@ -15063,10 +15063,10 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "gem fe nal.",
+            "roman": "gem fa nal.",
             "tokens": [
               "gem",
-              "fe",
+              "fa",
               "nal."
             ],
             "status": "gap",
@@ -15120,13 +15120,13 @@
           "type": "feeling",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi nes ga no fe.",
+            "roman": "mi nes wo no fa.",
             "tokens": [
               "mi",
               "nes",
-              "ga",
+              "wo",
               "no",
-              "fe."
+              "fa."
             ],
             "status": "gap",
             "unresolved": [
@@ -15141,9 +15141,9 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "fe nes mak pefem.",
+            "roman": "fa nes mak pefem.",
             "tokens": [
-              "fe",
+              "fa",
               "nes",
               "mak",
               "pefem."
@@ -15182,9 +15182,9 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "fe nes femtam saklo.",
+            "roman": "fa nes femtam saklo.",
             "tokens": [
-              "fe",
+              "fa",
               "nes",
               "femtam",
               "saklo."
@@ -15199,9 +15199,9 @@
           "type": "request",
           "complexity": 3,
           "fonoran": {
-            "roman": "fe les lemgu lo.",
+            "roman": "fa les lemgu lo.",
             "tokens": [
-              "fe",
+              "fa",
               "les",
               "lemgu",
               "lo."
@@ -16770,14 +16770,14 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi sa no gi tak ga.",
+            "roman": "mi sa no gi tak wo.",
             "tokens": [
               "mi",
               "sa",
               "no",
               "gi",
               "tak",
-              "ga."
+              "wo."
             ],
             "status": "translated"
           }
@@ -17644,7 +17644,7 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "be ta no gi fet mi ga.",
+            "roman": "be ta no gi fet mi wo.",
             "tokens": [
               "be",
               "ta",
@@ -17652,7 +17652,7 @@
               "gi",
               "fet",
               "mi",
-              "ga."
+              "wo."
             ],
             "status": "gap",
             "unresolved": [

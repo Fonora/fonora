@@ -135,6 +135,7 @@ function buildDocCatalog() {
     { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
     { path: 'docs/fonoran-compound-workflow.md', label: 'Compound workflow', layer: 'language' },
     { path: 'docs/fonoran-cli-tools.md', label: 'CLI tools reference', layer: 'language' },
+    { path: 'docs/fonoran-prefix-safe-roots.md', label: 'Prefix-safe CV / CVC roots', layer: 'language' },
     { path: 'docs/fonoran-numerals.md', label: 'Fonoran numerals', layer: 'language' },
     { path: 'docs/fonoran-learn.md', label: 'Fonoran Learn', layer: 'language' },
     { path: 'docs/fonoran-translator.md', label: 'Fonoran translator', layer: 'language' },

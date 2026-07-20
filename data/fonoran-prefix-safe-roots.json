@@ -1,0 +1,1476 @@
+{
+  "version": "1.0-prefix-safe",
+  "rule": "A spelling is algorithmically prefix-safe iff it neither prefixes nor is prefixed by any other approved root. Same detector as Health prefix_overlap.",
+  "note": "This is phonetic distinctiveness approval, not Word Manager human approval. Free CV forms that prefix taken CVCs are blocked until those CVCs move.",
+  "generated_at": "2026-07-20T20:08:53.890Z",
+  "summary": {
+    "approved_roots": 135,
+    "prefix_pairs": 0,
+    "approved_CV_prefix_safe": 57,
+    "approved_CVC_prefix_safe": 78,
+    "approved_prefix_unsafe": 0,
+    "pool_CV_prefix_safe_free": 0,
+    "pool_CV_blocked_free": 12,
+    "pool_CVC_prefix_safe_free": 6,
+    "pool_CVC_blocked_free": 30
+  },
+  "prefix_pairs": [],
+  "approved_prefix_safe": {
+    "CV": [
+      "ba",
+      "be",
+      "bi",
+      "bo",
+      "bu",
+      "cha",
+      "che",
+      "chu",
+      "de",
+      "di",
+      "do",
+      "du",
+      "fa",
+      "fi",
+      "fo",
+      "fu",
+      "gi",
+      "go",
+      "gu",
+      "ha",
+      "he",
+      "hi",
+      "ho",
+      "hu",
+      "ki",
+      "ko",
+      "ku",
+      "la",
+      "li",
+      "lo",
+      "lu",
+      "mo",
+      "mu",
+      "ni",
+      "nu",
+      "pa",
+      "pe",
+      "pu",
+      "se",
+      "sha",
+      "she",
+      "shu",
+      "si",
+      "so",
+      "su",
+      "ti",
+      "to",
+      "tu",
+      "wa",
+      "we",
+      "wi",
+      "wo",
+      "wu",
+      "ye",
+      "yi",
+      "yo",
+      "yu"
+    ],
+    "CVC": [
+      "dak",
+      "dal",
+      "dam",
+      "dan",
+      "das",
+      "dat",
+      "fel",
+      "fem",
+      "fen",
+      "fes",
+      "fet",
+      "gak",
+      "gal",
+      "gam",
+      "gan",
+      "gat",
+      "gek",
+      "gem",
+      "gen",
+      "ges",
+      "get",
+      "kal",
+      "kam",
+      "kan",
+      "kas",
+      "kat",
+      "kek",
+      "kel",
+      "kem",
+      "ken",
+      "kes",
+      "ket",
+      "lek",
+      "lel",
+      "lem",
+      "len",
+      "les",
+      "let",
+      "mak",
+      "mal",
+      "mam",
+      "man",
+      "mas",
+      "mek",
+      "mel",
+      "mem",
+      "men",
+      "mes",
+      "met",
+      "nak",
+      "nal",
+      "nam",
+      "nan",
+      "nas",
+      "nat",
+      "nek",
+      "nel",
+      "nem",
+      "nen",
+      "nes",
+      "net",
+      "sak",
+      "sal",
+      "sam",
+      "san",
+      "sas",
+      "sat",
+      "tak",
+      "tal",
+      "tam",
+      "tas",
+      "tat",
+      "tek",
+      "tel",
+      "tem",
+      "ten",
+      "tes",
+      "tet"
+    ]
+  },
+  "approved_prefix_unsafe": [],
+  "approved_detail": {
+    "CV": [
+      {
+        "id": "person",
+        "spelling": "ba",
+        "concept": "a person; someone",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "addressee",
+        "spelling": "be",
+        "concept": "the entity spoken to; you",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "calm",
+        "spelling": "bi",
+        "concept": "feeling settled and at peace",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "strong",
+        "spelling": "bo",
+        "concept": "strong",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "bone",
+        "spelling": "bu",
+        "concept": "a bone",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "front",
+        "spelling": "cha",
+        "concept": "forward; the front side; ahead",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "place",
+        "spelling": "che",
+        "concept": "a spot or location",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "understand",
+        "spelling": "chu",
+        "concept": "to understand; to grasp a meaning",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "self",
+        "spelling": "de",
+        "concept": "oneself; me, myself",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "before",
+        "spelling": "di",
+        "concept": "earlier; in the past",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "down",
+        "spelling": "do",
+        "concept": "toward a lower place",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "sick",
+        "spelling": "du",
+        "concept": "sick; ill in the body",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "child",
+        "spelling": "fa",
+        "concept": "a child; a young person",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "travel",
+        "spelling": "fi",
+        "concept": "going from one place to another",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "life",
+        "spelling": "fo",
+        "concept": "being alive",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "right",
+        "spelling": "fu",
+        "concept": "the right side",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "move",
+        "spelling": "gi",
+        "concept": "to go from one place to another",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "left",
+        "spelling": "go",
+        "concept": "the left side",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "good",
+        "spelling": "gu",
+        "concept": "good; works well or is wanted",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "rule",
+        "spelling": "ha",
+        "concept": "a pattern to follow; how things must be done",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "center",
+        "spelling": "he",
+        "concept": "the middle",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "flow",
+        "spelling": "hi",
+        "concept": "flow",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "same",
+        "spelling": "ho",
+        "concept": "the same; not different",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "know",
+        "spelling": "hu",
+        "concept": "to know something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "source",
+        "spelling": "ki",
+        "concept": "source",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "drink",
+        "spelling": "ko",
+        "concept": "to drink",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "give",
+        "spelling": "ku",
+        "concept": "to give something to someone",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "take",
+        "spelling": "la",
+        "concept": "to take something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "point",
+        "spelling": "li",
+        "concept": "a sharp aim or exact spot",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "food",
+        "spelling": "lo",
+        "concept": "food; something to eat",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "one",
+        "spelling": "lu",
+        "concept": "a single one",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "do",
+        "spelling": "mo",
+        "concept": "to do something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "work",
+        "spelling": "mu",
+        "concept": "effort done toward a goal",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "big",
+        "spelling": "ni",
+        "concept": "big; large in size",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "tree",
+        "spelling": "nu",
+        "concept": "a tree",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "conflict",
+        "spelling": "pa",
+        "concept": "a clash or fight between sides",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "fear",
+        "spelling": "pe",
+        "concept": "to be afraid",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "heart",
+        "spelling": "pu",
+        "concept": "your heart",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "speak",
+        "spelling": "se",
+        "concept": "to speak; to talk",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "less",
+        "spelling": "sha",
+        "concept": "a smaller amount",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "angry",
+        "spelling": "she",
+        "concept": "feeling mad or hostile",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "after",
+        "spelling": "shu",
+        "concept": "later; coming next",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "motion",
+        "spelling": "si",
+        "concept": "movement itself; something in motion",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "back",
+        "spelling": "so",
+        "concept": "behind; the back side; rear",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "metal",
+        "spelling": "su",
+        "concept": "a hard shiny material you can shape, like iron",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "still",
+        "spelling": "ti",
+        "concept": "not moving; staying put",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "thing",
+        "spelling": "to",
+        "concept": "any object or item",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "happy",
+        "spelling": "tu",
+        "concept": "feeling glad and content",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "up",
+        "spelling": "wa",
+        "concept": "toward a higher place",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "hope",
+        "spelling": "we",
+        "concept": "to wish and expect something good",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "see",
+        "spelling": "wi",
+        "concept": "to see",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "lonely",
+        "spelling": "wo",
+        "concept": "lonely",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "straight",
+        "spelling": "wu",
+        "concept": "a direct line without bend",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "water",
+        "spelling": "ye",
+        "concept": "water",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "around",
+        "spelling": "yi",
+        "concept": "encircling; going in a circle; again",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "proud",
+        "spelling": "yo",
+        "concept": "proud",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "form",
+        "spelling": "yu",
+        "concept": "form",
+        "prefix_safe": true,
+        "blocked_by": []
+      }
+    ],
+    "CVC": [
+      {
+        "id": "hand",
+        "spelling": "dak",
+        "concept": "your hand",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "near",
+        "spelling": "dal",
+        "concept": "close by",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "mouth",
+        "spelling": "dam",
+        "concept": "your mouth",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "collective",
+        "spelling": "dan",
+        "concept": "a group seen as one; togetherness",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "reach",
+        "spelling": "das",
+        "concept": "reach",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "fire",
+        "spelling": "dat",
+        "concept": "fire; a hot burning flame",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "through",
+        "spelling": "fel",
+        "concept": "through; passing from one side to the other",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "body",
+        "spelling": "fem",
+        "concept": "your body",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "earth",
+        "spelling": "fen",
+        "concept": "the ground or soil",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "parent",
+        "spelling": "fes",
+        "concept": "a mother or father",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "far",
+        "spelling": "fet",
+        "concept": "a long way off",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "cause",
+        "spelling": "gak",
+        "concept": "cause",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "will",
+        "spelling": "gal",
+        "concept": "will",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "bad",
+        "spelling": "gam",
+        "concept": "bad; harmful or unwanted",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "dark",
+        "spelling": "gan",
+        "concept": "darkness; no light",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "hold",
+        "spelling": "gat",
+        "concept": "to keep something in your grasp",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "use",
+        "spelling": "gek",
+        "concept": "to use something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "now",
+        "spelling": "gem",
+        "concept": "right now; this moment",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "small",
+        "spelling": "gen",
+        "concept": "small; little in size",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "air",
+        "spelling": "ges",
+        "concept": "the air we breathe",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "substance",
+        "spelling": "get",
+        "concept": "substance",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "animal",
+        "spelling": "kal",
+        "concept": "an animal",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "bond",
+        "spelling": "kam",
+        "concept": "a bond; a tie between things",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "time",
+        "spelling": "kan",
+        "concept": "time; how long things last",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "help",
+        "spelling": "kas",
+        "concept": "to help someone",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "equal",
+        "spelling": "kat",
+        "concept": "equal",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "light",
+        "spelling": "kek",
+        "concept": "light; what lets you see",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "make",
+        "spelling": "kel",
+        "concept": "to make something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "eye",
+        "spelling": "kem",
+        "concept": "your eye",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "mark",
+        "spelling": "ken",
+        "concept": "mark",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "head",
+        "spelling": "kes",
+        "concept": "your head",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "some",
+        "spelling": "ket",
+        "concept": "a few; part of them",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "many",
+        "spelling": "lek",
+        "concept": "a lot; lots of them",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "joy",
+        "spelling": "lel",
+        "concept": "deep gladness; joyful feeling",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "hot",
+        "spelling": "lem",
+        "concept": "hot; warm to burning",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "hear",
+        "spelling": "len",
+        "concept": "to hear",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "need",
+        "spelling": "les",
+        "concept": "to need something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "journey",
+        "spelling": "let",
+        "concept": "the experience of traveling; a path through life",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "cold",
+        "spelling": "mak",
+        "concept": "cold; chilly to freezing",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "name",
+        "spelling": "mal",
+        "concept": "a name",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "touch",
+        "spelling": "mam",
+        "concept": "to touch",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "trust",
+        "spelling": "man",
+        "concept": "to believe someone is safe and reliable",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "more",
+        "spelling": "mas",
+        "concept": "a greater amount",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "exclude",
+        "spelling": "mek",
+        "concept": "to keep out of a group",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "all",
+        "spelling": "mel",
+        "concept": "every one of them",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "part",
+        "spelling": "mem",
+        "concept": "part",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "timid",
+        "spelling": "men",
+        "concept": "shy fear; hesitation from fear",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "inside",
+        "spelling": "mes",
+        "concept": "in; within something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "think",
+        "spelling": "met",
+        "concept": "to use your mind",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "scared",
+        "spelling": "nak",
+        "concept": "feeling afraid; pulled back by fear",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "sleep",
+        "spelling": "nal",
+        "concept": "to sleep",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "here",
+        "spelling": "nam",
+        "concept": "at this place",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "path",
+        "spelling": "nan",
+        "concept": "a way or route to travel along",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "include",
+        "spelling": "nas",
+        "concept": "to bring in as part of a group",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "true",
+        "spelling": "nat",
+        "concept": "true; matches what's real",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "fast",
+        "spelling": "nek",
+        "concept": "quick; moving at high speed",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "change",
+        "spelling": "nel",
+        "concept": "change",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "sad",
+        "spelling": "nem",
+        "concept": "sad",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "outside",
+        "spelling": "nen",
+        "concept": "out; beyond something's edge",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "feel",
+        "spelling": "nes",
+        "concept": "to feel something inside",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "depression",
+        "spelling": "net",
+        "concept": "heavy sadness; spirit pressed down",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "want",
+        "spelling": "sak",
+        "concept": "to wish for something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "aggression",
+        "spelling": "sal",
+        "concept": "hostile force; attacking energy",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "sky",
+        "spelling": "sam",
+        "concept": "the sky above",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "love",
+        "spelling": "san",
+        "concept": "to deeply care for someone",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "stone",
+        "spelling": "sas",
+        "concept": "a hard rock",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "wait",
+        "spelling": "sat",
+        "concept": "to wait; to stay until later",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "there",
+        "spelling": "tak",
+        "concept": "at that place",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "taste",
+        "spelling": "tal",
+        "concept": "to taste",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "empty",
+        "spelling": "tam",
+        "concept": "having nothing inside",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "justice",
+        "spelling": "tas",
+        "concept": "fair treatment; equal rules for all",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "skin",
+        "spelling": "tat",
+        "concept": "skin",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "smell",
+        "spelling": "tek",
+        "concept": "to smell",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "eat",
+        "spelling": "tel",
+        "concept": "to eat",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "bound",
+        "spelling": "tem",
+        "concept": "an edge; where something ends",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "surface",
+        "spelling": "ten",
+        "concept": "the outer side you touch",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "pain",
+        "spelling": "tes",
+        "concept": "hurting; physical or emotional hurt",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "plant",
+        "spelling": "tet",
+        "concept": "a plant",
+        "prefix_safe": true,
+        "blocked_by": []
+      }
+    ],
+    "other": []
+  },
+  "pool_available": {
+    "CV_prefix_safe": [],
+    "CV_blocked": [
+      {
+        "form": "da",
+        "template": "CV",
+        "blocked_by": [
+          "dak",
+          "dal",
+          "dam",
+          "dan",
+          "das",
+          "dat"
+        ]
+      },
+      {
+        "form": "fe",
+        "template": "CV",
+        "blocked_by": [
+          "fel",
+          "fem",
+          "fen",
+          "fes",
+          "fet"
+        ]
+      },
+      {
+        "form": "ga",
+        "template": "CV",
+        "blocked_by": [
+          "gak",
+          "gal",
+          "gam",
+          "gan",
+          "gat"
+        ]
+      },
+      {
+        "form": "ge",
+        "template": "CV",
+        "blocked_by": [
+          "gek",
+          "gem",
+          "gen",
+          "ges",
+          "get"
+        ]
+      },
+      {
+        "form": "ka",
+        "template": "CV",
+        "blocked_by": [
+          "kal",
+          "kam",
+          "kan",
+          "kas",
+          "kat"
+        ]
+      },
+      {
+        "form": "ke",
+        "template": "CV",
+        "blocked_by": [
+          "kek",
+          "kel",
+          "kem",
+          "ken",
+          "kes",
+          "ket"
+        ]
+      },
+      {
+        "form": "le",
+        "template": "CV",
+        "blocked_by": [
+          "lek",
+          "lel",
+          "lem",
+          "len",
+          "les",
+          "let"
+        ]
+      },
+      {
+        "form": "ma",
+        "template": "CV",
+        "blocked_by": [
+          "mak",
+          "mal",
+          "mam",
+          "man",
+          "mas"
+        ]
+      },
+      {
+        "form": "me",
+        "template": "CV",
+        "blocked_by": [
+          "mek",
+          "mel",
+          "mem",
+          "men",
+          "mes",
+          "met"
+        ]
+      },
+      {
+        "form": "na",
+        "template": "CV",
+        "blocked_by": [
+          "nak",
+          "nal",
+          "nam",
+          "nan",
+          "nas",
+          "nat"
+        ]
+      },
+      {
+        "form": "ne",
+        "template": "CV",
+        "blocked_by": [
+          "nek",
+          "nel",
+          "nem",
+          "nen",
+          "nes",
+          "net"
+        ]
+      },
+      {
+        "form": "te",
+        "template": "CV",
+        "blocked_by": [
+          "tek",
+          "tel",
+          "tem",
+          "ten",
+          "tes",
+          "tet"
+        ]
+      }
+    ],
+    "CVC_prefix_safe": [
+      "fek",
+      "gas",
+      "gel",
+      "kak",
+      "mat",
+      "tan"
+    ],
+    "CVC_blocked": [
+      {
+        "form": "bak",
+        "template": "CVC",
+        "blocked_by": [
+          "ba"
+        ]
+      },
+      {
+        "form": "bal",
+        "template": "CVC",
+        "blocked_by": [
+          "ba"
+        ]
+      },
+      {
+        "form": "bam",
+        "template": "CVC",
+        "blocked_by": [
+          "ba"
+        ]
+      },
+      {
+        "form": "ban",
+        "template": "CVC",
+        "blocked_by": [
+          "ba"
+        ]
+      },
+      {
+        "form": "bas",
+        "template": "CVC",
+        "blocked_by": [
+          "ba"
+        ]
+      },
+      {
+        "form": "bat",
+        "template": "CVC",
+        "blocked_by": [
+          "ba"
+        ]
+      },
+      {
+        "form": "bek",
+        "template": "CVC",
+        "blocked_by": [
+          "be"
+        ]
+      },
+      {
+        "form": "bel",
+        "template": "CVC",
+        "blocked_by": [
+          "be"
+        ]
+      },
+      {
+        "form": "bem",
+        "template": "CVC",
+        "blocked_by": [
+          "be"
+        ]
+      },
+      {
+        "form": "ben",
+        "template": "CVC",
+        "blocked_by": [
+          "be"
+        ]
+      },
+      {
+        "form": "bes",
+        "template": "CVC",
+        "blocked_by": [
+          "be"
+        ]
+      },
+      {
+        "form": "bet",
+        "template": "CVC",
+        "blocked_by": [
+          "be"
+        ]
+      },
+      {
+        "form": "dek",
+        "template": "CVC",
+        "blocked_by": [
+          "de"
+        ]
+      },
+      {
+        "form": "del",
+        "template": "CVC",
+        "blocked_by": [
+          "de"
+        ]
+      },
+      {
+        "form": "dem",
+        "template": "CVC",
+        "blocked_by": [
+          "de"
+        ]
+      },
+      {
+        "form": "den",
+        "template": "CVC",
+        "blocked_by": [
+          "de"
+        ]
+      },
+      {
+        "form": "des",
+        "template": "CVC",
+        "blocked_by": [
+          "de"
+        ]
+      },
+      {
+        "form": "det",
+        "template": "CVC",
+        "blocked_by": [
+          "de"
+        ]
+      },
+      {
+        "form": "lak",
+        "template": "CVC",
+        "blocked_by": [
+          "la"
+        ]
+      },
+      {
+        "form": "lal",
+        "template": "CVC",
+        "blocked_by": [
+          "la"
+        ]
+      },
+      {
+        "form": "lam",
+        "template": "CVC",
+        "blocked_by": [
+          "la"
+        ]
+      },
+      {
+        "form": "lan",
+        "template": "CVC",
+        "blocked_by": [
+          "la"
+        ]
+      },
+      {
+        "form": "las",
+        "template": "CVC",
+        "blocked_by": [
+          "la"
+        ]
+      },
+      {
+        "form": "lat",
+        "template": "CVC",
+        "blocked_by": [
+          "la"
+        ]
+      },
+      {
+        "form": "sek",
+        "template": "CVC",
+        "blocked_by": [
+          "se"
+        ]
+      },
+      {
+        "form": "sel",
+        "template": "CVC",
+        "blocked_by": [
+          "se"
+        ]
+      },
+      {
+        "form": "sem",
+        "template": "CVC",
+        "blocked_by": [
+          "se"
+        ]
+      },
+      {
+        "form": "sen",
+        "template": "CVC",
+        "blocked_by": [
+          "se"
+        ]
+      },
+      {
+        "form": "ses",
+        "template": "CVC",
+        "blocked_by": [
+          "se"
+        ]
+      },
+      {
+        "form": "set",
+        "template": "CVC",
+        "blocked_by": [
+          "se"
+        ]
+      }
+    ]
+  }
+}

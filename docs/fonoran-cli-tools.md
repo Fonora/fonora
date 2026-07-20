@@ -74,6 +74,9 @@ npm run fonoran:reset && npm run fonoran:build
 | `npm run fonoran:reconcile-inventory` | Reconcile concept inventory against lab state. |
 | `npm run fonoran:root-capacity` | Report how many CV/CVC slots remain for new roots. |
 | `npm run fonoran:root-capacity:tiers` | Capacity broken down by experience tier. |
+| `npm run fonoran:prefix-safe` | Regenerate algorithmically prefix-safe CV/CVC inventory ([`data/fonoran-prefix-safe-roots.json`](../data/fonoran-prefix-safe-roots.json)). |
+| `npm run fonoran:prefix-safe -- --check` | Fail if the inventory is stale or any `prefix_overlap` pair exists (wired into `npm test`). |
+| `npm run fonoran:cv-density:project` | Thought-experiment projections: CV/CVC density by ring/priority, exclusivity examples, counterfactuals ([RN-35](research-notes/RN-35-cv-density-and-cvc-audibility.md)). |
 | `npm run fonoran:canonical:init` | Bootstrap canonical constitution data. |
 | `npm run fonoran:canonical:constitution` | Stabilize constitution-linked canonical records. |
 

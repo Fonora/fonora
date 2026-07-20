@@ -38,11 +38,11 @@
         },
         {
           "en": "Are you alone?",
-          "fon": "be ga?"
+          "fon": "be wo?"
         },
         {
           "en": "I am alone too.",
-          "fon": "mi ga [also].",
+          "fon": "mi wo [also].",
           "note": "gap: also (needs a root)"
         },
         {
@@ -139,7 +139,7 @@
         },
         {
           "en": "I am lost and I am alone.",
-          "fon": "mi hufet mi ga."
+          "fon": "mi hufet mi wo."
         },
         {
           "en": "Can we sit together?",
@@ -433,7 +433,7 @@
         },
         {
           "en": "I feel sick.",
-          "fon": "mi nes da."
+          "fon": "mi nes du."
         },
         {
           "en": "Do you have medicine?",
@@ -489,7 +489,7 @@
         },
         {
           "en": "I am sick and very tired.",
-          "fon": "mi nes da femtam ni."
+          "fon": "mi nes du femtam ni."
         },
         {
           "en": "Do you feel pain here?",
@@ -521,7 +521,7 @@
         },
         {
           "en": "I feel hot and sick.",
-          "fon": "mi nes lem da."
+          "fon": "mi nes lem du."
         },
         {
           "en": "Do you have cloth for the wound?",
@@ -553,7 +553,7 @@
         },
         {
           "en": "I am cold and I feel sick.",
-          "fon": "mi nes mak mi nes da."
+          "fon": "mi nes mak mi nes du."
         },
         {
           "en": "Is the wound getting better?",
@@ -573,7 +573,7 @@
         },
         {
           "en": "Do you feel sick today?",
-          "fon": "kekdi be nes da?"
+          "fon": "kekdi be nes du?"
         },
         {
           "en": "The bleeding has stopped.",
@@ -622,7 +622,7 @@
         },
         {
           "en": "I feel very sick.",
-          "fon": "mi nes da ni."
+          "fon": "mi nes du ni."
         }
       ]
     },
@@ -854,7 +854,7 @@
         },
         {
           "en": "I am lonely.",
-          "fon": "mi nes ga."
+          "fon": "mi nes wo."
         },
         {
           "en": "I feel relieved.",
@@ -894,7 +894,7 @@
         },
         {
           "en": "Are you lonely?",
-          "fon": "be ga?"
+          "fon": "be wo?"
         },
         {
           "en": "Are you worried?",
@@ -906,7 +906,7 @@
         },
         {
           "en": "I am sad and lonely.",
-          "fon": "mi nes nem ga."
+          "fon": "mi nes nem wo."
         },
         {
           "en": "I am calm and relieved.",
@@ -979,7 +979,7 @@
         },
         {
           "en": "You are not alone.",
-          "fon": "be no ga."
+          "fon": "be no wo."
         },
         {
           "en": "I am here with you.",
@@ -987,7 +987,7 @@
         },
         {
           "en": "I feel less lonely now.",
-          "fon": "gem mi nes ga sha."
+          "fon": "gem mi nes wo sha."
         },
         {
           "en": "I was angry, but I am calm now.",
@@ -995,7 +995,7 @@
         },
         {
           "en": "Do you feel lonely?",
-          "fon": "be nes ga?"
+          "fon": "be nes wo?"
         },
         {
           "en": "Do you feel relieved?",
@@ -1004,7 +1004,7 @@
         },
         {
           "en": "I do not want to be alone.",
-          "fon": "mi no sak ga."
+          "fon": "mi no sak wo."
         },
         {
           "en": "I am still worried.",
@@ -1098,7 +1098,7 @@
         },
         {
           "en": "I will not leave you alone.",
-          "fon": "mi sa no gi fet be ga."
+          "fon": "mi sa no gi fet be wo."
         },
         {
           "en": "That was my mistake.",
@@ -1214,7 +1214,7 @@
         },
         {
           "en": "I feel lonely and scared.",
-          "fon": "mi nes ga pefem."
+          "fon": "mi nes wo pefem."
         },
         {
           "en": "I am cold and I need help.",
@@ -1685,7 +1685,7 @@
         },
         {
           "en": "Who is the child?",
-          "fon": "hu ba fe?"
+          "fon": "hu ba fa?"
         },
         {
           "en": "That person is a stranger to me.",
@@ -1721,7 +1721,7 @@
         },
         {
           "en": "Who is sick?",
-          "fon": "hu ba da?"
+          "fon": "hu ba du?"
         },
         {
           "en": "Who can carry this?",
@@ -1737,7 +1737,7 @@
         },
         {
           "en": "That person is alone and looks lost.",
-          "fon": "ba ga hufet."
+          "fon": "ba wo hufet."
         },
         {
           "en": "Who is in danger?",
@@ -2043,11 +2043,11 @@
         },
         {
           "en": "Where is the child?",
-          "fon": "nohu che fe?"
+          "fon": "nohu che fa?"
         },
         {
           "en": "The child is near the big tree.",
-          "fon": "fe dal nu ni."
+          "fon": "fa dal nu ni."
         },
         {
           "en": "Come here and look at this.",
@@ -2404,7 +2404,7 @@
         },
         {
           "en": "Do not leave me alone.",
-          "fon": "no gi fet mi ga."
+          "fon": "no gi fet mi wo."
         },
         {
           "en": "I will go and you stay.",
@@ -2440,7 +2440,7 @@
         },
         {
           "en": "You left and I was alone.",
-          "fon": "be ta gi fet mi ta ga."
+          "fon": "be ta gi fet mi ta wo."
         },
         {
           "en": "Can I enter this space?",
@@ -2551,7 +2551,7 @@
         },
         {
           "en": "I have a knife and a rope.",
-          "fon": "mi gat getem daktet."
+          "fon": "mi gat sutem daktet."
         },
         {
           "en": "Do you want to share this?",
@@ -2587,7 +2587,7 @@
         },
         {
           "en": "Can I take one of those?",
-          "fon": "mi la lu to?"
+          "fon": "mi la fa to?"
         },
         {
           "en": "I will return your container soon.",
@@ -2789,7 +2789,7 @@
         },
         {
           "en": "That berry made me sick.",
-          "fon": "tetlo ta gak mi da."
+          "fon": "tetlo ta gak mi du."
         },
         {
           "en": "We can eat this together.",
@@ -3117,7 +3117,7 @@
         },
         {
           "en": "Are you sick?",
-          "fon": "be da?"
+          "fon": "be du?"
         },
         {
           "en": "My leg hurts.",
@@ -3169,7 +3169,7 @@
         },
         {
           "en": "I am not sick.",
-          "fon": "mi no da."
+          "fon": "mi no du."
         },
         {
           "en": "You should rest now.",
@@ -3205,7 +3205,7 @@
         },
         {
           "en": "I feel weak and sick.",
-          "fon": "mi nes femsha da."
+          "fon": "mi nes femsha du."
         },
         {
           "en": "This person needs rest.",
@@ -3221,7 +3221,7 @@
         },
         {
           "en": "I mean I am unwell.",
-          "fon": "mi da."
+          "fon": "mi du."
         },
         {
           "en": "My chest feels tight.",
@@ -3245,15 +3245,15 @@
         },
         {
           "en": "The old person is sick.",
-          "fon": "baso da."
+          "fon": "baso du."
         },
         {
           "en": "I said sick, not tired.",
-          "fon": "mi ta se da no femtam."
+          "fon": "mi ta se du no femtam."
         },
         {
           "en": "Are you tired or sick?",
-          "fon": "be nes femtam da?"
+          "fon": "be nes femtam du?"
         },
         {
           "en": "I feel pain in my side.",
@@ -3274,11 +3274,11 @@
         },
         {
           "en": "Is the child well?",
-          "fon": "fe gu?"
+          "fon": "fa gu?"
         },
         {
           "en": "I am tired but not sick.",
-          "fon": "mi femtam no da."
+          "fon": "mi femtam no du."
         },
         {
           "en": "I am very tired.",
@@ -3316,11 +3316,11 @@
       "phrases": [
         {
           "en": "The baby is crying.",
-          "fon": "fe nes tes gen."
+          "fon": "fa nes tes gen."
         },
         {
           "en": "My child is missing.",
-          "fon": "mi fe hufet."
+          "fon": "mi fa hufet."
         },
         {
           "en": "Is your mother here?",
@@ -3332,11 +3332,11 @@
         },
         {
           "en": "My baby is very hungry.",
-          "fon": "mi fe saklo ni."
+          "fon": "mi fa saklo ni."
         },
         {
           "en": "Is the child safe?",
-          "fon": "fe kamgu?"
+          "fon": "fa kamgu?"
         },
         {
           "en": "I am looking for my father.",
@@ -3344,24 +3344,24 @@
         },
         {
           "en": "My mother is sick.",
-          "fon": "[badi] da.",
+          "fon": "[badi] du.",
           "note": "gap: badi (needs a root)"
         },
         {
           "en": "Please hold the baby.",
-          "fon": "gat fe kugu."
+          "fon": "gat fa kugu."
         },
         {
           "en": "I am worried about my child.",
-          "fon": "mi nes pemet dela fe."
+          "fon": "mi nes pemet dela fa."
         },
         {
           "en": "The child is sleeping.",
-          "fon": "fe nal."
+          "fon": "fa nal."
         },
         {
           "en": "Do you have children?",
-          "fon": "be gat fe?"
+          "fon": "be gat fa?"
         },
         {
           "en": "My family is not here.",
@@ -3369,7 +3369,7 @@
         },
         {
           "en": "The baby needs water.",
-          "fon": "fe les ye."
+          "fon": "fa les ye."
         },
         {
           "en": "I miss my family.",
@@ -3381,7 +3381,7 @@
         },
         {
           "en": "Please watch the child.",
-          "fon": "kugu wi fe."
+          "fon": "kugu wi fa."
         },
         {
           "en": "My father is very weak.",
@@ -3389,7 +3389,7 @@
         },
         {
           "en": "The child is cold and scared.",
-          "fon": "fe nes mak pefem."
+          "fon": "fa nes mak pefem."
         },
         {
           "en": "Can you help the old person?",
@@ -3397,7 +3397,7 @@
         },
         {
           "en": "The baby is not breathing well.",
-          "fon": "fe no geshi gu."
+          "fon": "fa no geshi gu."
         },
         {
           "en": "Is your father alive?",
@@ -3405,7 +3405,7 @@
         },
         {
           "en": "I am the mother of this child.",
-          "fon": "mi fes fe."
+          "fon": "mi fes fa."
         },
         {
           "en": "The old person cannot walk far.",
@@ -3413,7 +3413,7 @@
         },
         {
           "en": "I feel afraid for my baby.",
-          "fon": "mi nes pefem de fe."
+          "fon": "mi nes pefem de fa."
         },
         {
           "en": "Do you have a mother here?",
@@ -3421,15 +3421,15 @@
         },
         {
           "en": "Give food to the child first.",
-          "fon": "di ku lo fe."
+          "fon": "di ku lo fa."
         },
         {
           "en": "My child is very small.",
-          "fon": "mi fe lek gen."
+          "fon": "mi fa lek gen."
         },
         {
           "en": "The baby is sleeping now.",
-          "fon": "gem fe nal."
+          "fon": "gem fa nal."
         },
         {
           "en": "I do not understand you.",
@@ -3437,7 +3437,7 @@
         },
         {
           "en": "Is this child your child?",
-          "fon": "fe meskam be?"
+          "fon": "fa meskam be?"
         },
         {
           "en": "My mother is old and tired.",
@@ -3446,7 +3446,7 @@
         },
         {
           "en": "Please stay near the child.",
-          "fon": "times dal fe kugu."
+          "fon": "times dal fa kugu."
         },
         {
           "en": "I am the father.",
@@ -3454,7 +3454,7 @@
         },
         {
           "en": "The child is hurt.",
-          "fon": "fe tes."
+          "fon": "fa tes."
         },
         {
           "en": "Are you the mother?",
@@ -3470,11 +3470,11 @@
         },
         {
           "en": "Can I carry the baby?",
-          "fon": "mi gigat fe?"
+          "fon": "mi gigat fa?"
         },
         {
           "en": "My child is not eating.",
-          "fon": "mi fe no tel."
+          "fon": "mi fa no tel."
         },
         {
           "en": "Please say that again slowly.",
@@ -3486,11 +3486,11 @@
         },
         {
           "en": "Is the baby a girl or boy?",
-          "fon": "fe dehu?"
+          "fon": "fa dehu?"
         },
         {
           "en": "The child is tired and hungry.",
-          "fon": "fe nes femtam saklo."
+          "fon": "fa nes femtam saklo."
         },
         {
           "en": "I need to find my mother.",
@@ -3499,7 +3499,7 @@
         },
         {
           "en": "I feel alone without my child.",
-          "fon": "mi nes ga no fe."
+          "fon": "mi nes wo no fa."
         },
         {
           "en": "The old person needs rest.",
@@ -3515,7 +3515,7 @@
         },
         {
           "en": "The child needs warmth and food.",
-          "fon": "fe les lemgu lo."
+          "fon": "fa les lemgu lo."
         }
       ]
     },
@@ -3816,7 +3816,7 @@
         },
         {
           "en": "I will not go there alone.",
-          "fon": "mi sa no gi tak ga."
+          "fon": "mi sa no gi tak wo."
         },
         {
           "en": "Do you want to come with me?",
@@ -4129,7 +4129,7 @@
         },
         {
           "en": "You did not leave me alone.",
-          "fon": "be ta no gi fet mi ga."
+          "fon": "be ta no gi fet mi wo."
         },
         {
           "en": "Are you going to sleep now?",

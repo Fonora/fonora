@@ -1,6 +1,6 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-07-20T06:22:28.652Z",
+  "updated_at": "2026-07-20T20:03:38.298Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
   "root_count": 135,
   "roots": [
@@ -186,8 +186,8 @@
     },
     {
       "id": "child",
-      "spelling": "fe",
-      "ipa": "/fɛ/",
+      "spelling": "fa",
+      "ipa": "/fʌ/",
       "concept": "a child; a young person",
       "domain": "being",
       "reason": "a child — basic everyday idea that deserves its own root.",
@@ -600,8 +600,8 @@
     },
     {
       "id": "lonely",
-      "spelling": "ga",
-      "ipa": "/gʌ/",
+      "spelling": "wo",
+      "ipa": "/wɑ/",
       "concept": "lonely",
       "domain": "abstract",
       "reason": "lonely — basic everyday idea that deserves its own root.",
@@ -645,8 +645,8 @@
     },
     {
       "id": "metal",
-      "spelling": "ge",
-      "ipa": "/gɛ/",
+      "spelling": "su",
+      "ipa": "/sʊ/",
       "concept": "a hard shiny material you can shape, like iron",
       "domain": "element",
       "reason": "a hard shiny material you can shape, like iron — basic everyday idea that deserves its own root.",
@@ -897,8 +897,8 @@
     },
     {
       "id": "sick",
-      "spelling": "da",
-      "ipa": "/dʌ/",
+      "spelling": "du",
+      "ipa": "/dʊ/",
       "concept": "sick; ill in the body",
       "domain": "being",
       "reason": "sick — basic everyday idea that deserves its own root.",
