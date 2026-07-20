@@ -1,6 +1,6 @@
     import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, isValidSyllable, romanToIpa } from '../tools/fonoran-pronunciation.js';
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
-    import { romanToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
+    import { romanToFonoraScript, romanWordToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
     import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
     import { createFonoraKeyboard } from '../js/fonora-keyboard-ui.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
@@ -809,12 +809,59 @@
           <span class="mn ${s.meaning ? '' : 'unnamed'}">${escapeHtml(s.meaning || 'unnamed')}</span>`;
     }
 
+    const pickerGlyphCache = new Map();
+
+    function pickerGlyphCacheKey(kind, spelling, compoundId) {
+      return kind === 'word' ? `word:${compoundId || spelling}` : `root:${spelling}`;
+    }
+
     function pickerGlyphsForSpelling(spelling, { kind = 'root', compoundId = null } = {}) {
       if (!STATE.rules || !spelling) return '';
-      if (kind === 'root') return romanToFonoraScript([spelling], STATE.rules).phrase;
-      const compound = compoundId ? STATE.lab?.compounds.find(c => c.id === compoundId) : null;
-      const parts = compound ? compoundSpeakParts(compound) : [spelling];
-      return romanToFonoraScript(parts, STATE.rules).phrase;
+      const cacheKey = pickerGlyphCacheKey(kind, spelling, compoundId);
+      if (pickerGlyphCache.has(cacheKey)) return pickerGlyphCache.get(cacheKey);
+      let phrase = '';
+      if (kind === 'root') {
+        phrase = romanToFonoraScript([spelling], STATE.rules).phrase;
+      } else {
+        const compound = compoundId ? STATE.lab?.compounds.find(c => c.id === compoundId) : null;
+        const parts = compound ? compoundSpeakParts(compound) : [spelling];
+        phrase = romanToFonoraScript(parts, STATE.rules).phrase;
+      }
+      pickerGlyphCache.set(cacheKey, phrase);
+      return phrase;
+    }
+
+    function phoneticScriptForSpelling(spelling) {
+      if (!STATE.rules || !spelling) return '';
+      const cacheKey = `phon:${spelling}`;
+      if (pickerGlyphCache.has(cacheKey)) return pickerGlyphCache.get(cacheKey);
+      const symbols = romanWordToFonoraScript(spelling, STATE.rules).symbols || '';
+      pickerGlyphCache.set(cacheKey, symbols);
+      return symbols;
+    }
+
+    /** Whole-word phonetic reading when it diverges from part-wise morph script. */
+    function morphPhoneticAlt(spelling, morphParts) {
+      if (!STATE.rules || !spelling || !morphParts?.length) return null;
+      const morphPhrase = romanToFonoraScript(morphParts, STATE.rules).phrase;
+      const phon = romanWordToFonoraScript(spelling, STATE.rules);
+      if (!phon.symbols || phon.symbols === morphPhrase) return null;
+      const keyLine = phon.phonemeKeys
+        ? phon.phonemeKeys.split(/\s+/).filter(Boolean).map(k => k.toUpperCase()).join('·')
+        : '';
+      return { script: phon.symbols, keyLine };
+    }
+
+    function buildPhoneticAltHtml(alt) {
+      if (!alt) return '';
+      const key = alt.keyLine
+        ? `<strong class="word-preview__also-key mono">${escapeHtml(alt.keyLine)}</strong>`
+        : '';
+      const script = alt.script
+        ? `<span class="word-preview__also-script symbol-text">${escapeHtml(alt.script)}</span>`
+        : '';
+      if (!key && !script) return '';
+      return `<p class="word-preview__also-read sans">Also read: ${[key, script].filter(Boolean).join(' ')}</p>`;
     }
 
     function pickerCellHtml({
@@ -1300,6 +1347,7 @@
       sideActionsHtml = '',
       footerHtml = '',
       descriptionHtml = '',
+      phoneticAlt = null,
     } = {}) {
       const parts = speakParts == null ? wordPreviewSpeakParts(focus, kind) : speakParts;
       const hasSpelling = Boolean(focus.spelling);
@@ -1320,6 +1368,7 @@
         ? buildBuiltFromSectionHtml(focus, { removable: builtFromRemovable, hideTypeBadge: builtFromHideBadges })
         : '';
       const wordmarkHtml = buildWordPreviewWordmarkHtml(focus, pron);
+      const phoneticAltHtml = buildPhoneticAltHtml(phoneticAlt);
       const soundBlockHtml = buildWordPreviewSoundBlockHtml(focus, pron, {
         showHear,
         sideActionsHtml,
@@ -1342,6 +1391,7 @@
           </div>` : ''}
           <div class="word-preview__hero">
             ${wordmarkHtml}
+            ${phoneticAltHtml}
             ${soundBlockHtml}
           </div>
           ${hearHtml}
@@ -1441,6 +1491,10 @@
         })
         : '';
 
+      const phoneticAlt = isDictionary && displayFocus.spelling
+        ? morphPhoneticAlt(displayFocus.spelling, speakParts)
+        : null;
+
       const previewHtml = buildWordPreviewHtml(displayFocus, {
         kind,
         speakParts,
@@ -1448,6 +1502,7 @@
         showHear: !sideActionsHtml,
         sideActionsHtml,
         descriptionHtml,
+        phoneticAlt,
       });
 
       const graphSection = showInlineGraph
@@ -1950,20 +2005,52 @@
     }
 
     /* ---------- DICTIONARY ---------- */
+    function dictEntryScriptFields(kind, spelling, compoundId = null) {
+      if (kind === 'compound') {
+        const morph = pickerGlyphsForSpelling(spelling, { kind: 'word', compoundId });
+        const phon = phoneticScriptForSpelling(spelling);
+        const scripts = [...new Set([morph, phon].filter(Boolean))];
+        return { script: morph, scripts };
+      }
+      const morph = pickerGlyphsForSpelling(spelling, { kind: 'root' });
+      return { script: morph, scripts: morph ? [morph] : [] };
+    }
+
     function dictEntries() {
-      const base = STATE.lab.sounds.map(s => ({ kind: 'sound', id: s.spelling, word: s.spelling, english: s.meaning || '(unnamed)', gloss: s.gloss || '', aliases: (s.aliases ?? []).join(' '), concept_id: s.concept_id ?? '', type: 'base', state: s.state, hint: s.say_bold }));
-      const comp = STATE.lab.compounds.map(c => ({
-        kind: 'compound',
-        id: c.id,
-        word: c.spelling,
-        english: c.meaning || '(unnamed)',
-        gloss: c.gloss || '',
-        aliases: (c.aliases ?? []).join(' '),
-        concept_id: c.concept_id ?? '',
-        type: 'compound',
-        state: c.state,
-        hint: (c.part_details ?? []).map(p => p.spelling).join(' + ') || (c.parts ?? []).join(' + '),
-      }));
+      const base = STATE.lab.sounds.map(s => {
+        const { script, scripts } = dictEntryScriptFields('sound', s.spelling);
+        return {
+          kind: 'sound',
+          id: s.spelling,
+          word: s.spelling,
+          english: s.meaning || '(unnamed)',
+          gloss: s.gloss || '',
+          aliases: (s.aliases ?? []).join(' '),
+          concept_id: s.concept_id ?? '',
+          type: 'base',
+          state: s.state,
+          hint: s.say_bold,
+          script,
+          scripts,
+        };
+      });
+      const comp = STATE.lab.compounds.map(c => {
+        const { script, scripts } = dictEntryScriptFields('compound', c.spelling, c.id);
+        return {
+          kind: 'compound',
+          id: c.id,
+          word: c.spelling,
+          english: c.meaning || '(unnamed)',
+          gloss: c.gloss || '',
+          aliases: (c.aliases ?? []).join(' '),
+          concept_id: c.concept_id ?? '',
+          type: 'compound',
+          state: c.state,
+          hint: (c.part_details ?? []).map(p => p.spelling).join(' + ') || (c.parts ?? []).join(' + '),
+          script,
+          scripts,
+        };
+      });
       const filters = dictStateToFilters(STATE);
       let list = [...base, ...comp].filter((e) => {
         const entry = {
@@ -1978,15 +2065,19 @@
       const particles = dictParticleEntries();
       if (filters.showParticles) list = [...list, ...particles];
 
-      const q = STATE.dictQuery.trim();
-      if (q) list = list.filter(e => labEntryMatchesQuery(q, {
-        word: e.word,
-        english: e.english,
-        gloss: e.gloss,
-        aliases: e.aliases,
-        concept_id: e.concept_id,
-        hint: e.hint,
-      }));
+      const q = STATE.dictQuery;
+      if (q.trim()) {
+        list = list.filter(e => labEntryMatchesQuery(q, {
+          word: e.word,
+          english: e.english,
+          gloss: e.gloss,
+          aliases: e.aliases,
+          concept_id: e.concept_id,
+          hint: e.hint,
+          script: e.script,
+          scripts: e.scripts,
+        }));
+      }
       return list.sort((a, b) => a.word.localeCompare(b.word));
     }
 
@@ -1996,21 +2087,26 @@
       if (!data?.particles) return [];
       return data.particles
         .filter(p => p.form)
-        .map(p => ({
-          kind: 'particle',
-          id: p.id,
-          word: p.form,
-          english: p.gloss || p.id,
-          gloss: p.gloss || '',
-          aliases: (p.triggers ?? []).join(' '),
-          concept_id: p.id,
-          type: 'particle',
-          state: 'active',
-          role: p.role,
-          group: p.group,
-          triggers: p.triggers ?? [],
-          hint: p.role || '',
-        }));
+        .map(p => {
+          const { script, scripts } = dictEntryScriptFields('particle', p.form);
+          return {
+            kind: 'particle',
+            id: p.id,
+            word: p.form,
+            english: p.gloss || p.id,
+            gloss: p.gloss || '',
+            aliases: (p.triggers ?? []).join(' '),
+            concept_id: p.id,
+            type: 'particle',
+            state: 'active',
+            role: p.role,
+            group: p.group,
+            triggers: p.triggers ?? [],
+            hint: p.role || '',
+            script,
+            scripts,
+          };
+        });
     }
     function dictExplorerKind(entryKind) {
       return entryKind === 'sound' ? 'root' : 'word';
@@ -2129,10 +2225,72 @@
       if (p?.form) {
         panel.querySelector('.word-preview__hear')?.addEventListener('click', () => speakNeural(p.form));
       }
-      openDictDetailSheet();
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => openDictDetailSheet());
+      });
     }
 
     let dictDetailToken = 0;
+
+    function localExplorerData(entryKind, id) {
+      if (entryKind === 'sound') {
+        const root = STATE.lab?.sounds?.find(s => s.spelling === id);
+        if (!root) return null;
+        return {
+          focus: {
+            kind: 'root',
+            id: root.spelling,
+            spelling: root.spelling,
+            meaning: root.meaning,
+            state: root.state,
+            components: [],
+            derivation: { direct: [] },
+          },
+          used_in: [],
+          related: [],
+          mermaid: null,
+          graph_nodes: [],
+        };
+      }
+      const word = STATE.lab?.compounds?.find(c => c.id === id);
+      if (!word) return null;
+      return {
+        focus: {
+          kind: 'word',
+          id: word.id,
+          spelling: word.spelling,
+          meaning: word.meaning,
+          state: word.state,
+          components: word.components ?? [],
+          derivation: word.derivation,
+          parts: word.parts,
+        },
+        used_in: [],
+        related: [],
+        mermaid: null,
+        graph_nodes: [],
+      };
+    }
+
+    function wireDictionaryExplorerPanel(panel, dataRef, speakParts, entryKind, id) {
+      panel.querySelector('.word-preview__hear, .word-preview-actions .hear-min')?.addEventListener('click', () => speakNeural(speakParts));
+      panel.querySelector('[data-open-graph]')?.addEventListener('click', () => {
+        if (!dataRef.current?.mermaid) {
+          toast('Word tree is still loading…');
+          return;
+        }
+        openFamilyGraphSheet(dataRef.current, (navKind, ref) => {
+          const kind = navKind === 'root' ? 'sound' : 'compound';
+          STATE.dictSelection = { kind, id: ref };
+          updateDictionarySelectionHighlight(null, STATE.dictSelection);
+          renderDictionaryList({ scrollToSelection: true });
+          loadDictionaryDetail(kind, ref);
+        });
+      });
+      panel.querySelector('[data-open-alternates]')?.addEventListener('click', () => {
+        openAlternatesSheet(entryKind, id);
+      });
+    }
 
     async function appendDictVoteBar(panel, entryKind, id) {
       if (entryKind === 'particle') return;
@@ -2199,32 +2357,70 @@
       const panel = dictDetailPanel();
       if (!panel) return;
       const token = ++dictDetailToken;
-      panel.innerHTML = '<p class="fonoran-split-loading">Loading…</p>';
-      openDictDetailSheet();
-      try {
-        await mountExplorer(panel, dictExplorerKind(entryKind), id, null, {
-          layout: 'dictionary',
-          includeGraph: false,
-          modalActions: true,
-          entryKind,
-          onNavigate: (navKind, ref) => {
-            const kind = navKind === 'root' ? 'sound' : 'compound';
-            STATE.dictSelection = { kind, id: ref };
-            renderDictionaryList({ scrollToSelection: true });
-            loadDictionaryDetail(kind, ref);
-          },
+      const local = localExplorerData(entryKind, id);
+      if (!local) {
+        panel.innerHTML = '<p class="empty">Not found.</p>';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => openDictDetailSheet());
         });
+        return;
+      }
+
+      const explorerKind = dictExplorerKind(entryKind);
+      const dataRef = { current: local };
+      const { html, speakParts } = buildExplorerHtml(local, explorerKind, {
+        layout: 'dictionary',
+        includeGraph: false,
+        modalActions: true,
+        entryKind,
+        ref: id,
+      });
+      panel.innerHTML = html;
+      wireDictionaryExplorerPanel(panel, dataRef, speakParts, entryKind, id);
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (token !== dictDetailToken) return;
+          openDictDetailSheet();
+        });
+      });
+
+      void appendDictVoteBar(panel, entryKind, id);
+
+      try {
+        const remote = await fetchExplorerData(explorerKind, id);
         if (token !== dictDetailToken) return;
-        void appendDictVoteBar(panel, entryKind, id);
-      } catch (e) {
-        if (token !== dictDetailToken) return;
-        panel.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`;
+        dataRef.current = remote;
+        const treeBtn = panel.querySelector('[data-open-graph]');
+        if (treeBtn && remote.mermaid) treeBtn.removeAttribute('disabled');
+      } catch {
+        /* tree optional; detail already painted from local lab */
+      }
+    }
+
+    function dictSelectionCellSelector(sel) {
+      if (!sel) return null;
+      const esc = (s) => (window.CSS?.escape ? CSS.escape(s) : String(s).replace(/["\\]/g, '\\$&'));
+      return `#dict-roots .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"], `
+        + `#dict-words .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"], `
+        + `#dict-particles .root-cell[data-kind="${esc(sel.kind)}"][data-id="${esc(sel.id)}"]`;
+    }
+
+    function updateDictionarySelectionHighlight(prev, next) {
+      if (prev) {
+        const prevSel = dictSelectionCellSelector(prev);
+        if (prevSel) document.querySelector(prevSel)?.classList.remove('is-selected');
+      }
+      if (next) {
+        const nextSel = dictSelectionCellSelector(next);
+        if (nextSel) document.querySelector(nextSel)?.classList.add('is-selected');
       }
     }
 
     function selectDictionaryEntry(entryKind, id) {
+      const prev = STATE.dictSelection;
       STATE.dictSelection = { kind: entryKind, id };
-      renderDictionaryList();
+      updateDictionarySelectionHighlight(prev, STATE.dictSelection);
       loadDictionaryDetail(entryKind, id);
     }
 
@@ -2258,6 +2454,7 @@
       return pickerCellHtml({
         spelling: entry.word,
         meaning: dictPickerMeaning(entry),
+        glyphs: entry.script ?? '',
         type,
         selected,
         attrs: { 'data-kind': entry.kind, 'data-id': entry.id },
@@ -3443,7 +3640,12 @@
         switchPage('advanced');
       }
     });
-    $('dict-search').addEventListener('input', e => { STATE.dictQuery = e.target.value; renderDictionary(); });
+    let dictSearchTimer = null;
+    $('dict-search').addEventListener('input', e => {
+      STATE.dictQuery = e.target.value;
+      clearTimeout(dictSearchTimer);
+      dictSearchTimer = setTimeout(() => renderDictionary(), 150);
+    });
     $('dict-filters')?.addEventListener('click', e => {
       const chip = e.target.closest('[data-dict-filter]');
       if (!chip) return;
