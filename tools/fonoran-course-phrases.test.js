@@ -5,7 +5,11 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGrammarPhraseExercises, grammarPhraseExerciseMatches } from '../js/fonoran-grammar-phrase-exercises.js';
-import { lessonsDocToExercises, grammarLessonAnswerMatches } from '../js/fonoran-grammar-lessons.js';
+import {
+  lessonsDocToExercises,
+  grammarLessonAnswerMatches,
+  stripMcqPromptOptions,
+} from '../js/fonoran-grammar-lessons.js';
 import { resolveDataPath } from './fonoran-data-paths.js';
 
 function assert(cond, msg) {
@@ -87,13 +91,19 @@ const rule4LessonTest = test('Rule 4 grammar basics lesson has 10 live-lexicon d
   assert(beach, 'beach drill present');
   assert(grammarLessonAnswerMatches(beach, 'be sak gi yetem ?'), 'full beach form');
   assert(grammarLessonAnswerMatches(beach, 'sak gi yetem'), 'casual beach form accepted');
+  const bare = exercises.find((e) => e.id === 'gb-bare-dest');
   assert(
-    grammarPhraseExerciseMatches(
-      exercises.find((e) => e.id === 'gb-bare-dest'),
-      'to-fonoran',
-      'mi gi ye',
-    ),
+    grammarPhraseExerciseMatches(bare, 'to-fonoran', 'mi gi ye'),
     'choose drill accepts correct option text',
+  );
+  assert(
+    !/^[A-D]\)/m.test(bare.promptLang) && !bare.promptLang.includes('mi gi nan ye'),
+    'choose prompt must not embed A/B option text',
+  );
+  assert(
+    stripMcqPromptOptions('Which means “x”?\nA) mi gi ye\nB) mi gi nan ye') ===
+      'Which means “x”?',
+    'stripMcqPromptOptions removes lettered options',
   );
 });
 

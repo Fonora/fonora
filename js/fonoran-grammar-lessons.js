@@ -32,6 +32,25 @@ function normalize(text) {
 }
 
 /**
+ * Strip trailing "A) … / B) …" lines from choose prompts.
+ * Choices render as clickable buttons — they must not repeat in the question text.
+ * @param {string} prompt
+ */
+export function stripMcqPromptOptions(prompt) {
+  const text = String(prompt ?? '');
+  if (!text) return '';
+  const withoutLines = text
+    .split(/\r?\n/)
+    .filter((line) => !/^[A-D]\)\s+\S/i.test(line.trim()))
+    .join('\n')
+    .trim();
+  // Also drop inline "A) … B) …" tails on a single line.
+  return withoutLines
+    .replace(/\s+[A-D]\)\s+.+$/i, '')
+    .trim();
+}
+
+/**
  * @param {object} raw
  * @returns {GrammarLessonExercise[]}
  */
@@ -39,8 +58,11 @@ export function lessonsDocToExercises(raw) {
   const out = [];
   for (const lesson of raw?.lessons ?? []) {
     for (const ex of lesson.exercises ?? []) {
+      const promptLang =
+        ex.kind === 'choose' ? stripMcqPromptOptions(ex.promptLang) : ex.promptLang;
       out.push({
         ...ex,
+        promptLang,
         spelling: ex.answerRoman,
         itemType: /** @type {'phrase'} */ ('phrase'),
         domainIndex: 0,
@@ -56,7 +78,7 @@ export function lessonsDocToExercises(raw) {
  */
 export async function loadGrammarLessonExercises() {
   try {
-    const res = await fetch('/data/fonoran-grammar-lessons.json');
+    const res = await fetch('/data/fonoran-grammar-lessons.json', { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     return lessonsDocToExercises(data);

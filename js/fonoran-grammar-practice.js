@@ -27,7 +27,7 @@ import {
   grammarPhraseForcesFonoran,
   grammarPhrasePrompt,
 } from './fonoran-grammar-phrase-exercises.js';
-import { loadGrammarLessonExercises } from './fonoran-grammar-lessons.js';
+import { loadGrammarLessonExercises, stripMcqPromptOptions } from './fonoran-grammar-lessons.js';
 import { speakFonoraPhrase, speakFonoraSlow, cancelSpeech } from './fonora-tts.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 
@@ -215,7 +215,14 @@ function setAnswerMode(mcq) {
   const choices = document.getElementById('fonoran-grammar-choices');
   const mcqActions = document.getElementById('fonoran-grammar-mcq-actions');
   if (typing) typing.hidden = mcq;
-  if (choices) choices.hidden = !mcq;
+  if (choices) {
+    choices.hidden = !mcq;
+    // Clear so prior MCQ options cannot linger into typed drills.
+    if (!mcq) {
+      choices.innerHTML = '';
+      currentChoices = [];
+    }
+  }
   if (mcqActions) mcqActions.hidden = !mcq;
 }
 
@@ -254,7 +261,7 @@ function renderExercise() {
 
   const dir = activeDirection(exercise);
   if (mcq) {
-    promptEl.textContent = exercise.promptLang;
+    promptEl.textContent = stripMcqPromptOptions(exercise.promptLang);
     renderMcqChoices(exercise);
     session?.setContinueVisible('fonoran-grammar-next', false);
   } else {

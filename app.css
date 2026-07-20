@@ -5400,6 +5400,13 @@ table.sound-grid .grid-cell {
   margin-top: 0.15rem;
 }
 
+/* display:grid on .learn-choice-grid otherwise overrides [hidden] */
+#fonoran-grammar-choices[hidden],
+#fonoran-grammar-typing[hidden],
+#fonoran-grammar-mcq-actions[hidden] {
+  display: none !important;
+}
+
 .learn-exercise--grammar .learn-exercise__actions {
   margin-top: 0.75rem;
 }
