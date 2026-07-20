@@ -15,6 +15,7 @@ import {
   getReaderWordSources,
   setReaderWordSources,
 } from './fonora-tts.js';
+import { createFonoraKeyboard } from './fonora-keyboard-ui.js';
 import { romanToFonoraScript, fonoraWordToRoman, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
 import { parseSyllable, toSpeakable, compoundPhoneticKey, romanToIpa } from '../tools/fonoran-pronunciation.js';
 import { getPiperVoiceForLang, PIPER_VOICE_OPTIONS } from './piper-audio.js';
@@ -40,10 +41,16 @@ let currentFonoranStrictOk = true;
 export const FONORAN_TRANSLITERATE_LANG = 'fonoran';
 export const FONORAN_ROMAN_LANG = 'fonoran-roman';
 
+/** @type {ReturnType<typeof createFonoraKeyboard> | null} */
+let transliterateKeyboard = null;
+let transliterateKeyboardOpen = false;
+/** @type {(() => void) | null} */
+let transliterateApplyHandler = null;
+
 const TRANSLITERATE_LANGUAGE_OPTIONS = [
   ...LANGUAGE_OPTIONS,
-  { code: FONORAN_TRANSLITERATE_LANG, label: 'Fonoran' },
-  { code: FONORAN_ROMAN_LANG, label: 'Fonoran (roman)' },
+  { code: FONORAN_TRANSLITERATE_LANG, label: 'Fonoran (Fonora)' },
+  { code: FONORAN_ROMAN_LANG, label: 'Fonoran (Roman)' },
 ];
 
 const EMPTY_OUTPUT_HTML =
@@ -81,6 +88,66 @@ export function isFonoranRomanMode() {
 
 export function isFonoranTransliterateMode() {
   return isFonoranScriptMode() || isFonoranRomanMode();
+}
+
+function syncFonoraKeyboardDockBodyClass() {
+  document.body.classList.toggle(
+    'fonora-keyboard-dock-open',
+    Boolean(document.querySelector('.fonora-keyboard-dock:not([hidden])')),
+  );
+}
+
+function isTransliterateKeyboardActive() {
+  return transliterateKeyboardOpen
+    && isFonoranScriptMode()
+    && document.documentElement.getAttribute('data-fonora-tab') === 'translator';
+}
+
+function syncTransliterateKeyboardToggle() {
+  const fonoraMode = isFonoranScriptMode();
+  const toggle = document.getElementById('translate-keyboard-toggle');
+  if (toggle) {
+    toggle.hidden = !fonoraMode;
+    toggle.setAttribute('aria-pressed', transliterateKeyboardOpen && fonoraMode ? 'true' : 'false');
+    toggle.textContent = transliterateKeyboardOpen && fonoraMode ? 'Hide keyboard' : 'Keyboard';
+  }
+  const dock = document.getElementById('translate-keyboard-dock');
+  if (dock) dock.hidden = !(transliterateKeyboardOpen && fonoraMode);
+  syncFonoraKeyboardDockBodyClass();
+}
+
+function ensureTransliterateKeyboard() {
+  const input = document.getElementById('translate-input');
+  const container = document.getElementById('translate-keyboard');
+  if (!input || !container || !rulesRef) return null;
+  if (transliterateKeyboard) {
+    transliterateKeyboard.refresh(rulesRef);
+    transliterateKeyboard.setTarget(input);
+    return transliterateKeyboard;
+  }
+  transliterateKeyboard = createFonoraKeyboard({
+    rules: rulesRef,
+    container,
+    target: input,
+    isActive: isTransliterateKeyboardActive,
+    layout: 'practice',
+    enterKeyLabel: 'go',
+    onEnter: () => { transliterateApplyHandler?.(); },
+  });
+  return transliterateKeyboard;
+}
+
+export function setTransliterateKeyboardOpen(open) {
+  if (open && !isFonoranScriptMode()) open = false;
+  if (open) {
+    ensureTransliterateKeyboard();
+    transliterateKeyboardOpen = true;
+    transliterateKeyboard?.activate();
+  } else {
+    transliterateKeyboardOpen = false;
+    transliterateKeyboard?.deactivate();
+  }
+  syncTransliterateKeyboardToggle();
 }
 
 export function isFonoranRomanListenAllowed() {
@@ -409,6 +476,11 @@ export function syncTransliterateModeUi() {
   }
   if (output) output.classList.toggle('symbol-text', fonoranRoman || !fonoran);
   if (detailsSection) detailsSection.hidden = fonoranScript;
+  if (!fonoranScript && transliterateKeyboardOpen) {
+    setTransliterateKeyboardOpen(false);
+  } else {
+    syncTransliterateKeyboardToggle();
+  }
 }
 
 function populateDialectSelect() {
@@ -968,6 +1040,13 @@ function bindPlaybackUiOnce() {
     warmReaderResources();
   });
 
+  document.getElementById('translate-keyboard-toggle')?.addEventListener('click', () => {
+    setTransliterateKeyboardOpen(!transliterateKeyboardOpen);
+  });
+  document.getElementById('translate-keyboard-close')?.addEventListener('click', () => {
+    setTransliterateKeyboardOpen(false);
+  });
+
   document.getElementById('translate-dialect')?.addEventListener('change', () => {
     saveEnglishDialectPreference(getReaderEnglishDialect());
   });
@@ -1011,4 +1090,12 @@ export function setupTranslatePlayback(rules) {
   warmReaderResources();
   bindPlaybackUiOnce();
   renderTranslateOutput();
+  if (transliterateKeyboard) {
+    transliterateKeyboard.refresh(rules);
+  }
+}
+
+/** Register the live/apply handler used by Enter on the Fonora keyboard dock. */
+export function setTransliterateApplyHandler(handler) {
+  transliterateApplyHandler = typeof handler === 'function' ? handler : null;
 }

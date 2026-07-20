@@ -68,6 +68,8 @@ import {
   setTransliterateFonoranOutput,
   isFonoranScriptMode,
   isFonoranRomanMode,
+  setTransliterateApplyHandler,
+  setTransliterateKeyboardOpen,
   FONORAN_TRANSLITERATE_LANG,
   FONORAN_ROMAN_LANG,
 } from './fonora-tts-ui.js';
@@ -627,7 +629,25 @@ function setupTranslator() {
     }
   }
 
-  inputEl.addEventListener('input', applyTranslate);
+  setTransliterateApplyHandler(applyTranslate);
+
+  inputEl.addEventListener('input', () => {
+    // Fonoran (Fonora): compose with the keyboard, then press Enter / Go to apply.
+    if (isFonoranScriptMode()) {
+      if (!inputEl.value.trim()) applyFonoranTransliterate();
+      return;
+    }
+    applyTranslate();
+  });
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    if (!isFonoranScriptMode()) return;
+    // Dock open: physical Enter is handled by the Fonora keyboard module (Go).
+    const dock = document.getElementById('translate-keyboard-dock');
+    if (dock && !dock.hidden) return;
+    e.preventDefault();
+    applyTranslate();
+  });
 
   let previousTransliterateLang = langEl.value;
   langEl.addEventListener('change', () => {
@@ -1031,6 +1051,23 @@ function showTab(tabId) {
   if (panelId === 'fonoran-speaking') {
     onFonoranSpeakingTabActivated();
   }
+
+  if (panelId !== 'translator') {
+    setTransliterateKeyboardOpen(false);
+  }
+
+  const spellingDock = document.getElementById('spelling-practice-keyboard-dock');
+  const scriptWritingDock = document.getElementById('script-writing-keyboard-dock');
+  const spellingScriptPanel = document.getElementById('fonoran-writing-script-panel');
+  const showSpellingDock = panelId === 'spelling-practice'
+    && Boolean(spellingScriptPanel && !spellingScriptPanel.hidden);
+  const showScriptWritingDock = panelId === 'script-writing';
+  if (spellingDock) spellingDock.hidden = !showSpellingDock;
+  if (scriptWritingDock) scriptWritingDock.hidden = !showScriptWritingDock;
+  document.body.classList.toggle(
+    'fonora-keyboard-dock-open',
+    Boolean(document.querySelector('.fonora-keyboard-dock:not([hidden])')),
+  );
 
   notifyFonoraTabChange(panelId);
 
