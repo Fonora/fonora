@@ -23,11 +23,11 @@ const BUILDER_TABS = [
   { id: 'translator', label: 'Translator' },
   { id: 'dictionary', label: 'Dictionary' },
   { id: 'grammar', label: 'Grammar' },
-  { id: 'puzzle', label: 'Puzzle' },
 ];
 
 const LEARN_TITLES = {
   'learn-home': 'Learn',
+  puzzle: 'Puzzle Conversation',
   'script-writing': 'Script · Writing',
   'script-sounds': 'Script · Symbol Sounds',
   'script-words': 'Script · Read Words',
@@ -49,7 +49,6 @@ const SCRIPT_TITLES = {
 const BUILDER_TITLES = {
   home: 'About',
   translator: 'Translator',
-  puzzle: 'Puzzle Conversation',
   dictionary: 'Dictionary',
   grammar: 'Grammar',
   health: 'Health',
@@ -265,7 +264,7 @@ function renderBuilderRow2(activeTab) {
 
 function renderLearnRow2(activeTab) {
   const active = learnHubNavActive(activeTab);
-  const tabs = [
+  const hubTabs = [
     { id: 'hub', label: 'About' },
     { id: 'script', label: 'Read & Write' },
     { id: 'fonoran', label: 'Speak' },
@@ -278,11 +277,15 @@ function renderLearnRow2(activeTab) {
         }>${t.label}</button>`,
     )
     .join('');
+  const puzzleActive = activeTab === 'puzzle';
+  const puzzleBtn = `<button type="button" class="tab-btn${puzzleActive ? ' tab-btn--active' : ''}" data-learn-tab="puzzle"${
+    puzzleActive ? ' aria-current="page"' : ''
+  }>Puzzle</button>`;
 
   return `
     <div class="app-header__row app-header__row--tools" data-nav-row="learn-tools">
       <nav class="main-nav" aria-label="Learn">
-        <div class="main-nav-primary">${tabs}</div>
+        <div class="main-nav-primary">${hubTabs}${puzzleBtn}</div>
       </nav>
     </div>`;
 }

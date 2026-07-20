@@ -10,7 +10,6 @@
     import { primeAudioContext } from '../js/espeak-audio.js';
     import { initUniversalNav, setActiveTab, setFonoranUndoDisabled, setFonoranAuth, setNavSelectHandlers } from '../js/universal-nav.js';
     import { mountSiteFooter } from '../js/site-footer.js';
-    import { createPuzzlePage } from './pages/puzzle-page.js';
     import { buildComposeScenesFromLab, mountComposeShowcase } from './compose-showcase.js';
     import { labEntryMatchesQuery } from '../tools/fonoran-lab-search.js';
     import { experienceMetaFor } from '../tools/fonoran-experience-tiers.js';
@@ -243,23 +242,6 @@
       translatorBusy: false,
       translatorPlaying: false,
       translatorCancel: false,
-      puzzle: {
-        challenge: null,
-        coreOnly: false,
-        difficultyMode: 'normal',
-        repairTurns: 0,
-        revealed: false,
-        busy: false,
-        recorded: false,
-        lastRoundId: null,
-        feedbackSent: false,
-        feedbackTags: [],
-        feedbackNote: '',
-        session: { played: 0, recovered: 0 },
-        summary: null,
-        missedMode: false,
-        missedIndex: null,
-      },
       rootCandidates: null,
     };
     const $ = (id) => document.getElementById(id);
@@ -397,17 +379,6 @@
     }
     function escapeHtml(s) { return String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 
-    const { renderPuzzle } = createPuzzlePage({
-      getState: () => STATE,
-      api,
-      $,
-      escapeHtml,
-      toast,
-      ensureRules,
-      romanToFonoraScript,
-      speakNeural,
-    });
-
     function badge(state) {
       const labels = { draft: 'draft', needs_review: 'needs review', approved: 'approved', rejected: 'rejected', revised: 'revised', base: 'sound', compound: 'compound' };
       return `<span class="badge badge-${state}">${labels[state] ?? state}</span>`;
@@ -497,7 +468,6 @@
       else if (STATE.page === 'dictionary') renderDictionary();
       else if (STATE.page === 'grammar') renderGrammar();
       else if (STATE.page === 'translator') renderTranslator();
-      else if (STATE.page === 'puzzle') renderPuzzle();
       else if (STATE.page === 'health') renderHealth();
       else if (STATE.page === 'progress') renderProgress();
       applyWriteAccessUI();
@@ -721,7 +691,7 @@
       const footer = preferredPct != null || alts.length
         ? `<footer class="dict-alternates-panel__footer">
             ${preferredPct != null ? `<span class="dict-alt__pill dict-alt__pill--preferred">Preferred · ${preferredPct}%</span>` : ''}
-            <a class="dict-alternates-panel__cta" href="#puzzle">Try in Puzzle Conversation</a>
+            <a class="dict-alternates-panel__cta" href="/learn#puzzle">Try in Puzzle Conversation</a>
           </footer>`
         : '';
       return `<div class="dict-alternates-panel">
@@ -3398,7 +3368,7 @@
 
     /* ---------- nav ---------- */
     const MAIN_PAGES = new Set(['dictionary', 'translator']);
-    const ALL_PAGES = new Set(['home', 'dictionary', 'grammar', 'translator', 'puzzle', 'health', 'progress']);
+    const ALL_PAGES = new Set(['home', 'dictionary', 'grammar', 'translator', 'health', 'progress']);
 
     function confirmDangerAction({ title, message, typeToConfirm }) {
       if (!confirm(`${title}\n\n${message}\n\nAre you sure you want to continue?`)) return false;

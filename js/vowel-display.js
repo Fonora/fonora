@@ -6,10 +6,14 @@ export function getVowelEntries(rules) {
   return rules?.vowels || [];
 }
 
-/** Pedagogical tiers for Sound Grid: keyboard default → long → diphthong. */
+/**
+ * Pedagogical tiers for Sound Grid: simple → long → diphthong.
+ * Within each tier, list by vowel space (sound), not glyph column.
+ * Simple: front → open → back, with rounded `u` last. Diphthongs: same idea, `oy` last.
+ */
 export const SOUND_GRID_VOWEL_GROUP_ORDER = [
-  { id: 'simple', label: 'Simple', keys: ['a', 'e', 'i', 'o', 'u'] },
-  { id: 'long', label: 'Long', keys: ['ae', 'ee', 'oh'] },
+  { id: 'simple', label: 'Simple', keys: ['i', 'e', 'a', 'o', 'u'] },
+  { id: 'long', label: 'Long', keys: ['ee', 'ae', 'oh'] },
   { id: 'diphthong', label: 'Diphthong', keys: ['ay', 'eye', 'ow', 'oy'] },
 ];
 

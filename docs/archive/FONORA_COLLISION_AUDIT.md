@@ -1,6 +1,6 @@
 # Fonora Collision Audit
 
-Generated: 2026-07-03T19:11:49.279Z
+Generated: 2026-07-20T07:37:20.021Z
 Rules version: v3
 
 ## Executive summary
@@ -9,7 +9,7 @@ Rules version: v3
 - **Concatenation → single-key collisions:** 4
 - **Concatenation → sequence collisions:** 15
 - **Vowel-shaped sequences (registered diphthongs):** 4
-- **Vowel-shaped sequences (unregistered phantom diphthongs):** 28 (16 simple + 12 long)
+- **Vowel-shaped sequences (unregistered phantom diphthongs):** 28 (17 simple + 11 long)
 - **Greedy decoder hazards:** 20
 - **Word-level boundary issues:** 3 (none)
 - **v2 collision test scope:** 5 minimal-pair groups / 13 words, symbol distinctness only
@@ -20,8 +20,8 @@ The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-tr
 
 | key | type | IPA | symbols | source | status | notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| ? | grid |  | `⏌⊃` | sound grid (nasal+throat) | reserved | No attested glottal nasal. Reserved for  |
-| ? | grid | /ʕ/ | `ᵔ⊃` | sound grid (glide+throat) | reserved | Voiced pharyngeal approximant (research  |
+| ? | grid |  | `⏌⊃` | sound grid (nasal+throat) | reserved | No glottal nasal. Reserved for research. |
+| ? | grid | /ʕ/ | `ᵔ⊃` | sound grid (glide+throat) | reserved | Pharyngeal approximant. Research candida |
 | a | vowel | ʌ, ə, ɐ, a | `⚬∪` | vowel recipe | defined | CUP / schwa / open |
 | ae | vowel | æ | `⚬⌀` | vowel recipe | defined | TRAP |
 | ay | vowel | eɪ | `⚬⌓ᵔ∪` | vowel recipe | defined | FACE |
@@ -39,8 +39,8 @@ The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-tr
 | i | vowel | ɪ | `⚬∩` | vowel recipe | defined | KIT |
 | j | grid | /dʒ/ | `⌇⌓` | sound grid (voice+middle_tongue) | defined | Voiced middle tongue sound |
 | k | grid | /k/ | `∪` | sound grid (plain+back_tongue) | defined | Plain back tongue stop |
-| kh | grid | /χ/ | `⌀⊃` | sound grid (friction+throat) | defined | Voiceless uvular/pharyngeal-region frica |
-| l | grid | /l/ | `ᵔ∩` | sound grid (glide+front_tongue) | defined | Approximant front tongue sound (alveolar |
+| kh | grid | /χ/ | `⌀⊃` | sound grid (friction+throat) | defined | Voiceless uvular fricative |
+| l | grid | /l/ | `ᵔ∩` | sound grid (glide+front_tongue) | defined | Approximant front tongue sound |
 | m | grid | /m/ | `⏌∋` | sound grid (nasal+lips) | defined | Nasal lips sound |
 | n | grid | /n/ | `⏌∩` | sound grid (nasal+front_tongue) | defined | Nasal front tongue sound |
 | ñ | grid | /ɲ/ | `⏌⌓` | sound grid (nasal+middle_tongue) | defined | Nasal middle tongue sound |
@@ -48,7 +48,7 @@ The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-tr
 | o | vowel | ɑ, ɒ, ɔ, ɑː, ɔː | `⚬⊃` | vowel recipe | defined | LOT / THOUGHT |
 | oh | vowel | o, oː, oʊ, əʊ | `⚬⏌` | vowel recipe | defined | GOAT |
 | ow | vowel | aʊ | `⚬⊃ᵔ∋` | vowel recipe | defined | MOUTH |
-| oy | vowel | ɔɪ | `⚬∋ᵔ∪` | vowel recipe | defined | CHOICE |
+| oy | vowel | ɔɪ | `⚬⏌ᵔ∪` | vowel recipe | defined | CHOICE |
 | p | grid | /p/ | `∋` | sound grid (plain+lips) | defined | Plain lips stop |
 | r | grid | /r/ | `ᵔ⌓` | sound grid (glide+middle_tongue) | defined | Approximant middle tongue sound |
 | s | grid | /s/ | `⌀∩` | sound grid (friction+front_tongue) | defined | Friction front tongue sound |
@@ -58,8 +58,8 @@ The bar/boy/bor fix addressed **display labeling** and **boundary-aware round-tr
 | u | vowel | ʊ, u, uː, ʉ, ɯ | `⚬∋` | vowel recipe | defined | FOOT / GOOSE |
 | v | derived | /v/ | `∋⌇` | derived (reverse_lips_voice) | defined | Reversed lips+voice ordering |
 | w | grid | /w/ | `ᵔ∋` | sound grid (glide+lips) | defined | Approximant lips sound |
-| x | grid | /x/ | `⌀∪` | sound grid (friction+back_tongue) | defined | Voiceless velar fricative (German Bach,  |
-| y | grid | /j/ | `ᵔ∪` | sound grid (glide+back_tongue) | defined | Approximant back tongue sound (/j/ witho |
+| x | grid | /x/ | `⌀∪` | sound grid (friction+back_tongue) | defined | Voiceless velar fricative |
+| y | grid | /j/ | `ᵔ∪` | sound grid (glide+back_tongue) | defined | Approximant back tongue sound |
 | z | derived | /z/ | `⌀⌇` | derived (reverse_friction_voice) | defined | Voiced counterpart of /s/ |
 
 _Full inventory: 71 rows (including 30 IPA map entries)._
@@ -72,7 +72,7 @@ No two distinct encodable phoneme keys share the exact same symbol string.
 
 | sequence A | sequence B | symbols | type | example risk | recommendation |
 | --- | --- | --- | --- | --- | --- |
-| u + y | oy | `⚬∋ᵔ∪` | sequence-equals-single | uy may encode as oy diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
+| oh + y | oy | `⚬⏌ᵔ∪` | sequence-equals-single | ohy may encode as oy diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
 | o + y | eye | `⚬⊃ᵔ∪` | sequence-equals-single | oy may encode as eye diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
 | o + w | ow | `⚬⊃ᵔ∋` | sequence-equals-single | ow may encode as ow diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
 | e + y | ay | `⚬⌓ᵔ∪` | sequence-equals-single | ey may encode as ay diphthong/composite | Known vowel+glide vs diphthong collision, requires symbol boundaries or recipe change (documented in language-rules homograph note) |
@@ -105,7 +105,7 @@ See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phanto
 | e + y | `⚬⌓ᵔ∪` | ay | intentional vowel+glide homograph |
 | o + w | `⚬⊃ᵔ∋` | ow | intentional vowel+glide homograph |
 | o + y | `⚬⊃ᵔ∪` | eye | intentional vowel+glide homograph |
-| u + y | `⚬∋ᵔ∪` | oy | intentional vowel+glide homograph |
+| oh + y | `⚬⏌ᵔ∪` | oy | intentional vowel+glide homograph |
 
 ### Category B/C — unregistered (phantom diphthong shape)
 
@@ -127,6 +127,7 @@ See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phanto
 | simple | u + w | `⚬∋ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
 | simple | u + l | `⚬∋ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
 | simple | u + r | `⚬∋ᵔ⌓` | diphthong | Centring-diphthong candidate: u + r (ʊə, CURE) |
+| simple | u + y | `⚬∋ᵔ∪` | diphthong | decodes as vowel + glide; not a vowel inventory key |
 | long | ae + w | `⚬⌀ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
 | long | ae + l | `⚬⌀ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
 | long | ae + r | `⚬⌀ᵔ⌓` | diphthong | decodes as vowel + glide; not a vowel inventory key |
@@ -138,7 +139,6 @@ See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phanto
 | long | oh + w | `⚬⏌ᵔ∋` | diphthong | decodes as vowel + glide; not a vowel inventory key |
 | long | oh + l | `⚬⏌ᵔ∩` | diphthong | decodes as vowel + glide; not a vowel inventory key |
 | long | oh + r | `⚬⏌ᵔ⌓` | diphthong | Phantom diphthong: oh + r (*core*, *bor*) |
-| long | oh + y | `⚬⏌ᵔ∪` | diphthong | decodes as vowel + glide; not a vowel inventory key |
 
 ## 5. Greedy decoder hazards
 
@@ -146,7 +146,7 @@ See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phanto
 
 | symbols | expected keys | greedy keys | spaced keys | spacing fixes? | notes |
 | --- | --- | --- | --- | --- | --- |
-| `⚬∋ᵔ∪` | u y | oy | u y | yes | phoneme keys [u y] |
+| `⚬⏌ᵔ∪` | oh y | oy | oh y | yes | phoneme keys [oh y] |
 | `∩⌀⌓` | t sh | th ch | t sh | yes | phoneme keys [t sh] |
 | `∩⌀⊃` | t kh | th h | t kh | yes | phoneme keys [t kh] |
 | `∩⌇⊃` | t gh | dh h | t gh | yes | phoneme keys [t gh] |
@@ -180,17 +180,17 @@ See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phanto
 | word | IPA | phoneme keys | symbols | recovered keys | unspaced | issues |
 | --- | --- | --- | --- | --- | --- | --- |
 | bar | bˈɑːɹ | a o r | `⚬∪⚬⊃ᵔ⌓` | a o r | a o r | - |
-| boy | bˈɔɪ | a oy | `⚬∪⚬∋ᵔ∪` | a oy | a oy | - |
+| boy | bˈɔɪ | a oy | `⚬∪⚬⏌ᵔ∪` | a oy | a oy | - |
 | bor | bˈoːɹ | a oh r | `⚬∪⚬⏌ᵔ⌓` | a oh r | a oh r | - |
 | car | kˈɑːɹ | a o r | `⚬∪⚬⊃ᵔ⌓` | a o r | a o r | - |
 | core | kˈoːɹ | a oh r | `⚬∪⚬⏌ᵔ⌓` | a oh r | a oh r | - |
-| coy | kˈɔɪ | a oy | `⚬∪⚬∋ᵔ∪` | a oy | a oy | - |
+| coy | kˈɔɪ | a oy | `⚬∪⚬⏌ᵔ∪` | a oy | a oy | - |
 | far | fˈɑːɹ | a o r | `⚬∪⚬⊃ᵔ⌓` | a o r | a o r | - |
-| foy | fˈɔɪ | a oy | `⚬∪⚬∋ᵔ∪` | a oy | a oy | - |
+| foy | fˈɔɪ | a oy | `⚬∪⚬⏌ᵔ∪` | a oy | a oy | - |
 | for | fˈɔːɹ | a o r | `⚬∪⚬⊃ᵔ⌓` | a o r | a o r | - |
 | saw | sˈɔː | a o | `⚬∪⚬⊃` | a o | a o | - |
 | soar | sˈoːɹ | a oh r | `⚬∪⚬⏌ᵔ⌓` | a oh r | a oh r | - |
-| soy | sˈɔɪ | a oy | `⚬∪⚬∋ᵔ∪` | a oy | a oy | - |
+| soy | sˈɔɪ | a oy | `⚬∪⚬⏌ᵔ∪` | a oy | a oy | - |
 | hat | hˈæt | a ae a | `⚬∪⚬⌀⚬∪` | a ae a | a ae a | - |
 | hot | hˈɑːt | a o a | `⚬∪⚬⊃⚬∪` | a o a | a o a | - |
 | hut | hˈʌt | a a a | `⚬∪⚬∪⚬∪` | a a a | a a a | - |

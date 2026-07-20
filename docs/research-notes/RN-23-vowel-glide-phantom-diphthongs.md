@@ -29,7 +29,7 @@ The question this note addresses:
 | --- | --- | --- |
 | Simple vowel | `⚬` + place | `a` ⚬∪, `e` ⚬⌓, `i` ⚬∩, `o` ⚬⊃, `u` ⚬∋ |
 | Long vowel | `⚬` + manner | `ae` ⚬⌀, `ee` ⚬⌇, `oh` ⚬⏌ |
-| Diphthong | `⚬XᵔY` (single key) | `ay` ⚬⌓ᵔ∪, `eye` ⚬⊃ᵔ∪, `ow` ⚬⊃ᵔ∋, `oy` ⚬∋ᵔ∪ |
+| Diphthong | `⚬XᵔY` (single key) | `ay` ⚬⌓ᵔ∪, `eye` ⚬⊃ᵔ∪, `ow` ⚬⊃ᵔ∋, `oy` ⚬⏌ᵔ∪ (`oh` + `y`) |
 | Glide consonant | `ᵔ` + place (no ⚬) | `w` ᵔ∋, `l` ᵔ∩, `r` ᵔ⌓, `y` ᵔ∪ |
 
 Glide place alignment matches the consonant grid: lips → back → middle → front for w, y, r, l respectively.
@@ -53,24 +53,24 @@ Unit test in [`js/tests-core.js`](../js/tests-core.js): 32 total shapes, 4 regis
 | **e** ⚬⌓ | ⚬⌓ᵔ∋ | ⚬⌓ᵔ∩ | ⚬⌓ᵔ⌓ | **⚬⌓ᵔ∪ = `ay`** |
 | **i** ⚬∩ | ⚬∩ᵔ∋ | ⚬∩ᵔ∩ | ⚬∩ᵔ⌓ | ⚬∩ᵔ∪ |
 | **o** ⚬⊃ | **⚬⊃ᵔ∋ = `ow`** | ⚬⊃ᵔ∩ | ⚬⊃ᵔ⌓ | **⚬⊃ᵔ∪ = `eye`** |
-| **u** ⚬∋ | ⚬∋ᵔ∋ | ⚬∋ᵔ∩ | ⚬∋ᵔ⌓ | **⚬∋ᵔ∪ = `oy`** |
+| **u** ⚬∋ | ⚬∋ᵔ∋ | ⚬∋ᵔ∩ | ⚬∋ᵔ⌓ | ⚬∋ᵔ∪ |
 
-### Long-vowel + glide matrix (3 × 4 = 12, all unregistered)
+### Long-vowel + glide matrix (3 × 4 = 12)
 
 | Nucleus | + w | + l | + r | + y |
 | --- | --- | --- | --- | --- |
 | **ae** ⚬⌀ | ⚬⌀ᵔ∋ | ⚬⌀ᵔ∩ | ⚬⌀ᵔ⌓ | ⚬⌀ᵔ∪ |
 | **ee** ⚬⌇ | ⚬⌇ᵔ∋ | ⚬⌇ᵔ∩ | ⚬⌇ᵔ⌓ | ⚬⌇ᵔ∪ |
-| **oh** ⚬⏌ | ⚬⏌ᵔ∋ | ⚬⏌ᵔ∩ | **⚬⏌ᵔ⌓** | ⚬⏌ᵔ∪ |
+| **oh** ⚬⏌ | ⚬⏌ᵔ∋ | ⚬⏌ᵔ∩ | **⚬⏌ᵔ⌓** | **⚬⏌ᵔ∪ = `oy`** |
 
 ## Evaluation
 
-**Automated audit (Jul 3, 2026):**
+**Automated audit (updated when `oy` remapped to `oh` + `y`):**
 
 - Exact symbol collisions: **0**
 - Category A (registered diphthong = decomposed sequence): **4**
-- Category B (simple unregistered): **16**
-- Category C (long unregistered): **12**
+- Category B (simple unregistered): **17**
+- Category C (long unregistered): **11**
 - Greedy decoder mis-recovery on Category A only (spacing fixes decode); Category B/C decode correctly as two phonemes because no single key matches
 
 **Manual spot-check:**
@@ -81,7 +81,7 @@ Unit test in [`js/tests-core.js`](../js/tests-core.js): 32 total shapes, 4 regis
 | *say* | `ay` | ⚬⌓ᵔ∪ | Yes — equals `e + y` |
 | *car* | `a o r` | ⚬⊃ᵔ⌓ in nucleus | No — phantom diphthong |
 | *core* | `a oh r` | ⚬⏌ᵔ⌓ | No — phantom diphthong |
-| *boy* | `a oy` | ⚬∋ᵔ∪ | Yes — equals `u + y` |
+| *boy* | `a oy` | ⚬⏌ᵔ∪ | Yes — equals `oh + y` |
 
 ## Findings
 
@@ -94,7 +94,7 @@ These are **features** of the mouth-intuitive design after RN-22: the diphthong 
 | `e + y` | `ay` | eɪ | say |
 | `o + y` | `eye` | aɪ | pie |
 | `o + w` | `ow` | aʊ | now |
-| `u + y` | `oy` | ɔɪ | boy |
+| `oh + y` | `oy` | ɔɪ | boy |
 
 Greedy decode on unsegmented text recovers the diphthong key, not the decomposed sequence. Pipeline spacing mitigates round-trip; visual homography in contiguous script remains.
 
@@ -128,7 +128,7 @@ Promoting ⚬⊃ᵔ⌓ or ⚬∪ᵔ⌓ to vowel keys would unify rhotic nuclei v
 
 **Tier 3 — not monophthong splits:**
 
-Collapsed families under `u` (ʊ, u, uː, ʉ, ɯ), `o` (LOT/THOUGHT/PALM), and `a` (STRUT/schwa/NURSE) require **new `⚬X` simple or long keys**, not vowel+glide composites. All five place slots and three manner long slots are occupied in [`docs/language-rules.md`](../docs/language-rules.md). No unregistered `⚬XᵔY` cleanly separates FOOT from GOOSE — e.g. ⚬∋ᵔ∪ is **`oy`**, not a GOOSE variant.
+Collapsed families under `u` (ʊ, u, uː, ʉ, ɯ), `o` (LOT/THOUGHT/PALM), and `a` (STRUT/schwa/NURSE) require **new `⚬X` simple or long keys**, not vowel+glide composites. All five place slots and three manner long slots are occupied in [`docs/language-rules.md`](../docs/language-rules.md). No unregistered `⚬XᵔY` cleanly separates FOOT from GOOSE — e.g. ⚬∋ᵔ∪ is a free `u + y` phantom shape, not a GOOSE variant (`oy` is now `oh + y` → ⚬⏌ᵔ∪).
 
 **RN-22 intuition confirmed:** The `e + y` → `ay` case is pedagogically coherent (DRESS nucleus ⌓ + y-glide to ∪ reads as FACE). Phantom diphthongs like *all* (⚬⊃ᵔ∩) show the same compositional logic applied to coda /l/, which is why they **look** like vowels without **being** vowel phonemes in the current model.
 
@@ -139,9 +139,9 @@ Summary from `npm run audit:collisions` (Jul 3, 2026, v3 rules):
 | Metric | Count | Notes |
 | --- | ---: | --- |
 | Exact symbol collisions | **0** | No two distinct phoneme keys share one string |
-| Category A — registered diphthong = decomposed sequence | **4** | `e+y`↔`ay`, `o+w`↔`ow`, `o+y`↔`eye`, `u+y`↔`oy` |
-| Category B — simple unregistered phantom diphthongs | **16** | e.g. `o+l` → ⚬⊃ᵔ∩ (*all*) |
-| Category C — long unregistered phantom diphthongs | **12** | e.g. `oh+r` → ⚬⏌ᵔ⌓ (*core*) |
+| Category A — registered diphthong = decomposed sequence | **4** | `e+y`↔`ay`, `o+w`↔`ow`, `o+y`↔`eye`, `oh+y`↔`oy` |
+| Category B — simple unregistered phantom diphthongs | **17** | e.g. `o+l` → ⚬⊃ᵔ∩ (*all*); `u+y` freed when `oy` moved to `oh+y` |
+| Category C — long unregistered phantom diphthongs | **11** | e.g. `oh+r` → ⚬⏌ᵔ⌓ (*core*) |
 | **Total vowel-shaped `⚬XᵔY` forms scanned** | **32** | 5×4 simple + 3×4 long |
 | Greedy decoder hazards (2-phoneme sequences) | **20** | 4 vowel+glide + 16 derived-order |
 | Concatenation → sequence collisions | **15** | Mostly th/dh/v reverse orderings (RN-06) |

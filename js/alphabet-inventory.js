@@ -1,6 +1,14 @@
 import { escapeHtml } from './utils.js';
 import { buildPhonemeInventory } from './rules.js';
 
+const ORDER_STORAGE_KEY = 'fonora.alphabet-inventory-order';
+
+/** @returns {'articulatory' | 'alphabetical'} */
+export function getAlphabetInventoryOrder() {
+  const stored = localStorage.getItem(ORDER_STORAGE_KEY);
+  return stored === 'alphabetical' ? 'alphabetical' : 'articulatory';
+}
+
 function renderInventoryRows(rows) {
   return rows
     .map(
@@ -18,8 +26,9 @@ function renderInventoryRows(rows) {
 /**
  * Populate the read-only Alphabet inventory tables from the active rules.
  * @param {object} rules
+ * @param {{ order?: 'articulatory' | 'alphabetical' }} [options]
  */
-export function renderAlphabetInventory(rules) {
+export function renderAlphabetInventory(rules, options = {}) {
   const consonantsBody = document.getElementById('alphabet-inventory-consonants');
   const derivedBody = document.getElementById('alphabet-inventory-derived');
   const vowelsBody = document.getElementById('alphabet-inventory-vowels');
@@ -27,7 +36,8 @@ export function renderAlphabetInventory(rules) {
   const reservedSection = document.getElementById('alphabet-inventory-reserved-section');
   if (!consonantsBody && !derivedBody && !vowelsBody) return;
 
-  const { consonants, derived, vowels, reserved } = buildPhonemeInventory(rules);
+  const order = options.order || getAlphabetInventoryOrder();
+  const { consonants, derived, vowels, reserved } = buildPhonemeInventory(rules, { order });
   if (consonantsBody) consonantsBody.innerHTML = renderInventoryRows(consonants);
   if (derivedBody) derivedBody.innerHTML = renderInventoryRows(derived);
   if (vowelsBody) vowelsBody.innerHTML = renderInventoryRows(vowels);
@@ -41,4 +51,21 @@ export function renderAlphabetInventory(rules) {
       reservedBody.innerHTML = '';
     }
   }
+}
+
+/** Wire the Alphabet sort toggle and persist the user's choice. */
+export function setupAlphabetInventoryOrderToggle(rules) {
+  const group = document.getElementById('alphabet-inventory-order');
+  if (!group) return;
+
+  const order = getAlphabetInventoryOrder();
+  const selected = group.querySelector(`input[value="${order}"]`);
+  if (selected) selected.checked = true;
+
+  group.addEventListener('change', (event) => {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement) || input.name !== 'alphabet-inventory-order') return;
+    localStorage.setItem(ORDER_STORAGE_KEY, input.value);
+    renderAlphabetInventory(rules, { order: input.value });
+  });
 }

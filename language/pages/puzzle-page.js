@@ -414,7 +414,7 @@ export function createPuzzlePage(deps) {
     if (p.revealed && c?.parts?.length) {
       wireBreakdownHear(host.querySelector('.puzzle-reveal'), c.parts);
     }
-    if (!c && !p.busy && STATE.lab) {
+    if (!c && !p.busy) {
       void loadPuzzleChallenge();
     }
   }

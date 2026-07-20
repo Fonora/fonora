@@ -29,7 +29,7 @@
   <script src="/js/nav-boot.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Charis+SIL:ital,wght@0,400;0,700;1,400&family=Noto+Sans+Symbols&family=Noto+Sans+Symbols+2&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/app.css">
   <link rel="stylesheet" href="/language/fonoran.css">
   <link rel="prefetch" href="/language">
@@ -93,6 +93,7 @@
           <button type="button" class="tab-btn" data-learn-hub="hub">About</button>
           <button type="button" class="tab-btn" data-learn-hub="script">Read &amp; Write</button>
           <button type="button" class="tab-btn" data-learn-hub="fonoran">Speak</button>
+          <button type="button" class="tab-btn" data-learn-tab="puzzle">Puzzle</button>
           <button type="button" class="tab-btn" data-learn-hub="progress">Progress</button>
         </div>
       </nav>
@@ -1281,7 +1282,7 @@
     <!-- Sound Grid -->
     <section class="panel tab-panel" id="tab-grid" data-tab-panel="grid" hidden>
       <h2>Sound Grid</h2>
-      <p class="section-desc">Five places of articulation × four manners. The vowel indicator <span class="symbol-text">⚬</span> (keyboard 0) is documented under Modifiers and used in the vowel table, not in this grid.</p>
+      <p class="section-desc">Five places of articulation × four manners. The vowel indicator <span class="symbol-text">⚬</span> is documented under Modifiers and used in the vowel table, not in this grid.</p>
       <textarea id="symbol-input" class="symbol-text symbol-input" hidden aria-hidden="true" tabindex="-1"></textarea>
       <div class="table-wrap table-wrap--scroll">
         <table class="sound-grid" id="sound-grid">
@@ -1291,8 +1292,8 @@
       </div>
 
       <div id="derived-sounds-section">
-        <h3>Derived / Reserved Sounds</h3>
-        <p class="section-desc">Reversed-order and modifier-pair sounds defined outside the main grid. Status: <strong>defined</strong>, <strong>experimental</strong>, or <strong>reserved</strong>.</p>
+        <h3>Derived Sounds</h3>
+        <p class="section-desc">Reversed-order and modifier-pair sounds from the Sound Grid above. Same place and manner symbols, written in a different order, so sounds like <strong>th</strong>, <strong>dh</strong>, <strong>v</strong>, and <strong>z</strong> can be written.</p>
         <div class="table-wrap">
           <table class="data-table" id="derived-sounds-table">
             <thead>
@@ -1495,6 +1496,19 @@
         Sound-to-symbol reference for consonants, derived sounds, and vowels. Grid consonants match the
         <button type="button" class="link-btn" data-tab="grid">Sound Grid</button>; reserved throat slots have no encoder key yet.
       </p>
+
+      <div class="alphabet-inventory-toolbar">
+        <div id="alphabet-inventory-order" class="learn-mode-group" role="radiogroup" aria-label="Alphabet sort order">
+          <label class="learn-mode-pill" title="Sound Grid order (place × manner)">
+            <input type="radio" name="alphabet-inventory-order" value="articulatory" checked>
+            <span>Articulatory</span>
+          </label>
+          <label class="learn-mode-pill" title="A–Z by phoneme key">
+            <input type="radio" name="alphabet-inventory-order" value="alphabetical">
+            <span>Alphabetical</span>
+          </label>
+        </div>
+      </div>
 
       <div class="alphabet-inventory-group">
         <h4 class="examples-heading">Consonants</h4>
@@ -1825,7 +1839,14 @@
         <div id="fonoran-speaking-feedback" class="learn-exercise__feedback quiz-feedback"></div>
       </div>
     </section>
+
+    <!-- Puzzle Conversation -->
+    <section class="tab-panel" id="tab-puzzle" data-tab-panel="puzzle" hidden>
+      <div id="puzzle-body"></div>
+    </section>
   </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
   <div id="translate-keyboard-dock" class="fonora-keyboard-dock" hidden>
     <div class="fonora-keyboard-dock__bar">

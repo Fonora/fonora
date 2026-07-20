@@ -1,4 +1,5 @@
 import { getEncodableEntries, getQuizEntries, getVowelPhonemeKeys, vowelSymbolForKey, buildPhonemeInventory, findGridCell, reverseLookup } from './rules.js';
+import { getSoundGridVowelGroups } from './vowel-display.js';
 import { encodeSounds } from './encode.js';
 import { decodeSymbols, decodeText, decodeToPhonemeKeys, normalizeSymbolInput } from './decode.js';
 import { normalizeIpa, registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules, findConsonantMapSyncIssues, buildConsonantMapFromRules } from './ipa-normalize.js';
@@ -165,6 +166,34 @@ export function runTests(options) {
     assert(/pharyngeal approximant/i.test(approxReserved.notes));
   });
 
+  t('phoneme inventory articulatory order follows sound grid', () => {
+    const inventory = buildPhonemeInventory(rules, { order: 'articulatory' });
+    const gridKeys = rules.soundGrid
+      .filter((c) => c.status === 'defined' && c.modifierId && c.placeId)
+      .map((c) => c.sound);
+    assert(
+      inventory.consonants.map((r) => r.key).join(',') === gridKeys.join(','),
+      'consonants should match defined sound grid row order',
+    );
+    assert(inventory.consonants[0]?.key === 'p', 'articulatory order starts with plain lips');
+  });
+
+  t('phoneme inventory alphabetical order sorts keys A–Z', () => {
+    const inventory = buildPhonemeInventory(rules, { order: 'alphabetical' });
+    const keys = inventory.consonants.map((r) => r.key);
+    const sorted = [...keys].sort((a, b) => a.localeCompare(b));
+    assert(keys.join(',') === sorted.join(','), 'consonants should be sorted A–Z');
+    assert(keys[0] === 'b', 'alphabetical order should not put digraphs first');
+  });
+
+  t('sound grid vowels keep tiers and list by vowel space', () => {
+    const groups = getSoundGridVowelGroups(rules);
+    assert(groups.map((g) => g.id).join(',') === 'simple,long,diphthong');
+    assert(groups[0].entries.map((v) => v.key).join(',') === 'i,e,a,o,u');
+    assert(groups[1].entries.map((v) => v.key).join(',') === 'ee,ae,oh');
+    assert(groups[2].entries.map((v) => v.key).join(',') === 'ay,eye,ow,oy');
+  });
+
   t('core vowels composed from recipes', () => {
     assert(registry.vowels.ee === `${vowelMarker}${voice}`);
     assert(registry.vowels.i === `${vowelMarker}${front}`);
@@ -179,9 +208,10 @@ export function runTests(options) {
   t('composite vowels composed from recipes', () => {
     assert(registry.vowels.eye === `${vowelMarker}${throat}${glide}${back}`);
     assert(registry.vowels.ow === `${vowelMarker}${throat}${glide}${lips}`);
-    assert(registry.vowels.oy === `${vowelMarker}${lips}${glide}${back}`);
+    assert(registry.vowels.oy === `${vowelMarker}${nasal}${glide}${back}`);
     assert(registry.vowels.ay === `${vowelMarker}${middle}${glide}${back}`);
     assert(registry.vowels.eye !== registry.vowels.oy);
+    assert(registry.vowels.oy === registry.vowels.oh + enc('y', rules).symbols);
     assert(registry.vowels.oy !== `${vowelMarker}${back}${glide}${middle}`);
   });
 
@@ -445,12 +475,15 @@ export function runTests(options) {
     assert(rows.length === 32);
     assert(rows.filter((r) => r.category === 'registered-diphthong').length === 4);
     assert(rows.filter((r) => r.category === 'unregistered').length === 28);
-    assert(rows.filter((r) => r.tier === 'simple' && r.category === 'unregistered').length === 16);
-    assert(rows.filter((r) => r.tier === 'long' && r.category === 'unregistered').length === 12);
+    assert(rows.filter((r) => r.tier === 'simple' && r.category === 'unregistered').length === 17);
+    assert(rows.filter((r) => r.tier === 'long' && r.category === 'unregistered').length === 11);
     assert(rows.every((r) => r.grammarOk));
     const allLike = rows.find((r) => r.symbols === vowelSym(rules, 'o') + enc('l', rules).symbols);
     assert(allLike?.sequence === 'o + l');
     assert(allLike?.category === 'unregistered');
+    const oyLike = rows.find((r) => r.sequence === 'oh + y');
+    assert(oyLike?.category === 'registered-diphthong');
+    assert(oyLike?.registeredVowelKey === 'oy');
   });
 
   t('IPA normalization maps TRAP vowel to ae phoneme', () => {

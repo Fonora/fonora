@@ -19,7 +19,7 @@
   if (!learnRouting) {
     throw new Error('learn-routing-data.js must load before nav-boot.js');
   }
-  const LEARN_TABS = new Set(learnRouting.LEARN_SKILL_IDS);
+  const LEARN_TABS = new Set(learnRouting.LEARN_TAB_IDS);
   const LEGACY_LEARN_HASH = learnRouting.LEGACY_LEARN_HASH;
   const LEARN_DEFAULT_TAB = learnRouting.LEARN_DEFAULT_TAB;
 
@@ -43,7 +43,6 @@
     'translator',
     'dictionary',
     'grammar',
-    'puzzle',
     'health',
     'gaps',
     'progress',
@@ -68,6 +67,11 @@
 
   if (path === '/language' || path.startsWith('/language/')) {
     const page = hash.split('?')[0];
+    if (page === 'puzzle') {
+      const query = hash.includes('?') ? hash.slice(hash.indexOf('?')) : '';
+      window.location.replace(`/learn#puzzle${query}${window.location.search}`);
+      return;
+    }
     if (page === 'advanced') {
       window.location.replace(`/tools#advanced${window.location.search}`);
       return;
@@ -113,14 +117,15 @@
 
   if (path === '/learn' || path.startsWith('/learn/')) {
     const LEARN_TO_TOOLS = learnRouting.LEARN_TO_TOOLS_REDIRECT;
-    if (hash && LEARN_TO_TOOLS[hash]) {
-      window.location.replace(`/tools#${LEARN_TO_TOOLS[hash]}${window.location.search}`);
+    const hashPage = hash.split('?')[0];
+    if (hash && LEARN_TO_TOOLS[hashPage]) {
+      window.location.replace(`/tools#${LEARN_TO_TOOLS[hashPage]}${window.location.search}`);
       return;
     }
     let tab = LEARN_DEFAULT_TAB;
-    if (hash && hash === LEARN_DEFAULT_TAB) tab = LEARN_DEFAULT_TAB;
-    else if (hash && LEARN_TABS.has(hash)) tab = hash;
-    else if (hash && LEGACY_LEARN_HASH[hash] && !LEARN_TO_TOOLS[hash]) tab = LEGACY_LEARN_HASH[hash];
+    if (hashPage && hashPage === LEARN_DEFAULT_TAB) tab = LEARN_DEFAULT_TAB;
+    else if (hashPage && LEARN_TABS.has(hashPage)) tab = hashPage;
+    else if (hashPage && LEGACY_LEARN_HASH[hashPage] && !LEARN_TO_TOOLS[hashPage]) tab = LEGACY_LEARN_HASH[hashPage];
     html.setAttribute('data-fonora-nav', 'learn');
     html.setAttribute('data-fonora-tab', tab);
     if (learnRouting.learnTrackForTab) {

@@ -117,8 +117,11 @@ function phonemeInventoryRow(cell, category, options = {}) {
   };
 }
 
+/** @typedef {'articulatory' | 'alphabetical'} AlphabetInventoryOrder */
+
 /** Grouped phoneme inventory for the Alphabet tab (consonants, derived, vowels, reserved). */
-export function buildPhonemeInventory(r) {
+export function buildPhonemeInventory(r, options = {}) {
+  const order = options.order === 'alphabetical' ? 'alphabetical' : 'articulatory';
   const encodable = getEncodableEntries(r).filter((c) => c.sound && c.sound !== '?');
 
   const consonants = [];
@@ -134,20 +137,38 @@ export function buildPhonemeInventory(r) {
 
   for (const cell of encodable) {
     if (cell.modifierId && cell.placeId) {
-      consonants.push(phonemeInventoryRow(cell, 'consonant'));
+      if (order === 'alphabetical') {
+        consonants.push(phonemeInventoryRow(cell, 'consonant'));
+      }
     } else if (cell.composition) {
-      derived.push(phonemeInventoryRow(cell, 'derived'));
+      if (order === 'alphabetical') {
+        derived.push(phonemeInventoryRow(cell, 'derived'));
+      }
     } else {
       vowelCells.push(cell);
     }
   }
 
-  consonants.sort((a, b) => {
-    if (b.key.length !== a.key.length) return b.key.length - a.key.length;
-    return a.key.localeCompare(b.key);
-  });
-
-  derived.sort((a, b) => a.key.localeCompare(b.key));
+  if (order === 'articulatory') {
+    for (const cell of r.soundGrid || []) {
+      if (cell.status === 'defined' && cell.modifierId && cell.placeId) {
+        consonants.push(phonemeInventoryRow(cell, 'consonant'));
+      }
+    }
+    for (const cell of r.derivedSounds || []) {
+      if (cell.status === 'defined') {
+        derived.push(phonemeInventoryRow(cell, 'derived'));
+      }
+    }
+    for (const cell of r.experimentalDerivedSounds || []) {
+      if (cell.status === 'experimental') {
+        derived.push(phonemeInventoryRow(cell, 'derived'));
+      }
+    }
+  } else {
+    consonants.sort((a, b) => a.key.localeCompare(b.key));
+    derived.sort((a, b) => a.key.localeCompare(b.key));
+  }
 
   const vowelOrder = getVowelEntries(r).map((v) => v.key || v.vowel || v.sound || '');
   const vowelByKey = new Map(
@@ -156,15 +177,20 @@ export function buildPhonemeInventory(r) {
       return [key, phonemeInventoryRow(cell, 'vowel')];
     }),
   );
-  const vowels = vowelOrder.filter((k) => vowelByKey.has(k)).map((k) => vowelByKey.get(k));
+  let vowels = vowelOrder.filter((k) => vowelByKey.has(k)).map((k) => vowelByKey.get(k));
   for (const cell of vowelCells) {
     const key = cell.sound || cell.key || '';
     if (!vowelOrder.includes(key)) {
       vowels.push(phonemeInventoryRow(cell, 'vowel'));
     }
   }
+  if (order === 'alphabetical') {
+    vowels = [...vowels].sort((a, b) => a.key.localeCompare(b.key));
+  }
 
-  reserved.sort((a, b) => a.symbols.localeCompare(b.symbols));
+  if (order === 'alphabetical') {
+    reserved.sort((a, b) => a.symbols.localeCompare(b.symbols));
+  }
 
   return { consonants, derived, vowels, reserved };
 }
