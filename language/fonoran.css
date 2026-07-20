@@ -2750,6 +2750,24 @@
       text-underline-offset:0.15em;
     }
     .translator-token__gloss { font-size:0.8rem; color:var(--muted); font-style:italic; }
+    .translator-token--droppable .translator-token__fonoran {
+      border-bottom: 1.5px dashed color-mix(in srgb, var(--muted) 70%, transparent);
+    }
+    .translator-token__droppable {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px dashed color-mix(in srgb, var(--muted) 55%, transparent);
+      border-radius: 3px;
+      padding: 0.05rem 0.35rem;
+      margin-left: 0.15rem;
+    }
+    .translator-roman--droppable {
+      border-bottom: 1.5px dashed color-mix(in srgb, var(--muted) 70%, transparent);
+      cursor: help;
+    }
     .translator-token__interp {
       display:block;
       font-size:0.78rem;

@@ -4,6 +4,7 @@
  */
 import { translateFromFrame } from './fonoran-translator.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
+import { isAddresseeDroppable } from './fonoran-llm-grammar-brief.js';
 
 /** English surface cues that justify mi + addressee instead of collective for "we". */
 const DYADIC_WE_CUES = /\b(each other|one another|you and i|you and me|both of us|the two of us|we two|together we|we together|just us|you and i both)\b/i;
@@ -111,6 +112,44 @@ export async function buildWeAlternate(primaryResult, frame, options = {}) {
   };
 }
 
+/**
+ * Casual reading: omit recoverable addressee Actor (Rule 4).
+ * Primary keeps `be`; this alternate shows `sak gi yetem ?` style.
+ */
+export async function buildDroppedActorAlternate(primaryResult, frame, options = {}) {
+  if (!isAddresseeDroppable(frame, options.input, options)) return null;
+  if (!primaryResult?.tokens?.some(t => t.droppable)) return null;
+
+  const altFrame = {
+    ...frame,
+    slots: {
+      ...frame.slots,
+      subject: [],
+    },
+  };
+
+  const altResult = await translateFromFrame(altFrame, {
+    lab: options.lab,
+    input: options.input,
+    sourceLang: options.sourceLang,
+    allowActorDrop: false,
+  });
+
+  const primaryRoman = primaryResult?.surface?.roman?.replace(/\s*\?\s*$/, '').trim();
+  const altRoman = altResult?.surface?.roman?.replace(/\s*\?\s*$/, '').trim();
+  if (!altRoman || altRoman === primaryRoman) return null;
+
+  return {
+    id: 'actor_dropped',
+    note: 'Casual: addressee dropped (same meaning).',
+    roman: altResult.surface?.roman ?? '',
+    surface: altResult.surface,
+    playback: altResult.playback,
+    tokens: altResult.tokens,
+    frame: altFrame,
+  };
+}
+
 /** Attach rule-based alternates to a translator result. */
 export async function attachTranslateAlternates(result, frame, options = {}) {
   if (!result || result.error) return result;
@@ -118,6 +157,9 @@ export async function attachTranslateAlternates(result, frame, options = {}) {
   const alternates = [];
   const weAlt = await buildWeAlternate(result, frame, options);
   if (weAlt) alternates.push(weAlt);
+
+  const dropAlt = await buildDroppedActorAlternate(result, frame, options);
+  if (dropAlt) alternates.push(dropAlt);
 
   if (alternates.length) {
     result.alternates = alternates;

@@ -77,9 +77,10 @@ flowchart LR
     N1["normalizeWePrimaryFrame()"]
     N2["stripExistentialThereFromFrame()"]
     N3["normalizeFrameParticles()"]
+    N4["simplifyMotionFrame() — serial want+move, bare destinations"]
     G["checkLlmGrammarViolations()"]
     L["repairFromLegacySlots() on WH misuse / removed particles"]
-    F --> N1 --> N2 --> N3 --> G
+    F --> N1 --> N2 --> N3 --> N4 --> G
     G -->|violations| L
   end
 
@@ -97,7 +98,7 @@ flowchart LR
     TOK["tokens + resolution_kind"]
     SUR["surface (roman, script, pronunciation)"]
     PBK["playback (script, segments, wordSources)"]
-    ALT["alternates (rule-based we readings)"]
+    ALT["alternates (we readings + casual Actor-drop)"]
     ST --> TOK
     BS --> SUR
     PB --> PBK
@@ -201,7 +202,8 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | --- | --- |
 | `surface.roman` | Fonoran roman line |
 | `surface.pronunciation` | `{ sayLine, englishLine }` for UI + TTS hints |
-| `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id` |
+| `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id`; `droppable` when addressee Actor may be omitted casually |
+| `actor_droppable` | True when primary includes a recoverable addressee that may drop in casual speech |
 | `playback` | `{ script, segments, wordSources, tokenIndices, playable }` |
 | `reasoning` | One-sentence compiler note (shown in “Why this reading”) |
 | `simplified` | Plain-meaning pivot `{ clauses[], text, note }` when the pre-pass ran (shown as “Plain meaning”) |

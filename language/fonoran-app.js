@@ -2526,6 +2526,9 @@
       if (kinds.has('loan')) items.push('<span class="translator-resolved--loan">«loan»</span> phonetic borrow');
       if (kinds.has('interpreted')) items.push('<span class="translator-resolved--interpreted">interpreted</span>');
       if (kinds.has('unknown')) items.push('<span class="translator-unresolved-sample">gap</span>');
+      if ((result?.tokens ?? []).some(t => t.droppable)) {
+        items.push('<span class="translator-token__droppable">can drop</span> optional in casual speech');
+      }
       if (items.length < 1) return '';
       return `<p class="translator-output__legend sans">${items.join(' · ')}</p>`;
     }
@@ -2759,13 +2762,15 @@
 
     function translatorTokenClass(token) {
       const kind = translatorResolutionKind(token);
-      if (kind === 'unknown') return ' translator-token--unresolved';
-      if (kind === 'composed') return ' translator-token--composed';
-      if (kind === 'loan') return ' translator-token--loan';
-      if (kind === 'interpreted') return ' translator-token--interpreted';
-      if (kind === 'semantic') return ' translator-token--semantic';
-      if (kind === 'alias_weak') return ' translator-token--semantic';
-      return '';
+      let cls = '';
+      if (kind === 'unknown') cls = ' translator-token--unresolved';
+      else if (kind === 'composed') cls = ' translator-token--composed';
+      else if (kind === 'loan') cls = ' translator-token--loan';
+      else if (kind === 'interpreted') cls = ' translator-token--interpreted';
+      else if (kind === 'semantic') cls = ' translator-token--semantic';
+      else if (kind === 'alias_weak') cls = ' translator-token--semantic';
+      if (token?.droppable) cls += ' translator-token--droppable';
+      return cls;
     }
 
     function parseHashPage() {
@@ -2786,11 +2791,15 @@
       const interp = showInterp
         ? `<span class="translator-token__interp">${escapeHtml(token.interpreted_from ?? token.english)} → ${escapeHtml(token.concept_id ?? token.lookup ?? '')}${token.interpret_reason ? ` (${escapeHtml(token.interpret_reason)})` : ''}</span>`
         : '';
+      const droppable = token.droppable
+        ? `<span class="translator-token__droppable" title="${escapeHtml(token.droppable_note || 'Can drop in casual speech')}">can drop</span>`
+        : '';
       return `<li class="translator-token${translatorTokenClass(token)}" data-tr-word="${index}">
         <span class="translator-token__role">${escapeHtml(token.role)}</span>
         <span class="translator-token__english">${escapeHtml(token.english)}</span>
         <span class="translator-token__arrow" aria-hidden="true">→</span>
         <span class="translator-token__fonoran">${fonoran}</span>
+        ${droppable}
         ${gloss}
         ${interp}
       </li>`;
@@ -2883,9 +2892,14 @@
         if (!t.resolved) {
           return `<span class="translator-unresolved-sample">${escapeHtml(t.english)}</span>`;
         }
-        const cls = translatorResolutionClass(translatorResolutionKind(t));
-        return cls
-          ? `<span class="${cls}">${escapeHtml(t.fonoran)}</span>`
+        const kindCls = translatorResolutionClass(translatorResolutionKind(t));
+        const dropCls = t.droppable ? ' translator-roman--droppable' : '';
+        const classes = `${kindCls || ''}${dropCls}`.trim();
+        const title = t.droppable
+          ? ` title="${escapeHtml(t.droppable_note || 'Can drop in casual speech')}"`
+          : '';
+        return classes
+          ? `<span class="${classes}"${title}>${escapeHtml(t.fonoran)}</span>`
           : escapeHtml(t.fonoran);
       }).join(' ');
 

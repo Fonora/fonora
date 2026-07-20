@@ -4,7 +4,7 @@
 >
 > **Read first:** [Fonoran Constitution](fonoran-constitution.md) · [Fonoran grammar](fonoran-grammar.md) · [Language rules (Fonora script)](language-rules.md)
 
-Fonoran cardinal numerals are **phonetic compounds**: speakable CV syllables written in Fonora script by concatenation, the same way lexical compounds (`benba`, `hudi`) are formed. They are not symbolic place-value notation.
+Fonoran cardinal numerals are **phonetic compounds**: speakable CV syllables written in Fonora script by concatenation, the same way lexical compounds (`yenan`, `hudi`) are formed. They are not symbolic place-value notation.
 
 ## Design constraints
 

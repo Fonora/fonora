@@ -55,6 +55,7 @@ import { getPosHint } from './fonoran-semantic-lookup.js';
 import { getParticleRuntime, resetParticleCache } from './fonoran-particles.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
 import { enforceModifierOrder } from './fonoran-grammar-spec.js';
+import { isAddresseeDroppable } from './fonoran-llm-grammar-brief.js';
 
 /**
  * Cached grammar-particle runtime: { index, byId, quantifiers }.
@@ -1076,6 +1077,18 @@ export async function translateFromFrame(frame, options = {}) {
   const tokens = await slotsToTokens(ctx, semantic);
   if (ctx.isQuestion) tokens.push(punctuationToken('?'));
 
+  // Full form still includes Actor; flag recoverable addressee for UI highlight.
+  if (isAddresseeDroppable(frame, input, options)) {
+    for (const t of tokens) {
+      if (t.role !== 'subject') continue;
+      const id = String(t.concept_id ?? t.english ?? '').toLowerCase();
+      if (id === 'addressee' || t.fonoran === 'be' || id === 'you') {
+        t.droppable = true;
+        t.droppable_note = 'Can drop in casual speech';
+      }
+    }
+  }
+
   const surface = buildSurface(tokens);
   // Frame gaps are cleaned to short tokens; token gaps are already single words.
   const frameGaps = (frame?.unresolved ?? []).map(cleanGapToken).filter(Boolean);
@@ -1107,6 +1120,7 @@ export async function translateFromFrame(frame, options = {}) {
     unresolved: uniqueUnresolved,
     reasoning: frame?.reasoning ?? null,
     sourceLang: options.sourceLang ?? null,
+    actor_droppable: tokens.some(t => t.droppable),
   });
 }
 

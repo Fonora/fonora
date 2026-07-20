@@ -1,7 +1,7 @@
 {
-  "version": "3.0-grammar-inventory-v1",
+  "version": "3.1-preferred-order-v1",
   "status": "active",
-  "description": "Fonoran v1 grammar particle inventory. Particles mark relationships in the sentence skeleton (Actor · Action · Target · Place · Time); they are invariant and never fuse into lexical spellings (docs/fonoran-grammar.md Rule 3). All forms are reserved in data/fonoran-primitive-roots-config.json so the root generator never assigns them to a lexical concept.",
+  "description": "Fonoran v1 grammar particle inventory. Particles mark relationships in the preferred sentence skeleton (Actor · Action · Target/Place · Time); they are invariant and never fuse into lexical spellings (docs/fonoran-grammar.md Rule 3). All forms are reserved in data/fonoran-primitive-roots-config.json so the root generator never assigns them to a lexical concept.",
   "philosophy_source": "docs/fonoran-grammar.md",
   "design_rule_0": "If a distinction can be expressed through ordinary concepts, it should not become grammar. Grammar exists only to express relationships that cannot be naturally represented as concepts. This is why v1 has no question particles, no focus particles, and no interrogative pro-form.",
   "scope_note": "This is a closed, minimal class. A particle belongs here ONLY if it is genuinely grammatical (cannot be expressed as a lexical concept) AND is either sanctioned by the grammar doc or actively wired in the translator. Spatial/relational meaning (in/at/toward/from/with, this/that) is LEXICAL in Fonoran — it lives in concepts/roots such as inside, here, there, near, far, up, down, reach — so those are deliberately NOT particles. Personal pronouns other than mi resolve lexically and are out of scope for now.",
@@ -37,7 +37,7 @@
   },
   "deliberately_lexical": {
     "note": "Handled by concepts/roots, NOT particles, to avoid duplicating the lexicon.",
-    "spatial_relations": ["in/into -> inside (mes)", "at/here -> here (nam)", "there -> there (tak)", "toward/to -> path (nan)", "from -> source (lo)", "away -> far (fet)", "up/over -> up (ra)", "down/under -> down (ju)", "near -> near (dal)"],
+    "spatial_relations": ["in/into -> inside (mes)", "at/here -> here (nam)", "there -> there (tak)", "toward (direction contrast) -> path (nan)", "plain go-to destination -> bare Place landmark (no nan)", "from -> source (ki)", "away -> far (fet)", "up/over -> up (ra)", "down/under -> down (ju)", "near -> near (dal)"],
     "pronouns": ["you/we/they/he/she/it resolve lexically; only mi is a particle"],
     "connectives": ["and/or/but handled structurally via clause splitting", "because/so handled as clause connectives"]
   },

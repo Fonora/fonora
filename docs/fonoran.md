@@ -219,7 +219,7 @@ node scripts/fonoran-translation-gaps.js   # full report: coverage, gaps, qualit
 
 Every primitive root is exactly **one syllable**: **CV** (`ba`, `te`) or **CVC** (`bel`, `dam`). Multi-syllable forms are compounds, not roots. Enforced at generation and at build time.
 
-Reserved particles (never roots): `mi`, `na`, `ta`.
+Reserved particles (never roots): `mi`, `ta`, `sa`, `no`, `ya`, `von`.
 
 ## API
 

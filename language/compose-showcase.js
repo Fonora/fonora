@@ -4,7 +4,7 @@ const SCENE_HOLD_MS = 2400;
 const MERGE_MS = 520;
 const SPLIT_MS = 1100;
 
-const PRIORITY_CONCEPTS = ['river', 'cloud', 'friend', 'home', 'leader'];
+const PRIORITY_CONCEPTS = ['river', 'beach', 'family', 'cloud', 'friend', 'home'];
 
 function prefersReducedMotion() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;

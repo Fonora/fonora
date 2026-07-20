@@ -6,10 +6,10 @@ import { isExistentialDummyThereEnglish } from './fonoran-interpretation.js';
 
 /** Map LLM frame slots to the human skeleton (Rule 4 / Rule 7). */
 export const SLOT_SKELETON = {
-  subject: 'Actor — who/what performs or is the topic',
-  event: 'Action — the event, state, or main predicate concept',
-  object: 'Target — who/what is affected or referenced',
-  path: 'Place — spatial relations, motion paths, locatives (lexical, not particles)',
+  subject: 'Actor — who/what performs or is the topic (may be omitted when obvious)',
+  event: 'Action — the event, state, or serial predicate chain (e.g. want+move)',
+  object: 'Target — who/what is affected or referenced (not a second verb)',
+  path: 'Place — destination landmark or directional concepts (lexical, not particles)',
   time: 'Time — ta (past), sa (future), or time concepts (now, before, after); empty = present',
   modifiers: 'Peripheral modifiers (each modifies the concept to its right)',
 };
@@ -19,6 +19,24 @@ const RESERVED_PARTICLE_FORMS = new Set(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
 const REMOVED_PARTICLE_FORMS = new Set([
   'wo', 'vus', 'zas', 'zes', 'zis', 'zos', 'zus', 'vat', 'vet', 'vit',
 ]);
+
+/** English cues that require a real direction concept (keep nan / lo / fet). */
+const DIRECTIONAL_SOURCE_RE = /\b(toward|towards|away(?:\s+from)?|from)\b/i;
+
+/** Motion / serial second verbs that belong in event, not Target. */
+const SERIAL_MOTION_IDS = new Set([
+  'move', 'come', 'run', 'walk', 'travel', 'return', 'leave', 'follow',
+  'gi', 'ginam', 'ginek', 'giyinam',
+]);
+
+function slotIds(items) {
+  if (!Array.isArray(items)) return [];
+  return items.map(x => String(x ?? '').trim().toLowerCase()).filter(Boolean);
+}
+
+function hasWhContentWord(sourceText) {
+  return /\b(who|whom|what|where|when)\b/i.test(String(sourceText ?? ''));
+}
 
 /** Build the grammar section injected into the LLM user prompt. */
 export function buildLlmGrammarBrief(particlesDoc = {}) {
@@ -33,7 +51,9 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('');
   lines.push('## Sentence skeleton (Rule 4 / Rule 7)');
   lines.push('Actor · Action · Target · Place · Time');
-  lines.push('Core order is strict: Actor → Action → Target. Place and Time may float.');
+  lines.push('Preferred order: Actor → Action → Target → Place → Time.');
+  lines.push('Core roles do not freely scramble (no case markers). Time/Place may front as scene-setting.');
+  lines.push('Recoverable Actor may omit in casual yes/no to the addressee — translator primary still includes it.');
   lines.push('');
   lines.push('### Frame slot mapping (your JSON output)');
   for (const [slot, desc] of Object.entries(SLOT_SKELETON)) {
@@ -56,7 +76,8 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
       lines.push(`  ${row}`);
     }
   } else {
-    lines.push('  in/inside→inside (mes), here→here (nam), there→there (tak), toward→path (nan), from→source (lo), near→near (dal), far→far (fet), up→up (wa), down→down (do)');
+    lines.push('  in/inside→inside (mes), here→here (nam), there→there (tak), toward→path (nan), from→source (ki), near→near (dal), far→far (fet), up→up (wa), down→down (do)');
+    lines.push('  plain "go to X" → destination landmark alone in path (NO automatic path/nan)');
   }
   lines.push('Personal pronouns except mi resolve lexically: you→addressee (be), self→self (de).');
   lines.push('First-person plural we/us — default subject: collective (dan). Optional alternate: mi + addressee (I + you) when the source explicitly signals a dyad (each other, you and I, both of us). Do not infer dyadic vs group from topic alone.');
@@ -78,6 +99,7 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('  who/whom → [unknown,person]  what → [unknown,thing]  where → [unknown,place]  when → [unknown,time]');
   lines.push('unknown is ONE word (nohu) — do NOT spell it as no + know.');
   lines.push('Yes/no questions (Are you…?, Is there…?, Do you…?, Can we…?) must NOT use WH composition.');
+  lines.push('For yes/no to "you": put addressee in subject (primary/full form). Casual speech may omit it — do NOT omit in the frame.');
   lines.push('Embedded "where X is" in a STATEMENT or imperative is possession, not a question:');
   lines.push('  compile as [X, place] — "nobody knows where we are" → object [collective, place] (= our place);');
   lines.push('  "show me where the food is" → object [food, place]. is_question stays false; no ?.');
@@ -91,8 +113,12 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('Prefer approved compound concept ids (e.g. rain, thirsty, happy) over listing raw roots.');
   lines.push('Semantic economy: if a compound concept already encodes a locative (e.g. "staying" = still+inside), do NOT also emit that locative separately in the path slot — it would be expressed twice.');
   lines.push('');
-  lines.push('## Motion & locatives (Rule 7)');
-  lines.push('Motion frames: event=move/run/etc, path slot holds direction/landmark concepts (path, source, far, near, up, inside).');
+  lines.push('## Motion, want+go, destinations (Rule 4 / Rule 7)');
+  lines.push('Serial verbs stay in event: "want to go/move" → event [want, move] — NEVER put move in object.');
+  lines.push('Plain destination ("go to the beach", "going to the water"): path = [beach] / [water] — NO path/nan.');
+  lines.push('Direction contrast only: toward→include path (nan); from→source (lo); away→far (fet).');
+  lines.push('Example: "Do you want to go to the beach?" → subject [addressee], event [want, move], path [beach], is_question true.');
+  lines.push('Example: "I want to go toward the water." → subject [mi], event [want, move], path [path, water].');
   lines.push('Static locatives ("X is near Y"): place concepts in path/modifiers, not collapsed head nouns only.');
   lines.push('');
   lines.push('## Weather / impersonal events');
@@ -105,8 +131,134 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('"going to [verb]" and "about to [verb]" are English future markers, NOT motion.');
   lines.push('Map them to sa in the time slot, not as the verb "come" or "go" in the event slot.');
   lines.push('When sa (future) is in the time slot, do NOT also add now (gem) — they contradict.');
+  lines.push('"going to the water/beach/place" IS motion + destination — event [move], path [landmark], no nan.');
 
   return lines.join('\n');
+}
+
+function motionConceptId(motionId) {
+  if (motionId === 'gi' || motionId === 'move') return 'move';
+  if (motionId === 'ginam' || motionId === 'come') return 'come';
+  if (motionId === 'ginek' || motionId === 'run') return 'run';
+  return motionId;
+}
+
+/**
+ * Fold infinitive-style "want to move/go" into a serial Action chain.
+ * event:[want] + object:[move, …] → event:[want, move, …]
+ * Does NOT fold "want PERSON to move" (object starts with an actor before motion).
+ */
+export function foldSerialWantMove(frame) {
+  if (!frame?.slots) return frame;
+  const slots = { ...frame.slots };
+  const event = slotIds(slots.event);
+  const object = slotIds(slots.object);
+  if (!event.length || !object.length) return frame;
+
+  const hasWant = event.includes('want') || event.includes('sak');
+  // Infinitive only: motion must be the first object concept.
+  if (!hasWant || !SERIAL_MOTION_IDS.has(object[0])) return frame;
+
+  const motionId = object[0];
+  const motionConcept = motionConceptId(motionId);
+
+  if (event.includes(motionConcept) || event.includes(motionId)) {
+    slots.object = object.slice(1);
+    return { ...frame, slots: { ...slots, event, object: slots.object } };
+  }
+
+  const newEvent = [...event].map(id => (id === 'sak' ? 'want' : id));
+  let insertAt = newEvent.findIndex(id => id === 'want') + 1;
+  if (insertAt < 1) insertAt = newEvent[0] === 'no' ? 1 : newEvent.length;
+  newEvent.splice(insertAt, 0, motionConcept);
+  slots.event = newEvent;
+  slots.object = object.slice(1);
+  return { ...frame, slots };
+}
+
+const ACTOR_LIKE_IDS = new Set(['mi', 'addressee', 'be', 'collective', 'dan', 'person', 'self', 'de']);
+const EXTRA_DIRECTION_IDS = new Set(['source', 'far', 'up', 'down', 'near', 'inside', 'lo', 'fet']);
+
+/**
+ * Strip spurious path/nan on plain motion "go to X".
+ * Keeps nan when English marks toward/from/away.
+ * Keeps a lone path/nan token when it is the noun/topic "path", not a direction marker.
+ */
+export function stripSpuriousPathNan(frame, sourceText = '') {
+  if (!frame?.slots) return frame;
+  if (DIRECTIONAL_SOURCE_RE.test(String(sourceText ?? ''))) return frame;
+
+  const slots = { ...frame.slots };
+  let path = slotIds(slots.path);
+  let object = slotIds(slots.object);
+  const event = slotIds(slots.event);
+  const hasMotion = event.some(id => SERIAL_MOTION_IDS.has(id));
+
+  const hasMarker = path.includes('path') || path.includes('nan');
+  const landmarks = path.filter(id => id !== 'path' && id !== 'nan');
+
+  // path + landmark(s) on a motion clause, no toward/from → bare landmark(s).
+  // Without motion, keep path/nan (likely the noun "path" / topic, not a to-marker).
+  // Person goals (nan mi) keep the marker — not a place destination.
+  if (hasMarker && landmarks.length >= 1 && hasMotion) {
+    if (landmarks.some(id => EXTRA_DIRECTION_IDS.has(id))) return frame;
+    if (landmarks.every(id => ACTOR_LIKE_IDS.has(id))) return frame;
+    slots.path = landmarks;
+    return { ...frame, slots };
+  }
+
+  // Motion + lone path/nan marker + place destination in object → bare Place.
+  // Keep nan when the only "destination" is a person (return/give to me).
+  if (hasMarker && landmarks.length === 0 && hasMotion && object.length) {
+    const dest = [];
+    const keptObj = [];
+    for (const id of object) {
+      if (SERIAL_MOTION_IDS.has(id) || RESERVED_PARTICLE_FORMS.has(id) || ACTOR_LIKE_IDS.has(id)) {
+        keptObj.push(id);
+      } else {
+        dest.push(id);
+      }
+    }
+    if (dest.length) {
+      slots.path = dest;
+      slots.object = keptObj;
+      return { ...frame, slots };
+    }
+    // Person-only goal: keep the path marker + person (nan mi), do not bare-drop.
+    return frame;
+  }
+
+  // Lone path/nan with no motion destination — keep (lexical noun / topic "path").
+  return frame;
+}
+
+/**
+ * True when Actor (addressee) is safely droppable in casual yes/no speech.
+ * Multi-clause / multi-sentence / WH / mixed persons / non-addressee → false.
+ */
+export function isAddresseeDroppable(frame, sourceText = '', options = {}) {
+  if (options.allowActorDrop === false || options.multiClause) return false;
+  if (!frame?.is_question) return false;
+  if (hasWhContentWord(sourceText)) return false;
+
+  const text = String(sourceText ?? '').trim();
+  // Multiple sentence terminators → discourse; keep Actor.
+  if ((text.match(/[.!?]/g) || []).length > 1) return false;
+
+  // Mixed persons ("Do you want me to…") — dropping you makes the reference vague.
+  const personHits = text.match(/\b(i|me|we|us|he|she|they|him|her|them|you)\b/gi) || [];
+  const persons = new Set(personHits.map((p) => {
+    const k = p.toLowerCase();
+    if (k === 'me') return 'i';
+    if (k === 'us') return 'we';
+    if (k === 'him' || k === 'her') return 'they';
+    if (k === 'them') return 'they';
+    return k;
+  }));
+  if ([...persons].some(p => p !== 'you')) return false;
+
+  const subject = slotIds(frame.slots?.subject);
+  return subject.length === 1 && (subject[0] === 'addressee' || subject[0] === 'be');
 }
 
 export function normalizeFrameParticles(frame) {
@@ -164,6 +316,43 @@ export function normalizeFrameParticles(frame) {
   }
 
   return { ...frame, slots };
+}
+
+/**
+ * Narrow spelling→concept fixes in Place/Target.
+ * `ye` is water's Fonoran spelling but also an archaic English alias for you.
+ * `nan` is path's spelling — normalize to concept id `path`.
+ */
+export function normalizeMotionFrameSpellings(frame) {
+  if (!frame?.slots) return frame;
+  const slots = { ...frame.slots };
+  let changed = false;
+  for (const role of ['path', 'object']) {
+    if (!Array.isArray(slots[role])) continue;
+    slots[role] = slots[role].map((raw) => {
+      const id = String(raw ?? '').trim().toLowerCase();
+      if (id === 'ye') {
+        changed = true;
+        return 'water';
+      }
+      if (id === 'nan') {
+        changed = true;
+        return 'path';
+      }
+      return raw;
+    });
+  }
+  return changed ? { ...frame, slots } : frame;
+}
+
+/**
+ * Apply Rule 4 motion / serial-verb repairs after particle normalization.
+ */
+export function simplifyMotionFrame(frame, sourceText = '') {
+  let next = normalizeMotionFrameSpellings(frame);
+  next = foldSerialWantMove(next);
+  next = stripSpuriousPathNan(next, sourceText);
+  return next;
 }
 
 /** Remove spurious there (tak) from frames for existential English dummy-there. */
@@ -256,10 +445,39 @@ export function checkLlmGrammarViolations(frame, sourceText = '') {
     }
   }
 
+  // Over-grammar: move parked in object while want is in event.
+  const eventIds = slotIds(slots.event);
+  const objectIds = slotIds(slots.object);
+  if (eventIds.includes('want') && objectIds.some(id => SERIAL_MOTION_IDS.has(id))) {
+    violations.push({
+      kind: 'serial_want_in_object',
+      message: 'Serial "want + move" must stay in event; do not park move in object.',
+    });
+  }
+
+  const pathIds = slotIds(slots.path);
+  const pathLandmarks = pathIds.filter(id => id !== 'path' && id !== 'nan');
+  if (
+    (pathIds.includes('path') || pathIds.includes('nan'))
+    && pathLandmarks.length >= 1
+    && !DIRECTIONAL_SOURCE_RE.test(String(sourceText ?? ''))
+    && !pathLandmarks.some(id => EXTRA_DIRECTION_IDS.has(id))
+  ) {
+    violations.push({
+      kind: 'spurious_path_nan',
+      message: 'Plain destination should not include path/nan — use the landmark alone in path.',
+    });
+  }
+
   return {
     violations,
-    repairable: violations.some(v => v.kind === 'wh_on_yesno' || v.kind === 'neg_alias'),
+    repairable: violations.some(v => (
+      v.kind === 'wh_on_yesno'
+      || v.kind === 'neg_alias'
+      || v.kind === 'serial_want_in_object'
+      || v.kind === 'spurious_path_nan'
+    )),
   };
 }
 
-export { RESERVED_PARTICLE_FORMS, REMOVED_PARTICLE_FORMS };
+export { RESERVED_PARTICLE_FORMS, REMOVED_PARTICLE_FORMS, DIRECTIONAL_SOURCE_RE, SERIAL_MOTION_IDS };
