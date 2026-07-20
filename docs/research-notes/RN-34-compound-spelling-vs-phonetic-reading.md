@@ -48,7 +48,7 @@ Provisional:
 
 ### Dictionary decision (2026-07-20)
 
-Do **not** ban cross-boundary digraph compounds, and do **not** rewrite preferred compounds into pure-phonetic roman (that would drop lego recoverability in the headword — e.g. `ye` still signals water).
+Do **not** ban cross-boundary digraph compounds, and do **not** rewrite preferred compounds into pure-phonetic roman (that would drop lego recoverability in the headword: e.g. `ye` still signals water).
 
 Keep **morphological roman + part-wise script** as the dictionary/translator canonical form. When whole-word longest-match encode diverges (same roman letters, different phoneme keys / glyphs), show the phonetic reading as an **alternate** in the dictionary (phoneme-key line + phonetic script). No seed schema field; compute on the fly via `romanWordToFonoraScript`. Translator/TTS stay part-wise.
 
