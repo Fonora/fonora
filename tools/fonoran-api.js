@@ -19,6 +19,7 @@ import {
   undoLast,
   recomposeCompound,
 } from './fonoran-sound-bucket.js';
+import { getLearnCoursePhrases } from './fonoran-learn-course-phrases.js';
 import { resetProject } from './fonoran-reset.js';
 import { loadEnglishLexicon } from './fonoran-english-lexicon.js';
 import { translate } from './fonoran-translate.js';
@@ -379,6 +380,26 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     if (pathname === '/api/fonoran/bootstrap' && method === 'GET') {
       return done(200, await getBootstrap());
+    }
+    if (pathname === '/api/fonoran/learn/course-phrases' && method === 'GET') {
+      const { payload, etag } = await getLearnCoursePhrases();
+      const ifNoneMatch = req.headers?.['if-none-match'];
+      if (ifNoneMatch && ifNoneMatch === etag) {
+        res.writeHead(304, {
+          ETag: etag,
+          'Cache-Control': 'private, max-age=60',
+        });
+        res.end();
+        return true;
+      }
+      const body = JSON.stringify(sanitizeForJsonResponse(payload));
+      res.writeHead(200, {
+        'Content-Type': 'application/json; charset=utf-8',
+        ETag: etag,
+        'Cache-Control': 'private, max-age=60',
+      });
+      res.end(body);
+      return true;
     }
     if (pathname === '/api/fonoran/lab' && method === 'GET') {
       return done(200, await getLab());

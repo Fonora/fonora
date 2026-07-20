@@ -1,5 +1,5 @@
 /**
- * Tests for course phrase build ordering and grammar phrase exercises.
+ * Tests for course phrase build ordering, hybrid curriculum layout, and grammar drills.
  */
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -10,7 +10,13 @@ import {
   grammarLessonAnswerMatches,
   stripMcqPromptOptions,
 } from '../js/fonoran-grammar-lessons.js';
+import {
+  computeHybridLayout,
+  hybridPhaseForLesson,
+} from '../js/fonoran-learn-curriculum.js';
 import { resolveDataPath } from './fonoran-data-paths.js';
+import { runFonoranCoursePhrasesCompileTests } from './fonoran-course-phrases-compile.test.js';
+import { clearLearnCoursePhrasesCache } from './fonoran-learn-course-phrases.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -107,8 +113,54 @@ const rule4LessonTest = test('Rule 4 grammar basics lesson has 10 live-lexicon d
   );
 });
 
+const hybridLayoutTest = test('hybrid layout: ring lessons then 5 phrase lessons per domain', () => {
+  const layout = computeHybridLayout(25, 20, 10);
+  assert(layout.ringLessons === 3, `ringLessons=${layout.ringLessons}`);
+  assert(layout.phraseLessons === 100, `phraseLessons=${layout.phraseLessons}`);
+  assert(layout.totalLessons === 103, `totalLessons=${layout.totalLessons}`);
+
+  const emptyLab = computeHybridLayout(0, 20, 10);
+  assert(emptyLab.ringLessons === 0, 'no ring lessons without lab');
+  assert(emptyLab.phraseLessons === 100, 'phrases still present');
+  assert(emptyLab.totalLessons === 100, 'total is phrase-only');
+
+  const ringOnly = computeHybridLayout(10, 0, 10);
+  assert(ringOnly.ringLessons === 1, 'one ring lesson');
+  assert(ringOnly.phraseLessons === 0, 'no phrase lessons');
+  assert(ringOnly.totalLessons === 1, 'total is ring-only');
+});
+
+const hybridPhaseTest = test('hybridPhaseForLesson maps ring then domain phrases', () => {
+  const layout = computeHybridLayout(25, 20, 10);
+  assert(hybridPhaseForLesson(0, layout).phase === 'ring', 'lesson 0 is ring');
+  assert(hybridPhaseForLesson(2, layout).phase === 'ring', 'last ring lesson');
+  const firstPhrase = hybridPhaseForLesson(3, layout);
+  assert(firstPhrase.phase === 'phrase', 'lesson 3 starts phrases');
+  assert(firstPhrase.domainIndex === 0, 'first domain');
+  assert(firstPhrase.withinDomain === 0, 'first phrase lesson in domain');
+  const secondDomain = hybridPhaseForLesson(8, layout);
+  assert(secondDomain.phase === 'phrase', 'still phrases');
+  assert(secondDomain.domainIndex === 1, `domainIndex=${secondDomain.domainIndex}`);
+  assert(hybridPhaseForLesson(layout.totalLessons, layout).phase === 'review', 'past end is review');
+});
+
+const learnCacheTest = test('learn course-phrases cache clears', () => {
+  clearLearnCoursePhrasesCache();
+  // Smoke: clear is idempotent and importable from the API helper module.
+  clearLearnCoursePhrasesCache();
+});
+
 export function runFonoranCoursePhrasesTests() {
-  return [sortTest, grammarTest, domainLessonTest, rule4LessonTest];
+  return [
+    sortTest,
+    grammarTest,
+    domainLessonTest,
+    rule4LessonTest,
+    hybridLayoutTest,
+    hybridPhaseTest,
+    learnCacheTest,
+    ...runFonoranCoursePhrasesCompileTests(),
+  ];
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

@@ -1,9 +1,10 @@
 /**
  * Fonora Script reading — Fonora script → type English meaning.
- * Uses the Fonoran domain curriculum (words then phrases).
+ * Uses hybrid curriculum (full ring vocabulary, then domain phrases).
  */
 import { loadDomainCurriculum } from './fonoran-course-phrases.js';
-import { createDomainCurriculum } from './fonoran-learn-curriculum.js';
+import { createHybridCurriculum } from './fonoran-learn-curriculum.js';
+import { loadFonoranPracticeEntries } from './fonoran-practice-words.js';
 import { showScriptReadingBreakdown, hideBreakdownFeedback } from './breakdown-feedback.js';
 import {
   createLearnSession,
@@ -22,7 +23,7 @@ let wired = false;
 /** @type {object | null} */
 let rulesRef = null;
 
-/** @type {ReturnType<typeof createDomainCurriculum> | null} */
+/** @type {ReturnType<typeof createHybridCurriculum> | null} */
 let curriculum = null;
 
 /** @type {ReturnType<typeof createLearnSession> | null} */
@@ -112,12 +113,20 @@ function checkWordAnswer() {
 
 async function reloadLessonEntries(rules) {
   if (!curriculum) {
-    const courseData = await loadDomainCurriculum(rules);
-    if (!courseData) {
+    const [labEntries, courseData] = await Promise.all([
+      loadFonoranPracticeEntries(rules).catch(() => []),
+      loadDomainCurriculum(rules).catch(() => null),
+    ]);
+    if (!courseData?.phraseItems?.length && !labEntries.length) {
       readingEntries = [];
       curriculum = null;
     } else {
-      curriculum = createDomainCurriculum('script-words', courseData.items, courseData.domains);
+      curriculum = createHybridCurriculum(
+        'script-words',
+        labEntries,
+        courseData?.phraseItems ?? [],
+        courseData?.domains ?? [],
+      );
       readingEntries = curriculum
         .currentLessonEntries()
         .filter((entry) => entry.script)

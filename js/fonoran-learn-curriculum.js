@@ -3,8 +3,8 @@
  *
  * Ring-based curriculum: orders words simple → complex by campfire tier.
  * Domain curriculum: 20 stranger-corpus modules (First contact → Closure & gratitude),
- *   50 phrases each, sliced into 5 lessons of 10 items. Used by all four Fonoran
- *   language skills once data/fonoran-course-phrases.json has been built.
+ *   50 phrases each, sliced into 5 lessons of 10 items.
+ * Hybrid curriculum: full ring vocabulary first, then domain phrase modules.
  */
 import { LANGUAGE_TIERS, LANGUAGE_TIER_LABELS } from '../tools/fonoran-experience-tiers.js';
 import {
@@ -380,6 +380,243 @@ export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
   return {
     ordered: entries,
     totalLessons,
+    currentLessonEntries,
+    lessonLabel,
+    ringLabel,
+    recordResult,
+    complete,
+    progress,
+  };
+}
+
+// ─── Hybrid curriculum (full ring vocabulary, then domain phrases) ───────────
+
+/**
+ * Lesson layout for hybrid skills: ring lessons then phrase-domain lessons.
+ *
+ * @param {number} labCount
+ * @param {number} domainCount
+ * @param {number} [size]
+ * @returns {{ ringLessons: number, phraseLessons: number, totalLessons: number, size: number }}
+ */
+export function computeHybridLayout(labCount, domainCount, size = DEFAULT_LESSON_SIZE) {
+  const ringLessons = labCount > 0 ? Math.max(1, Math.ceil(labCount / size)) : 0;
+  const phraseLessons = domainCount > 0 ? domainCount * LESSONS_PER_DOMAIN : 0;
+  return {
+    ringLessons,
+    phraseLessons,
+    totalLessons: Math.max(1, ringLessons + phraseLessons),
+    size,
+  };
+}
+
+/**
+ * Resolve which hybrid phase a flat lesson index falls into.
+ *
+ * @param {number} lessonIndex
+ * @param {{ ringLessons: number, phraseLessons: number, totalLessons: number }} layout
+ * @returns {{ phase: 'ring' | 'phrase' | 'review', ringLesson?: number, phraseLesson?: number, domainIndex?: number, withinDomain?: number }}
+ */
+export function hybridPhaseForLesson(lessonIndex, layout) {
+  if (lessonIndex >= layout.totalLessons) return { phase: 'review' };
+  if (lessonIndex < layout.ringLessons) {
+    return { phase: 'ring', ringLesson: lessonIndex };
+  }
+  const phraseLesson = lessonIndex - layout.ringLessons;
+  return {
+    phase: 'phrase',
+    phraseLesson,
+    domainIndex: Math.floor(phraseLesson / LESSONS_PER_DOMAIN),
+    withinDomain: phraseLesson % LESSONS_PER_DOMAIN,
+  };
+}
+
+/**
+ * Sequential hybrid curriculum: full lab ring vocabulary, then domain phrases.
+ *
+ * Lesson index is shared (localStorage `lessonIndex`). Labels show
+ * `Ring · 12/45` then `First contact · Phrases 1/5`.
+ *
+ * @param {import('./learn-gamification.js').LearnSkillId} skillId
+ * @param {import('./fonoran-practice-words.js').PracticeEntry[]} labEntries
+ * @param {import('./fonoran-course-phrases.js').CourseEntry[]} phraseEntries  phrase items only
+ * @param {import('./fonoran-course-phrases.js').CourseDomain[]} domains
+ * @param {{ size?: number }} [opts]
+ * @returns {SkillCurriculum & { ringLessons: number, phraseLessons: number }}
+ */
+export function createHybridCurriculum(skillId, labEntries, phraseEntries, domains, opts = {}) {
+  const size = opts.size ?? DEFAULT_LESSON_SIZE;
+  const orderedRing = orderByDifficulty(labEntries ?? []);
+  // Prefer explicit phrase items; accept entries that look like phrases (have domainId).
+  const phrasePool = (phraseEntries ?? []).filter(
+    (e) => e.itemType === 'phrase' || (e.domainId != null && e.itemType !== 'word'),
+  );
+  const layout = computeHybridLayout(orderedRing.length, domains?.length ?? 0, size);
+  const { ringLessons, phraseLessons, totalLessons } = layout;
+
+  /** @type {Map<number, import('./fonoran-course-phrases.js').CourseEntry[]>} */
+  const phrasesByDomain = new Map();
+  for (const entry of phrasePool) {
+    const idx = entry.domainIndex ?? 0;
+    if (!phrasesByDomain.has(idx)) phrasesByDomain.set(idx, []);
+    phrasesByDomain.get(idx).push(entry);
+  }
+
+  const ordered = [...orderedRing, ...phrasePool];
+
+  function domainLabelAt(domainIndex) {
+    return domains[domainIndex]?.label ?? `Module ${domainIndex + 1}`;
+  }
+
+  function ringLabel() {
+    const lesson = getSkillLesson(skillId);
+    const phase = hybridPhaseForLesson(lesson, layout);
+    if (phase.phase === 'review') {
+      return domains.length ? domainLabelAt(domains.length - 1) : RING_LABELS[0];
+    }
+    if (phase.phase === 'ring') {
+      if (!orderedRing.length) return RING_LABELS[0];
+      const start = (phase.ringLesson ?? 0) * size;
+      const slice = orderedRing.slice(start, start + size);
+      let rank = 0;
+      for (const item of slice) rank = Math.max(rank, item.tierRank ?? 0);
+      return RING_LABELS[rank] ?? RING_LABELS[0];
+    }
+    return domainLabelAt(phase.domainIndex ?? 0);
+  }
+
+  function lessonLabel() {
+    const lesson = getSkillLesson(skillId);
+    const phase = hybridPhaseForLesson(lesson, layout);
+    if (phase.phase === 'review') return 'Review';
+    if (phase.phase === 'ring') {
+      return `Ring · ${(phase.ringLesson ?? 0) + 1}/${ringLessons}`;
+    }
+    const within = (phase.withinDomain ?? 0) + 1;
+    return `${domainLabelAt(phase.domainIndex ?? 0)} · Phrases ${within}/${LESSONS_PER_DOMAIN}`;
+  }
+
+  function padSlice(pool, start) {
+    let slice = pool.slice(start, start + size);
+    if (slice.length < size && pool.length) {
+      const inSlice = new Set(slice);
+      const filler = shuffle(pool.filter((e) => !inSlice.has(e)));
+      slice = slice.concat(filler.slice(0, size - slice.length));
+    }
+    return slice;
+  }
+
+  function currentLessonEntries() {
+    const lesson = getSkillLesson(skillId);
+    const phase = hybridPhaseForLesson(lesson, layout);
+
+    if (phase.phase === 'review') {
+      return shuffle(ordered).slice(0, size);
+    }
+    if (phase.phase === 'ring') {
+      if (!orderedRing.length) {
+        // No lab words: fall through to first phrase lesson.
+        const pool = phrasesByDomain.get(0) ?? phrasePool;
+        return padSlice(pool, 0);
+      }
+      return padSlice(orderedRing, (phase.ringLesson ?? 0) * size);
+    }
+
+    const domainIdx = phase.domainIndex ?? 0;
+    const pool = phrasesByDomain.get(domainIdx) ?? [];
+    const start = (phase.withinDomain ?? 0) * size;
+    let slice = padSlice(pool, start);
+    if (!slice.length) {
+      return shuffle(phrasePool).slice(0, size);
+    }
+    return slice;
+  }
+
+  function recordResult(item, correct) {
+    const key = item.itemType === 'phrase' || item.domainId
+      ? (item.id ?? item.spelling ?? '')
+      : (item.spelling ?? item.id ?? '');
+    recordItemResult(skillId, key, correct);
+  }
+
+  function syncMeta() {
+    setSkillCurriculumMeta(skillId, {
+      total: ordered.length,
+      totalLessons,
+      ring: ringLabel(),
+    });
+  }
+
+  function complete(stats) {
+    const attempts = stats.attempts ?? 0;
+    const correct = stats.correct ?? 0;
+    const passed = attempts > 0 && correct / attempts >= LESSON_PASS_RATIO;
+
+    if (!passed) {
+      syncMeta();
+      return {
+        primaryLabel: 'Try this lesson again',
+        note: `Answer ${Math.round(LESSON_PASS_RATIO * 100)}% correctly to unlock the next lesson.`,
+        passed: false,
+      };
+    }
+
+    const before = hybridPhaseForLesson(getSkillLesson(skillId), layout);
+    const afterIndex = advanceSkillLesson(skillId);
+    syncMeta();
+
+    if (afterIndex >= totalLessons) {
+      return {
+        primaryLabel: 'Practice again',
+        note: 'You have covered the full vocabulary and all phrase modules — keep reviewing to stay sharp.',
+        passed: true,
+        done: true,
+      };
+    }
+
+    const after = hybridPhaseForLesson(afterIndex, layout);
+    if (before.phase === 'ring' && after.phase === 'phrase') {
+      return {
+        primaryLabel: `Start ${domainLabelAt(0)}`,
+        note: 'Ring vocabulary done — now practicing domain phrases.',
+        passed: true,
+        ringUp: true,
+      };
+    }
+    if (after.phase === 'phrase' && before.phase === 'phrase'
+      && (after.domainIndex ?? 0) > (before.domainIndex ?? 0)) {
+      const nextLabel = domainLabelAt(after.domainIndex ?? 0);
+      return {
+        primaryLabel: `Start ${nextLabel}`,
+        note: `Starting phrases for: ${nextLabel}.`,
+        passed: true,
+        ringUp: true,
+        moduleComplete: true,
+        completedModule: domainLabelAt(before.domainIndex ?? 0),
+        nextModule: nextLabel,
+      };
+    }
+
+    return {
+      primaryLabel: 'Next Lesson',
+      note: '',
+      passed: true,
+      ringUp: false,
+    };
+  }
+
+  function progress() {
+    const mastery = getMasteryStats(skillId);
+    return { ...mastery, total: ordered.length, totalLessons, ring: ringLabel() };
+  }
+
+  syncMeta();
+
+  return {
+    ordered,
+    totalLessons,
+    ringLessons,
+    phraseLessons,
     currentLessonEntries,
     lessonLabel,
     ringLabel,
