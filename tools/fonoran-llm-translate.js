@@ -32,6 +32,7 @@ import {
   normalizeFrameParticles,
   checkLlmGrammarViolations,
   stripExistentialThereFromFrame,
+  simplifyMotionFrame,
 } from './fonoran-llm-grammar-brief.js';
 import {
   normalizeWePrimaryFrame,
@@ -61,6 +62,7 @@ const FEW_SHOT_SEEDS = [
   'The bird is above the tree.',
   'I loved them.',
   'Run toward the river.',
+  'Do you want to go to the beach?',
 ];
 
 let promptContextCache = null;
@@ -256,10 +258,13 @@ function restoreDroppedNegation(frame, sourceText) {
 }
 
 export async function repairLlmFrame(frame, sourceText, lab = null) {
-  let normalized = restoreDroppedNegation(
-    normalizeWePrimaryFrame(
-      stripExistentialThereFromFrame(
-        normalizeFrameParticles(frame),
+  let normalized = simplifyMotionFrame(
+    restoreDroppedNegation(
+      normalizeWePrimaryFrame(
+        stripExistentialThereFromFrame(
+          normalizeFrameParticles(frame),
+          sourceText,
+        ),
         sourceText,
       ),
       sourceText,
@@ -374,10 +379,10 @@ Do NOT split for:
 - Shared-subject action chains with the same tense: "She stood up and walked away"
 
 ## Slot semantics (Rule 4 / Rule 7)
-- subject = Actor
-- event = Action (event, state, or predicate concept)
-- object = Target
-- path = Place (spatial/motion/locative concepts — lexical, never English prepositions)
+- subject = Actor (include addressee for yes/no "you" questions — casual drop is a surface variant, not a frame omission)
+- event = Action (serial chains belong here: want+move → [want, move])
+- object = Target (never park a second verb like move here)
+- path = Place (bare destination landmark, OR direction concepts when source contrasts toward/from/away)
 - time = Time (ta past, sa future, or time concepts; EMPTY for present)
 - modifiers = peripheral modifiers (modifier-before-head chains)
 
@@ -388,6 +393,8 @@ Do NOT split for:
 - Particles ONLY: mi, ta, sa, no, ya, von — map neg→no (Rule 3).
 - Present tense: leave time slot empty (Rule 3).
 - Spatial/relational: lexical concepts (inside, here, there, near, path, source, up, down…) — NOT particles.
+- Plain "go/want to go to X": event [move] or [want, move], path [X] — do NOT emit path/nan for English "to".
+- Direction contrast only: toward→path (nan), from→source (lo), away→far (fet).
 - Questions: no question particle; is_question true; WH composition ONLY for who/what/where/when in source (Rule 3).
 - Yes/no and existential questions: NO WH composition — state entities/relations directly.
 - Existential "Are there…" / "There are…": English dummy there is meaningless — do NOT emit concept there (tak). Compile only the entities/relations (e.g. other + people + near + addressee).
@@ -726,6 +733,9 @@ async function translateViaLlmCore(text, options = {}) {
         devLab: options.devLab,
         input,
         sourceLang: clauseFrame.detected_lang ?? sourceLang,
+        // Multi-clause discourse: never mark Actor as casually droppable.
+        allowActorDrop: false,
+        multiClause: true,
       });
       segResults.push({
         ...clauseResult,

@@ -39,33 +39,33 @@ This is inspired by how toddlers learn language, but it is **not** a literal tod
 | Is this causal linking (because / therefore)? | **Grammar particle** | n/a |
 
 ```example
-ben ba
+ye + nan
 
-collective person
+water + path
 
 ↓
 
-benba (tribe)
+yenan (river)
 ```
 
 ```example
-je + cha
+ye + tem
 
-big + change
+water + bound
 
 ↓
 
-jecha (grow)
+yetem (beach)
 ```
 
 ```example
-hu + di
+san + ba
 
-know + before
+love + person
 
 ↓
 
-hudi (remember)
+sanba (family)
 ```
 
 ```example
@@ -94,13 +94,13 @@ For the *why* — the communication experiment, campfire test, meaning-attempts,
 | Concepts, not parts of speech | [Rule 1](#rule-1-concepts-are-universal) |
 | Words never inflect | [Rule 2](#rule-2-words-never-change) |
 | Grammar uses particles | [Rule 3](#rule-3-grammar-uses-particles) |
-| Fixed core, floating periphery | [Rule 4](#rule-4-fixed-core-floating-periphery) |
+| Preferred order, drop what’s obvious | [Rule 4](#rule-4-preferred-order-drop-whats-obvious) |
 | Meaning through composition | [Rule 5](#rule-5-semantic-compounding) |
 | English → Fonoran compiler | [Rule 7](#rule-7-translator-architecture) |
 
-**Present has no time particle.** Past uses **ta**, future **sa**. The event concept stays identical across tenses: `mi bem` / `mi ta bem` / `mi sa bem` → I love / loved / will love.
+**Present has no time particle.** Past uses **ta**, future **sa**. The event concept stays identical across tenses: `mi san` / `mi ta san` / `mi sa san` → I love / loved / will love.
 
-Modifier chains use the same invariant spellings — **bem ba** (loving person), **bem ben** (loving community), **bem nal** (conflict about love) — with the modifier placed **before its head** ([Rule 4](#rule-4-fixed-core-floating-periphery)). Compounds like **benba** (collective + person) and **benbanal** (tribe + conflict) preserve their ancestry in the spelling; see [Rule 5](#rule-5-semantic-compounding).
+Modifier chains use the same invariant spellings — **san ba** (loving person), **san dan** (loving community) — with the modifier placed **before its head** ([Rule 4](#rule-4-preferred-order-drop-whats-obvious)). Compounds like **yenan** (water + path) and **sanba** (love + person) preserve their ancestry in the spelling; see [Rule 5](#rule-5-semantic-compounding).
 
 ## Rule 1: Concepts Are Universal
 
@@ -109,16 +109,19 @@ Every word is simply a **concept**.
 | Concept | Meaning |
 | --- | --- |
 | **ba** | person |
-| **nal** | conflict |
-| **ben** | collective |
-| **bem** | love |
-| **benba** | tribe |
-| **benbanal** | war |
+| **pa** | conflict |
+| **dan** | collective |
+| **san** | love |
+| **ye** | water |
+| **nan** | path |
+| **yenan** | river (water + path) |
+| **danbakam** | tribe |
+| **danpaba** | war |
 
 These are not permanently nouns or verbs. Their role depends on **sentence position** and **surrounding particles**.
 
 ```example
-ba nal
+ba pa
 
 person conflict
 
@@ -128,7 +131,7 @@ a person's conflict
 ```
 
 ```example
-nal ba
+pa ba
 
 conflict person
 
@@ -145,12 +148,12 @@ Fonoran has no conjugation, declension, grammatical gender, plural endings, or c
 
 A word is always written the same way.
 
-**benbanal** always remains **benbanal**.
+**danpaba** always remains **danpaba**.
 
 ```example
-mi ta benbanal
-mi benbanal
-benba benbanal
+mi ta danpaba
+mi danpaba
+danbakam danpaba
 
 ↓
 
@@ -159,7 +162,7 @@ There is war.
 The tribe is at war.
 ```
 
-Present sentences omit the time particle. **benbanal** never changes.
+Present sentences omit the time particle. **danpaba** never changes.
 
 Time, plurality, and relationships are expressed through **particles** and **word order**, not through mutating the concept itself.
 
@@ -214,7 +217,7 @@ Particles occupy fixed positions within the sentence skeleton; they never fuse i
 Even before the full inventory exists, you can already read sentences by treating each slot as a labeled relationship:
 
 ```example
-mi bem ba
+mi san ba
 
 ↓
 
@@ -223,7 +226,7 @@ I love someone.
 
 Particles are separate from concepts. They never fuse into word spellings.
 
-## Rule 4: Fixed Core, Floating Periphery
+## Rule 4: Preferred Order, Drop What’s Obvious
 
 Fonoran's sentence structure follows how people naturally think about an event — **who did what to what, where, and when**:
 
@@ -241,28 +244,63 @@ flowchart LR
   Actor --> Action --> Target --> Place --> Time
 ```
 
-Fonoran has no case markers, so **word order is the sole disambiguator for the core roles**. The rule splits into two parts:
+Fonoran has no case markers, so a **preferred order** keeps who-did-what-to-whom clear. The language is campfire-simple: stack actions, name the place, drop what the listener already knows. Core roles do **not** freely scramble.
 
-- **The core — Actor → Action → Target — is strict.** These roles are semantically interchangeable (a person can love or be loved), so their order is fixed and load-bearing.
-- **The periphery — Place and Time — floats.** A place concept or a time concept can only be read as place or time, so it cannot be mistaken for a core role. It may sit in its slot or be fronted as scene-setting. All of these are valid:
+### Preferred order
+
+**Actor → Action → Target → Place → Time** is the teaching template and the translator’s default render. Actor and Target stay in that order because either role can be a person (`mi san be` vs `be san mi`).
+
+### Serial Action
+
+Stacked predicates stay in the **Action** chain — no infinitive particle:
 
 ```text
-mi tel lo kan-now        (I eat fish now)
-kan-now mi tel lo        (now, I eat fish)
-mi tel lo che-home       (I eat fish at-home)
+be sak gi yetem ?     (do you want to go to the beach?)
+mi no sak gi fa de    (I do not want to go alone)
 ```
 
-**Why this order:**
+`want` + `move` → `sak gi`. Do **not** park the second verb in Target.
 
-- **Intuitive**: it mirrors "who → did what → to what → where → when"
-- **Predictable**: the ambiguous core always follows one template
-- **Natural**: fronting time/place as scene-setting is what many languages do
-- **Easy to parse**: the strict core maps cleanly to who-did-what-to-whom
+### Bare destination
 
-> Note: `ta`/`sa` (tense) and `no` (negation) are grammatical markers that stay next to the action; they are not the floating **Time** periphery, which is for *time concepts* (before / now / after, calendar words).
+A plain “go to X” puts the landmark in **Place** after the motion concept. Do **not** insert `nan` (path/toward) for English *to* alone:
+
+```text
+mi gi ye              (I go to the water)
+be sak gi yetem ?     (do you want to go to the beach?)
+```
+
+Use direction concepts (`nan`, `lo`, `fet`, …) only when the source contrasts direction — *toward*, *from*, *away*:
+
+```text
+mi sak gi nan ye      (I want to go toward the water)
+gi fet ki lekche      (go away from the city)
+```
+
+### Drop what’s obvious
+
+Recoverable **Actor** may be omitted — same meaning, shorter surface:
+
+| Register | Surface | When |
+| --- | --- | --- |
+| Full / clear | `be sak gi yetem ?` | Default teaching & translator primary |
+| Casual | `sak gi yetem ?` | Yes/no to the addressee; Actor is obvious |
+
+**Do not drop Actor** when dropping would create a vague reference — multi-clause discourse, contrasting actors, or when the Actor is not the addressee. Weather and imperatives already allow empty Actor (`[rain]`, `gi …`).
+
+Time and Place may front as scene-setting (they cannot be mistaken for core roles):
+
+```text
+mi tel lo gem         (I eat food now)
+gem mi tel lo         (now, I eat food)
+mi tel lo nalche      (I eat food at-home)
+mi gi ye              (I go to the water — bare destination)
+```
+
+> Note: `ta`/`sa` (tense) and `no` (negation) stay next to the action; they are not the floating **Time** periphery (time *concepts*: before / now / after, calendar words).
 
 ```example
-benba benbanal
+danbakam danpaba
 
 ↓
 
@@ -270,7 +308,7 @@ The tribe is at war.
 ```
 
 ```example
-mi bem benba
+mi san danbakam
 
 ↓
 
@@ -278,16 +316,24 @@ I love the tribe.
 ```
 
 ```example
-mi sa bem benba
+mi sa san danbakam
 
 ↓
 
 I will love the tribe.
 ```
 
-**Modifier attachment is deterministic:** within a phrase, each concept modifies the concept to its **right**; the rightmost concept is the head (`bem ba` = loving person; `datwi kal` = red bird). This makes grouping mechanical rather than interpretive.
+```example
+be sak gi yetem ?
 
-> **Long-term design goal:** a meaning that needs modifiers and fills a single role should eventually resolve to *one lexical unit per role* — a root or an approved compound. In v1 we do **not** force adjacent concepts to fuse into a single written word: compounds become canonical because they are useful, reusable concepts (Rule 5), not merely because two words appeared next to each other. Deterministic ordering now; earned compounds over time.
+↓
+
+Do you want to go to the beach?
+```
+
+**Modifier attachment is deterministic:** within a phrase, each concept modifies the concept to its **right**; the rightmost concept is the head (`san ba` = loving person; `datwi samkal` = red bird). This makes grouping mechanical rather than interpretive.
+
+> **Long-term design goal:** a meaning that needs modifiers and fills a single role should eventually resolve to *one lexical unit per role* — a root or an approved compound. In v1 we do **not** force adjacent concepts to fuse into a single written word: compounds become canonical because they are useful, reusable concepts (Rule 5), not merely because two words appeared next to each other. Preferred ordering now; earned compounds over time.
 
 ## Rule 5: Semantic Compounding
 
@@ -297,41 +343,41 @@ Almost every complex concept should be expressed through **composition**.
 
 | | |
 | --- | --- |
-| **ben** | collective |
-| **ba** | person |
+| **ye** | water |
+| **nan** | path |
 
 ↓
 
 | | |
 | --- | --- |
-| **benba** | tribe |
+| **yenan** | river |
 
 **Step 2: extend the tree**
 
 | | |
 | --- | --- |
-| **benba** | tribe |
-| **nal** | conflict |
+| **ye** | water |
+| **tem** | bound |
 
 ↓
 
 | | |
 | --- | --- |
-| **benbanal** | war |
+| **yetem** | beach |
 
-Every derived word **preserves its ancestry**. Words form a semantic tree rather than existing independently.
+Every derived word **preserves its ancestry**. Words form a semantic tree rather than existing independently. Larger social compounds follow the same idea — **danbakam** (tribe), **danpaba** (war) — built from approved roots without inventing opaque spellings.
 
 ```mermaid
 graph TD
-  ben["ben\ncollective"]
-  ba["ba\nperson"]
-  benba["benba\ntribe"]
-  nal["nal\nconflict"]
-  benbanal["benbanal\nwar"]
-  ben --> benba
-  ba --> benba
-  benba --> benbanal
-  nal --> benbanal
+  ye["ye\nwater"]
+  nan["nan\npath"]
+  yenan["yenan\nriver"]
+  tem["tem\nbound"]
+  yetem["yetem\nbeach"]
+  ye --> yenan
+  nan --> yenan
+  ye --> yetem
+  tem --> yetem
 ```
 
 Compounding rules for the translator: prefer the **shortest transparent path** through approved concepts; omit concepts implied by human experience unless emphasis or disambiguation is needed (**semantic economy**); reject opaque shortcuts that break the tree (*implementation Under Development*).
@@ -340,14 +386,14 @@ Compounding rules for the translator: prefer the **shortest transparent path** t
 
 > **A valid compound may not join two morphemes when the final consonant of the left morpheme is identical to the initial consonant of the right morpheme. Fonoran does not collapse, lengthen, or silently alter boundary sounds. If such a boundary would occur, the compound candidate is invalid and must be regenerated or assigned different roots.**
 
-This rule preserves Fonoran's core promise: **what you hear = what you write = what you look up**. If a spoken compound sounded like "bemam" a listener would naturally write "bemam", but the dictionary would store "bemmam". That gap violates spelling stability.
+This rule preserves Fonoran's core promise: **what you hear = what you write = what you look up**. If a spoken compound sounded like "sannan" a listener would naturally write "sannan", but the dictionary would store "sannnan". That gap violates spelling stability.
 
 | Left | Right | Boundary | Valid? | Reason |
 | --- | --- | --- | --- | --- |
-| bem | mam | m + m | **No** | identical consonants |
+| san | nan | n + n | **No** | identical consonants |
 | kal | lem | l + l | **No** | identical consonants |
-| bem | lek | m + l | Yes | different consonants |
-| ben | mam | n + m | Yes | different consonants |
+| ye | nan | e + n | Yes | vowel–consonant (no double consonant) |
+| san | ba | n + b | Yes | different consonants |
 | ba | so | a + s | Yes | vowel–consonant boundary |
 | so | a | o + a | Yes | vowel–vowel boundary |
 
@@ -396,26 +442,26 @@ This principle should guide both manual word creation and future automated compo
 
 ## Rule 6: Meaning Is Visible
 
-When someone learns **ben** (collective) and **ba** (person), they should naturally understand **benba** (tribe) without memorization.
+When someone learns **ye** (water) and **nan** (path), they should naturally understand **yenan** (river) without memorization.
 
 ```example
-ben ba
+ye nan
 
-collective person
+water path
 
 ↓
 
-benba (tribe)
+yenan (river)
 ```
 
 ```example
-benba nal
+ye tem
 
-tribe conflict
+water bound
 
 ↓
 
-benbanal (war)
+yetem (beach)
 ```
 
 As vocabulary grows, **understanding accelerates**. Each new root unlocks many compounds, and each compound reinforces the roots below it.
@@ -479,7 +525,23 @@ reason }` that renders as `[english]` in the surface and flows to the gap report
 The Fonoran surface is generated purely from the resolved tokens, so the frame is
 a faithful description of what the surface actually says — it never fabricates.
 
-**Multi-path motion** (direction in the Path slot, multiple entries allowed):
+**Motion & want+go** (Rule 4):
+
+```example
+Do you want to go to the beach?
+
+↓ slots
+
+addressee · want · move · beach
+
+↓ surface (full)
+
+be sak gi yetem ?
+
+↓ casual (Actor dropped)
+
+sak gi yetem ?
+```
 
 ```example
 go away from the city
@@ -490,20 +552,22 @@ move · far · source · city
 
 ↓ surface
 
-gi fet lo lekche
+gi fet ki lekche
 ```
 
 ```example
-run toward us from the river
+I want to go toward the water
 
 ↓ slots
 
-collective · past · run · path · source · river
+mi · want · move · path · water
 
 ↓ surface
 
-dan ta ginek nan yetasnan
+mi sak gi nan ye
 ```
+
+Plain destinations are bare Place landmarks. `nan` / `lo` / `fet` appear only for real direction contrast. Serial predicates stay in Action (`want`+`move` → `sak gi`), never Target.
 
 **Pipeline stages:**
 
@@ -513,7 +577,7 @@ dan ta ginek nan yetasnan
 4. **Primitive concepts**: map graph nodes to approved Fonoran roots
 5. **Compound construction**: build or select transparent compounds for complex nodes
 6. **Grammar particles**: attach past (**ta**), future (**sa**), negation (**no**), conditional (**von**). **Omit time particles for present.** Questions add no particle — content questions compose from concepts and are written with `?`.
-7. **Fonoran sentence**: emit fixed-order surface string
+7. **Fonoran sentence**: emit preferred-order surface string; mark recoverable addressee as droppable in the UI when safe
 
 Full implementation spec: [fonoran-translator.md](fonoran-translator.md) (live path) · [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) (legacy English compiler).
 
@@ -641,20 +705,20 @@ family
 
 Fonoran:
 mi
-bem
-tatba
+san
+sanba
 ```
 
-**family** compiles to **tatba** (bond + person). No time particle: present by default. Every slot resolves through known concepts or transparent compounding.
+**family** compiles to **sanba** (love + person). No time particle: present by default. Every slot resolves through known concepts or transparent compounding.
 
 ```example
-tat ba
+san ba
 
-bond person
+love person
 
 ↓
 
-tatba (family)
+sanba (family)
 ```
 
 ### Example: full compile
@@ -668,11 +732,29 @@ tribe
 war
 
 Fonoran:
-benba
-benbanal
+danbakam
+danpaba
 ```
 
-Every known concept compiles into Fonoran. **benba** (tribe), **benbanal** (war). No time particle: the tribe **is at war now**. Nothing hidden. Nothing borrowed from English without marking it.
+Every known concept compiles into Fonoran. **danbakam** (tribe), **danpaba** (war). No time particle: the tribe **is at war now**. Nothing hidden. Nothing borrowed from English without marking it.
+
+### Example: want + go (simplified grammar)
+
+```pipeline
+English:
+Do you want to go to the beach?
+
+Semantic:
+addressee
+want
+move
+beach
+
+Fonoran:
+be sak gi yetem ?
+```
+
+Serial Action (`sak gi`), bare Place (`yetem`), no path particle. Casual speech may drop Actor: `sak gi yetem ?`.
 
 This architecture allows multiple English expressions to converge into the **same underlying semantic representation**, then diverge again only at the particle layer when needed.
 

@@ -684,7 +684,7 @@
         },
         {
           "en": "Run to the trees.",
-          "fon": "ginek nan nu"
+          "fon": "ginek nu"
         },
         {
           "en": "Something is watching us.",
@@ -752,7 +752,7 @@
         },
         {
           "en": "Come with me to safety.",
-          "fon": "be ginam nan kamgu mi"
+          "fon": "be ginam kamgu mi"
         },
         {
           "en": "I see something in the dark.",
@@ -1955,7 +1955,7 @@
         },
         {
           "en": "The path goes to the left.",
-          "fon": "nan gi nan go"
+          "fon": "nan gi go"
         },
         {
           "en": "Is the village far from here?",
@@ -2324,7 +2324,7 @@
         },
         {
           "en": "I am going to the water.",
-          "fon": "mi gi nan ye"
+          "fon": "mi gi ye"
         },
         {
           "en": "Please wait for me here.",
@@ -2448,7 +2448,7 @@
         },
         {
           "en": "I meant to go the other way.",
-          "fon": "mi ta gi [honen] nan dimet",
+          "fon": "mi ta gi [honen] dimet",
           "note": "gap: honen (needs a root)"
         },
         {
@@ -2469,7 +2469,7 @@
         },
         {
           "en": "You went the wrong direction.",
-          "fon": "be ta gi gam nan"
+          "fon": "be ta gi gam"
         },
         {
           "en": "Are we moving toward the water?",
@@ -2627,7 +2627,7 @@
         },
         {
           "en": "Can you give me a little water?",
-          "fon": "be ku mi gen be ?"
+          "fon": "be ku mi gen ye ?"
         },
         {
           "en": "I will share my shelter with you.",
@@ -2935,7 +2935,7 @@
         },
         {
           "en": "I am cold and wet.",
-          "fon": "mi nes mak be"
+          "fon": "mi nes mak ye"
         },
         {
           "en": "The rain is very heavy.",
@@ -3804,7 +3804,11 @@
         },
         {
           "en": "I want to go toward the water.",
-          "fon": "mi sak nan be gi"
+          "fon": "mi sak gi nan ye"
+        },
+        {
+          "en": "Do you want to go to the beach?",
+          "fon": "be sak gi yetem ?"
         },
         {
           "en": "Can we rest for a short time?",
@@ -3890,7 +3894,7 @@
         },
         {
           "en": "Maybe that path leads to people.",
-          "fon": "ketnat nan gi nan balek ketnat"
+          "fon": "ketnat nan gi balek ketnat"
         },
         {
           "en": "I can try to make a signal.",
@@ -4133,7 +4137,7 @@
         },
         {
           "en": "I will come back to this place.",
-          "fon": "mi sa giyinam nan che"
+          "fon": "mi sa giyinam che"
         },
         {
           "en": "We made it through this day.",

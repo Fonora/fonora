@@ -17,25 +17,30 @@ function prefersReducedMotion() {
  * @param {(parts: string[]) => string} toScript
  */
 export function buildPlatformPipelineData(rules, toScript) {
+  // Live lexicon: water (ye) + path (nan) → river (yenan).
+  // Script intro still shows place + vowel as the writing-system idea;
+  // the language beat uses the real approved roots.
   const lips = rules?.places?.find((place) => place.id === 'lips');
+  const palate = rules?.places?.find((place) => place.id === 'palate' || place.id === 'blade' || place.id === 'ridge');
   const vowel = rules?.modifiers?.find((modifier) => modifier.id === 'vowel');
+  const place = palate ?? lips;
   const roots = [
-    { spelling: 'pa', meaning: 'flow' },
-    { spelling: 'kal', meaning: 'path' },
+    { spelling: 'ye', meaning: 'water' },
+    { spelling: 'nan', meaning: 'path' },
   ];
 
   return {
     symbols: [
-      { symbol: lips?.symbol ?? '∋', label: lips?.label ?? 'Lips' },
+      { symbol: place?.symbol ?? lips?.symbol ?? '∋', label: place?.label ?? lips?.label ?? 'Lips' },
       { symbol: vowel?.symbol ?? '⚬', label: vowel?.label ?? 'Vowel' },
     ],
     syllable: {
-      roman: 'pa',
-      script: toScript(['pa']),
+      roman: 'ye',
+      script: toScript(['ye']),
     },
     roots,
     compound: {
-      spelling: 'pakal',
+      spelling: 'yenan',
       meaning: 'river',
       script: toScript(roots.map((root) => root.spelling)),
     },

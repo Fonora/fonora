@@ -142,6 +142,7 @@ people communicate with only 50?"** — a measurable question.
 - **Present tense is inferred.** Only past (`ta`) and future (`sa`) are marked.
 - No conjugation, declension, gender, or plural endings. A word is invariant.
 - Polarity is grammar, not vocabulary (`no` + *true* = false).
+- Prefer a clear Actor → Action → Place order; drop the Actor only when it is obvious (e.g. casual yes/no to “you”). Destinations are bare after motion — no mandatory “toward” particle.
 - See [fonoran-grammar.md](fonoran-grammar.md) for the full rules.
 
 ## How we judge understandability

@@ -37,23 +37,26 @@ A primitive is a **fundamental human experience** that cannot be naturally said 
 
 ## Grammar (minimal)
 
-**Sentence core (strict order):** Actor → Action → Target · Place · Time float
+**Preferred order:** Actor → Action → Target/Place · Time floats · recoverable Actor may omit
 
 | Slot | Role | Example |
 | --- | --- | --- |
-| Actor | who | mi (I) |
-| Action | what happens | tel (eat) |
-| Target | whom/what | lo (fish) |
-| Place | where (floats) | che (home) |
-| Time | when (floats) | kan (now) |
+| Actor | who (may drop when obvious) | mi (I), be (you) |
+| Action | what happens (may chain) | sak gi (want go) |
+| Target | whom/what | lo (food), yekal (fish) |
+| Place | where / destination | yetem (beach), ye (water) |
+| Time | when (floats) | gem (now) |
 
 **Time particles:** present = *(none)* · past = **ta** · future = **sa**
 
-- `mi bem` = I love (now)
-- `mi ta bem` = I loved
-- `mi sa bem` = I will love
+- `mi san be` = I love you (now)
+- `mi ta san be` = I loved you
+- `mi sa san be` = I will love you
+- `mi gi ye` = I go to the water (bare destination)
+- `be sak gi yetem?` = do you want to go to the beach? (full)
+- `sak gi yetem?` = same, casual (addressee dropped)
 
-Words never inflect. Grammar uses a tiny closed particle set (`mi`, `ta`, `sa`, `no`, `ya`, `von`). Full rules → [fonoran-grammar.md](fonoran-grammar.md).
+Words never inflect. Grammar uses a tiny closed particle set (`mi`, `ta`, `sa`, `no`, `ya`, `von`). Core roles keep a preferred order because there are no case markers — they do not freely scramble. Full rules → [fonoran-grammar.md](fonoran-grammar.md).
 
 ## Seeds are truth
 

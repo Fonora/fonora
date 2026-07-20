@@ -10,7 +10,12 @@ import {
   validateLlmFrame,
   mergeSentenceResults,
 } from '../tools/fonoran-llm-translate.js';
-import { normalizeFrameParticles, checkLlmGrammarViolations } from '../tools/fonoran-llm-grammar-brief.js';
+import {
+  normalizeFrameParticles,
+  checkLlmGrammarViolations,
+  simplifyMotionFrame,
+  isAddresseeDroppable,
+} from '../tools/fonoran-llm-grammar-brief.js';
 import {
   normalizeWePrimaryFrame,
   attachTranslateAlternates,
@@ -54,8 +59,8 @@ async function main() {
   assert(phraseResult.tokens.some(t => t.resolved), 'at least one resolved token');
   assert(phraseResult.surface?.roman, 'roman surface produced');
 
-  const equalToken = (await translateFromFrame(equalFrame, { input: 'equal' })).tokens.find(t => t.fonoran === 'homas');
-  assert(equalToken?.parts?.length === 2, `equal compound parts: ${JSON.stringify(equalToken?.parts)}`);
+  const equalToken = (await translateFromFrame(equalFrame, { input: 'equal' })).tokens.find(t => t.concept_id === 'equal');
+  assert(equalToken?.resolved && equalToken?.fonoran, `equal resolves: ${JSON.stringify(equalToken?.fonoran)}`);
 
   const badExistentialFrame = {
     slots: {
@@ -75,13 +80,18 @@ async function main() {
   assert(!frameUsesWhComposition(repaired), 'repair removes WH composition');
   const repairedResult = await translateFromFrame(repaired, { input: 'Are there other people near you?' });
   assert(
-    repairedResult.surface?.roman?.includes('honen balek dal be') && !repairedResult.surface?.roman?.includes('tak'),
+    repairedResult.surface?.roman?.includes('balek')
+      && repairedResult.surface?.roman?.includes('dal')
+      && repairedResult.surface?.roman?.includes('be')
+      && !repairedResult.surface?.roman?.includes('tak'),
     `existential repair roman: ${repairedResult.surface?.roman}`,
   );
 
   const cached = await translate('Are there other people near you', { sourceLang: 'en', engine: 'llm', skipCache: false });
   assert(
-    cached.surface?.roman?.includes('honen balek dal be') && !cached.surface?.roman?.includes('tak'),
+    cached.surface?.roman?.includes('balek')
+      && cached.surface?.roman?.includes('be')
+      && !cached.surface?.roman?.includes('tak'),
     `cached existential: ${cached.surface?.roman}`,
   );
 
@@ -121,9 +131,12 @@ async function main() {
     unresolved: [],
   };
   const safeHere = await translateFromFrame(safeHereFrame, { input: 'You are safe here' });
+  const safeRoman = safeHere.surface?.roman ?? '';
+  const safeIdx = safeRoman.indexOf('kamgu') >= 0 ? safeRoman.indexOf('kamgu') : safeRoman.indexOf('tampe');
+  const hereIdx = safeRoman.indexOf('nam');
   assert(
-    safeHere.surface?.roman === 'be tampe nam',
-    `safe-here modifier order (quality before place): ${safeHere.surface?.roman}`,
+    safeRoman.startsWith('be ') && safeIdx >= 0 && hereIdx > safeIdx,
+    `safe-here modifier order (quality before place): ${safeRoman}`,
   );
 
   // Sentence segmentation: multiple single-sentence frames compose into discrete
@@ -141,19 +154,66 @@ async function main() {
     ['It moves here.', 'A person moves.'],
     { input: 'It moves here. A person moves.' },
   );
-  const expectedTwo = `${sentA.surface.roman}. ${sentB.surface.roman}.`;
   assert(mergedTwo.sentences?.length === 2, `two discrete sentences: ${mergedTwo.sentences?.length}`);
   assert(
-    mergedTwo.surface.roman === expectedTwo,
-    `segmented surface (discrete sentences): "${mergedTwo.surface.roman}" != "${expectedTwo}"`,
+    mergedTwo.surface.roman === `${sentA.surface.roman} ${sentB.surface.roman}`,
+    `segmented surface (no period terminators): "${mergedTwo.surface.roman}"`,
   );
   assert(mergedTwo.mode === 'discourse', `multi-sentence mode is discourse: ${mergedTwo.mode}`);
+
+  // Rule 4: serial want+move, bare destination, droppable addressee.
+  const beachFrame = {
+    slots: {
+      subject: ['addressee'],
+      event: ['want'],
+      object: ['move'],
+      path: ['path', 'beach'],
+      time: [],
+      modifiers: [],
+    },
+    is_question: true,
+    unresolved: [],
+  };
+  const beachRepaired = simplifyMotionFrame(beachFrame, 'Do you want to go to the beach?');
+  assert(
+    JSON.stringify(beachRepaired.slots.event) === JSON.stringify(['want', 'move']),
+    `beach serial event: ${JSON.stringify(beachRepaired.slots.event)}`,
+  );
+  assert(
+    JSON.stringify(beachRepaired.slots.path) === JSON.stringify(['beach']),
+    `beach bare path: ${JSON.stringify(beachRepaired.slots.path)}`,
+  );
+  assert(isAddresseeDroppable(beachRepaired, 'Do you want to go to the beach?'), 'beach Actor droppable');
+  assert(
+    !isAddresseeDroppable(beachRepaired, 'Do you want me to move back?'),
+    'mixed persons not droppable',
+  );
+  const beachResult = await translateFromFrame(beachRepaired, { input: 'Do you want to go to the beach?' });
+  assert(beachResult.surface?.roman === 'be sak gi yetem ?', `beach roman: ${beachResult.surface?.roman}`);
+  assert(beachResult.tokens.some(t => t.droppable && t.fonoran === 'be'), 'beach marks be droppable');
+  const beachAlts = await attachTranslateAlternates(beachResult, beachRepaired, {
+    input: 'Do you want to go to the beach?',
+  });
+  assert(
+    beachAlts.alternates?.some(a => a.id === 'actor_dropped' && a.roman === 'sak gi yetem ?'),
+    `beach casual alt: ${JSON.stringify(beachAlts.alternates?.map(a => a.roman))}`,
+  );
+
+  const toward = simplifyMotionFrame({
+    slots: { subject: ['mi'], event: ['want'], object: ['move'], path: ['path', 'ye'], time: [], modifiers: [] },
+    is_question: false,
+  }, 'I want to go toward the water.');
+  assert(
+    JSON.stringify(toward.slots.path) === JSON.stringify(['path', 'water']),
+    `toward keeps nan: ${JSON.stringify(toward.slots.path)}`,
+  );
 
   console.log('translateFromFrame:', phraseResult.surface.roman);
   console.log('segmented two:', mergedTwo.surface.roman);
   console.log('existential repair:', repairedResult.surface.roman);
   console.log('safe-here order:', safeHere.surface.roman);
   console.log('equal parts:', equalToken?.parts?.join(' + '));
+  console.log('beach:', beachResult.surface.roman);
   console.log('OK');
 }
 

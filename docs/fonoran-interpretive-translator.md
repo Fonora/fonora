@@ -44,7 +44,7 @@ Roman line + pronunciation + script
 
 Tokenizes English, skips articles/auxiliaries/conjunctions, assigns **grammar slots** per [fonoran-grammar.md](fonoran-grammar.md).
 
-The v1 skeleton is **Actor · Action · Target · Place · Time** ([fonoran-grammar.md Rule 4](fonoran-grammar.md#rule-4-fixed-core-floating-periphery)). The parser's internal slot keys keep their historical names (`subject`, `event`, `object`, `path`) but map onto the new roles as below:
+The v1 skeleton is **Actor · Action · Target · Place · Time** ([fonoran-grammar.md Rule 4](fonoran-grammar.md#rule-4-preferred-order-drop-whats-obvious)). The parser's internal slot keys keep their historical names (`subject`, `event`, `object`, `path`) but map onto the new roles as below:
 
 | Slot (role) | Internal key | Meaning |
 | --- | --- | --- |
@@ -75,17 +75,19 @@ The v1 skeleton is **Actor · Action · Target · Place · Time** ([fonoran-gram
 
 ### Motion toward / away / from
 
-English locomotion collapses to **`move`** (`gi`). Direction is lexical in the **Path** slot — not a separate English “go”:
+English locomotion collapses to **`move`** (`gi`). Plain destinations are bare Place landmarks; direction concepts appear only for real contrast (toward / from / away):
 
 | English | Frame | Example surface |
 | --- | --- | --- |
-| go / walk to X | move · path · X | `mi gi nan lekche` |
-| will go to X | · sa · move · path · X | `mi sa gi nan lekche` |
-| come from X | move · source · X | `mi gi lo yetasnan` |
-| run away | move · far | `kal ta ginek fet` |
-| go away from X | move · far · source · X | `mi gi fet lo lekche` |
+| go / walk to X | move · X | `mi gi lekche` / `mi gi ye` |
+| want to go to the beach | want · move · beach | `be sak gi yetem ?` |
+| will go to X | · sa · move · X | `mi sa gi lekche` |
+| go toward X | move · path · X | `mi gi nan ye` |
+| come from X | move · source · X | `mi gi ki yenan` |
+| run away | run · far | `ginek fet` |
+| go away from X | move · far · source · X | `mi gi fet ki lekche` |
 
-`going to` + **verb** (future intent) peels to **sa**; `going to` + **place** stays present motion with path **nan**.
+`going to` + **verb** (future intent) peels to **sa**; `going to` + **place** stays present motion with a **bare** destination (no automatic `nan`).
 
 ### Layer 2: Resolution
 

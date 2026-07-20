@@ -106,8 +106,8 @@ export const DOMAIN_MODULE_COPY = {
     fonoraFocus: 'When-questions in Fonora symbols.',
   },
   direction_motion: {
-    description: 'Coming, going, movement paths, and verbs of motion.',
-    fonoranFocus: 'Motion verbs and path particles.',
+    description: 'Coming, going, destinations, and verbs of motion.',
+    fonoranFocus: 'Motion verbs, bare destinations, and direction concepts (toward/from/away).',
     fonoraFocus: 'Script for direction and movement phrases.',
   },
   possession_trade: {
