@@ -479,7 +479,9 @@ const fonoranTranslatorResult = await (async () => {
     // real root. `light` previously resolved to dark (ges) and `travels` to path
     // (kal) via gloss tokens leaked through lab-sound aliases.
     const light = await translateEnglish('Light travels fast.');
-    assert(light.surface.roman === 'kek gi nek', `light roman: ${light.surface.roman}`);
+    // Trailing `.` is retained from the English source for Listen/readback.
+    assert(light.surface.roman === 'kek gi nek.', `light roman: ${light.surface.roman}`);
+    assert(light.tokens.some((t) => t.kind === 'punctuation' && t.fonoran === '.'), 'light keeps period token');
     const lightTok = light.tokens.find(t => t.english === 'light');
     assert(lightTok?.fonoran === 'kek' && lightTok?.resolution_kind === 'direct', `light token: ${JSON.stringify(lightTok)}`);
     const travelsTok = light.tokens.find(t => t.english === 'travels');
