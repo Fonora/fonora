@@ -13,21 +13,49 @@ function prefersReducedMotion() {
 }
 
 /**
+ * Resolve a 2-root compound example from the live dictionary (preferred),
+ * falling back to the approved river form when the API is unavailable.
+ * @param {{ spelling?: string, meaning?: string, roots?: Array<{ spelling: string, meaning: string }> } | null} lexiconExample
+ */
+function resolveLanguageExample(lexiconExample) {
+  const roots = Array.isArray(lexiconExample?.roots)
+    ? lexiconExample.roots
+      .map((root) => ({
+        spelling: String(root?.spelling ?? '').trim(),
+        meaning: String(root?.meaning ?? '').trim(),
+      }))
+      .filter((root) => root.spelling && root.meaning)
+    : [];
+  const spelling = String(lexiconExample?.spelling ?? '').trim();
+  const meaning = String(lexiconExample?.meaning ?? '').trim() || 'river';
+  if (spelling && roots.length === 2) {
+    return { roots, compound: { spelling, meaning } };
+  }
+  // Fallback matches data/fonoran-compounds.json river = water + path.
+  return {
+    roots: [
+      { spelling: 'ye', meaning: 'water' },
+      { spelling: 'nan', meaning: 'path' },
+    ],
+    compound: { spelling: 'yenan', meaning: 'river' },
+  };
+}
+
+/**
  * @param {object} rules
  * @param {(parts: string[]) => string} toScript
+ * @param {{ spelling?: string, meaning?: string, roots?: Array<{ spelling: string, meaning: string }> } | null} [lexiconExample]
  */
-export function buildPlatformPipelineData(rules, toScript) {
-  // Live lexicon: water (ye) + path (nan) → river (yenan).
+export function buildPlatformPipelineData(rules, toScript, lexiconExample = null) {
   // Script intro still shows place + vowel as the writing-system idea;
-  // the language beat uses the real approved roots.
+  // the language beat prefers a live dictionary compound (homepage must not
+  // invent spellings that drift from the lab).
   const lips = rules?.places?.find((place) => place.id === 'lips');
   const palate = rules?.places?.find((place) => place.id === 'palate' || place.id === 'blade' || place.id === 'ridge');
   const vowel = rules?.modifiers?.find((modifier) => modifier.id === 'vowel');
   const place = palate ?? lips;
-  const roots = [
-    { spelling: 'ye', meaning: 'water' },
-    { spelling: 'nan', meaning: 'path' },
-  ];
+  const example = resolveLanguageExample(lexiconExample);
+  const firstRoot = example.roots[0].spelling;
 
   return {
     symbols: [
@@ -35,16 +63,57 @@ export function buildPlatformPipelineData(rules, toScript) {
       { symbol: vowel?.symbol ?? '⚬', label: vowel?.label ?? 'Vowel' },
     ],
     syllable: {
-      roman: 'ye',
-      script: toScript(['ye']),
+      roman: firstRoot,
+      script: toScript([firstRoot]),
     },
-    roots,
+    roots: example.roots,
     compound: {
-      spelling: 'yenan',
-      meaning: 'river',
-      script: toScript(roots.map((root) => root.spelling)),
+      spelling: example.compound.spelling,
+      meaning: example.compound.meaning,
+      script: toScript(example.roots.map((root) => root.spelling)),
     },
   };
+}
+
+/**
+ * Fetch a 2-root showcase compound from the public words API.
+ * Prefers concept_id=river so the homepage tracks the live dictionary.
+ * @returns {Promise<{ spelling: string, meaning: string, roots: Array<{ spelling: string, meaning: string }> } | null>}
+ */
+export async function fetchPlatformLexiconExample(conceptId = 'river') {
+  const wanted = String(conceptId || 'river').toLowerCase();
+  try {
+    const listRes = await fetch(`/api/fonoran/words?q=${encodeURIComponent(wanted)}`);
+    if (!listRes.ok) return null;
+    const list = await listRes.json();
+    const hit = (list.items ?? []).find((item) => {
+      if (item.state === 'rejected') return false;
+      if ((item.concept_id || '').toLowerCase() !== wanted) return false;
+      return Array.isArray(item.parts) && item.parts.length === 2;
+    });
+    if (!hit?.ref) return null;
+
+    const detailRes = await fetch(`/api/fonoran/words/${encodeURIComponent(hit.ref)}`);
+    if (!detailRes.ok) return null;
+    const detail = await detailRes.json();
+    const direct = detail.compound?.derivation?.direct
+      ?? detail.derivation?.direct
+      ?? [];
+    const roots = direct
+      .map((part) => ({
+        spelling: String(part.spelling ?? part.ref ?? '').trim(),
+        meaning: String(part.meaning ?? '').trim(),
+      }))
+      .filter((root) => root.spelling && root.meaning);
+    if (roots.length !== 2) return null;
+    return {
+      spelling: String(detail.spelling || hit.spelling || '').trim(),
+      meaning: String(detail.meaning || hit.meaning || wanted).trim(),
+      roots,
+    };
+  } catch {
+    return null;
+  }
 }
 
 /**

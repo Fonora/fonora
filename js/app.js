@@ -56,7 +56,7 @@ import { getPiperVoiceForLang, initPiperAudio } from './piper-audio.js';
 import { loadLanguagePreference } from './language-preferences.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { mountSymbolSpotlight } from './symbol-spotlight.js';
-import { buildPlatformPipelineData, mountPlatformShowcase } from './platform-showcase.js';
+import { buildPlatformPipelineData, fetchPlatformLexiconExample, mountPlatformShowcase } from './platform-showcase.js?v=lexicon-1';
 import { romanToFonoraScript, fonoraScriptToRoman, romanTextToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { setupEncoderTesting } from './encoder-testing.js';
 import { setupPronunciationValidation } from './pronunciation-validation-ui.js';
@@ -173,16 +173,20 @@ const HOME_MANNER_ROWS = [
 ];
 
 let platformShowcaseCleanup = null;
+let platformShowcaseToken = 0;
 
-function renderPlatformShowcase() {
+async function renderPlatformShowcase() {
   const root = document.getElementById('platform-showcase');
   if (!root || !rules) return;
+  const token = ++platformShowcaseToken;
   if (platformShowcaseCleanup) {
     platformShowcaseCleanup();
     platformShowcaseCleanup = null;
   }
   const toScript = (parts) => romanToFonoraScript(parts, rules).phrase ?? '';
-  const data = buildPlatformPipelineData(rules, toScript);
+  const lexiconExample = await fetchPlatformLexiconExample('river');
+  if (token !== platformShowcaseToken) return;
+  const data = buildPlatformPipelineData(rules, toScript, lexiconExample);
   platformShowcaseCleanup = mountPlatformShowcase(root, { data });
 }
 
@@ -1183,7 +1187,7 @@ function applyRulesBundle(loaded) {
 
   showFallbackBanner();
   setupTabs();
-  renderPlatformShowcase();
+  void renderPlatformShowcase();
   renderHomeHowItWorks();
   renderSoundGrid();
   renderSupplementalSoundTables();
