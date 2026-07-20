@@ -1,15 +1,15 @@
 /**
  * Fonoran writing practice (roman mode): meaning → type Fonoran roman spelling.
  *
- * Prefers the phrase-based domain curriculum when translated phrases are available;
- * falls back to the word-based ring curriculum.
+ * Uses hybrid curriculum (full ring vocabulary, then domain phrases) when course
+ * phrases are available; falls back to ring-only when they are not.
  */
 import {
   loadFonoranPracticeEntries,
   spellingMatchesEntry,
 } from './fonoran-practice-words.js';
 import { loadDomainCurriculum, spellingMatchesCourseEntry } from './fonoran-course-phrases.js';
-import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curriculum.js';
+import { createCurriculum, createHybridCurriculum } from './fonoran-learn-curriculum.js';
 import { setupFonoranDisplayModeToggle, loadFonoranDisplayMode } from './learning-display-mode.js';
 import {
   onSpellingPracticeTabActivated,
@@ -100,7 +100,8 @@ function checkRomanAnswer() {
   const input = document.getElementById('fonoran-writing-roman-input');
   if (!entry || !input) return;
 
-  const correct = usingPhrases
+  const isPhrase = entry?.itemType === 'phrase' || entry?.domainId != null;
+  const correct = isPhrase
     ? spellingMatchesCourseEntry(input.value, /** @type {any} */ (entry))
     : spellingMatchesEntry(input.value, /** @type {any} */ (entry), pool.length ? pool : entries);
   checked = true;
@@ -166,13 +167,21 @@ export async function setupFonoranWriting(rules) {
   setupFonoranDisplayModeToggle('fonoran-writing-mode', applyDisplayMode, 'fonoran-writing-display-mode');
 
   try {
-    const courseData = await loadDomainCurriculum(rules);
-    if (courseData) {
+    const [labEntries, courseData] = await Promise.all([
+      loadFonoranPracticeEntries(rules),
+      loadDomainCurriculum(rules).catch(() => null),
+    ]);
+    if (courseData?.phraseItems?.length) {
       usingPhrases = true;
-      curriculum = createDomainCurriculum('fonoran-writing', courseData.items, courseData.domains);
+      curriculum = createHybridCurriculum(
+        'fonoran-writing',
+        labEntries,
+        courseData.phraseItems,
+        courseData.domains,
+      );
     } else {
       usingPhrases = false;
-      curriculum = createCurriculum('fonoran-writing', await loadFonoranPracticeEntries(rules));
+      curriculum = createCurriculum('fonoran-writing', labEntries);
     }
     pool = curriculum.ordered;
     entries = curriculum.currentLessonEntries();
@@ -188,7 +197,7 @@ export async function setupFonoranWriting(rules) {
     status.hidden = entries.length > 0;
     status.textContent = entries.length
       ? ''
-      : 'No practice content loaded. Run the dev server and build course phrases with npm run fonoran:course-phrases:build.';
+      : 'No practice content loaded. Run the dev server so /api/fonoran/bootstrap can supply the lab dictionary.';
   }
 
   document.getElementById('fonoran-writing-roman-check')?.addEventListener('click', checkRomanAnswer);

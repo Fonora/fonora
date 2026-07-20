@@ -1,10 +1,11 @@
 /**
  * Fonora Script writing: English prompt → type Fonora script.
- * Uses the Fonoran domain curriculum (words then phrases).
+ * Uses hybrid curriculum (full ring vocabulary, then domain phrases).
  */
 import { createTypingPractice } from './fonora-typing-practice.js';
 import { loadDomainCurriculum } from './fonoran-course-phrases.js';
-import { createDomainCurriculum } from './fonoran-learn-curriculum.js';
+import { createHybridCurriculum } from './fonoran-learn-curriculum.js';
+import { loadFonoranPracticeEntries } from './fonoran-practice-words.js';
 import {
   setupLearningLanguageSelect,
   ensureLearningLanguageSelect,
@@ -33,7 +34,7 @@ let practice = null;
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
 
-/** @type {ReturnType<typeof createDomainCurriculum> | null} */
+/** @type {ReturnType<typeof createHybridCurriculum> | null} */
 let curriculum = null;
 
 /** @type {object | null} */
@@ -56,9 +57,17 @@ function entryToPracticeWord(entry) {
  */
 async function loadLessonWords(rules) {
   if (!curriculum) {
-    const courseData = await loadDomainCurriculum(rules);
-    if (!courseData) return [];
-    curriculum = createDomainCurriculum('script-writing', courseData.items, courseData.domains);
+    const [labEntries, courseData] = await Promise.all([
+      loadFonoranPracticeEntries(rules).catch(() => []),
+      loadDomainCurriculum(rules).catch(() => null),
+    ]);
+    if (!courseData?.phraseItems?.length && !labEntries.length) return [];
+    curriculum = createHybridCurriculum(
+      'script-writing',
+      labEntries,
+      courseData?.phraseItems ?? [],
+      courseData?.domains ?? [],
+    );
   }
   return curriculum
     .currentLessonEntries()

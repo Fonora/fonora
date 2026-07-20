@@ -43,7 +43,7 @@ flowchart TB
   subgraph session [Session layer]
     UI["learn-session-ui.js\n10-question sessions + XP"]
     Gamify["learn-gamification.js\nlocalStorage + optional sync"]
-    Curr["fonoran-learn-curriculum.js\nring-based lesson slicing"]
+    Curr["fonoran-learn-curriculum.js\nhybrid ring + domain phrases"]
   end
   subgraph tracks [Two tracks]
     Script["Script skills\nsounds · writing · words"]
@@ -51,16 +51,18 @@ flowchart TB
   end
   subgraph data [Data sources]
     Bootstrap["GET /api/fonoran/bootstrap\nroots + compounds"]
+    Phrases["GET /api/fonoran/learn/course-phrases\nruntime-compiled roman"]
     Particles["fonoran-grammar-particles.json"]
-    Fallback["fonoran-grammar-practice.json\nstatic fallback"]
+    Fallback["static course-phrases.json\noffline fallback"]
   end
   Learn --> Route --> UI
   UI --> Gamify --> Curr
   Curr --> Script
   Curr --> Fonoran
   Fonoran --> Bootstrap
+  Fonoran --> Phrases
+  Phrases --> Fallback
   Fonoran --> Particles
-  Fonoran --> Fallback
 ```
 
 `/learn` is served by the same SPA bundle as `/script` and `/tools` ([`index.html`](../index.html)). Hash routes select skill panels via [`js/learn-routing-data.js`](../js/learn-routing-data.js).
@@ -76,20 +78,21 @@ Teaches the phonetic writing system with **structured lesson progression** and i
 | Skill | Route | Exercise | Curriculum |
 | --- | --- | --- | --- |
 | Sounds | `#script-sounds` | Match symbol ↔ sound (decode + construct) | Ordered symbol modules: places → modifiers → grid → vowels ([`js/fonora-script-curriculum.js`](../js/fonora-script-curriculum.js)) |
-| Writing | `#script-writing` | English meaning → type Fonora script | Domain curriculum from [`data/fonoran-course-phrases.json`](../data/fonoran-course-phrases.json): words then phrases per module |
-| Words | `#script-words` | Fonora script → type English meaning | Same domain curriculum as Writing |
+| Writing | `#script-writing` | English meaning → type Fonora script | Hybrid: full lab ring vocabulary, then stranger-corpus phrases |
+| Words | `#script-words` | Fonora script → type English meaning | Same hybrid curriculum as Writing |
 
-Script Writing and Read Words reuse the Fonoran phrase corpus: English `sourceText` prompts and precomputed `script` glyphs from translated course entries. Pass ≥70% to advance; skill cards show module labels and lesson progress ([`js/learn-home-progress.js`](../js/learn-home-progress.js)).
+Script Writing and Read Words share the hybrid curriculum with Fonoran language skills. Pass ≥70% to advance; skill cards show ring / module labels and lesson progress ([`js/learn-home-progress.js`](../js/learn-home-progress.js)).
 
 **Playback:** Inline hear buttons use [`js/learn-hear-ui.js`](../js/learn-hear-ui.js) + [`js/fonora-tts.js`](../js/fonora-tts.js). Piper voice models are cached in the browser Cache API ([`js/piper-audio.js`](../js/piper-audio.js)) and warmed on app load so Listen is fast after the first visit.
 
 ### Fonoran language
 
-Teaches roots and compounds from the live lab, ordered by **language rings** (campfire tiers):
+Reading, writing, hearing, and script skills use a **hybrid curriculum**:
 
-1. **Communicative core** — survival dialogue vocabulary
-2. **Extended core** — broader everyday concepts
-3. **Complete** — full inventory
+1. **Ring phase** — every lab root/compound, ordered by campfire tier (communicative core → extended → complete), ~10 items per lesson
+2. **Phrase phase** — 20 stranger-corpus domains × 5 phrase lessons (50 phrases each when translated)
+
+Grammar keeps a separate flow: hand-authored Rule 4 lesson, then domain phrase drills.
 
 | Skill | Route | Exercise |
 | --- | --- | --- |
@@ -99,7 +102,11 @@ Teaches roots and compounds from the live lab, ordered by **language rings** (ca
 | Grammar | `#fonoran-grammar` | Rule 4 basics lesson (order, particles, want+go, bare destinations) then phrase drills · **Listen** for Fonoran |
 | Speaking | `#fonoran-speaking` | Stub — not yet on Learn home |
 
-Ring labels and tier assignment come from [`tools/fonoran-experience-tiers.js`](../tools/fonoran-experience-tiers.js). Curriculum ordering is implemented in [`js/fonoran-learn-curriculum.js`](../js/fonoran-learn-curriculum.js): tier rank → root before compound → alphabetical.
+Ring labels and tier assignment come from [`tools/fonoran-experience-tiers.js`](../tools/fonoran-experience-tiers.js). Hybrid lesson slicing lives in [`js/fonoran-learn-curriculum.js`](../js/fonoran-learn-curriculum.js) (`createHybridCurriculum`).
+
+### Phrase roman freshness
+
+English prompts are static (stranger corpus / baked domain structure). Fonoran roman is **compiled at Learn load** from the translation cache via `GET /api/fonoran/learn/course-phrases`, keyed on lab `updated_at`. Lexicon respells therefore show up in Learn without rebuilding `data/fonoran-course-phrases.json`. That baked file remains the offline fallback and CI fixture; rebuild with `npm run fonoran:course-phrases:build -- --force --cache-only` when you need to refresh the committed snapshot.
 
 ---
 
@@ -112,10 +119,12 @@ sequenceDiagram
   participant Gamify as learn-gamification
   participant Curr as fonoran-learn-curriculum
   participant API as /api/fonoran/bootstrap
+  participant Phrases as /api/fonoran/learn/course-phrases
 
   User->>Session: Start skill
   Session->>Curr: currentLessonEntries()
-  Curr->>API: load vocabulary (Fonoran skills)
+  Curr->>API: load vocabulary (ring phase)
+  Curr->>Phrases: load runtime-compiled phrases
   Session->>User: 10 questions
   User->>Session: answer each
   Session->>Curr: recordResult(item, correct)
@@ -164,19 +173,14 @@ Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 | --- | --- |
 | [`js/learn-session-ui.js`](../js/learn-session-ui.js) | Shared 10-question session UI |
 | [`js/learn-gamification.js`](../js/learn-gamification.js) | Progress model, XP, streaks, sync |
-| [`js/fonoran-learn-curriculum.js`](../js/fonoran-learn-curriculum.js) | Ring ordering, lesson slicing |
+| [`js/fonoran-learn-curriculum.js`](../js/fonoran-learn-curriculum.js) | Hybrid ring + domain phrase lesson slicing |
 | [`js/fonoran-practice-words.js`](../js/fonoran-practice-words.js) | Builds practice entries from bootstrap |
+| [`js/fonoran-course-phrases.js`](../js/fonoran-course-phrases.js) | Client loader (API first, static fallback) |
+| [`tools/fonoran-course-phrases-compile.js`](../tools/fonoran-course-phrases-compile.js) | Shared cache-first phrase compile |
+| [`tools/fonoran-learn-course-phrases.js`](../tools/fonoran-learn-course-phrases.js) | Server lab_rev cache for Learn phrases |
 | [`js/fonoran-*-practice.js`](../js/) | Per-skill exercise modules |
 | [`js/learn-home-progress.js`](../js/learn-home-progress.js) | Learn home streak / daily goal / skill bars |
-| [`tools/fonoran-api.js`](../tools/fonoran-api.js) | Bootstrap + progress API routes |
-
----
-
-## Future direction
-
-A planned pivot aligns courses with the **1,000-phrase stranger corpus** (20 communicative domains, simple → hard within each category) and the LLM translator cache. That work replaces ring-based vocabulary ordering with phrase-based exercises; it is **not yet implemented**.
-
-Current Learn behavior documented above remains authoritative until that ships.
+| [`tools/fonoran-api.js`](../tools/fonoran-api.js) | Bootstrap, Learn phrases, progress API routes |
 
 ---
 

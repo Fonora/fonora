@@ -1,15 +1,15 @@
 /**
  * Fonoran reading practice: recognize meaning from roman or Fonora script prompt.
  *
- * Prefers the phrase-based domain curriculum (data/fonoran-course-phrases.json)
- * when translated phrases are available; falls back to the word-based ring curriculum.
+ * Uses hybrid curriculum (full ring vocabulary, then domain phrases) when course
+ * phrases are available; falls back to ring-only when they are not.
  */
 import {
   loadFonoranPracticeEntries,
   meaningChoicesForEntry,
 } from './fonoran-practice-words.js';
 import { loadDomainCurriculum, meaningChoicesForCourseEntry } from './fonoran-course-phrases.js';
-import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curriculum.js';
+import { createCurriculum, createHybridCurriculum } from './fonoran-learn-curriculum.js';
 import { loadFonoranDisplayMode, setupFonoranDisplayModeToggle } from './learning-display-mode.js';
 import {
   createLearnSession,
@@ -85,7 +85,8 @@ function renderChoices() {
   const container = document.getElementById('fonoran-reading-choices');
   if (!entry || !container) return;
 
-  currentChoices = usingPhrases
+  const isPhrase = entry?.itemType === 'phrase' || entry?.domainId != null;
+  currentChoices = isPhrase
     ? meaningChoicesForCourseEntry(/** @type {any} */ (entry), /** @type {any[]} */ (pool.length ? pool : entries))
     : meaningChoicesForEntry(/** @type {any} */ (entry), pool.length ? pool : entries);
   answered = false;
@@ -156,13 +157,21 @@ export async function setupFonoranReading(rules) {
   });
 
   try {
-    const courseData = await loadDomainCurriculum(rules);
-    if (courseData) {
+    const [labEntries, courseData] = await Promise.all([
+      loadFonoranPracticeEntries(rules),
+      loadDomainCurriculum(rules).catch(() => null),
+    ]);
+    if (courseData?.phraseItems?.length) {
       usingPhrases = true;
-      curriculum = createDomainCurriculum('fonoran-reading', courseData.items, courseData.domains);
+      curriculum = createHybridCurriculum(
+        'fonoran-reading',
+        labEntries,
+        courseData.phraseItems,
+        courseData.domains,
+      );
     } else {
       usingPhrases = false;
-      curriculum = createCurriculum('fonoran-reading', await loadFonoranPracticeEntries(rules));
+      curriculum = createCurriculum('fonoran-reading', labEntries);
     }
     pool = curriculum.ordered;
     entries = curriculum.currentLessonEntries();
@@ -178,7 +187,7 @@ export async function setupFonoranReading(rules) {
     status.hidden = entries.length > 0;
     status.textContent = entries.length
       ? ''
-      : 'No practice content loaded. Run the dev server and build course phrases with npm run fonoran:course-phrases:build.';
+      : 'No practice content loaded. Run the dev server so /api/fonoran/bootstrap can supply the lab dictionary.';
   }
 
   document.getElementById('fonoran-reading-choices')?.addEventListener('click', (event) => {

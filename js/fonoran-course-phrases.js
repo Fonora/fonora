@@ -1,9 +1,9 @@
 /**
- * Browser-side loader for the pre-built course phrase dataset.
+ * Browser-side loader for the course phrase dataset.
  *
- * The JSON at /data/fonoran-course-phrases.json is produced by
- * tools/fonoran-course-phrases-build.js and contains 20 stranger-corpus domains
- * (50 phrases each), sorted simple → complex within each domain.
+ * Prefers runtime-compiled roman from GET /api/fonoran/learn/course-phrases
+ * (cache-first recompile keyed on lab revision). Falls back to the baked JSON at
+ * /data/fonoran-course-phrases.json for offline/static hosting.
  *
  * loadDomainCurriculum() is the primary entry point for the practice modules. It
  * returns a flat list of DomainItems tagged as 'word' or 'phrase'. Within each domain,
@@ -11,7 +11,7 @@
  */
 import { buildMeaningChoices } from '../tools/fonoran-meaning-choices.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
-import { loadFonoranPracticeEntries } from './fonoran-practice-words.js';
+import { loadFonoranPracticeEntries, loadFonoranPracticeLab } from './fonoran-practice-words.js';
 
 /**
  * @typedef {{
@@ -46,23 +46,78 @@ import { loadFonoranPracticeEntries } from './fonoran-practice-words.js';
  * }} CourseEntry
  */
 
+/** @type {{ version: string, lab_rev?: string | null, domains: CourseDomain[] } | null} */
 let cachedData = null;
+/** @type {string | null} */
+let cachedLabRev = null;
 
-/** @returns {Promise<{ version: string, domains: CourseDomain[] } | null>} */
-export async function loadCoursePhrasesData() {
-  if (cachedData !== null) return cachedData;
+/** Clear module-scope course phrase cache (e.g. after lab changes). */
+export function invalidateCoursePhrasesCache() {
+  cachedData = null;
+  cachedLabRev = null;
+}
+
+/**
+ * @returns {Promise<string | null>}
+ */
+async function currentLabRev() {
   try {
-    const res = await fetch('/data/fonoran-course-phrases.json');
-    if (!res.ok) {
-      cachedData = null;
-      return null;
-    }
-    cachedData = await res.json();
-    return cachedData;
+    const bootstrap = await loadFonoranPracticeLab();
+    return bootstrap?.health?.bucket_updated_at ?? null;
   } catch {
-    cachedData = null;
     return null;
   }
+}
+
+/**
+ * @returns {Promise<{ version: string, lab_rev?: string | null, domains: CourseDomain[] } | null>}
+ */
+async function loadStaticCoursePhrases() {
+  try {
+    const res = await fetch('/data/fonoran-course-phrases.json');
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * @returns {Promise<{ version: string, lab_rev?: string | null, domains: CourseDomain[] } | null>}
+ */
+async function loadRuntimeCoursePhrases() {
+  try {
+    const res = await fetch('/api/fonoran/learn/course-phrases');
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Load course phrases: runtime API first, static JSON fallback.
+ * Cache invalidates when bootstrap lab revision changes.
+ *
+ * @returns {Promise<{ version: string, lab_rev?: string | null, domains: CourseDomain[] } | null>}
+ */
+export async function loadCoursePhrasesData() {
+  const labRev = await currentLabRev();
+  if (cachedData !== null && (labRev == null || cachedLabRev === labRev)) {
+    return cachedData;
+  }
+
+  const runtime = await loadRuntimeCoursePhrases();
+  if (runtime?.domains?.length) {
+    cachedData = runtime;
+    cachedLabRev = runtime.lab_rev ?? labRev;
+    return cachedData;
+  }
+
+  const baked = await loadStaticCoursePhrases();
+  cachedData = baked;
+  cachedLabRev = labRev;
+  return cachedData;
 }
 
 /**
