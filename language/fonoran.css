@@ -2351,6 +2351,14 @@
       height:auto;
     }
     .translator-panel__header { flex-shrink:0; }
+    .translator-panel__header--input {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:0.65rem;
+      margin-bottom:0.35rem;
+    }
+    .translator-panel__header--input .translator-panel__lang { margin:0; flex:1; min-width:0; }
     .translator-panel--output { overflow:visible; }
     .translator-panel__header--output {
       display:flex;
@@ -2400,6 +2408,51 @@
     .translator-panel__lang--select .translator-panel__lang-text { display:none; }
     .translator-panel__lang--select .translator-panel__lang-select { display:block; }
     .translator-panel--output .translator-output { flex:none; }
+    .translator-input.translator-input--fonora.symbol-text {
+      font-family:"Noto Sans Symbols 2","Noto Sans Symbols","Segoe UI Symbol","Apple Symbols","Arial Unicode MS",sans-serif;
+      font-size:1rem;
+      line-height:1.45;
+      font-variant-ligatures:none;
+      letter-spacing:0;
+      word-spacing:0;
+    }
+    .translator-examples .chip.symbol-text {
+      font-family:"Noto Sans Symbols 2","Noto Sans Symbols","Segoe UI Symbol","Apple Symbols","Arial Unicode MS",sans-serif;
+      font-variant-ligatures:none;
+      letter-spacing:0;
+      word-spacing:0;
+    }
+    .translator-output__translation {
+      margin:0;
+      font-family:var(--font-serif);
+      font-size:1.35rem;
+      line-height:1.45;
+      color:var(--text);
+    }
+    .translator-output__literal {
+      margin:0.55rem 0 0;
+      font-size:0.88rem;
+      color:var(--muted);
+      line-height:1.4;
+    }
+    .translator-output__literal-label {
+      font-weight:600;
+      margin-right:0.35rem;
+      color:var(--text);
+    }
+    .translator-output__source-details {
+      margin:0.85rem 0 0;
+      border-top:1px solid var(--border);
+      padding-top:0.55rem;
+    }
+    .translator-output__source-details > summary {
+      cursor:pointer;
+      font-weight:600;
+      color:var(--muted);
+    }
+    .translator-output__source-body {
+      margin-top:0.55rem;
+    }
     .translator-input {
       width:100%;
       flex:none;

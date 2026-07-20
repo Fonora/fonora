@@ -243,8 +243,8 @@
 
           <div class="translator-layout">
             <div class="translator-panel translator-panel--input content-card">
-              <div class="translator-panel__header">
-                <label class="translator-panel__lang" for="tr-input">
+              <div class="translator-panel__header translator-panel__header--input">
+                <label class="translator-panel__lang" for="tr-source-lang">
                   <select id="tr-source-lang" class="translator-panel__lang-select" aria-label="Source language">
                     <option value="auto">Auto-detect</option>
                     <option value="en" selected>English</option>
@@ -254,11 +254,16 @@
                     <option value="ja">Japanese</option>
                     <option value="ar">Arabic</option>
                     <option value="zh">Mandarin</option>
+                    <option value="fonoran-roman">Fonoran (Roman)</option>
+                    <option value="fonoran-fonora">Fonoran (Fonora)</option>
                   </select>
                 </label>
+                <button type="button" id="tr-keyboard-toggle" class="btn fonora-keyboard-toggle" hidden aria-pressed="false" aria-controls="tr-keyboard-dock">
+                  Keyboard
+                </button>
               </div>
               <textarea id="tr-input" class="translator-input" rows="6" placeholder="Type words, phrases, or sentences in any language…" autocomplete="off" spellcheck="true" aria-label="Text to translate into Fonoran"></textarea>
-              <div class="translator-examples sans">
+              <div id="tr-examples" class="translator-examples sans">
                 <span class="translator-examples__label">Try:</span>
                 <button type="button" class="chip" data-tr-example="Do you want to go to the beach?">Do you want to go to the beach?</button>
                 <button type="button" class="chip" data-tr-example="I love my family">I love my family</button>
@@ -270,6 +275,17 @@
             <div class="translator-panel translator-panel--output content-card">
               <div class="translator-panel__header translator-panel__header--output">
                 <span class="translator-panel__lang" id="tr-output-label">Fonoran</span>
+                <label class="translator-panel__lang translator-panel__lang--select" id="tr-target-lang-wrap" hidden for="tr-target-lang">
+                  <select id="tr-target-lang" class="translator-panel__lang-select" aria-label="Target language">
+                    <option value="en" selected>English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="ja">Japanese</option>
+                    <option value="ar">Arabic</option>
+                    <option value="zh">Mandarin</option>
+                  </select>
+                </label>
                 <div id="tr-output-meta" class="translator-panel__meta"></div>
               </div>
               <div id="tr-output" class="translator-output" aria-live="polite" aria-labelledby="tr-output-label">
@@ -375,6 +391,14 @@
     </div>
     <div id="sheet-body" class="sheet__body"></div>
   </div>
+  <div id="tr-keyboard-dock" class="fonora-keyboard-dock" hidden>
+    <div class="fonora-keyboard-dock__bar">
+      <span class="fonora-keyboard-dock__title sans">Fonora keyboard</span>
+      <button type="button" id="tr-keyboard-close" class="btn" aria-label="Hide keyboard">Hide</button>
+    </div>
+    <div id="tr-keyboard" class="fonora-keyboard" aria-label="Fonora Script keyboard"></div>
+  </div>
+
   <div id="toast" class="toast"></div>
   <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script type="module" src="/language/fonoran-app.js"></script>

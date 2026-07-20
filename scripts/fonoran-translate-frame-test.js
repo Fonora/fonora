@@ -189,13 +189,16 @@ async function main() {
     'mixed persons not droppable',
   );
   const beachResult = await translateFromFrame(beachRepaired, { input: 'Do you want to go to the beach?' });
-  assert(beachResult.surface?.roman === 'be sak gi yetem ?', `beach roman: ${beachResult.surface?.roman}`);
+  assert(
+    /^be sak gi yetem\s*\?$/.test(String(beachResult.surface?.roman ?? '')),
+    `beach roman: ${beachResult.surface?.roman}`,
+  );
   assert(beachResult.tokens.some(t => t.droppable && t.fonoran === 'be'), 'beach marks be droppable');
   const beachAlts = await attachTranslateAlternates(beachResult, beachRepaired, {
     input: 'Do you want to go to the beach?',
   });
   assert(
-    beachAlts.alternates?.some(a => a.id === 'actor_dropped' && a.roman === 'sak gi yetem ?'),
+    beachAlts.alternates?.some(a => a.id === 'actor_dropped' && /^sak gi yetem\s*\?$/.test(String(a.roman ?? ''))),
     `beach casual alt: ${JSON.stringify(beachAlts.alternates?.map(a => a.roman))}`,
   );
 
@@ -207,6 +210,176 @@ async function main() {
     JSON.stringify(toward.slots.path) === JSON.stringify(['path', 'water']),
     `toward keeps nan: ${JSON.stringify(toward.slots.path)}`,
   );
+
+  // Negation repair: orphaned `no` (or `no` before a verb parked outside event)
+  // must not invent Action negation when English has no clause-negation cue;
+  // real "did not / never / no X" must still restore dropped event `no`.
+  const bogusLocalNo = normalizeFrameParticles({
+    slots: {
+      subject: ['animal'],
+      event: ['walk'],
+      object: [],
+      path: ['earth'],
+      time: ['long_ago'],
+      modifiers: ['no', 'old', 'big'],
+    },
+    is_question: false,
+    unresolved: [],
+  });
+  assert(
+    !bogusLocalNo.slots.event.some(x => String(x).toLowerCase() === 'no'),
+    `no+quality stays out of event: ${JSON.stringify(bogusLocalNo.slots.event)}`,
+  );
+  assert(
+    bogusLocalNo.slots.modifiers[0] === 'no' && bogusLocalNo.slots.modifiers[1] === 'old',
+    `no+quality left in modifiers: ${JSON.stringify(bogusLocalNo.slots.modifiers)}`,
+  );
+  const strippedInvented = await repairLlmFrame(
+    {
+      slots: {
+        subject: ['animal'],
+        event: ['no', 'walk'],
+        object: [],
+        path: [],
+        time: ['long_ago'],
+        modifiers: ['old'],
+      },
+      is_question: false,
+      unresolved: [],
+    },
+    'Long ago the animal walked.',
+  );
+  assert(
+    !strippedInvented.slots.event.some(x => ['no', 'neg'].includes(String(x).toLowerCase())),
+    `strip invented event no: ${JSON.stringify(strippedInvented.slots.event)}`,
+  );
+  assert(strippedInvented._stripped_invented_negation === true, 'marks stripped invented negation');
+  const realNegKept = await repairLlmFrame(
+    {
+      slots: { subject: ['mi'], event: ['walk'], object: [], path: [], time: [], modifiers: [] },
+      is_question: false,
+      unresolved: [],
+    },
+    'I did not walk.',
+  );
+  assert(
+    realNegKept.slots.event[0] === 'no',
+    `restore real negation: ${JSON.stringify(realNegKept.slots.event)}`,
+  );
+  const determinerNoKept = await repairLlmFrame(
+    {
+      slots: { subject: ['person'], event: ['come'], object: [], path: [], time: [], modifiers: [] },
+      is_question: false,
+      unresolved: [],
+    },
+    'No people came.',
+  );
+  assert(
+    determinerNoKept.slots.event[0] === 'no',
+    `restore determiner no: ${JSON.stringify(determinerNoKept.slots.event)}`,
+  );
+
+  // Reverse path: natural-language pasted with Fonoran source must not dump
+  // word-by-word gaps — detect wrong direction instead.
+  const { looksLikeWrongSourceLanguage, glossRomanPhrase, translateFromFonoran } = await import('../tools/fonoran-reverse-translate.js');
+  const { buildResolveContext } = await import('../tools/fonoran-english-resolve.js');
+  const { getParticleRuntime } = await import('../tools/fonoran-particles.js');
+  const { promoteTemporalSceneToTime } = await import('../tools/fonoran-llm-grammar-brief.js');
+  const revCtx = await buildResolveContext();
+  const revParticles = await getParticleRuntime();
+  const englishAsFonoran = glossRomanPhrase(
+    'long ago when the world was young the great beast walked upon the earth',
+    revCtx,
+    revParticles,
+  );
+  assert(looksLikeWrongSourceLanguage(englishAsFonoran), 'English prose flagged as wrong reverse source');
+  const realFonoran = glossRomanPhrase('ni kal ta difet giti fen di fenfo', revCtx, revParticles);
+  assert(!looksLikeWrongSourceLanguage(realFonoran), 'real Fonoran not flagged as wrong source');
+  const wrongDir = await translateFromFonoran(
+    'long ago, when the world was young, the great beast walked upon the earth.',
+    { sourceLang: 'fonoran-roman', inputMode: 'roman', targetLang: 'en', engine: 'lexical' },
+  );
+  assert(wrongDir.ok === false && wrongDir.code === 'wrong_source_language', `wrong-dir error: ${JSON.stringify(wrongDir)}`);
+  const rightDir = await translateFromFonoran('ni kal ta giti fen', {
+    sourceLang: 'fonoran-roman',
+    inputMode: 'roman',
+    targetLang: 'en',
+    engine: 'lexical',
+  });
+  assert(rightDir.ok !== false, `real Fonoran reverse ok: ${rightDir.error}`);
+
+  // Dummy "difet ta mo" scene frames must collapse into the main clause.
+  const { collapseDummySceneFrames, isDummyTemporalSceneFrame } = await import('../tools/fonoran-llm-grammar-brief.js');
+  assert(isDummyTemporalSceneFrame({
+    slots: { time: ['long_ago', 'ta'], event: ['do'], subject: [], object: [], path: [], modifiers: [] },
+  }), 'difet ta mo is dummy scene');
+  assert(!isDummyTemporalSceneFrame({
+    slots: { subject: ['animal'], event: ['do'], time: ['ta'], object: ['thing'], path: [], modifiers: [] },
+  }), 'real actor doing something is not dummy scene');
+  const collapsedMo = collapseDummySceneFrames([
+    { slots: { time: ['long_ago', 'ta'], event: ['do'], subject: [], object: [], path: [], modifiers: [] } },
+    { slots: { time: ['beginning', 'world', 'ta'], event: ['do'], subject: [], object: [], path: [], modifiers: [] } },
+    {
+      slots: {
+        subject: ['big', 'animal'],
+        event: ['walk'],
+        path: ['surface', 'earth'],
+        time: ['ta'],
+        object: [],
+        modifiers: [],
+      },
+    },
+  ]);
+  assert(collapsedMo.length === 1, `collapsed to one frame: ${collapsedMo.length}`);
+  assert(
+    !collapsedMo[0].slots.event.includes('do'),
+    `no dummy do left: ${JSON.stringify(collapsedMo[0].slots.event)}`,
+  );
+  assert(
+    collapsedMo[0].slots.time.includes('long_ago')
+      && collapsedMo[0].slots.time.includes('beginning')
+      && collapsedMo[0].slots.time.includes('world'),
+    `scene folded into time: ${JSON.stringify(collapsedMo[0].slots.time)}`,
+  );
+  const collapsedSurface = await translateFromFrame(collapsedMo[0], {
+    input: 'Long ago, when the world was young, the animal walked on the earth.',
+  });
+  assert(
+    /^difet lukan fenfo ni kal ta giti ten fen\.?$/.test(collapsedSurface.surface?.roman ?? ''),
+    `collapsed surface: ${collapsedSurface.surface?.roman}`,
+  );
+
+  // Scene structure: temporal concepts front; ta stays by Action; not a flat bag.
+  const scenePromoted = promoteTemporalSceneToTime({
+    slots: {
+      subject: ['big', 'animal'],
+      event: ['walk'],
+      path: ['surface', 'earth'],
+      time: ['long_ago', 'ta'],
+      modifiers: ['beginning', 'world'],
+    },
+  });
+  assert(
+    JSON.stringify(scenePromoted.slots.time.slice(0, 3)) === JSON.stringify(['long_ago', 'beginning', 'world']),
+    `scene promoted+sorted: ${JSON.stringify(scenePromoted.slots.time)}`,
+  );
+  assert(scenePromoted.slots.time.at(-1) === 'ta', 'ta stays last in time slot');
+  assert(scenePromoted.slots.modifiers.length === 0, 'modifiers cleared of scene');
+  const sceneSurface = await translateFromFrame(scenePromoted, {
+    input: 'Long ago, when the world was young, the animal walked on the earth.',
+  });
+  const sceneRoman = sceneSurface.surface?.roman ?? '';
+  assert(
+    /^difet lukan fenfo ni kal ta giti ten fen\.?$/.test(sceneRoman),
+    `scene-fronted surface: ${sceneRoman}`,
+  );
+  const roles = sceneSurface.tokens.filter(t => t.kind !== 'punctuation').map(t => t.role);
+  const difetIdx = sceneRoman.split(/\s+/).indexOf('difet');
+  const niIdx = sceneRoman.split(/\s+/).indexOf('ni');
+  const taIdx = sceneRoman.split(/\s+/).indexOf('ta');
+  const gitiIdx = sceneRoman.split(/\s+/).indexOf('giti');
+  assert(difetIdx === 0 && niIdx > difetIdx && taIdx > niIdx && gitiIdx === taIdx + 1,
+    `scene order difet…ni…ta giti: ${sceneRoman} roles=${roles.join(',')}`);
 
   console.log('translateFromFrame:', phraseResult.surface.roman);
   console.log('segmented two:', mergedTwo.surface.roman);

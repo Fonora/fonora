@@ -543,9 +543,22 @@
       "aliases": [
         "later",
         "future",
-        "tomorrow",
         "next",
         "then"
+      ]
+    },
+    "tomorrow": {
+      "label": "tomorrow",
+      "aliases": [
+        "tomorrow",
+        "the next day"
+      ]
+    },
+    "yesterday": {
+      "label": "yesterday",
+      "aliases": [
+        "yesterday",
+        "the day before"
       ]
     },
     "birth": {
@@ -807,7 +820,6 @@
         "prior",
         "earlier",
         "past",
-        "yesterday",
         "old",
         "older",
         "aged"

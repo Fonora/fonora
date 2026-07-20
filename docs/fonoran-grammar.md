@@ -256,7 +256,7 @@ Stacked predicates stay in the **Action** chain — no infinitive particle:
 
 ```text
 be sak gi yetem ?     (do you want to go to the beach?)
-mi no sak gi fa de    (I do not want to go alone)
+mi no sak gi lu de    (I do not want to go alone)
 ```
 
 `want` + `move` → `sak gi`. Do **not** park the second verb in Target.
@@ -790,7 +790,7 @@ The following topics extend this specification without breaking Rules 1 through 
 | Conditionals | **Partial** — `if` / `von` in golden torture tests |
 | Relative clauses | Open |
 | Aspect / progressive | Open — English progressive collapses to `move` (`gi`) for now |
-| Subordinate clauses | **Partial** — `and`/`but` coordination; `when`/`after` still weak |
+| Subordinate clauses | **Partial** — `and`/`but` coordination; pure temporal scene-setting fronts via Time periphery; `when` with its own actor+action splits frames (still maturing) |
 
 Contributions should preserve: invariant words, particle-based grammar, fixed default order, visible semantic compounding, and semantic economy in compounds.
 

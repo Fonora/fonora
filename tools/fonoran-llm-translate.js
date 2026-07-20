@@ -36,6 +36,8 @@ import {
   checkLlmGrammarViolations,
   stripExistentialThereFromFrame,
   simplifyMotionFrame,
+  promoteTemporalSceneToTime,
+  collapseDummySceneFrames,
 } from './fonoran-llm-grammar-brief.js';
 import {
   normalizeWePrimaryFrame,
@@ -230,12 +232,16 @@ function frameHasNegation(frame) {
 }
 
 /**
- * Explicit English verbal negation (not/never/cannot/n't). Excludes bare "no"
- * (quantifiers like nobody/nothing already compose with the particle) and the
- * WH word nohu, which is a lexical unit, not clause negation.
+ * Explicit English clause-negation cues. Includes not/never/cannot/n't and
+ * determiner "no X" ("no water", "No people came"). Excludes fused quantifiers
+ * nobody/nothing (no space) — those compose as [no, person|thing] without
+ * requiring event-scoped no.
  */
 function sourceHasVerbalNegation(text) {
-  return /(?:\bnot\b|\bnever\b|\bcannot\b|n't\b)/i.test(String(text ?? ''));
+  const s = String(text ?? '');
+  if (/(?:\bnot\b|\bnever\b|\bcannot\b|\bcan\s+not\b|n't\b)/i.test(s)) return true;
+  if (/\bno\s+\w+/i.test(s)) return true;
+  return false;
 }
 
 /**
@@ -260,17 +266,46 @@ function restoreDroppedNegation(frame, sourceText) {
   };
 }
 
+/**
+ * Inverse of restoreDroppedNegation: if English has no clause-negation cue but
+ * the event slot still carries `no`, the compiler invented Action negation
+ * (often by relocating a bogus local no+quality pair). Strip event `no`.
+ */
+function stripInventedNegation(frame, sourceText) {
+  if (!frame?.slots || sourceHasVerbalNegation(sourceText)) return frame;
+  const event = Array.isArray(frame.slots.event) ? frame.slots.event : [];
+  const isNo = x => {
+    const id = String(x ?? '').trim().toLowerCase();
+    return id === 'no' || id === 'neg';
+  };
+  if (!event.some(isNo)) return frame;
+  return {
+    ...frame,
+    slots: { ...frame.slots, event: event.filter(x => !isNo(x)) },
+    reasoning: [
+      frame.reasoning,
+      '[Grammar repair] Source has no clause negation but event carried no — stripped invented Action negation.',
+    ].filter(Boolean).join(' '),
+    _stripped_invented_negation: true,
+  };
+}
+
 export async function repairLlmFrame(frame, sourceText, lab = null) {
   let normalized = simplifyMotionFrame(
-    restoreDroppedNegation(
-      normalizeWePrimaryFrame(
-        stripExistentialThereFromFrame(
-          normalizeFrameParticles(frame),
+    promoteTemporalSceneToTime(
+      stripInventedNegation(
+        restoreDroppedNegation(
+          normalizeWePrimaryFrame(
+            stripExistentialThereFromFrame(
+              normalizeFrameParticles(frame),
+              sourceText,
+            ),
+            sourceText,
+          ),
           sourceText,
         ),
         sourceText,
       ),
-      sourceText,
     ),
     sourceText,
   );
@@ -376,10 +411,13 @@ Split into separate frames whenever the source contains two or more independent 
 - Causal/result connectives: "that is why", "therefore", "so", "thus", "hence", "c'est pourquoi", "por eso", "deshalb", "因此", "だから", etc.
 - Sequential events with a clear boundary: "I did X and then I did Y" (different tenses or actors)
 - Adversative contrast with separate predicates: "I wanted X but I got Y"
+- Temporal subordinates with their OWN actor+action: "when the dog barked, the child ran" → [bark frame, run frame]
 
 Do NOT split for:
 - Simple noun coordination: "I want food and water"
 - Shared-subject action chains with the same tense: "She stood up and walked away"
+- Pure temporal scene-setting without a second action ("long ago", "when the world was young", "in those days") — keep ONE frame; put scene concepts in time
+- Never invent event [do] as a dummy copula/happening for scenes ("difet ta mo" is invalid)
 
 ## Slot semantics (Rule 4 / Rule 7)
 - subject = Actor (include addressee for yes/no "you" questions — casual drop is a surface variant, not a frame omission)
@@ -394,6 +432,11 @@ Do NOT split for:
 - Never mix concepts from different clauses into one slot set — that produces scrambled output.
 - Demonstratives (this/that/these/those) and articles have NO Fonoran form — never emit a concept for them; leave them to inference (Rule 7).
 - Particles ONLY: mi, ta, sa, no, ya, von — map neg→no (Rule 3).
+- Polarity with no: ONLY false=[no, true] and different=[no, same]. Never invent other antonyms via no+quality.
+- Scene structure: put temporal scene concepts in time (long_ago, beginning, world, …), never as trailing modifiers. Renderer fronts them before Actor; ta/sa stay by Action.
+- Pure scene-setting ("when the world was young") = one frame. Subordinate with its own actor+action = split frames.
+- No copula: English "was" in scene-setting is NOT concept do (mo). Never emit event [do] for "it was / there was / happened" scenes.
+- Age/quality words about eras, places, or things → temporal primitives + topic; person age → child; else unresolved[].
 - Present tense: leave time slot empty (Rule 3).
 - Spatial/relational: lexical concepts (inside, here, there, near, path, source, up, down…) — NOT particles.
 - Plain "go/want to go to X": event [move] or [want, move], path [X] — do NOT emit path/nan for English "to".
@@ -481,7 +524,8 @@ Fonoran is a small concept language built for two strangers at a campfire: it ha
 Rewrite the source text into the SIMPLEST possible propositions that a person who only knows basic, concrete concepts could still understand — the same thing a human translator does before glossing.
 
 Rules:
-- Split every sentence into short, single-idea clauses.
+- Split coordinated or sequential EVENT clauses; do NOT peel pure temporal scene-setting into its own clause.
+- Keep "long ago", "when the world was young", "in those days" attached to the main event clause as time context — never rewrite them as "something happened" / "it was".
 - Replace abstract / technical / sci-fi words with plain, concrete meaning (e.g. "sentience" → "a mind that thinks for itself"; "the system executes processes" → "the thing does its work"; "real-time input was tunneled in" → "control was sent in from outside, moment by moment").
 - Keep the ORIGINAL meaning and intent; do not add new ideas, do not editorialize, do not shorten away meaning.
 - Prefer concrete nouns, simple verbs, and short subject-verb-object clauses.
@@ -727,9 +771,32 @@ async function translateViaLlmCore(text, options = {}) {
   }
 
   // Multi-clause path: LLM returned an array of frames (one per clause).
+  // Collapse unreadable dummy "time + do" scene frames into the main clause first.
   if (llm.frames) {
+    const frames = collapseDummySceneFrames(llm.frames);
+    if (frames.length === 1) {
+      const frame = await repairLlmFrame(frames[0], input, options.lab);
+      const result = await translateFromFrame(frame, {
+        lab: options.lab,
+        devLab: options.devLab,
+        input,
+        sourceLang: frame.detected_lang ?? sourceLang,
+      });
+      const validation = await validateLlmFrame(frame, options.lab, input, { devLab: Boolean(options.devLab) });
+      const enriched = {
+        ...result,
+        engine: 'llm',
+        model: llm.model,
+        reasoning: frame.reasoning ?? null,
+        detected_lang: frame.detected_lang ?? sourceLang,
+        llm_frame: frame,
+        validation,
+      };
+      return finalizeWithAlternates(enriched, frame, input, options);
+    }
+
     const segResults = [];
-    for (const rawFrame of llm.frames) {
+    for (const rawFrame of frames) {
       const clauseFrame = await repairLlmFrame(rawFrame, input, options.lab);
       const clauseResult = await translateFromFrame(clauseFrame, {
         lab: options.lab,
@@ -751,11 +818,11 @@ async function translateViaLlmCore(text, options = {}) {
       });
     }
     // Use frame indices as segment labels; the real source text is tracked on the merged result.
-    const segments = llm.frames.map((_, i) => `clause ${i + 1}`);
+    const segments = frames.map((_, i) => `clause ${i + 1}`);
     const merged = await mergeSentenceResults(segResults, segments, { input });
     return finalizeWithAlternates(
       { ...merged, engine: 'llm', model: llm.model },
-      llm.frames[0],
+      frames[0],
       input,
       options,
     );
