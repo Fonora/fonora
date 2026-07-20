@@ -67,7 +67,7 @@ Narrative research notes (one per major experiment), authored in `docs/research-
 | Phase II: Inventing a language | Gen 1/2 roots, Gen 3 DDA, Gen 3.1 distinctiveness, the 200-primitive allocation |
 | Phase III: A usable language | semantic foundation, the Constitution, the editorial pipeline, grammar particles, the translator, typing, puzzle conversation |
 | Phase IV: Reconstructing compounds | teaching trees, meaning-attempts, seed expansion, playtest-driven preferred forms |
-| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, **RN-26** LLM-assisted word generation (foundational pipeline), **RN-27** automated refine loop (corpus experiment), **RN-28** multilingual semantic compiler |
+| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, **RN-26** LLM-assisted word generation (foundational pipeline), **RN-27** automated refine loop (corpus experiment), **RN-28** multilingual semantic compiler, **RN-33** seeds-are-truth + four-rules preferred regen |
 
 ---
 
