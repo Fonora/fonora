@@ -180,7 +180,12 @@ function cacheControl(pathname) {
   ) {
     return 'no-cache';
   }
-  if (/\.(wasm|data|js|mjs|css)$/.test(pathname)) return 'public, max-age=31536000, immutable';
+  // WASM / large binary assets are content-stable and safe to pin.
+  if (/\.(wasm|data)$/.test(pathname)) return 'public, max-age=31536000, immutable';
+  // App JS/CSS are served at stable URLs with no content hashes. Never mark them
+  // immutable: a year-long pin keeps stale homepage showcases and dictionary
+  // examples alive after deploys (e.g. pakal → yenan).
+  if (/\.(js|mjs|css)$/.test(pathname)) return 'no-cache';
   // Markdown docs are edited in place and fetched by the in-app viewer; revalidate
   // so content updates appear immediately instead of being pinned for max-age.
   if (/\.md$/.test(pathname)) return 'no-cache';
