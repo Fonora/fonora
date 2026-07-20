@@ -19,6 +19,9 @@ import {
   buildSurface,
   buildFrame,
   splitSentences,
+  punctuationToken,
+  terminalPunctuationFromText,
+  stripTrailingPunctuationTokens,
 } from './fonoran-translator.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
 import { getParticleRuntime } from './fonoran-particles.js';
@@ -828,11 +831,15 @@ export async function mergeSentenceResults(results, segments, { input }) {
   let anyLlm = false;
 
   results.forEach((r, i) => {
-    const segTokens = Array.isArray(r.tokens) ? r.tokens : [];
-    // No period terminators: Fonoran writing carries no sentence punctuation
-    // except the question `?` (Rule 3). Sentence boundaries stay available to
-    // consumers via `sentences[]`; the printed surface is just the words.
+    // Retain source terminators (. ! ?) on Fonoran/roman so long passages stay
+    // readable and Listen can pause between sentences. Do not invent periods for
+    // bare coordinated clauses that never had terminal punctuation.
+    const segTokens = stripTrailingPunctuationTokens(
+      Array.isArray(r.tokens) ? r.tokens : [],
+    );
     tokens.push(...segTokens);
+    const mark = terminalPunctuationFromText(segments[i]);
+    if (mark) tokens.push(punctuationToken(mark));
 
     const segSlots = r.semantic?.slots ?? {};
     for (const key of Object.keys(slots)) {
@@ -843,19 +850,18 @@ export async function mergeSentenceResults(results, segments, { input }) {
     if (r.reasoning) reasonings.push(r.reasoning);
     if (r.engine === 'llm') anyLlm = true;
     frames.push(r.llm_frame ?? null);
+    const segSurfaceTokens = mark
+      ? [...segTokens, punctuationToken(mark)]
+      : segTokens;
     sentences.push({
       input: segments[i],
-      roman: r.surface?.roman ?? '',
+      roman: buildSurface(segSurfaceTokens).roman,
       unresolved: r.unresolved ?? [],
       frame: r.llm_frame ?? null,
     });
   });
 
   const surface = buildSurface(tokens);
-  // Multi-sentence tidy: drop the space before sentence/question terminators.
-  // Scoped to this new path only; the single-sentence surface is left byte-for-
-  // byte identical so golden/probe expectations are unaffected.
-  surface.roman = surface.roman.replace(/\s+([.?!])/g, '$1');
 
   const merged = {
     input,

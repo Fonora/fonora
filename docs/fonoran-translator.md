@@ -156,7 +156,7 @@ flowchart TB
 | **Resolution colors** | Default text = direct lexicon hit; gold = interpreted; orange = semantic / weak alias; red = unresolved |
 | **Pronunciation** | Collapsed `<details>` under roman; phonetic key + “sounds like” hint |
 | **Why this reading** | Hover/focus popup in output header; shows LLM `reasoning` + engine badge (Cached / LLM) |
-| **Listen** | Uses server `playback` as source of truth; speaks every token; unresolved → browser TTS English fallback; punctuation skipped |
+| **Listen** | Uses server `playback` as source of truth; speaks Fonoran IPA via Piper; unresolved gaps may use English TTS; Fonoran tokens never fall back to English orthography; `.` `!` `?` retained on roman/script and pause Listen between sentences |
 | **Also sayable** | Rule-based alternates (e.g. collective `dan` ↔ dyadic `mi be` for *we*); alternate ▶ highlights alternate tokens |
 | **Layout** | 15 px gap below nav; panels `align-items: start`; independent auto heights |
 

@@ -32,7 +32,16 @@ import {
 } from './language-preferences.js';
 import { buildPhonemeKeyLexicon } from './fonora-speak-lexicon.js';
 import { ipaToEspeakSynthesisInput, segmentIpa } from './ipa-espeak-format.js';
-import { ipaToPiperPhonemeIds, canMapIpaToPiper, getPiperVoiceForLang, getSamplePlaybackPlan, PIPER_VOICE_BY_LANG } from './piper-audio.js';
+import {
+  ipaToPiperPhonemeIds,
+  canMapIpaToPiper,
+  getPiperVoiceForLang,
+  getSamplePlaybackPlan,
+  PIPER_VOICE_BY_LANG,
+  resolvePiperPhonemeId,
+  piperVoiceCoversFonoranCore,
+  piperSkipsLaxAutoStress,
+} from './piper-audio.js';
 import { buildMermaidGraph } from '../tools/fonoran-graph.js';
 import { translateEnglish, resetTranslatorCache } from '../tools/fonoran-translator.js';
 import { loadLanguageRulesFromMarkdown } from './load-language-rules.js';
@@ -169,8 +178,40 @@ const piperMultiWordResult = test('ipaToPiperPhonemeIds keeps word boundaries in
   const mergedStress = merged.filter((id) => id === stressId).length;
   const spacedStress = spaced.filter((id) => id === stressId).length;
   assert(mergedStress === 1, 'merged clause should stress only the first vowel');
-  assert(spacedStress === 3, 'spaced clause should stress each word');
+  assert(spacedStress === 3, 'spaced clause should stress each word by default');
   assert(spaced.length > merged.length, 'spaced clause should not collapse into one word');
+});
+
+const piperLaxStressResult = test('LibriTTS skips lax auto-stress; Lessac keeps it', () => {
+  const map = {
+    _: [0], '^': [1], '$': [2], 'ˈ': [120],
+    m: [25], ɪ: [74], i: [73],
+  };
+  const kitDefault = ipaToPiperPhonemeIds('mɪ', map);
+  const kitLibri = ipaToPiperPhonemeIds('mɪ', map, { skipLaxAutoStress: true });
+  const fleece = ipaToPiperPhonemeIds('mi', map);
+  assert(kitDefault.includes(120), 'Lessac/Alba path keeps stress on KIT');
+  assert(!kitLibri.includes(120), 'LibriTTS path skips stress on KIT');
+  assert(fleece.includes(120), 'FLEECE still receives primary stress');
+  assert(piperSkipsLaxAutoStress('en_US-libritts_r-medium'));
+  assert(!piperSkipsLaxAutoStress('en_US-lessac-medium'));
+  assert(!piperSkipsLaxAutoStress('en_GB-alba-medium'));
+});
+
+const piperSoftMapResult = test('resolvePiperPhonemeId soft-maps missing phones instead of throwing', () => {
+  const map = {
+    _: [0], '^': [1], '$': [2], 'ˈ': [120],
+    g: [66], m: [25], ɪ: [74],
+  };
+  assert(resolvePiperPhonemeId('ɡ', map) === 66, 'ɡ soft-maps to g');
+  assert(resolvePiperPhonemeId('ʕ', map) == null || typeof resolvePiperPhonemeId('ʕ', map) === 'number');
+  const ids = ipaToPiperPhonemeIds('mɪɡ', map);
+  assert(ids.includes(66), 'soft-mapped ɡ still synthesizes');
+  assert(piperVoiceCoversFonoranCore({
+    _: [0], '^': [1], '$': [2], 'ˈ': [120],
+    m: [1], b: [2], s: [3],
+    ɪ: [74], i: [73], ɛ: [70], æ: [60], ʌ: [61], ʊ: [62], ɑ: [10],
+  }));
 });
 
 const sampleVoiceResult = test('getPiperVoiceForLang maps sample languages', () => {
@@ -814,6 +855,9 @@ const allFailed = [
   ...(pronunciationResult.ok ? [] : [pronunciationResult]),
   ...(syllableCatalogResult.ok ? [] : [syllableCatalogResult]),
   ...(piperGResult.ok ? [] : [piperGResult]),
+  ...(piperMultiWordResult.ok ? [] : [piperMultiWordResult]),
+  ...(piperLaxStressResult.ok ? [] : [piperLaxStressResult]),
+  ...(piperSoftMapResult.ok ? [] : [piperSoftMapResult]),
   ...(piperLengthResult.ok ? [] : [piperLengthResult]),
   ...(sampleVoiceResult.ok ? [] : [sampleVoiceResult]),
   ...(samplePlanResult.ok ? [] : [samplePlanResult]),
@@ -847,6 +891,9 @@ const allPassed =
   + (syllableCatalogResult.ok ? 1 : 0)
   + (ipaFormatResult.ok ? 1 : 0)
   + (piperGResult.ok ? 1 : 0)
+  + (piperMultiWordResult.ok ? 1 : 0)
+  + (piperLaxStressResult.ok ? 1 : 0)
+  + (piperSoftMapResult.ok ? 1 : 0)
   + (piperLengthResult.ok ? 1 : 0)
   + (sampleVoiceResult.ok ? 1 : 0)
   + (samplePlanResult.ok ? 1 : 0)
@@ -862,7 +909,7 @@ const allPassed =
   + (boundaryDigraphResult.ok ? 1 : 0)
   + (rootWorkflowResult.ok ? 1 : 0)
   + (labSearchResult.ok ? 1 : 0);
-const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + 23;
+const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + 26;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

@@ -50,6 +50,47 @@ const PIPER_SPLIT = {
 const STRESS_MARKS = new Set(['ˈ', 'ˌ']);
 const VOWEL_LIKE = /[aeiouæɑɒɔəɚɝɐɨʉɯɪʊɜɞɵʏyɛœøʌaɪaʊoʊeɪɔɪ]/;
 
+/**
+ * Lax vowels. LibriTTS sounds better without forced primary stress on these
+ * (open KIT drifts less). Lessac / Alba sound better WITH the original stress.
+ */
+const LAX_NO_AUTO_STRESS = new Set(['ɪ', 'ʊ', 'æ', 'ʌ', 'ɛ', 'ə', 'ɐ', 'ɒ', 'ɨ']);
+
+/** Voices that should skip auto-stress on lax vowels. */
+const PIPER_VOICES_SKIP_LAX_STRESS = new Set(['en_US-libritts_r-medium']);
+
+/** True when this Piper voice should leave lax vowels unstressed. */
+export function piperSkipsLaxAutoStress(voice) {
+  return PIPER_VOICES_SKIP_LAX_STRESS.has(String(voice || ''));
+}
+
+/** Soft aliases when a voice lacks an exact IPA segment (never hard-fail listen). */
+const PIPER_PHONE_FALLBACKS = {
+  ɡ: 'g',
+  ɾ: 't',
+  ɹ: 'r',
+  ɻ: 'r',
+  ɫ: 'l',
+  ɬ: 'l',
+  ɲ: 'n',
+  ŋ: 'n',
+  ɟ: 'j',
+  ʔ: '',
+  ɸ: 'f',
+  β: 'v',
+  θ: 't',
+  ð: 'd',
+  ʃ: 's',
+  ʒ: 'z',
+  x: 'h',
+  ɣ: 'g',
+  ħ: 'h',
+  ʕ: 'a',
+};
+
+/** Compact probe covering core Fonoran vowel qualities for voice gating. */
+export const FONORAN_CORE_IPA_PROBE = 'mɪ mi bɛ sæ sʌ bʊ bɑ';
+
 const PIPER_CACHE_NAME = 'fonora-piper-v3';
 
 let initPromise = null;
@@ -166,6 +207,27 @@ function isConsonantSchwaClip(segments) {
   return nuclei.length === 1 && nuclei[0] === 'ə' && segments.includes('ə');
 }
 
+/**
+ * Resolve a Piper phoneme id, soft-mapping unknowns instead of throwing.
+ * @returns {number | null}
+ */
+export function resolvePiperPhonemeId(segment, phonemeIdMap) {
+  const direct = phonemeIdMap?.[segment];
+  if (direct?.length) return direct[0];
+
+  const fallback = PIPER_PHONE_FALLBACKS[segment];
+  if (fallback === '') return null;
+  if (fallback && phonemeIdMap?.[fallback]?.length) return phonemeIdMap[fallback][0];
+
+  // Last resort: skip unmapped length/diacritic-like junk rather than kill audio.
+  return null;
+}
+
+/** True when a voice inventory can speak the Fonoran core vowel probe (soft-map allowed). */
+export function piperVoiceCoversFonoranCore(phonemeIdMap) {
+  return canMapIpaToPiper(FONORAN_CORE_IPA_PROBE, phonemeIdMap);
+}
+
 function appendPiperWordPhonemeIds(ids, ipaWord, phonemeIdMap, pad, options = {}) {
   const segments = expandSegmentsForPiper(segmentIpa(ipaWord));
   const schwaClip = Boolean(options.teachingClip) && isConsonantSchwaClip(segments);
@@ -175,16 +237,24 @@ function appendPiperWordPhonemeIds(ids, ipaWord, phonemeIdMap, pad, options = {}
     if (STRESS_MARKS.has(segment)) continue;
 
     const unstressedSchwa = schwaClip && segment === 'ə';
-    if (!stressed && VOWEL_LIKE.test(segment) && phonemeIdMap['ˈ'] && !unstressedSchwa) {
+    // Default: stress lax vowels (Lessac/Alba). Opt-in skip for LibriTTS only.
+    const skipStress = Boolean(options.skipLaxAutoStress)
+      && LAX_NO_AUTO_STRESS.has(segment)
+      && !options.forceStress;
+    if (
+      !stressed
+      && VOWEL_LIKE.test(segment)
+      && phonemeIdMap['ˈ']
+      && !unstressedSchwa
+      && !skipStress
+    ) {
       ids.push(pad, phonemeIdMap['ˈ'][0]);
       stressed = true;
     }
 
-    const mapped = phonemeIdMap[segment];
-    if (!mapped?.length) {
-      throw new Error(`Piper has no phoneme for “${segment}”`);
-    }
-    ids.push(pad, mapped[0]);
+    const phonemeId = resolvePiperPhonemeId(segment, phonemeIdMap);
+    if (phonemeId == null) continue;
+    ids.push(pad, phonemeId);
   }
 }
 
@@ -207,11 +277,14 @@ export function ipaToPiperPhonemeIds(ipa, phonemeIdMap, options = {}) {
   return ids;
 }
 
-/** True when every IPA segment maps into a Piper voice phoneme inventory. */
+/**
+ * True when IPA can be mapped for Piper (soft-map allowed).
+ * Still false if the voice lacks BOS/EOS/pad scaffolding.
+ */
 export function canMapIpaToPiper(ipa, phonemeIdMap) {
   try {
-    ipaToPiperPhonemeIds(ipa, phonemeIdMap);
-    return true;
+    const ids = ipaToPiperPhonemeIds(ipa, phonemeIdMap);
+    return Array.isArray(ids) && ids.length > 2;
   } catch {
     return false;
   }
@@ -341,7 +414,11 @@ export async function synthesizePiperIpa(ipa, voice = 'en_US-lessac-medium', onP
   if (!isValidVoiceConfig(config)) {
     throw new Error('Invalid Piper voice configuration');
   }
-  const phonemeIds = ipaToPiperPhonemeIds(trimmed, config.phoneme_id_map, options);
+  const phonemeOpts = {
+    ...options,
+    skipLaxAutoStress: options.skipLaxAutoStress ?? piperSkipsLaxAutoStress(voice),
+  };
+  const phonemeIds = ipaToPiperPhonemeIds(trimmed, config.phoneme_id_map, phonemeOpts);
   let payload = data;
   if (options.lengthScale != null && config.inference) {
     payload = [{ ...config, inference: { ...config.inference, length_scale: options.lengthScale } }, data[1]];
