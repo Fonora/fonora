@@ -17,7 +17,9 @@
   /** Learn home section anchors (scroll targets / hub views, not lesson tabs). */
   const LEARN_SECTION_HASHES = ['learn-home', 'fonora-script', 'fonoran-language', 'learn-progress'];
 
+  const LEARN_PUZZLE_TAB = 'puzzle';
   const LEARN_SKILL_IDS = [...LEARN_SCRIPT_SKILL_IDS, ...LEARN_FONORAN_SKILL_IDS];
+  const LEARN_TAB_IDS = [...LEARN_SKILL_IDS, LEARN_PUZZLE_TAB];
 
   const LEARN_PANEL_MAP = {
     [LEARN_HUB_TAB]: LEARN_HUB_TAB,
@@ -29,6 +31,7 @@
     'fonoran-hearing': 'fonoran-hearing',
     'fonoran-grammar': 'fonoran-grammar',
     'fonoran-speaking': 'fonoran-speaking',
+    [LEARN_PUZZLE_TAB]: LEARN_PUZZLE_TAB,
   };
 
   /** Hashes that redirect from /learn to /tools */
@@ -53,7 +56,7 @@
 
   const LEARN_REDIRECT_HASHES = [
     ...LEARN_LEGACY_HASHES,
-    ...LEARN_SKILL_IDS,
+    ...LEARN_TAB_IDS,
     ...LEARN_SECTION_HASHES,
     LEARN_HUB_TAB,
     ...Object.keys(LEARN_TO_TOOLS_REDIRECT),
@@ -62,6 +65,7 @@
   /** @param {string} tabId */
   function learnTrackForTab(tabId) {
     if (tabId === LEARN_HUB_TAB) return 'hub';
+    if (tabId === LEARN_PUZZLE_TAB) return LEARN_PUZZLE_TAB;
     if (LEARN_SCRIPT_SKILL_IDS.includes(tabId)) return 'script';
     if (LEARN_FONORAN_SKILL_IDS.includes(tabId)) return 'fonoran';
     return 'hub';
@@ -69,9 +73,11 @@
 
   window.FONORA_LEARN_ROUTING = {
     LEARN_HUB_TAB,
+    LEARN_PUZZLE_TAB,
     LEARN_SCRIPT_SKILL_IDS,
     LEARN_FONORAN_SKILL_IDS,
     LEARN_SKILL_IDS,
+    LEARN_TAB_IDS,
     LEARN_PANEL_MAP,
     LEARN_TO_TOOLS_REDIRECT,
     LEGACY_LEARN_HASH,

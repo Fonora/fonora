@@ -40,6 +40,7 @@ import {
   setupFonoranSpeaking,
   onFonoranSpeakingTabActivated,
 } from './fonoran-speaking-practice.js';
+import { setupPuzzleLearn, onPuzzleTabActivated } from './puzzle-learn.js';
 import {
   loadLanguageRulesFromString,
   buildKeyboardMap,
@@ -47,7 +48,7 @@ import {
 } from './rules.js';
 import { setActiveLanguageRulesBundle, LANGUAGE_RULES_PATH } from './fonora-config.js';
 import { registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules } from './ipa-normalize.js';
-import { renderAlphabetInventory } from './alphabet-inventory.js';
+import { renderAlphabetInventory, setupAlphabetInventoryOrderToggle } from './alphabet-inventory.js';
 import { normalizeSymbolInput, decodeToPhonemeKeys } from './decode.js';
 import { translateIpaPhrase } from './ipa-pipeline.js';
 import { prepareChineseForPipeline } from './cjk-text.js';
@@ -93,6 +94,7 @@ import {
 } from './universal-nav.js';
 import {
   LEARN_SKILL_IDS,
+  LEARN_TAB_IDS,
   LEGACY_LEARN_HASH,
   LEARN_DEFAULT_TAB,
   LEARN_HUB_TAB,
@@ -688,25 +690,31 @@ function migrateLegacyUrl() {
     return;
   }
   if (path === '/language' || path.startsWith('/language/')) {
-    const hash = window.location.hash.replace(/^#/, '').split('?')[0];
-    if (hash === 'advanced') {
+    const page = window.location.hash.replace(/^#/, '').split('?')[0];
+    if (page === 'puzzle') {
+      const rawHash = window.location.hash.replace(/^#/, '');
+      const query = rawHash.includes('?') ? rawHash.slice(rawHash.indexOf('?')) : '';
+      history.replaceState(null, '', `/learn#puzzle${query}${window.location.search}`);
+      return;
+    }
+    if (page === 'advanced') {
       history.replaceState(null, '', `/tools#advanced${window.location.search}`);
       return;
     }
-    if (hash === 'gaps' || hash === 'translation-test') {
+    if (page === 'gaps' || page === 'translation-test') {
       history.replaceState(null, '', `/tools#translation-test${window.location.search}`);
       return;
     }
-    if (hash === 'health') {
+    if (page === 'health') {
       history.replaceState(null, '', `/tools#health${window.location.search}`);
       return;
     }
-    if (hash === 'progress') {
+    if (page === 'progress') {
       history.replaceState(null, '', `/tools#progress${window.location.search}`);
       return;
     }
     const legacy = new Set(['words', 'concepts', 'create', 'review', 'roots', 'root-review']);
-    if (legacy.has(hash)) {
+    if (legacy.has(page)) {
       history.replaceState(null, '', `/tools#word-manager${window.location.search}`);
       return;
     }
@@ -720,14 +728,17 @@ function migrateLegacyUrl() {
     if (hash && BUILDER_TOOLS_TAB_IDS.has(hash)) {
       return;
     }
-    if (hash && LEARN_REDIRECT_HASHES.includes(hash)) {
+    if (hash && LEARN_REDIRECT_HASHES.includes(hash.split('?')[0])) {
+      const hashPage = hash.split('?')[0];
       const navTab =
-        hash === LEARN_DEFAULT_TAB
+        hashPage === LEARN_DEFAULT_TAB
           ? LEARN_DEFAULT_TAB
-          : LEARN_SKILL_IDS.has(hash)
-            ? hash
-            : LEGACY_LEARN_HASH[hash] ?? LEARN_DEFAULT_TAB;
-      const nextHash = learnNavTabToHash(navTab);
+          : LEARN_TAB_IDS.has(hashPage)
+            ? hashPage
+            : LEGACY_LEARN_HASH[hashPage] ?? LEARN_DEFAULT_TAB;
+      const nextHash = navTab === 'puzzle' && hash.includes('?')
+        ? `#puzzle${hash.slice(hash.indexOf('?'))}`
+        : learnNavTabToHash(navTab);
       history.replaceState(null, '', `/learn${nextHash}${window.location.search}`);
       return;
     }
@@ -814,9 +825,9 @@ function getTabFromHash() {
   }
   if (isDocsRoute()) return 'docs';
   if (isLearnPath()) {
-    const id = window.location.hash.replace(/^#/, '');
+    const id = window.location.hash.replace(/^#/, '').split('?')[0];
     if (id && LEARN_SECTION_HASHES.has(id)) return LEARN_DEFAULT_TAB;
-    if (id && (LEARN_SKILL_IDS.has(id) || id === LEARN_DEFAULT_TAB)) return id;
+    if (id && (LEARN_TAB_IDS.has(id) || id === LEARN_DEFAULT_TAB)) return id;
     if (id && LEGACY_LEARN_HASH[id]) return LEGACY_LEARN_HASH[id];
     return defaultTabForBase('/learn');
   }
@@ -870,9 +881,15 @@ function setHashForTab(tabId) {
 
   const base = basePathForTab(tabId);
   const currentHash = window.location.hash.replace(/^#/, '');
+  const currentHashPage = currentHash.split('?')[0];
   let hashSuffix = '';
   if (tabId !== defaultTabForBase(base)) {
-    hashSuffix = `#${tabId}`;
+    if (tabId === 'puzzle' && currentHashPage === 'puzzle') {
+      const query = currentHash.includes('?') ? currentHash.slice(currentHash.indexOf('?')) : '';
+      hashSuffix = `#puzzle${query}`;
+    } else {
+      hashSuffix = `#${tabId}`;
+    }
   } else if (
     base === '/learn'
     && (currentHash === 'fonora-script' || currentHash === 'fonoran-language' || currentHash === 'learn-progress')
@@ -1050,6 +1067,10 @@ function showTab(tabId) {
 
   if (panelId === 'fonoran-speaking') {
     onFonoranSpeakingTabActivated();
+  }
+
+  if (panelId === 'puzzle') {
+    onPuzzleTabActivated();
   }
 
   if (panelId !== 'translator') {
@@ -1245,6 +1266,9 @@ function applyRulesBundle(loaded) {
   void setupFonoranHearing(rules);
   void setupFonoranGrammar(rules);
   void setupFonoranSpeaking(rules);
+  if (document.querySelector('#tab-puzzle.tab-panel--active')) {
+    onPuzzleTabActivated();
+  }
   setupLearningLanguageSelect('learn-language-global', () => {
     updateLearningLanguageNote('script-writing-language-note');
     updateLearningLanguageNote('script-reading-language-note');
@@ -1252,6 +1276,7 @@ function applyRulesBundle(loaded) {
   setupDocsViewer();
   setupTranslator();
   renderAlphabetInventory(rules);
+  setupAlphabetInventoryOrderToggle(rules);
 
   initEspeak().then((result) => {
     if (!result.ok) {
@@ -1277,6 +1302,7 @@ function applyRulesBundle(loaded) {
 
 function bootstrapShell() {
   captureLearnRef();
+  setupPuzzleLearn(() => rules);
   const initialNavTab = resolveTabForAuth(getTabFromHash());
   const { navTab, panelId } = normalizeLearnTab(initialNavTab);
   initUniversalNav({

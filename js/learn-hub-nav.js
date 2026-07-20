@@ -91,6 +91,7 @@ export function syncLearnHubViewFromHash() {
  * @returns {LearnHubView}
  */
 export function learnHubNavActive(activeTab) {
+  if (activeTab === 'puzzle') return 'puzzle';
   if (activeTab === LEARN_HUB_TAB) {
     const hash = window.location.hash.replace(/^#/, '');
     if (hash === 'fonora-script') return 'script';

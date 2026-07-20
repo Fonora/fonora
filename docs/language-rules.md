@@ -102,7 +102,7 @@ Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction
 
 * **Simple** (`a`, `e`, `i`, `o`, `u`): place glyphs, back → front — `a` ∪, `e` ⌓, `i` ∩, `o` ⊃, `u` ∋
 * **Long** (`ae`, `ee`, `oh`): manner glyphs — `ae` ⌀, `ee` ⌇, `oh` ⏌
-* **Diphthongs**: nucleus and offglide use the simple-vowel place glyphs (e.g. `ay` = `e` + approximant + `a`)
+* **Diphthongs**: nucleus vowel + glide offglide (e.g. `ay` = `e` + `y`, `ow` = `o` + `w`, `oy` = `oh` + `y`)
 
 **Mapping rule:** IPA tokens in each table are authoritative. English words in *Example* are teaching aids only.
 
@@ -126,7 +126,7 @@ Recipe tokens: `vowel` → **⚬**; place ids and manner ids (`voice`, `friction
 | ay | vowel, middle_tongue, glide, back_tongue | eɪ | FACE | say |
 | eye | vowel, throat, glide, back_tongue | aɪ | PRICE | pie |
 | ow | vowel, throat, glide, lips | aʊ | MOUTH | now |
-| oy | vowel, lips, glide, back_tongue | ɔɪ | CHOICE | boy |
+| oy | vowel, nasal, glide, back_tongue | ɔɪ | CHOICE | boy |
 
 Phoneme keys (`ee`, `i`, `ae`, …) are encoder identifiers. Sound Grid and Alphabet UIs are generated from these tables at load time.
 

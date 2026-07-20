@@ -105,6 +105,9 @@
   --color-text-secondary: var(--fonora-gray);
   --color-text-tertiary: #4a4540;
   --font-ipa: 'Charis SIL', 'Lucida Sans Unicode', 'Arial Unicode MS', sans-serif;
+  /* Prefer system symbol fonts (Sound Grid look). Noto is fallback for rare glyphs (e.g. ⏌). */
+  --font-symbol: "Apple Symbols", "Segoe UI Symbol", "Noto Sans Symbols 2",
+    "Noto Sans Symbols", "Arial Unicode MS", sans-serif;
   --color-tts-active-bg: var(--fonora-gold-soft);
   --color-tts-active-ring: var(--fonora-gold);
   --color-tts-done-bg: var(--color-success-bg);
@@ -678,14 +681,19 @@ a.btn,
   -webkit-tap-highlight-color: transparent;
 }
 
-.symbol-text {
-  font-family: "Noto Sans Symbols 2", "Noto Sans Symbols", "Segoe UI Symbol",
-    "Apple Symbols", "Arial Unicode MS", sans-serif;
-  font-size: 1.75rem;
-  line-height: 1.6;
+.symbol-text,
+.grid-cell-symbols,
+.fonora-script,
+.root-glyphs {
+  font-family: var(--font-symbol) !important;
   font-variant-ligatures: none;
   letter-spacing: 0;
   word-spacing: 0;
+}
+
+.symbol-text {
+  font-size: 1.75rem;
+  line-height: 1.6;
   white-space: pre-wrap;
 }
 
@@ -810,6 +818,7 @@ html[data-fonora-tab='fonoran-reading'] #tab-fonoran-reading,
 html[data-fonora-tab='fonoran-hearing'] #tab-fonoran-hearing,
 html[data-fonora-tab='fonoran-grammar'] #tab-fonoran-grammar,
 html[data-fonora-tab='fonoran-speaking'] #tab-fonoran-speaking,
+html[data-fonora-tab='puzzle'] #tab-puzzle,
 html[data-fonora-tab='encoder-testing'] #tab-encoder-testing,
 html[data-fonora-tab='pronunciation-validation'] #tab-pronunciation-validation,
 html[data-fonora-tab='word-manager'] #tab-word-manager,
@@ -846,6 +855,7 @@ html[data-fonora-tab='fonoran-writing'] [data-learn-tab='fonoran-writing'].tab-b
 html[data-fonora-tab='fonoran-hearing'] [data-learn-tab='fonoran-hearing'].tab-btn,
 html[data-fonora-tab='fonoran-grammar'] [data-learn-tab='fonoran-grammar'].tab-btn,
 html[data-fonora-tab='fonoran-speaking'] [data-learn-tab='fonoran-speaking'].tab-btn,
+html[data-fonora-tab='puzzle'] [data-learn-tab='puzzle'].tab-btn,
 html[data-fonora-tab='learn-home'] [data-learn-tab='learn-home'].tab-btn,
 html[data-fonora-tab='tools-home'] [data-tab='tools-home'].tab-btn,
 html[data-fonora-tab='home'] [data-tab='home'].tab-btn,
@@ -868,7 +878,6 @@ html[data-fonora-tab='home'] [data-fonoran-page='home'].tab-btn,
 html[data-fonora-tab='translator'] [data-fonoran-page='translator'].tab-btn,
 html[data-fonora-tab='dictionary'] [data-fonoran-page='dictionary'].tab-btn,
 html[data-fonora-tab='grammar'] [data-fonoran-page='grammar'].tab-btn,
-html[data-fonora-tab='puzzle'] [data-fonoran-page='puzzle'].tab-btn,
 html[data-fonora-tab='create'] [data-fonoran-page='create'].tab-btn,
 html[data-fonora-tab='review'] [data-fonoran-page='review'].tab-btn,
 html[data-fonora-tab='concepts'] [data-fonoran-page='concepts'].tab-btn,
@@ -896,7 +905,6 @@ html[data-fonora-page='home'] #page-home,
 html[data-fonora-page='translator'] #page-translator,
 html[data-fonora-page='dictionary'] #page-dictionary,
 html[data-fonora-page='grammar'] #page-grammar,
-html[data-fonora-page='puzzle'] #page-puzzle,
 html[data-fonora-page='health'] #page-health,
 html[data-fonora-page='gaps'] #page-gaps,
 html[data-fonora-page='progress'] #page-progress,
@@ -4801,6 +4809,10 @@ table.sound-grid td {
   background: var(--color-table-row-hover);
 }
 
+#tab-grid table .symbol-text {
+  font-size: 1.5rem;
+}
+
 table.sound-grid td:not([class*="grid-cell--"]) {
   background: var(--layout-surface);
 }
@@ -4939,7 +4951,7 @@ table.sound-grid .grid-cell {
   font-size: inherit;
   line-height: inherit;
   white-space: normal;
-  color: #444;
+  color: var(--color-text-body);
 }
 
 .examples-heading {
@@ -7118,6 +7130,14 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
   }
 }
 
+.alphabet-inventory-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+}
+
 .alphabet-inventory-group {
   margin-bottom: 1.5rem;
 }
@@ -7133,7 +7153,7 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 }
 
 .alphabet-inventory-table .alphabet-inventory-symbol {
-  font-size: 1.35rem;
+  font-size: 1rem;
 }
 
 .alphabet-inventory-notes {
@@ -9504,7 +9524,7 @@ body.fonora-keyboard-dock-open {
 }
 
 .page-doc-content code {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), var(--font-symbol);
   font-size: 0.88em;
   background: var(--doc-code-bg);
   color: var(--color-text);
@@ -9543,7 +9563,8 @@ body.fonora-keyboard-dock-open {
 .page-doc-content .doc-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: var(--font-serif);
+  /* Serif for prose; symbol stack so Fonora glyphs (e.g. ⏌ ⌀) do not tofu. */
+  font-family: var(--font-serif), var(--font-symbol);
   font-size: 0.92rem;
 }
 
@@ -10249,6 +10270,7 @@ body.fonora-keyboard-dock-open {
 }
 
 .research-note__body {
+  font-family: var(--font-serif), var(--font-symbol);
   font-size: 1.02rem;
   line-height: 1.7;
 }
@@ -10271,7 +10293,7 @@ body.fonora-keyboard-dock-open {
 }
 
 .research-note__body code {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono), var(--font-symbol);
   font-size: 0.88em;
   background: var(--doc-code-bg);
   color: var(--color-text);
@@ -10311,6 +10333,8 @@ body.fonora-keyboard-dock-open {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.92rem;
+  /* Inherit body stack; keep explicit so tables do not pick up mono-only rules. */
+  font-family: var(--font-serif), var(--font-symbol);
 }
 
 .research-note__body .doc-table th,
