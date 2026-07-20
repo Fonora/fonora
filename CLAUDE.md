@@ -74,7 +74,9 @@ Deploy does **not** auto-rebuild vocabulary. After `git push heroku`, run regene
 ```bash
 npm install
 npm start          # http://localhost:8000
-npm test           # run before PRs
+npm test           # REQUIRED before every commit / PR
 ```
+
+**Agents: never commit or push until `npm test` passes.** Translator/lexicon/seed surface changes usually need golden refresh in the same change set (`node scripts/fonoran-translation-gaps.js --update-golden` or `npm run test:translator:update`). After lexicon respells, also refresh Learn phrases with `node tools/fonoran-course-phrases-build.js --force --cache-only` (without `--force`, old roman is frozen). Do not leave CI golden failures or stale Learn spellings for the human to clean up.
 
 Admin tools: `/tools#word-manager` (requires `ADMIN_EMAILS` when OAuth is configured).

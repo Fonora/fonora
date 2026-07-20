@@ -35,6 +35,16 @@ import { REUSABLE_WORD_STATES } from './fonoran-derivation.js';
 
 const RESOLVE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CONCEPT_BRIDGES_PATH = join(RESOLVE_ROOT, 'data/fonoran-concept-bridges.json');
+
+/**
+ * Former root spellings that still appear as concept ids in cached LLM frames
+ * after a respell (e.g. banned fa → one/lu). Resolve through the live concept id
+ * so Learn / translator recompiles stay current without rewarming every cache row.
+ */
+const RETIRED_SPELLING_CONCEPT_IDS = Object.freeze({
+  fa: 'one',
+});
+
 // Optional local-only loanword glossaries (not tracked in this repo). Drop a
 // JSON glossary at data/local/glossary.json to pin proper-noun/loanword
 // decisions for a private corpus; absent by default.
@@ -551,6 +561,10 @@ function lookupByConceptId(ctx, conceptId) {
   const mappedId = ctx.spellingByConceptId?.get(String(conceptId).toLowerCase());
   if (mappedId && mappedId !== conceptId) {
     return lookupByConceptId(ctx, mappedId);
+  }
+  const retiredId = RETIRED_SPELLING_CONCEPT_IDS[String(conceptId).toLowerCase()];
+  if (retiredId && retiredId !== conceptId) {
+    return lookupByConceptId(ctx, retiredId);
   }
   return {
     ...unknownHit(conceptId),
