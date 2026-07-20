@@ -422,6 +422,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const result = await translate(body.text ?? '', {
         lab,
         sourceLang: body.sourceLang ?? url.searchParams.get('sourceLang') ?? 'auto',
+        targetLang: body.targetLang ?? url.searchParams.get('targetLang') ?? 'en',
+        direction: body.direction ?? url.searchParams.get('direction') ?? undefined,
+        inputMode: body.inputMode ?? url.searchParams.get('inputMode') ?? undefined,
         engine,
         skipCache: body.skipCache === true,
         simplify,
@@ -430,7 +433,12 @@ export async function handleFonoranApi(req, res, pathname, method) {
           || process.env.FONORAN_DEV_LAB === 'true',
       });
       if (result.ok === false) {
-        return done(result.status ?? 503, { error: result.error, engine: result.engine ?? 'llm' });
+        return done(result.status ?? 503, {
+          error: result.error,
+          engine: result.engine ?? 'llm',
+          code: result.code,
+          hint: result.hint,
+        });
       }
       return done(200, result);
     }

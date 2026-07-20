@@ -17,6 +17,7 @@ const SPELLING_IDS = {
   input: 'spelling-practice-input',
   keyboard: 'spelling-practice-keyboard',
   popup: 'spelling-vowel-popup',
+  dock: 'spelling-practice-keyboard-dock',
 };
 
 /** @type {ReturnType<typeof createTypingPractice> | null} */

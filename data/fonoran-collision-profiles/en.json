@@ -9,6 +9,8 @@
     "particle_near_miss": 800
   },
   "blocked_forms": [
+    { "form": "fa", "category": "profanity", "reason": "English /fʌ/; compounds like fa+kan (beginning) read as a slur." },
+    { "form": "fu", "category": "profanity", "reason": "Near-profanity onset in English." },
     { "form": "fak", "category": "profanity", "reason": "Near-profanity in English." },
     { "form": "fuk", "category": "profanity", "reason": "Near-profanity in English." },
     { "form": "fek", "category": "profanity", "reason": "Near-profanity in English." },

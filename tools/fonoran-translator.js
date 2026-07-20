@@ -38,6 +38,9 @@ import {
   normalizeMotionSlots,
   peelFutureFromTokens,
   LEADING_TIME_WORDS,
+  TEMPORAL_SCENE_CONCEPT_IDS,
+  TEMPORAL_SCENE_TOPIC_IDS,
+  TEMPORAL_SCENE_FRONT_ORDER,
   peelQuestionAuxiliary,
   peelExistentialDummyThere,
 } from './fonoran-interpretation.js';
@@ -55,6 +58,7 @@ import { getPosHint } from './fonoran-semantic-lookup.js';
 import { getParticleRuntime, resetParticleCache } from './fonoran-particles.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
 import { enforceModifierOrder } from './fonoran-grammar-spec.js';
+import { promoteTemporalSceneToTime } from './fonoran-llm-grammar-brief.js';
 import { isAddresseeDroppable } from './fonoran-llm-grammar-brief.js';
 
 /**
@@ -883,36 +887,49 @@ async function slotsToTokens(ctx, slots) {
 
   // v1: questions carry no particle. Written questions are marked with `?`
   // (appended by translateEnglish); content questions compose from concepts.
+  //
+  // Scene structure (Rule 4): lexical Time periphery may front as scene-setting;
+  // tense particles ta/sa stay next to the Action (not floating in the scene).
+  // Order: [scene time] · Actor · [ta/sa] · Action · Target · Place · modifiers
 
-  const calendarTime = slots.time.filter(s => LEADING_TIME_WORDS.has(String(s.english ?? '').toLowerCase()));
-  const otherTime = slots.time.filter(s => !LEADING_TIME_WORDS.has(String(s.english ?? '').toLowerCase()));
+  const timeKey = (slot) => String(slot.particle ?? slot.concept_id ?? slot.english ?? '').toLowerCase();
+  const isTenseParticle = (slot) => slot.particle === 'ta' || slot.particle === 'sa'
+    || timeKey(slot) === 'ta' || timeKey(slot) === 'sa';
+  const isSceneTime = (slot) => {
+    if (isTenseParticle(slot)) return false;
+    const key = timeKey(slot);
+    return TEMPORAL_SCENE_CONCEPT_IDS.has(key)
+      || TEMPORAL_SCENE_TOPIC_IDS.has(key)
+      || LEADING_TIME_WORDS.has(key);
+  };
+  const sceneRank = (slot) => {
+    const idx = TEMPORAL_SCENE_FRONT_ORDER.indexOf(timeKey(slot));
+    return idx >= 0 ? idx : TEMPORAL_SCENE_FRONT_ORDER.length + 1;
+  };
 
-  if (calendarTime.length) {
-    for (const slot of calendarTime) {
-      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
-      else push(await resolveSlot(ctx, slot, 'time'), 'time');
-    }
-    for (const slot of otherTime) {
-      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
-      else push(await resolveSlot(ctx, slot, 'time'), 'time');
-    }
-    for (const slot of slots.subject) {
-      if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
-      else push(await resolveSlot(ctx, slot, 'subject'), 'subject');
-    }
-  } else {
-    for (const slot of slots.subject) {
-      if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
-      else push(await resolveSlot(ctx, slot, 'subject'), 'subject');
-    }
-    for (const slot of slots.time) {
-      if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
-      else push(await resolveSlot(ctx, slot, 'time'), 'time');
-    }
-  }
+  const sceneTime = slots.time.filter(isSceneTime).sort((a, b) => sceneRank(a) - sceneRank(b));
+  const tenseTime = slots.time.filter(isTenseParticle);
+  const otherTime = slots.time.filter(s => !isSceneTime(s) && !isTenseParticle(s));
+
+  const pushTimeSlot = async (slot) => {
+    if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
+    else push(await resolveSlot(ctx, slot, 'time'), 'time');
+  };
+  const pushSubjectSlot = async (slot) => {
+    if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
+    else push(await resolveSlot(ctx, slot, 'subject'), 'subject');
+  };
+
+  // Front lexical scene time whenever present (calendar + long_ago/beginning/world…).
+  for (const slot of sceneTime) await pushTimeSlot(slot);
+  for (const slot of slots.subject) await pushSubjectSlot(slot);
+  // Tense particles immediately before Action (Rule 3).
+  for (const slot of tenseTime) await pushTimeSlot(slot);
   for (const slot of slots.event) push(await resolveSlot(ctx, slot, 'event'), 'event');
   for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'), 'path');
   for (const slot of slots.object) push(await resolveSlot(ctx, slot, 'object'), 'object');
+  // Non-scene residual time (rare) stays before trailing modifiers.
+  for (const slot of otherTime) await pushTimeSlot(slot);
   for (const slot of slots.modifiers) push(await resolveSlot(ctx, slot, 'modifier'), 'modifier');
   return out;
 }
@@ -1106,7 +1123,10 @@ export async function translateFromFrame(frame, options = {}) {
   if (!PARTICLES) PARTICLES = await getParticleRuntime();
 
   ctx.isQuestion = Boolean(frame?.is_question);
-  const semantic = frameSlotsToSemanticSlots(frame?.slots ?? {});
+  // Promote temporal scene concepts out of trailing modifiers before render so
+  // structure is preserved even if the LLM (or a cached frame) parked them wrong.
+  const structured = promoteTemporalSceneToTime(frame ?? { slots: {} });
+  const semantic = frameSlotsToSemanticSlots(structured?.slots ?? {});
   // Deterministic grammar enforcement: canonical modifier order (quality before
   // place) so floating modifiers render the same regardless of LLM slot order.
   enforceModifierOrder(semantic, ctx.inventory?.concepts ?? []);

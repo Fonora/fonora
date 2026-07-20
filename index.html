@@ -1125,7 +1125,10 @@
       </div>
       <p id="translate-voice-note" class="section-desc" hidden></p>
 
-      <label for="translate-input">Text</label>
+      <div class="translate-input-head">
+        <label for="translate-input">Text</label>
+        <button type="button" id="translate-keyboard-toggle" class="btn fonora-keyboard-toggle" hidden aria-pressed="false" aria-controls="translate-keyboard-dock">Keyboard</button>
+      </div>
       <textarea id="translate-input" class="text-input text-input--full" rows="4" placeholder="e.g. knife, hola, the big dog" autocomplete="off"></textarea>
 
       <div id="translate-status" class="translate-status" hidden></div>
@@ -1231,12 +1234,10 @@
           <p class="typing-practice__meaning" id="spelling-prompt-meaning"></p>
         </div>
 
-        <textarea id="spelling-practice-input" class="learn-exercise__input symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
+        <textarea id="spelling-practice-input" class="learn-exercise__input symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling" inputmode="none"></textarea>
 
         <p class="typing-practice__tab-hint">Press <kbd>Tab</kbd> for next word · <kbd>↵</kbd> check</p>
 
-        <div id="spelling-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
-        <div id="spelling-practice-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
         <div class="button-row learn-exercise__actions learn-exercise__actions--check-continue">
           <button type="button" id="spelling-practice-continue" class="btn btn--primary learn-exercise__continue" hidden>Continue</button>
         </div>
@@ -1266,12 +1267,10 @@
           <p class="typing-practice__meaning learn-exercise__prompt-meaning" id="script-writing-prompt-meaning"></p>
         </div>
 
-        <textarea id="script-writing-input" class="learn-exercise__input symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling"></textarea>
+        <textarea id="script-writing-input" class="learn-exercise__input symbol-text symbol-input text-input--full typing-practice__input" rows="1" placeholder="Type with the keyboard…" aria-label="Your Fonora spelling" inputmode="none"></textarea>
 
         <p class="typing-practice__tab-hint"><kbd>↵</kbd> Check · <kbd>Tab</kbd> Continue · vowel keys show sound options</p>
 
-        <div id="script-writing-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
-        <div id="script-writing-keyboard" class="fonora-keyboard typing-practice__keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
         <div class="button-row learn-exercise__actions learn-exercise__actions--check-continue">
           <button type="button" id="script-writing-continue" class="btn btn--primary learn-exercise__continue" hidden>Continue</button>
         </div>
@@ -1827,6 +1826,30 @@
       </div>
     </section>
   </main>
+
+  <div id="translate-keyboard-dock" class="fonora-keyboard-dock" hidden>
+    <div class="fonora-keyboard-dock__bar">
+      <span class="fonora-keyboard-dock__title">Fonora keyboard</span>
+      <button type="button" id="translate-keyboard-close" class="btn" aria-label="Hide keyboard">Hide</button>
+    </div>
+    <div id="translate-keyboard" class="fonora-keyboard" aria-label="Fonora Script keyboard"></div>
+  </div>
+
+  <div id="spelling-practice-keyboard-dock" class="fonora-keyboard-dock fonora-keyboard-dock--lesson" hidden>
+    <div class="fonora-keyboard-dock__bar">
+      <span class="fonora-keyboard-dock__title">Fonora keyboard</span>
+    </div>
+    <div id="spelling-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
+    <div id="spelling-practice-keyboard" class="fonora-keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
+  </div>
+
+  <div id="script-writing-keyboard-dock" class="fonora-keyboard-dock fonora-keyboard-dock--lesson" hidden>
+    <div class="fonora-keyboard-dock__bar">
+      <span class="fonora-keyboard-dock__title">Fonora keyboard</span>
+    </div>
+    <div id="script-writing-vowel-popup" class="fonora-vowel-popup" hidden role="listbox" aria-label="Sound options"></div>
+    <div id="script-writing-keyboard" class="fonora-keyboard fonora-keyboard--practice" aria-label="Fonora Script keyboard"></div>
+  </div>
 
   <div id="site-footer-root"></div>
 

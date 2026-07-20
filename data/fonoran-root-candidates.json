@@ -1,7 +1,7 @@
 {
   "version": "2.0-editorial-workflow",
   "status": "proposal",
-  "generated_at": "2026-07-19T06:19:15.031Z",
+  "generated_at": "2026-07-20T06:22:28.667Z",
   "collision_profile": "en",
   "philosophy": {
     "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
@@ -3261,24 +3261,24 @@
     },
     {
       "id": "one",
-      "ipa": "/fʌ/",
+      "ipa": "/lu/",
       "domain": "quantity",
-      "reason": "a single one — basic everyday idea that deserves its own root.",
+      "reason": "a single one — basic everyday idea that deserves its own root. Respelled from fa (English /fʌ/; fa+kan read as a slur); le avoided (dense le-/lek- cluster).",
       "review": {
-        "note": null,
-        "edited_at": null,
+        "note": "2026-07-20: fa→lu (not le); fa banned",
+        "edited_at": "2026-07-20T00:00:00.000Z",
         "approved_at": "2026-07-02T00:49:33.288Z",
         "rejected_at": null
       },
       "status": "approved",
       "concept": "a single one",
       "priority": 99942,
-      "spelling": "fa",
+      "spelling": "lu",
       "generation": {
-        "tier": "preferred-cv-a",
+        "tier": "preferred-cv",
         "eligible": true,
         "template": "CV",
-        "phonetic_cost": 3,
+        "phonetic_cost": 4,
         "collision_profile": "en",
         "compound_flow_score": 100,
         "distinctiveness_score": 54,

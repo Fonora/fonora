@@ -2,7 +2,7 @@
 
 > **Status**: Active (July 2026). Live path at `/language#translator` and `POST /api/fonoran/translate`.
 
-The Fonoran Translator compiles **meaning** from any source language into Fonoran — it is not a word-for-word gloss. Grammar is language-neutral ([Rule 7](fonoran-grammar.md#rule-7-translator-architecture)); concepts are canonical; spellings come only from the approved lab inventory.
+The Fonoran Translator compiles **meaning** from any source language into Fonoran — it is not a word-for-word gloss. It also supports the reverse path: **Fonoran → natural language** (English or another selected target), with input as **Fonoran (Roman)** or **Fonoran (Fonora)** script. Grammar is language-neutral ([Rule 7](fonoran-grammar.md#rule-7-translator-architecture)); concepts are canonical; spellings come only from the approved lab inventory.
 
 The **default engine** is a multilingual **LLM semantic compiler** (`tools/fonoran-llm-translate.js`) that emits a concept frame, then a **deterministic renderer** (`translateFromFrame()` in `tools/fonoran-translator.js`) builds roman, script, tokens, and playback. The legacy English-only compiler remains for regression (`engine=legacy`).
 
@@ -77,10 +77,12 @@ flowchart LR
     N1["normalizeWePrimaryFrame()"]
     N2["stripExistentialThereFromFrame()"]
     N3["normalizeFrameParticles()"]
+    N3b["restoreDroppedNegation() / stripInventedNegation()"]
+    N3c["promoteTemporalSceneToTime() — scene out of modifiers"]
     N4["simplifyMotionFrame() — serial want+move, bare destinations"]
     G["checkLlmGrammarViolations()"]
     L["repairFromLegacySlots() on WH misuse / removed particles"]
-    F --> N1 --> N2 --> N3 --> N4 --> G
+    F --> N1 --> N2 --> N3 --> N3b --> N3c --> N4 --> G
     G -->|violations| L
   end
 
@@ -123,13 +125,13 @@ flowchart TB
   end
 
   subgraph OutputPanel["Output panel (auto height, no scroll)"]
-    HDR["Header: Fonoran · Why this reading (hover popup)"]
+    HDR["Header: Fonoran, or target-lang select when source is Fonoran · Why this reading"]
     SURF["Surface block"]
-    SCRIPT["Fonora script"]
+    SCRIPT["Fonora script (forward) / fluent translation (reverse)"]
     ROMAN["Roman line + resolution colors"]
     PRON["Pronunciation ▸ (collapsed details)"]
     TOK["Token list (role → english → fonoran)"]
-    ALT2["Also sayable (we alternates: Use / ▶)"]
+    ALT2["Also sayable (we alternates: Use / ▶) — forward only"]
     HDR --- SURF
     SURF --> SCRIPT --> ROMAN --> PRON --> TOK --> ALT2
   end
@@ -152,7 +154,8 @@ flowchart TB
 
 | Element | Behavior |
 | --- | --- |
-| **Translate** | Debounced (~280 ms) POST to `/api/fonoran/translate`; spinner while busy |
+| **Source language** | Includes natural languages plus **Fonoran (Roman)** and **Fonoran (Fonora)**. Choosing either switches to reverse mode and shows a target-language select (default English) |
+| **Translate** | Debounced (~280 ms) POST to `/api/fonoran/translate`; spinner while busy. Reverse sends `direction: "from-fonoran"`, `inputMode`, and `targetLang` |
 | **Resolution colors** | Default text = direct lexicon hit; gold = interpreted; orange = semantic / weak alias; red = unresolved |
 | **Pronunciation** | Collapsed `<details>` under roman; phonetic key + “sounds like” hint |
 | **Why this reading** | Hover/focus popup in output header; shows LLM `reasoning` + engine badge (Cached / LLM) |
@@ -168,7 +171,8 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 
 | Module | Role |
 | --- | --- |
-| `tools/fonoran-translate.js` | Unified `translate()` router (`llm` default, `legacy` fallback) |
+| `tools/fonoran-translate.js` | Unified `translate()` router (`to-fonoran` / `from-fonoran`) |
+| `tools/fonoran-reverse-translate.js` | Fonoran → natural language (script/roman normalize, lexical resolve, fluent LLM) |
 | `tools/fonoran-llm-translate.js` | LLM prompt, frame compile, cache, validation, repair |
 | `tools/fonoran-llm-grammar-brief.js` | Grammar rules excerpt + `checkLlmGrammarViolations()` |
 | `tools/fonoran-translator.js` | `translateFromFrame()`, `slotsToTokens()`, `buildSurface()`, legacy English compiler |
@@ -186,6 +190,8 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 
 **`POST /api/fonoran/translate`** (public, read-only)
 
+**Forward** (any language → Fonoran):
+
 ```json
 {
   "text": "We need shelter",
@@ -196,10 +202,25 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 }
 ```
 
-**Response (success):**
+**Reverse** (Fonoran → English / selected language):
+
+```json
+{
+  "text": "mi gi ye",
+  "direction": "from-fonoran",
+  "inputMode": "roman",
+  "targetLang": "en",
+  "sourceLang": "fonoran-roman"
+}
+```
+
+`sourceLang` values `fonoran-roman` / `fonoran-fonora` also select reverse automatically. `inputMode` is `roman` or `fonora` (script decoded via `fonoraScriptToRoman`).
+
+**Response (success, forward):**
 
 | Field | Description |
 | --- | --- |
+| `direction` | `to-fonoran` |
 | `surface.roman` | Fonoran roman line |
 | `surface.pronunciation` | `{ sayLine, englishLine }` for UI + TTS hints |
 | `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id`; `droppable` when addressee Actor may be omitted casually |
@@ -212,7 +233,21 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | `unresolved[]` | Honest gaps (render red; never fabricated) |
 | `engine` | `llm` \| `cached` \| `legacy` |
 
-Requires `ANTHROPIC_API_KEY_FONORA_TRANSLATOR` for `engine=llm`. See [fonoran-cli-tools.md](fonoran-cli-tools.md).
+**Response (success, reverse):**
+
+| Field | Description |
+| --- | --- |
+| `direction` | `from-fonoran` |
+| `translation` | Fluent reading in `targetLang` |
+| `literal` | Lexical gloss (shown when it differs from `translation`) |
+| `surface.roman` | Normalized Fonoran roman from the input |
+| `tokens[]` | Resolved particles / roots / compounds (or unresolved gaps) |
+| `playback` | Speaks the **source** Fonoran |
+| `engine` | `llm` (fluent) or `lexical` (gloss-only fallback) |
+
+Requires `ANTHROPIC_API_KEY_FONORA_TRANSLATOR` for fluent `engine=llm` (both directions). Reverse falls back to a lexical gloss when the key is unset. See [fonoran-cli-tools.md](fonoran-cli-tools.md).
+
+Module: `tools/fonoran-reverse-translate.js`.
 
 ---
 

@@ -33,12 +33,14 @@
     ]
   },
   "excluded_syllables": {
-    "note": "Awkward or humorous; deferred to later expansion.",
+    "note": "Awkward, humorous, or English near-profanity. Prefix-matched in the syllable pool (isExcludedSyllable). pi/po family ≈ pee/poo; fa/fu ≈ English near-profanity (/fʌ/, fuckin-class compounds).",
     "forms": [
       "pi",
       "pee",
       "po",
-      "poo"
+      "poo",
+      "fa",
+      "fu"
     ]
   },
   "phonetics": {

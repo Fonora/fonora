@@ -23,6 +23,7 @@ const IDS = {
   input: 'script-writing-input',
   keyboard: 'script-writing-keyboard',
   popup: 'script-writing-vowel-popup',
+  dock: 'script-writing-keyboard-dock',
   feedback: 'script-writing-breakdown-feedback',
 };
 

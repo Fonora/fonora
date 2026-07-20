@@ -128,8 +128,12 @@ function syncPanelVisibility(mode) {
 function applyDisplayMode(mode) {
   displayMode = mode;
   syncPanelVisibility(mode);
-  if (mode === 'roman') showRomanPrompt();
-  else onSpellingPracticeTabActivated();
+  if (mode === 'roman') {
+    showRomanPrompt();
+    getSpellingPractice()?.onTabActivated();
+  } else {
+    onSpellingPracticeTabActivated();
+  }
 }
 
 /**

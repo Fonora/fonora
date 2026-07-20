@@ -175,6 +175,36 @@
       "target_frame": "consciousness · outside · system",
       "status": "pass",
       "note": "consciousness (know+self) + system (all+thing) both compose"
+    },
+    {
+      "en": "Long ago, when the world was young, the animal walked on the earth.",
+      "target_frame": "long_ago · beginning · world · walk · earth",
+      "status": "broken",
+      "note": "Scene structure: front temporal scene (long_ago/beginning/world) before Actor; ta by Action; no invented negation. Track until golden-stable."
+    },
+    {
+      "en": "Long ago, when the forest was young, people walked to the river.",
+      "target_frame": "long_ago · beginning · walk · river",
+      "status": "broken",
+      "note": "Era scene + motion destination; must not invent do/mo scene clauses; scene time fronts before Actor."
+    },
+    {
+      "en": "Yesterday, before the rain, the child sat near the fire.",
+      "target_frame": "before · rain · child · sit · near · fire",
+      "status": "broken",
+      "note": "Calendar + before-X scene with stative sit; ta by Action; no dummy do."
+    },
+    {
+      "en": "When the dog barked, the child ran to the house.",
+      "target_frame": "bark · run · house",
+      "status": "broken",
+      "note": "Real subordinate with its own actor+action → discourse split (two frames), not time+do mini-clauses."
+    },
+    {
+      "en": "Tomorrow, after the sun, we will go to the water.",
+      "target_frame": "after · sun · go · water",
+      "status": "broken",
+      "note": "Future scene fronting; sa by Action; after+sun as scene time; no dummy do."
     }
   ]
 }

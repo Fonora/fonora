@@ -59,6 +59,33 @@ const LOCOMOTION_EXTRA = new Set([
 /** Calendar words that open a clause as a time adverbial. */
 export const LEADING_TIME_WORDS = new Set(['yesterday', 'today', 'tomorrow', 'now', 'tonight']);
 
+/**
+ * Lexical time / scene-setting concept ids. These are the Time periphery
+ * (not tense particles ta/sa). When present they front as scene-setting so
+ * complex sentences keep “when/where in time” before the main Actor·Action.
+ */
+export const TEMPORAL_SCENE_CONCEPT_IDS = new Set([
+  ...LEADING_TIME_WORDS,
+  'long_ago',
+  'before',
+  'after',
+  'beginning',
+  'morning',
+  'night',
+  'day',
+  'yesterday',
+  'tomorrow',
+]);
+
+/** Topics that ride with a temporal scene (e.g. beginning+world), not Place. */
+export const TEMPORAL_SCENE_TOPIC_IDS = new Set(['world']);
+
+/** Stable fronting order for scene-time concepts (unknown ids sort last). */
+export const TEMPORAL_SCENE_FRONT_ORDER = [
+  'long_ago', 'yesterday', 'before', 'after', 'tomorrow', 'today', 'tonight',
+  'now', 'morning', 'night', 'day', 'beginning', 'world',
+];
+
 const TENSE_AUX_FOR_MOTION = new Set([
   'is', 'am', 'are', 'was', 'were', 'be', 'been', 'being',
   'do', 'does', 'did', 'have', 'has', 'had',

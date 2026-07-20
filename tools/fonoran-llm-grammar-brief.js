@@ -2,7 +2,12 @@
  * Authoritative grammar brief for the LLM semantic compiler.
  * Distilled from docs/fonoran-grammar.md and data/fonoran-grammar-particles.json.
  */
-import { isExistentialDummyThereEnglish } from './fonoran-interpretation.js';
+import {
+  isExistentialDummyThereEnglish,
+  TEMPORAL_SCENE_CONCEPT_IDS,
+  TEMPORAL_SCENE_TOPIC_IDS,
+  TEMPORAL_SCENE_FRONT_ORDER,
+} from './fonoran-interpretation.js';
 
 /** Map LLM frame slots to the human skeleton (Rule 4 / Rule 7). */
 export const SLOT_SKELETON = {
@@ -65,8 +70,40 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('Present tense: leave time slot EMPTY (no particle). Past: ta in time. Future: sa in time.');
   lines.push('Negation no attaches near the action, clause-scoped. Map internal "neg" to form "no".');
   lines.push('Clause negation goes at the FRONT of the event slot: "do not want to see" → event [no, want], object [see, …].');
-  lines.push('Never park no in time or modifiers; no belongs in a non-event slot ONLY for quantifier composition (nobody → [no, person]).');
+  lines.push('Never park no in time or modifiers; no belongs in a non-event slot ONLY for quantifier/polarity composition (nobody → [no, person]; false → [no, true]).');
   lines.push('Particles never fuse into lexical spellings. Do NOT emit removed v1 forms (wo, vus, zas, etc.).');
+  lines.push('');
+  lines.push('## Polarity (Rule 3) — closed pairs ONLY');
+  lines.push('The ONLY polarity antonyms produced with no are: false = [no, true], different = [no, same].');
+  lines.push('Never invent other antonyms with no (age, temperature, size, value, …). Campfire strangers will not recover "no X" as "the opposite of X".');
+  lines.push('If an antonym has no approved root/compound and is not one of those two pairs → unresolved[].');
+  lines.push('');
+  lines.push('## Scene-setting vs main Action (structure, not a bag of concepts)');
+  lines.push('Fonoran has no "at/when" particle. Scene meaning is carried by ORDER:');
+  lines.push('  [scene time concepts] · Actor · ta/sa · Action · Target · Place');
+  lines.push('Put ALL scene-setting concepts in the time slot (not trailing modifiers):');
+  lines.push('  long_ago, before, after, beginning, now, yesterday… and scene topics like world');
+  lines.push('  when they set the era ("beginning of the world" → time [beginning, world]).');
+  lines.push('Tense particles ta/sa also go in time — the renderer keeps them next to the Action.');
+  lines.push('Do NOT park scene concepts in modifiers after the verb — that flattens structure.');
+  lines.push('');
+  lines.push('When the subordinate has its OWN actor+action ("when the dog barked, …"):');
+  lines.push('  split into a JSON array of two frames (scene clause, then main clause).');
+  lines.push('When it is pure temporal scene-setting ("when the world was young", "long ago"):');
+  lines.push('  keep ONE frame; put scene concepts in time; main Actor/Action/Place as usual.');
+  lines.push('Example single-frame shape:');
+  lines.push('  time [long_ago, beginning, world, ta], subject [big, animal], event [walk], path [surface, earth]');
+  lines.push('Surface intent: difet fakan fenfo · ni kal · ta · giti · ten fen');
+  lines.push('');
+  lines.push('NO COPULA / NO DUMMY do: Fonoran has no "be/was" verb for scene-setting.');
+  lines.push('Never emit event [do] (mo) to mean "it was / it happened / there was" for a time scene.');
+  lines.push('  BAD:  difet ta mo.   fakan fenfo ta mo.   (unreadable — "long ago past do")');
+  lines.push('  GOOD: difet fakan fenfo ni kal ta giti …');
+  lines.push('English "was" in "when X was Y" is NOT concept do — compile as time concepts only.');
+  lines.push('');
+  lines.push('Scene clauses must NOT add event-scoped no unless the source negates the main Action.');
+  lines.push('Age/quality about eras/places/things → temporal primitives (before, beginning, …) + topic;');
+  lines.push('person age → child; else unresolved[]. Never invent polarity antonyms with no.');
   lines.push('');
   lines.push('## Lexical, NOT particles');
   lines.push('Spatial/relational meaning uses concept ids — never English prepositions as grammar:');
@@ -286,12 +323,15 @@ export function normalizeFrameParticles(frame) {
   }
 
   // Negation attaches near the action (Rule 3): LLMs sometimes park a clause-
-  // scoped `no` in time, in modifiers, or trailing in another slot. Move it to
-  // the event front so the frame validates and renders before the Action.
-  // `no` + a CATEGORY concept in the same slot is local composition sanctioned
-  // by the grammar (nobody = no+person, nothing = no+thing, different =
-  // no+same, false = no+true) and is left alone; `no` + anything else (verbs,
-  // adjectives) is misplaced clause negation.
+  // scoped `no` alone in time/modifiers, or before a verb parked in the wrong
+  // slot. Move those to the event front.
+  //
+  // Leave alone:
+  // - `no` + sanctioned composition targets (nobody = no+person, different =
+  //   no+same, false = no+true, legacy [no, know, …])
+  // - `no` + a non-verbal concept in the same slot (bogus local composition).
+  //   Relocating that into event invents Action negation the source never had.
+  //   Prefer leaving a bad local pair over flipping the Action.
   const isNo = x => String(x ?? '').trim().toLowerCase() === 'no';
   // person/thing/place/time: quantifier pronouns; same/true: polarity antonyms;
   // know: legacy WH composition [no, know, X] that fuses to nohu downstream.
@@ -303,10 +343,20 @@ export function normalizeFrameParticles(frame) {
     const kept = [];
     for (let i = 0; i < items.length; i += 1) {
       const nextId = String(items[i + 1] ?? '').trim().toLowerCase();
-      if (isNo(items[i]) && (role === 'time' || !NO_COMPOSITION_TARGETS.has(nextId))) {
+      if (!isNo(items[i])) {
+        kept.push(items[i]);
+        continue;
+      }
+      if (NO_COMPOSITION_TARGETS.has(nextId)) {
+        kept.push(items[i]);
+        continue;
+      }
+      // Orphan `no`, or `no` before a verb stuck in a non-event slot → clause negation.
+      if (!nextId || SERIAL_MOTION_IDS.has(nextId)) {
         misplacedNegation = true;
         continue;
       }
+      // `no` + noun/quality/etc. in subject/object/path/time/modifiers: leave in place.
       kept.push(items[i]);
     }
     slots[role] = kept;
@@ -353,6 +403,178 @@ export function simplifyMotionFrame(frame, sourceText = '') {
   next = foldSerialWantMove(next);
   next = stripSpuriousPathNan(next, sourceText);
   return next;
+}
+
+function conceptIdOf(raw) {
+  return String(raw ?? '').trim().toLowerCase();
+}
+
+function sceneFrontRank(id) {
+  const idx = TEMPORAL_SCENE_FRONT_ORDER.indexOf(id);
+  return idx >= 0 ? idx : TEMPORAL_SCENE_FRONT_ORDER.length + 1;
+}
+
+/**
+ * Move temporal scene concepts out of trailing modifiers into the time slot
+ * so the renderer can front them. Also pulls scene topics (world) when a
+ * temporal scene concept is already present. Deterministic — not story-specific.
+ */
+export function promoteTemporalSceneToTime(frame) {
+  if (!frame?.slots) return frame;
+  const time = [...(Array.isArray(frame.slots.time) ? frame.slots.time : [])];
+  const modifiers = [...(Array.isArray(frame.slots.modifiers) ? frame.slots.modifiers : [])];
+  if (!modifiers.length) {
+    return sortTimeSlotConcepts({ ...frame, slots: { ...frame.slots, time } });
+  }
+
+  const present = new Set([...time, ...modifiers].map(conceptIdOf));
+  const hasTemporalScene = [...present].some(id => TEMPORAL_SCENE_CONCEPT_IDS.has(id));
+  const timeIds = new Set(time.map(conceptIdOf));
+  const keptMods = [];
+  let moved = false;
+
+  for (const item of modifiers) {
+    const id = conceptIdOf(item);
+    const isScene = TEMPORAL_SCENE_CONCEPT_IDS.has(id)
+      || (hasTemporalScene && TEMPORAL_SCENE_TOPIC_IDS.has(id));
+    if (!isScene) {
+      keptMods.push(item);
+      continue;
+    }
+    if (!timeIds.has(id)) {
+      time.push(item);
+      timeIds.add(id);
+      moved = true;
+    }
+  }
+
+  if (!moved && keptMods.length === modifiers.length) {
+    return sortTimeSlotConcepts(frame);
+  }
+
+  return sortTimeSlotConcepts({
+    ...frame,
+    slots: { ...frame.slots, time, modifiers: keptMods },
+    reasoning: [
+      frame.reasoning,
+      moved ? '[Grammar repair] Promoted temporal scene concepts from modifiers into time for fronting.' : null,
+    ].filter(Boolean).join(' '),
+  });
+}
+
+/** Stable order inside the time slot: scene lexicon, then tense particles. */
+export function sortTimeSlotConcepts(frame) {
+  if (!frame?.slots || !Array.isArray(frame.slots.time)) return frame;
+  const tense = new Set(['ta', 'sa']);
+  const lexical = [];
+  const particles = [];
+  const other = [];
+  for (const item of frame.slots.time) {
+    const id = conceptIdOf(item);
+    if (tense.has(id)) particles.push(item);
+    else if (TEMPORAL_SCENE_CONCEPT_IDS.has(id) || TEMPORAL_SCENE_TOPIC_IDS.has(id)) lexical.push(item);
+    else other.push(item);
+  }
+  lexical.sort((a, b) => sceneFrontRank(conceptIdOf(a)) - sceneFrontRank(conceptIdOf(b)));
+  return {
+    ...frame,
+    slots: { ...frame.slots, time: [...lexical, ...other, ...particles] },
+  };
+}
+
+function isDummyDoEvent(frame) {
+  const event = Array.isArray(frame?.slots?.event) ? frame.slots.event : [];
+  if (event.length !== 1) return false;
+  const id = conceptIdOf(event[0]);
+  return id === 'do' || id === 'mo';
+}
+
+function collectSceneConceptIds(frame) {
+  const out = [];
+  const seen = new Set();
+  for (const role of ['time', 'modifiers', 'subject', 'object', 'path']) {
+    for (const item of frame?.slots?.[role] ?? []) {
+      const id = conceptIdOf(item);
+      if (!id || id === 'ta' || id === 'sa' || id === 'do' || id === 'mo' || id === 'no') continue;
+      if (!TEMPORAL_SCENE_CONCEPT_IDS.has(id) && !TEMPORAL_SCENE_TOPIC_IDS.has(id)) continue;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      out.push(item);
+    }
+  }
+  return out;
+}
+
+/**
+ * True when a frame is only a temporal scene propped up with dummy do (mo) —
+ * the unreadable "difet ta mo" / "fakan fenfo ta mo" failure mode.
+ */
+export function isDummyTemporalSceneFrame(frame) {
+  if (!isDummyDoEvent(frame)) return false;
+  const scene = collectSceneConceptIds(frame);
+  if (!scene.length) return false;
+  const subject = (frame?.slots?.subject ?? []).map(conceptIdOf);
+  const realActor = subject.filter(id => id
+    && !TEMPORAL_SCENE_CONCEPT_IDS.has(id)
+    && !TEMPORAL_SCENE_TOPIC_IDS.has(id)
+    && id !== 'ta' && id !== 'sa');
+  if (realActor.length) return false;
+  if ((frame?.slots?.object ?? []).length) return false;
+  if ((frame?.slots?.path ?? []).length) return false;
+  return true;
+}
+
+function mergeSceneIntoFrame(frame, sceneIds) {
+  if (!sceneIds.length) return frame;
+  const time = [...sceneIds, ...(Array.isArray(frame?.slots?.time) ? frame.slots.time : [])];
+  const seen = new Set();
+  const deduped = [];
+  for (const item of time) {
+    const id = conceptIdOf(item);
+    if (!id || seen.has(id)) continue;
+    seen.add(id);
+    deduped.push(item);
+  }
+  return promoteTemporalSceneToTime({
+    ...frame,
+    slots: { ...frame.slots, time: deduped },
+    reasoning: [
+      frame.reasoning,
+      '[Grammar repair] Collapsed dummy do-scene frame(s) into main-clause time (no copula).',
+    ].filter(Boolean).join(' '),
+  });
+}
+
+/**
+ * Collapse multi-frame LLM output where pure temporal scenes were wrongly
+ * compiled as "time + do" mini-clauses. Folds their scene concepts into the
+ * next real clause and drops the dummy frames.
+ *
+ * @param {object[]} frames
+ * @returns {object[]}
+ */
+export function collapseDummySceneFrames(frames) {
+  if (!Array.isArray(frames) || frames.length < 2) return frames;
+
+  const pendingScene = [];
+  const out = [];
+
+  for (const frame of frames) {
+    if (isDummyTemporalSceneFrame(frame)) {
+      pendingScene.push(...collectSceneConceptIds(frame));
+      continue;
+    }
+    out.push(pendingScene.length ? mergeSceneIntoFrame(frame, pendingScene.splice(0)) : frame);
+  }
+
+  if (pendingScene.length && out.length) {
+    out[out.length - 1] = mergeSceneIntoFrame(out[out.length - 1], pendingScene);
+  } else if (pendingScene.length && !out.length) {
+    // Nothing but dummy scenes — keep original rather than invent a verb-less utterance.
+    return frames;
+  }
+
+  return out.length ? out : frames;
 }
 
 /** Remove spurious there (tak) from frames for existential English dummy-there. */

@@ -20,6 +20,7 @@ import { finishTypingAnswer, setLearnVerdict } from './learn-session-ui.js';
  * @property {string} input
  * @property {string} keyboard
  * @property {string} popup
+ * @property {string} [dock]
  */
 
 /**
@@ -28,6 +29,13 @@ import { finishTypingAnswer, setLearnVerdict } from './learn-session-ui.js';
  */
 function el(ids, suffix) {
   return document.getElementById(ids[suffix]);
+}
+
+function syncFonoraKeyboardDockBodyClass() {
+  document.body.classList.toggle(
+    'fonora-keyboard-dock-open',
+    Boolean(document.querySelector('.fonora-keyboard-dock:not([hidden])')),
+  );
 }
 
 /**
@@ -79,6 +87,23 @@ export function createTypingPractice({
     const checkId = resolvedCheckButtonId();
     if (!checkId || checkId === continueButtonId) return;
     document.getElementById(checkId)?.addEventListener('click', checkAnswer);
+  }
+
+  function isPracticePanelActive() {
+    const target = el(ids, 'input');
+    if (!target) return false;
+    const panel = target.closest('[data-tab-panel]');
+    const tabOk = Boolean(panel && !panel.hidden && panel.classList.contains('tab-panel--active'));
+    if (!tabOk) return false;
+    const nested = target.closest('#fonoran-writing-script-panel');
+    if (nested?.hidden) return false;
+    return true;
+  }
+
+  function syncLessonKeyboardDock() {
+    const dock = ids.dock ? document.getElementById(ids.dock) : el(ids, 'keyboard')?.closest('.fonora-keyboard-dock');
+    if (dock) dock.hidden = !isPracticePanelActive();
+    syncFonoraKeyboardDockBodyClass();
   }
 
   function setStatus(message) {
@@ -239,10 +264,6 @@ export function createTypingPractice({
     const target = el(ids, 'input');
     if (!container || !target || !rulesRef) return;
 
-    const panel = target.closest('[data-tab-panel]');
-    const isPracticePanelActive = () =>
-      Boolean(panel && !panel.hidden && panel.classList.contains('tab-panel--active'));
-
     practiceKeyboard?.destroy();
     practiceKeyboard = createFonoraKeyboard({
       rules: rulesRef,
@@ -252,16 +273,17 @@ export function createTypingPractice({
       tabId,
       isActive: isPracticePanelActive,
       layout: 'practice',
-    enterKeyLabel: 'check',
-    onEnter: checkAnswer,
-    onTab: onTabPressed,
-  });
+      enterKeyLabel: 'check',
+      onEnter: checkAnswer,
+      onTab: onTabPressed,
+    });
 
     setStatus('');
     practiceWords = await loadWords(rulesRef);
 
     if (practiceWords.length === 0) {
       setStatus(emptyMessage || 'No practice words loaded.');
+      syncLessonKeyboardDock();
       return;
     }
 
@@ -271,6 +293,7 @@ export function createTypingPractice({
     if (isPracticePanelActive()) {
       practiceKeyboard.activate();
     }
+    syncLessonKeyboardDock();
 
     wireActionButtons();
   }
@@ -285,7 +308,9 @@ export function createTypingPractice({
       setup();
       return;
     }
-    practiceKeyboard?.activate();
+    syncLessonKeyboardDock();
+    if (isPracticePanelActive()) practiceKeyboard?.activate();
+    else practiceKeyboard?.deactivate();
   }
 
   function destroy() {
@@ -293,6 +318,9 @@ export function createTypingPractice({
     unbindHear = null;
     practiceKeyboard?.destroy();
     practiceKeyboard = null;
+    const dock = ids.dock ? document.getElementById(ids.dock) : el(ids, 'keyboard')?.closest('.fonora-keyboard-dock');
+    if (dock) dock.hidden = true;
+    syncFonoraKeyboardDockBodyClass();
   }
 
   return {

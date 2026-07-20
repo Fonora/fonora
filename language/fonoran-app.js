@@ -1,7 +1,8 @@
     import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, isValidSyllable, romanToIpa } from '../tools/fonoran-pronunciation.js';
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
-    import { romanToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
+    import { romanToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
     import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
+    import { createFonoraKeyboard } from '../js/fonora-keyboard-ui.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
     import { getSamplePlaybackPlan, getPiperVoiceForLang, initPiperAudio } from '../js/piper-audio.js';
@@ -2476,11 +2477,95 @@
 
     /* ---------- TRANSLATOR ---------- */
     let translatorToken = 0;
+    /** @type {ReturnType<typeof createFonoraKeyboard> | null} */
+    let translatorKeyboard = null;
+    let translatorKeyboardOpen = false;
 
     const TRANSLATOR_SPEED_KEY = 'fonoran:translator:speed';
     const TRANSLATOR_SYLLABLE_MODE_KEY = 'fonoran:translator:syllable-by-syllable';
     const TRANSLATOR_SYLLABLE_MODE_LEGACY_KEY = 'fonoran:translator:word-by-word';
     const TRANSLATOR_SOURCE_LANG_KEY = 'fonoran:translator:source-lang';
+    const TRANSLATOR_TARGET_LANG_KEY = 'fonoran:translator:target-lang';
+
+    const TRANSLATOR_FORWARD_EXAMPLES = [
+      'Do you want to go to the beach?',
+      'I love my family',
+      'The tribe is at war',
+      'I am going to the water.',
+    ];
+    const TRANSLATOR_REVERSE_ROMAN_EXAMPLES = [
+      'mi gi lekche?',
+      'mi gi ye',
+      'mi ta gi nam',
+      'ya',
+    ];
+
+    function isFonoranSourceLang(lang) {
+      const value = String(lang ?? '').trim().toLowerCase();
+      return value === 'fonoran-roman' || value === 'fonoran-fonora';
+    }
+
+    function isTranslatorFonoraMode() {
+      return readTranslatorSourceLang() === 'fonoran-fonora';
+    }
+
+    function isTranslatorKeyboardActive() {
+      return translatorKeyboardOpen
+        && STATE.page === 'translator'
+        && isTranslatorFonoraMode();
+    }
+
+    function syncTranslatorKeyboardToggle() {
+      const toggle = $('tr-keyboard-toggle');
+      const fonoraMode = isTranslatorFonoraMode();
+      if (toggle) {
+        toggle.hidden = !fonoraMode;
+        toggle.setAttribute('aria-pressed', translatorKeyboardOpen && fonoraMode ? 'true' : 'false');
+        toggle.textContent = translatorKeyboardOpen && fonoraMode ? 'Hide keyboard' : 'Keyboard';
+      }
+      const dock = $('tr-keyboard-dock');
+      if (dock) dock.hidden = !(translatorKeyboardOpen && fonoraMode);
+      document.body.classList.toggle(
+        'fonora-keyboard-dock-open',
+        Boolean(document.querySelector('.fonora-keyboard-dock:not([hidden])')),
+      );
+    }
+
+    async function ensureTranslatorKeyboard() {
+      const input = $('tr-input');
+      const container = $('tr-keyboard');
+      if (!input || !container) return null;
+      const rules = await ensureRules();
+      if (!rules) return null;
+      if (translatorKeyboard) {
+        translatorKeyboard.refresh(rules);
+        translatorKeyboard.setTarget(input);
+        return translatorKeyboard;
+      }
+      translatorKeyboard = createFonoraKeyboard({
+        rules,
+        container,
+        target: input,
+        isActive: isTranslatorKeyboardActive,
+        layout: 'practice',
+        enterKeyLabel: 'go',
+        onEnter: () => { void runTranslator(); },
+      });
+      return translatorKeyboard;
+    }
+
+    async function setTranslatorKeyboardOpen(open) {
+      if (open && !isTranslatorFonoraMode()) open = false;
+      if (open) {
+        await ensureTranslatorKeyboard();
+        translatorKeyboardOpen = true;
+        translatorKeyboard?.activate();
+      } else {
+        translatorKeyboardOpen = false;
+        translatorKeyboard?.deactivate();
+      }
+      syncTranslatorKeyboardToggle();
+    }
 
     function readTranslatorSourceLang() {
       const el = $('tr-source-lang');
@@ -2489,9 +2574,86 @@
       return localStorage.getItem(TRANSLATOR_SOURCE_LANG_KEY) || 'auto';
     }
 
+    function readTranslatorTargetLang() {
+      const el = $('tr-target-lang');
+      const fromSelect = el?.value?.trim();
+      if (fromSelect) return fromSelect;
+      return localStorage.getItem(TRANSLATOR_TARGET_LANG_KEY) || 'en';
+    }
+
+    function syncTranslatorDirectionUi() {
+      const sourceLang = readTranslatorSourceLang();
+      const reverse = isFonoranSourceLang(sourceLang);
+      const input = $('tr-input');
+      const outputLabel = $('tr-output-label');
+      const targetWrap = $('tr-target-lang-wrap');
+      const examples = $('tr-examples');
+
+      if (outputLabel) outputLabel.hidden = reverse;
+      if (targetWrap) targetWrap.hidden = !reverse;
+
+      if (input) {
+        const fonoraMode = reverse && sourceLang === 'fonoran-fonora';
+        input.classList.toggle('translator-input--fonora', fonoraMode);
+        input.classList.toggle('symbol-text', fonoraMode);
+        if (fonoraMode) {
+          input.placeholder = 'Type Fonoran in Fonora script…';
+          input.setAttribute('aria-label', 'Fonoran (Fonora script) to translate');
+          input.spellcheck = false;
+        } else if (reverse) {
+          input.placeholder = 'Type Fonoran in roman spelling…';
+          input.setAttribute('aria-label', 'Fonoran (roman) to translate');
+          input.spellcheck = false;
+        } else {
+          input.placeholder = 'Type words, phrases, or sentences in any language…';
+          input.setAttribute('aria-label', 'Text to translate into Fonoran');
+          input.spellcheck = true;
+        }
+      }
+
+      if (examples) {
+        let phrases = reverse ? TRANSLATOR_REVERSE_ROMAN_EXAMPLES : TRANSLATOR_FORWARD_EXAMPLES;
+        const fonoraExamples = reverse && sourceLang === 'fonoran-fonora';
+        if (fonoraExamples && STATE.rules) {
+          phrases = TRANSLATOR_REVERSE_ROMAN_EXAMPLES.map((roman) => {
+            const converted = romanTextToFonoraScript(roman, STATE.rules);
+            return converted.symbols || roman;
+          });
+        }
+        const chipClass = fonoraExamples ? 'chip symbol-text' : 'chip';
+        examples.innerHTML = `<span class="translator-examples__label">Try:</span>${
+          phrases.map(p => `<button type="button" class="${chipClass}" data-tr-example="${escapeHtml(p)}">${escapeHtml(p)}</button>`).join('')
+        }`;
+        examples.querySelectorAll('[data-tr-example]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const text = btn.dataset.trExample ?? '';
+            const inputEl = $('tr-input');
+            if (inputEl) inputEl.value = text;
+            STATE.translatorInput = text;
+            void runTranslator();
+          });
+        });
+      }
+
+      if (!isTranslatorFonoraMode() && translatorKeyboardOpen) {
+        void setTranslatorKeyboardOpen(false);
+      } else {
+        syncTranslatorKeyboardToggle();
+      }
+    }
+
+    async function syncTranslatorDirectionUiAsync() {
+      const sourceLang = readTranslatorSourceLang();
+      if (isFonoranSourceLang(sourceLang) && sourceLang === 'fonoran-fonora') {
+        await ensureRules();
+      }
+      syncTranslatorDirectionUi();
+    }
+
     function translatorEngineLabel(engine) {
       if (engine === 'cached') return 'Cached';
       if (engine === 'legacy') return 'Legacy';
+      if (engine === 'lexical') return 'Lexical';
       if (engine === 'llm') return 'LLM';
       return engine ? String(engine) : '';
     }
@@ -2874,11 +3036,58 @@
       </div>`;
     }
 
+    function translatorReverseEmptyMessage() {
+      const sourceLang = readTranslatorSourceLang();
+      if (sourceLang === 'fonoran-fonora') {
+        return 'Type Fonoran in Fonora script on the left to see a natural-language reading.';
+      }
+      if (sourceLang === 'fonoran-roman') {
+        return 'Type Fonoran in roman spelling on the left to see a natural-language reading.';
+      }
+      return 'Type any language on the left to see Fonoran script and pronunciation.';
+    }
+
+    async function renderTranslatorReverseOutput(result) {
+      const out = $('tr-output');
+      if (!out) return;
+
+      await ensureRules();
+      const playbackScript = result.playback?.script
+        || (STATE.rules && result.surface?.roman
+          ? resolveTranslatorPlayback(result).script || resolveTranslatorPlayback(result).phrase
+          : '');
+      const translation = String(result.translation ?? '').trim();
+      const literal = String(result.literal ?? '').trim();
+      const showLiteral = literal && literal !== translation;
+      const roman = result.surface?.roman || '';
+      const pronHtml = translatorPronHtml(result.surface?.pronunciation);
+
+      syncTranslatorOutputHeader(result);
+
+      out.innerHTML = `
+        <div class="translator-output__surface">
+          <p class="translator-output__translation">${escapeHtml(translation || '—')}</p>
+          ${showLiteral ? `<p class="translator-output__literal sans"><span class="translator-output__literal-label">Literal</span> ${escapeHtml(literal)}</p>` : ''}
+        </div>
+        <details class="translator-output__source-details sans">
+          <summary>Source Fonoran</summary>
+          <div class="translator-output__source-body">
+            ${playbackScript ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(playbackScript)}</div>` : ''}
+            ${roman ? `<p class="translator-output__roman">${escapeHtml(roman)}</p>` : ''}
+            ${pronHtml}
+          </div>
+        </details>
+        ${translatorLegendHtml(result)}
+        <ul class="translator-token-list translator-token-list--primary">${(result.tokens ?? []).map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>`;
+
+      syncTranslatorPlaybackUi(result);
+    }
+
     async function renderTranslatorOutput(result) {
       const out = $('tr-output');
       if (!out) return;
       if (!result || result.mode === 'empty') {
-        out.innerHTML = '<p class="translator-output__empty sans">Type any language on the left to see Fonoran script and pronunciation.</p>';
+        out.innerHTML = `<p class="translator-output__empty sans">${escapeHtml(translatorReverseEmptyMessage())}</p>`;
         syncTranslatorOutputHeader(null);
         syncTranslatorPlaybackUi(null);
         return;
@@ -2888,6 +3097,11 @@
         out.innerHTML = `<p class="translator-output__empty sans translator-output__error">${escapeHtml(result.error)}</p>`;
         syncTranslatorOutputHeader(null);
         syncTranslatorPlaybackUi(null);
+        return;
+      }
+
+      if (result.direction === 'from-fonoran' || result.mode === 'reverse') {
+        await renderTranslatorReverseOutput(result);
         return;
       }
 
@@ -2958,6 +3172,8 @@
       const text = (input?.value ?? STATE.translatorInput ?? '').trim();
       STATE.translatorInput = input?.value ?? text;
       const token = ++translatorToken;
+      const sourceLang = readTranslatorSourceLang();
+      const reverse = isFonoranSourceLang(sourceLang);
 
       if (!text) {
         STATE.translatorBusy = false;
@@ -2969,18 +3185,24 @@
       STATE.translatorBusy = true;
       showTranslatorLoading();
       try {
+        const body = {
+          text,
+          sourceLang,
+          simplify: reverse ? false : 'auto',
+          dev_lab: isLocalDevHost(),
+        };
+        if (reverse) {
+          body.direction = 'from-fonoran';
+          body.inputMode = sourceLang === 'fonoran-fonora' ? 'fonora' : 'roman';
+          body.targetLang = readTranslatorTargetLang();
+        }
         const result = await api('/api/fonoran/translate', {
           method: 'POST',
-          body: JSON.stringify({
-            text,
-            sourceLang: readTranslatorSourceLang(),
-            simplify: 'auto',
-            dev_lab: isLocalDevHost(),
-          }),
+          body: JSON.stringify(body),
         });
         if (token !== translatorToken) return;
         if (result?.error) {
-          STATE.translatorResult = { error: result.error, mode: 'error' };
+          STATE.translatorResult = { error: result.error, mode: 'error', code: result.code, hint: result.hint };
           await renderTranslatorOutput(STATE.translatorResult);
           return;
         }
@@ -2989,7 +3211,22 @@
       } catch (e) {
         if (token !== translatorToken) return;
         const out = $('tr-output');
-        if (out) out.innerHTML = `<p class="translator-output__empty sans" style="color:var(--color-error)">${escapeHtml(e.message)}</p>`;
+        const msg = e.message || 'Translation failed';
+        const wrongSource = /natural language, not Fonoran/i.test(msg);
+        if (out) {
+          out.innerHTML = wrongSource
+            ? `<p class="translator-output__empty sans translator-output__error">${escapeHtml(msg)}</p>
+               <p class="translator-output__empty sans"><button type="button" class="chip" data-tr-switch-source="en">Switch source to English</button></p>`
+            : `<p class="translator-output__empty sans" style="color:var(--color-error)">${escapeHtml(msg)}</p>`;
+          out.querySelector('[data-tr-switch-source]')?.addEventListener('click', () => {
+            const sel = $('tr-source-lang');
+            if (sel) {
+              sel.value = 'en';
+              sel.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            void runTranslator();
+          });
+        }
         syncTranslatorOutputHeader(null);
         syncTranslatorPlaybackUi(null);
       } finally {
@@ -3012,6 +3249,10 @@
       const langEl = $('tr-source-lang');
       const savedLang = localStorage.getItem(TRANSLATOR_SOURCE_LANG_KEY);
       if (langEl && savedLang) langEl.value = savedLang;
+      const targetEl = $('tr-target-lang');
+      const savedTarget = localStorage.getItem(TRANSLATOR_TARGET_LANG_KEY);
+      if (targetEl && savedTarget) targetEl.value = savedTarget;
+      void syncTranslatorDirectionUiAsync();
       syncTranslatorSpeedLabel();
       syncTranslatorPlaybackUi(STATE.translatorResult);
       if (STATE.translatorResult) void renderTranslatorOutput(STATE.translatorResult);
@@ -3187,6 +3428,9 @@
         return;
       }
       if (name !== 'dictionary') closeSheet();
+      if (name !== 'translator' && translatorKeyboardOpen) {
+        void setTranslatorKeyboardOpen(false);
+      }
       STATE.page = name;
       setActiveTab(name);
       document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3267,8 +3511,17 @@
     let translatorDebounce = null;
     $('tr-input')?.addEventListener('input', (e) => {
       STATE.translatorInput = e.target.value;
+      if (isTranslatorFonoraMode()) return;
       clearTimeout(translatorDebounce);
       translatorDebounce = setTimeout(() => { void runTranslator(); }, 280);
+    });
+    $('tr-input')?.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || e.shiftKey) return;
+      if (!isTranslatorFonoraMode()) return;
+      // Physical Enter while Fonora keyboard is active is handled by the keyboard module.
+      if (translatorKeyboardOpen) return;
+      e.preventDefault();
+      void runTranslator();
     });
     $('tr-speed')?.addEventListener('input', () => {
       syncTranslatorSpeedLabel();
@@ -3279,7 +3532,17 @@
     });
     $('tr-source-lang')?.addEventListener('change', (e) => {
       localStorage.setItem(TRANSLATOR_SOURCE_LANG_KEY, e.target.value);
+      void syncTranslatorDirectionUiAsync().then(() => runTranslator());
+    });
+    $('tr-target-lang')?.addEventListener('change', (e) => {
+      localStorage.setItem(TRANSLATOR_TARGET_LANG_KEY, e.target.value);
       void runTranslator();
+    });
+    $('tr-keyboard-toggle')?.addEventListener('click', () => {
+      void setTranslatorKeyboardOpen(!translatorKeyboardOpen);
+    });
+    $('tr-keyboard-close')?.addEventListener('click', () => {
+      void setTranslatorKeyboardOpen(false);
     });
     document.querySelectorAll('[data-tr-example]').forEach(btn => {
       btn.addEventListener('click', () => {

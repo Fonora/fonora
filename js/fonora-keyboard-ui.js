@@ -4,7 +4,7 @@ import {
   romanLetterForCode,
   getVowelIndicatorSymbol,
 } from './fonora-keyboard-layout.js';
-import { insertAtCursor } from './utils.js';
+import { insertAtCursor, deleteFonoraPhonemeBeforeCursor } from './utils.js';
 
 /** @type {Set<ReturnType<typeof createFonoraKeyboard>>} */
 const keyboardInstances = new Set();
@@ -59,6 +59,7 @@ export function createFonoraKeyboard(options) {
     tabId != null && document.documentElement.getAttribute('data-fonora-tab') === tabId);
 
   let composer = createFonoraKeyboardComposer(rules);
+  let rulesRef = rules;
   let vowelIndicatorSymbol = getVowelIndicatorSymbol(rules);
   /** @type {Map<string, HTMLButtonElement>} */
   const keyByCode = new Map();
@@ -214,6 +215,25 @@ export function createFonoraKeyboard(options) {
     }
   }
 
+  function syncSoftKeyboardSuppression() {
+    if (!boundTextarea) return;
+    const suppress = isActive();
+    if (suppress) {
+      if (boundTextarea.dataset.fonoraSoftKb == null) {
+        boundTextarea.dataset.fonoraSoftKb = boundTextarea.getAttribute('inputmode') ?? '';
+      }
+      boundTextarea.setAttribute('inputmode', 'none');
+      // readonly blocks the OS keyboard on mobile while still allowing focus + programmatic inserts
+      boundTextarea.setAttribute('readonly', 'readonly');
+    } else if (boundTextarea.dataset.fonoraSoftKb != null) {
+      const saved = boundTextarea.dataset.fonoraSoftKb;
+      if (saved) boundTextarea.setAttribute('inputmode', saved);
+      else boundTextarea.removeAttribute('inputmode');
+      delete boundTextarea.dataset.fonoraSoftKb;
+      boundTextarea.removeAttribute('readonly');
+    }
+  }
+
   function updateKeyboardVisualState() {
     if (!composer) return;
     if (!isPopupOpen()) {
@@ -270,20 +290,15 @@ export function createFonoraKeyboard(options) {
     emitSymbols(textarea, composer.flushBuffer());
   }
 
-  function applyNativeBackspace(textarea) {
+  function deleteSelection(textarea) {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
-    if (start !== end) {
-      textarea.value = textarea.value.slice(0, start) + textarea.value.slice(end);
-      textarea.selectionStart = start;
-      textarea.selectionEnd = start;
-    } else if (start > 0) {
-      textarea.value = textarea.value.slice(0, start - 1) + textarea.value.slice(start);
-      const pos = start - 1;
-      textarea.selectionStart = pos;
-      textarea.selectionEnd = pos;
-    }
+    if (start === end) return false;
+    textarea.value = textarea.value.slice(0, start) + textarea.value.slice(end);
+    textarea.selectionStart = start;
+    textarea.selectionEnd = start;
     textarea.dispatchEvent(new Event('input', { bubbles: true }));
+    return true;
   }
 
   function removeSuffixBeforeCursor(textarea, suffix) {
@@ -303,6 +318,10 @@ export function createFonoraKeyboard(options) {
     if (!composer) return;
     dismissVowelPopup();
     setKeyPressed('Backspace', true);
+    if (deleteSelection(textarea)) {
+      updateKeyboardVisualState();
+      return;
+    }
     const result = composer.backspace();
     if (result.handled) {
       if (result.removeSymbols) {
@@ -311,7 +330,9 @@ export function createFonoraKeyboard(options) {
       updateKeyboardVisualState();
       return;
     }
-    applyNativeBackspace(textarea);
+    // Whole Fonora phoneme (often 2 symbols), not a single UTF-16 unit.
+    deleteFonoraPhonemeBeforeCursor(textarea, rulesRef);
+    updateKeyboardVisualState();
   }
 
   function isPopupOpen() {
@@ -524,18 +545,9 @@ export function createFonoraKeyboard(options) {
       }
 
       if (e.code === 'Backspace') {
-        if (boundTextarea.selectionStart !== boundTextarea.selectionEnd) {
-          return;
-        }
-        const result = composer.backspace();
-        if (result.handled) {
-          e.preventDefault();
-          boundTextarea.focus();
-          if (result.removeSymbols) {
-            removeSuffixBeforeCursor(boundTextarea, result.removeSymbols);
-          }
-          updateKeyboardVisualState();
-        }
+        e.preventDefault();
+        boundTextarea.focus();
+        handleBackspace(boundTextarea);
         return;
       }
 
@@ -588,11 +600,13 @@ export function createFonoraKeyboard(options) {
 
   function activate() {
     boundTextarea?.focus();
+    syncSoftKeyboardSuppression();
     updateKeyboardVisualState();
   }
 
   function deactivate() {
     clearCompose();
+    syncSoftKeyboardSuppression();
   }
 
   function onTabChange(activeTabId) {
@@ -607,6 +621,13 @@ export function createFonoraKeyboard(options) {
     destroyed = true;
     keyboardInstances.delete(instance);
     deactivate();
+    if (boundTextarea?.dataset.fonoraSoftKb != null) {
+      const saved = boundTextarea.dataset.fonoraSoftKb;
+      if (saved) boundTextarea.setAttribute('inputmode', saved);
+      else boundTextarea.removeAttribute('inputmode');
+      delete boundTextarea.dataset.fonoraSoftKb;
+      boundTextarea.removeAttribute('readonly');
+    }
     if (keydownHandler) document.removeEventListener('keydown', keydownHandler);
     if (keyupHandler) document.removeEventListener('keyup', keyupHandler);
     if (outsidePointerHandler) document.removeEventListener('pointerdown', outsidePointerHandler, true);
@@ -620,6 +641,7 @@ export function createFonoraKeyboard(options) {
   function refresh(newRules) {
     if (!newRules) return;
     clearCompose();
+    rulesRef = newRules;
     composer = createFonoraKeyboardComposer(newRules);
     vowelIndicatorSymbol = getVowelIndicatorSymbol(newRules);
     renderKeyboard();
@@ -632,6 +654,7 @@ export function createFonoraKeyboard(options) {
 
   renderKeyboard();
   bindPhysicalKeyboard();
+  syncSoftKeyboardSuppression();
   updateKeyboardVisualState();
 
   const instance = {
