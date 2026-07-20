@@ -1429,6 +1429,26 @@
       line-height:1.2;
       color:var(--text);
     }
+    .word-preview__also-read {
+      margin:0.15rem 0 0;
+      text-align:center;
+      font-size:0.8rem;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .word-preview__also-key {
+      font-weight:700;
+      color:var(--text);
+      letter-spacing:0.02em;
+    }
+    .word-preview__also-script {
+      display:inline;
+      margin-left:0.25rem;
+      color:var(--text);
+    }
+    .word-preview-panel .word-preview__also-read {
+      text-align:center;
+    }
     .word-preview__phonetic-key {
       display:block;
       font-family:var(--font-mono);

@@ -25,7 +25,7 @@ The open design question is whether the script layer should prefer one, show bot
 
 ## Approach
 
-Not implemented yet. Trigger was the `oy` remap (`oh`+`y` → `⚬⏌ᵔ∪`) plus noticing that translator script for `moyi` stayed `mo`+`yi` (`⚬⊃` then `ᵔ∪`) instead of using the `oy` key.
+Dictionary dual-display implemented (morph headword + phonetic alt when encode diverges). Trigger was the `oy` remap (`oh`+`y` → `⚬⏌ᵔ∪`) plus noticing that translator script for `moyi` stayed `mo`+`yi` (`⚬⊃` then `ᵔ∪`) instead of using the `oy` key. (As of 2026-07-20 the live rules may not expose `oy`; the alt only appears when morph vs whole-word script actually differs.)
 
 Related machinery:
 
@@ -45,6 +45,12 @@ Provisional:
 - It is not fixed by updating vowel recipes alone.
 - Dual spelling (compound vs phonetic) is a plausible framing; choosing a single canonical script form needs a constitution-level call.
 - Informal pronounce pass on free diphthong-shaped slots (`⚬XᵔY` with offglide `w`/`y`): almost none felt like a new vowel. Closest was `a`+`y` (`⚬∪ᵔ∪`), which read as a slightly deeper `ay`.
+
+### Dictionary decision (2026-07-20)
+
+Do **not** ban cross-boundary digraph compounds, and do **not** rewrite preferred compounds into pure-phonetic roman (that would drop lego recoverability in the headword — e.g. `ye` still signals water).
+
+Keep **morphological roman + part-wise script** as the dictionary/translator canonical form. When whole-word longest-match encode diverges (same roman letters, different phoneme keys / glyphs), show the phonetic reading as an **alternate** in the dictionary (phoneme-key line + phonetic script). No seed schema field; compute on the fly via `romanWordToFonoraScript`. Translator/TTS stay part-wise.
 
 ## Unused symbol inventory (snapshot 2026-07-20)
 
@@ -207,12 +213,12 @@ Open rows are candidates if the inventory grows with less collapsing.
 
 ## What Changed
 
-Nothing in encoder, translator, or seeds. This note captures the compound/phonetic plot hole and inventories unused symbol structures for a later vowel-expansion pass.
+Dictionary shows phonetic reading as an alternate when morph vs whole-word encode diverges (search indexes both scripts). Encoder, translator canonical path, and seeds unchanged. This note still inventories unused symbol structures for a later vowel-expansion pass.
 
 ## Open Questions
 
 - At compound approval, should editors be required to record a phonetic rewrite distinct from the morphological spelling?
-- Should dictionary/translator script use full-spelling encode, part-wise encode, or both (morphology tree vs speakable script)?
+- ~~Should dictionary/translator script use full-spelling encode, part-wise encode, or both?~~ **Dictionary:** morph canonical + phonetic alt when they diverge. **Translator/TTS:** still part-wise; constitution-level script canonicity remains open.
 - How often do cross-boundary digraphs occur in the approved lexicon beyond `moyi`?
 - Does the campfire test care about recoverable roots in the *script*, or only in the roman analysis?
 - If diphthong-shaped free slots do not yield new vowels by ear, should expansion look at unused **reverse** or **modifier-pair** consonants instead, or invent a new vowel grammar beyond `⚬X` / `⚬XᵔY`?
