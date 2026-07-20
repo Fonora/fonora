@@ -501,9 +501,9 @@
             <div class="learn-skill-card__body">
               <div class="learn-skill-card__head">
                 <h3 class="learn-skill-card__title">Grammar</h3>
-                <span class="learn-skill-card__tag">Stories</span>
+                <span class="learn-skill-card__tag">Basics</span>
               </div>
-              <p class="learn-skill-card__desc">Translate short sentences once you know the words.</p>
+              <p class="learn-skill-card__desc">Five-minute rules: order, particles, want+go, then short drills.</p>
               <div class="learn-skill-card__foot">
                 <div class="learn-skill-card__progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="learn-skill-card__progress-fill"></span></div>
                 <span class="learn-skill-card__level">Level 1</span>
@@ -1759,6 +1759,7 @@
         </div>
       </div>
       <p id="fonoran-grammar-status" class="section-desc learn-exercise__status" hidden></p>
+      <p id="fonoran-grammar-tip" class="learn-grammar-tip" hidden aria-live="polite"></p>
 
       <div class="learn-session-summary" hidden></div>
 
@@ -1767,12 +1768,37 @@
           <span id="fonoran-grammar-verdict" class="typing-practice__verdict-badge learn-exercise__verdict" hidden aria-live="polite"></span>
         </div>
         <div class="quiz-prompt-label">Prompt</div>
-        <p id="fonoran-grammar-prompt" class="quiz-prompt learn-exercise__prompt-display"></p>
-        <label id="fonoran-grammar-answer-label" for="fonoran-grammar-answer">Your Answer</label>
-        <input type="text" id="fonoran-grammar-answer" class="learn-exercise__input text-input text-input--full" autocomplete="off" spellcheck="false">
-        <div class="button-row learn-exercise__actions learn-exercise__actions--check-continue">
-          <button type="button" id="fonoran-grammar-check" class="btn btn--primary">Check <kbd class="learn-exercise__check-kbd" aria-hidden="true">↵</kbd></button>
-          <button type="button" id="fonoran-grammar-next" class="btn learn-exercise__continue" hidden>Continue</button>
+        <p id="fonoran-grammar-prompt" class="quiz-prompt learn-exercise__prompt-display learn-exercise__prompt-display--multiline"></p>
+        <div class="learn-play-area learn-play-area--compact">
+          <div class="learn-play-group" role="group" aria-label="Play Fonoran phrase">
+            <button type="button" id="fonoran-grammar-play" class="learn-play-btn" aria-label="Play phrase">
+              <svg class="learn-play-btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+            <button type="button" id="fonoran-grammar-play-slow" class="learn-play-btn learn-play-btn--slow" aria-label="Play slowly, syllable by syllable">
+              <svg class="learn-play-btn__icon learn-play-btn__icon--turtle" viewBox="0 0 78 64" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M6 38c3-18 17-29 34-25 7 1.6 12 5.5 15 10"/>
+                <path d="M6 38c15 1.5 34-1 47-15"/>
+                <path d="M54 23c2.8-7.8 8.5-16 16-13.2 4.8 1.8 6.4 7 3.5 11.4C69 28 61.5 35.5 53 39"/>
+                <path d="M16 39l-4 14h13l1-10"/>
+                <path d="M43 39l1 14h13l-4-14"/>
+                <path d="M5.5 38c-3.5-.2-4.5-3.6-1.3-5.4"/>
+                <circle class="learn-icon__dot" cx="65.2" cy="16.5" r="2.4"/>
+              </svg>
+            </button>
+          </div>
+          <p id="fonoran-grammar-play-status" class="learn-play-hint">Tap to listen</p>
+        </div>
+        <div id="fonoran-grammar-choices" class="fonoran-mcq-grid learn-choice-grid" hidden></div>
+        <div id="fonoran-grammar-typing" class="learn-grammar-typing">
+          <label id="fonoran-grammar-answer-label" for="fonoran-grammar-answer">Your Answer</label>
+          <input type="text" id="fonoran-grammar-answer" class="learn-exercise__input text-input text-input--full" autocomplete="off" spellcheck="false">
+          <div class="button-row learn-exercise__actions learn-exercise__actions--check-continue">
+            <button type="button" id="fonoran-grammar-check" class="btn btn--primary">Check <kbd class="learn-exercise__check-kbd" aria-hidden="true">↵</kbd></button>
+            <button type="button" id="fonoran-grammar-next" class="btn learn-exercise__continue" hidden>Continue</button>
+          </div>
+        </div>
+        <div class="button-row learn-exercise__actions" id="fonoran-grammar-mcq-actions" hidden>
+          <button type="button" id="fonoran-grammar-mcq-next" class="btn learn-exercise__continue" hidden>Continue</button>
         </div>
         <div id="fonoran-grammar-feedback" class="learn-exercise__feedback quiz-feedback"></div>
       </div>

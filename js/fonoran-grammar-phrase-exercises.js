@@ -21,7 +21,8 @@ function normalize(text) {
 /**
  * @typedef {{
  *   id: string,
- *   kind: 'reorder' | 'particles' | 'translate-to-fonoran' | 'translate-to-lang',
+ *   kind: 'reorder' | 'particles' | 'translate-to-fonoran' | 'translate-to-lang' | 'choose',
+ *   tip?: string,
  *   promptLang: string,
  *   answerRoman: string,
  *   promptFonoran: string,
@@ -30,6 +31,8 @@ function normalize(text) {
  *   spelling?: string,
  *   tierRank?: number,
  *   sourceId?: string,
+ *   alternates?: string[],
+ *   choices?: string[],
  * }} GrammarPhraseExercise
  */
 
@@ -102,20 +105,46 @@ export function buildGrammarPhraseExercises(entries) {
  * @param {'to-fonoran' | 'to-lang'} direction
  * @returns {boolean}
  */
+function normalizeLoose(text) {
+  return normalize(String(text ?? '').replace(/[?？]/g, ''));
+}
+
 export function grammarPhraseExerciseMatches(exercise, direction, answer) {
   const norm = normalize(answer);
-  if (exercise.kind === 'translate-to-fonoran' || (exercise.kind === 'reorder' && direction === 'to-fonoran')) {
-    return norm === normalize(exercise.answerRoman);
-  }
+  const loose = normalizeLoose(answer);
+  const alternates = (exercise.alternates ?? []).map(normalizeLoose);
+
   if (exercise.kind === 'particles') {
     const expected = normalize(exercise.answerRoman).split(' ').sort().join(' ');
     const given = norm.split(' ').filter(Boolean).sort().join(' ');
     return expected === given;
   }
+
+  if (
+    exercise.kind === 'choose'
+    || exercise.kind === 'reorder'
+    || exercise.kind === 'translate-to-fonoran'
+    || direction === 'to-fonoran'
+  ) {
+    const primary = normalizeLoose(exercise.answerRoman);
+    if (loose === primary || alternates.includes(loose)) return true;
+    if (norm === normalize(exercise.answerRoman)) return true;
+    // Choose drills: accept "A" / "B" when that option matches the answer.
+    if (exercise.kind === 'choose' && Array.isArray(exercise.choices)) {
+      const letter = loose.replace(/[^a-z]/g, '');
+      if (letter.length === 1) {
+        const idx = letter.charCodeAt(0) - 97;
+        const option = exercise.choices[idx];
+        if (option && normalizeLoose(option) === primary) return true;
+      }
+    }
+    return false;
+  }
+
   if (direction === 'to-lang') {
     return norm === normalize(exercise.answerLang);
   }
-  return norm === normalize(exercise.answerRoman);
+  return loose === normalizeLoose(exercise.answerRoman);
 }
 
 /**
@@ -136,6 +165,11 @@ export function grammarPhrasePrompt(exercise, direction) {
         prompt: exercise.promptLang,
         label: 'Grammar particles (mi, ta, sa, no…)',
       };
+    case 'choose':
+      return {
+        prompt: exercise.promptLang,
+        label: 'Choose the correct Fonoran',
+      };
     case 'translate-to-fonoran':
       return direction === 'to-lang'
         ? { prompt: exercise.promptFonoran, label: 'Your translation' }
@@ -146,4 +180,11 @@ export function grammarPhrasePrompt(exercise, direction) {
         label: direction === 'to-lang' ? 'Your translation' : 'Your Fonoran answer (roman spelling)',
       };
   }
+}
+
+/** True when the exercise should stay in Fonoran-answer mode regardless of direction radio. */
+export function grammarPhraseForcesFonoran(exercise) {
+  return exercise?.kind === 'reorder'
+    || exercise?.kind === 'particles'
+    || exercise?.kind === 'choose';
 }

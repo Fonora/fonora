@@ -5,6 +5,7 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildGrammarPhraseExercises, grammarPhraseExerciseMatches } from '../js/fonoran-grammar-phrase-exercises.js';
+import { lessonsDocToExercises, grammarLessonAnswerMatches } from '../js/fonoran-grammar-lessons.js';
 import { resolveDataPath } from './fonoran-data-paths.js';
 
 function assert(cond, msg) {
@@ -20,8 +21,10 @@ function test(name, fn) {
   }
 }
 
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const corpusPath = resolveDataPath('stranger_corpus');
 const corpus = JSON.parse(readFileSync(corpusPath, 'utf8'));
+const lessonsDoc = JSON.parse(readFileSync(join(ROOT, 'data/fonoran-grammar-lessons.json'), 'utf8'));
 
 const sortTest = test('stranger corpus phrases sort complexity then id', () => {
   for (const domain of corpus.domains) {
@@ -76,8 +79,26 @@ const domainLessonTest = test('domain curriculum has 5 lessons per domain × 20 
   }
 });
 
+const rule4LessonTest = test('Rule 4 grammar basics lesson has 10 live-lexicon drills', () => {
+  const exercises = lessonsDocToExercises(lessonsDoc);
+  assert(exercises.length === 10, `expected 10 basics drills, got ${exercises.length}`);
+  assert(exercises.every((e) => e.tip), 'every basics drill should teach with a tip');
+  const beach = exercises.find((e) => e.id === 'gb-beach');
+  assert(beach, 'beach drill present');
+  assert(grammarLessonAnswerMatches(beach, 'be sak gi yetem ?'), 'full beach form');
+  assert(grammarLessonAnswerMatches(beach, 'sak gi yetem'), 'casual beach form accepted');
+  assert(
+    grammarPhraseExerciseMatches(
+      exercises.find((e) => e.id === 'gb-bare-dest'),
+      'to-fonoran',
+      'mi gi ye',
+    ),
+    'choose drill accepts correct option text',
+  );
+});
+
 export function runFonoranCoursePhrasesTests() {
-  return [sortTest, grammarTest, domainLessonTest];
+  return [sortTest, grammarTest, domainLessonTest, rule4LessonTest];
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {

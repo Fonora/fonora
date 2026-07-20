@@ -5363,11 +5363,56 @@ table.sound-grid .grid-cell {
 .learn-exercise--reading .learn-exercise__feedback,
 .learn-exercise--hearing .learn-exercise__feedback,
 .learn-exercise--fonoran-writing #fonoran-writing-roman-feedback,
-.learn-exercise--grammar .learn-exercise__feedback,
+.learn-exercise--grammar .learn-exercise__feedback:not(.is-visible),
 .learn-exercise--speaking .learn-exercise__feedback,
 .learn-exercise--words #script-reading-word-feedback,
 .learn-exercise--sounds #quiz-feedback {
   display: none;
+}
+
+.learn-grammar-tip {
+  margin: 0 0 0.85rem;
+  padding: 0.7rem 0.9rem;
+  border-left: 3px solid var(--fonora-gold-strong, #c4a35a);
+  background: color-mix(in srgb, var(--fonora-gold-strong, #c4a35a) 10%, transparent);
+  color: var(--text, inherit);
+  font-size: 0.92rem;
+  line-height: 1.45;
+  border-radius: 0 6px 6px 0;
+}
+
+.learn-exercise--grammar .learn-exercise__prompt-display {
+  margin: 0;
+}
+
+.learn-grammar-typing {
+  text-align: left;
+  margin-top: 0.15rem;
+}
+
+.learn-grammar-typing label {
+  display: block;
+  margin: 0 0 0.35rem;
+  font-family: var(--font-serif);
+}
+
+.learn-exercise--grammar .learn-choice-grid {
+  margin-top: 0.15rem;
+}
+
+.learn-exercise--grammar .learn-exercise__actions {
+  margin-top: 0.75rem;
+}
+
+.learn-exercise__prompt-display--multiline {
+  white-space: pre-line;
+}
+
+.learn-exercise--grammar .learn-exercise__feedback.is-visible {
+  display: block;
+  margin-top: 0.65rem;
+  font-size: 0.9rem;
+  line-height: 1.4;
 }
 
 .learn-exercise__actions--check-continue {
@@ -5787,6 +5832,11 @@ html[data-fonora-tab] .learn-exercise.learn-exercise--session-complete {
 
 .learn-exercise--hearing .learn-play-area {
   padding-top: 0.35rem;
+}
+
+.learn-play-area--compact {
+  padding: 0.7rem 0 0.85rem;
+  gap: 0.45rem;
 }
 
 .learn-play-group {
