@@ -86,15 +86,23 @@ const GRAMMAR_SKELETON = 'Actor · Action · Target · Place · Time';
  * with the lexicalized word **nohu** "unknown" (fused from no + hu, playtest
  * decision 2026-07: separated `no hu` read as clause negation, the fused word
  * reads as one learnable concept) applied to a category concept
- * (person/thing/place/time). Grammar only states that questions are
+ * (person/thing/place/time/cause). Grammar only states that questions are
  * compositional (docs/fonoran-grammar.md Rule 3); the concrete mapping lives
- * here and MAY CHANGE as the lexicon evolves (e.g. if a `reason`/`method`
- * concept is later justified by usage).
+ * here and MAY CHANGE as the lexicon evolves (e.g. if a `method` concept is
+ * later justified by usage).
  *   who   -> nohu ba    (unknown person)
  *   what  -> nohu to    (unknown thing)
  *   where -> nohu che   (unknown place)
  *   when  -> nohu kan   (unknown time)
- * why/how are intentionally absent: Fonoran has no robust reason/method concept yet.
+ *   why   -> nohu gak   (unknown cause)
+ * Each pairs `nohu` with a root naming a DIMENSION (a kind of thing, neutral as
+ * to which one), never a value on a scale: see RN-37. That is why `how many` is
+ * absent rather than mapped to `nohu lek` ("unknown a-lot"), which commits to a
+ * position on the quantity scale before the question is asked; the quantity
+ * domain has no dimension root to pair with yet.
+ * `how` is absent for a different reason: no neutral way/manner/method concept
+ * exists. The nearest root, `rule` (ha), is prescriptive ("how things must be
+ * done"), so `nohu ha` would ask which norm applies, not by what means.
  * Applied only in interrogative sentences (source marked with `?`) so relative /
  * subordinate "who"/"when" are left alone.
  */
@@ -104,6 +112,7 @@ const WH_QUESTION_COMPOSITION = {
   what: ['unknown', 'thing'],
   where: ['unknown', 'place'],
   when: ['unknown', 'time'],
+  why: ['unknown', 'cause'],
 };
 
 /**
@@ -113,8 +122,8 @@ const WH_QUESTION_COMPOSITION = {
  */
 const UNKNOWN_WORD = { spelling: 'nohu', parts: ['no', 'hu'] };
 
-/** Category concepts that mark a within-slot no+know sequence as an "unknown" composition. */
-const UNKNOWN_CATEGORY_IDS = new Set(['person', 'thing', 'place', 'time']);
+/** Dimension concepts that mark a within-slot no+know sequence as an "unknown" composition. */
+const UNKNOWN_CATEGORY_IDS = new Set(['person', 'thing', 'place', 'time', 'cause']);
 
 /** A source sentence is a written question when it ends with `?`. */
 function isQuestionSentence(sentence) {

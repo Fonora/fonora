@@ -40,7 +40,7 @@ function slotIds(items) {
 }
 
 function hasWhContentWord(sourceText) {
-  return /\b(who|whom|what|where|when)\b/i.test(String(sourceText ?? ''));
+  return /\b(who|whom|what|where|when|why)\b/i.test(String(sourceText ?? ''));
 }
 
 /** Build the grammar section injected into the LLM user prompt. */
@@ -131,10 +131,14 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('');
   lines.push('## Questions (Rule 3)');
   lines.push('No question particle. Set is_question true; surface gets ?.');
-  lines.push('WH content questions ONLY when source contains who/whom/what/where/when.');
-  lines.push('Use the lexicalized word unknown (nohu) + a category concept:');
-  lines.push('  who/whom → [unknown,person]  what → [unknown,thing]  where → [unknown,place]  when → [unknown,time]');
+  lines.push('WH content questions ONLY when source contains who/whom/what/where/when/why.');
+  lines.push('Use the lexicalized word unknown (nohu) + a DIMENSION concept:');
+  lines.push('  who/whom → [unknown,person]  what → [unknown,thing]  where → [unknown,place]  when → [unknown,time]  why → [unknown,cause]');
   lines.push('unknown is ONE word (nohu) — do NOT spell it as no + know.');
+  lines.push('NO composition exists for how or how many. Do NOT approximate them:');
+  lines.push('  how many must NOT become [unknown,many] — many is a value on a scale, not the quantity dimension;');
+  lines.push('  how must NOT become [unknown,rule] — rule is prescriptive, not a manner dimension.');
+  lines.push('  Leave how / how many unresolved instead of inventing a probe.');
   lines.push('Yes/no questions (Are you…?, Is there…?, Do you…?, Can we…?) must NOT use WH composition.');
   lines.push('For yes/no to "you": put addressee in subject (primary/full form). Casual speech may omit it — do NOT omit in the frame.');
   lines.push('Embedded "where X is" in a STATEMENT or imperative is possession, not a question:');
@@ -144,7 +148,8 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   lines.push('Existential "Are there…" / "There are…": English dummy there has NO meaning — do NOT emit concept there (tak).');
   lines.push('  Compile only the entities and relations being asserted (e.g. other + people + near + addressee + ?).');
   lines.push('  Use there (tak) ONLY for deictic pointing at a place ("over there", "put it there").');
-  lines.push('Why/how are NOT expressible in v1 — list in unresolved[], do not approximate.');
+  lines.push('why IS expressible: [unknown, cause] → nohu gak.');
+  lines.push('how and how many are NOT expressible — list in unresolved[], do not approximate.');
   lines.push('');
   lines.push('## Compounding (Rule 5)');
   lines.push('Prefer approved compound concept ids (e.g. rain, thirsty, happy) over listing raw roots.');
@@ -598,7 +603,7 @@ export function stripExistentialThereFromFrame(frame, sourceText) {
 export function checkLlmGrammarViolations(frame, sourceText = '') {
   const violations = [];
   const slots = frame?.slots ?? {};
-  const hasWh = /\b(who|whom|what|where|when)\b/i.test(String(sourceText));
+  const hasWh = /\b(who|whom|what|where|when|why)\b/i.test(String(sourceText));
 
   for (const [role, items] of Object.entries(slots)) {
     if (!Array.isArray(items)) continue;

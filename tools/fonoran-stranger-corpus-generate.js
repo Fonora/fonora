@@ -93,7 +93,7 @@ export const STRANGER_DOMAINS = [
   {
     id: 'when_questions',
     label: 'When questions',
-    focus: 'when, now, soon, before, after, later — never why or how',
+    focus: 'when, now, soon, before, after, later — never how',
     examples: 'when will we leave, is it time to eat, we should go soon',
     prefix: 'tn',
   },
@@ -173,12 +173,12 @@ const SYSTEM_PROMPT = [
   '- Simple English, 3–12 words, ending punctuation (. or ?)',
   '- No idioms, slang, or culture-specific references (no Christmas, dollar, phone, etc.)',
   '- No proper nouns except generic roles (the child, the old person)',
-  '- NEVER use why or how questions (those concepts are intentionally absent from the target language)',
+  '- NEVER use how questions (no manner concept exists in the target language). why questions are fine.',
   '- Each phrase must be something a real stranger would plausibly say or think aloud',
   '',
   'Utterance mix for the batch (approximately):',
   '- 35% statements/observations (type: statement)',
-  '- 25% questions (type: question) — but never why/how',
+  '- 25% questions (type: question) — but never how',
   '- 20% requests/offers (type: request)',
   '- 15% feelings/inner states (type: feeling)',
   '- 5% repair/meta-communication (type: repair)',
@@ -220,14 +220,15 @@ function normalizeEn(en) {
 }
 
 const IDIOM_OR_CULTURE = /\b(christmas|thanksgiving|dollar|euro|smartphone|iphone|wifi|internet|facebook|god bless|break a leg|piece of cake)\b/i;
-const WHY_HOW = /^\s*(why|how)\b/i;
+/** `how` has no v1 form; `why` does (nohu gak), so only `how` is filtered out. */
+const UNEXPRESSIBLE_PROBE = /^\s*how\b/i;
 
 function filterPhrase(phrase, domain, seen, acceptedCount = 0) {
   const en = String(phrase?.en ?? '').trim();
   if (!en || en.length < 3) return { ok: false, reason: 'empty or too short' };
   const words = en.split(/\s+/).length;
   if (words > 12) return { ok: false, reason: 'too long' };
-  if (WHY_HOW.test(en)) return { ok: false, reason: 'why/how question' };
+  if (UNEXPRESSIBLE_PROBE.test(en)) return { ok: false, reason: 'how question' };
   if (IDIOM_OR_CULTURE.test(en)) return { ok: false, reason: 'idiom or culture-specific' };
   const key = normalizeEn(en);
   if (seen.has(key)) return { ok: false, reason: 'duplicate' };

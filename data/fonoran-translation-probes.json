@@ -205,6 +205,54 @@
       "target_frame": "after · sun · go · water",
       "status": "broken",
       "note": "Future scene fronting; sa by Action; after+sun as scene time; no dummy do."
+    },
+    {
+      "en": "Why are you here?",
+      "target_frame": "unknown · cause · here",
+      "status": "pass",
+      "note": "why probe = nohu gak (unknown + cause dimension). Interrogative coverage: the golden corpus has levels for what/who/where/when but none for why, so these probes are the only regression guard."
+    },
+    {
+      "en": "Why did you go?",
+      "target_frame": "unknown · cause · addressee · move",
+      "status": "pass",
+      "note": "why on a bare motion frame; keeps actor and past ta"
+    },
+    {
+      "en": "Why do you want the water?",
+      "target_frame": "unknown · cause · want · water",
+      "status": "pass",
+      "note": "why on a desire frame; must not displace the want event"
+    },
+    {
+      "en": "Why is the child afraid?",
+      "target_frame": "unknown · cause · child · afraid",
+      "status": "pass",
+      "note": "why on an emotion predicate; no dummy do invented"
+    },
+    {
+      "en": "Why did you take the water?",
+      "target_frame": "unknown · cause · take · water",
+      "status": "pass",
+      "note": "why on a transitive frame; probe survives alongside object"
+    },
+    {
+      "en": "Why did you go to the river?",
+      "target_frame": "unknown · cause · move · river",
+      "status": "broken",
+      "note": "Pre-existing WH loss, not specific to why: when a content question also carries a destination path, the WH word is dropped and unresolved[] stays EMPTY, so the loss is silent. 'Where did you go to the river?' drops where identically, which is how this was isolated. Tracked here because a silently dropped question word is worse than an honest gap."
+    },
+    {
+      "en": "How many animals do you own?",
+      "target_frame": "unknown · quantity · own · animal",
+      "status": "broken",
+      "note": "Quantity probe has no dimension root to pair with, so how_many is an honest gap (RN-37). Must NOT regress to nohu lek: lek is a value on the scale, not the scale. Frame heads name the dimension this needs, so this probe stays broken until one exists."
+    },
+    {
+      "en": "How do you make fire?",
+      "target_frame": "unknown · manner · make · fire",
+      "status": "broken",
+      "note": "No neutral way/manner/method concept. Must NOT regress to nohu ha: rule (ha) is prescriptive, not manner."
     }
   ]
 }

@@ -129,7 +129,8 @@ function sectionCanonicalRedirect(pathname, search, hash) {
     pathname === '/tools/' ||
     pathname === '/learn/' ||
     pathname === '/language/' ||
-    pathname === '/research/'
+    pathname === '/research/' ||
+    pathname === '/showcase/'
   ) {
     return `${pathname.slice(0, -1)}${search}${hash}`;
   }
@@ -142,6 +143,7 @@ function normalizePathname(pathname) {
   if (path === '/learn' || path === '/learn/') path = '/index.html';
   if (path === '/tools' || path === '/tools/') path = '/index.html';
   if (path === '/language' || path === '/language/') path = '/language/index.html';
+  if (path === '/showcase' || path === '/showcase/') path = '/showcase/index.html';
   if (path.endsWith('/')) path += 'index.html';
   if (path === '/') path = '/index.html';
   return path;
@@ -176,7 +178,8 @@ function cacheControl(pathname) {
     pathname === '/learn' ||
     pathname === '/tools' ||
     pathname === '/language' ||
-    pathname === '/research'
+    pathname === '/research' ||
+    pathname === '/showcase'
   ) {
     return 'no-cache';
   }

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phrase Aligner | Fonora</title>
+  <meta name="description" content="See how an English phrase maps word-by-word into Fonoran — color-coded script glyphs and alignment lines.">
+  <link rel="icon" href="/favicon.png" type="image/png" sizes="500x500">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Symbols&family=Noto+Sans+Symbols+2&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --font-ui: "Inter", system-ui, -apple-system, sans-serif;
+      --font-symbol: "Apple Symbols", "Segoe UI Symbol", "Noto Sans Symbols 2",
+        "Noto Sans Symbols", "Arial Unicode MS", sans-serif;
+      --bg:      #f5f3ef;
+      --surface: #ffffff;
+      --text:    #1a1816;
+      --muted:   #6b6460;
+      --border:  #e0dbd4;
+      --radius:  14px;
+
+      --c0: #00b4d8;
+      --c1: #e09b20;
+      --c2: #9b5de5;
+      --c3: #e63946;
+      --c4: #2ab87a;
+      --c5: #f4845f;
+      --c-particle: #999;
+      --c-omitted:  #bdb7b0;
+    }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg);
+      font-family: var(--font-ui);
+      color: var(--text);
+    }
+
+    /* ── Controls ─────────────────────────────────────────────────── */
+    .controls {
+      padding: 1.5rem 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.9rem;
+    }
+
+    .controls__heading {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .controls__heading em {
+      color: #0077a8;
+      font-style: italic;
+    }
+
+    .controls__form {
+      display: flex;
+      gap: 0.6rem;
+      width: 100%;
+      max-width: 580px;
+    }
+
+    .controls__input {
+      flex: 1;
+      padding: 0.65rem 1rem;
+      font-size: 1rem;
+      font-family: var(--font-ui);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .controls__input:focus { border-color: #0077a8; }
+
+    .controls__btn {
+      padding: 0.65rem 1.4rem;
+      font-size: 1rem;
+      font-family: var(--font-ui);
+      font-weight: 600;
+      background: #0077a8;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+      white-space: nowrap;
+    }
+
+    .controls__btn:hover:not(:disabled) { background: #005f87; }
+    .controls__btn:disabled { opacity: 0.45; cursor: default; }
+
+    .controls__actions {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+    }
+
+    .controls__save {
+      padding: 0.4rem 0.9rem;
+      font-size: 0.85rem;
+      font-family: var(--font-ui);
+      font-weight: 500;
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .controls__save:hover { border-color: #aaa; color: var(--text); }
+
+    .controls__hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ── Poster wrapper ───────────────────────────────────────────── */
+    .poster-wrap {
+      display: flex;
+      justify-content: center;
+      padding: 0 1.5rem 3rem;
+    }
+
+    /* ── Poster card ──────────────────────────────────────────────── */
+    .poster {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: 0 4px 32px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+      padding: 2rem 2.75rem 2.25rem;
+      width: 100%;
+      max-width: 860px;
+      min-height: 300px;
+    }
+
+    /* placeholder / loading / error */
+    .poster__placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      padding: 3.5rem 0;
+      color: var(--muted);
+      min-height: 220px;
+    }
+
+    .poster__placeholder-icon {
+      font-family: var(--font-symbol);
+      font-size: 2.5rem;
+      opacity: 0.3;
+    }
+
+    .poster__error {
+      color: #c0392b;
+      font-size: 0.95rem;
+      padding: 2.5rem;
+      text-align: center;
+    }
+
+    /* ── Poster header ────────────────────────────────────────────── */
+    .poster__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.75rem;
+    }
+
+    .poster__brand {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .poster__url {
+      font-size: 0.72rem;
+      color: #d0ccc6;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Aligner layout (the 3-zone area) ────────────────────────── */
+    .poster__aligner {
+      position: relative;  /* SVG anchors here */
+    }
+
+    /* ── Fonoran row ──────────────────────────────────────────────── */
+    .poster__fonoran-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.75rem;
+      padding-bottom: 0.75rem;
+      align-items: flex-end;
+    }
+
+    /* one column per token */
+    .poster__fblock {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+    }
+
+    .poster__fblock-glyph {
+      font-family: var(--font-symbol);
+      font-size: 2.75rem;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .poster__fblock-roman {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    /* The literal meaning. This is the most informative line in the block,
+       so it outranks the grammar role visually. */
+    .poster__fblock-gloss {
+      font-size: 0.78rem;
+      font-style: italic;
+      color: var(--muted);
+      text-align: center;
+      max-width: 130px;
+      line-height: 1.25;
+    }
+
+    .poster__fblock-role {
+      font-size: 0.55rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #d4cfc9;
+    }
+
+    /* ── Lines zone (SVG lives here) ─────────────────────────────── */
+    .poster__lines-zone {
+      height: 100px;
+      position: relative;
+    }
+
+    .poster__lines-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    /* ── English row ──────────────────────────────────────────────── */
+    .poster__english-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.1em 0.5em;
+      align-items: baseline;
+      padding-top: 0.5rem;
+    }
+
+    .poster__eword {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    /* Line endpoints anchor to the core, so punctuation never shifts the
+       curve off the middle of the word. */
+    .poster__eword-core { color: var(--text); }
+
+    /* Words Fonoran genuinely does not need (copulas, articles, prepositions)
+       fade back so the omission reads as intentional. */
+    .poster__eword-core--omitted { color: var(--c-omitted); }
+
+    .poster__eword-punct { color: var(--c-omitted); }
+
+    /* ── Honest gaps ──────────────────────────────────────────────── */
+    .poster__gaps {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.4rem;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px dashed #e0dad2;
+    }
+
+    .poster__gaps-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .poster__gap {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--muted);
+      border: 1px dashed #cfc7bd;
+      border-radius: 999px;
+      padding: 0.1rem 0.55rem;
+    }
+
+    /* ── Print ────────────────────────────────────────────────────── */
+    @media print {
+      body { background: white; }
+      .controls { display: none !important; }
+      .poster-wrap { padding: 0; display: block; }
+      .poster {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+        page-break-inside: avoid;
+      }
+    }
+
+    /* ── Spinner ──────────────────────────────────────────────────── */
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .spinner {
+      width: 26px; height: 26px;
+      border: 3px solid var(--border);
+      border-top-color: #0077a8;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls" id="controls">
+    <p class="controls__heading">Fonoran <em>Phrase Aligner</em></p>
+    <div class="controls__form">
+      <input
+        class="controls__input"
+        id="phrase-input"
+        type="text"
+        placeholder="Enter an English phrase, e.g. The blue star shines"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <button class="controls__btn" id="translate-btn">Translate</button>
+    </div>
+    <div class="controls__actions" id="save-actions" style="display:none">
+      <button class="controls__save" id="save-btn">Save as PDF</button>
+      <span class="controls__hint">or use File › Print</span>
+    </div>
+  </div>
+
+  <div class="poster-wrap">
+    <div class="poster" id="poster">
+      <div class="poster__placeholder" id="poster-placeholder">
+        <div class="poster__placeholder-icon">⏌∋⚬∩</div>
+        <div>Type a phrase above and click Translate</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/showcase/showcase.js"></script>
+</body>
+</html>

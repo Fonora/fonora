@@ -198,7 +198,9 @@ The full inventory (forms, roles, English triggers) lives in [../data/fonoran-gr
 
 That is the entire grammatical inventory. Everything else — questions, focus, possession, comparison — is expressed with **concepts and word order**, not particles, until usage proves a distinction genuinely needs one.
 
-**Questions carry no particle.** There is no question marker and no interrogative pro-form. Content (*wh*) questions are formed **compositionally from ordinary concepts** (e.g. an "unknown person / thing / place / time" placed in the relevant role), and written questions are marked with **`?`**; spoken questions rely on **intonation**. How a given question is composed is a matter of the lexicon and the translator, not grammar — so the grammar never fixes a particular form. The current lexical form is **`nohu`** "unknown" — a *lexicalized word* built from the negation form + `hu` (know), written and taught as one unit (`nohu ba` = who, `nohu to` = what, `nohu che` = where, `nohu kan` = when). Playtesting showed the separated `no hu …` read as clause negation ("not know…") rather than as a question word; lexicalizing it is a deliberate vocabulary decision, not productive particle fusion — the `no` particle itself still never fuses in grammar. *Why* and *how* are deliberately **not yet expressible** in v1: Fonoran has no robust *reason* or *method* concept, and the language admits that rather than approximating it. (Removed in v1: the former question marker `wo`, the interrogatives `vus/zas/zes/zis/zos/zus`, and the focus particles `vat/vet/vit`.)
+**Questions carry no particle.** There is no question marker and no interrogative pro-form. Content (*wh*) questions are formed **compositionally from ordinary concepts** (an "unknown *X*" placed in the relevant role), and written questions are marked with **`?`**; spoken questions rely on **intonation**. How a given question is composed is a matter of the lexicon and the translator, not grammar — so the grammar never fixes a particular form. The current lexical form is **`nohu`** "unknown" — a *lexicalized word* built from the negation form + `hu` (know), written and taught as one unit (`nohu ba` = who, `nohu to` = what, `nohu che` = where, `nohu kan` = when, `nohu gak` = why). Playtesting showed the separated `no hu …` read as clause negation ("not know…") rather than as a question word; lexicalizing it is a deliberate vocabulary decision, not productive particle fusion — the `no` particle itself still never fuses in grammar.
+
+The *X* in `nohu X` must be a **dimension**: a root naming a kind of thing while staying neutral about which one. `che` does not say which place, `kan` does not say when, `gak` does not say which cause. A root naming a *value* cannot fill the slot, because it answers the question before it is asked. This is why *how many* is not expressible: the quantity domain contains only values (`lek` many, `ket` some, `mel` all) and no root naming the quantity axis, so `nohu lek` would read "unknown a-lot" rather than "unknown amount". *How* is unavailable for the same reason in a different domain: there is no neutral *way*/*manner*/*method* concept, and `rule` (`ha`) is prescriptive rather than neutral. Both are left in `unresolved[]` rather than approximated. See [RN-37](/research/notes/interrogatives-need-dimensions-not-values). (Removed in v1: the former question marker `wo`, the interrogatives `vus/zas/zes/zis/zos/zus`, and the focus particles `vat/vet/vit`.)
 
 Particles are **reserved**: the root generator never assigns particle forms to a lexical concept. The reserved set is enumerated in [../data/fonoran-primitive-roots-config.json](../data/fonoran-primitive-roots-config.json) (`reserved_particles.forms`) — it includes the active v1 forms plus the forms freed by v1 removals, which stay blocked from lexical reuse for spelling stability pending a future decision.
 
@@ -631,9 +633,10 @@ appear in the gap report (`suggestGapConcepts`) and the concept editor; they are
 never authoritative runtime output.
 
 **Curated relational vocabulary.** Spatial/relational words are added
-deliberately, not guessed. `beside → near` is a curated interpretation rule;
-`behind`, `front`, and `between` have no Fonoran root yet and remain **tracked
-honest gaps** until one is grown through the normal root pipeline.
+deliberately, not guessed. `beside → near` is a curated interpretation rule.
+`behind` (`so`) and `front` (`cha`) have since been grown through the normal
+root pipeline; `between` still has no Fonoran root and remains a **tracked
+honest gap** until one is grown the same way.
 
 **Locative predicates keep the relation.** In a static locative predicate
 (`the cat is behind the tree`) the parser routes the leading spatial preposition
@@ -781,9 +784,9 @@ The following topics extend this specification without breaking Rules 1 through 
 | --- | --- |
 | Pronouns | **Partial** — `mi` particle; `you`/`we`/`he`/`she` resolve to roots |
 | Negation | **Partial** — `no` particle in Time slot |
-| Questions | **v1** — no particle; content questions use the lexicalized word *nohu* "unknown" + person/thing/place/time, written with `?`, spoken via intonation. *why/how* deferred (no *reason*/*method* concept yet) |
+| Questions | **v1** — no particle; content questions use the lexicalized word *nohu* "unknown" + a **dimension** concept (person/thing/place/time/cause), written with `?`, spoken via intonation. *why* → `nohu gak` (unknown + cause). *how* is **blocked**: no neutral *way*/*manner*/*method* concept exists. The nearest root is `rule` (`ha`), "a pattern to follow; how things must be done", but it is prescriptive and social rather than a manner dimension, so `nohu ha` would ask which norm applies, not by what means something happens. *how many* is likewise **blocked**: the quantity domain has no dimension root, and `nohu lek` is rejected because `lek` is a value on the scale rather than the scale itself ([RN-37](/research/notes/interrogatives-need-dimensions-not-values)) |
 | Comparisons | Open |
-| Numbers | Open |
+| Numbers | **Open** — cardinals 1–99 are specified in [fonoran-numerals.md](fonoran-numerals.md) but **not implemented**: no numeral appears in any seed file and the translator returns number words unresolved |
 | Quantifiers | **Partial** — `nobody`, `everyone`, etc. expand to particles + roots |
 | Time expressions | **Partial** — `yesterday`/`tomorrow`, `every morning` |
 | Locations / motion | **Partial** — Path slot: `path`, `source`, `far`, `inside`, `up`, `near` |

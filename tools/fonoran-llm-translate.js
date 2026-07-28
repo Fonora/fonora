@@ -168,19 +168,22 @@ const WH_COMPOSITION_PREFIXES = [
   ['no', 'know', 'thing'],
   ['no', 'know', 'place'],
   ['no', 'know', 'time'],
+  ['no', 'know', 'cause'],
   ['neg', 'know', 'person'],
   ['neg', 'know', 'thing'],
   ['neg', 'know', 'place'],
   ['neg', 'know', 'time'],
+  ['neg', 'know', 'cause'],
   ['unknown', 'person'],
   ['unknown', 'thing'],
   ['unknown', 'place'],
   ['unknown', 'time'],
+  ['unknown', 'cause'],
 ];
 
-/** True when source text is a content question (who/what/where/when). */
+/** True when source text is a content question (who/what/where/when/why). */
 export function hasWhContentWord(text) {
-  return /\b(who|whom|what|where|when)\b/i.test(String(text ?? ''));
+  return /\b(who|whom|what|where|when|why)\b/i.test(String(text ?? ''));
 }
 
 /** True when any slot opens with a WH-composition prefix. */
@@ -441,12 +444,13 @@ Do NOT split for:
 - Spatial/relational: lexical concepts (inside, here, there, near, path, source, up, down…) — NOT particles.
 - Plain "go/want to go to X": event [move] or [want, move], path [X] — do NOT emit path/nan for English "to".
 - Direction contrast only: toward→path (nan), from→source (lo), away→far (fet).
-- Questions: no question particle; is_question true; WH composition ONLY for who/what/where/when in source (Rule 3).
+- Questions: no question particle; is_question true; WH composition ONLY for who/what/where/when/why in source (Rule 3).
 - Yes/no and existential questions: NO WH composition — state entities/relations directly.
 - Existential "Are there…" / "There are…": English dummy there is meaningless — do NOT emit concept there (tak). Compile only the entities/relations (e.g. other + people + near + addressee).
 - Deictic there (tak) only when pointing at a place ("over there", "put it there").
 - we/us: default subject collective (dan). Use mi + addressee only when source explicitly signals a dyad (each other, you and I, both of us) — never from topic or urgency alone.
-- Why/how: not expressible in v1 — put in unresolved[], do not guess.
+- why: expressible as [unknown, cause] → nohu gak (cause is an approved root).
+- how / how many: NOT expressible — put in unresolved[], do not guess. Specifically, how many must not become [unknown, many] (many is a value on the quantity scale, not the quantity dimension), and how must not become [unknown, rule] (rule is prescriptive, not manner).
 - Abstract / technical words: prefer a transparent compose path over an existing concept over a gap (Rule 5). Emit either a bridge concept id (e.g. sentience) or an explicit compose path joined with "+" using APPROVED concept ids (e.g. "think+self"). Only fall back to unresolved[] when no root path is recoverable and it is not a proper noun.
 - Proper nouns / coined names with no recoverable path (e.g. a place or product name): keep as a marked loanword — emit its concept id if one is pinned in the glossary/bridge list rather than translating or gapping.
 - Never invent concept ids OR spellings. Record honest gaps in unresolved[] as SHORT tokens — the single English word (or ≤2-word phrase) that has no v1 form, e.g. "can", "or", "should", "boy". Do NOT put explanations, clause labels, or sentence fragments in unresolved[] (Design Rule 0).`;

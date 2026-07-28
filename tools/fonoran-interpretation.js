@@ -1028,7 +1028,7 @@ const CLAUSE_VERB_MARKERS = new Set([
 const CLAUSE_SUBJECT_PRONOUNS = new Set(['i', 'you', 'we', 'they', 'he', 'she', 'it']);
 
 /** WH words open a coordinated content-question clause ("…and where is the food?"). */
-const CLAUSE_WH_STARTERS = new Set(['who', 'whom', 'what', 'where', 'when']);
+const CLAUSE_WH_STARTERS = new Set(['who', 'whom', 'what', 'where', 'when', 'why']);
 
 /** Connectives that join full clauses; handled structurally (docs/fonoran-grammar.md Rule 3). */
 const CLAUSE_CONNECTIVES = new Set(['and', 'but', 'so', 'because']);
