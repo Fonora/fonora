@@ -170,12 +170,12 @@ Toki Pona is the closest well-known reference point, so the comparison is worth 
 | Meaning model | maximally context- and intent-dependent | recoverable-by-strangers, measured via puzzle playtests |
 | Grammar particles | several bounding particles: `li`, `e`, `pi`, `la`, `en`, `o` | position-first, minimal particle set (~7) |
 | Question strategy | single pro-word `seme` in the slot | single pro-form in the slot (R4 borrows this) |
-| Script | Latin (sitelen sitelen/pona are art) | optional universal phonetic script (Fonora), spoken-first |
+| Script | Latin (sitelen sitelen/pona are art) | optional phonetic script (Fonora), spoken-first |
 | Design intent | minimalist / philosophical / artistic | applied cross-lingual communication experiment |
 
 - **Similarities:** tiny root set; invariant words; grammar via particles plus word order; tolerance of ambiguity; "good enough / recoverable" meaning over precision; a single interrogative pro-form.
 - **Differences:** Toki Pona deliberately maximizes context dependence and speaker intent, and is not engineered for reproducible cross-native-language recovery. It also leans on more bounding particles than Fonoran wants.
-- **Fonoran's distinct research direction:** rather than Toki Pona's context-maximal minimalism, Fonoran optimizes for **deterministic recoverability by strangers**, measured empirically. The differentiator is not "fewest words" but **"highest first-week recovery rate between strangers with no shared language"** — backed by transparent semantic trees, spelling stability, an optional universal phonetic script, and an explicit meaning-attempt + repair protocol. That is a niche Toki Pona does not occupy.
+- **Fonoran's distinct research direction:** rather than Toki Pona's context-maximal minimalism, Fonoran optimizes for **deterministic recoverability by strangers**, measured empirically. The differentiator is not "fewest words" but **"highest first-week recovery rate between strangers with no shared language"** — backed by transparent semantic trees, spelling stability, an optional phonetic script (Fonora), and an explicit meaning-attempt + repair protocol. That is a niche Toki Pona does not occupy.
 
 ## 5. Consolidated tradeoffs and risks
 
