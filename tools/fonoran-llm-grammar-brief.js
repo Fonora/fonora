@@ -489,10 +489,18 @@ const DISJUNCTION_SLOT_ORDER = ['object', 'event', 'path', 'subject', 'modifiers
  * `unresolved[]`; this pass is where the grammar rule is applied, keeping the
  * decision deterministic rather than model-dependent.
  *
- * Fires only when a lost connective is reported AND a slot actually holds the
- * alternatives. When the alternatives were themselves dropped upstream (missing
- * `girl` and `boy` roots, or skipped demonstratives) there is nothing to mark,
- * so the gap stays visible instead of `lu` attaching to a single item.
+ * Fires only when a lost connective is reported AND one slot actually holds the
+ * alternatives. Two cases are deliberately left alone:
+ *
+ * - The alternatives were dropped upstream (no `girl`/`boy` roots, or skipped
+ *   demonstratives), so there is nothing to mark.
+ * - The model split them across slots (`event: [tired]` + `modifiers: [sick]`).
+ *
+ * Both stay honest gaps rather than guessing a position. A positional fallback
+ * was tried and rejected: with only a subject and a verb surviving, as in "do
+ * you mean this or that?", it emits a choice the source never expressed, which
+ * is the fluent-and-wrong failure this rule exists to remove. Grouping is
+ * instead required of the model in the slot-semantics prompt.
  */
 export function applyDisjunction(frame) {
   if (!frame?.slots) return frame;

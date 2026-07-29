@@ -293,23 +293,26 @@ function stripInventedNegation(frame, sourceText) {
   };
 }
 
-export async function repairLlmFrame(frame, sourceText, lab = null) {
-  let normalized = simplifyMotionFrame(
-    promoteTemporalSceneToTime(
-      stripInventedNegation(
-        restoreDroppedNegation(
-          normalizeWePrimaryFrame(
-            stripExistentialThereFromFrame(
-              normalizeFrameParticles(frame),
-              sourceText,
-            ),
-            sourceText,
-          ),
-          sourceText,
-        ),
-        sourceText,
-      ),
+export async function repairLlmFrame(frame, sourceText, lab = null, { multiClause = false } = {}) {
+  const base = normalizeWePrimaryFrame(
+    stripExistentialThereFromFrame(
+      normalizeFrameParticles(frame),
+      sourceText,
     ),
+    sourceText,
+  );
+
+  // Negation repair compares the frame against the source string. For one clause
+  // of a multi-clause compile the only text available is the whole sentence, so
+  // a `not` in any clause would negate all of them: "Machines act and do not
+  // learn" rendered as `kelto no mo kelto no lahu`, asserting they do not act.
+  // The model emits negation per clause, so trust it rather than the text.
+  const negationChecked = multiClause
+    ? base
+    : stripInventedNegation(restoreDroppedNegation(base, sourceText), sourceText);
+
+  let normalized = simplifyMotionFrame(
+    promoteTemporalSceneToTime(negationChecked),
     sourceText,
   );
   const grammar = checkLlmGrammarViolations(normalized, sourceText);
@@ -429,6 +432,7 @@ Do NOT split for:
 - path = Place (bare destination landmark, OR direction concepts when source contrasts toward/from/away)
 - time = Time (ta past, sa future, or time concepts; EMPTY for present)
 - modifiers = peripheral modifiers (modifier-before-head chains)
+- Coordinated alternatives ("A or B") MUST go in the SAME slot, in source order: "tired or sick" → object [tired, sick], NOT event [tired] + modifiers [sick]. The renderer marks disjunction by closing that group, so alternatives split across slots cannot be marked and the choice is lost. Same for "A and B".
 
 ## Mandatory rules
 - Compile MEANING, not word-for-word English (Rule 7).
@@ -717,6 +721,44 @@ async function translateViaLlmCore(text, options = {}) {
 
   if (!options.skipCache) {
     const cached = await lookupCachedTranslation(sourceLang, input);
+    // Multi-clause entries store one frame per clause. Replay each and re-merge,
+    // mirroring the live multi-frame branch below, so discourse-level input is
+    // servable offline instead of costing an API call on every request.
+    if (Array.isArray(cached?.frames) && cached.frames.length > 1) {
+      const segResults = [];
+      for (const cachedFrame of cached.frames) {
+        const frame = await repairLlmFrame(cachedFrame, input, options.lab, { multiClause: true });
+        const clauseResult = await translateFromFrame(frame, {
+          lab: options.lab,
+          devLab: options.devLab,
+          input,
+          sourceLang: cachedFrame.detected_lang ?? sourceLang,
+          allowActorDrop: false,
+          multiClause: true,
+        });
+        segResults.push({
+          ...clauseResult,
+          engine: 'llm',
+          reasoning: cachedFrame.reasoning ?? null,
+          detected_lang: cachedFrame.detected_lang ?? sourceLang,
+          llm_frame: frame,
+          unresolved: clauseResult.unresolved ?? [],
+        });
+      }
+      const segments = cached.frames.map((_, i) => `clause ${i + 1}`);
+      const merged = await mergeSentenceResults(segResults, segments, { input });
+      return finalizeWithAlternates(
+        {
+          ...(cached.result ?? {}),
+          ...merged,
+          engine: 'cached',
+          cache_key: cacheKey(sourceLang, input),
+        },
+        cached.frames[0],
+        input,
+        options,
+      );
+    }
     if (cached?.frame) {
       const frame = await repairLlmFrame(cached.frame, input, options.lab);
       const refreshed = await translateFromFrame(frame, {
@@ -801,7 +843,7 @@ async function translateViaLlmCore(text, options = {}) {
 
     const segResults = [];
     for (const rawFrame of frames) {
-      const clauseFrame = await repairLlmFrame(rawFrame, input, options.lab);
+      const clauseFrame = await repairLlmFrame(rawFrame, input, options.lab, { multiClause: true });
       const clauseResult = await translateFromFrame(clauseFrame, {
         lab: options.lab,
         devLab: options.devLab,
@@ -824,12 +866,30 @@ async function translateViaLlmCore(text, options = {}) {
     // Use frame indices as segment labels; the real source text is tracked on the merged result.
     const segments = frames.map((_, i) => `clause ${i + 1}`);
     const merged = await mergeSentenceResults(segResults, segments, { input });
-    return finalizeWithAlternates(
+    const finalized = await finalizeWithAlternates(
       { ...merged, engine: 'llm', model: llm.model },
       frames[0],
       input,
       options,
     );
+
+    // Cache every clause frame under the full input. Previously this branch
+    // returned without writing, so anything the model split into clauses was
+    // uncacheable: it could never appear in a cache-only CI run, and each
+    // request re-paid for the call.
+    await writeCachedTranslation({
+      sourceLang: frames[0]?.detected_lang ?? sourceLang,
+      sourceText: input,
+      frames,
+      surface: finalized.surface,
+      result: finalized,
+      engine: 'llm',
+      model: llm.model,
+      validated: (finalized.unresolved ?? []).length === 0,
+      created_at: new Date().toISOString(),
+    });
+
+    return finalized;
   }
 
   const frame = await repairLlmFrame(llm.frame, input, options.lab);

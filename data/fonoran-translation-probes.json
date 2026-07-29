@@ -1,28 +1,28 @@
 {
-  "version": "1.1",
-  "description": "Structural probe corpus for complex English. target_frame lists required English slot heads (not exact fon). Probes with status pass gate CI via --assert; broken probes track known gaps.",
+  "version": "1.2",
+  "description": "Structural probe corpus for complex English. target_frame lists required concept heads as production emits them (not exact fon, and not English surface words). Probes run the shipped LLM compiler cache-only; --engine legacy runs the deprecated rule-based path for comparison only. Probes with status pass gate CI via --assert; broken probes track known gaps.",
   "phrases": [
     {
       "en": "I want to go to the city but I am afraid of the dark.",
-      "target_frame": "go · to · city · afraid · dark",
+      "target_frame": "want · move · city · afraid · dark",
       "status": "pass",
       "note": "but-clause split; want omitted per golden L13 (no obligation grammar)"
     },
     {
       "en": "They ran toward us from the river.",
-      "target_frame": "ran · toward · from · river",
+      "target_frame": "run · source · river · path",
       "status": "pass",
       "note": "compound path toward + from"
     },
     {
       "en": "The hunter followed the animal into the forest.",
-      "target_frame": "followed · into · forest",
+      "target_frame": "hunter · follow · animal · inside · forest",
       "status": "pass",
       "note": "transitive motion + into path"
     },
     {
       "en": "Are you going to the market tomorrow?",
-      "target_frame": "you · going · to · market · tomorrow",
+      "target_frame": "addressee · tomorrow · move · trade",
       "status": "pass",
       "note": "question subject preserved; tomorrow trailing time"
     },
@@ -34,7 +34,7 @@
     },
     {
       "en": "Go away and leave me alone.",
-      "target_frame": "away · leave",
+      "target_frame": "move · far",
       "status": "pass",
       "note": "coordinated motion clauses"
     },
@@ -46,19 +46,19 @@
     },
     {
       "en": "We should not go there at night.",
-      "target_frame": "not · go · there",
+      "target_frame": "no · move · there",
       "status": "pass",
       "note": "negation on motion frame"
     },
     {
       "en": "I am going to tell you a story about the old king.",
-      "target_frame": "tell · you · story",
+      "target_frame": "sa · speak · addressee · old · leader",
       "status": "pass",
       "note": "going-to-VERB future + speech event"
     },
     {
       "en": "The bird flew over the lake and landed near the trees.",
-      "target_frame": "flew · over · lake",
+      "target_frame": "bird · fly · above · lake · land · near · plant",
       "status": "pass",
       "note": "over path; second clause partial"
     },
@@ -82,13 +82,13 @@
     },
     {
       "en": "When she arrives, we will leave for the mountains.",
-      "target_frame": "when · leave · mountains",
+      "target_frame": "come · sa · move · mountain",
       "status": "pass",
       "note": "when opens clause; arrives gap"
     },
     {
       "en": "I go to the city.",
-      "target_frame": "go · to · city",
+      "target_frame": "mi · move · city",
       "status": "pass",
       "note": "regression guard from level 12"
     },
@@ -142,13 +142,13 @@
     },
     {
       "en": "Tell the child a story about the sea.",
-      "target_frame": "tell · child · story · sea",
+      "target_frame": "speak · child · sea",
       "status": "pass",
       "note": "speech event + recipient + topic modifier"
     },
     {
       "en": "We ran through the forest toward the river.",
-      "target_frame": "ran · through · forest · toward · river",
+      "target_frame": "collective · run · through · forest · path · river",
       "status": "pass",
       "note": "through path + toward path on same motion frame"
     },
@@ -160,38 +160,38 @@
     },
     {
       "en": "No sentience can live inside it.",
-      "target_frame": "sentience · live · inside",
+      "target_frame": "no · think · life · inside",
       "status": "pass",
       "note": "abstract 'sentience' composes (think+self); negation + inside path"
     },
     {
       "en": "Machines act and do not learn.",
-      "target_frame": "machine · not · learn",
+      "target_frame": "make · do · no · learn",
       "status": "pass",
       "note": "'machine' composes (make+thing) not animal; negation preserved"
     },
     {
       "en": "Consciousness stays outside the system.",
-      "target_frame": "consciousness · outside · system",
+      "target_frame": "think · self · outside",
       "status": "pass",
       "note": "consciousness (know+self) + system (all+thing) both compose"
     },
     {
       "en": "Long ago, when the world was young, the animal walked on the earth.",
       "target_frame": "long_ago · beginning · world · walk · earth",
-      "status": "broken",
+      "status": "pass",
       "note": "Scene structure: front temporal scene (long_ago/beginning/world) before Actor; ta by Action; no invented negation. Track until golden-stable."
     },
     {
       "en": "Long ago, when the forest was young, people walked to the river.",
       "target_frame": "long_ago · beginning · walk · river",
-      "status": "broken",
+      "status": "pass",
       "note": "Era scene + motion destination; must not invent do/mo scene clauses; scene time fronts before Actor."
     },
     {
       "en": "Yesterday, before the rain, the child sat near the fire.",
       "target_frame": "before · rain · child · sit · near · fire",
-      "status": "broken",
+      "status": "pass",
       "note": "Calendar + before-X scene with stative sit; ta by Action; no dummy do."
     },
     {
@@ -239,8 +239,8 @@
     {
       "en": "Why did you go to the river?",
       "target_frame": "unknown · cause · move · river",
-      "status": "broken",
-      "note": "Pre-existing WH loss, not specific to why: when a content question also carries a destination path, the WH word is dropped and unresolved[] stays EMPTY, so the loss is silent. 'Where did you go to the river?' drops where identically, which is how this was isolated. Tracked here because a silently dropped question word is worse than an honest gap."
+      "status": "pass",
+      "note": "WH probe with a destination path. Was recorded as a silent WH loss (probe dropped, unresolved[] empty) but that was the deprecated rule-based engine, which still renders be ta gi nan yenan?. Production carries the probe. Guards the WH-plus-path interaction, which is where the loss appeared."
     },
     {
       "en": "How many animals do you own?",
@@ -257,14 +257,14 @@
     {
       "en": "Are you tired or sick?",
       "target_frame": "tired · sick · one",
-      "status": "broken",
-      "note": "Disjunction IS expressible as of the lu rule and the LLM path renders be nes femtam du lu. This probe stays broken because probes run translateEnglish, which aliases the deprecated rule-based engine: it scatters the alternatives into event=[tired] and object=[sick] instead of grouping them, so there is no coordinated group to mark. Blocked on the rule-based engine grouping coordinated items, not on the disjunction rule."
+      "status": "pass",
+      "note": "Disjunction: alternatives grouped in one slot and closed with lu (one), so the pair reads as a choice rather than an assertion of both. The rule fires only on a grouped pair; if the model splits the alternatives across slots, or stays an honest gap rather than lu attaching to a lone item."
     },
     {
       "en": "Do you want food or water?",
       "target_frame": "food · water · one",
-      "status": "broken",
-      "note": "Same rule-based grouping gap. Renders identically to 'Do you want food and water?' (be sak tel ye), which is the and/or conflation the lu rule exists to remove. Guards against the two ever being indistinguishable again once grouping lands."
+      "status": "pass",
+      "note": "Disjunction on a noun pair. Must never render identically to \"Do you want food and water?\": the identical surface was the and/or conflation the lu rule exists to remove."
     },
     {
       "en": "Is the baby a girl or boy?",

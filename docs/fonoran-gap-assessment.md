@@ -68,15 +68,7 @@ In the deprecated rule-based path the loss is a stopword drop: the `SKIP` set at
 
 One clarification, because it explains why this defect stayed invisible: the gap *tracking* is honest while the *output* is not. `or`, `and`, `can`, `let`, `must`, and `should` all appear in the 132-entry gap baseline, so the project correctly records that it cannot express them. But the rendered translation is a clean, fluent, well-formed string with no marker of loss. A reader looking at output sees success; only the baseline reveals the failure. Contrast this with genuine gaps, which surface visibly as bracketed forms like `[tetsas]`.
 
-### 3b. The structural probe suite tests a deprecated engine
-
-Found while adding disjunction probes, and it compounds finding 3.
-
-All 42 structural probes run through `translateEnglish` ([tools/fonoran-translation-probes.js](../tools/fonoran-translation-probes.js) line 7), which is an alias for `translateEnglishLegacy` and carries an explicit `@deprecated Use translate() from fonoran-translate.js` marker at [tools/fonoran-translator.js](../tools/fonoran-translator.js) line 1303. **The probe suite therefore does not exercise the engine that ships.**
-
-The gap between engines is large, not cosmetic. On the same input the rule-based engine never groups coordinated items into a single slot, scattering *tired or sick* into `event: [tired]` and `object: [sick]`, and it renders *food or water* and *food and water* identically as `be sak tel ye`. The LLM path groups them correctly. So a probe can pass or fail for reasons that have no bearing on production output, and the four disjunction probes added in this pass are recorded as `broken` for exactly that reason: the rule is live and working in production while the probe engine cannot represent it.
-
-**Recommended fix, which costs nothing.** The quantity domain already contains the exact operators needed, and no new root or particle is required:
+**The implemented design.** The quantity domain already contains the exact operators needed, and no new root or particle is required:
 
 - `mel` (`all`), glossed "every one of them"
 - `lu` (`one`), glossed "a single one"
@@ -92,6 +84,23 @@ Coordination can be expressed as quantification over the coordinated set, which 
 | some of A, B | `A B ket` | "A B, part of them" |
 
 So "friend or enemy" becomes `guba gamba lu` and "Are you tired or sick?" becomes `be nes femtam du lu`. This is lego-recoverable in the constitutional sense: a reader who knows only that `lu` means "a single one" decodes "friend enemy one" as one-of-the-two, which is disjunction. It spends none of the six remaining root slots, adds nothing to the closed particle class, and leaves the sentence skeleton untouched. It also preserves the existing default, since bare juxtaposition keeps meaning conjunction.
+
+### 3b. The structural probe suite tested a deprecated engine
+
+Found while adding disjunction probes, and it compounded finding 3.
+
+All 42 structural probes ran through `translateEnglish`, an alias for `translateEnglishLegacy` carrying an explicit `@deprecated Use translate() from fonoran-translate.js` marker. **The probe suite did not exercise the engine that ships.**
+
+The gap between engines was large, not cosmetic. The rule-based engine never groups coordinated items into a single slot, scattering *tired or sick* into `event: [tired]` and `object: [sick]`, and it renders *food or water* and *food and water* identically as `be sak tel ye`. It also drops the WH word when a content question carries a destination path, returning `be ta gi nan yenan?` for *why did you go to the river?* while reporting no gaps. Production does neither.
+
+**Status: fixed.** Probes now run the production compiler, cache-only so CI stays offline, with `--engine legacy` retained for comparison and the engine labelled in the output. Switching engines moved the suite from 32 passing and 14 broken to 38 passing and 8 broken. Six probes recorded as broken were already working in production, including both disjunction cases and the WH-with-path loss, which had been filed as a translator defect and was an artifact of the measuring engine. Fifteen `target_frame` specs had to be rewritten, because they named legacy output vocabulary (`go`, `to`, `tell`, `story`) rather than the concepts production emits (`move`, bare destination, `speak`); one of them, `story`, has no root or compound at all, so the old target was only satisfiable by the legacy engine guessing.
+
+**Switching the engine immediately exposed two production defects that no test could previously see**, which is the clearest available evidence for this section's thesis:
+
+- **Multi-clause results were uncacheable.** The multi-frame branch returned before reaching its cache write, so any input the model split into clauses was never cached. It could not appear in a cache-only CI run at all, and every request re-paid for the API call. Clause frames are now stored under the full input and replayed on lookup.
+- **Negation leaked across clauses, inverting meaning.** Each clause was repaired against the *whole* sentence, so text-driven negation repair applied one clause's `not` to all of them. *Machines act and do not learn* rendered as `kelto no mo kelto no lahu`, asserting that machines do not act. The clause frames were correct; the repair pass corrupted the first one. Negation repair is now skipped for multi-clause frames, where the model already marks negation per clause.
+
+Both are the same failure shape as disjunction: fluent, confident, wrong, and reported as success.
 
 ### 1b. Two canonical seed files disagree about the closed class
 
