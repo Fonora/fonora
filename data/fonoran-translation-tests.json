@@ -601,7 +601,7 @@
         },
         {
           "en": "Is the pain here or there?",
-          "fon": "tes nam tak?"
+          "fon": "tes nam tak lu?"
         },
         {
           "en": "I do not understand, show me again.",
@@ -1352,7 +1352,7 @@
         },
         {
           "en": "Is this yours or mine?",
-          "fon": "to meskam be mi?"
+          "fon": "to meskam be mi lu?"
         },
         {
           "en": "Did you take my food?",
@@ -1837,7 +1837,7 @@
         },
         {
           "en": "That person is a friend or an enemy.",
-          "fon": "ba guba gamba."
+          "fon": "ba guba gamba lu."
         },
         {
           "en": "Show me who you are.",
@@ -2113,7 +2113,7 @@
         },
         {
           "en": "Is it morning or night now?",
-          "fon": "gem kekshu gankan?"
+          "fon": "gem kekshu gankan lu?"
         },
         {
           "en": "I will return soon.",
@@ -2352,7 +2352,7 @@
         },
         {
           "en": "Are you staying or leaving?",
-          "fon": "be times gi fet?"
+          "fon": "be times gi lu fet?"
         },
         {
           "en": "Move slowly and carefully.",
@@ -3253,7 +3253,7 @@
         },
         {
           "en": "Are you tired or sick?",
-          "fon": "be nes femtam du?"
+          "fon": "be nes femtam du lu?"
         },
         {
           "en": "I feel pain in my side.",
@@ -3865,7 +3865,7 @@
         },
         {
           "en": "We can go together or stay here.",
-          "fon": "dan gi times nam ho."
+          "fon": "dan gi times lu nam ho."
         },
         {
           "en": "I want to understand your plan.",
@@ -3902,7 +3902,7 @@
         },
         {
           "en": "Do you want to stay or go?",
-          "fon": "be sak times gi?"
+          "fon": "be sak times gi lu?"
         },
         {
           "en": "I will wait here for you.",

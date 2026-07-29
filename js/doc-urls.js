@@ -132,6 +132,7 @@ function buildDocCatalog() {
     { path: 'docs/fonoran-constitution.md', label: 'Fonoran constitution', layer: 'language' },
     { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
     { path: 'docs/fonoran-philosophy.md', label: 'Fonoran philosophy', layer: 'language' },
+    { path: 'docs/fonoran-gap-assessment.md', label: 'Gap assessment', layer: 'language' },
     { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
     { path: 'docs/fonoran-compound-workflow.md', label: 'Compound workflow', layer: 'language' },
     { path: 'docs/fonoran-cli-tools.md', label: 'CLI tools reference', layer: 'language' },

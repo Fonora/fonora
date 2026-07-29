@@ -58,7 +58,7 @@ import { getPosHint } from './fonoran-semantic-lookup.js';
 import { getParticleRuntime, resetParticleCache } from './fonoran-particles.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
 import { enforceModifierOrder } from './fonoran-grammar-spec.js';
-import { promoteTemporalSceneToTime } from './fonoran-llm-grammar-brief.js';
+import { promoteTemporalSceneToTime, applyDisjunction } from './fonoran-llm-grammar-brief.js';
 import { isAddresseeDroppable } from './fonoran-llm-grammar-brief.js';
 
 /**
@@ -1134,7 +1134,7 @@ export async function translateFromFrame(frame, options = {}) {
   ctx.isQuestion = Boolean(frame?.is_question);
   // Promote temporal scene concepts out of trailing modifiers before render so
   // structure is preserved even if the LLM (or a cached frame) parked them wrong.
-  const structured = promoteTemporalSceneToTime(frame ?? { slots: {} });
+  const structured = applyDisjunction(promoteTemporalSceneToTime(frame ?? { slots: {} }));
   const semantic = frameSlotsToSemanticSlots(structured?.slots ?? {});
   // Deterministic grammar enforcement: canonical modifier order (quality before
   // place) so floating modifiers render the same regardless of LLM slot order.
@@ -1158,7 +1158,7 @@ export async function translateFromFrame(frame, options = {}) {
 
   const surface = buildSurface(tokens);
   // Frame gaps are cleaned to short tokens; token gaps are already single words.
-  const frameGaps = (frame?.unresolved ?? []).map(cleanGapToken).filter(Boolean);
+  const frameGaps = (structured?.unresolved ?? frame?.unresolved ?? []).map(cleanGapToken).filter(Boolean);
   const tokenGaps = tokens.filter(t => !t.resolved).map(t => String(t.english ?? '').toLowerCase());
   const uniqueUnresolved = [...new Set([...frameGaps, ...tokenGaps])];
 

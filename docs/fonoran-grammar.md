@@ -263,6 +263,37 @@ mi no sak gi lu de    (I do not want to go alone)
 
 `want` + `move` → `sak gi`. Do **not** park the second verb in Target.
 
+### Coordination and disjunction
+
+**`and` needs no marker.** Juxtaposition already reads as conjunction:
+
+```text
+mi nes mak saklo      (I am cold and hungry)
+dan les lo ye         (we need food and water)
+```
+
+**`or` does need one**, because it would otherwise be identical to `and` and therefore assert the opposite of a choice: bare `guba gamba` for *friend or enemy* says the person is both. The group is closed with **`lu`** (`one`, "a single one"), quantifying over the alternatives:
+
+```text
+ba guba gamba lu      (that person is a friend or an enemy)
+be nes femtam du lu   (are you tired or sick?)
+tes nam tak lu        (is the pain here or there?)
+be sak times gi lu    (do you want to stay or go?)
+```
+
+This is lexical, not grammatical, per Design Rule 0: `lu` is an existing quantity root, so disjunction costs no new particle and no new root. `mel` (`all`, "every one of them") is available for emphatic conjunction, and `ket` (`some`, "part of them") for partial selection.
+
+**Position carries the distinction.** `lu` *before* a concept quantifies that concept, which is the existing *alone* idiom `lu de` (one + self):
+
+```text
+mi no sak gi lu de    (I do not want to go alone)
+be sak times gi lu    (do you want to stay or go?)
+```
+
+In the first, `lu` precedes a single concept. In the second, it *follows* a group of two or more. Marking only ever attaches after the group it closes, so the two never compete for the same slot.
+
+**Alternatives must be grouped to be marked.** When they are lost before the marking step there is nothing to close, and the gap stays visible rather than `lu` attaching to a lone item. *Is the baby a girl or boy?* reports `girl` and `boy` as gaps because neither has a root, and *Do you mean this or that?* keeps `or` as a gap because demonstratives are skipped as function words.
+
 ### Bare destination
 
 A plain “go to X” puts the landmark in **Place** after the motion concept. Do **not** insert `nan` (path/toward) for English *to* alone:
@@ -794,6 +825,8 @@ The following topics extend this specification without breaking Rules 1 through 
 | Relative clauses | Open |
 | Aspect / progressive | Open — English progressive collapses to `move` (`gi`) for now |
 | Subordinate clauses | **Partial** — `and`/`but` coordination; pure temporal scene-setting fronts via Time periphery; `when` with its own actor+action splits frames (still maturing) |
+| Coordination: `and` | **v1** — bare juxtaposition. "I am cold and hungry" is `mi nes mak saklo`; no marker is needed because juxtaposition already reads as conjunction |
+| Coordination: `or` | **v1** — juxtaposition **plus `lu`** (`one`, "a single one") closing the group. See Disjunction below |
 
 Contributions should preserve: invariant words, particle-based grammar, fixed default order, visible semantic compounding, and semantic economy in compounds.
 

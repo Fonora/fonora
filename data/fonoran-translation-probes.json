@@ -253,6 +253,30 @@
       "target_frame": "unknown · manner · make · fire",
       "status": "broken",
       "note": "No neutral way/manner/method concept. Must NOT regress to nohu ha: rule (ha) is prescriptive, not manner."
+    },
+    {
+      "en": "Are you tired or sick?",
+      "target_frame": "tired · sick · one",
+      "status": "broken",
+      "note": "Disjunction IS expressible as of the lu rule and the LLM path renders be nes femtam du lu. This probe stays broken because probes run translateEnglish, which aliases the deprecated rule-based engine: it scatters the alternatives into event=[tired] and object=[sick] instead of grouping them, so there is no coordinated group to mark. Blocked on the rule-based engine grouping coordinated items, not on the disjunction rule."
+    },
+    {
+      "en": "Do you want food or water?",
+      "target_frame": "food · water · one",
+      "status": "broken",
+      "note": "Same rule-based grouping gap. Renders identically to 'Do you want food and water?' (be sak tel ye), which is the and/or conflation the lu rule exists to remove. Guards against the two ever being indistinguishable again once grouping lands."
+    },
+    {
+      "en": "Is the baby a girl or boy?",
+      "target_frame": "child · girl · boy · one",
+      "status": "broken",
+      "note": "Not a disjunction failure: girl and boy have no roots, so both alternatives drop upstream and there is nothing for lu to attach to. Correctly reports gaps [girl, boy] rather than marking a single item. Lexical gap, tracked separately from the coordination rule."
+    },
+    {
+      "en": "Do you mean this or that?",
+      "target_frame": "meaning · one",
+      "status": "broken",
+      "note": "Alternatives are demonstratives, which SKIP discards as function words, so both drop and or stays an honest gap. Needs demonstrative support, not coordination work."
     }
   ]
 }

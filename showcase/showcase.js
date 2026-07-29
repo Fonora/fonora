@@ -65,6 +65,12 @@ const GLOSS_STOPWORDS = new Set([
  */
 const WH_PROBE_GLOSS = 'unknown';
 
+/** Roman form of the quantity root that closes a disjunctive group. */
+const DISJUNCTION_MARKER = 'lu';
+
+/** English connectives the marker stands in for. */
+const DISJUNCTION_ENGLISH = ['or', 'either'];
+
 const WH_ALL = ['how', 'what', 'who', 'whom', 'which', 'where', 'when', 'why'];
 
 /** Dimension gloss → the single English WH-word the `nohu X` pair collapses into. */
@@ -345,6 +351,18 @@ function buildMapping(englishPhrase, tokens) {
     // Unpaired probe: let it claim whichever WH-word the sentence actually uses.
     for (const w of WH_ALL) add(primary, w, i);
   });
+
+  // Disjunction: a trailing `lu` closing a group of alternatives is what English
+  // spells `or`, so point the connective at it. Guarded on the phrase actually
+  // containing `or`, because `lu` is also the ordinary `one` and the `lu de`
+  // ("alone") idiom, neither of which should steal the link.
+  if (DISJUNCTION_ENGLISH.some(w => new RegExp(`\\b${w}\\b`, 'i').test(englishPhrase))) {
+    const luIdx = tokens.map((t, i) => [t, i])
+      .filter(([t]) => normWord(t.fonoran) === DISJUNCTION_MARKER)
+      .map(([, i]) => i)
+      .pop();
+    if (luIdx !== undefined) for (const w of DISJUNCTION_ENGLISH) add(primary, w, luIdx);
+  }
 
   const lookupAll = (core) => {
     for (const v of variantsOf(core)) {

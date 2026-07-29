@@ -47,6 +47,7 @@ Read in this order for a new contributor:
 | 1 | **Fonoran constitution** (read first — one page) | [fonoran-constitution.md](fonoran-constitution.md) |
 | 2 | **Fonoran grammar** | [fonoran-grammar.md](fonoran-grammar.md) |
 | 3 | **Philosophy & rationale** (optional deep read) | [fonoran-philosophy.md](fonoran-philosophy.md) |
+| 3b | **Gap assessment** (audit vs. real conlang standards) | [fonoran-gap-assessment.md](fonoran-gap-assessment.md) |
 | 4 | **Fonoran guide** (builder pipeline) | [fonoran.md](fonoran.md) |
 | 4b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
 | 4c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
@@ -68,7 +69,7 @@ Narrative research notes (one per major experiment), authored in `docs/research-
 | Phase II: Inventing a language | Gen 1/2 roots, Gen 3 DDA, Gen 3.1 distinctiveness, the 200-primitive allocation |
 | Phase III: A usable language | semantic foundation, the Constitution, the editorial pipeline, grammar particles, the translator, typing, puzzle conversation |
 | Phase IV: Reconstructing compounds | teaching trees, meaning-attempts, seed expansion, playtest-driven preferred forms |
-| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, **RN-26** LLM-assisted word generation (foundational pipeline), **RN-27** automated refine loop (corpus experiment), **RN-28** multilingual semantic compiler, **RN-33** seeds-are-truth + four-rules preferred regen, **RN-35** CV density vs CVC audibility (thought experiment), **RN-37** interrogatives need dimensions not values (quantity type error) |
+| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, **RN-26** LLM-assisted word generation (foundational pipeline), **RN-27** automated refine loop (corpus experiment), **RN-28** multilingual semantic compiler, **RN-33** seeds-are-truth + four-rules preferred regen, **RN-35** CV density vs CVC audibility (thought experiment), **RN-37** interrogatives need dimensions not values (quantity type error), **RN-38** tests shaped by the language cannot measure it (corpus bias + probe engine mismatch; disjunction fix) |
 
 ---
 

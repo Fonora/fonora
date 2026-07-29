@@ -467,6 +467,60 @@ export function promoteTemporalSceneToTime(frame) {
   });
 }
 
+/** English words that signal disjunction rather than a missing concept. */
+const DISJUNCTION_WORDS = new Set(['or', 'either', 'either or']);
+
+/** Quantity root `lu`: "a single one". Closes a coordinated group as exclusive. */
+const DISJUNCTION_CONCEPT_ID = 'one';
+
+/** Slots searched, in order, for the group the alternatives were parsed into. */
+const DISJUNCTION_SLOT_ORDER = ['object', 'event', 'path', 'subject', 'modifiers', 'time'];
+
+/**
+ * Render `A or B` as `A B lu`, "A B, a single one".
+ *
+ * Bare juxtaposition already reads as conjunction, so an unmarked pair of
+ * alternatives asserts both and inverts the source: `guba gamba` for "friend or
+ * enemy" says the person is both. `lu` quantifies over the coordinated group and
+ * restores the exclusive reading. It reuses an approved quantity root, so this
+ * costs no new root and no addition to the closed particle class.
+ *
+ * The LLM parses alternatives into a single slot and reports the connective in
+ * `unresolved[]`; this pass is where the grammar rule is applied, keeping the
+ * decision deterministic rather than model-dependent.
+ *
+ * Fires only when a lost connective is reported AND a slot actually holds the
+ * alternatives. When the alternatives were themselves dropped upstream (missing
+ * `girl` and `boy` roots, or skipped demonstratives) there is nothing to mark,
+ * so the gap stays visible instead of `lu` attaching to a single item.
+ */
+export function applyDisjunction(frame) {
+  if (!frame?.slots) return frame;
+  const gaps = Array.isArray(frame.unresolved) ? frame.unresolved : [];
+  const isConnective = gap => DISJUNCTION_WORDS.has(String(gap ?? '').trim().toLowerCase());
+  if (!gaps.some(isConnective)) return frame;
+
+  const slotKey = DISJUNCTION_SLOT_ORDER.find((key) => {
+    const items = frame.slots[key];
+    return Array.isArray(items) && items.length >= 2;
+  });
+  if (!slotKey) return frame;
+
+  const items = [...frame.slots[slotKey]];
+  if (items.some(item => conceptIdOf(item) === DISJUNCTION_CONCEPT_ID)) return frame;
+  items.push(DISJUNCTION_CONCEPT_ID);
+
+  return {
+    ...frame,
+    slots: { ...frame.slots, [slotKey]: items },
+    unresolved: gaps.filter(gap => !isConnective(gap)),
+    reasoning: [
+      frame.reasoning,
+      `[Grammar repair] Marked ${slotKey} alternatives as disjunction with lu (one); bare juxtaposition would assert both.`,
+    ].filter(Boolean).join(' '),
+  };
+}
+
 /** Stable order inside the time slot: scene lexicon, then tense particles. */
 export function sortTimeSlotConcepts(frame) {
   if (!frame?.slots || !Array.isArray(frame.slots.time)) return frame;
