@@ -444,8 +444,7 @@
         },
         {
           "en": "My leg is broken.",
-          "fon_deterministic": "femnan [broken] mi.",
-          "note_deterministic": "gap: broken (needs a root)"
+          "fon_deterministic": "femnan pato mi."
         },
         {
           "en": "I feel sick.",
@@ -491,8 +490,7 @@
         },
         {
           "en": "Is your leg broken?",
-          "fon_deterministic": "ka femnan [broken] be.",
-          "note_deterministic": "gap: broken (needs a root)"
+          "fon_deterministic": "ka femnan pato be."
         },
         {
           "en": "I feel very weak.",
@@ -504,8 +502,7 @@
         },
         {
           "en": "This bone is broken.",
-          "fon_deterministic": "bu [broken] to.",
-          "note_deterministic": "gap: broken (needs a root)"
+          "fon_deterministic": "bu pato to."
         },
         {
           "en": "I am sick and very tired.",
@@ -4180,8 +4177,7 @@
         },
         {
           "en": "The work is done.",
-          "fon_deterministic": "mu [done].",
-          "note_deterministic": "gap: done (needs a root)"
+          "fon_deterministic": "mu mo."
         },
         {
           "en": "We are both tired.",

@@ -1,6 +1,46 @@
 # Fonora / Fonoran — agent instructions
 
-Read this before editing language data, seeds, or documentation.
+## The architecture. Read this first, and re-read it before you add a file
+
+```
+source language  ──►  third-party parser  ──►  language-neutral meaning  ──►  Fonoran
+   (any)               (owns the language)         (roles + concepts)        (dictionary
+                                                                              + grammar
+                                                                              rules)
+```
+
+Four rules follow from that picture. They are not aspirations; they are the shape of
+the system, and work that violates them is wrong even when it passes the tests.
+
+**1. We do not implement any human language.** A third-party library owns the source
+language: how English inflects, what part of speech a word is, where a clause ends.
+If you are writing a lemmatizer, a word list, an irregular table, a suffix rule, or a
+pattern that matches a particular English construction, stop. That knowledge is
+someone else's maintained dependency and ours will always be a worse copy of it. A
+different source language must be a different parser, not a second pipeline.
+
+**2. There are exactly two sources of truth, and they are data.** The dictionary
+(`data/fonoran-concept-inventory.json`, `fonoran-approved-roots.json`,
+`fonoran-compounds.json`) and the grammar rules (`fonoran-rulebook.md` with
+`data/fonoran-grammar-*.json`). Every answer comes from those. A fact hardcoded in
+code is a copy that will rot, and it has: English "not" once pointed at `ko`, the
+live root for *to drink*.
+
+**3. One engine, no exceptions.** Translator, Learn, and the alignment view are the
+same call with the same input and the same output. A surface that needs something
+different needs the engine to return more, never its own logic. If two surfaces can
+disagree, that is a bug in the architecture, not a difference in features.
+
+**4. Say it once.** Two copies of a rule means one of them is already wrong. Before
+adding a constant, a list, or a helper, search for it: it usually exists. This
+codebase has had three separate English lemmatizers at once, all with the same bug.
+
+**The honest gap.** We are not there yet. The forward path is English-only and about
+5,000 lines, most of which is rule-by-rule English handling that rules 1 and 4 say
+should not exist. `sourceLang` currently only asks "is this Fonoran or not". Closing
+that gap is the standing priority; every change should move toward the diagram, and
+none should move away from it. When you are unsure whether something is an exception
+worth making, it is not. Ask.
 
 ## Read first
 

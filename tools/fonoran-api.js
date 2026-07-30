@@ -23,6 +23,7 @@ import { getLearnCoursePhrases } from './fonoran-learn-course-phrases.js';
 import { resetProject } from './fonoran-reset.js';
 import { loadEnglishLexicon } from './fonoran-english-lexicon.js';
 import { translate } from './fonoran-translate.js';
+import { buildAlignment } from './fonoran-alignment.js';
 import { loadTranslationCorpus, runTranslationGapReport, loadLatestGapReport } from './fonoran-translation-gaps.js';
 import { loadParticles } from './fonoran-particles.js';
 import { buildFonoran } from './fonoran-build.js';
@@ -359,6 +360,14 @@ export async function handleFonoranApi(req, res, pathname, method) {
           engine: result.engine ?? 'legacy',
           code: result.code,
           hint: result.hint,
+        });
+      }
+      // Opt-in: only the phrase poster needs to know which English word each
+      // token came from, and computing it costs a lemma per word.
+      if (body.align === true && Array.isArray(result.tokens)) {
+        return done(200, {
+          ...result,
+          alignment: buildAlignment(body.text ?? '', result.tokens),
         });
       }
       return done(200, result);

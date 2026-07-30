@@ -27,9 +27,9 @@ Roles are then read off word class, never off position:
 Actor · Action · Target · Place · Time
 ```
 
-The Action is the verb. The Actor is the head of the noun phrase before it, so a stacked adjective cannot displace it: `the tall man walks` is man, walk, tall. This replaced a hand-written pattern cascade whose fallback assigned slots by position, which made `tall` the Actor and `man` the Action while reporting no gaps at all. The old front end is still selectable with `parser: 'patterns'` or `FONORAN_PARSER=patterns` for comparison.
+The Action is the verb. The Actor is the head of the noun phrase before it, so a stacked adjective cannot displace it: `the tall man walks` is man, walk, tall. This replaced a hand-written pattern cascade whose fallback assigned slots by position, which made `tall` the Actor and `man` the Action while reporting no gaps at all. That cascade, roughly 1,600 lines of English constructions matched by hand, was deleted in July 2026 once coverage showed no test could reach it. There is one front end.
 
-This is also where English grammar is consumed and discarded. Tense comes from verb form (including irregular pasts) and becomes a particle rather than an ending. Negation words are re-emitted as the `no` particle in front of what they deny, scoped to their own clause. Ability and necessity modals become ordinary concepts before the Action. Words English marks and Fonoran does not (number, articles, degree adverbs) are dropped; everything else either resolves or is reported.
+This is also where English grammar is consumed and discarded. Tense comes from verb form and becomes a particle rather than an ending; irregulars need no list of ours, since the tagger already reports `gave` as `give`. Negation words are re-emitted as the `no` particle in front of what they deny, scoped to their own clause. Ability and necessity modals become ordinary concepts before the Action. Words English marks and Fonoran does not (number, articles, degree adverbs) are dropped; everything else either resolves or is reported.
 
 ## Step 3: resolve each word to a concept, in a fixed tier order
 

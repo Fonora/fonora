@@ -31,12 +31,12 @@ import { getLab } from './fonoran-sound-bucket.js';
 import {
   loadInterpretationRules,
   interpretToConceptRelaxed,
-  irregularPastLemma,
   landmarkPhrase,
   lemmaCandidates,
   nominalPhrase,
   headNounToken,
 } from './fonoran-interpretation.js';
+import { tokenizeEnglish, lemmatizeEnglish, inflectedLemma } from './fonoran-english-morphology.js';
 import { REUSABLE_WORD_STATES } from './fonoran-derivation.js';
 import { retiredSpellingConceptIds } from './fonoran-retired-spellings.js';
 
@@ -115,46 +115,6 @@ export async function loadConceptBridges() {
   conceptBridgeCache = map;
   return map;
 }
-
-/** Reset the concept-bridge cache (tests / hot reload). */
-export function resetConceptBridgeCache() {
-  conceptBridgeCache = null;
-}
-
-/** Hardcoded surface → lemma shortcuts shared with translator frame parser. */
-export const IRREGULAR = {
-  fought: 'war',
-  fight: 'war',
-  fighting: 'war',
-  fights: 'war',
-  loved: 'love',
-  loves: 'love',
-  loving: 'love',
-  laughed: 'laugh',
-  laughing: 'laugh',
-  laughs: 'laugh',
-  lost: 'lose',
-  went: 'move',
-  go: 'move',
-  goes: 'move',
-  going: 'move',
-  gone: 'move',
-  said: 'speak',
-  say: 'speak',
-  says: 'speak',
-  saying: 'speak',
-  knew: 'know',
-  knows: 'know',
-  knowing: 'know',
-  children: 'child',
-  men: 'person',
-  man: 'person',
-  women: 'person',
-  woman: 'person',
-  people: 'person',
-  war: 'conflict',
-  wars: 'conflict',
-};
 
 /**
  * Curated English → concept bridges. Deliberate, human-authored mappings for
@@ -280,55 +240,7 @@ async function tryTransparentPhraseAssembly(phrase, ctx, role) {
   return assemblyToken(words, resolved, phrase, role, `transparent assembly:${words.join('+')}`);
 }
 
-export function tokenizeEnglish(text) {
-  return String(text ?? '')
-    .trim()
-    .match(/[A-Za-z']+/g)
-    ?.map(t => {
-      // Possession is not lexical in Fonoran: strip the possessive clitic so the
-      // bare noun resolves (man's -> man, children's -> children, dogs'/James' -> dogs/james).
-      const possessive = t.toLowerCase().replace(/'s$/, '');
-      return possessive.replace(/^'+|'+$/g, '');
-    })
-    .filter(Boolean) ?? [];
-}
-
-export function lemmatizeEnglish(word, rules = null) {
-  const w = String(word ?? '').toLowerCase();
-  if (IRREGULAR[w]) return IRREGULAR[w];
-  const pastLemma = rules ? irregularPastLemma(w, rules) : null;
-  if (pastLemma) return pastLemma;
-  if (w.endsWith('ies') && w.length > 4) return `${w.slice(0, -3)}y`;
-  if (w.endsWith('ied') && w.length > 4) return `${w.slice(0, -3)}y`;
-  if (w.endsWith('ing') && w.length > 5) {
-    const base = w.slice(0, -3);
-    if (base.endsWith(base.at(-1)) && !base.endsWith('ing')) return base.slice(0, -1);
-    return base;
-  }
-  if (w.endsWith('ed') && w.length > 4) {
-    if (w.endsWith('ied')) return `${w.slice(0, -3)}y`;
-    if (w.endsWith('ted') || w.endsWith('ded')) return w.slice(0, -1);
-    const base = w.slice(0, -2);
-    if (base.length >= 2 && base.at(-1) === base.at(-2)) return base.slice(0, -1);
-    return base;
-  }
-  if (w.endsWith('en') && w.length > 4) {
-    const base = w.slice(0, -2);
-    if (base.length >= 2 && base.at(-1) === base.at(-2)) return base.slice(0, -1);
-    return base;
-  }
-  if (w.endsWith('s') && w.length > 3 && !w.endsWith('ss')) return w.slice(0, -1);
-  return w;
-}
-
-/** Agentive forms: traveler → travel (+ person). */
-export function agentiveBase(word) {
-  const w = String(word ?? '').toLowerCase();
-  if (w.endsWith('er') && w.length > 4) return [w.slice(0, -2), `${w.slice(0, -2)}e`];
-  if (w.endsWith('or') && w.length > 4) return [w.slice(0, -2), `${w.slice(0, -2)}e`];
-  if (w.endsWith('ist') && w.length > 5) return [w.slice(0, -3)];
-  return null;
-}
+export { tokenizeEnglish, lemmatizeEnglish };
 
 function partsForEntry(entry) {
   if (entry.parts?.length) return entry.parts;
@@ -346,22 +258,7 @@ function pronunciationForParts(parts) {
 }
 
 function buildTryKeys(raw, rules) {
-  return [...new Set([...lemmaCandidates(raw, rules), IRREGULAR[raw]].filter(Boolean))];
-}
-
-function phraseLookupKeys(phrase, rules, skip = null) {
-  const raw = String(phrase ?? '').trim().toLowerCase();
-  if (!raw) return [];
-  const parts = raw.split(/\s+/).filter(Boolean);
-  const keys = [
-    raw,
-    landmarkPhrase(raw),
-    nominalPhrase(raw, { skip }),
-  ];
-  const head = headNounToken(parts, { skip });
-  if (head) keys.push(...buildTryKeys(head, rules));
-  for (const part of parts) keys.push(...buildTryKeys(part, rules));
-  return [...new Set(keys.filter(Boolean))];
+  return [...new Set([...lemmaCandidates(raw, rules), lemmatizeEnglish(raw)].filter(Boolean))];
 }
 
 /**
@@ -563,13 +460,10 @@ export async function buildResolveContext(lab = null, { devLab = false } = {}) {
   };
 }
 
-/** @deprecated alias — word generator uses buildResolveContext */
-export const buildContext = buildResolveContext;
-
 function lookupByKeys(ctx, keys) {
   const found = lookupAliasEntry(ctx.aliasIndex, keys);
   if (!found) return unknownHit(keys[0] ?? '');
-  const pastLemma = irregularPastLemma(keys[0], ctx.rules);
+  const pastLemma = inflectedLemma(keys[0]);
   return entryToHit(found.hit, { lookup: found.lookup, rules: ctx.rules, pastLemma });
 }
 
@@ -940,7 +834,7 @@ export async function resolveEnglishToken(english, ctx, {
     const weakAlias = hit.alias_strength === 'weak';
     if (!weakAlias) {
       // Tier HIGH: strong alias / concept id / lemma.
-      const pastLemma = irregularPastLemma(surface, ctx.rules);
+      const pastLemma = inflectedLemma(surface);
       const interpretedPast = Boolean(pastLemma && hit.past_lemma);
       return enrichToken({ ...hit, role, english: surface }, {
         resolution_kind: interpretedPast ? 'interpreted' : 'direct',

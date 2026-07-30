@@ -11,11 +11,7 @@
  * by position, so "the tall man walks" made tall the Actor and man the Action. Word
  * class is what English actually marks, so an adjective can no longer shift every role.
  */
-import winkNLP from 'wink-nlp';
-import model from 'wink-eng-lite-web-model';
-
-const nlp = winkNLP(model);
-const its = nlp.its;
+import { nlp, its, BE_FORMS, MODAL_WORDS } from './fonoran-english-morphology.js';
 
 /** Prepositions that open a Place phrase. Time words are handled separately. */
 const PLACE_PREPS = new Set([
@@ -28,9 +24,7 @@ const PLACE_PREPS = new Set([
 const TIME_WORDS = new Set(['yesterday', 'today', 'tomorrow', 'now', 'tonight', 'later', 'soon']);
 const PAST_AUX = new Set(['did', 'was', 'were', 'had']);
 const FUTURE_AUX = new Set(['will', 'shall']);
-const BE_FORMS = new Set(['am', 'is', 'are', 'was', 'were', 'be', 'been', 'being']);
 const NEGATORS = new Set(['not', "n't", 'never', 'no', 'nobody', 'nothing', 'none']);
-const MODAL_WORDS = new Set(['can', 'could', 'must', 'should', 'may', 'might', 'would', 'shall']);
 const WH_WORDS = ['why', 'how', 'where', 'when', 'who', 'what', 'which'];
 
 /** Words that open a subordinate clause. `as` is left out: "as big as" is not a clause. */

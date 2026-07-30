@@ -2,8 +2,8 @@
  * Fonoran grammar spec — the hard, machine-checkable rules.
  *
  * This is the single source of truth for BOTH the deterministic grammar-
- * enforcement pass (applied to every LLM/cached frame before render) and the
- * grammar-invariant tests. The LLM is free to choose meaning (concept ids), but
+ * enforcement pass and the grammar-invariant tests. A caller is free to choose
+ * meaning (concept ids), but
  * the grammar around those concepts is guaranteed here by hard rules.
  *
  * Distilled from docs/fonoran-grammar.md (Rules 3/4/5/7). Particle forms come from
@@ -108,7 +108,7 @@ export function enforceModifierOrder(slots, concepts = []) {
 /**
  * Check hard grammar invariants against a rendered token stream. Used by the
  * grammar-invariant tests: these must hold regardless of which synonym concept
- * the LLM chose. Returns a list of violations (empty = grammatical).
+ * the caller chose. Returns a list of violations (empty = grammatical).
  * @param {object[]} tokens  resolved tokens (role, kind, fonoran, concept_id)
  * @param {{ placeSet?: Set<string> }} [opts]
  * @returns {Array<{ kind: string, message: string }>}

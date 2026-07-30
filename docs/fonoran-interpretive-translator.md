@@ -107,7 +107,7 @@ Resolution order per token:
 
 1. Frame **concept hint** (linking verbs, idioms, path slots)
 2. Direct (strong) alias — inventory, `data/localizations/en.json`, lab sounds/compounds
-3. Class / irregular past — `data/fonoran-interpretation-rules.json`
+3. Verb class / spatial path rule — `data/fonoran-interpretation-rules.json`
 4. WordNet single-concept fallback (`semantic`) → else weak alias (`alias_weak`)
 5. Unresolved — never silently dropped, never fabricated
 
@@ -132,12 +132,13 @@ Translator tab: `language/index.html` + `language/fonoran-app.js`.
 
 | File | Purpose |
 | --- | --- |
-| `data/fonoran-interpretation-rules.json` | Idioms, verb classes, spatial preps, irregular past |
+| `data/fonoran-interpretation-rules.json` | Idioms, verb classes, spatial preps |
 | `data/localizations/en.json` | English aliases per concept (`feel` ≠ `touch`) |
 | `data/fonoran-approved-roots.json` | Approved spellings |
 | `tools/fonoran-concepts.js` | Runtime inventory + alias index |
-| `tools/fonoran-interpretation.js` | Phrase matchers, clause/time helpers |
+| `tools/fonoran-interpretation.js` | Rule lookup, time helpers |
 | `tools/fonoran-english-resolve.js` | Unified resolution pipeline |
+| `tools/fonoran-english-morphology.js` | Tokenizing and lemmatizing, delegated to `wink-nlp` |
 
 ## API
 

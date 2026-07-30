@@ -534,9 +534,9 @@ English surface forms diverge. Meaning converges. The translator **compiles mean
 
 ```mermaid
 flowchart TD
-  SRC["Source (any language)"]
-  subgraph Probabilistic["Probabilistic (LLM @ temperature 0)"]
-    ME["Meaning extraction"]
+  SRC["Source sentence"]
+  subgraph Source["Source language (third-party tagger)"]
+    ME["Word class and lemma"]
     SG["Concept frame: slots + concept ids"]
   end
   subgraph Deterministic["Deterministic render (hard rules)"]
@@ -548,19 +548,19 @@ flowchart TD
   SRC --> ME --> SG --> PC --> CC --> GP --> FO
 ```
 
-The LLM only chooses **meaning** (concept ids + slot roles); everything from concept ids onward is **deterministic** and never invents a spelling.
+Only the left half knows the source language, and it is a maintained third-party dependency rather than our own rules. Everything from concept ids onward is deterministic and never invents a spelling.
 
-**Current implementation (July 2026).** The live translator is a **multilingual LLM semantic compiler** plus deterministic render. See **[fonoran-translator.md](fonoran-translator.md)** for architecture diagrams, UI behavior, API fields, and module map.
+**Current implementation (July 2026).** One engine, `translateEnglishLegacy` in `tools/fonoran-translator.js`, serves the translator, Learn, and the alignment view alike. See **[fonoran-algorithm-translation.md](fonoran-algorithm-translation.md)** for the full walk from sentence to surface, and **[fonoran-translator.md](fonoran-translator.md)** for API fields and the module map.
 
 At a high level:
 
-1. **Any language** → LLM emits a language-neutral **concept frame** (`{ slots, is_question, unresolved, reasoning }`).
-2. **Repair** — grammar brief validates the frame; rule-based fallback fixes WH misuse on yes/no questions and removed v1 particles.
-3. **Render** — `translateFromFrame()` maps concept ids to approved spellings via `slotsToTokens()` + `buildSurface()`. No invented roots.
-4. **Playback** — `attachTranslatorPlayback()` builds Fonora script + TTS segments (same pipeline as Samples).
-5. **Alternates** — optional rule-based readings (e.g. collective vs dyadic *we*) without a second LLM call.
+1. **Source sentence** → [`wink-nlp`](https://winkjs.org/wink-nlp/) supplies word class and dictionary form.
+2. **Roles** — Actor, Action, Target, Place, Time are read off word class, never off position.
+3. **Resolve** — each word becomes a concept id through a fixed tier order, or is reported as an honest gap.
+4. **Render** — `slotsToTokens()` and `buildSurface()` map concept ids to approved spellings. No invented roots.
+5. **Playback** — `attachTranslatorPlayback()` builds Fonora script + TTS segments (same pipeline as Samples).
 
-The legacy English slot-filling compiler in `tools/fonoran-translator.js` (`translateEnglishLegacy`, `engine=legacy`) remains for golden regression. It uses programmatic motion matching (`matchMotionPhrase` in `tools/fonoran-interpretation.js`) from `data/fonoran-interpretation-rules.json`. The per-sentence **semantic frame** below is still the pivot object — now produced by the LLM path as well as the legacy parser.
+The hand-written pattern cascade that preceded the tagger was deleted in July 2026.
 
 **The semantic frame is a real pivot object.** Between the parse and the surface,
 `translateEnglish` builds an explicit, language-neutral frame:

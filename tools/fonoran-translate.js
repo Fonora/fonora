@@ -52,5 +52,5 @@ export async function translate(text, options = {}) {
   return { ...result, engine: 'legacy', direction: 'to-fonoran' };
 }
 
-export { translateEnglishLegacy, translateFromFrame } from './fonoran-translator.js';
+export { translateEnglishLegacy } from './fonoran-translator.js';
 export { translateFromFonoran } from './fonoran-reverse-translate.js';

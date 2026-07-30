@@ -1208,30 +1208,6 @@ async function runLanguagePolicyTests() {
     );
   }));
 
-  // `test` is synchronous, so the frames are compiled before the assertions run.
-  const translator = await import('../tools/fonoran-translator.js');
-  const ownedGapFrame = await translator.translateFromFrame({
-    slots: { object: ['tes+temkan'] },
-    unresolved: ['relieved'],
-  }, { input: 'relieved' });
-  const openGapFrame = await translator.translateFromFrame({
-    slots: { object: ['animal+body'] },
-    unresolved: ['meat'],
-  }, { input: 'meat' });
-
-  results.push(test('composition: an approved word beats a composed stand-in for the same gap', () => {
-    assert(ownedGapFrame.surface.roman.includes('nesgu'), `expected nesgu, got ${ownedGapFrame.surface.roman}`);
-    assert(ownedGapFrame.unresolved.length === 0, `gap should close: ${JSON.stringify(ownedGapFrame.unresolved)}`);
-  }));
-
-  results.push(test('composition: a gap the lexicon cannot fill stays an honest gap', () => {
-    assert(openGapFrame.unresolved.includes('meat'), `gap should survive: ${JSON.stringify(openGapFrame.unresolved)}`);
-    assert(
-      openGapFrame.tokens.some(t => t.ad_hoc_composition),
-      'the stand-in must stay marked as composed',
-    );
-  }));
-
   return results;
 }
 
