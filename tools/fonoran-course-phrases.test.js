@@ -4,6 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isMainModule } from './is-main.js';
 import { buildGrammarPhraseExercises, grammarPhraseExerciseMatches } from '../js/fonoran-grammar-phrase-exercises.js';
 import {
   lessonsDocToExercises,
@@ -163,7 +164,7 @@ export function runFonoranCoursePhrasesTests() {
   ];
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const results = runFonoranCoursePhrasesTests();
   const failed = results.filter((r) => !r.ok);
   for (const r of results) {

@@ -4,6 +4,12 @@
   "version": "1.0-converged-editorial",
   "particles": [
     {
+      "id": "speaker",
+      "form": "mi",
+      "note": "first person singular; the speaker",
+      "role": "pronoun"
+    },
+    {
       "id": "past",
       "form": "ta",
       "note": "marks an event in the past; present is unmarked",
@@ -11,14 +17,14 @@
     },
     {
       "id": "future",
-      "form": "na",
+      "form": "sa",
       "note": "marks an event in the future",
       "role": "tense"
     },
     {
       "id": "negation",
       "form": "no",
-      "note": "negates the following concept (false = no + true)",
+      "note": "negates the constituent it precedes (false = no + true)",
       "role": "polarity"
     },
     {
@@ -28,13 +34,19 @@
       "role": "polarity"
     },
     {
+      "id": "conditional",
+      "form": "von",
+      "note": "marks a condition; if",
+      "role": "mood"
+    },
+    {
       "id": "question",
-      "form": "wo",
-      "note": "marks a clause as a question",
+      "form": "ka",
+      "note": "opens a question, polar or content; replaces the borrowed ?",
       "role": "mood"
     }
   ],
-  "core_count": 135,
+  "core_count": 136,
   "primitives": [
     {
       "id": "addressee",
@@ -349,6 +361,20 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
+      "id": "count",
+      "tier": "core",
+      "domain": "quantity",
+      "description": "how many of something; the quantity axis, not a value on it",
+      "priority_class": "essential",
+      "suggested_status": "primitive",
+      "plain_description": "how many of something; the quantity axis, not a value on it",
+      "primitive_test_note": "Distinct from many/some/all/one (values on the scale). Pairing unknown with count is what English packs into how many and how much. One axis covers both people and water: Fonoran does not mark the English count/mass split, so the noun names what is being counted.",
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": true,
+      "campfire_reason": "Ring 3 by capacity (Rings 1–2 are full). Still campfire-needed in spirit: strangers ask how many / how much early. The quantity axis, not a value."
+    },
+    {
       "id": "dark",
       "tier": "core",
       "domain": "element",
@@ -506,7 +532,7 @@
     {
       "id": "fast",
       "tier": "core",
-      "domain": "quantity",
+      "domain": "quality",
       "description": "quick; moving at high speed",
       "priority_class": "common",
       "suggested_status": "primitive",
@@ -514,7 +540,8 @@
       "experience_tier": "space_motion",
       "language_tier": "extended_core",
       "campfire_pass": false,
-      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core.",
+      "domain_note": "Speed is a rate, not a cardinality. Filed with the other scalar properties (big, small) rather than with the quantity values it was grouped under."
     },
     {
       "id": "fear",
@@ -1786,7 +1813,7 @@
   ],
   "description": "Converged Fonoran concept inventory: ring-redesigned primitive set with 4 new spatial primitives (around/front/back/through) and 16 demoted to compound_candidate. Derivable concepts live in data/fonoran-compounds.json; polarity/tense/mood are particles, not roots.",
   "extended_count": 8,
-  "primitive_count": 135,
+  "primitive_count": 136,
   "productive_dimensions": {
     "bond": [
       "family",
@@ -1850,10 +1877,11 @@
     "summary": {
       "ring_1": 50,
       "ring_2": 50,
-      "ring_3": 35,
-      "total_assigned": 135,
+      "ring_3": 36,
+      "total_assigned": 136,
       "cap": 150
     },
     "spec": "data/fonoran-root-rings.json"
-  }
+  },
+  "particles_authority": "data/fonoran-grammar-particles.json is the single source of truth for the closed particle class; it is the file the translator loads. This array mirrors it for editorial convenience only. Do not add a particle here without adding it there. It previously drifted: future was listed as na (it is sa, kept phonemically distinct from the negation no), mi and von were missing, and wo was still claimed as a question particle after v1 removed question particles entirely (v1 asks content questions compositionally with nohu + a dimension concept). wo is now the lexical root for lonely."
 }

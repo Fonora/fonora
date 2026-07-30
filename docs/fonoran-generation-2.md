@@ -1,5 +1,7 @@
 # Fonoran Generation 2 — Architecture Snapshot
 
+<!-- language-ref: archival — records spellings as they were when written; see scripts/fonoran-verify-language-refs.js -->
+
 > **Historical snapshot.** This document records the decisions and structure of Generation 2 (89 primitives, 455 compounds). The active vocabulary is now **483+ compounds** built on the same editorial principles. The `tools/legacy/` directory referenced in the Deprecated section no longer exists. Active workflow: [fonoran.md](fonoran.md) · [fonoran-cli-tools.md](fonoran-cli-tools.md).
 
 ---

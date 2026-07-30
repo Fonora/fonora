@@ -12,15 +12,15 @@
   },
   "collision_profile": "en",
   "reserved_particles": {
-    "note": "Grammar particles, never lexical roots (docs/fonoran-grammar.md Rule 3). Full inventory + roles in data/fonoran-grammar-particles.json. Active v1 particles: mi=pronoun I, ta=past, sa=future, no=negation, ya=affirmation, von=if. REMOVED FROM GRAMMAR in v1 but kept reserved (blocked from lexical reuse for spelling stability, pending a future decision): wo (question marker) and the v*/z* forms that were interrogatives (vus/zas/zes/zis/zos/zus) and focus (vat/vet/vit). v1 questions are compositional + '?' with no question particle. Spatial relations and other pronouns are lexical, not particles. (Future is sa, not na, to keep it phonemically distinct from the negation particle no.)",
+    "note": "Grammar particles, never lexical roots (docs/fonoran-grammar.md Rule 3). Full inventory + roles in data/fonoran-grammar-particles.json, which is the authority. Active v1 particles: mi=pronoun I, ta=past, sa=future, no=negation, ya=affirmation, von=if. (Future is sa, not na, to keep it phonemically distinct from the negation particle no.) Questions open with the particle ka (both polar and content), so ka is reserved. The old v1 marker wo is NOT reserved: it is the approved lexical root for lonely and is in live corpus use. Still listed below are the removed v1 interrogatives (vus/zas/zes/zis/zos/zus) and focus forms (vat/vet/vit); they are kept for spelling history and cost no capacity, because v and z are not valid Fonoran onsets and the generator can never produce them. Spatial relations and other pronouns are lexical, not particles.",
     "forms": [
       "mi",
       "ta",
       "sa",
       "no",
       "ya",
-      "wo",
       "von",
+      "ka",
       "vus",
       "zas",
       "zes",
@@ -33,15 +33,17 @@
     ]
   },
   "excluded_syllables": {
-    "note": "Awkward, humorous, or English near-profanity. Prefix-matched in the syllable pool (isExcludedSyllable). pi/po family ≈ pee/poo; fa/fu ≈ English near-profanity (/fʌ/, fuckin-class compounds).",
+    "note": "Awkward, humorous, or English near-profanity. Prefix-matched in the syllable pool (isExcludedSyllable). The p-family is listed by SOUND, not romanization: pi /pɪ/ ≈ pee, po /po/ and pu /pʊ/ ≈ poo. `pu` was missing because the list predates the vowel work in RN-22/RN-23, so the OO vowel was never re-derived; it reached the dictionary as `heart`. fa/fu ≈ English near-profanity (/fʌ/, fuckin-class compounds). Enforced in three places that share one predicate: the syllable pool, the build gate in fonoran-build.js, and scripts/fonoran-verify-invariants.js on every commit. Excluded spellings are not re-locked by root generation, so listing a form here is enough to make the language heal itself on the next regen.",
     "forms": [
       "pi",
       "pee",
       "po",
       "poo",
+      "pu",
       "fa",
       "fu"
-    ]
+    ],
+    "known_violations": []
   },
   "phonetics": {
     "note": "r and j onsets are excluded from primitive assignment (constitution rule 1). See tools/fonoran-phonetic-weights.js isBannedPrimitiveSpelling().",

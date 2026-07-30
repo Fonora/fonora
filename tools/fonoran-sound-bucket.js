@@ -43,12 +43,71 @@ export function effectiveState(item) {
 export async function loadBucket() {
   try {
     const bucket = await readBucketRaw();
-    if (!bucket) return seedBucket();
+    if (!bucket) return bucketFromSeedsOrBlank();
     return migrateBucket(bucket);
-  } catch {
-    return seedBucket();
+  } catch (err) {
+    console.error(`[fonoran] could not read the lab bucket: ${err?.message ?? err}`);
+    return bucketFromSeedsOrBlank();
   }
 }
+
+/**
+ * The lab bucket is a derived artifact and is gitignored, so a fresh checkout or deploy
+ * has no bucket file. Falling straight through to an empty blank-slate bucket would
+ * publish an empty language: no Dictionary, no Translator vocabulary, no Lessons, with
+ * nothing failing loudly. Derive it from the committed editorial seeds instead, which is
+ * what makes "the seeds are the published truth" true without a manual post-deploy step.
+ *
+ * Only a genuinely uninitialised project (no approved roots) gets the blank slate. That
+ * distinction has to be checked rather than assumed: seedBucket() *persists* the empty
+ * bucket, so a derivation that failed for an unrelated reason (one pending concept the
+ * syllable pool cannot serve is enough) would overwrite the published language with
+ * nothing, answer 200, and report health at 100. Refuse instead.
+ */
+async function bucketFromSeedsOrBlank() {
+  let derivationError = null;
+  try {
+    const { buildFonoran } = await import('./fonoran-build.js');
+    await buildFonoran({ preserveReview: true });
+    const rebuilt = await readBucketRaw();
+    if (rebuilt?.sounds?.length) return migrateBucket(rebuilt);
+  } catch (err) {
+    derivationError = err;
+  }
+
+  const approvedRoots = await approvedRootCount();
+  if (approvedRoots > 0) {
+    throw new Error(
+      `Refusing to publish an empty language: the seeds hold ${approvedRoots} approved root(s), `
+      + 'but the lab could not be derived from them. Run `npm run fonoran:build:approved` and fix what it reports.'
+      + (derivationError ? ` Derivation failed with: ${derivationError.message ?? derivationError}` : ''),
+    );
+  }
+
+  if (derivationError) {
+    console.error(`[fonoran] could not derive the lab from the seeds: ${derivationError.message ?? derivationError}`);
+  }
+  return seedBucket();
+}
+
+/**
+ * Approved roots as recorded in the committed seed, read directly rather than through the
+ * lab, since the whole point is to decide whether an empty lab is legitimate.
+ * @returns {Promise<number>}
+ */
+async function approvedRootCount() {
+  try {
+    const { readFile } = await import('node:fs/promises');
+    const { dirname, join } = await import('node:path');
+    const { fileURLToPath } = await import('node:url');
+    const seedPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'data/fonoran-approved-roots.json');
+    const doc = JSON.parse(await readFile(seedPath, 'utf8'));
+    return (doc.roots ?? []).filter(r => r?.spelling).length;
+  } catch {
+    return 0;
+  }
+}
+
 
 async function saveBucket(bucket) {
   return writeBucketRaw(bucket);

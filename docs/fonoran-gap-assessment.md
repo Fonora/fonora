@@ -6,7 +6,7 @@
 
 **Fonora (the script) is a legitimate design in a real tradition.** A script whose glyph shapes encode articulation is a *featural* script. The tradition is small and respected: Hangul, designed in 1443, and Bell's Visible Speech, 1867. Hangul is routinely cited among the most learnable writing systems ever devised, for precisely the reason Fonora was built this way. This is the strongest layer of the project.
 
-**Fonoran (the language) is a legitimate conlang project that is not yet a complete language.** Its structural profile is a **pidgin**: invariant word forms, no inflection, preverbal tense particles, zero copula, fixed constituent order, small root inventory, heavy compounding, no relativizer, no complementizer, no comparative construction, no modality. That list is not arbitrary. It is close to the standard description of what separates a pidgin from a creole.
+**Fonoran (the language) is a legitimate conlang project that is not yet a complete language.** Its structural profile is a **pidgin**: invariant word forms, no inflection, preverbal tense particles, zero copula, fixed constituent order, small root inventory, heavy compounding, no relativizer, no complementizer, no comparative construction. That list is not arbitrary. It is close to the standard description of what separates a pidgin from a creole.
 
 This is the useful framing, and it is not a criticism. Pidgins are real communicative systems. More importantly, **creoles are the empirical answer to the question this project asks.** A creole is what arises when adults with unrelated native languages must build a shared system quickly, and creoles worldwide converge on a strikingly similar grammar despite unrelated parent languages: no inflection, preverbal tense-mood-aspect particles in a fixed order, zero copula, a general complementizer, a relativizer, and a small set of clause connectives.
 
@@ -19,9 +19,9 @@ Fonoran arrived at most of that profile from first principles. The remaining gap
 | Script (Fonora) | **Strong** | Featural design, coherent composition, 0 exact symbol collisions |
 | Root phonology | **Strong** | `a e i o u` only; `r` and `j` banned; onsets tiered by articulatory ease |
 | Morphology | **Adequate** | Isolating and internally consistent; no derivational layer |
-| Syntax | **Incomplete** | Cannot express choice, comparison, modality, aspect, or relative clauses |
+| Syntax | **Incomplete** | Choice and modality now work (see findings 2 and 3); comparison, aspect, and relative clauses remain absent |
 | Lexicon | **Adequate, capacity-limited** | 135 roots, 454 compounds, but only 6 usable root forms remain |
-| Seed integrity | **One live conflict** | Two seed files disagree on the particle inventory; `wo` is claimed as both particle and root |
+| Seed integrity | **Reconciled** | The particle disagreement and the `wo` double-booking are fixed; `fonoran-grammar-particles.json` is now named as the sole authority |
 | Validation | **Unvalidated** | Central hypothesis untested with diverse humans |
 | Documentation | **Extensive, mis-structured** | Organized as design rationale, not as a reference grammar |
 | Test methodology | **Biased** | Corpus omits the constructions the language cannot express |
@@ -102,6 +102,8 @@ The gap between engines was large, not cosmetic. The rule-based engine never gro
 
 Both are the same failure shape as disjunction: fluent, confident, wrong, and reported as success.
 
+A third instance turned up while verifying a grammar-doc claim about negation. *This water is not safe* was committed as `be no kamgu` and *that water is mine* as `be meskam mi`, "you belong to me". The model had emitted `ye`, water's Fonoran spelling, in place of a concept id, and `ye` is also an archaic English second person, so it resolved to `addressee`. A repair for this exact hazard existed but only scanned Place and Target, so the two Subject cases, where the error was worst, survived. It now runs on every slot. The defect was reached by trying to verify a sentence in the documentation, not by any test.
+
 ### 1b. Two canonical seed files disagree about the closed class
 
 Found while designing the fix above. The particle inventory is the most fundamental part of the grammar and two seed files state it differently.
@@ -116,9 +118,15 @@ The conflicts are not cosmetic:
 - **`wo` is claimed as the question particle** by the inventory, but `wo` is an approved root meaning `lonely`, and the corpus uses it that way in "I feel less lonely now" giving `gem mi nes wo sha`. A particle form is being claimed by a live content root.
 - **`von`** (conditional) and **`mi`** appear only in the loaded file
 
-The inventory copy is stale and should be reconciled to the loaded file or removed. This matters beyond tidiness because `fonoran-concept-inventory.json` feeds root-candidate generation ([tools/fonoran-build.js](../tools/fonoran-build.js), [tools/fonoran-root-candidates.js](../tools/fonoran-root-candidates.js)), so a wrong particle list is a latent hazard for any generator that reserves particle forms: it would protect `na` and `wo` while leaving `sa` and `von` unprotected.
+**Status: fixed.** The inventory array now mirrors the loaded file (`mi`, `ta`, `sa`, `no`, `ya`, `von`), and it carries a `particles_authority` field naming `fonoran-grammar-particles.json` as the single source of truth, so the next editor sees where a particle has to be added rather than adding it to the mirror.
 
-Related and smaller: `nek` (`fast`) is filed in the **quantity** domain, where it does not belong. Speed is not a quantity, and the misfiling inflates the quantity domain to 7 when it holds 6 genuine members.
+One claim made here earlier was wrong and is worth correcting rather than quietly deleting. This drift was described as a latent hazard for root generation, on the assumption that `fonoran-concept-inventory.json`'s particle array feeds the generator's reservations. It does not: `tools/fonoran-root-candidates.js` reserves forms from `reserved_particles` in [data/fonoran-primitive-roots-config.json](../data/fonoran-primitive-roots-config.json) plus the spellings of existing concepts, and never reads that array at all. `sa` and `von` were correctly protected the whole time. The drift was editorial, not operational.
+
+**Checking that, however, surfaced a real conflict in the file that does drive generation.** `reserved_particles` listed `wo` as blocked from lexical reuse, while `wo` is simultaneously the approved root for `lonely` and in live corpus use (*I feel less lonely now* gives `gem mi nes wo sha`). The form was double-booked: held back from the lexicon and already in it. The reservation existed pending a decision about a question particle, and v1 has since settled that question the other way, asking content questions compositionally with `nohu` plus a dimension concept. The reservation is therefore released and the note records why, which ratifies the lexicon as it stands instead of respelling a root that already works.
+
+The remaining reservations, the removed v1 interrogatives (`vus`/`zas`/`zes`/`zis`/`zos`/`zus`) and focus forms (`vat`/`vet`/`vit`), were checked at the same time and cost no capacity: `v` and `z` are not valid Fonoran onsets, so the generator can never produce them. They are noise in the blocklist, not held slots, which matters because the root ceiling is otherwise tight.
+
+Related and smaller, also fixed: `nek` (`fast`) was filed in the **quantity** domain, where it does not belong. Speed is a rate, not a cardinality. It is refiled under **quality** with `big` and `small`, the other scalar properties, which leaves quantity with the six genuine members RN-37 analysed. The move is invisible in the UI, since the word composer groups quantity and quality into the same Abstract bucket.
 
 ### 2. Modality is absent and it is the largest hole by volume
 
@@ -135,6 +143,30 @@ That is roughly 131 phrase-level hits, the largest single expressive gap in the 
 Fonoran already has the mechanism. *Want* is an ordinary root chained in the Action slot: "I want to go" is `mi sak gi` ([docs/fonoran-grammar.md](fonoran-grammar.md) Serial Action). Modals can follow that pattern exactly, requiring no new particle and no change to the sentence skeleton.
 
 Existing roots are plausible raw material. `ha` (`rule`) is glossed "a pattern to follow; how things must be done", which is obligation in all but name. Ability is commonly derived cross-linguistically from knowledge (compare Spanish *saber*, "to know how to") or from strength, and both `hu` (`know`) and `strong` are approved roots.
+
+**Status: implemented, and the headline count above overstates the gap by roughly half.** Sorting the modal phrases by sense rather than by English word changed the design substantially, and the correction is the more useful finding.
+
+Of the 75 phrases containing *can*, 39 are interrogative, and those need no modal at all: a bare Fonoran question already reads as a request, so *can you hear me?* is `be len mi?` and adding a modal would be worse, not better. Separately, 11 of the 12 negated modals are *cannot*, which plain negation already covers, and *I cannot walk* was already rendering correctly as `mi no giti`. Neither group is a hole. Roughly 25 more are proposals rather than capability claims: *we can go together* is an invitation, and treating it as ability produces "we know how to walk", which is a distortion introduced by the fix rather than by the gap. Genuine declarative ability is about 6 phrases.
+
+The senses that remained are served entirely by existing forms, so modality cost no root and no particle:
+
+| Sense | Form | Example |
+| --- | --- | --- |
+| Ability | `know` + Action | *I can make fire* -> `mi hu kel dat` |
+| Necessity | `need` + Action | *we must run now* -> `gem dan les ginek` |
+| Possibility, suggestion | `maybe` | *maybe we can build a shelter* -> `gem kekdi dan ketnat kel temche` |
+| Inability | `no` + Action | *I cannot walk* -> `mi no giti` |
+
+`know` for ability is the ordinary creole route, matching Haitian `konn` and Tok Pisin `save`, and it stays lego-recoverable: "know make fire" reads as knowing how. `maybe` needed nothing at all, because it already existed as the compound `some` + `true` (`ketnat`).
+
+`ha` (`rule`) was considered for obligation, as the paragraph above proposed, and rejected on inspection. It is prescriptive, naming which norm applies, so *we must run now* would assert that running is the rule rather than that it is necessary. `les` (`need`) carries the sense directly, and the corpus had already reached for it without being told to: **4 of 11 *must* phrases were spontaneously rendering with `les` before any change was made**, at inconsistent positions (`dan les kel datlo` but also a trailing `dan gi gan les`). The work was regularizing a pattern the model had already found, not inventing one, and the marker now sits immediately before the Action like `sak` and `no`.
+
+Two senses are deliberately left as honest gaps, which is why `can`, `should`, and `let` still appear in the gap baseline against 7 phrases:
+
+- **`should` / `ought`, 8 phrases.** Routing it through `need` inverts under negation: *we should not go there* would render as "we do not need to go there", permitting exactly what the source forbids. A tracked gap is better than a reversed sentence, and this is the same failure shape as the disjunction bug in finding 3.
+- **Permission-granting *you can keep this*, 5 phrases.** No approved root separates granting from merely stating, and inventing one for 5 phrases is not justified. Interrogative permission (*can I borrow that?*) already works as a request.
+
+Measured effect: modal-source phrases carrying a modal marker rose from 20 to 45 of 108, distinct tracked gaps fell from 132 to 127, and `must`, `have to`, `need to`, `able`, `could`, `cannot`, and `may` left the baseline entirely.
 
 ### 3. The test corpus systematically omits what the language cannot do
 

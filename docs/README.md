@@ -44,6 +44,11 @@ Read in this order for a new contributor:
 
 | # | Topic | Document |
 | --- | --- | --- |
+| 0 | **Rulebook** (all three layers, 13 rules, plain language) | [fonoran-rulebook.md](fonoran-rulebook.md) |
+| 0a | **Algorithm: how a concept gets its sound** (one page) | [fonoran-algorithm-roots.md](fonoran-algorithm-roots.md) |
+| 0b | **Algorithm: how a compound is chosen** (one page) | [fonoran-algorithm-compounds.md](fonoran-algorithm-compounds.md) |
+| 0c | **Algorithm: how English becomes Fonoran** (one page) | [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md) |
+| 0d | **Architecture map** (what reads what, where the fat is) | [fonoran-architecture.md](fonoran-architecture.md) |
 | 1 | **Fonoran constitution** (read first — one page) | [fonoran-constitution.md](fonoran-constitution.md) |
 | 2 | **Fonoran grammar** | [fonoran-grammar.md](fonoran-grammar.md) |
 | 3 | **Philosophy & rationale** (optional deep read) | [fonoran-philosophy.md](fonoran-philosophy.md) |

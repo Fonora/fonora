@@ -14,14 +14,18 @@ export function translationCachePath() {
   return resolveDataPath(CACHE_KEY);
 }
 
-/** Normalize cache lookup key: lang|text */
-export function cacheKey(sourceLang, sourceText) {
-  const lang = String(sourceLang ?? 'auto').trim().toLowerCase() || 'auto';
-  const text = String(sourceText ?? '')
+/** Normalize the text half of a cache key. */
+function cacheText(sourceText) {
+  return String(sourceText ?? '')
     .trim()
     .replace(/\s+/g, ' ')
     .toLowerCase();
-  return `${lang}|${text}`;
+}
+
+/** Normalize cache lookup key: lang|text */
+export function cacheKey(sourceLang, sourceText) {
+  const lang = String(sourceLang ?? 'auto').trim().toLowerCase() || 'auto';
+  return `${lang}|${cacheText(sourceText)}`;
 }
 
 // In-process read cache: load the JSON file once and serve lookups from memory.
@@ -67,9 +71,26 @@ export async function saveTranslationCache(doc) {
  * @returns {Promise<object | null>}
  */
 export async function lookupCachedTranslation(sourceLang, sourceText) {
-  const key = cacheKey(sourceLang, sourceText);
   const doc = await loadTranslationCache();
-  return doc.entries[key] ?? null;
+  const exact = doc.entries[cacheKey(sourceLang, sourceText)] ?? null;
+  if (exact) return exact;
+
+  // Entries are written under the language the model *detected*, so the cache holds
+  // `en|...` and never `auto|...`. Looking up by the language the caller *requested*
+  // therefore missed every warmed phrase whenever the source was left on Auto-detect:
+  // the request paid for a live call, wrote another `en|` entry, and missed again next
+  // time. Same text, so resolve across languages, preferring English.
+  const lang = String(sourceLang ?? 'auto').trim().toLowerCase();
+  if (lang && lang !== 'auto') return null;
+
+  const english = doc.entries[cacheKey('en', sourceText)];
+  if (english) return english;
+
+  // A string that exists under two languages is genuinely ambiguous ("no", "si"), so
+  // stay a miss rather than guess which one the caller meant.
+  const suffix = `|${cacheText(sourceText)}`;
+  const matches = Object.entries(doc.entries).filter(([key]) => key.endsWith(suffix));
+  return matches.length === 1 ? matches[0][1] : null;
 }
 
 // Serialize cache writes in-process. Each write is a full read-modify-write of

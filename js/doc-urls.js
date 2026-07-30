@@ -129,6 +129,11 @@ function buildDocCatalog() {
     { path: 'docs/pronunciation-validation.md', label: 'Pronunciation validation', layer: 'script' },
     { path: 'docs/ipa-normalize.md', label: 'IPA normalization', layer: 'script' },
 
+    { path: 'docs/fonoran-rulebook.md', label: 'Fonoran rulebook', layer: 'language' },
+    { path: 'docs/fonoran-algorithm-roots.md', label: 'Algorithm: root sounds', layer: 'language' },
+    { path: 'docs/fonoran-algorithm-compounds.md', label: 'Algorithm: compounds', layer: 'language' },
+    { path: 'docs/fonoran-algorithm-translation.md', label: 'Algorithm: translation', layer: 'language' },
+    { path: 'docs/fonoran-architecture.md', label: 'Architecture map', layer: 'language' },
     { path: 'docs/fonoran-constitution.md', label: 'Fonoran constitution', layer: 'language' },
     { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
     { path: 'docs/fonoran-philosophy.md', label: 'Fonoran philosophy', layer: 'language' },

@@ -9,21 +9,11 @@
 import { parseSyllable } from './fonoran-pronunciation.js';
 import { buildSyllablePool } from './fonoran-root-sound-assign.js';
 
-export function findPrefixConflicts(form, taken) {
-  const f = String(form || '').toLowerCase();
-  if (!f) return [];
-  const hits = [];
-  for (const other of taken) {
-    const o = String(other || '').toLowerCase();
-    if (!o || o === f) continue;
-    if (o.startsWith(f) || f.startsWith(o)) hits.push(o);
-  }
-  return hits.sort();
-}
+// The predicate lives in a leaf module so root assignment can enforce the same rule this
+// script audits. Imported and re-exported to keep existing importers working.
+import { findPrefixConflicts, isPrefixSafe } from './fonoran-prefix-rule.js';
 
-export function isPrefixSafe(form, taken) {
-  return findPrefixConflicts(form, taken).length === 0;
-}
+export { findPrefixConflicts, isPrefixSafe };
 
 /** Classify a root as CV / CVC / other using the pronunciation parser. */
 export function syllableTemplate(form) {

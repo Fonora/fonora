@@ -25,7 +25,6 @@
       "label": "air",
       "aliases": [
         "atmosphere",
-        "breath",
         "wind"
       ]
     },
@@ -33,8 +32,7 @@
       "label": "all",
       "aliases": [
         "every",
-        "everything",
-        "whole"
+        "everything"
       ]
     },
     "bad": {
@@ -61,8 +59,7 @@
     "eat": {
       "label": "eat",
       "aliases": [
-        "eating",
-        "food"
+        "eating"
       ]
     },
     "eye": {
@@ -90,7 +87,6 @@
     "joy": {
       "label": "joy",
       "aliases": [
-        "happy",
         "happiness",
         "delight",
         "glad"
@@ -140,7 +136,6 @@
     "body": {
       "label": "body",
       "aliases": [
-        "form",
         "physique"
       ]
     },
@@ -153,7 +148,6 @@
         "family",
         "friend",
         "friendship",
-        "trust",
         "trusts",
         "trusted"
       ]
@@ -235,7 +229,6 @@
       "label": "food",
       "aliases": [
         "meal",
-        "eat",
         "mana",
         "bread",
         "this meat"
@@ -310,6 +303,17 @@
         "guards"
       ]
     },
+    "own": {
+      "label": "own",
+      "aliases": [
+        "have",
+        "owns",
+        "owning",
+        "owned",
+        "possess",
+        "possesses"
+      ]
+    },
     "know": {
       "label": "know",
       "aliases": [
@@ -362,7 +366,8 @@
         "multiple",
         "plenty",
         "several",
-        "a lot"
+        "a lot",
+        "much"
       ]
     },
     "mark": {
@@ -406,7 +411,6 @@
         "returned",
         "returns",
         "leave",
-        "left",
         "continue",
         "continues",
         "continued",
@@ -431,7 +435,6 @@
         "hurting",
         "ache",
         "suffering",
-        "sick",
         "ill"
       ]
     },
@@ -475,15 +478,13 @@
       "label": "skin",
       "aliases": [
         "skin",
-        "your skin",
-        "your"
+        "your skin"
       ]
     },
     "some": {
       "label": "some",
       "aliases": [
-        "few",
-        "part"
+        "few"
       ]
     },
     "take": {
@@ -615,7 +616,6 @@
     "equal": {
       "label": "equal",
       "aliases": [
-        "same",
         "balance",
         "fair",
         "fairness",
@@ -673,8 +673,6 @@
       "label": "plant",
       "aliases": [
         "vegetation",
-        "tree",
-        "trees",
         "grass",
         "leaf",
         "leaves",
@@ -742,8 +740,7 @@
         "rest",
         "rested",
         "rests",
-        "peaceful",
-        "calm"
+        "peaceful"
       ]
     },
     "stone": {
@@ -789,8 +786,7 @@
     "water": {
       "label": "water",
       "aliases": [
-        "liquid",
-        "drink"
+        "liquid"
       ]
     },
     "whole": {
@@ -856,8 +852,6 @@
         "healers",
         "she",
         "he",
-        "parents",
-        "parent",
         "king",
         "kings",
         "queen",
@@ -928,8 +922,7 @@
       "label": "container",
       "aliases": [
         "box",
-        "vessel",
-        "hold"
+        "vessel"
       ]
     },
     "different": {
@@ -951,7 +944,6 @@
     "collective": {
       "label": "collective",
       "aliases": [
-        "all",
         "group",
         "groups",
         "community",
@@ -1264,6 +1256,14 @@
         "meant"
       ]
     },
+    "manner": {
+      "label": "manner",
+      "aliases": [
+        "how",
+        "method",
+        "means"
+      ]
+    },
     "small": {
       "label": "small",
       "aliases": [
@@ -1272,9 +1272,7 @@
     },
     "breath": {
       "label": "breath",
-      "aliases": [
-        "breathe"
-      ]
+      "aliases": []
     },
     "doubt": {
       "label": "doubt",
@@ -1350,5 +1348,14 @@
     }
   },
   "version": "1.0-localization",
-  "description": "English labels and word bank for Fonoran concept identifiers. English is one localization — not the semantic authority."
+  "description": "English labels and word bank for Fonoran concept identifiers. English is one localization — not the semantic authority.",
+  "count": {
+    "label": "count",
+    "aliases": [
+      "amount",
+      "number",
+      "quantity",
+      "total"
+    ]
+  }
 }

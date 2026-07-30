@@ -1,8 +1,8 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-07-20T20:03:38.298Z",
+  "updated_at": "2026-07-30T06:06:00.368Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
-  "root_count": 135,
+  "root_count": 136,
   "roots": [
     {
       "id": "addressee",
@@ -186,12 +186,12 @@
     },
     {
       "id": "child",
-      "spelling": "fa",
-      "ipa": "/fʌ/",
+      "spelling": "gas",
+      "ipa": "/gʌs/",
       "concept": "a child; a young person",
       "domain": "being",
       "reason": "a child — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:38:20.707Z"
+      "approved_at": "2026-07-29T15:29:39.853Z"
     },
     {
       "id": "cold",
@@ -219,6 +219,15 @@
       "domain": "relationships",
       "reason": "a clash or fight between sides — shows up a lot in compounds, so it needs its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "count",
+      "spelling": "tan",
+      "ipa": "/tʌn/",
+      "concept": "how many of something; the quantity axis, not a value on it",
+      "domain": "quantity",
+      "reason": "how many of something — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-30T06:06:00.169Z"
     },
     {
       "id": "dark",
@@ -456,12 +465,12 @@
     },
     {
       "id": "heart",
-      "spelling": "pu",
-      "ipa": "/pʊ/",
+      "spelling": "mat",
+      "ipa": "/mʌt/",
       "concept": "your heart",
       "domain": "body",
       "reason": "your heart — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
+      "approved_at": "2026-07-29T15:20:51.628Z"
     },
     {
       "id": "help",
@@ -834,12 +843,12 @@
     },
     {
       "id": "right",
-      "spelling": "fu",
-      "ipa": "/fʊ/",
+      "spelling": "gel",
+      "ipa": "/gɛl/",
       "concept": "the right side",
       "domain": "space",
       "reason": "the right side — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
+      "approved_at": "2026-07-29T15:29:39.853Z"
     },
     {
       "id": "rule",

@@ -36,11 +36,18 @@ export async function listWordInventory({ filter = 'all', query = '' } = {}) {
 
   const concepts = inventory?.concepts ?? [];
   const candidates = candidatesDoc?.candidates ?? [];
-  const candidateByConcept = new Map(candidates.map(c => [c.concept ?? c.id, c]));
+  // Keyed by id, not by `concept`: a candidate's `concept` is its description text ("the
+  // entity spoken to; you"), so keying on it and looking up by id matched only the 17 of
+  // 135 roots whose description happens to equal their id. Review status, generation
+  // scores and collision warnings never reached the UI for the other 118.
+  const candidateByConcept = new Map(candidates.map(c => [c.id ?? c.concept, c]));
   const soundByConcept = new Map(
     (lab?.sounds ?? []).filter(s => s.concept_id).map(s => [s.concept_id, s]),
   );
-  const aliases = localization?.concepts ?? localization ?? {};
+  // The localization doc keys its map `entries`; reading `concepts` fell through to the
+  // whole document, so every alias lookup missed and all 135 roots reported none, in the
+  // public showcase as well as here.
+  const aliases = localization?.entries ?? {};
 
   /** @type {object[]} */
   const items = [];
@@ -232,7 +239,7 @@ export async function getWordDetail(ref, { kind = null } = {}) {
     ? (inventory?.concepts ?? []).find(c => (c.id ?? c.concept) === item.concept_id)
     : null;
   const candidate = item.kind === 'root'
-    ? (candidatesDoc?.candidates ?? []).find(c => (c.concept ?? c.id) === item.concept_id)
+    ? (candidatesDoc?.candidates ?? []).find(c => (c.id ?? c.concept) === item.concept_id)
     : null;
   const sound = item.kind === 'root'
     ? (lab?.sounds ?? []).find(s => s.concept_id === item.concept_id)
@@ -240,7 +247,7 @@ export async function getWordDetail(ref, { kind = null } = {}) {
   const compound = item.kind === 'compound'
     ? (lab?.compounds ?? []).find(c => c.id === item.id)
     : null;
-  const aliasesDoc = localization?.concepts ?? localization ?? {};
+  const aliasesDoc = localization?.entries ?? {};
 
   return {
     ...item,

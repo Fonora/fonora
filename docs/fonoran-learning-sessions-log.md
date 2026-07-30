@@ -1,5 +1,7 @@
 # Fonoran learning sessions log
 
+<!-- language-ref: archival — records spellings as they were when written; see scripts/fonoran-verify-language-refs.js -->
+
 > Living log for Phase IV learnability experiments. Feeds [RN-19](/research/notes/first-learner-signal-from-phase-iv-regen) and [RN-20](/research/notes/synthetic-intuition-ranking).
 
 ## Session template

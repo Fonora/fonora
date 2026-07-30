@@ -575,9 +575,34 @@ export async function pgBucketIsEmpty() {
  * Read the raw bucket object from the active store.
  * @returns {Promise<object | null>}
  */
+/**
+ * Where the published vocabulary is read from.
+ *
+ * Defaults to the committed seeds, because they are the single source of truth for the
+ * published language and the public surfaces (Dictionary, Translator, Showcase, Lessons)
+ * must match them exactly. The database is NOT a safe default for this: it is seeded from
+ * the seeds only when its tables are empty (see maybeAutoSeedOnStartup), so once populated
+ * it keeps serving whatever vocabulary existed at that first boot and a later deploy does
+ * not refresh it. Reading the seeds removes that failure mode and the deploy step that
+ * would otherwise be needed to avoid it.
+ *
+ * Everything else (research notes, community, proposals, auth) still uses the database,
+ * since those are genuinely runtime state rather than published language.
+ *
+ * Set FONORAN_LAB_SOURCE=database to read the lab from Postgres instead, which is what
+ * admin editing against a database needs. Admin editing on production is deliberately
+ * out of scope for now.
+ */
+export function resolveLabReadMode() {
+  return process.env.FONORAN_LAB_SOURCE?.trim().toLowerCase() === 'database'
+    ? 'database'
+    : 'seeds';
+}
+
 export async function readBucketRaw() {
   if (bucketCache?.bucket) return bucketCache.bucket;
-  const bucket = resolveStorageMode() === 'postgres'
+  const fromDatabase = resolveStorageMode() === 'postgres' && resolveLabReadMode() === 'database';
+  const bucket = fromDatabase
     ? await readBucketFromPg()
     : await readBucketFromJson();
   if (bucket) {

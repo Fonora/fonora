@@ -17,7 +17,13 @@ import {
   compoundEnglishGuide,
 } from './fonoran-pronunciation.js';
 import { checkCompoundBoundary } from './fonoran-gen3-readability.js';
-import { buildConceptAliasIndex, loadRuntimeConceptInventory, buildRootById, loadLocalization } from './fonoran-concepts.js';
+import {
+  buildConceptAliasIndex,
+  registerAliasEntry,
+  loadRuntimeConceptInventory,
+  buildRootById,
+  loadLocalization,
+} from './fonoran-concepts.js';
 // WordNet is imported ONLY for the offline curation assistant (suggestGapConcepts).
 // It is never used by resolveEnglishToken / the runtime translate path.
 import { expandWord, pickHypernymConcept } from './fonoran-semantic-lookup.js';
@@ -32,6 +38,7 @@ import {
   headNounToken,
 } from './fonoran-interpretation.js';
 import { REUSABLE_WORD_STATES } from './fonoran-derivation.js';
+import { retiredSpellingConceptIds } from './fonoran-retired-spellings.js';
 
 const RESOLVE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CONCEPT_BRIDGES_PATH = join(RESOLVE_ROOT, 'data/fonoran-concept-bridges.json');
@@ -40,10 +47,11 @@ const CONCEPT_BRIDGES_PATH = join(RESOLVE_ROOT, 'data/fonoran-concept-bridges.js
  * Former root spellings that still appear as concept ids in cached LLM frames
  * after a respell (e.g. banned fa → one/lu). Resolve through the live concept id
  * so Learn / translator recompiles stay current without rewarming every cache row.
+ *
+ * Read from data/fonoran-retired-spellings.json rather than hardcoded here: a
+ * retirement recorded in code drifts from the seeds, which is how `fa` was retired
+ * from `one` and later reassigned to `child` with nothing objecting.
  */
-const RETIRED_SPELLING_CONCEPT_IDS = Object.freeze({
-  fa: 'one',
-});
 
 // Optional local-only loanword glossaries (not tracked in this repo). Drop a
 // JSON glossary at data/local/glossary.json to pin proper-noun/loanword
@@ -356,12 +364,27 @@ function phraseLookupKeys(phrase, rules, skip = null) {
   return [...new Set(keys.filter(Boolean))];
 }
 
+/**
+ * Find the best alias entry for a candidate key list.
+ *
+ * Keys arrive most-specific-first (raw surface, then lemmas), but strength beats
+ * specificity: a weak gloss-derived entry on an early key must not block a strong
+ * curated entry on a later one. Returning the first hit of any strength made
+ * `animals` unresolvable, because the raw plural was claimed weakly by trap's
+ * definition ("catch animals for food") and the resolver abandoned the key list
+ * before reaching the lemma `animal`, which the `kal` root claims strongly. The
+ * weak hit is still returned when nothing strong matches, so it can be carried as
+ * a curation suggestion.
+ */
 function lookupAliasEntry(aliasIndex, keys) {
+  let weak = null;
   for (const key of keys) {
     const hit = aliasIndex.get(key);
-    if (hit) return { hit, lookup: key };
+    if (!hit) continue;
+    if (hit.alias_strength !== 'weak') return { hit, lookup: key };
+    weak = weak ?? { hit, lookup: key };
   }
-  return null;
+  return weak;
 }
 
 function entryToHit(entry, { lookup, rules, pastLemma }) {
@@ -417,7 +440,7 @@ function enrichToken(base, meta) {
  * optional `suggestion` (e.g. a demoted weak/gloss alias) is carried for the
  * curation queue but is deliberately not used as output.
  */
-function gapToken(surface, role, { reason = 'no confident concept', suggestion = null, conceptId = null } = {}) {
+export function gapToken(surface, role, { reason = 'no confident concept', suggestion = null, conceptId = null } = {}) {
   return enrichToken({ ...unknownHit(surface), role, english: surface, resolved: false, fonoran: null }, {
     resolution_kind: 'unknown',
     confidence: 'low',
@@ -441,9 +464,21 @@ export async function buildResolveContext(lab = null, { devLab = false } = {}) {
     devLab,
   });
 
+  // Compounds join the same alias index the primitives use, and they must obey the
+  // same strength rule. A compound's stored `aliases` array is not a synonym list:
+  // `mergeLocaleAliases` folds curated locale aliases in beside the definition
+  // sentence and the individual words mined out of it, so `trap` ("a device or
+  // method to catch animals for food") also claims `device`, `method`, `catch`,
+  // `animals`, and `food`. Registering those with a bare `Map.set` left them with
+  // no `alias_strength`, which is neither strong nor weak, so the resolver's
+  // weak-alias rejection never fired and 367 ordinary English words resolved to an
+  // unrelated concept: `animals` returned `gatkal` (trap), `liquid` returned water
+  // only by luck, `black` returned coal. Curated claims stay strong; anything left
+  // is gloss-derived and may only fill a gap it does not shadow.
   for (const compound of liveLab?.compounds ?? []) {
     const meaning = String(compound.meaning ?? '').trim().toLowerCase();
     if (!meaning || !compound.spelling) continue;
+    const conceptId = String(compound.concept_id ?? '').trim().toLowerCase();
     const entry = {
       english: meaning,
       concept_id: compound.concept_id ?? null,
@@ -456,11 +491,22 @@ export async function buildResolveContext(lab = null, { devLab = false } = {}) {
       source: 'lab',
       state: compound.state,
     };
-    aliasIndex.set(meaning, entry);
+    const strongKeys = new Set([meaning]);
+    if (conceptId) {
+      strongKeys.add(conceptId);
+      strongKeys.add(conceptId.replace(/_/g, ' '));
+      for (const alias of locData?.[compound.concept_id]?.aliases ?? []) {
+        const key = String(alias).trim().toLowerCase();
+        if (key) strongKeys.add(key);
+      }
+    }
+    for (const key of strongKeys) {
+      registerAliasEntry(aliasIndex, key, { ...entry, matched_alias: key }, { strength: 'strong' });
+    }
     for (const alias of compound.aliases ?? []) {
       const key = String(alias).trim().toLowerCase();
-      if (!key || aliasIndex.has(key)) continue;
-      aliasIndex.set(key, { ...entry, matched_alias: key });
+      if (!key || strongKeys.has(key)) continue;
+      registerAliasEntry(aliasIndex, key, { ...entry, matched_alias: key }, { strength: 'weak' });
     }
   }
 
@@ -562,7 +608,7 @@ function lookupByConceptId(ctx, conceptId) {
   if (mappedId && mappedId !== conceptId) {
     return lookupByConceptId(ctx, mappedId);
   }
-  const retiredId = RETIRED_SPELLING_CONCEPT_IDS[String(conceptId).toLowerCase()];
+  const retiredId = retiredSpellingConceptIds()[String(conceptId).toLowerCase()];
   if (retiredId && retiredId !== conceptId) {
     return lookupByConceptId(ctx, retiredId);
   }
@@ -582,7 +628,10 @@ function partSpellings(ctx, conceptIds) {
   for (const id of conceptIds) {
     const hit = lookupByConceptId(ctx, id);
     if (!hit.resolved || !hit.fonoran) return null;
-    specs.push({ id, spelling: hit.fonoran, gloss: hit.gloss ?? id });
+    // The requested part may be a spelling rather than a concept id (the LLM
+    // sometimes writes `tes` for `pain`). Record what the lexicon resolved it
+    // to, so the composition is described in concept ids either way.
+    specs.push({ id: hit.concept_id ?? id, spelling: hit.fonoran, gloss: hit.gloss ?? id });
   }
   return specs;
 }
@@ -604,7 +653,22 @@ export function composeConceptToken(ctx, conceptIds, { role = 'concept', english
   const boundary = checkCompoundBoundary(parts);
   const fused = boundary.valid ? parts.join('') : parts.join(' ');
   const composedGloss = gloss ?? specs.map(s => s.gloss).join(' + ');
-  const conceptKey = ids.join('+');
+  const conceptKey = specs.map(s => s.id).join('+');
+  // The parts may spell a word the lexicon already owns (the LLM wrote out a
+  // composition instead of naming the approved concept). Prefer the approved
+  // entry: same surface, but an honest concept id and no "invented" marking.
+  const approvedId = boundary.valid ? ctx.spellingByConceptId?.get(fused.toLowerCase()) : null;
+  if (approvedId) {
+    const approvedHit = lookupByConceptId(ctx, approvedId);
+    if (approvedHit.resolved) {
+      return enrichToken(approvedHit, {
+        role,
+        concept_id: approvedId,
+        resolution_kind: 'direct',
+        confidence: 'high',
+      });
+    }
+  }
   return enrichToken({
     english: english || conceptKey,
     fonoran: fused,
@@ -616,6 +680,9 @@ export function composeConceptToken(ctx, conceptIds, { role = 'concept', english
     source: 'bridge_compose',
     concept_id: conceptKey,
     pronunciation: pronunciationForParts(parts),
+    // Built from approved parts at runtime, but the lexicon does not own this
+    // word. Surfaces that teach vocabulary must not present it as approved.
+    ad_hoc_composition: true,
   }, {
     role,
     resolution_kind: 'composed',
@@ -790,7 +857,12 @@ export async function resolveEnglishToken(english, ctx, {
   avoidConceptIds = null, // eslint-disable-line no-unused-vars
 } = {}) {
   const surface = String(surfaceEnglish ?? english ?? '').trim();
-  const lookupWord = role === 'object' ? landmarkPhrase(surface) : String(english ?? '').trim().toLowerCase();
+  // The lemma is what the lexicon is keyed on, so the landmark is reduced from it rather
+  // than from the written form: an Object given as "these" with the lemma "this" was looked
+  // up as written and gapped, even though this has a root.
+  const lookupWord = role === 'object'
+    ? landmarkPhrase(String(english ?? '').trim())
+    : String(english ?? '').trim().toLowerCase();
   if (!lookupWord) {
     return gapToken(surface, role, { reason: 'empty token' });
   }

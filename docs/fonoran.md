@@ -239,7 +239,7 @@ Reserved particles (never roots): `mi`, `ta`, `sa`, `no`, `ya`, `von`.
 | `/api/fonoran/snapshot/export` | GET | Admin | Download full-state zip |
 | `/api/fonoran/snapshot/preview` | POST | Sign-in | Preview zip before restore |
 | `/api/fonoran/snapshot/import` | POST | Admin | Replace all state (`confirm: RESTORE`) |
-| `/api/fonoran/translate` | POST | Public | Any language → Fonoran (LLM semantic compiler; requires `ANTHROPIC_API_KEY_FONORA_TRANSLATOR`; `engine=legacy` for English-only compiler) |
+| `/api/fonoran/translate` | POST | Public | English → Fonoran, deterministic by default, no API key needed. `engine=llm` for the multilingual LLM compiler, which requires `ANTHROPIC_API_KEY_FONORA_TRANSLATOR` |
 | `/api/fonoran/concepts` | GET | Public | Concept inventory + spellings |
 
 Auth and production release checklist: [fonoran-auth-and-release.md](fonoran-auth-and-release.md).

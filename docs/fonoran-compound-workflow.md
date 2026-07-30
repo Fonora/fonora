@@ -210,7 +210,7 @@ Reference: [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.
 heroku open /language -a fonora
 # or
 curl -s https://fonora.org/health
-# Dictionary: search "world" → should show fenmel (after world compression deploy)
+# Dictionary: search "world" → should show fenfo (earth + life)
 ```
 
 **Step D — backup (recommended after milestone vocab changes)**

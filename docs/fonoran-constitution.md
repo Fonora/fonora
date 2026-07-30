@@ -23,7 +23,7 @@ Two strangers anywhere on Earth, with zero shared language, can achieve basic co
 | **Ring 1 — Campfire core** | Two strangers, ~1 hour | **50** roots | eat, fear, help, water, collective |
 | **Ring 2 — Everyday** | Week-two fluency | **100** cumulative | rule, work, understand, tree |
 | **Ring 3 — Broad fluency** | Full primitive cap | **150** cumulative max | justice, travel, equal, flow |
-| **Compound words** | Roots stacked transparently | unlimited | law = collective + path |
+| **Compound words** | Roots stacked transparently | unlimited | law = collective + still |
 
 **Hard cap:** 150 primitive roots total. Anything beyond Ring 3 is **compound-only** — not a new primitive.
 
@@ -53,8 +53,7 @@ A primitive is a **fundamental human experience** that cannot be naturally said 
 - `mi ta san be` = I loved you
 - `mi sa san be` = I will love you
 - `mi gi ye` = I go to the water (bare destination)
-- `be sak gi yetem?` = do you want to go to the beach? (full)
-- `sak gi yetem?` = same, casual (addressee dropped)
+- `ka be sak gi yetem.` = do you want to go to the beach? (`ka` opens every question; the Actor is always spoken)
 
 Words never inflect. Grammar uses a tiny closed particle set (`mi`, `ta`, `sa`, `no`, `ya`, `von`). Core roles keep a preferred order because there are no case markers — they do not freely scramble. Full rules → [fonoran-grammar.md](fonoran-grammar.md).
 

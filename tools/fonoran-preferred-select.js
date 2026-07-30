@@ -11,7 +11,6 @@ import { segmentCompound, checkCompoundBoundary } from './fonoran-gen3-readabili
 import { maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { scoreUnderstandability } from './fonoran-understandability.js';
 import { rankCandidates, ASSOCIATION_SEEDS } from './fonoran-expression-candidates.js';
-import { pickConsensus, compositionKey as llmCompositionKey, llmScoresForConcept } from './fonoran-llm-aggregate.js';
 import { computeBoundaryQuality } from './fonoran-compound-confusability.js';
 
 const LOCKED_SOURCES = new Set(['playtest', 'human', 'locked']);
@@ -162,8 +161,10 @@ function pickShortestLengthAlternate(validRanked, maxFlat, currentKey) {
  * Select preferred composition for one concept.
  *
  * Ranking is deterministic four-rules scoring (campfire + understandability heuristics +
- * phonetic/boundary tie-breaks). LLM aggregates are opt-in via options.useLlm and are not
- * part of the default regeneration path.
+ * phonetic/boundary tie-breaks) and nothing else. There is no model-advised branch: the
+ * selector used to accept LLM aggregates behind an opt-in flag that the four-rules regen
+ * never set, which left a dead path capable of changing preferred forms and made the
+ * "deterministic" pipeline import the LLM client transitively.
  */
 export function selectPreferred(conceptId, {
   candidates = [],
@@ -173,7 +174,6 @@ export function selectPreferred(conceptId, {
   locked = false,
   buildCtx,
   rankCtx = {},
-  llmAggregates = null,
   options = {},
 }) {
   const scoreMarginDefault = options.scoreMargin ?? DEFAULT_SCORE_MARGIN;
@@ -183,10 +183,6 @@ export function selectPreferred(conceptId, {
   const scoreMargin = current.some(r => difficultRootIdsEarly.has(r)) ? 0 : scoreMarginDefault;
   const maxFlat = options.maxFlattened ?? maxFlattenedRoots();
   const flatCountFor = rankCtx.flatCountFor ?? (() => null);
-  // LLM path is opt-in advisory only — four-rules regen never sets useLlm.
-  const useLlm = Boolean(options.useLlm && llmAggregates);
-  const llmScores = useLlm ? llmScoresForConcept(llmAggregates, conceptId) : null;
-  const llmConsensus = useLlm ? pickConsensus(llmAggregates, conceptId, options.llmThresholds) : null;
   const force = Boolean(options.force)
     || (options.forceConcepts instanceof Set && options.forceConcepts.has(conceptId));
 
@@ -233,24 +229,6 @@ export function selectPreferred(conceptId, {
 
   // Prefer campfire-passing candidates, then heuristic understandability / flat / boundary.
   validRanked = validRanked.sort((a, b) => {
-    if (useLlm && llmScores?.size) {
-      const aKey = compositionKey(a.composition);
-      const bKey = compositionKey(b.composition);
-      const aStats = llmScores.get(aKey);
-      const bStats = llmScores.get(bKey);
-      const aRank = aStats?.intuition_weight
-        ?? aStats?.cold_recovery_rate
-        ?? aStats?.recovery_rate
-        ?? -1;
-      const bRank = bStats?.intuition_weight
-        ?? bStats?.cold_recovery_rate
-        ?? bStats?.recovery_rate
-        ?? -1;
-      if (bRank !== aRank) return bRank - aRank;
-      const aRepair = aStats?.mean_repair_turns ?? 99;
-      const bRepair = bStats?.mean_repair_turns ?? 99;
-      if (aRepair !== bRepair) return aRepair - bRepair;
-    }
     const aCamp = a.campfire_score ?? 0;
     const bCamp = b.campfire_score ?? 0;
     if (bCamp !== aCamp) return bCamp - aCamp;
@@ -312,26 +290,7 @@ export function selectPreferred(conceptId, {
     shouldPromote = topKey !== currentKey && beatScore;
     promoteReason = 'score';
 
-    if (useLlm) {
-      shouldPromote = false;
-      promoteReason = 'llm_no_consensus';
-      if (llmConsensus) {
-        const consensusKey = llmCompositionKey(llmConsensus.composition);
-        const consensusRow = validRanked.find(r => compositionKey(r.composition) === consensusKey);
-        if (consensusKey !== currentKey && consensusRow) {
-          shouldPromote = true;
-          promoteReason = 'llm_consensus';
-          promoteSource = 'llm_consensus';
-          winner = consensusRow;
-        }
-      }
-      if (!currentValid && topKey !== currentKey) {
-        shouldPromote = true;
-        promoteReason = 'invalid current';
-        promoteSource = useLlm && llmConsensus ? 'llm_consensus' : 'heuristic';
-        winner = top;
-      }
-    } else if (!currentValid && topKey !== currentKey) {
+    if (!currentValid && topKey !== currentKey) {
       shouldPromote = true;
       promoteReason = 'invalid current';
       winner = top;
@@ -343,11 +302,9 @@ export function selectPreferred(conceptId, {
   if (!shouldPromote) {
     const holdReason = lengthOnly && !currentTooLong
       ? 'within length limit'
-      : (lengthOnly && currentTooLong ? 'no shorter alternate' : (
-        useLlm && !llmConsensus && topKey !== currentKey
-          ? 'llm_split'
-          : (winnerKey === currentKey ? 'already optimal' : 'policy held current')
-      ));
+      : (lengthOnly && currentTooLong
+        ? 'no shorter alternate'
+        : (winnerKey === currentKey ? 'already optimal' : 'policy held current'));
     return {
       preferred: { composition: current, gloss },
       preferred_source: preferredSource === 'llm_consensus' ? preferredSource : 'heuristic',
@@ -358,7 +315,6 @@ export function selectPreferred(conceptId, {
       demoted: [],
       top_candidate: winner.composition,
       top_score: winner.understandability,
-      llm_consensus: llmConsensus,
     };
   }
 
@@ -390,7 +346,6 @@ export function selectPreferred(conceptId, {
     to_flat: winner.validation.flat_count,
     from_score: currentScore,
     to_score: winner.understandability,
-    llm_consensus: llmConsensus,
   };
 }
 
@@ -441,7 +396,6 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
   const workingPreferred = new Map();
   const promotions = [];
   const demoTrees = ctx.demoTrees ?? new Map();
-  const llmAggregates = options.useLlm ? (ctx.llmAggregates ?? null) : null;
   // Pass difficultRootIds through options so selectPreferred can waive its score margin.
   const effectiveOptions = { ...options, difficultRootIds: ctx.difficultRootIds ?? new Set() };
 
@@ -476,7 +430,6 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
       locked: isCompoundEditoriallyLocked(row),
       buildCtx,
       rankCtx,
-      llmAggregates,
       options: effectiveOptions,
     });
 

@@ -14,7 +14,6 @@ import {
   normalizeFrameParticles,
   checkLlmGrammarViolations,
   simplifyMotionFrame,
-  isAddresseeDroppable,
 } from '../tools/fonoran-llm-grammar-brief.js';
 import {
   normalizeWePrimaryFrame,
@@ -161,7 +160,9 @@ async function main() {
   );
   assert(mergedTwo.mode === 'discourse', `multi-sentence mode is discourse: ${mergedTwo.mode}`);
 
-  // Rule 4: serial want+move, bare destination, droppable addressee.
+  // Rule 4: serial want+move, bare destination. The Actor is always spoken: the casual
+  // addressee drop was removed from the grammar, because a bare `sak gi yetem` reads as a
+  // first-person statement just as easily as a question to you.
   const beachFrame = {
     slots: {
       subject: ['addressee'],
@@ -183,23 +184,18 @@ async function main() {
     JSON.stringify(beachRepaired.slots.path) === JSON.stringify(['beach']),
     `beach bare path: ${JSON.stringify(beachRepaired.slots.path)}`,
   );
-  assert(isAddresseeDroppable(beachRepaired, 'Do you want to go to the beach?'), 'beach Actor droppable');
-  assert(
-    !isAddresseeDroppable(beachRepaired, 'Do you want me to move back?'),
-    'mixed persons not droppable',
-  );
   const beachResult = await translateFromFrame(beachRepaired, { input: 'Do you want to go to the beach?' });
   assert(
     /^be sak gi yetem\s*\?$/.test(String(beachResult.surface?.roman ?? '')),
     `beach roman: ${beachResult.surface?.roman}`,
   );
-  assert(beachResult.tokens.some(t => t.droppable && t.fonoran === 'be'), 'beach marks be droppable');
+  assert(!beachResult.tokens.some(t => t.droppable), 'no token is marked droppable');
   const beachAlts = await attachTranslateAlternates(beachResult, beachRepaired, {
     input: 'Do you want to go to the beach?',
   });
   assert(
-    beachAlts.alternates?.some(a => a.id === 'actor_dropped' && /^sak gi yetem\s*\?$/.test(String(a.roman ?? ''))),
-    `beach casual alt: ${JSON.stringify(beachAlts.alternates?.map(a => a.roman))}`,
+    !beachAlts.alternates?.some(a => a.id === 'actor_dropped'),
+    `no actor-dropped alternate: ${JSON.stringify(beachAlts.alternates?.map(a => a.id))}`,
   );
 
   const toward = simplifyMotionFrame({

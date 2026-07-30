@@ -12,6 +12,7 @@ import {
 import { scoreEditorialCollision, collisionSafetyScore } from './fonoran-root-collision.js';
 import { scoreCompoundBoundary, boundaryPenalty } from './fonoran-root-boundary-score.js';
 import { isBannedPrimitiveSpelling } from './fonoran-phonetic-weights.js';
+import { isPrefixSafe } from './fonoran-prefix-rule.js';
 
 const GRAMMAR_PARTICLE_PHRASES = [
   ['mi'],
@@ -171,6 +172,10 @@ function pickBestSyllable(concept, syllablePool, config, usedRoots, rhymeCounts,
   for (const syllable of syllablePool) {
     if (usedRoots.includes(syllable.form)) continue;
     if (isBannedPrimitiveSpelling(syllable.form)) continue;
+    // Hard constraint, not the soft prefix_overlap penalty below: a form that prefixes an
+    // approved root (or is prefixed by one) fails the prefix-safe audit, so handing it out
+    // here only defers the failure to CI.
+    if (!isPrefixSafe(syllable.form, usedRoots)) continue;
 
     const collision = scoreEditorialCollision(syllable.form, collisionProfile);
     if (collision.blocked) continue;
@@ -229,6 +234,7 @@ function pickBestSyllable(concept, syllablePool, config, usedRoots, rhymeCounts,
     for (const syllable of syllablePool) {
       if (usedRoots.includes(syllable.form)) continue;
       if (isBannedPrimitiveSpelling(syllable.form)) continue;
+      if (!isPrefixSafe(syllable.form, usedRoots)) continue;
       if (scoreEditorialCollision(syllable.form, collisionProfile).blocked) continue;
       const collision = scoreEditorialCollision(syllable.form, collisionProfile);
       const boundary = scoreCompoundBoundary(concept.id, syllable.form, partnerMap, spellingByConcept);

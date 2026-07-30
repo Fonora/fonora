@@ -64,7 +64,7 @@ export const RING_2_IDS = [
 
 /** Ring 3 — fluency (up to 50 more, 150 cumulative max). */
 export const RING_3_IDS = [
-  'equal', 'change', 'cause', 'part', 'all', 'more', 'less', 'will', 'mark',
+  'equal', 'change', 'cause', 'count', 'part', 'all', 'more', 'less', 'will', 'mark',
   'justice', 'include', 'exclude',
   'motion', 'point', 'travel', 'journey',
   'lonely', 'proud', 'scared', 'aggression', 'joy', 'depression', 'timid',

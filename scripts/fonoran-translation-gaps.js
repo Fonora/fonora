@@ -38,6 +38,7 @@ import {
   loadGapBaseline,
   saveGapBaseline,
   diffGapsAgainstBaseline,
+  goldenFieldForEngine,
 } from '../tools/fonoran-translation-gaps.js';
 import { closeStore } from '../tools/fonoran-store.js';
 
@@ -68,6 +69,14 @@ const gapReportOpts = () => ({
   cacheOnly,
 });
 
+// Each engine keeps its own golden field and gap baseline, so every "accept this"
+// hint has to name the engine it applies to. A hint that omits it sends the reader
+// to a command that rewrites the other engine's baseline.
+const goldenField = goldenFieldForEngine(engineArg).golden;
+const engineFlags = `--engine ${engineArg}${cacheOnly ? ' --cache-only' : ''}`;
+const acceptCommand = `node scripts/fonoran-translation-gaps.js --update-golden ${engineFlags}`;
+const baselineCommand = `node scripts/fonoran-translation-gaps.js --update-gap-baseline ${engineFlags}`;
+
 const C = {
   reset: '\x1b[0m', dim: '\x1b[2m', bold: '\x1b[1m',
   red: '\x1b[31m', green: '\x1b[32m', yellow: '\x1b[33m', cyan: '\x1b[36m',
@@ -82,7 +91,7 @@ async function runAssert() {
 
   // Gap-baseline regression: fail on any NEW honest gap beyond the tracked
   // baseline (curation may only shrink it). Skipped if no baseline exists yet.
-  const baseline = await loadGapBaseline();
+  const baseline = await loadGapBaseline(engineArg);
   const gapDiff = baseline ? diffGapsAgainstBaseline(report, baseline) : null;
   const newGaps = gapDiff?.new ?? [];
   const warmNeeded = report.warm_needed ?? [];
@@ -113,16 +122,16 @@ async function runAssert() {
   if (newGaps.length) {
     console.log(color(C.red + C.bold, `✗ New translation gap(s) beyond baseline`) +
       ` — ${newGaps.length}: ${newGaps.join(', ')}`);
-    console.log(color(C.dim, 'If intended, accept them with: node scripts/fonoran-translation-gaps.js --update-gap-baseline\n'));
+    console.log(color(C.dim, `If intended, accept them with: ${baselineCommand}\n`));
   } else if (baseline && gapDiff.resolved.length) {
     console.log(color(C.green, `✓ ${gapDiff.resolved.length} gap(s) newly resolved: ${gapDiff.resolved.join(', ')}`) +
-      color(C.dim, ' — shrink the baseline with --update-gap-baseline\n'));
+      color(C.dim, ` — shrink the baseline with ${baselineCommand}\n`));
   }
 
   if (!graded.length) {
     if (warmNeeded.length) return false;
-    console.log(color(C.yellow, 'No golden `fon` values found in corpus — nothing to assert.'));
-    console.log(color(C.dim, 'Seed them with: node scripts/fonoran-translation-gaps.js --update-golden'));
+    console.log(color(C.yellow, `No golden \`${goldenField}\` values found in corpus — nothing to assert.`));
+    console.log(color(C.dim, `Seed them with: ${acceptCommand}`));
     return true;
   }
 
@@ -138,7 +147,7 @@ async function runAssert() {
       console.log(`    ${color(C.dim, 'got     ')} ${color(C.red, p.roman || '(empty)')}`);
     }
     console.log(`\n${color(C.dim, 'If these changes are intentional, accept them with:')}`);
-    console.log(color(C.dim, '  node scripts/fonoran-translation-gaps.js --update-golden'));
+    console.log(color(C.dim, `  ${acceptCommand}`));
   }
 
   // Informational: soft reviews + concept collapses (do not fail the suite).
@@ -182,7 +191,7 @@ async function runUpdate() {
 async function runUpdateBaseline() {
   const report = await runTranslationGapReport({ ...gapReportOpts(), suggest: false });
   const words = (report.gaps ?? []).map(g => g.word);
-  const gaps = await saveGapBaseline(words);
+  const gaps = await saveGapBaseline(words, engineArg);
   console.log(color(C.green + C.bold, `Updated gap baseline`) +
     ` — ${gaps.length} distinct honest gap(s) accepted.`);
   console.log(color(C.dim, 'Review the git diff to confirm the new baseline is intended.'));

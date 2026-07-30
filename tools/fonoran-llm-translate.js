@@ -44,6 +44,9 @@ import {
   attachTranslateAlternates,
 } from './fonoran-translate-alternates.js';
 import { splitCoordinatedClauses } from './fonoran-interpretation.js';
+// Particles come from the seed, not the lab, so reading them at module load is correct:
+// they are editorial and change with a deploy, unlike root spellings.
+import { particleForms, particleFormById } from './fonoran-language-policy.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const GRAMMAR_PARTICLES_PATH = join(ROOT, 'data/fonoran-grammar-particles.json');
@@ -438,7 +441,7 @@ Do NOT split for:
 - Compile MEANING, not word-for-word English (Rule 7).
 - Never mix concepts from different clauses into one slot set — that produces scrambled output.
 - Demonstratives (this/that/these/those) and articles have NO Fonoran form — never emit a concept for them; leave them to inference (Rule 7).
-- Particles ONLY: mi, ta, sa, no, ya, von — map neg→no (Rule 3).
+- Particles ONLY: ${particleForms().join(', ')} — map neg→${particleFormById('logic_not')} (Rule 3).
 - Polarity with no: ONLY false=[no, true] and different=[no, same]. Never invent other antonyms via no+quality.
 - Scene structure: put temporal scene concepts in time (long_ago, beginning, world, …), never as trailing modifiers. Renderer fronts them before Actor; ta/sa stay by Action.
 - Pure scene-setting ("when the world was young") = one frame. Subordinate with its own actor+action = split frames.
@@ -455,9 +458,17 @@ Do NOT split for:
 - we/us: default subject collective (dan). Use mi + addressee only when source explicitly signals a dyad (each other, you and I, both of us) — never from topic or urgency alone.
 - why: expressible as [unknown, cause] → nohu gak (cause is an approved root).
 - how / how many: NOT expressible — put in unresolved[], do not guess. Specifically, how many must not become [unknown, many] (many is a value on the quantity scale, not the quantity dimension), and how must not become [unknown, rule] (rule is prescriptive, not manner).
+- Modality is LEXICAL: chain modal senses as ordinary concepts in event, on the want (sak) precedent. Never a particle, never a new concept.
+  - ability means a LEARNED SKILL or physical capability of the subject ("I can make fire", "I can swim", "able to") -> event [know, VERB]; the know+VERB route reads as "knows how to"
+  - "we can X" proposing a joint action is a SUGGESTION, not ability -> maybe, or the bare action when maybe overstates the doubt. NEVER [know, VERB] for a proposal: "we can go together" is not a claim that we know how to walk
+  - necessity "must / have to / need to" -> event [need, VERB]
+  - possibility or suggestion ("maybe", and "we can X" meaning let us X) -> the single concept maybe. Emit maybe itself, NEVER its parts as separate items: [some, true] renders as two words and loses the sense
+  - inability "cannot" -> plain negation, event [no, VERB]. Do NOT add a modal concept.
+  - interrogative "can you…?" / "can we…?" is a REQUEST: compile the bare question with NO modal concept, the "?" carries it
+  - should / ought and permission-granting "you can keep this" are NOT expressible -> unresolved[]. Never map should onto need: under negation that reverses the meaning ("should not go" would become "need not go", permitting what was forbidden)
 - Abstract / technical words: prefer a transparent compose path over an existing concept over a gap (Rule 5). Emit either a bridge concept id (e.g. sentience) or an explicit compose path joined with "+" using APPROVED concept ids (e.g. "think+self"). Only fall back to unresolved[] when no root path is recoverable and it is not a proper noun.
 - Proper nouns / coined names with no recoverable path (e.g. a place or product name): keep as a marked loanword — emit its concept id if one is pinned in the glossary/bridge list rather than translating or gapping.
-- Never invent concept ids OR spellings. Record honest gaps in unresolved[] as SHORT tokens — the single English word (or ≤2-word phrase) that has no v1 form, e.g. "can", "or", "should", "boy". Do NOT put explanations, clause labels, or sentence fragments in unresolved[] (Design Rule 0).`;
+- Never invent concept ids OR spellings. Record honest gaps in unresolved[] as SHORT tokens — the single English word (or ≤2-word phrase) that has no v1 form, e.g. "should", "how", "boy". Do NOT put explanations, clause labels, or sentence fragments in unresolved[] (Design Rule 0).`;
 
 /**
  * Ask LLM for a concept frame.
@@ -658,7 +669,7 @@ export async function simplifyForFonoran(text, options = {}) {
 export async function validateLlmFrame(frame, lab = null, sourceText = '', { devLab = false } = {}) {
   const ctx = await buildResolveContext(lab, { devLab });
   const particles = await getParticleRuntime();
-  const allowedParticles = new Set(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
+  const allowedParticles = new Set(particleForms());
   for (const p of particles.data?.particles ?? []) {
     if (p.form) allowedParticles.add(p.form);
   }
@@ -733,7 +744,6 @@ async function translateViaLlmCore(text, options = {}) {
           devLab: options.devLab,
           input,
           sourceLang: cachedFrame.detected_lang ?? sourceLang,
-          allowActorDrop: false,
           multiClause: true,
         });
         segResults.push({
@@ -849,8 +859,6 @@ async function translateViaLlmCore(text, options = {}) {
         devLab: options.devLab,
         input,
         sourceLang: clauseFrame.detected_lang ?? sourceLang,
-        // Multi-clause discourse: never mark Actor as casually droppable.
-        allowActorDrop: false,
         multiClause: true,
       });
       segResults.push({
@@ -969,7 +977,14 @@ export async function mergeSentenceResults(results, segments, { input }) {
       Array.isArray(r.tokens) ? r.tokens : [],
     );
     tokens.push(...segTokens);
-    const mark = terminalPunctuationFromText(segments[i]);
+    // Clause splits label their segments `clause N` instead of carrying source
+    // text, so no terminator is recoverable from the label and every
+    // multi-clause sentence lost its final mark. The sentence's own terminator
+    // belongs on the last clause; earlier clauses were comma- or
+    // conjunction-joined and correctly take none.
+    const isLast = i === results.length - 1;
+    const mark = terminalPunctuationFromText(segments[i])
+      || (isLast ? terminalPunctuationFromText(input) : null);
     if (mark) tokens.push(punctuationToken(mark));
 
     const segSlots = r.semantic?.slots ?? {};
@@ -1031,8 +1046,12 @@ export async function translateViaLlm(text, options = {}) {
   const input = String(text ?? '').trim();
   const sourceLang = normalizeSourceLang(options.sourceLang);
 
-  const wantSimplify = options.simplify === true
-    || (options.simplify === 'auto' && shouldAutoSimplify(input));
+  // Simplification is its own API call and it runs before any cache is consulted, so a
+  // cache-only caller could be billed for a request that promised not to spend, and a
+  // warmed phrase could pay to be rewritten before the lookup that would have hit.
+  const wantSimplify = !options.cacheOnly
+    && (options.simplify === true
+      || (options.simplify === 'auto' && shouldAutoSimplify(input)));
 
   let simplified = null;
   if (input && wantSimplify) {

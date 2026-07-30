@@ -121,6 +121,7 @@ const PARTICLE_SHORT_GLOSS = {
   no: 'not',
   ya: 'yes',
   von: 'if',
+  ka: 'question',
 };
 
 function shortGloss(text, fallback = '') {

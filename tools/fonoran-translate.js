@@ -1,6 +1,14 @@
 /**
- * Unified Fonoran translate API — routes to LLM compiler (default), legacy English compiler,
- * or reverse Fonoran → natural-language path.
+ * Unified Fonoran translate API. Routes to the deterministic English compiler (default), the
+ * LLM compiler, or the reverse Fonoran to natural-language path.
+ *
+ * The deterministic engine is the default because it is the language, and because the LLM was
+ * never a fallback in practice: it answered essentially every request, which meant the public
+ * translator cost money per phrase and stopped working entirely when no API key was present,
+ * which is what it was doing. The deterministic engine needs no key, costs nothing, answers
+ * instantly, and brackets what it cannot say instead of inventing it.
+ *
+ * `legacy` and `lexical` remain accepted names for it, since scripts and tests pass them.
  */
 
 import { translateViaLlm, translatorLlmConfigured } from './fonoran-llm-translate.js';
@@ -15,9 +23,11 @@ import {
 
 function resolveEngine(requested) {
   const fromEnv = process.env.FONORAN_TRANSLATOR_ENGINE?.trim().toLowerCase();
-  const engine = (requested ?? fromEnv ?? 'llm').toLowerCase();
-  if (engine === 'legacy' || engine === 'lexical') return engine;
-  return 'llm';
+  const engine = (requested ?? fromEnv ?? 'legacy').toLowerCase();
+  // Only an explicit request reaches the LLM, so an unrecognised engine name costs nothing
+  // rather than silently billing. Set FONORAN_TRANSLATOR_ENGINE=llm to invert this.
+  if (engine === 'llm') return 'llm';
+  return 'legacy';
 }
 
 function resolveDirection(options = {}) {

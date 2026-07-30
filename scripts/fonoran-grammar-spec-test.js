@@ -111,6 +111,7 @@ assert(
 
 // 11. Spec constants are well-formed.
 assert(SLOT_SURFACE_ORDER[0] === 'subject', 'subject is first slot');
-assert(PARTICLE_FORMS.length === 6, 'six closed-class particles');
+assert(PARTICLE_FORMS.length === 7, 'seven closed-class particles');
+assert(PARTICLE_FORMS.includes('ka'), 'question particle ka is in the closed class');
 
 console.log('fonoran-grammar-spec: all assertions passed');

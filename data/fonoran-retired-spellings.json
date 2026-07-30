@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "status": "canonical",
+  "description": "Spellings that were once published and have since been retired. A retired spelling is never reassigned to a different concept: learners, lessons, docs and cached translations may still carry the old meaning, so reuse creates two meanings for one sound. Retirement used to be recorded as a hardcoded map in tools/fonoran-english-resolve.js, which is how `fa` was retired from `one` and then reassigned to `child`. This seed is the single source: the resolver reads it for backwards compatibility, root generation reserves every form here so the pool can never hand it out again, and scripts/fonoran-verify-invariants.js fails when a retired form reappears.",
+  "policy": "append-only",
+  "retired": [
+    {
+      "form": "fa",
+      "concept": "child",
+      "reason": "English near-profanity /fʌ/. Retired twice: first from `one` (which moved to `lu`), then reassigned to `child` on 2026-07-12 because retirement was recorded in code rather than here. `child` is now `da`. Resolves to `child` because that is the meaning in current caches.",
+      "retired_at": "2026-07-29"
+    },
+    {
+      "form": "fu",
+      "concept": "right",
+      "reason": "English near-profanity /fʊ/. Was an approved root for `right`, which is now `fe`.",
+      "retired_at": "2026-07-29"
+    },
+    {
+      "form": "pu",
+      "concept": "heart",
+      "reason": "Reads as \"poo\" (/pʊ/, the OO vowel). Missing from the excluded list because the list predated the vowel work, so it reached the dictionary as `heart`, which is now `mat`.",
+      "retired_at": "2026-07-29"
+    },
+    {
+      "form": "pedal",
+      "concept": null,
+      "reason": "Superseded compound spelling from an earlier compound generation.",
+      "retired_at": "2026-07-01"
+    },
+    {
+      "form": "daktopa",
+      "concept": null,
+      "reason": "Superseded compound spelling from an earlier compound generation.",
+      "retired_at": "2026-07-01"
+    },
+    {
+      "form": "tampe",
+      "concept": "peace",
+      "reason": "Respelled to `tampa` when the vowel inventory settled.",
+      "retired_at": "2026-07-01"
+    },
+    {
+      "form": "le",
+      "concept": null,
+      "reason": "Taught in an early Learn fixture, never an approved root. Reserved so it is not handed out as a new spelling.",
+      "retired_at": "2026-07-01"
+    },
+    {
+      "form": "ka",
+      "concept": null,
+      "reason": "Taught in an early Learn fixture as `person`, which is now `ba`. Reserved against reuse.",
+      "retired_at": "2026-07-01"
+    },
+    {
+      "form": "telto",
+      "concept": null,
+      "reason": "Taught in an early Learn fixture as `food`, which is now `lo`. Reserved against reuse.",
+      "retired_at": "2026-07-01"
+    },
+    {
+      "form": "fenmel",
+      "concept": "world",
+      "reason": "Documented spelling for `world`, which is now `fenfo` (earth+life).",
+      "retired_at": "2026-07-01"
+    }
+  ]
+}

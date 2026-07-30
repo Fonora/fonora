@@ -4,7 +4,11 @@
 
 The Fonoran Translator compiles **meaning** from any source language into Fonoran — it is not a word-for-word gloss. It also supports the reverse path: **Fonoran → natural language** (English or another selected target), with input as **Fonoran (Roman)** or **Fonoran (Fonora)** script. Grammar is language-neutral ([Rule 7](fonoran-grammar.md#rule-7-translator-architecture)); concepts are canonical; spellings come only from the approved lab inventory.
 
-The **default engine** is a multilingual **LLM semantic compiler** (`tools/fonoran-llm-translate.js`) that emits a concept frame, then a **deterministic renderer** (`translateFromFrame()` in `tools/fonoran-translator.js`) builds roman, script, tokens, and playback. The legacy English-only compiler remains for regression (`engine=legacy`).
+The **default engine** is the **deterministic English compiler** (`translateEnglishLegacy()` in `tools/fonoran-translator.js`, named `engine=legacy` in the API and scripts). It needs no API key, costs nothing per phrase, answers offline, and brackets what it cannot say, for example `[how]`, instead of inventing a form.
+
+A multilingual **LLM semantic compiler** (`tools/fonoran-llm-translate.js`) is available on `engine=llm` or by setting `FONORAN_TRANSLATOR_ENGINE=llm`. It emits a concept frame that the same **deterministic renderer** (`translateFromFrame()`) turns into roman, script, tokens, and playback. It is now an authoring tool, used to warm the golden corpus and to probe phrasing the rule engine cannot yet parse, rather than the path public traffic takes.
+
+The default was the LLM until it became clear it was not a fallback in practice: it answered essentially every request, so every public translation cost money and the translator failed outright wherever no key was configured.
 
 Research context: [RN-28 · Multilingual LLM semantic compiler](research-notes/RN-28-multilingual-llm-semantic-compiler.md). Legacy compiler spec: [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md).
 
@@ -159,7 +163,7 @@ flowchart TB
 | **Resolution colors** | Default text = direct lexicon hit; gold = interpreted; orange = semantic / weak alias; red = unresolved |
 | **Pronunciation** | Collapsed `<details>` under roman; phonetic key + “sounds like” hint |
 | **Why this reading** | Hover/focus popup in output header; shows LLM `reasoning` + engine badge (Cached / LLM) |
-| **Listen** | Uses server `playback` as source of truth; speaks Fonoran IPA via Piper; unresolved gaps may use English TTS; Fonoran tokens never fall back to English orthography; `.` `!` `?` retained on roman/script and pause Listen between sentences |
+| **Listen** | Uses server `playback` as source of truth; speaks Fonoran IPA via Piper; unresolved gaps may use English TTS; Fonoran tokens never fall back to English orthography; `.` and `!` retained on roman/script and pause Listen between sentences; a question's `?` is written as `.`, because `ka` already marks it as a question |
 | **Also sayable** | Rule-based alternates (e.g. collective `dan` ↔ dyadic `mi be` for *we*); alternate ▶ highlights alternate tokens |
 | **Layout** | 15 px gap below nav; panels `align-items: start`; independent auto heights |
 
@@ -223,8 +227,7 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | `direction` | `to-fonoran` |
 | `surface.roman` | Fonoran roman line |
 | `surface.pronunciation` | `{ sayLine, englishLine }` for UI + TTS hints |
-| `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id`; `droppable` when addressee Actor may be omitted casually |
-| `actor_droppable` | True when primary includes a recoverable addressee that may drop in casual speech |
+| `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id` |
 | `playback` | `{ script, segments, wordSources, tokenIndices, playable }` |
 | `reasoning` | One-sentence compiler note (shown in “Why this reading”) |
 | `simplified` | Plain-meaning pivot `{ clauses[], text, note }` when the pre-pass ran (shown as “Plain meaning”) |

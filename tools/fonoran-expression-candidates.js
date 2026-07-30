@@ -17,10 +17,9 @@ import { readDoc } from './fonoran-store.js';
 import { scoreUnderstandability, metaLookupFromRecords } from './fonoran-understandability.js';
 import { experienceMetaFor } from './fonoran-experience-tiers.js';
 import { buildCompositionResolver } from './fonoran-composition-resolve.js';
-import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
-import { getAcceptedCompositionSeeds } from './fonoran-compound-proposals.js';
 import { evaluateCampfireComposition } from './fonoran-campfire-composition.js';
 import { DIFFICULT_ONSETS } from './fonoran-phonetic-weights.js';
+import { isMainModule } from './is-main.js';
 
 /**
  * Hand-seeded communicative strategies: intuitive ways a stranger might try to express a
@@ -668,26 +667,27 @@ export function validateSeedIntegrity(primitiveIds, compoundDefs) {
  * Generate ranked candidate expressions for a concept by merging:
  *   - any known preferred/existing composition,
  *   - hand-seeded communicative strategies,
- *   - accepted LLM-generated proposals (from fonoran-compound-proposals),
  *   - caller-supplied extra attempts.
+ *
+ * The pool is committed seed data only. Accepted proposals used to be read live
+ * from the proposals doc, which made a "deterministic" ranking depend on review
+ * state that is not in git: a proposal accepted enters the language by being
+ * written to the seeds, not by being merged here at ranking time.
  */
 export function generateCandidates(conceptId, ctx = {}) {
   const pool = [];
   if (ctx.knownComposition?.length) pool.push(ctx.knownComposition);
   for (const seed of ASSOCIATION_SEEDS[conceptId] ?? []) pool.push(seed);
-  // Merge accepted LLM proposals: these were validated at creation time
-  for (const comp of ctx.llmProposalSeeds?.get(conceptId) ?? []) pool.push(comp);
   for (const extra of ctx.extraCompositions ?? []) pool.push(extra);
   return rankCandidates(conceptId, pool, ctx);
 }
 
 /** Node-only: build ranking context (meta lookup + collision counts) from the data files. */
 export async function loadCandidateContext() {
-  const [inventory, approved, compoundsDoc, llmProposalSeeds] = await Promise.all([
+  const [inventory, approved, compoundsDoc] = await Promise.all([
     readDoc('concept_inventory'),
     readDoc('approved_roots'),
     readDoc('compounds'),
-    getAcceptedCompositionSeeds().catch(() => new Map()),
   ]);
   const records = [...(inventory?.primitives ?? []), ...(approved?.roots ?? [])];
   const fromRecords = metaLookupFromRecords(records);
@@ -724,44 +724,23 @@ export async function loadCandidateContext() {
     flatCountFor,
     compoundsDoc,
     primitiveIds,
-    llmProposalSeeds,
     difficultRootIds,
   };
 }
 
 async function main() {
   const args = process.argv.slice(2);
-  const useLlm = args.includes('--llm');
   const conceptId = args.find(a => !a.startsWith('--'));
   if (!conceptId) {
-    console.error('Usage: node tools/fonoran-expression-candidates.js <concept-id> [--llm]');
+    console.error('Usage: node tools/fonoran-expression-candidates.js <concept-id>');
     process.exit(1);
   }
   const ctx = await loadCandidateContext();
-  let extraCompositions = [];
-  if (useLlm) {
-    const compound = ctx.compoundsDoc?.compounds?.find(c => c.concept === conceptId);
-    const gloss = compound?.preferred?.gloss ?? compound?.gloss ?? conceptId;
-    const llmResult = await proposeLlmCandidates(conceptId, {
-      gloss,
-      primitiveIds: ctx.primitiveIds,
-      compoundDefs: ctx.compoundsDoc?.compounds ?? [],
-      maxFlattened: 4,
-      rejectComposition: compound?.preferred?.composition ?? compound?.composition,
-    });
-    extraCompositions = llmResult.compositions ?? [];
-    if (extraCompositions.length) {
-      console.log(`LLM proposed ${extraCompositions.length} candidate(s).\n`);
-    } else if (llmResult.error) {
-      console.log(`LLM error: ${llmResult.error}\n`);
-    }
-  }
   const ranked = generateCandidates(conceptId, {
     metaFor: ctx.metaFor,
     collisionCounts: ctx.collisionCounts,
     knownComposition: ctx.knownByConcept.get(conceptId),
     flatCountFor: ctx.flatCountFor,
-    extraCompositions,
   });
   if (!ranked.length) {
     console.log(`No candidate strategies seeded for "${conceptId}". Add some to ASSOCIATION_SEEDS.`);
@@ -775,7 +754,7 @@ async function main() {
   console.log('\nThe score only ranks. A human guess-the-meaning playtest decides the preferred form.');
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+const isMain = isMainModule(import.meta.url);
 if (isMain) {
   main().catch(err => { console.error(err); process.exit(1); });
 }

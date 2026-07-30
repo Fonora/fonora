@@ -1,6 +1,6 @@
 {
   "name": "fonora",
-  "version": "0.1.8",
+  "version": "0.1.16",
   "description": "Open-source research exploring phonetic writing, constructed language design, and fast cross-linguistic communication",
   "homepage": "https://fonora.org",
   "repository": {
@@ -18,10 +18,13 @@
   "scripts": {
     "postinstall": "node scripts/copy-espeak.js && node scripts/copy-espeak-audio.js && node scripts/copy-onnx-wasm.js && node scripts/copy-piper.js && node scripts/fonoran-data-fetch.js",
     "start": "node server.js",
-    "test": "node js/tests.js && npm run research:verify-md && npm run fonoran:prefix-safe -- --check && npm run test:translator",
-    "test:translator": "node scripts/fonoran-grammar-spec-test.js && node scripts/fonoran-translation-gaps.js --assert --engine llm --cache-only && node scripts/fonoran-translation-probes.js --assert",
+    "test": "node js/tests.js && npm run research:verify-md && npm run fonoran:prefix-safe -- --check && npm run fonoran:policy:check && npm run fonoran:verify-refs && npm run fonoran:verify-invariants && npm run fonoran:verify-quarantine && npm run test:translator",
+    "test:translator": "node scripts/fonoran-grammar-spec-test.js && node scripts/fonoran-translation-gaps.js --assert --engine legacy && node scripts/fonoran-translation-gaps.js --assert --engine llm --cache-only && node scripts/fonoran-translation-probes.js --assert",
+    "test:translator:probes:deterministic": "node scripts/fonoran-translation-probes.js --assert --engine legacy",
     "test:translator:grammar-spec": "node scripts/fonoran-grammar-spec-test.js",
     "test:translator:golden": "node scripts/fonoran-translation-gaps.js --assert --engine llm --cache-only",
+    "test:translator:deterministic": "node scripts/fonoran-translation-gaps.js --assert --engine legacy",
+    "test:translator:deterministic:update": "node scripts/fonoran-translation-gaps.js --update-golden --engine legacy",
     "test:translator:legacy": "node scripts/fonoran-translation-gaps.js --assert --engine legacy",
     "test:translator:warm": "node scripts/fonoran-translation-gaps.js --update-golden --engine llm",
     "test:translator:update": "node scripts/fonoran-translation-gaps.js --update-golden --engine llm",
@@ -95,7 +98,12 @@
     "fonoran:cv-density:project": "node scripts/fonoran-cv-density-project.js",
     "fonoran:primitive-roots": "node -e \"console.error('DEPRECATED: use npm run fonoran:build (converged pipeline). See docs/fonoran.md')\" && exit 1",
     "fonoran:primitive-roots:gen": "node -e \"console.error('DEPRECATED: use npm run fonoran:build')\" && exit 1",
-    "fonoran:primitive-roots:import": "node -e \"console.error('DEPRECATED: use npm run fonoran:build')\" && exit 1"
+    "fonoran:primitive-roots:import": "node -e \"console.error('DEPRECATED: use npm run fonoran:build')\" && exit 1",
+    "fonoran:build:policy": "node scripts/fonoran-build-language-policy.js",
+    "fonoran:policy:check": "node scripts/fonoran-build-language-policy.js --check",
+    "fonoran:verify-refs": "node scripts/fonoran-verify-language-refs.js",
+    "fonoran:verify-invariants": "node scripts/fonoran-verify-invariants.js",
+    "fonoran:verify-quarantine": "node scripts/fonoran-verify-llm-quarantine.js"
   },
   "dependencies": {
     "@echogarden/espeak-ng-emscripten": "^0.3.5",
@@ -105,6 +113,8 @@
     "onnxruntime-web": "1.20.1",
     "pg": "^8.22.0",
     "piper-tts-web": "^1.1.2",
+    "wink-eng-lite-web-model": "^1.8.1",
+    "wink-nlp": "^2.4.0",
     "wordpos": "^2.1.0"
   }
 }

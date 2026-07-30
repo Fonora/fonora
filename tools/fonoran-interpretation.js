@@ -447,14 +447,47 @@ const DESIRE_VERBS = new Set([
 ]);
 
 /**
+ * English props yes/no questions up with a do-auxiliary that carries no meaning of its own:
+ * "Do you want to go" asserts nothing that "you want to go" does not. Fonoran marks the
+ * question with `?`, so the auxiliary is dropped. It is skipped here rather than filtered
+ * from the pattern stream because these patterns deliberately keep be-forms.
+ */
+const DUMMY_QUESTION_AUX = new Set(['do', 'does', 'did']);
+
+/**
+ * True when the stream holds DESIRE_VERB + to + VERB, the shape matchDesireInfinitive reads.
+ *
+ * The motion reading is attempted first and matches on the infinitive alone, so "I want to go
+ * to the beach" was parsed as "go to the beach" with `want` folded into the subject region and
+ * dropped: the output claimed I am going, not that I want to. The desire is the main assertion,
+ * so a stream of this shape belongs to the desire pattern and the motion branch stands down.
+ */
+export function hasDesireInfinitive(tokens) {
+  if (!tokens?.length) return false;
+  for (let i = 0; i < tokens.length - 2; i += 1) {
+    if (!DESIRE_VERBS.has(tokens[i]?.toLowerCase())) continue;
+    if (tokens[i + 1]?.toLowerCase() !== 'to') continue;
+    const inf = tokens[i + 2]?.toLowerCase();
+    if (inf && !ARTICLES.has(inf)) return true;
+  }
+  return false;
+}
+
+/**
  * DESIRE_VERB + to + VERB + NP* → event (desire) + object (infinitive verb) + modifiers (NP).
  */
 export function matchDesireInfinitive(tokens, rules) {
   if (!tokens?.length || tokens.length < 3) return null;
 
-  let start = 0;
-  const head = tokens[0]?.toLowerCase();
-  if (tokens.length >= 4 && !DESIRE_VERBS.has(head)) start = 1;
+  // The desire verb is located rather than assumed, because it sits at index 2 in a question
+  // ("do you want to go"). Assuming index 0 or 1 dropped that whole class through to the
+  // spatial-landmark branch, which joins everything before the verb into one pseudo-token:
+  // "you want to" was looked up as a single word and confidently resolved to an unrelated
+  // root, reporting no gap. Silently wrong beats loudly incomplete only for the machine.
+  const offset = DUMMY_QUESTION_AUX.has(tokens[0]?.toLowerCase()) ? 1 : 0;
+  let start = offset;
+  const head = tokens[offset]?.toLowerCase();
+  if (tokens.length >= offset + 4 && !DESIRE_VERBS.has(head)) start = offset + 1;
 
   const desire = tokens[start]?.toLowerCase();
   if (!DESIRE_VERBS.has(desire)) return null;
@@ -478,7 +511,9 @@ export function matchDesireInfinitive(tokens, rules) {
   }
 
   return {
-    subject: start > 0 ? { english: tokens[0], role: 'subject' } : null,
+    // The subject is the token before the desire verb, not tokens[0], which is the discarded
+    // auxiliary in a question.
+    subject: start > offset ? { english: tokens[start - 1], role: 'subject' } : null,
     event: { english: tokens[start], role: 'event' },
     object: { english: infVerb, role: 'object' },
     modifiers,

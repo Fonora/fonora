@@ -17,6 +17,34 @@ import { resolveDataPath } from './fonoran-data-paths.js';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS_PATH = join(ROOT, 'data/fonoran-translation-tests.json');
 const GAP_BASELINE_PATH = join(ROOT, 'data/fonoran-translation-gap-baseline.json');
+const DETERMINISTIC_GAP_BASELINE_PATH = join(ROOT, 'data/fonoran-translation-gap-baseline-deterministic.json');
+
+/**
+ * Each engine gets its own golden field, because the two answer different
+ * questions and their answers disagree on most of the corpus.
+ *
+ * `fon` records the LLM compiler replayed from the warmed frame cache. It is the
+ * fluency target: what a speaker who already knows the language would say.
+ * `fon_deterministic` records the rule-based compiler that actually ships. It is
+ * the contract, and it is the only one a user ever sees.
+ *
+ * Keeping one shared field hid the difference completely. The LLM path resolves
+ * concept ids straight out of a cached frame, so it never exercises the English
+ * resolver, which is where the compiler does its real work: a defect that made 367
+ * ordinary English words resolve to an unrelated concept moved exactly one of 1001
+ * committed goldens.
+ */
+export function goldenFieldForEngine(engine) {
+  return String(engine ?? '').toLowerCase() === 'llm'
+    ? { golden: 'fon', note: 'note' }
+    : { golden: 'fon_deterministic', note: 'note_deterministic' };
+}
+
+function gapBaselinePathForEngine(engine) {
+  return String(engine ?? '').toLowerCase() === 'llm'
+    ? GAP_BASELINE_PATH
+    : DETERMINISTIC_GAP_BASELINE_PATH;
+}
 const LATEST_PATH = () => resolveDataPath('translation_test_latest');
 const STRANGER_GAP_PATH = () => resolveDataPath('stranger_gap_report');
 
@@ -46,6 +74,8 @@ export function normalizeCorpusLevels(raw) {
         const entry = { en: p.en };
         if (p.note) entry.note = p.note;
         if (p.fon) entry.fon = p.fon;
+        if (p.note_deterministic) entry.note_deterministic = p.note_deterministic;
+        if (p.fon_deterministic) entry.fon_deterministic = p.fon_deterministic;
         return entry;
       }),
     })),
@@ -76,19 +106,19 @@ export async function loadTranslationCorpus(corpus = 'golden') {
  * express (honest gaps). It is the growth backbone: curation shrinks it, and the
  * strict runner can fail on any NEW gap that appears beyond it.
  */
-export async function loadGapBaseline() {
+export async function loadGapBaseline(engine = 'llm') {
   try {
-    const data = JSON.parse(await readFile(GAP_BASELINE_PATH, 'utf8'));
+    const data = JSON.parse(await readFile(gapBaselinePathForEngine(engine), 'utf8'));
     return Array.isArray(data.gaps) ? data.gaps : [];
   } catch {
     return null;
   }
 }
 
-export async function saveGapBaseline(words) {
+export async function saveGapBaseline(words, engine = 'llm') {
   const gaps = [...new Set(words.map(w => String(w).toLowerCase()))].sort();
   await writeFile(
-    GAP_BASELINE_PATH,
+    gapBaselinePathForEngine(engine),
     `${JSON.stringify({ generated_at: new Date().toISOString(), count: gaps.length, gaps }, null, 2)}\n`,
     'utf8',
   );
@@ -134,6 +164,7 @@ export async function updateGoldenCorpus({
 } = {}) {
   const corpus = await loadGoldenCorpus();
   resetTranslatorCache();
+  const field = goldenFieldForEngine(engine);
   const allGaps = new Set();
 
   // Flatten across levels so phrases can run in parallel; results are re-seated
@@ -163,7 +194,11 @@ export async function updateGoldenCorpus({
       // flags + token gaps), not just token-level hard gaps. Otherwise the
       // baseline written here can never satisfy the assert.
       for (const w of r.unresolved ?? []) allGaps.add(String(w).toLowerCase());
-      const rec = { en, fon: roman };
+      // Only this engine's fields are rewritten; the other engine's golden is
+      // carried through untouched so accepting one baseline cannot silently erase
+      // the other.
+      const prior = typeof entry === 'string' ? {} : entry;
+      const rec = { ...prior, en, [field.golden]: roman };
       const notes = [];
       if (grade.gaps.length) {
         notes.push(`gap: ${[...new Set(grade.gaps.map(g => g.english))].join(', ')} (needs a root)`);
@@ -171,7 +206,8 @@ export async function updateGoldenCorpus({
       if (grade.review.length) {
         notes.push(`review: ${grade.review.map(x => `${x.english}→${x.fonoran}(${x.kind})`).join(', ')}`);
       }
-      if (notes.length) rec.note = notes.join(' | ');
+      if (notes.length) rec[field.note] = notes.join(' | ');
+      else delete rec[field.note];
       results[idx] = { rec, counted: true };
     }
     done += 1;
@@ -203,8 +239,10 @@ export async function updateGoldenCorpus({
   corpus.levels.forEach((lvl, li) => { lvl.phrases = byLevel[li]; });
 
   await saveTranslationCorpus(corpus);
-  // The accepted baseline of honest gaps moves with the golden corpus.
-  const gaps = await saveGapBaseline([...allGaps]);
+  // The accepted baseline of honest gaps moves with the golden corpus, per engine:
+  // the deterministic compiler brackets far more than the LLM does, and merging the
+  // two would let either engine's new gaps pass unnoticed.
+  const gaps = await saveGapBaseline([...allGaps], engine);
   return { updated, levels: corpus.levels.length, gaps: gaps.length };
 }
 
@@ -355,6 +393,7 @@ export async function runTranslationGapReport({
 } = {}) {
   const corpusDoc = await loadTranslationCorpus(corpus);
   if (resetCache) resetTranslatorCache();
+  const field = goldenFieldForEngine(engine);
 
   const warmNeeded = [];
   const gap = new Map();
@@ -399,8 +438,8 @@ export async function runTranslationGapReport({
           review: [],
           gaps: [],
           cache_miss: true,
-          ...(golden && typeof golden.fon === 'string'
-            ? { expected: golden.fon, matches_golden: false }
+          ...(golden && typeof golden[field.golden] === 'string'
+            ? { expected: golden[field.golden], matches_golden: false }
             : {}),
         });
         continue;
@@ -451,10 +490,10 @@ export async function runTranslationGapReport({
         review: quality.review,
         gaps: quality.gaps,
       };
-      if (golden && typeof golden.fon === 'string') {
-        result.expected = golden.fon;
-        result.matches_golden = golden.fon === roman;
-        if (golden.note) result.note = golden.note;
+      if (golden && typeof golden[field.golden] === 'string') {
+        result.expected = golden[field.golden];
+        result.matches_golden = golden[field.golden] === roman;
+        if (golden[field.note]) result.note = golden[field.note];
       }
       phraseResults.push(result);
     }

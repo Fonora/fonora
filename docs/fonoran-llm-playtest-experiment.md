@@ -1,5 +1,7 @@
 # LLM synthetic playtest experiment
 
+<!-- language-ref: archival — records spellings as they were when written; see scripts/fonoran-verify-language-refs.js -->
+
 > **Status:** v4 Compositional Intuition Battery — **synthetic-only validity strategy (RN-30)**  
 > **Battery:** `cib-v4` · prompt v5 · judge default `claude-fable-5`  
 > **Command:** `npm run fonoran:llm-intuition` · reliability: `npm run fonoran:llm-reliability`  

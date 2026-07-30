@@ -6,9 +6,11 @@
  * grammar-invariant tests. The LLM is free to choose meaning (concept ids), but
  * the grammar around those concepts is guaranteed here by hard rules.
  *
- * Distilled from docs/fonoran-grammar.md (Rules 3/4/5/7) and
- * data/fonoran-grammar-particles.json.
+ * Distilled from docs/fonoran-grammar.md (Rules 3/4/5/7). Particle forms come from
+ * data/fonoran-grammar-particles.json via the policy module, never restated here.
  */
+
+import { particleForms, particleFormById } from './fonoran-language-policy.js';
 
 /**
  * Surface order of frame slots (Rule 4 / Rule 7: Actor · Action · Target ·
@@ -20,11 +22,19 @@ export const SLOT_SURFACE_ORDER = Object.freeze([
   'subject', 'time', 'event', 'path', 'object', 'modifier',
 ]);
 
-/** The only legal grammatical particle forms (Rule 3, closed class). */
-export const PARTICLE_FORMS = Object.freeze(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
+/**
+ * The only legal grammatical particle forms (Rule 3, closed class).
+ *
+ * Read from the particle seed rather than restated. This list was previously written
+ * out by hand in this file and in four others; when the inventory was reconciled, the
+ * copies had to be found one by one.
+ */
+export const PARTICLE_FORMS = Object.freeze(particleForms());
 
-/** Particles allowed in the Time slot (present tense = empty). */
-export const TENSE_PARTICLES = Object.freeze(['ta', 'sa']);
+/** Particles allowed in the Time slot (present tense = empty, so it has no form). */
+export const TENSE_PARTICLES = Object.freeze(
+  ['tense_past', 'tense_future'].map(id => particleFormById(id)).filter(Boolean),
+);
 
 /** Inventory domain that marks a concept as locative / Place. */
 export const PLACE_DOMAIN = 'space';

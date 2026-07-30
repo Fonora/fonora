@@ -25,6 +25,7 @@ import { maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { aliasesForConcept, loadLocalization } from './fonoran-concepts.js';
 import { parseSyllable } from './fonoran-pronunciation.js';
 import { isBannedPrimitiveSpelling } from './fonoran-phonetic-weights.js';
+import { isExcludedSyllable } from './fonoran-root-sound-assign.js';
 import { loadPrimitiveConceptIds, pruneShadowCompounds } from './fonoran-compound-prune.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -290,6 +291,22 @@ export async function buildFonoran({ preserveReview = true, approveAll = false }
     throw new Error(
       `Build halted: ${phoneticViolations.length} primitive root(s) use banned r/j onsets.\n` +
       `Re-run root generation — locked spellings with difficult onsets are auto-reassigned.\n` +
+      `Violations:\n${list}`
+    );
+  }
+
+  // The excluded-syllable list used to be applied only when the pool handed out
+  // syllables, so a spelling locked or edited through any other path was never
+  // re-checked: that is how `fa` (/fʌ/) and `fu` became approved roots. Gate the
+  // final set too, using the same predicate as the pool.
+  const excludedForms = ((await readDoc('phonetics_config'))?.excluded_syllables?.forms ?? [])
+    .map(s => String(s).toLowerCase());
+  const excludedViolations = candidates.filter(c => isExcludedSyllable(c.spelling, excludedForms));
+  if (excludedViolations.length > 0) {
+    const list = excludedViolations.map(c => `  ${c.spelling} (${c.id})`).join('\n');
+    throw new Error(
+      `Build halted: ${excludedViolations.length} primitive root(s) use an excluded syllable.\n` +
+      `Re-run root generation — excluded spellings are not re-locked and get reassigned.\n` +
       `Violations:\n${list}`
     );
   }

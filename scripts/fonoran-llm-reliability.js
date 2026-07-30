@@ -18,6 +18,7 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isMainModule } from '../tools/is-main.js';
 import { spawn } from 'node:child_process';
 import { readDoc } from '../tools/fonoran-store.js';
 import {
@@ -274,7 +275,7 @@ async function main() {
   console.log(`\nWrote ${REPORT_PATH}`);
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+const isMain = isMainModule(import.meta.url);
 if (isMain) {
   main().catch(err => { console.error(err); process.exit(1); });
 }

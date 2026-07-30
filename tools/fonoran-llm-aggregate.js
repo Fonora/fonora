@@ -3,6 +3,7 @@
  */
 
 import '../load-env.js';
+import { isMainModule } from './is-main.js';
 
 // '5' = cib-v4 (blind grader + L1 personas). '4' and '3' were cib-v3 rounds.
 export const PROMPT_VERSION = '5';
@@ -466,7 +467,7 @@ async function main() {
   printReport(conceptId, aggregates);
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+const isMain = isMainModule(import.meta.url);
 if (isMain) {
   main().catch(err => { console.error(err); process.exit(1); });
 }

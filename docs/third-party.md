@@ -15,7 +15,7 @@ Fonora is [MIT-licensed](../LICENSE). The project also bundles or calls these co
 
 ## Translator stack
 
-The **live** translator at `/language#translator` uses the LLM semantic compiler ([fonoran-translator.md](fonoran-translator.md)), not WordNet. WordNet remains in the codebase for the legacy English compiler (`engine=legacy`, regression tests).
+The **live** translator at `/language#translator` uses the deterministic English compiler ([fonoran-translator.md](fonoran-translator.md)), which uses WordNet for part-of-speech hints and word-bank proposals. The LLM semantic compiler is opt-in on `engine=llm` and does not use WordNet.
 
 ## WordNet attribution (legacy translator)
 

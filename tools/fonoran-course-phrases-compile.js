@@ -18,7 +18,26 @@ export function extractTokens(result) {
 }
 
 /**
+ * Rewrite one whole word of a roman surface, leaving spacing and terminal
+ * punctuation intact. The form may itself contain a space (a composition whose
+ * boundary collided renders as separate parts).
+ * @param {string} roman
+ * @param {string} form
+ * @param {string} replacement
+ * @returns {string}
+ */
+function replaceWholeForm(roman, form, replacement) {
+  const escaped = form.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return roman.replace(new RegExp(`(^|\\s)${escaped}(?=[\\s.,!?]|$)`, 'g'), `$1${replacement}`);
+}
+
+/**
  * Build a fonoran field for one phrase from a translation result.
+ *
+ * Lessons teach vocabulary, so a composition the lexicon does not own must read
+ * as a gap here even though the Translator is allowed to offer it: an unbracketed
+ * runtime composition is indistinguishable from an approved word.
+ *
  * @param {object} result
  * @returns {{ roman: string, tokens: string[], status: string, unresolved?: string[], error?: string }}
  */
@@ -32,10 +51,15 @@ export function buildFonoranField(result) {
       error: result?.error ?? 'translation failed',
     };
   }
-  const roman = result.surface?.roman ?? '';
-  const tokens = extractTokens(result);
+  const composed = (result.tokens ?? []).filter(t => t?.ad_hoc_composition && t.fonoran);
+  let roman = result.surface?.roman ?? '';
+  for (const token of composed) {
+    roman = replaceWholeForm(roman, token.fonoran, `[${token.concept_id ?? token.english}]`);
+  }
+  const tokens = roman ? roman.split(/\s+/).filter(Boolean) : [];
   const unresolved = Array.isArray(result.unresolved) ? result.unresolved : [];
-  const status = roman && unresolved.length === 0 ? 'translated' : unresolved.length ? 'gap' : 'pending';
+  const blocked = unresolved.length > 0 || composed.length > 0;
+  const status = roman && !blocked ? 'translated' : blocked ? 'gap' : 'pending';
   return {
     roman,
     tokens,

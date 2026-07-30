@@ -1,0 +1,193 @@
+{
+  "version": 1,
+  "description": "Editorial grammar policy that previously existed only as JavaScript tables. Everything here is keyed by CONCEPT ID, never by roman spelling, so a lexicon respell cannot invalidate it. Spellings are resolved at build time by scripts/fonoran-build-language-policy.js.",
+  "authority": {
+    "particles": "data/fonoran-grammar-particles.json",
+    "roots": "data/fonoran-approved-roots.json",
+    "compounds": "data/fonoran-compounds.json",
+    "rings": "data/fonoran-root-rings.json",
+    "note": "This file owns POLICY (which concept expresses which function, and which English words map to it). It never owns spellings."
+  },
+  "function_word_english": {
+    "_comment": "English words a speaker actually types, mapped to the concept that carries them. Used by the Showcase aligner to draw links, because technical glosses like 'addressee' never match typed English like 'you'. Previously PARTICLE_ENGLISH in showcase/showcase.js, keyed by roman, where it had drifted badly: 'ko' was mapped to negation though it is the live root for 'to drink', 'ban' was mapped to 'the/this/that' though no such form exists anywhere in the seeds, the real negation particle was absent, and 'we/us/our' were attached to the first-person singular instead of the collective.",
+    "pronoun_i": [
+      "i",
+      "me",
+      "my",
+      "myself",
+      "mine"
+    ],
+    "addressee": [
+      "you",
+      "your",
+      "yourself",
+      "yours",
+      "thou",
+      "thee",
+      "thy"
+    ],
+    "collective": [
+      "we",
+      "us",
+      "our",
+      "ourselves",
+      "ours",
+      "together"
+    ],
+    "tense_past": [
+      "was",
+      "were",
+      "had",
+      "did",
+      "ago",
+      "yesterday",
+      "before"
+    ],
+    "tense_future": [
+      "will",
+      "shall",
+      "would",
+      "going",
+      "tomorrow",
+      "soon",
+      "later"
+    ],
+    "logic_not": [
+      "not",
+      "never",
+      "no",
+      "none",
+      "nothing",
+      "cannot"
+    ],
+    "logic_yes": [
+      "yes"
+    ],
+    "logic_if": [
+      "if"
+    ],
+    "one": [
+      "one",
+      "single",
+      "someone",
+      "something"
+    ]
+  },
+  "function_word_labels": {
+    "_comment": "Short human labels for a poster or a learner view, for concepts whose own gloss is unhelpful: a particle glossed as its own roman ('mi' = 'mi'), or a technical term ('addressee'). Previously PARTICLE_LABELS.",
+    "pronoun_i": "I / me",
+    "addressee": "you",
+    "collective": "we",
+    "tense_past": "past",
+    "tense_future": "future",
+    "logic_not": "not",
+    "logic_yes": "yes",
+    "logic_if": "if",
+    "one": "one"
+  },
+  "lexicalized": {
+    "_comment": "Words written and taught as one unit whose spelling is still derived from their parts. They are not compounds in the seed sense (a particle participates), but they must not be spelling literals either. Resolved at build time, so respelling any part propagates.",
+    "unknown": {
+      "composition": [
+        "logic_not",
+        "know"
+      ],
+      "gloss": "unknown; a value that is not known",
+      "note": "Deliberately transparent so a learner can decompose it, but written and taught as ONE word so it is not misread as clause negation. Until this entry existed, the only definition of this live, taught word was a hardcoded literal spelling in tools/fonoran-translator.js, invisible to every other tool and to the seeds."
+    }
+  },
+  "wh_composition": {
+    "_comment": "Fonoran has no interrogative words. It asks by naming an unknown value plus the DIMENSION being probed, so 'unknown + person' is what English spells 'who'. Each pairs with a dimension (a kind of thing, neutral as to which one), never a value on a scale. Applied only to interrogatives, so relative and subordinate 'who' / 'when' are left alone. English 'how many' / 'how much' are one interrogative, not manner-how plus a quantity value: they map to unknown + count. The noun names what is counted; Fonoran does not split English count vs mass.",
+    "who": [
+      "unknown",
+      "person"
+    ],
+    "whom": [
+      "unknown",
+      "person"
+    ],
+    "what": [
+      "unknown",
+      "thing"
+    ],
+    "where": [
+      "unknown",
+      "place"
+    ],
+    "when": [
+      "unknown",
+      "time"
+    ],
+    "why": [
+      "unknown",
+      "cause"
+    ],
+    "how": [
+      "unknown",
+      "manner"
+    ],
+    "how many": [
+      "unknown",
+      "count"
+    ],
+    "how much": [
+      "unknown",
+      "count"
+    ]
+  },
+  "wh_blocked": {
+    "_comment": "Interrogatives deliberately NOT expressible as a nohu+dimension pair. Scalar degree ('how far', 'how big') is asked as a polar probe on the scale word instead, refined with more and less — deferred until a degree treatment earns its keep. Manner how and quantity how-many/how-much are expressible and live in wh_composition."
+  },
+  "wh_dimension_english": {
+    "_comment": "Dimension concept -> the English WH surface the unknown+dimension pair collapses into for alignment. count collapses to 'how many' (covering how much too): English has two spellings for one Fonoran question.",
+    "person": "who",
+    "place": "where",
+    "thing": "what",
+    "time": "when",
+    "cause": "why",
+    "manner": "how",
+    "count": "how many"
+  },
+  "wh_quantity_dimensions": {
+    "_comment": "Retired. Quantity questions use the count dimension via wh_composition ('how many' / 'how much' -> unknown + count). Kept empty so old readers do not emit value-as-dimension probes.",
+    "ids": []
+  },
+  "modal_composition": {
+    "_comment": "Modality is lexical, not grammatical: modal senses chain as ordinary concepts in the Action slot on the 'want' precedent, so none costs a particle or a root. 'know' for ability is the ordinary creole route (Haitian konn, Tok Pisin save) and stays decomposable as 'know how to'. Previously MODAL_COMPOSITION in tools/fonoran-translator.js.",
+    "ability": [
+      "know"
+    ],
+    "necessity": [
+      "need"
+    ],
+    "possibility": [
+      "maybe"
+    ],
+    "inability": [
+      "logic_not"
+    ]
+  },
+  "modal_unmarked": {
+    "_comment": "Senses that correctly take NO modal marker. Adding one is an error, not an improvement.",
+    "request": "An interrogative 'can you...?' is a request, and the question already carries it. Measured: 39 of 75 corpus 'can' phrases.",
+    "proposal": "'We can X' proposing a joint action invites rather than claims skill. Marking it with 'know' would say we know how to walk. Roughly 25 corpus phrases.",
+    "inability": "Plain negation suffices. 11 of 12 negated modals in the corpus are 'cannot'."
+  },
+  "modal_blocked": {
+    "_comment": "Modal senses deliberately left as honest gaps.",
+    "should": "Weak obligation. Routing it through 'need' inverts under negation: 'should not go' forbids, while 'need not go' permits. A tracked gap beats a reversed sentence.",
+    "permission": "Permission-granting 'you can keep this'. No approved root separates granting from merely stating, and the sense is 5 corpus phrases."
+  },
+  "disjunction": {
+    "_comment": "Bare juxtaposition already reads as conjunction, so an unmarked pair of alternatives asserts both and inverts the source. Closing the coordinated group with the quantity concept 'one' ('a single one') restores the exclusive reading at no cost in new vocabulary.",
+    "marker_concept": "one",
+    "english": [
+      "or",
+      "either"
+    ],
+    "conjunction_english": [
+      "and"
+    ],
+    "conjunction_marker_concept": null
+  }
+}

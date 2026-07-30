@@ -8,6 +8,7 @@ import {
   TEMPORAL_SCENE_TOPIC_IDS,
   TEMPORAL_SCENE_FRONT_ORDER,
 } from './fonoran-interpretation.js';
+import { disjunction, particleForms } from './fonoran-language-policy.js';
 
 /** Map LLM frame slots to the human skeleton (Rule 4 / Rule 7). */
 export const SLOT_SKELETON = {
@@ -19,7 +20,7 @@ export const SLOT_SKELETON = {
   modifiers: 'Peripheral modifiers (each modifies the concept to its right)',
 };
 
-const RESERVED_PARTICLE_FORMS = new Set(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
+const RESERVED_PARTICLE_FORMS = new Set(particleForms());
 
 const REMOVED_PARTICLE_FORMS = new Set([
   'wo', 'vus', 'zas', 'zes', 'zis', 'zos', 'zus', 'vat', 'vet', 'vit',
@@ -130,7 +131,7 @@ export function buildLlmGrammarBrief(particlesDoc = {}) {
   }
   lines.push('');
   lines.push('## Questions (Rule 3)');
-  lines.push('No question particle. Set is_question true; surface gets ?.');
+  lines.push('Set is_question true. The renderer opens the clause with the question particle ka and writes no ?; never emit either yourself.');
   lines.push('WH content questions ONLY when source contains who/whom/what/where/when/why.');
   lines.push('Use the lexicalized word unknown (nohu) + a DIMENSION concept:');
   lines.push('  who/whom → [unknown,person]  what → [unknown,thing]  where → [unknown,place]  when → [unknown,time]  why → [unknown,cause]');
@@ -274,35 +275,6 @@ export function stripSpuriousPathNan(frame, sourceText = '') {
   return frame;
 }
 
-/**
- * True when Actor (addressee) is safely droppable in casual yes/no speech.
- * Multi-clause / multi-sentence / WH / mixed persons / non-addressee → false.
- */
-export function isAddresseeDroppable(frame, sourceText = '', options = {}) {
-  if (options.allowActorDrop === false || options.multiClause) return false;
-  if (!frame?.is_question) return false;
-  if (hasWhContentWord(sourceText)) return false;
-
-  const text = String(sourceText ?? '').trim();
-  // Multiple sentence terminators → discourse; keep Actor.
-  if ((text.match(/[.!?]/g) || []).length > 1) return false;
-
-  // Mixed persons ("Do you want me to…") — dropping you makes the reference vague.
-  const personHits = text.match(/\b(i|me|we|us|he|she|they|him|her|them|you)\b/gi) || [];
-  const persons = new Set(personHits.map((p) => {
-    const k = p.toLowerCase();
-    if (k === 'me') return 'i';
-    if (k === 'us') return 'we';
-    if (k === 'him' || k === 'her') return 'they';
-    if (k === 'them') return 'they';
-    return k;
-  }));
-  if ([...persons].some(p => p !== 'you')) return false;
-
-  const subject = slotIds(frame.slots?.subject);
-  return subject.length === 1 && (subject[0] === 'addressee' || subject[0] === 'be');
-}
-
 export function normalizeFrameParticles(frame) {
   if (!frame?.slots) return frame;
   const slots = {};
@@ -374,23 +346,31 @@ export function normalizeFrameParticles(frame) {
 }
 
 /**
- * Narrow spelling→concept fixes in Place/Target.
- * `ye` is water's Fonoran spelling but also an archaic English alias for you.
- * `nan` is path's spelling — normalize to concept id `path`.
+ * Repair Fonoran spellings that leak into the frame as concept ids.
+ *
+ * `ye` is water's spelling and also an archaic English alias for *you*, so a
+ * leak resolves to `addressee` and renders `be`. That inverts the sentence
+ * rather than degrading it: *that water is mine* became `be kamkam mi`, "you
+ * belong to me", with no gap reported. It is checked in every slot because the
+ * subject is exactly where it did the most damage.
+ *
+ * `nan` is path's spelling. It stays scoped to Place/Target, where a bare `nan`
+ * is unambiguously the path concept.
  */
 export function normalizeMotionFrameSpellings(frame) {
   if (!frame?.slots) return frame;
   const slots = { ...frame.slots };
   let changed = false;
-  for (const role of ['path', 'object']) {
+  for (const role of Object.keys(slots)) {
     if (!Array.isArray(slots[role])) continue;
+    const pathScoped = role === 'path' || role === 'object';
     slots[role] = slots[role].map((raw) => {
-      const id = String(raw ?? '').trim().toLowerCase();
+      const id = String(raw?.concept_id ?? raw ?? '').trim().toLowerCase();
       if (id === 'ye') {
         changed = true;
         return 'water';
       }
-      if (id === 'nan') {
+      if (pathScoped && id === 'nan') {
         changed = true;
         return 'path';
       }
@@ -467,11 +447,16 @@ export function promoteTemporalSceneToTime(frame) {
   });
 }
 
-/** English words that signal disjunction rather than a missing concept. */
-const DISJUNCTION_WORDS = new Set(['or', 'either', 'either or']);
+/**
+ * English words that signal disjunction rather than a missing concept.
+ *
+ * `either or` is kept here rather than in the seed: it is a parsing artifact of how a
+ * lost connective can arrive in `unresolved[]`, not an editorial fact about the language.
+ */
+const DISJUNCTION_WORDS = new Set([...disjunction().english, 'either or']);
 
-/** Quantity root `lu`: "a single one". Closes a coordinated group as exclusive. */
-const DISJUNCTION_CONCEPT_ID = 'one';
+/** The quantity concept that closes a coordinated group as exclusive ("a single one"). */
+const DISJUNCTION_CONCEPT_ID = disjunction().marker_concept;
 
 /** Slots searched, in order, for the group the alternatives were parsed into. */
 const DISJUNCTION_SLOT_ORDER = ['object', 'event', 'path', 'subject', 'modifiers', 'time'];

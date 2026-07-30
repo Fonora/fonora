@@ -352,7 +352,8 @@ const fonoranTranslatorResult = await (async () => {
     assert(jumped.unresolved.length === 0, `jumped unresolved: ${jumped.unresolved.join(', ')}`);
     // The 'move' root spelling is a generated artifact; assert structure (man + past particle + move)
     // rather than a fixed spelling so the test survives regeneration.
-    const movedRoman = jumped.tokens.find(t => t.english === 'jumped')?.fonoran;
+    // The parser lemmatizes, so the token reports `jump` rather than the surface `jumped`.
+    const movedRoman = jumped.tokens.find(t => t.english === 'jumped' || t.english === 'jump')?.fonoran;
     assert(Boolean(movedRoman), `jumped move token: ${JSON.stringify(jumped.tokens)}`);
     assert(jumped.surface.roman === `ba ta ${movedRoman}`, `jumped roman: ${jumped.surface.roman}`);
     // 'jump' is now a compound; it resolves directly (not via interpretation), so check tokens
@@ -378,7 +379,9 @@ const fonoranTranslatorResult = await (async () => {
     const ateAnimal = ate.tokens.find(t => t.english === 'animal' || t.concept_id === 'animal')?.fonoran;
     assert(Boolean(ateEat) && Boolean(ateAnimal), `ate tokens: ${JSON.stringify(ate.tokens)}`);
     assert(ate.surface.roman === `ba ta ${ateEat} ${ateAnimal}`, `ate roman: ${ate.surface.roman}`);
-    assert(ate.interpretations.some(i => i.english === 'ate' && i.reason === 'irregular past'), `ate interp: ${JSON.stringify(ate.interpretations)}`);
+    // Inflection is resolved by the lemmatizer rather than by a per-form irregular table,
+    // so the reported reason is the general one instead of 'irregular past'.
+    assert(ate.interpretations.some(i => i.english === 'ate' && i.reason === 'inflected form'), `ate interp: ${JSON.stringify(ate.interpretations)}`);
 
     const futureEat = await translateEnglish('the man will eat animal');
     assert(futureEat.unresolved.length === 0, `futureEat unresolved: ${futureEat.unresolved.join(', ')}`);
@@ -713,6 +716,573 @@ async function runCorpusIpaTests() {
 
 const corpusResults = await runCorpusIpaTests();
 
+/**
+ * Guards the single-source-of-truth contract for grammar policy.
+ *
+ * Each assertion here corresponds to a bug that shipped because a consumer kept its
+ * own copy of a language fact: the Showcase aligner pointed English "not" at `ko`
+ * (the live root for *to drink*) and at `ban` (a form absent from every seed), had no
+ * entry for the real negation particle, and attributed "we/us/our" to the first-person
+ * singular instead of the collective. A stale generated module is caught separately by
+ * `npm run fonoran:policy:check`; these tests catch a policy that is fresh but wrong.
+ */
+async function runLanguagePolicyTests() {
+  const policy = await import('../tools/fonoran-language-policy.js');
+  const seedParticles = JSON.parse(
+    readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'data/fonoran-grammar-particles.json'), 'utf8'),
+  ).particles ?? [];
+  const results = [];
+
+  results.push(test('language policy: particle list matches the seed exactly', () => {
+    const expected = seedParticles.map(p => p.form).filter(Boolean);
+    const actual = policy.particleForms();
+    assert(actual.length === expected.length, `expected ${expected.length} particles, got ${actual.length}`);
+    for (const form of expected) assert(actual.includes(form), `missing particle ${form}`);
+  }));
+
+  results.push(test('language policy: negation is mapped, and not to a lexical root', () => {
+    const negation = seedParticles.find(p => p.id === 'logic_not')?.form;
+    assert(negation, 'seed has no logic_not particle');
+    const byForm = policy.functionWordEnglishByForm();
+    assert(byForm.has(negation), `English "not" has no link target: ${negation} is absent from the mapping`);
+    assert(byForm.get(negation).includes('not'), `${negation} does not claim the word "not"`);
+    // `ko` is the approved root for `drink`. It must never carry negation again.
+    assert(!byForm.has('ko'), 'negation is mapped onto ko, which is the root for drink');
+    assert(!byForm.has('ban'), 'mapping references ban, which exists in no seed');
+  }));
+
+  results.push(test('language policy: every mapped form exists in the seeds', () => {
+    for (const [form, english] of policy.functionWordEnglishByForm()) {
+      assert(typeof form === 'string' && form.length > 0, 'empty form in mapping');
+      assert(Array.isArray(english) && english.length > 0, `${form} maps to no English words`);
+      assert(policy.formForConcept(form) !== undefined, `${form} does not resolve`);
+    }
+  }));
+
+  results.push(test('language policy: first person singular does not claim the plural', () => {
+    const byForm = policy.functionWordEnglishByForm();
+    const singular = seedParticles.find(p => p.id === 'pronoun_i')?.form;
+    assert(singular, 'seed has no pronoun_i');
+    for (const word of ['we', 'us', 'our']) {
+      assert(!byForm.get(singular).includes(word), `${singular} wrongly claims "${word}"`);
+    }
+  }));
+
+  results.push(test('language policy: interrogatives compose from a dimension, never a scale value', () => {
+    assert(policy.whSurface('why') === `${policy.unknownWord().form} ${policy.formForConcept('cause')}`);
+    assert(policy.whSurface('who') === `${policy.unknownWord().form} ${policy.formForConcept('person')}`);
+    // `how` pairs with manner (do+form). Quantity is unknown+count: English how many / how much
+    // are one interrogative, never unknown+many (a value on the scale).
+    assert(policy.whSurface('how') === `${policy.unknownWord().form} ${policy.formForConcept('manner')}`);
+    assert(policy.whSurface('how many') === `${policy.unknownWord().form} ${policy.formForConcept('count')}`);
+    assert(policy.whSurface('how much') === `${policy.unknownWord().form} ${policy.formForConcept('count')}`);
+    assert(policy.whComposition().how?.[1] === 'manner', '`how` must compose with the manner dimension');
+    assert(policy.whComposition()['how many']?.[1] === 'count', '`how many` must compose with count');
+    assert(!policy.whBlocked()['how many'], '`how many` is expressible via count');
+  }));
+
+  results.push(test('language policy: unknown probe is derived from its parts, not a literal', () => {
+    const unknown = policy.unknownWord();
+    assert(unknown.parts.length === unknown.concepts.length, 'a part failed to resolve');
+    assert(unknown.form === unknown.parts.join(''), `${unknown.form} is not the concatenation of ${unknown.parts}`);
+  }));
+
+  results.push(test('language policy: modal markers resolve and stay distinct', () => {
+    const markers = ['ability', 'necessity', 'possibility'].map(s => policy.modalMarker(s));
+    for (const m of markers) assert(m, 'a modal sense has no marker');
+    assert(new Set(markers).size === markers.length, 'two modal senses share one marker');
+    // `should` must stay a gap: routed through `need` it reverses under negation.
+    assert(policy.modalBlocked().should, '`should` must stay explicitly blocked with a reason');
+    assert(!policy.modalComposition().should, '`should` must not acquire a composition');
+  }));
+
+  results.push(test('language policy: disjunction marker is a real form and conjunction has none', () => {
+    const d = policy.disjunction();
+    assert(d.marker_form, 'disjunction marker does not resolve');
+    assert(d.marker_form === policy.formForConcept(d.marker_concept));
+    assert(d.english.includes('or'), 'disjunction does not claim "or"');
+    assert(d.conjunction_english.includes('and'), 'conjunction words not recorded');
+  }));
+
+  /**
+   * Rings are the one place where the direction of truth runs the other way:
+   * `scripts/fonoran-root-rings-apply.js` generates data/fonoran-root-rings.json from the
+   * hardcoded RING_*_IDS in tools/fonoran-experience-tiers.js, so the JS is upstream and
+   * the seed is derived. That is a legitimate arrangement, but nothing asserted the two
+   * agreed, so a hand-edit of either side could drift silently. This is the same
+   * guarantee the policy codegen gets from `--check`, pointed the other way.
+   */
+  const tiers = await import('../tools/fonoran-experience-tiers.js');
+  const ringSeed = JSON.parse(
+    readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'data/fonoran-root-rings.json'), 'utf8'),
+  );
+  results.push(test('root rings: the generated seed matches the ring definitions in code', () => {
+    const seedById = Object.fromEntries((ringSeed.rings ?? []).map(r => [r.id, r.concept_ids ?? []]));
+    const pairs = [
+      ['communicative_core', tiers.RING_1_IDS],
+      ['extended_core', tiers.RING_2_IDS],
+      ['fluent_core', tiers.RING_3_IDS],
+    ];
+    for (const [ringId, codeIds] of pairs) {
+      const seedIds = seedById[ringId] ?? [];
+      assert(seedIds.length === codeIds.length, `${ringId}: seed has ${seedIds.length}, code has ${codeIds.length}`);
+      for (const id of codeIds) assert(seedIds.includes(id), `${ringId}: ${id} is in code but not the seed`);
+      for (const id of seedIds) assert(codeIds.includes(id), `${ringId}: ${id} is in the seed but not code`);
+    }
+    // The policy module reads the seed, so it must agree with both.
+    for (const [ringId, codeIds] of pairs) {
+      for (const id of codeIds) assert(policy.ringFor(id) === ringId, `${id} resolves to the wrong ring`);
+    }
+  }));
+
+  /**
+   * Publishing guarantee: the public surfaces must show exactly the vocabulary that was
+   * committed. The database is seeded from the seeds only when its tables are empty, so
+   * once populated it serves whatever existed at that first boot and no later deploy
+   * refreshes it. Reading the seeds by default is what makes "deploy the site and it is
+   * accurate" true without a manual post-deploy step.
+   */
+  const store = await import('../tools/fonoran-store.js');
+  results.push(test('publishing: vocabulary reads from the committed seeds by default', () => {
+    assert(
+      store.resolveLabReadMode() === 'seeds',
+      `lab reads default to ${store.resolveLabReadMode()}, so a stale database could be published`,
+    );
+  }));
+
+  results.push(test('language policy: every root is assigned to exactly one ring', () => {
+    const caps = policy.ringCaps();
+    assert(caps.ring_3_cumulative === 150, `constitution cap changed: ${caps.ring_3_cumulative}`);
+    assert(policy.ringFor('water'), 'a Ring 1 concept has no ring assignment');
+  }));
+
+  /**
+   * Composition policy: the translator may build a word from approved parts at runtime,
+   * but the human owns the lexicon, so such a word must never pass as approved vocabulary.
+   * The distinction is what lets Lessons refuse it while the Translator still offers it.
+   */
+  const resolve = await import('../tools/fonoran-english-resolve.js');
+  const ctx = await resolve.buildResolveContext();
+
+  results.push(test('composition: parts that spell an approved word resolve to that word', () => {
+    const token = resolve.composeConceptToken(ctx, ['feel', 'good'], { role: 'object' });
+    assert(token?.fonoran === 'nesgu', `expected nesgu, got ${token?.fonoran}`);
+    assert(token.concept_id === 'relieved', `expected the approved concept, got ${token.concept_id}`);
+    assert(!token.ad_hoc_composition, 'an approved word must not be marked as composed');
+  }));
+
+  results.push(test('composition: a word the lexicon does not own is marked as composed', () => {
+    const token = resolve.composeConceptToken(ctx, ['animal', 'body'], { role: 'object' });
+    assert(token?.fonoran === 'kalfem', `expected kalfem, got ${token?.fonoran}`);
+    assert(token.ad_hoc_composition, 'an unapproved composition must be marked');
+    assert(token.concept_id === 'animal+body', `expected concept ids, got ${token.concept_id}`);
+  }));
+
+  results.push(test('composition: spelled-out parts are described in concept ids', () => {
+    // The LLM sometimes writes spellings ("tes") where a concept id ("pain") belongs.
+    const token = resolve.composeConceptToken(ctx, ['tes', 'temkan'], { role: 'object' });
+    assert(token?.concept_id === 'pain+ending', `expected pain+ending, got ${token?.concept_id}`);
+  }));
+
+  /**
+   * Seed invariants: a rule the project wrote down but checks only at generation time
+   * is a comment. These guard the checker itself, so the rule cannot quietly stop
+   * matching the lexicon the way the excluded-syllable list did.
+   */
+  const invariants = await import('../tools/fonoran-invariants.js');
+  const invariantCtx = await invariants.loadInvariantContext();
+  const invariantRun = await invariants.runInvariants(invariantCtx);
+
+  results.push(test('invariants: the committed lexicon has no unrecorded violations', () => {
+    const detail = invariantRun.violations.map(v => `${v.subject} (${v.concept})`).join(', ');
+    assert(invariantRun.violations.length === 0, `unrecorded violation(s): ${detail}`);
+  }));
+
+  /**
+   * A CLI whose entry-point guard never matches runs to completion doing nothing and still
+   * exits 0. That is how the compound audit sat dead: it compared import.meta.url against a
+   * raw `file://` path, and this checkout lives under "Fonora Org", so the space encoded to
+   * %20 on one side only. Five CLIs were affected and npm reported success every time.
+   */
+  const isMain = await import('../tools/is-main.js');
+  const { pathToFileURL } = await import('node:url');
+
+  results.push(test('cli: an entry point is recognised through a path that needs encoding', () => {
+    const spaced = '/tmp/Fonora Org/tool.js';
+    const argv = process.argv[1];
+    try {
+      process.argv[1] = spaced;
+      assert(
+        isMain.isMainModule(pathToFileURL(spaced).href),
+        'a tool invoked through a path containing a space must be recognised as the entry point',
+      );
+      assert(
+        !isMain.isMainModule(pathToFileURL('/tmp/other.js').href),
+        'a module that is not the entry point must not claim to be',
+      );
+    } finally {
+      process.argv[1] = argv;
+    }
+  }));
+
+  /**
+   * Deterministic compound semantics. The signal these replace was an LLM playtest scored by
+   * exact match on the English headword, which ranked world as whole+place+earth+life above
+   * earth+life. These assert the scorer measures gloss agreement and resists the two ways a
+   * loose match makes it untrustworthy.
+   */
+  const semantics = await import('../tools/fonoran-compound-semantics.js');
+  const semanticFixture = semantics.buildSemanticContext({
+    inventory: {
+      primitives: [
+        { id: 'person', domain: 'being', plain_description: 'a person; someone' },
+        { id: 'back', domain: 'space', plain_description: 'behind; the back side; rear' },
+        { id: 'before', domain: 'time', plain_description: 'earlier; in the past' },
+        { id: 'place', domain: 'space', plain_description: 'a location' },
+        { id: 'star', domain: 'element', plain_description: 'a star in the sky' },
+        { id: 'source', domain: 'abstract', plain_description: 'the origin of something' },
+        { id: 'life', domain: 'being', plain_description: 'being alive' },
+      ],
+    },
+    compounds: [{ concept: 'distant_place', preferred: { composition: ['far', 'place'], gloss: 'a place far away' } }],
+    candidatesByConcept: {
+      elder: [['person', 'before'], ['person', 'back']],
+      birth: [['life', 'before'], ['source', 'life']],
+    },
+  });
+
+  results.push(test('semantics: a gloss naming a listed candidate outranks the preferred form', () => {
+    const ranked = semantics.rankCandidatesByGloss({
+      concept: 'elder',
+      preferred: { composition: ['person', 'back'], gloss: 'an older person; one who came before' },
+      preferred_source: 'playtest',
+    }, semanticFixture);
+    assert(ranked.better_available, 'the gloss says "came before" while the composition says back');
+    assert(
+      ranked.best.composition.join('+') === 'person+before',
+      `expected person+before, got ${ranked.best.composition.join('+')}`,
+    );
+  }));
+
+  results.push(test('semantics: "start" is not read as the root for star', () => {
+    const ranked = semantics.rankCandidatesByGloss({
+      concept: 'birth',
+      preferred: { composition: ['life', 'before'], gloss: 'the start of life' },
+    }, semanticFixture);
+    const proposed = ranked.best.composition.join('+');
+    assert(!proposed.includes('star'), `a celestial body has no business in birth: got ${proposed}`);
+  }));
+
+  results.push(test('semantics: a gloss that only restates the headword is not scored', () => {
+    const ranked = semantics.rankCandidatesByGloss({
+      concept: 'breathe',
+      preferred: { composition: ['inside', 'air'], gloss: 'breathe' },
+    }, semanticFixture);
+    assert(!ranked.informative, 'a gloss identical to the headword cannot check a composition');
+    assert(!ranked.better_available, 'an uninformative gloss must not drive a recommendation');
+  }));
+
+  results.push(test('semantics: a two-word concept is not named by half of its name', () => {
+    const scored = semantics.scoreCompound({
+      concept: 'campfire',
+      preferred: { composition: ['fire', 'near'], gloss: 'fire at a place' },
+    }, semanticFixture);
+    assert(
+      !scored.gloss_named_absent.includes('distant_place'),
+      'a gloss saying "place" must not name distant_place, or every locative proposes every other',
+    );
+  }));
+
+  results.push(test('invariants: an English word owned by two concepts is caught', () => {
+    const found = invariants.englishWordOwnershipRule.run({
+      conceptIds: new Set(['plant', 'tree']),
+      localization: {
+        entries: {
+          plant: { label: 'plant', aliases: ['tree'] },
+          tree: { label: 'tree', aliases: [] },
+        },
+      },
+      ownership: { contested: [] },
+    });
+    assert(found.length === 1, `expected one finding, got ${found.length}`);
+    assert(!found[0].waived, 'an unrecorded collision must fail: the translator would have to guess');
+  }));
+
+  results.push(test('invariants: a recorded contested word is visible debt, not a failure', () => {
+    const found = invariants.englishWordOwnershipRule.run({
+      conceptIds: new Set(['angry', 'move']),
+      localization: {
+        entries: {
+          angry: { label: 'angry', aliases: ['cross'] },
+          move: { label: 'move', aliases: ['cross'] },
+        },
+      },
+      ownership: { contested: [{ word: 'cross', concepts: ['angry', 'move'] }] },
+    });
+    assert(found.length === 1 && found[0].waived, 'a recorded ruling-pending word must not fail the build');
+    assert(found[0].reason, 'a waived finding has to say why it is waived');
+  }));
+
+  results.push(test('invariants: an excluded syllable is caught, not assumed absent', () => {
+    const found = invariants.excludedSyllableRule.run({
+      config: { excluded_syllables: { forms: ['poo'] } },
+      roots: [{ id: 'test_concept', spelling: 'poo', ipa: '/puː/' }],
+      compounds: [],
+    });
+    assert(found.length === 1, `expected one finding, got ${found.length}`);
+    assert(!found[0].waived, 'an unrecorded violation must not be waived');
+  }));
+
+  results.push(test('invariants: fusing two clean parts into an excluded sound is caught', () => {
+    const found = invariants.excludedSyllableRule.run({
+      config: { excluded_syllables: { forms: ['po'] } },
+      roots: [],
+      compounds: [{ spelling: 'lapo', concept_id: 'test_fusion', parts: ['la', 'o'], state: 'approved' }],
+    });
+    assert(found.length === 1, `expected the fused sequence to be caught, got ${found.length}`);
+  }));
+
+  results.push(test('invariants: a waiver is honoured but must carry a reason', () => {
+    const waivedRun = invariants.excludedSyllableRule.run({
+      config: {
+        excluded_syllables: {
+          forms: ['poo'],
+          known_violations: [{ form: 'poo', concept: 'test_concept', reason: 'recorded exception' }],
+        },
+      },
+      roots: [{ id: 'test_concept', spelling: 'poo' }],
+      compounds: [],
+    });
+    assert(waivedRun.length === 1 && waivedRun[0].waived, 'a recorded exception should be waived, not failed');
+    for (const w of invariantRun.waived) {
+      assert(w.reason, `${w.subject} is waived without a reason`);
+    }
+  }));
+
+  results.push(test('invariants: reusing a retired spelling is caught', () => {
+    // `fa` was retired and then approved for `child` because retirement lived in code.
+    const retired = invariants.retiredReassignmentRule.run({
+      roots: [{ id: 'some_new_concept', spelling: 'fa' }],
+      compounds: [],
+      retired: [{ form: 'fa', concept: 'child', retired_at: '2026-07-29' }],
+    });
+    assert(retired.length === 1, `expected the reused spelling to be caught, got ${retired.length}`);
+    assert(retired[0].severity === 'error', 'reuse must gate, not merely advise');
+  }));
+
+  results.push(test('invariants: the dimension rule reports without gating', () => {
+    const advisory = invariants.dimensionConsistencyRule.run({
+      dimensions: {
+        dimensions: [
+          { id: 'time_past', owner: 'before' },
+          { id: 'space_rear', owner: 'back', reserved_for: 'space' },
+        ],
+        sense_markers: { time: ['older'] },
+      },
+      compoundSeed: [
+        { concept: 'elder', preferred: { composition: ['person', 'back'], gloss: 'an older person' } },
+        { concept: 'behind', preferred: { composition: ['outside', 'back'], gloss: 'to the rear of' } },
+      ],
+    });
+    assert(advisory.length === 1, `expected only the temporal misuse, got ${advisory.length}`);
+    assert(advisory[0].concept === 'elder', `flagged ${advisory[0].concept}`);
+    assert(advisory[0].severity === 'advisory', 'the gloss heuristic must not gate CI');
+    assert(!invariantRun.violations.some(v => v.rule === 'dimension-consistency'), 'advisories must stay out of violations');
+  }));
+
+  // Possessive determiners sat in the parser's SKIP set, so the possessor was deleted
+  // before the parse and `mi`/`be` were the two most-dropped tokens in the corpus. `your`
+  // was also aliased to `skin`, so where it did survive it meant the wrong thing.
+  const translateModule = await import('../tools/fonoran-translate.js');
+  const [possessed, yourResolution, wantQuestion, wantStatement] = await Promise.all([
+    translateModule.translate('I am not your enemy.', { engine: 'legacy' }),
+    (async () => {
+      const resolve = await import('../tools/fonoran-english-resolve.js');
+      const bucket = await import('../tools/fonoran-sound-bucket.js');
+      const ctx = await resolve.buildResolveContext(await bucket.loadBucket());
+      return resolve.resolveEnglishToken('your', ctx, { role: 'object' });
+    })(),
+    // No engine is named, so these also assert what the public translator now answers with.
+    translateModule.translate('Do you want to go to the beach?', {}),
+    translateModule.translate('I want to go to the beach', {}),
+  ]);
+
+  results.push(test('translation: the default engine needs no API key', () => {
+    assert(
+      wantQuestion.engine !== 'llm',
+      `the default engine is ${wantQuestion.engine}: an unset key makes the public translator fail`,
+    );
+    assert(wantQuestion.ok !== false, `default engine errored: ${wantQuestion.error ?? ''}`);
+  }));
+
+  // A motion reading was attempted before the desire reading and matched on the infinitive
+  // alone, so the desire verb was swallowed: the statement asserted going rather than wanting,
+  // and in the question everything before `go` was joined into one pseudo-token ("you want to")
+  // that resolved to an unrelated root with no gap reported.
+  results.push(test('translation: "want to go" wants, it does not just go', () => {
+    for (const [label, res] of [['question', wantQuestion], ['statement', wantStatement]]) {
+      const roman = String(res.surface?.roman ?? '');
+      assert(roman.includes('sak'), `${label} dropped want entirely: got "${roman}"`);
+    }
+  }));
+
+  // `how` was blocked while no manner concept existed, and the word was then dropped without
+  // a gap in every sentence that was not a question, so "I do not know how" claimed to be a
+  // complete translation of "I do not know".
+  const [howMake, howFar, howMany, howKnow, howNotKnow] = await Promise.all([
+    translateEnglish('How do you make fire?'),
+    translateEnglish('How far is the water?'),
+    translateEnglish('How many people are there?'),
+    translateEnglish('I know how to make fire.'),
+    translateEnglish('I do not know how.'),
+  ]);
+
+  results.push(test('translation: a manner question asks unknown + manner', () => {
+    const roman = String(howMake.surface?.roman ?? '');
+    assert(roman.startsWith('ka nohu moyu '), `manner question: ${roman}`);
+    assert(howMake.unresolved.length === 0, `manner question gaps: ${howMake.unresolved.join(', ')}`);
+    const manner = howMake.tokens.find(t => t.concept_id === 'manner');
+    assert(manner?.fonoran === 'moyu', `manner token: ${JSON.stringify(manner)}`);
+  }));
+
+  results.push(test('translation: a degree question probes the scale, it does not assert it', () => {
+    // "how far" has no dimension yet, so it is asked as "is the water far".
+    assert(howFar.surface.roman === 'ka ye fet.', `how far: ${howFar.surface.roman}`);
+    assert(!howFar.surface.roman.includes('moyu'), 'a degree question is not a manner question');
+    assert(!howFar.surface.roman.includes('tan'), 'a degree question is not a count question');
+    assert(howFar.interpretations.some(i => /degree/.test(i.reason ?? '')), 'the narrowing must be reported');
+  }));
+
+  results.push(test('translation: a quantity question asks unknown + count', () => {
+    const roman = String(howMany.surface?.roman ?? '');
+    assert(roman.startsWith('ka nohu tan '), `how many: ${roman}`);
+    assert(!roman.includes('lek'), 'quantity must not assert many');
+    assert(howMany.unresolved.length === 0, `how many gaps: ${howMany.unresolved.join(', ')}`);
+    const count = howMany.tokens.find(t => t.concept_id === 'count');
+    assert(count?.fonoran === 'tan', `count token: ${JSON.stringify(count)}`);
+  }));
+
+  results.push(test('translation: outside a question `how` is the manner word, never silence', () => {
+    assert(howNotKnow.surface.roman === 'mi no hu moyu.', `not know how: ${howNotKnow.surface.roman}`);
+    // "know how to" is carried by the infinitive: `hu kel dat` already says it.
+    assert(!howKnow.surface.roman.includes('moyu'), `know how to: ${howKnow.surface.roman}`);
+  }));
+
+  results.push(test('translation: a subject is one word, not a joined span', () => {
+    const subjects = (wantQuestion.tokens ?? []).filter(t => t.role === 'subject');
+    for (const t of subjects) {
+      assert(
+        !String(t.english ?? '').includes(' '),
+        `subject "${t.english}" is a joined span resolved as one word (${t.fonoran})`,
+      );
+    }
+  }));
+
+  results.push(test('translation: a possessor is not dropped on the floor', () => {
+    const roman = String(possessed.surface?.roman ?? '');
+    assert(roman.includes('be'), `the possessor should survive: got "${roman}"`);
+  }));
+
+  results.push(test('lexicon: "your" is a possessor, never the word for skin', () => {
+    assert(
+      yourResolution.concept_id !== 'skin',
+      `"your" resolved to skin (${yourResolution.fonoran}), which mistranslates every possessive`,
+    );
+  }));
+
+  // The lab bucket is gitignored, so any fresh checkout or deploy derives it from the
+  // seeds on first read. That derivation used to fall back to a blank-slate bucket on any
+  // error and persist it, publishing an empty Dictionary, Translator and Learn while
+  // answering 200 with health at 100.
+  const soundBucket = await import('../tools/fonoran-sound-bucket.js');
+  const publishedLab = await soundBucket.loadBucket();
+  const approvedSeedRoots = JSON.parse(
+    readFileSync(new URL('../data/fonoran-approved-roots.json', import.meta.url), 'utf8'),
+  ).roots ?? [];
+
+  results.push(test('publishing: a lab derived from the seeds is never an empty language', () => {
+    assert(approvedSeedRoots.length > 0, 'the seeds should hold approved roots for this to mean anything');
+    assert(
+      (publishedLab.sounds ?? []).length > 0,
+      `the published lab has no roots while the seeds hold ${approvedSeedRoots.length}`,
+    );
+    assert((publishedLab.compounds ?? []).length > 0, 'the published lab has no compound words');
+    assert(
+      publishedLab.version !== '2.0-blank-slate',
+      'a blank slate must not be served while the seeds hold an approved lexicon',
+    );
+  }));
+
+  // Cache lookups are keyed by the language the caller asked for, but entries are
+  // written under the language the model detected. Auto-detect therefore missed every
+  // warmed phrase and paid for a live call each time. Resolve the reads before asserting.
+  const translationCache = await import('../tools/fonoran-translation-cache.js');
+  const warmedPhrase = 'The storm passed.';
+  const [cachedAsEnglish, cachedAsAuto, cachedNovel] = await Promise.all([
+    translationCache.lookupCachedTranslation('en', warmedPhrase),
+    translationCache.lookupCachedTranslation('auto', warmedPhrase),
+    translationCache.lookupCachedTranslation('auto', 'no warmed entry exists for this line'),
+  ]);
+
+  results.push(test('cache: auto-detect finds a phrase warmed under its detected language', () => {
+    assert(cachedAsEnglish, `${warmedPhrase} should be warmed under en`);
+    assert(cachedAsAuto, 'auto-detect must not miss a warmed phrase and pay for a live call');
+    assert(
+      cachedAsAuto.cache_key === cachedAsEnglish.cache_key,
+      `auto resolved to ${cachedAsAuto.cache_key}, expected ${cachedAsEnglish.cache_key}`,
+    );
+  }));
+
+  results.push(test('cache: an unwarmed phrase is still a miss', () => {
+    assert(cachedNovel === null, 'a novel phrase must miss rather than resolve to something else');
+  }));
+
+  // loadTranslationCache hands back the live in-process map, which is the seam for
+  // exercising the ambiguous case: the committed cache is English-only.
+  const cacheDoc = await translationCache.loadTranslationCache();
+  const ambiguousText = 'zzz cross language probe';
+  cacheDoc.entries[`es|${ambiguousText}`] = { cache_key: `es|${ambiguousText}` };
+  const singleLanguageHit = await translationCache.lookupCachedTranslation('auto', ambiguousText);
+  cacheDoc.entries[`fr|${ambiguousText}`] = { cache_key: `fr|${ambiguousText}` };
+  const ambiguousHit = await translationCache.lookupCachedTranslation('auto', ambiguousText);
+  delete cacheDoc.entries[`es|${ambiguousText}`];
+  delete cacheDoc.entries[`fr|${ambiguousText}`];
+  translationCache.invalidateTranslationCache();
+
+  results.push(test('cache: auto resolves one non-English language but never guesses between two', () => {
+    assert(singleLanguageHit?.cache_key === `es|${ambiguousText}`, 'a single language match should resolve');
+    assert(ambiguousHit === null, 'two languages spelling the same text must stay a miss');
+  }));
+
+  // `test` is synchronous, so the frames are compiled before the assertions run.
+  const translator = await import('../tools/fonoran-translator.js');
+  const ownedGapFrame = await translator.translateFromFrame({
+    slots: { object: ['tes+temkan'] },
+    unresolved: ['relieved'],
+  }, { input: 'relieved' });
+  const openGapFrame = await translator.translateFromFrame({
+    slots: { object: ['animal+body'] },
+    unresolved: ['meat'],
+  }, { input: 'meat' });
+
+  results.push(test('composition: an approved word beats a composed stand-in for the same gap', () => {
+    assert(ownedGapFrame.surface.roman.includes('nesgu'), `expected nesgu, got ${ownedGapFrame.surface.roman}`);
+    assert(ownedGapFrame.unresolved.length === 0, `gap should close: ${JSON.stringify(ownedGapFrame.unresolved)}`);
+  }));
+
+  results.push(test('composition: a gap the lexicon cannot fill stays an honest gap', () => {
+    assert(openGapFrame.unresolved.includes('meat'), `gap should survive: ${JSON.stringify(openGapFrame.unresolved)}`);
+    assert(
+      openGapFrame.tokens.some(t => t.ad_hoc_composition),
+      'the stand-in must stay marked as composed',
+    );
+  }));
+
+  return results;
+}
+
+const languagePolicyResults = await runLanguagePolicyTests();
+
 const boundaryResult = test('checkCompoundBoundary rejects identical consonant collision', () => {
   // C + same C → invalid
   const bemMam = checkCompoundBoundary(['bem', 'mam']);
@@ -866,6 +1436,7 @@ const allFailed = [
   ...researchStoreFailed,
   ...authFailed,
   ...corpusResults.filter((r) => !r.ok),
+  ...languagePolicyResults.filter((r) => !r.ok),
   ...(rootWorkflowResult.ok ? [] : [rootWorkflowResult]),
   ...(parserResult.ok ? [] : [parserResult]),
   ...(composeResult.ok ? [] : [composeResult]),
@@ -903,6 +1474,7 @@ const allPassed =
   + authPassed
   + coursePhrasesPassed
   + corpusResults.filter((r) => r.ok).length
+  + languagePolicyResults.filter((r) => r.ok).length
   + (parserResult.ok ? 1 : 0)
   + (composeResult.ok ? 1 : 0)
   + (derivedResult.ok ? 1 : 0)
@@ -930,7 +1502,7 @@ const allPassed =
   + (prefixSafeResult.ok ? 1 : 0)
   + (rootWorkflowResult.ok ? 1 : 0)
   + (labSearchResult.ok ? 1 : 0);
-const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + 27;
+const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + languagePolicyResults.length + 27;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

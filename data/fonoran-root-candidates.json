@@ -1,7 +1,7 @@
 {
   "version": "2.0-editorial-workflow",
   "status": "proposal",
-  "generated_at": "2026-07-20T20:03:38.312Z",
+  "generated_at": "2026-07-30T06:06:00.383Z",
   "collision_profile": "en",
   "philosophy": {
     "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
@@ -9,9 +9,9 @@
     "source_concepts": "data/fonoran-concept-inventory.json"
   },
   "summary": {
-    "total": 135,
+    "total": 136,
     "pending": 0,
-    "approved": 135,
+    "approved": 136,
     "rejected": 0
   },
   "candidates": [
@@ -842,31 +842,38 @@
       "priority_class": "common",
       "priority_weight": 80,
       "priority": 79980,
-      "spelling": "fa",
-      "ipa": "/fʌ/",
+      "spelling": "gas",
+      "ipa": "/gʌs/",
       "reason": "a child — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 5,
-      "pronunciation_ease_label": "very easy",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "status": "approved",
       "review": {
-        "approved_at": "2026-07-12T10:38:20.707Z",
+        "approved_at": "2026-07-29T15:29:39.853Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
       },
       "generation": {
-        "phonetic_cost": 4,
-        "template": "CV",
-        "tier": "preferred-cv",
+        "phonetic_cost": 54,
+        "template": "CVC",
+        "tier": "cvc",
         "eligible": true,
         "distinctiveness_score": 100,
-        "editorial_collision_score": 100,
+        "editorial_collision_score": 20,
         "compound_flow_score": 100,
         "collision_profile": "en"
       },
-      "collision_warnings": [],
+      "collision_warnings": [
+        {
+          "form": "gas",
+          "type": "discouraged",
+          "category": "common_word",
+          "message": "Common English word."
+        }
+      ],
       "boundary_warnings": []
     },
     {
@@ -991,6 +998,50 @@
       "semantic_usefulness": 5,
       "pronunciation_ease_label": "somewhat difficult",
       "semantic_usefulness_label": "very high"
+    },
+    {
+      "id": "count",
+      "concept": "how many of something; the quantity axis, not a value on it",
+      "domain": "quantity",
+      "plain_description": "how many of something; the quantity axis, not a value on it",
+      "primitive_test_note": "Distinct from many/some/all/one (values on the scale). Pairing unknown with count is what English packs into how many and how much. One axis covers both people and water: Fonoran does not mark the English count/mass split, so the noun names what is being counted.",
+      "suggested_status": "primitive",
+      "priority_class": "essential",
+      "priority_weight": 100,
+      "priority": 99976,
+      "spelling": "tan",
+      "ipa": "/tʌn/",
+      "reason": "how many of something — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 5,
+      "semantic_usefulness_label": "very high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-30T06:06:00.169Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": "Quantity dimension for unknown+count (English how many / how much). Deterministic assigner chose tan; English common-word collision is advisory only."
+      },
+      "generation": {
+        "phonetic_cost": 60.8,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 100,
+        "editorial_collision_score": 20,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [
+        {
+          "form": "tan",
+          "type": "discouraged",
+          "category": "common_word",
+          "message": "Common English word."
+        }
+      ],
+      "boundary_warnings": []
     },
     {
       "id": "dark",
@@ -2057,44 +2108,47 @@
     },
     {
       "id": "heart",
-      "ipa": "/pʊ/",
-      "domain": "body",
-      "reason": "your heart — basic everyday idea that deserves its own root.",
-      "review": {
-        "note": null,
-        "edited_at": null,
-        "approved_at": "2026-07-02T00:49:33.288Z",
-        "rejected_at": null
-      },
-      "status": "approved",
       "concept": "your heart",
-      "priority": 59908,
-      "spelling": "pu",
-      "generation": {
-        "tier": "tertiary-cv",
-        "eligible": true,
-        "template": "CV",
-        "phonetic_cost": 35,
-        "collision_profile": "en",
-        "compound_flow_score": 100,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100
-      },
-      "campfire_pass": false,
-      "language_tier": "extended_core",
-      "priority_class": "useful",
-      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core.",
-      "experience_tier": "survival_body",
-      "priority_weight": 60,
-      "suggested_status": "primitive",
-      "boundary_warnings": [],
+      "domain": "body",
       "plain_description": "your heart",
-      "collision_warnings": [],
-      "pronunciation_ease": 2,
       "primitive_test_note": null,
-      "semantic_usefulness": 3,
+      "suggested_status": "primitive",
+      "priority_class": "useful",
+      "priority_weight": 60,
+      "priority": 59950,
+      "spelling": "mat",
+      "ipa": "/mʌt/",
+      "reason": "your heart — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
       "pronunciation_ease_label": "somewhat difficult",
-      "semantic_usefulness_label": "moderate"
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-29T15:20:51.628Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 57.4,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 20,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [
+        {
+          "form": "mat",
+          "type": "discouraged",
+          "category": "common_word",
+          "message": "Common English word."
+        }
+      ],
+      "boundary_warnings": []
     },
     {
       "id": "help",
@@ -3748,31 +3802,38 @@
       "priority_class": "common",
       "priority_weight": 80,
       "priority": 79908,
-      "spelling": "fu",
-      "ipa": "/fʊ/",
+      "spelling": "gel",
+      "ipa": "/gɛl/",
       "reason": "the right side — basic everyday idea that deserves its own root.",
-      "pronunciation_ease": 4,
-      "pronunciation_ease_label": "easy",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
       "semantic_usefulness": 4,
       "semantic_usefulness_label": "high",
       "status": "approved",
       "review": {
-        "approved_at": "2026-07-12T10:31:34.918Z",
+        "approved_at": "2026-07-29T15:29:39.853Z",
         "rejected_at": null,
         "edited_at": null,
         "note": null
       },
       "generation": {
-        "phonetic_cost": 7,
-        "template": "CV",
-        "tier": "preferred-cv",
+        "phonetic_cost": 54.7,
+        "template": "CVC",
+        "tier": "cvc",
         "eligible": true,
-        "distinctiveness_score": 0,
-        "editorial_collision_score": 100,
+        "distinctiveness_score": 100,
+        "editorial_collision_score": 20,
         "compound_flow_score": 100,
         "collision_profile": "en"
       },
-      "collision_warnings": [],
+      "collision_warnings": [
+        {
+          "form": "gel",
+          "type": "discouraged",
+          "category": "common_word",
+          "message": "Common English word."
+        }
+      ],
       "boundary_warnings": []
     },
     {

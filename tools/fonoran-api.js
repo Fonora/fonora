@@ -440,6 +440,11 @@ export async function handleFonoranApi(req, res, pathname, method) {
         : simplifyRaw === true || simplifyRaw === 'true' ? true
           : simplifyRaw === false || simplifyRaw === 'false' ? false
             : undefined;
+      // Every LLM call here costs money, so a caller must not be able to force one.
+      // `skipCache` bypasses the cache entirely and is admin-only; `cacheOnly` is the
+      // opposite and is always honoured, so the UI can answer keystrokes for free and
+      // spend only when someone deliberately submits.
+      const cacheOnly = body.cacheOnly === true || url.searchParams.get('cacheOnly') === 'true';
       const result = await translate(body.text ?? '', {
         lab,
         sourceLang: body.sourceLang ?? url.searchParams.get('sourceLang') ?? 'auto',
@@ -447,7 +452,8 @@ export async function handleFonoranApi(req, res, pathname, method) {
         direction: body.direction ?? url.searchParams.get('direction') ?? undefined,
         inputMode: body.inputMode ?? url.searchParams.get('inputMode') ?? undefined,
         engine,
-        skipCache: body.skipCache === true,
+        skipCache: body.skipCache === true && isAdminUser(req),
+        cacheOnly,
         simplify,
         devLab: body.dev_lab === true
           || process.env.FONORAN_DEV_LAB === '1'
@@ -459,6 +465,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
           engine: result.engine ?? 'llm',
           code: result.code,
           hint: result.hint,
+          // A cache miss is "not warmed yet", not a failure. The caller needs to tell them
+          // apart so typing can stay quiet while a real error still surfaces.
+          ...(result.cache_miss ? { cache_miss: true } : {}),
         });
       }
       return done(200, result);
@@ -813,7 +822,14 @@ export async function handleFonoranApi(req, res, pathname, method) {
   } catch (err) {
     console.error('Fonoran API error:', err);
     const status = err?.status >= 400 && err?.status < 600 ? err.status : 400;
-    jsonErrorResponse(res, status, status >= 500 ? 'Internal server error' : 'Request failed');
+    // A 4xx here is a validation message written for the person who caused it ("No syllable
+    // available for concept: x", "Cannot delete an approved concept"). Replacing all of them
+    // with "Request failed" meant the admin tools could report that something went wrong but
+    // never what. 5xx stays generic, since an unexpected failure can carry internals.
+    const message = status >= 500
+      ? 'Internal server error'
+      : (typeof err?.message === 'string' && err.message.trim()) || 'Request failed';
+    jsonErrorResponse(res, status, message);
     return true;
   }
 }

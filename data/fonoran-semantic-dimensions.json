@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "status": "advisory",
+  "description": "Which root owns each semantic dimension. Derived from how the lexicon already behaves rather than invented: `before` is temporal in all 16 compounds that use it, `after` in all 11, and `back` is spatial in 7 of its 8. The lone exception is `elder` (person+back), where a spatial root carries a temporal sense. Nothing enforced this convention, so the exception froze in place under a playtest lock.",
+  "enforcement": "advisory-only: reported by scripts/fonoran-verify-invariants.js, does not fail CI. Detection uses a gloss heuristic, not a semantic proof, so a hit needs a human read. Promoting this to a hard rule needs a per-concept sense field on the concept seeds.",
+  "dimensions": [
+    {
+      "id": "time_past",
+      "owner": "before",
+      "gloss": "earlier in time",
+      "usage_note": "16 of 16 compounds using `before` are temporal."
+    },
+    {
+      "id": "time_future",
+      "owner": "after",
+      "gloss": "later in time",
+      "usage_note": "11 of 11 compounds using `after` are temporal."
+    },
+    {
+      "id": "space_rear",
+      "owner": "back",
+      "gloss": "behind in space",
+      "reserved_for": "space",
+      "usage_note": "7 of 8 compounds using `back` are spatial. `elder` is the exception."
+    },
+    {
+      "id": "space_front",
+      "owner": "front",
+      "reserved_for": "space",
+      "gloss": "ahead in space"
+    }
+  ],
+  "sense_markers": {
+    "note": "Words in a gloss that indicate the concept is about time. Used to spot a spatial root standing in for a temporal one.",
+    "time": [
+      "older",
+      "oldest",
+      "earlier",
+      "ancient",
+      "aged",
+      "previous",
+      "former",
+      "senior",
+      "came before",
+      "long ago",
+      "in the past"
+    ]
+  }
+}

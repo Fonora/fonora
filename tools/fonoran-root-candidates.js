@@ -21,6 +21,9 @@ import { derivePriority, priorityWeight, DEFAULT_PRIORITY_CLASS } from './fonora
 import { loadCollisionProfile } from './fonoran-root-collision.js';
 import { buildCompoundPartnerMap } from './fonoran-root-boundary-score.js';
 import { isBannedPrimitiveSpelling } from './fonoran-phonetic-weights.js';
+import { isExcludedSyllable } from './fonoran-root-sound-assign.js';
+import { loadRetiredSpellings } from './fonoran-retired-spellings.js';
+import { isPrefixSafe } from './fonoran-prefix-rule.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUTPUT_PATH = join(ROOT, 'data/fonoran-root-candidates.json');
@@ -141,6 +144,12 @@ export async function generateRootCandidates({ preserveReview = true } = {}) {
   const phoneticsConfig = await readDoc('phonetics_config');
   if (!phoneticsConfig) throw new Error('Phonetics config not found');
 
+  // Same list the syllable pool filters on, so assignment and re-locking agree.
+  const excludedForms = (phoneticsConfig.excluded_syllables?.forms ?? []).map(s => String(s).toLowerCase());
+  // A retired spelling carries an old meaning in lessons, docs and cached frames, so
+  // it is reserved rather than recycled: this is how `fa` reached `child`.
+  const retiredForms = loadRetiredSpellings().map(e => e.form);
+
   const productiveIds = new Set(Object.keys(semantic.productive_dimensions ?? {}));
   const highLeverage = new Set([
     'person', 'self', 'thing', 'move', 'change', 'equal', 'strong', 'bond', 'conflict',
@@ -176,21 +185,49 @@ export async function generateRootCandidates({ preserveReview = true } = {}) {
 
   const lockedRoots = {};
   const preserved = new Map();
-  const reservedForms = [];
+  const reservedForms = [...retiredForms];
 
   if (preserveReview && existing?.candidates) {
-    for (const c of existing.candidates) {
-      if (c.status === 'approved') {
-        // Re-lock only spellings that pass the primitive phonetic rule.
-        // Bad r/j onsets from older runs are regenerated on the next build.
-        if (c.spelling && !isBannedPrimitiveSpelling(c.spelling)) {
-          lockedRoots[c.id] = c.spelling;
-          preserved.set(c.id, c);
-        }
-      } else if (c.status === 'rejected') {
-        preserved.set(c.id, c);
-        if (c.spelling) reservedForms.push(c.spelling.toLowerCase());
+    // When two approved spellings collide, the one more words depend on keeps its form and
+    // the other is reassigned, so healing a rule disturbs the published lexicon as little
+    // as possible. Approval dates would be the obvious tiebreak, but the candidate store
+    // does not carry them. Ties fall back to concept id so the result is reproducible.
+    const usageByConcept = new Map();
+    for (const row of (await readDoc('compounds'))?.compounds ?? []) {
+      for (const part of row.preferred?.composition ?? []) {
+        usageByConcept.set(part, (usageByConcept.get(part) ?? 0) + 1);
       }
+    }
+    const approved = existing.candidates
+      .filter(c => c.status === 'approved')
+      .sort((a, b) =>
+        (usageByConcept.get(b.id) ?? 0) - (usageByConcept.get(a.id) ?? 0)
+        || String(a.id).localeCompare(String(b.id)));
+    const lockedForms = new Set();
+
+    for (const c of approved) {
+      // Re-lock only spellings that still pass every rule: the primitive phonetic rule,
+      // the excluded-syllable rule, and the prefix rule. A spelling that fails one is not
+      // re-locked, so the next generation reassigns it and the rule heals itself instead
+      // of needing a hand edit per word.
+      const legal = c.spelling
+        && !isBannedPrimitiveSpelling(c.spelling)
+        && !isExcludedSyllable(c.spelling, excludedForms)
+        && isPrefixSafe(c.spelling, lockedForms);
+      if (legal) {
+        lockedRoots[c.id] = c.spelling;
+        lockedForms.add(c.spelling.toLowerCase());
+        preserved.set(c.id, c);
+      } else if (c.spelling) {
+        // Never hand the offending spelling to another concept.
+        reservedForms.push(c.spelling.toLowerCase());
+      }
+    }
+
+    for (const c of existing.candidates) {
+      if (c.status !== 'rejected') continue;
+      preserved.set(c.id, c);
+      if (c.spelling) reservedForms.push(c.spelling.toLowerCase());
     }
   }
 

@@ -2,16 +2,16 @@
   "version": "1.0-prefix-safe",
   "rule": "A spelling is algorithmically prefix-safe iff it neither prefixes nor is prefixed by any other approved root. Same detector as Health prefix_overlap.",
   "note": "This is phonetic distinctiveness approval, not Word Manager human approval. Free CV forms that prefix taken CVCs are blocked until those CVCs move.",
-  "generated_at": "2026-07-20T20:08:53.890Z",
+  "generated_at": "2026-07-30T06:06:53.091Z",
   "summary": {
-    "approved_roots": 135,
+    "approved_roots": 136,
     "prefix_pairs": 0,
-    "approved_CV_prefix_safe": 57,
-    "approved_CVC_prefix_safe": 78,
+    "approved_CV_prefix_safe": 54,
+    "approved_CVC_prefix_safe": 82,
     "approved_prefix_unsafe": 0,
     "pool_CV_prefix_safe_free": 0,
-    "pool_CV_blocked_free": 12,
-    "pool_CVC_prefix_safe_free": 6,
+    "pool_CV_blocked_free": 11,
+    "pool_CVC_prefix_safe_free": 2,
     "pool_CVC_blocked_free": 30
   },
   "prefix_pairs": [],
@@ -29,10 +29,8 @@
       "di",
       "do",
       "du",
-      "fa",
       "fi",
       "fo",
-      "fu",
       "gi",
       "go",
       "gu",
@@ -54,7 +52,6 @@
       "nu",
       "pa",
       "pe",
-      "pu",
       "se",
       "sha",
       "she",
@@ -91,8 +88,10 @@
       "gal",
       "gam",
       "gan",
+      "gas",
       "gat",
       "gek",
+      "gel",
       "gem",
       "gen",
       "ges",
@@ -119,6 +118,7 @@
       "mam",
       "man",
       "mas",
+      "mat",
       "mek",
       "mel",
       "mem",
@@ -146,6 +146,7 @@
       "tak",
       "tal",
       "tam",
+      "tan",
       "tas",
       "tat",
       "tek",
@@ -244,13 +245,6 @@
         "blocked_by": []
       },
       {
-        "id": "child",
-        "spelling": "fa",
-        "concept": "a child; a young person",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
         "id": "travel",
         "spelling": "fi",
         "concept": "going from one place to another",
@@ -261,13 +255,6 @@
         "id": "life",
         "spelling": "fo",
         "concept": "being alive",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "right",
-        "spelling": "fu",
-        "concept": "the right side",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -415,13 +402,6 @@
         "id": "fear",
         "spelling": "pe",
         "concept": "to be afraid",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "heart",
-        "spelling": "pu",
-        "concept": "your heart",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -666,6 +646,13 @@
         "blocked_by": []
       },
       {
+        "id": "child",
+        "spelling": "gas",
+        "concept": "a child; a young person",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
         "id": "hold",
         "spelling": "gat",
         "concept": "to keep something in your grasp",
@@ -676,6 +663,13 @@
         "id": "use",
         "spelling": "gek",
         "concept": "to use something",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "right",
+        "spelling": "gel",
+        "concept": "the right side",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -858,6 +852,13 @@
         "id": "more",
         "spelling": "mas",
         "concept": "a greater amount",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "heart",
+        "spelling": "mat",
+        "concept": "your heart",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -1051,6 +1052,13 @@
         "blocked_by": []
       },
       {
+        "id": "count",
+        "spelling": "tan",
+        "concept": "how many of something; the quantity axis, not a value on it",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
         "id": "justice",
         "spelling": "tas",
         "concept": "fair treatment; equal rules for all",
@@ -1143,6 +1151,7 @@
           "gal",
           "gam",
           "gan",
+          "gas",
           "gat"
         ]
       },
@@ -1151,21 +1160,11 @@
         "template": "CV",
         "blocked_by": [
           "gek",
+          "gel",
           "gem",
           "gen",
           "ges",
           "get"
-        ]
-      },
-      {
-        "form": "ka",
-        "template": "CV",
-        "blocked_by": [
-          "kal",
-          "kam",
-          "kan",
-          "kas",
-          "kat"
         ]
       },
       {
@@ -1200,7 +1199,8 @@
           "mal",
           "mam",
           "man",
-          "mas"
+          "mas",
+          "mat"
         ]
       },
       {
@@ -1254,11 +1254,7 @@
     ],
     "CVC_prefix_safe": [
       "fek",
-      "gas",
-      "gel",
-      "kak",
-      "mat",
-      "tan"
+      "kak"
     ],
     "CVC_blocked": [
       {

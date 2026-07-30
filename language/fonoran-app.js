@@ -257,7 +257,13 @@
         await refreshAuth();
         throw new Error('Sign in required');
       }
-      if (!res.ok) throw new Error(data.error || res.statusText);
+      if (!res.ok) {
+        const err = new Error(data.error || res.statusText);
+        // "Not warmed in the cache" is a normal answer, not a failure. Callers that ask
+        // for cache-only results need to tell the two apart.
+        if (data.cache_miss) err.cacheMiss = true;
+        throw err;
+      }
       return data;
     }
     function toast(msg) {
@@ -1184,9 +1190,12 @@
     }
 
     async function renderExplorerMermaidIn(rootEl, mermaidSource, graphNodes, onNavigate) {
-      if (!window.mermaid || !mermaidSource || !rootEl) return;
-      const { MERMAID_INIT } = await import('../js/mermaid-theme.js');
-      window.mermaid.initialize(MERMAID_INIT);
+      if (!mermaidSource || !rootEl) return;
+      const { ensureMermaidLoaded } = await import('../js/mermaid-render.js');
+      await ensureMermaidLoaded().catch(() => {});
+      if (!window.mermaid) return;
+      const { getMermaidInit } = await import('../js/mermaid-theme.js');
+      window.mermaid.initialize(getMermaidInit());
       await new Promise((resolve) => requestAnimationFrame(resolve));
       const nodes = rootEl.querySelectorAll('.mermaid');
       try {
@@ -2819,8 +2828,10 @@
 
     function translatorEngineLabel(engine) {
       if (engine === 'cached') return 'Cached';
-      if (engine === 'legacy') return 'Legacy';
-      if (engine === 'lexical') return 'Lexical';
+      // "Legacy" is the internal token, kept because scripts and tests pass it, but it is the
+      // wrong word for the reader: this is the rule-based engine, and it is now the default.
+      if (engine === 'legacy') return 'Deterministic';
+      if (engine === 'lexical') return 'Deterministic';
       if (engine === 'llm') return 'LLM';
       return engine ? String(engine) : '';
     }
@@ -2855,9 +2866,6 @@
       if (kinds.has('loan')) items.push('<span class="translator-resolved--loan">«loan»</span> phonetic borrow');
       if (kinds.has('interpreted')) items.push('<span class="translator-resolved--interpreted">interpreted</span>');
       if (kinds.has('unknown')) items.push('<span class="translator-unresolved-sample">gap</span>');
-      if ((result?.tokens ?? []).some(t => t.droppable)) {
-        items.push('<span class="translator-token__droppable">can drop</span> optional in casual speech');
-      }
       if (items.length < 1) return '';
       return `<p class="translator-output__legend sans">${items.join(' · ')}</p>`;
     }
@@ -3105,7 +3113,6 @@
       else if (kind === 'interpreted') cls = ' translator-token--interpreted';
       else if (kind === 'semantic') cls = ' translator-token--semantic';
       else if (kind === 'alias_weak') cls = ' translator-token--semantic';
-      if (token?.droppable) cls += ' translator-token--droppable';
       return cls;
     }
 
@@ -3127,15 +3134,11 @@
       const interp = showInterp
         ? `<span class="translator-token__interp">${escapeHtml(token.interpreted_from ?? token.english)} → ${escapeHtml(token.concept_id ?? token.lookup ?? '')}${token.interpret_reason ? ` (${escapeHtml(token.interpret_reason)})` : ''}</span>`
         : '';
-      const droppable = token.droppable
-        ? `<span class="translator-token__droppable" title="${escapeHtml(token.droppable_note || 'Can drop in casual speech')}">can drop</span>`
-        : '';
       return `<li class="translator-token${translatorTokenClass(token)}" data-tr-word="${index}">
         <span class="translator-token__role">${escapeHtml(token.role)}</span>
         <span class="translator-token__english">${escapeHtml(token.english)}</span>
         <span class="translator-token__arrow" aria-hidden="true">→</span>
         <span class="translator-token__fonoran">${fonoran}</span>
-        ${droppable}
         ${gloss}
         ${interp}
       </li>`;
@@ -3285,14 +3288,9 @@
         } else if (isPunct) {
           piece = escapeHtml(t.fonoran);
         } else {
-          const kindCls = translatorResolutionClass(translatorResolutionKind(t));
-          const dropCls = t.droppable ? ' translator-roman--droppable' : '';
-          const classes = `${kindCls || ''}${dropCls}`.trim();
-          const title = t.droppable
-            ? ` title="${escapeHtml(t.droppable_note || 'Can drop in casual speech')}"`
-            : '';
+          const classes = translatorResolutionClass(translatorResolutionKind(t)) || '';
           piece = classes
-            ? `<span class="${classes}"${title}>${escapeHtml(t.fonoran)}</span>`
+            ? `<span class="${classes}">${escapeHtml(t.fonoran)}</span>`
             : escapeHtml(t.fonoran);
         }
         if (isPunct && romanChunks.length) romanChunks[romanChunks.length - 1] += piece;
@@ -3334,7 +3332,14 @@
       syncTranslatorPlaybackUi(null);
     }
 
-    async function runTranslator() {
+    /**
+     * @param {{ live?: boolean }} [opts] `live` marks a call fired by typing rather than by
+     *   the reader asking for a translation. A live call is served from the cache only, so
+     *   half-typed text costs nothing: the cache used to fill up with paid-for fragments
+     *   like "i am thirsty s". Submitting (Enter, or the controls) spends deliberately.
+     */
+    async function runTranslator(opts = {}) {
+      const live = opts.live === true;
       const input = $('tr-input');
       const text = (input?.value ?? STATE.translatorInput ?? '').trim();
       STATE.translatorInput = input?.value ?? text;
@@ -3355,7 +3360,10 @@
         const body = {
           text,
           sourceLang,
-          simplify: reverse ? false : 'auto',
+          // Auto-simplify can fire a second call for long or abstract text, so it waits
+          // for a deliberate submit too.
+          simplify: reverse || live ? false : 'auto',
+          ...(live ? { cacheOnly: true } : {}),
           dev_lab: isLocalDevHost(),
         };
         if (reverse) {
@@ -3378,6 +3386,16 @@
       } catch (e) {
         if (token !== translatorToken) return;
         const out = $('tr-output');
+        // Typing runs ahead of the cache constantly. That is not an error worth shouting
+        // about: invite the reader to submit, which is what actually spends a call.
+        if (live && e.cacheMiss) {
+          if (out) {
+            out.innerHTML = '<p class="translator-output__empty sans">Press Enter to translate.</p>';
+          }
+          syncTranslatorOutputHeader(null);
+          syncTranslatorPlaybackUi(null);
+          return;
+        }
         const msg = e.message || 'Translation failed';
         const wrongSource = /natural language, not Fonoran/i.test(msg);
         if (out) {
@@ -3432,7 +3450,10 @@
     let grammarMarkdownCache = null;
 
     async function renderGrammarMermaidIn(rootEl) {
-      if (!window.mermaid || !rootEl) return;
+      if (!rootEl) return;
+      const { ensureMermaidLoaded } = await import('../js/mermaid-render.js');
+      await ensureMermaidLoaded().catch(() => {});
+      if (!window.mermaid) return;
       const { getMermaidInit } = await import('../js/mermaid-theme.js');
       window.mermaid.initialize(getMermaidInit());
       await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -3685,13 +3706,18 @@
       STATE.translatorInput = e.target.value;
       if (isTranslatorFonoraMode()) return;
       clearTimeout(translatorDebounce);
-      translatorDebounce = setTimeout(() => { void runTranslator(); }, 280);
+      translatorDebounce = setTimeout(() => { void runTranslator({ live: true }); }, 280);
     });
     $('tr-input')?.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' || e.shiftKey) return;
-      if (!isTranslatorFonoraMode()) return;
-      // Physical Enter while Fonora keyboard is active is handled by the keyboard module.
-      if (translatorKeyboardOpen) return;
+      // Enter submits in every mode. It used to submit only in Fonora mode, which was fine
+      // while typing auto-translated: English input answered on its own and Enter had nothing
+      // to do. Keystrokes are now served from the cache only so they cost nothing, so a phrase
+      // the cache has not seen shows "Press Enter to translate" and Enter is the only way to
+      // ask. In a textarea an unhandled Enter just inserts a newline, so the hint sat there
+      // while nothing happened. Shift+Enter still breaks the line.
+      // Physical Enter while the Fonora keyboard is active belongs to the keyboard module.
+      if (isTranslatorFonoraMode() && translatorKeyboardOpen) return;
       e.preventDefault();
       void runTranslator();
     });

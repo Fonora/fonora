@@ -3,7 +3,14 @@
  * Used when translated course phrases are available (domain curriculum).
  */
 
-const GRAMMAR_PARTICLES = new Set(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
+import { particleForms } from '../tools/fonoran-language-policy.js';
+
+/**
+ * The closed particle class, from the seed rather than restated here. A learner drilling
+ * particle spotting is being graded against this set, so a stale copy would mark correct
+ * answers wrong.
+ */
+const GRAMMAR_PARTICLES = new Set(particleForms());
 
 function shuffle(list) {
   const copy = [...list];

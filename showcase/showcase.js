@@ -4,7 +4,21 @@
  * Calls POST /api/fonoran/translate, renders a color-coded alignment poster,
  * then draws SVG bezier curves connecting each Fonoran token block to the
  * English word(s) it represents.
+ *
+ * Every language fact used for alignment comes from the policy module, which reads
+ * the seeds. Nothing here may hardcode a particle, a spelling, or a WH mapping: this
+ * file previously did, and the copies rotted until "not" pointed at the root for
+ * *to drink*.
  */
+
+import {
+  functionWordEnglishByForm,
+  functionWordLabelsByForm,
+  whDimensionEnglish,
+  whQuantityDimensionConcepts,
+  unknownProbeConcept,
+  disjunction,
+} from '../tools/fonoran-language-policy.js';
 
 // ── Color palette ─────────────────────────────────────────────────────────────
 
@@ -24,20 +38,19 @@ const ROLE_LABELS = {
 };
 
 /**
- * Curated Fonoran roman → English words, used ahead of the gloss text.
- * Particles carry technical glosses ("addressee") that never match the natural
- * English a speaker types ("you"), and this mapping is more reliable than
- * parsing prose out of the gloss.
+ * Fonoran roman → English words, used ahead of the gloss text. Function words carry
+ * technical glosses ("addressee") or their own roman ("mi" glossed "mi"), neither of
+ * which matches the natural English a speaker types, so this mapping is more reliable
+ * than parsing prose out of the gloss.
+ *
+ * Derived from `data/fonoran-grammar-policy.json`, which keys the mapping by concept
+ * id. This used to be a literal keyed by roman and it had drifted: English "not" was
+ * pointed at `ko`, the live root for *to drink*; `ban` was mapped to "the/this/that"
+ * though no such form exists in the seeds; the real negation particle `no` was absent
+ * entirely, so "not" linked to nothing; and "we/us/our" hung off the first-person
+ * singular rather than the collective `dan`.
  */
-const PARTICLE_ENGLISH = {
-  mi:  ['i', 'me', 'my', 'myself', 'we', 'us', 'our'],
-  be:  ['you', 'your', 'yourself', 'thou', 'thee', 'thy', 'ye'],
-  ta:  ['was', 'were', 'had', 'did', 'ago', 'yesterday', 'before'],
-  sa:  ['will', 'shall', 'would', 'going', 'tomorrow', 'soon', 'later'],
-  lu:  ['one', 'single', 'someone', 'something'],
-  ban: ['the', 'this', 'that', 'these', 'those'],
-  ko:  ['not', 'never', 'no', 'none', 'nothing'],
-};
+const PARTICLE_ENGLISH = functionWordEnglishByForm();
 
 /**
  * Dropped when mining gloss prose. Pronouns matter most here: glosses are
@@ -63,48 +76,31 @@ const GLOSS_STOPWORDS = new Set([
  * WH-word: nohu ba "unknown person" = who, nohu che "unknown place" = where.
  * Keyed on meaning rather than roman so a lexicon respell cannot break it.
  */
-const WH_PROBE_GLOSS = 'unknown';
+const WH_PROBE_GLOSS = unknownProbeConcept();
 
 /** Roman form of the quantity root that closes a disjunctive group. */
-const DISJUNCTION_MARKER = 'lu';
+const DISJUNCTION_MARKER = disjunction().marker_form;
 
 /** English connectives the marker stands in for. */
-const DISJUNCTION_ENGLISH = ['or', 'either'];
+const DISJUNCTION_ENGLISH = disjunction().english;
 
 const WH_ALL = ['how', 'what', 'who', 'whom', 'which', 'where', 'when', 'why'];
 
-/** Dimension gloss → the single English WH-word the `nohu X` pair collapses into. */
-const WH_DIMENSION = {
-  person: 'who',
-  place:  'where',
-  thing:  'what',
-  time:   'when',
-  reason: 'why',
-  cause:  'why',
-  way:    'how',
-  manner: 'how',
-};
+/** Dimension concept → the single English WH-word the `nohu X` pair collapses into. */
+const WH_DIMENSION = whDimensionEnglish();
 
 /**
  * Quantity probes stay two-to-two rather than collapsing: English also spells
  * this with two words, so nohu aligns to "how" and the dimension to "many".
  */
-const WH_QUANTITY_DIMENSIONS = new Set(['many', 'much', 'number', 'amount', 'quantity']);
+const WH_QUANTITY_DIMENSIONS = whQuantityDimensionConcepts();
 
 /**
  * Friendly labels for function words whose `english` field is either the roman
  * itself ("mi" glossed as "mi") or a technical term ("addressee"), neither of
  * which tells a newcomer anything on a poster.
  */
-const PARTICLE_LABELS = {
-  mi:  'I / me',
-  be:  'you',
-  ta:  'past',
-  sa:  'future',
-  ko:  'not',
-  lu:  'one',
-  ban: 'the',
-};
+const PARTICLE_LABELS = functionWordLabelsByForm();
 
 /**
  * Inflected form → base form for words the suffix rules cannot reach.
@@ -263,7 +259,7 @@ function variantsOf(word) {
  * term. Falls back to `english`, then to the longer `gloss`.
  */
 function displayGloss(tok) {
-  const curated = PARTICLE_LABELS[tok.fonoran];
+  const curated = PARTICLE_LABELS.get(tok.fonoran);
   if (curated) return curated;
 
   const eng = String(tok.english ?? '').trim();
@@ -319,7 +315,7 @@ function buildMapping(englishPhrase, tokens) {
     for (const g of String(tok.english ?? '').split(/[\s,;/]+/)) {
       for (const v of variantsOf(g)) add(primary, v, i);
     }
-    for (const alt of (PARTICLE_ENGLISH[tok.fonoran] ?? [])) {
+    for (const alt of (PARTICLE_ENGLISH.get(tok.fonoran) ?? [])) {
       for (const v of variantsOf(alt)) add(primary, v, i);
     }
     for (const kw of glossKeywords(tok.gloss)) {

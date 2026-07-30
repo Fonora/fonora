@@ -283,28 +283,39 @@ export function buildRootById(concepts, lab = null) {
   return rootById;
 }
 
+/**
+ * Register one alias into a lookup index under the strength rule.
+ *
+ * Alias strength controls shadowing. `strong` aliases are authoritative (concept
+ * id, curated locale/stored aliases, lab meaning + aliases); `weak` aliases are
+ * derived from description/gloss text and must never shadow a strong claim, nor
+ * be emitted as output. Order-independent rule: a weak registration never
+ * overwrites an existing entry, and a strong registration may overwrite an
+ * existing weak entry (so e.g. the strong `light` root always wins over the weak
+ * `light` token leaked from dark's gloss "no light"). `force` (lab-canonical)
+ * wins over anything.
+ *
+ * Exported because every index that feeds `resolveEnglishToken` has to obey this
+ * rule. An index built with raw `Map.set` carries no `alias_strength`, so the
+ * resolver's weak-alias rejection cannot fire and definition prose is emitted as
+ * vocabulary.
+ */
+export function registerAliasEntry(index, alias, entry, { force = false, strength = 'strong' } = {}) {
+  const key = String(alias ?? '').trim().toLowerCase();
+  if (!key) return;
+  const existing = index.get(key);
+  if (existing && !force) {
+    const overrideWeak = strength === 'strong' && existing.alias_strength === 'weak';
+    if (!overrideWeak) return;
+  }
+  index.set(key, { ...entry, alias_strength: strength });
+}
+
 /** Build translator lookup: alias → concept entry with fonoran spelling. */
 export function buildConceptAliasIndex(concepts, lab = null, locData = {}, { labFirst = false, devLab = false } = {}) {
   const index = new Map();
 
-  // Alias strength controls shadowing. `strong` aliases are authoritative
-  // (concept id, curated locale/stored aliases, lab meaning + aliases); `weak`
-  // aliases are derived from description/gloss text and must never shadow a
-  // strong claim. Order-independent rule: a weak registration never overwrites
-  // an existing entry, and a strong registration may overwrite an existing weak
-  // entry (so e.g. the strong `light` root always wins over the weak `light`
-  // token leaked from dark's gloss "no light"). `force` (lab-canonical) wins
-  // over anything.
-  const register = (alias, entry, { force = false, strength = 'strong' } = {}) => {
-    const key = String(alias ?? '').trim().toLowerCase();
-    if (!key) return;
-    const existing = index.get(key);
-    if (existing && !force) {
-      const overrideWeak = strength === 'strong' && existing.alias_strength === 'weak';
-      if (!overrideWeak) return;
-    }
-    index.set(key, { ...entry, alias_strength: strength });
-  };
+  const register = (alias, entry, opts = {}) => registerAliasEntry(index, alias, entry, opts);
 
   const baseFor = (c) => ({
     english: c.id,

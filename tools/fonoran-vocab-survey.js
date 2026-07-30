@@ -24,6 +24,7 @@ import { anthropicModelForRole, completeJson } from './fonoran-llm-client.js';
 import { phoneticPromptBrief } from './fonoran-phonetic-weights.js';
 import { semanticFieldsPromptBrief, loadRootSemanticFields } from './fonoran-root-semantic-fields.js';
 import { evaluateCampfireComposition } from './fonoran-campfire-composition.js';
+import { isMainModule } from './is-main.js';
 
 const MAX_TOKENS = 4096;
 
@@ -375,7 +376,7 @@ async function main() {
   }
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+const isMain = isMainModule(import.meta.url);
 if (isMain) {
   main().catch(err => { console.error(err); process.exit(1); });
 }

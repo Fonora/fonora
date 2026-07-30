@@ -21,6 +21,7 @@ import { createCurriculum } from './fonoran-learn-curriculum.js';
 import { loadFonoranPracticeLab } from './fonoran-practice-words.js';
 import { buildGrammarExercises } from './fonoran-grammar-generate.js';
 import { loadDomainCurriculum } from './fonoran-course-phrases.js';
+import { particleForms } from '../tools/fonoran-language-policy.js';
 import {
   buildGrammarPhraseExercises,
   grammarPhraseExerciseMatches,
@@ -134,7 +135,9 @@ async function loadExercisePool() {
 
 function tipForPhraseKind(kind) {
   if (kind === 'reorder') return 'Preferred order: Actor → Action → Target → Place. Type the full roman phrase.';
-  if (kind === 'particles') return 'Closed particles only: mi, ta, sa, no, ya, von.';
+  // Listed from the seed: this hint tells a learner which forms count as particles, so a
+  // stale list here would contradict the exercise that grades them.
+  if (kind === 'particles') return `Closed particles only: ${particleForms().join(', ')}.`;
   return 'Compile meaning — not English word order.';
 }
 
