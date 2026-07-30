@@ -103,7 +103,8 @@ export function functionWordLabelsByForm() {
 
 /**
  * English WH-word -> the concept ids it compiles to, e.g. who -> [unknown, person].
- * Each pairs the unknown probe with a DIMENSION, never a value on a scale (RN-37).
+ * Each pairs the unknown probe with a DIMENSION, never a value on a scale: "how many" asks
+ * for the quantity axis, not for the value "many".
  */
 export function whComposition() {
   return Object.fromEntries(

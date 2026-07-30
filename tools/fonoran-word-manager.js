@@ -123,12 +123,14 @@ export async function listWordInventory({ filter = 'all', query = '' } = {}) {
     });
   }
 
-  // LLM compound/primitive proposals (fonoran-compound-proposals.js)
+  // Compound/primitive proposals awaiting a human ruling (fonoran-compound-proposals.js).
+  // The 87 open ones came from the retired vocab survey; each carries its own `source`, and
+  // none of them touch the lexicon until someone approves it here.
   try {
-    const llmProposals = await listCompoundProposals({ status: 'open', limit: 200 });
-    for (const lp of llmProposals) {
+    const openProposals = await listCompoundProposals({ status: 'open', limit: 200 });
+    for (const lp of openProposals) {
       items.push({
-        kind: 'llm_proposal',
+        kind: 'word_proposal',
         id: lp.id,
         ref: lp.id,
         word: lp.word,
@@ -190,8 +192,8 @@ export async function listWordInventory({ filter = 'all', query = '' } = {}) {
       || i.lifecycle === 'candidate_pending'
       || i.lifecycle === 'proposal_open',
     );
-  } else if (filter === 'llm_proposals') {
-    filtered = items.filter(i => i.kind === 'llm_proposal');
+  } else if (filter === 'word_proposals' || filter === 'llm_proposals') {
+    filtered = items.filter(i => i.kind === 'word_proposal');
   } else if (filter === 'gaps') {
     filtered = items.filter(i => i.kind === 'gap');
   }

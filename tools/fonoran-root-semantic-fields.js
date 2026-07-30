@@ -6,8 +6,8 @@
  *   - roles: communicative jobs it can anchor in compounds
  *   - association_ideas: recoverability hints (not lemmas / inflections)
  *
- * Used by campfire composition gates, vocab survey prompts, and seed audits
- * so we reject lazy glue (stone+make = hammer) before expensive LLM runs.
+ * Used by campfire composition gates and seed audits so we reject lazy glue
+ * (stone+make = hammer) before it reaches the lexicon.
  */
 
 import { readFile } from 'node:fs/promises';

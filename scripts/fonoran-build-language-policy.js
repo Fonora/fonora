@@ -117,7 +117,7 @@ for (const [sense, ids] of Object.entries(stripComments(policy.modal_composition
 }
 
 // Quantity dimensions are aspirational: several ids name concepts the language does
-// not have yet (RN-37). Emit only the ones that exist rather than failing the build.
+// not have yet. Emit only the ones that exist rather than failing the build.
 const quantityDimensions = (policy.wh_quantity_dimensions?.ids ?? [])
   .map(id => ({ concept: id, form: spellingFor(id) }))
   .filter(entry => entry.form);

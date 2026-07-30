@@ -33,7 +33,7 @@
     ]
   },
   "excluded_syllables": {
-    "note": "Awkward, humorous, or English near-profanity. Prefix-matched in the syllable pool (isExcludedSyllable). The p-family is listed by SOUND, not romanization: pi /pɪ/ ≈ pee, po /po/ and pu /pʊ/ ≈ poo. `pu` was missing because the list predates the vowel work in RN-22/RN-23, so the OO vowel was never re-derived; it reached the dictionary as `heart`. fa/fu ≈ English near-profanity (/fʌ/, fuckin-class compounds). Enforced in three places that share one predicate: the syllable pool, the build gate in fonoran-build.js, and scripts/fonoran-verify-invariants.js on every commit. Excluded spellings are not re-locked by root generation, so listing a form here is enough to make the language heal itself on the next regen.",
+    "note": "Awkward, humorous, or English near-profanity. Prefix-matched in the syllable pool (isExcludedSyllable). The p-family is listed by SOUND, not romanization: pi /pɪ/ ≈ pee, po /po/ and pu /pʊ/ ≈ poo. `pu` was missing because the list predates the vowel rebuild, so the OO vowel was never re-derived; it reached the dictionary as `heart`. fa/fu ≈ English near-profanity (/fʌ/, fuckin-class compounds). Enforced in three places that share one predicate: the syllable pool, the build gate in fonoran-build.js, and scripts/fonoran-verify-invariants.js on every commit. Excluded spellings are not re-locked by root generation, so listing a form here is enough to make the language heal itself on the next regen.",
     "forms": [
       "pi",
       "pee",

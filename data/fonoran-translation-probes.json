@@ -246,7 +246,7 @@
       "en": "How many animals do you own?",
       "target_frame": "unknown · quantity · own · animal",
       "status": "broken",
-      "note": "Quantity probe has no dimension root to pair with, so how_many is an honest gap (RN-37). Must NOT regress to nohu lek: lek is a value on the scale, not the scale. Frame heads name the dimension this needs, so this probe stays broken until one exists."
+      "note": "Quantity probe has no dimension root to pair with, so how_many is an honest gap. Must NOT regress to nohu lek: lek is a value on the scale, not the scale. Frame heads name the dimension this needs, so this probe stays broken until one exists."
     },
     {
       "en": "How do you make fire?",

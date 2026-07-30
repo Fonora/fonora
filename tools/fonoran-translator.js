@@ -1212,9 +1212,9 @@ function posClauseToSlots(sentence, tokens, {
 
   // Rule 13: side by side already means "and", so a conjunction needs no word, while a
   // choice closes the group with `lu` ("a single one") AFTER the alternatives. Both
-  // alternatives must sit in the same slot for that to be sayable at all: RN-38 recorded
-  // disjunction as unreachable here precisely because the pattern parser never grouped
-  // them, so the marker had no group to close.
+  // alternatives must sit in the same slot for that to be sayable at all: disjunction was
+  // unreachable for a long time precisely because the pattern parser never grouped them,
+  // so the marker had no group to close.
   /**
    * @param {object[]} slot
    * @param {string|null} head
