@@ -6,7 +6,6 @@ Fonora is [MIT-licensed](../LICENSE). The project also bundles or calls these co
 | --- | --- | --- |
 | **eSpeak NG** | IPA pronunciation (WASM) | [GPL-3.0-or-later](https://github.com/espeak-ng/espeak-ng) — see [espeak-integration.md](espeak-integration.md) |
 | **@echogarden/espeak-ng-emscripten**, **espeak-ng** (npm) | Bundled eSpeak engine | Same GPL chain as eSpeak NG |
-| **Anthropic Claude** | Fonoran LLM semantic compiler (`tools/fonoran-llm-translate.js`) | Anthropic API terms |
 | **WordNet** / **wordpos** | Legacy translator only (`engine=legacy`) | [Princeton WordNet license](https://wordnet.princeton.edu/license-and-commercial-use); wordpos MIT |
 | **Piper** / **piper-tts-web** | Neural TTS (“Listen” in the builder) | MIT (library); voice models from [rhasspy/piper-voices](https://huggingface.co/rhasspy/piper-voices) (see each model card) |
 | **ONNX Runtime Web** | Piper inference in the browser | Apache-2.0 |

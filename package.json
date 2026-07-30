@@ -1,6 +1,6 @@
 {
   "name": "fonora",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "Open-source research exploring phonetic writing, constructed language design, and fast cross-linguistic communication",
   "homepage": "https://fonora.org",
   "repository": {
@@ -56,12 +56,10 @@
     "fonoran:compound-confusability": "node scripts/fonoran-compound-confusability.js",
     "fonoran:seed-quality-audit": "node scripts/fonoran-seed-quality-audit.js",
     "fonoran:translation-gaps": "node scripts/fonoran-translation-gaps.js",
-    "fonoran:translate:cache": "node tools/fonoran-translation-cache.js",
     "fonoran:regen-compounds": "node scripts/fonoran-regen-compounds.js",
     "fonoran:regen:four-rules": "node scripts/fonoran-regen-four-rules.js",
     "fonoran:course-phrases:build": "node tools/fonoran-course-phrases-build.js",
     "fonoran:course-phrases:build:dry": "node tools/fonoran-course-phrases-build.js --dry-run",
-    "fonoran:course-phrases:build:cache": "node tools/fonoran-course-phrases-build.js --cache-only",
     "fonoran:root-candidates": "node tools/fonoran-root-candidates.js",
     "fonoran:inventory-migrate": "node tools/fonoran-inventory-migrate.js",
     "fonoran:reconcile-inventory": "node scripts/fonoran-reconcile-inventory.js",

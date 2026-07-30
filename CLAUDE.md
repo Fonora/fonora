@@ -29,7 +29,7 @@ Read this before editing language data, seeds, or documentation.
 
 1. **Seeds are truth** — Word Manager saves must update editorial JSON via `tools/fonoran-editorial-sync.js`
 2. **Human owns the lexicon** — vocabulary is authored by hand in the seeds, never generated
-3. **No models in the language** — model-driven proposal, ranking, and playtest pipelines were deleted in July 2026. Deterministic code may not depend on model code or model output, and `npm run fonoran:verify-quarantine` fails the build if it does. Remaining exceptions are listed in `data/fonoran-llm-quarantine.json` and all belong to Learn
+3. **No models in the language** — model-driven proposal, ranking, playtest, and translation pipelines were deleted in July 2026, and nothing in this repository talks to a model. Deterministic code may not depend on model code or model output, and `npm run fonoran:verify-quarantine` fails the build if it does. `data/fonoran-llm-quarantine.json` is empty and must stay that way; the one declared allowance is model-drafted **English** prompt text, which says what to translate and never what the answer is
 4. **Four constitution rules** — universal phonetics, audible distinction, lego recoverability (≤4 roots), no double consonants — enforced at seed layer
 
 ## Version control
@@ -78,6 +78,6 @@ npm start          # http://localhost:8000
 npm test           # REQUIRED before every commit / PR
 ```
 
-**Agents: never commit or push until `npm test` passes.** Translator/lexicon/seed surface changes usually need golden refresh in the same change set (`node scripts/fonoran-translation-gaps.js --update-golden` or `npm run test:translator:update`). Learn phrase roman is compiled at runtime from the translation cache (`GET /api/fonoran/learn/course-phrases`), so lexicon respells do **not** require a course-phrases rebuild for Learn freshness. Optionally refresh the committed offline snapshot with `node tools/fonoran-course-phrases-build.js --force --cache-only` when you want CI fixtures / static fallback updated. Do not leave CI golden failures for the human to clean up.
+**Agents: never commit or push until `npm test` passes.** Translator/lexicon/seed surface changes usually need golden refresh in the same change set (`node scripts/fonoran-translation-gaps.js --update-golden` or `npm run test:translator:update`). Learn phrase roman is compiled at runtime by the deterministic translator (`GET /api/fonoran/learn/course-phrases`), so lexicon respells do **not** require a course-phrases rebuild for Learn freshness. Optionally refresh the committed offline snapshot with `node tools/fonoran-course-phrases-build.js` when you want CI fixtures / static fallback updated. Do not leave CI golden failures for the human to clean up.
 
 Admin tools: `/tools#word-manager` (requires `ADMIN_EMAILS` when OAuth is configured).

@@ -1,25 +1,18 @@
 {
-  "version": "1.2",
-  "rule": "A deterministic algorithm may never depend on LLM code or on data an LLM produced. Deterministic output must be reproducible from seeds in git alone, which is impossible if any step reads a cache or aggregate a model wrote.",
+  "version": "2.0",
+  "rule": "A deterministic algorithm may never depend on LLM code, nor on data a model produced about Fonoran. Deterministic output must be reproducible from seeds in git alone, which is impossible if any step reads a cache, aggregate, or ranking a model wrote.",
   "enforced_by": "scripts/fonoran-verify-llm-quarantine.js (runs in npm test)",
 
-  "_quarantined_comment": "LLM-owned files. They may talk to a model. Nothing outside this list may import them. Only three remain: the translate client and the grammar brief it sends, kept alive solely because Learn still reads the translation cache they filled. When Learn is rebuilt on the deterministic engine, all three go and this section becomes empty.",
-  "quarantined": [
-    "tools/fonoran-llm-client.js",
-    "tools/fonoran-llm-grammar-brief.js",
-    "tools/fonoran-llm-translate.js"
-  ],
+  "_status": "No file in this repository talks to a language model, and nothing reads model-written Fonoran. The last dependency was Learn, which compiled its phrase roman by replaying frames from the LLM translation cache; it now compiles from the deterministic translator, so lessons teach exactly what the language can say and the cache, client, and grammar brief are deleted. The checker stays in npm test to hold the line: quarantined and pending_cut must both stay empty.",
 
-  "_pending_cut_comment": "Deterministic code that still reaches LLM code. Each entry is a bug with a known fix, not an accepted dependency. The checker fails on any file NOT in either list, so this set can only shrink.",
-  "pending_cut": {
-    "tools/fonoran-course-phrases-compile.js": "Learn phrase roman is compiled from the LLM translation cache at runtime. Fix: compile from the deterministic engine, which removes the cache dependency entirely. Deferred on purpose: Learn is being redesigned as procedural lessons, and rewriting its compiler before that design lands would be work done twice.",
-    "tools/fonoran-course-phrases-build.js": "Inherits from the compiler plus a direct llm-translate import. Same deferral.",
-    "tools/fonoran-learn-course-phrases.js": "Inherits via the course-phrases compiler. Same deferral.",
-    "tools/fonoran-course-phrases-compile.test.js": "Inherits via the course-phrases compiler. Same deferral.",
-    "tools/fonoran-course-phrases.test.js": "Inherits via the course-phrases compiler. Same deferral.",
-    "tools/fonoran-api.js": "Serves the Learn course-phrases route, so it inherits the course-phrases compiler. No LLM route remains: the pipeline, candidate, and gap-analyzer routes were deleted.",
-    "server.js": "Inherits via fonoran-api.js and the Learn route only.",
-    "js/tests.js": "Inherits via the course-phrases tests.",
-    "tools/fonoran-data-paths.js": "Names the translation cache and the LLM evaluations file. Goes away with the Learn cache dependency."
+  "_quarantined_comment": "Files permitted to talk to a model. Nothing outside this list may import them. Adding an entry is a deliberate decision to reintroduce model code and needs a reason in the commit message.",
+  "quarantined": [],
+
+  "_pending_cut_comment": "Deterministic code that still reaches LLM code. Every entry is a bug with a known fix, never an accepted dependency. This must stay empty.",
+  "pending_cut": {},
+
+  "_model_authored_inputs_comment": "English source text a model drafted, which the rule above deliberately permits. The distinction that matters: these files say what to translate, never what the answer is. A model that writes an English sentence makes no claim about Fonoran, so the same corpus through the same seeds still yields the same Fonoran by rule, and a human can read and edit the English. Model-written Fonoran is the thing that is banned, because it cannot be derived and so cannot be checked. Each file must be committed and pinned by hash in the fonora-data manifest so a corpus cannot change under a golden test.",
+  "model_authored_inputs": {
+    "fonoran-stranger-corpus.json": "The 1,000-phrase English corpus behind the golden translation tests and the Learn phrase lessons. Read by tools/fonoran-translation-gaps.js, tools/fonoran-course-phrases-build.js, and their tests. Pinned by sha256 in external/fonora-data/manifest.json."
   }
 }

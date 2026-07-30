@@ -89,7 +89,7 @@ New vocabulary is authored by a human, either in the **Words** tab or directly i
 
 Accepted compounds require dictionary regeneration (Advanced tab or `npm run fonoran:regenerate`).
 
-**Production storage:** With `DATABASE_URL` set, the proposal queue uses PostgreSQL (shared by web dynos and `heroku run` one-offs). Without Postgres, proposals use local JSON only. Generated artifacts (translation cache, gap reports) live in the **fonora-data** submodule via `resolveDataPath()`.
+**Production storage:** With `DATABASE_URL` set, the proposal queue uses PostgreSQL (shared by web dynos and `heroku run` one-offs). Without Postgres, proposals use local JSON only. Generated artifacts (gap reports, test snapshots) live in the **fonora-data** submodule via `resolveDataPath()`.
 
 ---
 
@@ -104,7 +104,6 @@ Live translator architecture: [fonoran-translator.md](fonoran-translator.md). Al
 | `npm run test:translator:golden` | Golden regression only. |
 | `npm run test:translator:update` | Accept current translator output as new golden baseline. |
 | `npm run test:translator:probes` | Frame probes with full output. |
-| `npm run fonoran:translate:cache` | Inspect and prune the translation cache. |
 
 ---
 
@@ -190,7 +189,6 @@ External vocabulary data lives in the `fonora-data` submodule.
 
 | Variable | Purpose |
 | --- | --- |
-| `ANTHROPIC_API_KEY_FONORA_TRANSLATOR` | Only remaining model key. Fills the Learn translation cache, which is the last model dependency left (see `data/fonoran-llm-quarantine.json`). Not needed to build, translate, or test. |
 | `DATABASE_URL` | PostgreSQL for production lab state |
 | `PORT` | Dev server port (default `8000`) |
 

@@ -55,10 +55,7 @@ export async function getLearnCoursePhrases() {
   }
 
   const baked = await loadBakedCoursePhrases();
-  const payload = await compileCoursePhrasesDocument(baked, {
-    cacheOnly: true,
-    labRev: labRev || null,
-  });
+  const payload = await compileCoursePhrasesDocument(baked, { labRev: labRev || null });
   const etag = etagForPayload(payload);
   coursePhrasesCache = { labRev, etag, payload };
   return { payload, etag, labRev };

@@ -6,7 +6,7 @@ The Fonoran Translator compiles **meaning** into Fonoran, not a word-for-word gl
 
 There is **one engine**, the deterministic English compiler (`translateEnglishLegacy()` in `tools/fonoran-translator.js`, named `engine=legacy` in the API and scripts). It needs no API key, costs nothing per phrase, answers offline, and brackets what it cannot say, for example `[how]`, instead of inventing a form.
 
-A model-driven semantic compiler ran as the default until July 2026. It was removed: it answered essentially every request, so every public translation cost money, the translator failed outright wherever no key was configured, and no golden output could be reproduced from the repo alone. What it left behind is a translation cache that Learn still reads, tracked as the last open item in `data/fonoran-llm-quarantine.json`.
+A model-driven semantic compiler ran as the default until July 2026. It was removed: it answered essentially every request, so every public translation cost money, the translator failed outright wherever no key was configured, and no golden output could be reproduced from the repo alone. Its cache outlived it for a while because Learn replayed cached frames; Learn now compiles through this engine, so the cache, the client, and the model grammar brief are all deleted and `data/fonoran-llm-quarantine.json` is empty.
 
 One-page algorithm: [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md). Legacy compiler spec: [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md).
 
@@ -168,7 +168,6 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | `tools/fonoran-translate-alternates.js` | Optional we-reading alternates |
 | `tools/fonoran-playback-build.js` | Server wrapper; attaches `playback` to every result |
 | `js/fonoran-playback-build.js` | Browser-safe playback builder (shared with Samples pipeline) |
-| `tools/fonoran-translation-cache.js` | Read/write `fonoran-translation-cache.json` (read path for Learn) |
 | `language/fonoran-app.js` | Translator page UI |
 
 ---

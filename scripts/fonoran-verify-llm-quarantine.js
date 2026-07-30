@@ -27,7 +27,11 @@ const SKIP_DIRS = new Set(['node_modules', '.git', 'external', 'coverage', 'dist
 /** Provider-facing modules: the roots of everything LLM. */
 const PROVIDER_RE = /\b(ANTHROPIC_API_KEY|OPENAI_API_KEY|api\.anthropic\.com|@anthropic-ai)\b/;
 
-/** Data files an LLM wrote. Deterministic code must not read these. */
+/**
+ * Data files a model wrote. Deterministic code must not read these, except for the
+ * English-input corpora declared in model_authored_inputs, which say what to translate
+ * rather than what the answer is.
+ */
 const LLM_DATA_RE = /fonoran-(translation-cache|llm-evaluations|llm-reliability|playtests|stranger-corpus|vocab-survey|persona-glossaries)[\w-]*\.json/;
 
 async function walk(dir, out = []) {
@@ -115,14 +119,26 @@ async function declared() {
     return {
       quarantined: new Set(doc.quarantined ?? []),
       pending: new Set(Object.keys(doc.pending_cut ?? {})),
+      allowedInputs: new Set(Object.keys(doc.model_authored_inputs ?? {})),
     };
   } catch {
-    return { quarantined: new Set(), pending: new Set() };
+    return { quarantined: new Set(), pending: new Set(), allowedInputs: new Set() };
   }
 }
 
+/**
+ * Reading a declared English-input corpus is not a leak. Match on the declared filenames so a
+ * new model-written file cannot slip in under a name the regex happens to catch.
+ * @param {string[]} hits  LLM_DATA_RE matches, which include bare stems as well as filenames
+ * @param {Set<string>} allowedInputs
+ */
+function bannedDataOnly(hits, allowedInputs) {
+  const allowedStems = [...allowedInputs].map(name => name.replace(/\.json$/, ''));
+  return hits.filter(hit => !allowedStems.some(stem => stem.includes(hit) || hit.includes(stem)));
+}
+
 export async function verifyQuarantine() {
-  const { quarantined, pending } = await declared();
+  const { quarantined, pending, allowedInputs } = await declared();
   const { nodes, inside } = await buildGraph(quarantined);
 
   const undeclared = [];
@@ -132,7 +148,8 @@ export async function verifyQuarantine() {
 
   for (const [abs, node] of nodes) {
     const known = quarantined.has(node.rel) || pending.has(node.rel);
-    const touchesLlm = inside.has(abs) || node.llmData.length > 0;
+    const bannedData = bannedDataOnly(node.llmData, allowedInputs);
+    const touchesLlm = inside.has(abs) || bannedData.length > 0;
     if (touchesLlm) seen.add(node.rel);
 
     if (inside.has(abs) && !known) {
@@ -141,8 +158,8 @@ export async function verifyQuarantine() {
         : `imports ${node.imports.filter(d => inside.has(d)).map(d => nodes.get(d).rel).join(', ')}`;
       undeclared.push({ rel: node.rel, via });
     }
-    if (node.llmData.length && !known) {
-      dataLeaks.push({ rel: node.rel, data: node.llmData });
+    if (bannedData.length && !known) {
+      dataLeaks.push({ rel: node.rel, data: bannedData });
     }
   }
 

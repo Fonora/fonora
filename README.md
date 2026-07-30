@@ -73,7 +73,7 @@ npm install
 npm start
 ```
 
-Generated datasets (translation cache, gap reports, phrase corpus) live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data). After clone, run `npm run fonoran:data:status` to verify paths.
+Generated datasets (gap reports, phrase corpus, test snapshots) live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data). After clone, run `npm run fonoran:data:status` to verify paths.
 
 Open [http://localhost:8000](http://localhost:8000). Browsers block `fetch()` and WASM over `file://` — always use the HTTP server.
 

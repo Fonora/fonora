@@ -45,14 +45,13 @@ const gapTest = test('buildFonoranField marks unresolved as gap', () => {
   assert(field.unresolved?.includes('X'), 'unresolved kept');
 });
 
-const cacheMissTest = test('buildFonoranField marks cache-miss as pending', () => {
-  const field = buildFonoranField({
-    ok: false,
-    cache_miss: true,
-    error: 'cache-miss: "Hello."',
-  });
-  assert(field.status === 'pending', `status=${field.status}`);
-  assert(field.roman === '', 'empty roman on miss');
+// Learn used to replay a translation cache, so a phrase missing from it came back "pending"
+// and was hidden from lessons even when the translator could say it. With one deterministic
+// engine there is no such limbo: every phrase is either teachable or a named gap.
+const noPendingLimboTest = test('buildFonoranField never parks a failed phrase as pending', () => {
+  const field = buildFonoranField({ ok: false, cache_miss: true, error: 'stale miss flag' });
+  assert(field.status === 'gap', `status=${field.status}`);
+  assert(field.roman === '', 'empty roman on failure');
 });
 
 const hardFailTest = test('buildFonoranField marks hard failure as gap', () => {
@@ -101,7 +100,7 @@ export function runFonoranCoursePhrasesCompileTests() {
     extractTest,
     translatedTest,
     gapTest,
-    cacheMissTest,
+    noPendingLimboTest,
     hardFailTest,
     composedTest,
     composedWithoutGapsTest,

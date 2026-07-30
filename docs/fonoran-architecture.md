@@ -44,7 +44,7 @@ flowchart TD
   MEM["1. in-process docCache"]
   PG["2. Postgres rows\nactive whenever DATABASE_URL is set"]
   GIT["3. data/*.json in git\ndeclared the source of truth"]
-  EXT["external/fonora-data submodule\ntranslation cache, phrase corpus, gap reports"]
+  EXT["external/fonora-data submodule\nphrase corpus, gap reports, test snapshots"]
   READ["readDoc\npicks the first one it finds"]
   ALGOS["every algorithm"]
   BUILD["fonoran-build"]

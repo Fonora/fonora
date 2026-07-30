@@ -1205,47 +1205,6 @@ async function runLanguagePolicyTests() {
     );
   }));
 
-  // Cache lookups are keyed by the language the caller asked for, but entries are
-  // written under the language the model detected. Auto-detect therefore missed every
-  // warmed phrase and paid for a live call each time. Resolve the reads before asserting.
-  const translationCache = await import('../tools/fonoran-translation-cache.js');
-  const warmedPhrase = 'The storm passed.';
-  const [cachedAsEnglish, cachedAsAuto, cachedNovel] = await Promise.all([
-    translationCache.lookupCachedTranslation('en', warmedPhrase),
-    translationCache.lookupCachedTranslation('auto', warmedPhrase),
-    translationCache.lookupCachedTranslation('auto', 'no warmed entry exists for this line'),
-  ]);
-
-  results.push(test('cache: auto-detect finds a phrase warmed under its detected language', () => {
-    assert(cachedAsEnglish, `${warmedPhrase} should be warmed under en`);
-    assert(cachedAsAuto, 'auto-detect must not miss a warmed phrase and pay for a live call');
-    assert(
-      cachedAsAuto.cache_key === cachedAsEnglish.cache_key,
-      `auto resolved to ${cachedAsAuto.cache_key}, expected ${cachedAsEnglish.cache_key}`,
-    );
-  }));
-
-  results.push(test('cache: an unwarmed phrase is still a miss', () => {
-    assert(cachedNovel === null, 'a novel phrase must miss rather than resolve to something else');
-  }));
-
-  // loadTranslationCache hands back the live in-process map, which is the seam for
-  // exercising the ambiguous case: the committed cache is English-only.
-  const cacheDoc = await translationCache.loadTranslationCache();
-  const ambiguousText = 'zzz cross language probe';
-  cacheDoc.entries[`es|${ambiguousText}`] = { cache_key: `es|${ambiguousText}` };
-  const singleLanguageHit = await translationCache.lookupCachedTranslation('auto', ambiguousText);
-  cacheDoc.entries[`fr|${ambiguousText}`] = { cache_key: `fr|${ambiguousText}` };
-  const ambiguousHit = await translationCache.lookupCachedTranslation('auto', ambiguousText);
-  delete cacheDoc.entries[`es|${ambiguousText}`];
-  delete cacheDoc.entries[`fr|${ambiguousText}`];
-  translationCache.invalidateTranslationCache();
-
-  results.push(test('cache: auto resolves one non-English language but never guesses between two', () => {
-    assert(singleLanguageHit?.cache_key === `es|${ambiguousText}`, 'a single language match should resolve');
-    assert(ambiguousHit === null, 'two languages spelling the same text must stay a miss');
-  }));
-
   // `test` is synchronous, so the frames are compiled before the assertions run.
   const translator = await import('../tools/fonoran-translator.js');
   const ownedGapFrame = await translator.translateFromFrame({

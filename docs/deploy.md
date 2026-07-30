@@ -102,7 +102,7 @@ flowchart TB
     DataJSON["data/*.json\neditorial JSON"]
   end
   subgraph fonoraData [fonora-data submodule]
-    Cache["Translation cache · gap reports\nstranger corpus"]
+    Cache["Gap reports · test snapshots\nstranger corpus"]
   end
   SPA --> API
   SPA --> Static
@@ -118,9 +118,9 @@ flowchart TB
 - **Compound proposal queue** (Review tab)
 - Community users, learn progress, community proposals/votes
 
-**Not in PostgreSQL:** fonora-data artifacts (translation cache, stranger corpus, gap reports).
+**Not in PostgreSQL:** fonora-data artifacts (stranger corpus, gap reports, test snapshots).
 
-**fonora-data submodule** (via `FONORAN_DATA_DIR` / `external/fonora-data`): translation cache, gap reports, stranger corpus. Generated artifacts, not live lab state.
+**fonora-data submodule** (via `FONORAN_DATA_DIR` / `external/fonora-data`): stranger corpus, gap reports, test snapshots. Generated artifacts, not live lab state.
 
 Git-tracked JSON under `data/` is the **seed** format. On first boot with an empty database, the server seeds from those files automatically.
 
@@ -172,7 +172,7 @@ npm run fonoran:export   # lab bucket PostgreSQL → JSON only
 
 Without `DATABASE_URL`, storage falls back to JSON files under `data/`. Use snapshot export/import to sync between JSON mode and a local Postgres instance.
 
-**External generated data:** the translation cache, phrase corpus, and gap reports live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data), checked out as `external/fonora-data` (git submodule). After clone:
+**External generated data:** the phrase corpus, gap reports, and test snapshots live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data), checked out as `external/fonora-data` (git submodule). After clone:
 
 ```bash
 git submodule update --init

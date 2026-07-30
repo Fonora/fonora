@@ -106,7 +106,9 @@ Ring labels and tier assignment come from [`tools/fonoran-experience-tiers.js`](
 
 ### Phrase roman freshness
 
-English prompts are static (stranger corpus / baked domain structure). Fonoran roman is **compiled at Learn load** from the translation cache via `GET /api/fonoran/learn/course-phrases`, keyed on lab `updated_at`. Lexicon respells therefore show up in Learn without rebuilding `data/fonoran-course-phrases.json`. That baked file remains the offline fallback and CI fixture; rebuild with `npm run fonoran:course-phrases:build -- --force --cache-only` when you need to refresh the committed snapshot.
+English prompts are static (stranger corpus / baked domain structure). Fonoran roman is **compiled at Learn load** by the deterministic translator via `GET /api/fonoran/learn/course-phrases`, keyed on lab `updated_at`. Lexicon respells therefore show up in Learn without rebuilding `data/fonoran-course-phrases.json`. That baked file remains the offline fallback and CI fixture; rebuild with `npm run fonoran:course-phrases:build` when you need to refresh the committed snapshot.
+
+Because lessons and the golden translation tests now run the same engine over the same corpus, a phrase a lesson teaches is exactly a phrase the tests prove the language can say. Of the 1,000 corpus phrases, 787 translate cleanly and are teachable; the other 213 name a missing concept and are held back until the lexicon covers them.
 
 ---
 
@@ -176,7 +178,7 @@ Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 | [`js/fonoran-learn-curriculum.js`](../js/fonoran-learn-curriculum.js) | Hybrid ring + domain phrase lesson slicing |
 | [`js/fonoran-practice-words.js`](../js/fonoran-practice-words.js) | Builds practice entries from bootstrap |
 | [`js/fonoran-course-phrases.js`](../js/fonoran-course-phrases.js) | Client loader (API first, static fallback) |
-| [`tools/fonoran-course-phrases-compile.js`](../tools/fonoran-course-phrases-compile.js) | Shared cache-first phrase compile |
+| [`tools/fonoran-course-phrases-compile.js`](../tools/fonoran-course-phrases-compile.js) | Shared deterministic phrase compile |
 | [`tools/fonoran-learn-course-phrases.js`](../tools/fonoran-learn-course-phrases.js) | Server lab_rev cache for Learn phrases |
 | [`js/fonoran-*-practice.js`](../js/) | Per-skill exercise modules |
 | [`js/learn-home-progress.js`](../js/learn-home-progress.js) | Learn home streak / daily goal / skill bars |

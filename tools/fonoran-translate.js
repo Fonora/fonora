@@ -2,11 +2,9 @@
  * Unified Fonoran translate API: the deterministic English compiler, or the reverse
  * Fonoran to natural-language path.
  *
- * There is one forward engine, and it is the language. The model-backed compiler used to sit
+ * There is one forward engine, and it is the language. A model-backed compiler used to sit
  * behind `engine: 'llm'` here, which meant every consumer of this module loaded LLM code and
- * any caller could silently opt into output no rule can reproduce. Model tooling that still
- * exists imports `fonoran-llm-translate.js` directly and is declared in
- * `data/fonoran-llm-quarantine.json`.
+ * any caller could silently opt into output no rule can reproduce. It is gone.
  *
  * `legacy` and `lexical` remain accepted engine names, since scripts and tests pass them.
  */

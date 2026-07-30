@@ -2,25 +2,23 @@
 /**
  * Build data/fonoran-course-phrases.json from the 1,000-phrase stranger corpus.
  *
- * Each domain's phrases are sorted complexity-asc → id-asc so the curriculum
- * walks from simple to hard within each module. Translations are pulled from the
- * LLM translation cache (cache-first); unresolvable phrases are marked "gap" and
- * skipped by the curriculum until the lexicon grows.
+ * Each domain's phrases are sorted complexity-asc then id-asc so the curriculum walks from
+ * simple to hard within a module. Roman comes from the deterministic translator, and phrases
+ * it cannot say are marked "gap" and skipped by the curriculum until the lexicon grows.
+ *
+ * The committed output is an offline snapshot: the Learn API recompiles roman per lab revision,
+ * so this only needs re-running when the English corpus or the domain layout changes.
  *
  * Run:
  *   node tools/fonoran-course-phrases-build.js
  *   node tools/fonoran-course-phrases-build.js --dry-run
  *   node tools/fonoran-course-phrases-build.js --domain first_contact
  *   node tools/fonoran-course-phrases-build.js --limit 20
- *   node tools/fonoran-course-phrases-build.js --force  (re-translate even if cached)
- *   node tools/fonoran-course-phrases-build.js --cache-only  (never call LLM; cache or pending/gap)
  */
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import '../load-env.js';
-import { translatorLlmConfigured } from './fonoran-llm-translate.js';
 import { resolveDataPath } from './fonoran-data-paths.js';
 import { closeStore } from './fonoran-store.js';
 import { compilePhrase } from './fonoran-course-phrases-compile.js';
@@ -30,127 +28,55 @@ const OUTPUT_PATH = join(ROOT, 'data/fonoran-course-phrases.json');
 
 const argv = process.argv.slice(2);
 const dryRun = argv.includes('--dry-run');
-const force = argv.includes('--force');
-const cacheOnly = argv.includes('--cache-only');
 const domainIdx = argv.indexOf('--domain');
 const onlyDomain = domainIdx !== -1 ? argv[domainIdx + 1] : null;
 const limitIdx = argv.indexOf('--limit');
 const limit = limitIdx !== -1 ? Number(argv[limitIdx + 1]) : null;
 
 /** @returns {Promise<object>} */
-async function loadExistingOutput() {
-  try {
-    const raw = await readFile(OUTPUT_PATH, 'utf8');
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-/** @returns {Promise<object>} */
 async function loadStrangerCorpus() {
   const path = resolveDataPath('stranger_corpus');
-  const raw = await readFile(path, 'utf8');
-  return JSON.parse(raw);
+  return JSON.parse(await readFile(path, 'utf8'));
 }
 
 /**
- * Sort phrases within a domain: complexity asc → id asc.
+ * Sort phrases within a domain: complexity asc then id asc.
  * @param {object[]} phrases
  */
 function sortPhrases(phrases) {
   return [...phrases].sort((a, b) =>
-    (a.complexity ?? 1) - (b.complexity ?? 1) ||
-    String(a.id ?? '').localeCompare(String(b.id ?? '')),
+    (a.complexity ?? 1) - (b.complexity ?? 1)
+    || String(a.id ?? '').localeCompare(String(b.id ?? '')),
   );
 }
 
 async function main() {
   const corpus = await loadStrangerCorpus();
-  const existing = await loadExistingOutput();
-
-  /** Build lookup of existing translated phrases (by id) for incremental skipping. */
-  const existingById = new Map();
-  if (existing?.domains) {
-    for (const domain of existing.domains) {
-      for (const phrase of domain.phrases ?? []) {
-        if (phrase.id) existingById.set(phrase.id, phrase);
-      }
-    }
-  }
 
   const outputDomains = [];
   let processed = 0;
-  let skipped = 0;
   let translated = 0;
   let gap = 0;
-  let failed = 0;
-
-  const needsLlm = !dryRun && !cacheOnly && translatorLlmConfigured();
 
   for (let domainIndex = 0; domainIndex < corpus.domains.length; domainIndex++) {
     const domain = corpus.domains[domainIndex];
     if (onlyDomain && domain.id !== onlyDomain) continue;
 
-    const sortedPhrases = sortPhrases(domain.phrases ?? []);
     const outputPhrases = [];
-
-    for (const phrase of sortedPhrases) {
+    for (const phrase of sortPhrases(domain.phrases ?? [])) {
       if (limit != null && processed >= limit) break;
       processed += 1;
 
-      const existingPhrase = existingById.get(phrase.id);
+      const fonoran = dryRun
+        ? { roman: '', tokens: [], status: 'pending' }
+        : await compilePhrase(phrase.en);
 
-      // Incremental: skip phrases already translated with unchanged source text.
-      if (
-        !force &&
-        existingPhrase?.fonoran?.status === 'translated' &&
-        existingPhrase.sourceText === phrase.en
-      ) {
-        skipped += 1;
-        outputPhrases.push(existingPhrase);
-        continue;
-      }
+      if (fonoran.status === 'translated') translated += 1;
+      else if (fonoran.status === 'gap') gap += 1;
 
-      if (dryRun) {
-        console.log(`[dry-run] ${domain.id}: ${phrase.id} — ${phrase.en.slice(0, 60)}`);
-        outputPhrases.push({
-          id: phrase.id,
-          sourceLang: 'en',
-          sourceText: phrase.en,
-          type: phrase.type,
-          complexity: phrase.complexity,
-          fonoran: { roman: '', tokens: [], status: 'pending' },
-        });
-        continue;
-      }
-
-      let fonoranField;
-      if (cacheOnly || needsLlm) {
-        fonoranField = await compilePhrase(phrase.en, {
-          cacheOnly,
-          sourceLang: 'en',
-        });
-        const tag = fonoranField.error?.includes('cache-miss') || fonoranField.status === 'pending'
-          ? 'skip  '
-          : cacheOnly || fonoranField.status === 'translated'
-            ? 'cache '
-            : 'llm   ';
-        if (fonoranField.status === 'pending' && cacheOnly) {
-          console.log(`[skip  ] ${domain.id}: ${phrase.id} — not in cache`);
-        } else if (fonoranField.error && fonoranField.status === 'gap' && !cacheOnly) {
-          failed += 1;
-          console.error(`[error ] ${domain.id}: ${phrase.id} — ${fonoranField.error}`);
-        } else {
-          console.log(`[${tag}] ${domain.id}: ${phrase.id} → ${fonoranField.roman || '(gap)'}`);
-        }
-      } else {
-        fonoranField = { roman: '', tokens: [], status: 'pending' };
-        console.log(`[skip  ] ${domain.id}: ${phrase.id} — LLM not configured`);
-      }
-
-      if (fonoranField.status === 'translated') translated += 1;
-      else if (fonoranField.status === 'gap') gap += 1;
+      console.log(
+        `[${fonoran.status.padEnd(10)}] ${domain.id}: ${phrase.id} → ${fonoran.roman || '(gap)'}`,
+      );
 
       outputPhrases.push({
         id: phrase.id,
@@ -158,7 +84,7 @@ async function main() {
         sourceText: phrase.en,
         type: phrase.type,
         complexity: phrase.complexity,
-        fonoran: fonoranField,
+        fonoran,
       });
     }
 
@@ -177,7 +103,6 @@ async function main() {
     total_phrases: outputDomains.reduce((n, d) => n + d.phrases.length, 0),
     translated,
     gap,
-    skipped,
     domains: outputDomains,
   };
 
@@ -187,9 +112,7 @@ async function main() {
     console.log(`\nWrote ${OUTPUT_PATH}`);
   }
 
-  console.log(
-    `\nDone — processed: ${processed}, translated: ${translated + skipped}, gap: ${gap}, failed: ${failed}`,
-  );
+  console.log(`\nDone — processed: ${processed}, translated: ${translated}, gap: ${gap}`);
 }
 
 main()
