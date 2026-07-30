@@ -5,7 +5,7 @@
 
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { readDoc, writeDoc, EDITORIAL_DOCS, resolveStorageMode } from './fonoran-store.js';
+import { readDoc, writeDoc, EDITORIAL_DOCS } from './fonoran-store.js';
 import { editorialSeedPath } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -122,7 +122,6 @@ export async function updateCompoundEditorial(conceptId, { composition, gloss, l
     seeds_written: true,
     concept: cid,
     paths: [editorialSeedPath('compounds', rel, ROOT)],
-    storage_mode: resolveStorageMode(),
   };
 }
 

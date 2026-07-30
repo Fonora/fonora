@@ -7,7 +7,7 @@
 
 import '../load-env.js';
 import { readFile } from 'node:fs/promises';
-import { readDoc, closeStore } from '../tools/fonoran-store.js';
+import { readDoc } from '../tools/fonoran-store.js';
 import { loadConceptInventory } from '../tools/fonoran-concepts.js';
 import { loadLocalization } from '../tools/fonoran-concepts.js';
 import {
@@ -105,5 +105,4 @@ main().catch(err => {
   console.error(err);
   process.exitCode = 1;
 }).finally(async () => {
-  await closeStore();
 });

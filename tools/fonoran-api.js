@@ -77,13 +77,6 @@ import {
 import { analyzeWord, analysisDelta } from './fonoran-word-analysis.js';
 import { listWordInventory, getWordDetail, acceptProposal } from './fonoran-word-manager.js';
 import {
-  createSnapshotZipStream,
-  getSnapshotStatus,
-  importSnapshotZip,
-  previewSnapshotZip,
-  exportSnapshotToDir,
-} from './fonoran-snapshot.js';
-import {
   generateCandidates,
   loadCandidateContext,
 } from './fonoran-expression-candidates.js';
@@ -99,7 +92,6 @@ import {
   optimizeCompoundsInStore,
   runTranslatorRegression,
 } from './fonoran-regen.js';
-import { importEditorialFromSeedPaths } from './fonoran-store.js';
 import { sanitizeForJsonResponse } from '../js/utils.js';
 
 function writeJsonPayload(res, status, payload) {
@@ -126,22 +118,6 @@ export async function readJsonBody(req) {
   const raw = Buffer.concat(chunks).toString('utf8');
   if (!raw) return {};
   return JSON.parse(raw);
-}
-
-async function readRawBody(req) {
-  const chunks = [];
-  for await (const chunk of req) chunks.push(chunk);
-  return Buffer.concat(chunks);
-}
-
-function snapshotZipFromBody(body, rawBuffer) {
-  if (body?.zip_base64) {
-    return Buffer.from(body.zip_base64, 'base64');
-  }
-  if (rawBuffer?.length && !rawBuffer.toString('utf8').trimStart().startsWith('{')) {
-    return rawBuffer;
-  }
-  return null;
 }
 
 async function getBootstrap() {
@@ -180,57 +156,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     return true;
   }
   try {
-    if (pathname === '/api/fonoran/snapshot/status' && method === 'GET') {
-      return done(200, await getSnapshotStatus());
-    }
-    if (pathname === '/api/fonoran/snapshot/export' && method === 'GET') {
-      const stamp = new Date().toISOString().slice(0, 10);
-      res.writeHead(200, {
-        'Content-Type': 'application/zip',
-        'Content-Disposition': `attachment; filename="fonoran-snapshot-${stamp}.zip"`,
-        'Cache-Control': 'no-store',
-      });
-      const archive = await createSnapshotZipStream();
-      archive.on('error', (err) => {
-        console.error('Snapshot export failed:', err);
-        if (!res.headersSent) {
-          jsonErrorResponse(res, 500, 'Export failed');
-        } else {
-          res.destroy(err);
-        }
-      });
-      archive.pipe(res);
-      return true;
-    }
-    if (pathname === '/api/fonoran/snapshot/preview' && method === 'POST') {
-      const raw = await readRawBody(req);
-      let body = {};
-      try {
-        body = raw.length ? JSON.parse(raw.toString('utf8')) : {};
-      } catch {
-        body = {};
-      }
-      const zip = snapshotZipFromBody(body, raw);
-      if (!zip?.length) return done(400, { error: 'Provide zip_base64 or raw zip body' });
-      return done(200, previewSnapshotZip(zip));
-    }
-    if (pathname === '/api/fonoran/snapshot/import' && method === 'POST') {
-      const raw = await readRawBody(req);
-      let body = {};
-      try {
-        body = raw.length ? JSON.parse(raw.toString('utf8')) : {};
-      } catch {
-        body = {};
-      }
-      if (body.confirm !== 'RESTORE') {
-        return done(400, { error: 'Type RESTORE in confirm field to replace all Fonoran state' });
-      }
-      const zip = snapshotZipFromBody(body, raw);
-      if (!zip?.length) return done(400, { error: 'Provide zip_base64 or raw zip body' });
-      const preview = previewSnapshotZip(zip);
-      const result = await importSnapshotZip(zip);
-      return done(200, { imported: true, preview: preview.summary, ...result });
-    }
     if (pathname === '/api/fonoran/me/progress' && method === 'GET') {
       const user = getSessionUser(req);
       if (!user?.userId) return done(401, { error: 'Sign in required' });
@@ -537,17 +462,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/lab/regen/status' && method === 'GET') {
       return done(200, await getRegenStatus());
     }
-    if (pathname === '/api/fonoran/lab/editorial/import' && method === 'POST') {
-      const body = await readJsonBody(req);
-      if (body.confirm !== 'IMPORT') {
-        return done(400, { error: 'Type IMPORT in confirm field to reload editorial seeds from deploy' });
-      }
-      return done(200, await importEditorialFromSeedPaths());
-    }
-    if (pathname === '/api/fonoran/editorial/export-seeds' && method === 'POST') {
-      const summary = await exportSnapshotToDir();
-      return done(200, { exported: true, ...summary });
-    }
     if (pathname === '/api/fonoran/lab/optimize-compounds' && method === 'POST') {
       const body = await readJsonBody(req);
       return done(200, await optimizeCompoundsInStore({
@@ -570,20 +484,10 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/lab/seed' && method === 'POST') {
       return done(200, await resetProject());
     }
+    // The stale-seed guard that used to sit here compared the seeds against a Postgres copy of
+    // them. A build now reads the seed files directly, so it cannot be stale by construction.
     if ((pathname === '/api/fonoran/lab/build' || pathname === '/api/fonoran/lab/import-vocabulary') && method === 'POST') {
       const body = await readJsonBody(req);
-      if (!body.force) {
-        const status = await getRegenStatus();
-        const stale = status.warnings?.some(w => w.code === 'lab_newer_than_seeds' || w.code === 'never_imported_seeds');
-        if (stale && status.storage_mode === 'postgres') {
-          return done(409, {
-            error: 'Editorial seeds are stale. Use Regenerate from git seeds in Advanced, or pass force: true with confirm BUILD.',
-          });
-        }
-      }
-      if (body.force && body.confirm !== 'BUILD') {
-        return done(400, { error: 'Type BUILD in confirm field to force rebuild without reloading seeds' });
-      }
       return done(200, await buildFonoran({ approveAll: Boolean(body.approve_all) }));
     }
     if (pathname === '/api/fonoran/lab/reset-review' && method === 'POST') {

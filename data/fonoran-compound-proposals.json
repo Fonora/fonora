@@ -1,0 +1,6125 @@
+{
+  "version": "2.0",
+  "description": "Concepts the lexicon does not cover yet, kept as a human review queue. Nothing here is part of the language until a human accepts it and it lands in fonoran-compounds.json or fonoran-approved-roots.json.",
+  "provenance": "Every record carries source \"vocab_survey\": two runs of a model-driven survey that asked what a small lexicon was missing, on 2026-07-04 and 2026-07-07. That pipeline has been deleted. The wording of each rationale and gloss is therefore model-written English and has not been reviewed. The concept list is worth keeping as a to-do list; the prose in it carries no authority.",
+  "merged_at": "2026-07-30T16:32:16.577Z",
+  "proposal_count": 161,
+  "proposals": [
+    {
+      "id": "cp-mr6rwkp4-315ae1ff",
+      "word": "ally",
+      "role": "social",
+      "concept_id": "ally",
+      "gloss": "one who is bonded through mutual help; an ally",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "forming alliances with other groups or individuals is key to survival",
+      "compositions": [
+        [
+          "help",
+          "bond"
+        ],
+        [
+          "good",
+          "collective"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "help",
+          "bond"
+        ],
+        [
+          "good",
+          "collective"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.688Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rxdo4-79f7e8f4",
+      "word": "anticipation",
+      "role": "emotion_mind",
+      "concept_id": "anticipation",
+      "gloss": "feeling want toward something coming; anticipation",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing excitement about an expected good event like rescue",
+      "compositions": [
+        [
+          "before",
+          "want",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "before",
+          "want",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:17.236Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup6-2ecee0eb",
+      "word": "anxiety",
+      "role": "emotion_mind",
+      "concept_id": "anxiety",
+      "gloss": "thinking with fear; anxiety",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "worrying about what dangers might come next",
+      "compositions": [
+        [
+          "fear",
+          "think"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "fear",
+          "think"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.882Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tl7-e0afcac2",
+      "word": "approach",
+      "role": "action_motion",
+      "concept_id": "approach",
+      "gloss": "to move closer to something",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "approaching an animal carefully or a stranger's camp",
+      "compositions": [
+        [
+          "near",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "near",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.835Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwklp-f53937c0",
+      "word": "ask",
+      "role": "social",
+      "concept_id": "ask",
+      "gloss": "to request or question; to ask",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "requesting information or help is one of the most frequent social acts",
+      "compositions": [
+        [
+          "want",
+          "speak"
+        ],
+        [
+          "empty",
+          "speak"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "want",
+          "speak"
+        ],
+        [
+          "empty",
+          "speak"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.565Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwka-a14e2561",
+      "word": "away_from",
+      "role": "space_direction",
+      "concept_id": "away_from",
+      "gloss": "moving in the direction away from something; departing",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "warning your partner to move away from danger or a predator",
+      "compositions": [
+        [
+          "move",
+          "far"
+        ],
+        [
+          "path",
+          "far"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "far"
+        ],
+        [
+          "path",
+          "far"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.754Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup6-601fd924",
+      "word": "awe",
+      "role": "emotion_mind",
+      "concept_id": "awe",
+      "gloss": "feeling something is immensely large or powerful; awe",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "reacting to a vast landscape, storm, or overwhelming sight",
+      "compositions": [
+        [
+          "big",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "big",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.882Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh3-e0d2fc9f",
+      "word": "back_body",
+      "role": "body_health",
+      "concept_id": "back_body",
+      "gloss": "the back of the body; rear torso",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "back pain or injury from carrying heavy loads is common in survival",
+      "compositions": [
+        [
+          "body",
+          "back"
+        ],
+        [
+          "spine",
+          "body"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "back"
+        ],
+        [
+          "spine",
+          "body"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.887Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzqc-c8fc72ca",
+      "word": "bandaging",
+      "role": "survival",
+      "concept_id": "bandaging",
+      "gloss": "wrapping a wound to stop bleeding; bandaging",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "directing partner to bind an injury to prevent blood loss",
+      "compositions": [
+        [
+          "hold",
+          "wound"
+        ],
+        [
+          "skin",
+          "hold"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "hold",
+          "wound"
+        ],
+        [
+          "skin",
+          "hold"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.204Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tlw-c8897405",
+      "word": "bend",
+      "role": "action_motion",
+      "concept_id": "bend",
+      "gloss": "to curve the body or a limb downward",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "bending to pick something up or to fit through a low space",
+      "compositions": [
+        [
+          "down",
+          "body"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "down",
+          "body"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.860Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s01io-33ed15ad",
+      "word": "blanket",
+      "role": "tools_objects",
+      "concept_id": "blanket",
+      "gloss": "a large piece of cloth used to cover and warm the body",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "essential for staying warm at night in cold conditions",
+      "compositions": [
+        [
+          "body",
+          "cloth"
+        ],
+        [
+          "sleep",
+          "cloth"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "cloth"
+        ],
+        [
+          "sleep",
+          "cloth"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:21.456Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh5-63404258",
+      "word": "blister",
+      "role": "body_health",
+      "concept_id": "blister",
+      "gloss": "a blister; fluid-filled bubble under the skin",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "blisters from walking or burns are common and painful survival issues",
+      "compositions": [
+        [
+          "skin",
+          "water"
+        ],
+        [
+          "skin",
+          "small"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "skin",
+          "water"
+        ],
+        [
+          "skin",
+          "small"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.889Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj94-75966a85",
+      "word": "boundary_marker",
+      "role": "space_direction",
+      "concept_id": "boundary_marker",
+      "gloss": "a physical object marking the edge of a territory or area",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "placing stones or sticks to mark the safe perimeter of camp",
+      "compositions": [
+        [
+          "bound",
+          "thing"
+        ],
+        [
+          "thing",
+          "bound"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bound",
+          "thing"
+        ],
+        [
+          "thing",
+          "bound"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.424Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s01ih-3ed48fc1",
+      "word": "brick",
+      "role": "tools_objects",
+      "concept_id": "brick",
+      "gloss": "a block of hardened clay used for building",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "durable building block for walls and fireplaces",
+      "compositions": [
+        [
+          "make",
+          "stone"
+        ],
+        [
+          "earth",
+          "fire"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "make",
+          "stone"
+        ],
+        [
+          "earth",
+          "fire"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:21.449Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzqq-2d4d7cc1",
+      "word": "broken_limb",
+      "role": "survival",
+      "concept_id": "broken_limb",
+      "gloss": "a fractured or broken limb; a serious bone injury",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "communicating that a partner cannot walk or use their arm due to bone injury",
+      "compositions": [
+        [
+          "bone",
+          "bad"
+        ],
+        [
+          "pain",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bone",
+          "bad"
+        ],
+        [
+          "pain",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.218Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlnv-d533568c",
+      "word": "camp",
+      "role": "survival",
+      "concept_id": "camp",
+      "gloss": "a temporary base where people sleep and rest; camp",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Establishing a camp is the first act of organized survival",
+      "compositions": [
+        [
+          "place",
+          "sleep"
+        ],
+        [
+          "sleep",
+          "fire"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "sleep"
+        ],
+        [
+          "sleep",
+          "fire"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.891Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzqo-69ea3305",
+      "word": "carrying_water",
+      "role": "survival",
+      "concept_id": "carrying_water",
+      "gloss": "transporting water; carrying water from source to camp",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "coordinating who fetches and carries water back to shelter",
+      "compositions": [
+        [
+          "hold",
+          "water"
+        ],
+        [
+          "move",
+          "water"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "hold",
+          "water"
+        ],
+        [
+          "move",
+          "water"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.216Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8z-91b0fbe9",
+      "word": "center_path",
+      "role": "space_direction",
+      "concept_id": "center_path",
+      "gloss": "the middle route; a path through the center",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "choosing to go through the middle of a forest rather than around it",
+      "compositions": [
+        [
+          "path",
+          "inside"
+        ],
+        [
+          "inside",
+          "path"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "inside"
+        ],
+        [
+          "inside",
+          "path"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.419Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwlg-7bd87bae",
+      "word": "center_place",
+      "role": "space_direction",
+      "concept_id": "center_place",
+      "gloss": "the central point; the middle of an area",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "designating the center of camp as a meeting point or fire location",
+      "compositions": [
+        [
+          "inside",
+          "all"
+        ],
+        [
+          "all",
+          "near"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "inside",
+          "all"
+        ],
+        [
+          "all",
+          "near"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.796Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rvo95-2d4002c5",
+      "word": "chill",
+      "role": "body_health",
+      "concept_id": "chill",
+      "gloss": "chill; the body feeling abnormally cold",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "hypothermia risk must be communicated quickly",
+      "compositions": [
+        [
+          "body",
+          "cold"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "cold"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:57.641Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tl5-8791efa0",
+      "word": "circle",
+      "role": "action_motion",
+      "concept_id": "circle",
+      "gloss": "to move in a loop around something",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "circling a territory to scout for danger or game",
+      "compositions": [
+        [
+          "around",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "around",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.833Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzq9-ecce8699",
+      "word": "cold_danger",
+      "role": "survival",
+      "concept_id": "cold_danger",
+      "gloss": "dangerous cold threatening the body; hypothermia risk",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "alerting partner that temperature is becoming life-threatening",
+      "compositions": [
+        [
+          "bad",
+          "cold"
+        ],
+        [
+          "cold",
+          "body"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bad",
+          "cold"
+        ],
+        [
+          "cold",
+          "body"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.201Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwkqu-02fa0d7d",
+      "word": "comfort",
+      "role": "social",
+      "concept_id": "comfort",
+      "gloss": "to ease another's pain with care; to comfort",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "supporting someone in distress maintains emotional bonds and group morale",
+      "compositions": [
+        [
+          "good",
+          "feel"
+        ],
+        [
+          "help",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "good",
+          "feel"
+        ],
+        [
+          "help",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.750Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwkq5-d99dfb02",
+      "word": "command",
+      "role": "social",
+      "concept_id": "command",
+      "gloss": "an authoritative instruction; a command",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "clear directives from a leader coordinate group action in emergencies",
+      "compositions": [
+        [
+          "front",
+          "speak"
+        ],
+        [
+          "leader",
+          "speak"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "front",
+          "speak"
+        ],
+        [
+          "leader",
+          "speak"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.725Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwkqg-ac45ec2c",
+      "word": "confess",
+      "role": "social",
+      "concept_id": "confess",
+      "gloss": "to speak one's inner truth; to confess",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "admitting wrongdoing openly is necessary for restoring trust in a small group",
+      "compositions": [
+        [
+          "true",
+          "self"
+        ],
+        [
+          "inside",
+          "speak"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "true",
+          "self"
+        ],
+        [
+          "inside",
+          "speak"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.736Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup4-166ac973",
+      "word": "content",
+      "role": "emotion_mind",
+      "concept_id": "content",
+      "gloss": "feeling good and still; contentment",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing quiet satisfaction after a successful day",
+      "compositions": [
+        [
+          "good",
+          "still",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "good",
+          "still",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.880Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlq-3e602278",
+      "word": "continue",
+      "role": "time_change",
+      "concept_id": "continue",
+      "gloss": "to continue; to keep doing something",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "telling your partner to continue gathering while you scout ahead",
+      "compositions": [
+        [
+          "more",
+          "do"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "more",
+          "do"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.230Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj92-6ab22985",
+      "word": "crossing_point",
+      "role": "space_direction",
+      "concept_id": "crossing_point",
+      "gloss": "a specific spot where one can cross a barrier such as a river",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "locating the safest ford or stepping-stone crossing on a river",
+      "compositions": [
+        [
+          "through",
+          "place"
+        ],
+        [
+          "place",
+          "through"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "through",
+          "place"
+        ],
+        [
+          "place",
+          "through"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.422Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlo-b919fa34",
+      "word": "daily",
+      "role": "time_change",
+      "concept_id": "daily",
+      "gloss": "each day; the daily cycle of light and dark",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "planning tasks around the daily light cycle is essential outdoors",
+      "compositions": [
+        [
+          "around",
+          "light"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "around",
+          "light"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.228Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwlx-e0bc8a5f",
+      "word": "dangerous_place",
+      "role": "space_direction",
+      "concept_id": "dangerous_place",
+      "gloss": "a dangerous or harmful location; a hazardous area",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "warning your partner to avoid a certain area due to risk",
+      "compositions": [
+        [
+          "place",
+          "bad"
+        ],
+        [
+          "bad",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "bad"
+        ],
+        [
+          "bad",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.813Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlp-510153fa",
+      "word": "dawn",
+      "role": "time_change",
+      "concept_id": "dawn",
+      "gloss": "dawn; the moment before full light; early morning",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "agreeing to start moving at dawn to maximize travel time",
+      "compositions": [
+        [
+          "light",
+          "before"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "light",
+          "before"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.229Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlo-320a027d",
+      "word": "daytime",
+      "role": "time_change",
+      "concept_id": "daytime",
+      "gloss": "daytime; the light period of the day",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "planning work during daytime when visibility is good",
+      "compositions": [
+        [
+          "light",
+          "time"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "light",
+          "time"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.228Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8i4-9f096c05",
+      "word": "delay",
+      "role": "time_change",
+      "concept_id": "delay",
+      "gloss": "to hold back in time; to postpone",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "a delay in leaving could mean being caught in bad weather",
+      "compositions": [
+        [
+          "hold",
+          "time"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "hold",
+          "time"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.196Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj95-df0b14ac",
+      "word": "depth",
+      "role": "space_direction",
+      "concept_id": "depth",
+      "gloss": "how far down something goes; the depth of a hole or water",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "judging whether a pool or pit is safe to enter or cross",
+      "compositions": [
+        [
+          "down",
+          "inside"
+        ],
+        [
+          "inside",
+          "down"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "down",
+          "inside"
+        ],
+        [
+          "inside",
+          "down"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.425Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tk8-7fe5b0f9",
+      "word": "descend",
+      "role": "action_motion",
+      "concept_id": "descend",
+      "gloss": "to move downward",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "coming down from a cliff or hill safely",
+      "compositions": [
+        [
+          "down",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "down",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.800Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup8-9090efd0",
+      "word": "determined",
+      "role": "emotion_mind",
+      "concept_id": "determined",
+      "gloss": "holding onto doing something; determination",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "showing you will keep trying no matter what obstacles arise",
+      "compositions": [
+        [
+          "hold",
+          "do"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "hold",
+          "do"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.884Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8w-92331633",
+      "word": "detour",
+      "role": "space_direction",
+      "concept_id": "detour",
+      "gloss": "a route that goes around an obstacle",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "planning how to avoid a dangerous area or impassable terrain",
+      "compositions": [
+        [
+          "path",
+          "around"
+        ],
+        [
+          "around",
+          "path"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "around"
+        ],
+        [
+          "around",
+          "path"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.416Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rxdnx-7ddc56c9",
+      "word": "distracted",
+      "role": "emotion_mind",
+      "concept_id": "distracted",
+      "gloss": "thinking of many things at once; distracted",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "explaining why you made a mistake or missed something important",
+      "compositions": [
+        [
+          "many",
+          "think"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "many",
+          "think"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:17.229Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup3-3f18c5c9",
+      "word": "distrust",
+      "role": "emotion_mind",
+      "concept_id": "distrust",
+      "gloss": "a broken or bad bond; distrust",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "warning that someone nearby cannot be relied upon",
+      "compositions": [
+        [
+          "bad",
+          "bond"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bad",
+          "bond"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.879Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8t-2f8551ee",
+      "word": "downhill",
+      "role": "space_direction",
+      "concept_id": "downhill",
+      "gloss": "going downward; descending a slope",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "guiding toward lower ground where water or shelter may be found",
+      "compositions": [
+        [
+          "move",
+          "down"
+        ],
+        [
+          "path",
+          "down"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "down"
+        ],
+        [
+          "path",
+          "down"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.413Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tm0-dc0c0896",
+      "word": "drag",
+      "role": "action_motion",
+      "concept_id": "drag",
+      "gloss": "to pull something heavy along the ground",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "dragging a large animal carcass back to camp",
+      "compositions": [
+        [
+          "path",
+          "take"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "take"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.864Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlnp-f4c5c780",
+      "word": "drinking_water",
+      "role": "survival",
+      "concept_id": "drinking_water",
+      "gloss": "water that is safe to drink; clean water",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Distinguishing safe water from contaminated water is life-saving",
+      "compositions": [
+        [
+          "good",
+          "water"
+        ],
+        [
+          "drink",
+          "water"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "good",
+          "water"
+        ],
+        [
+          "drink",
+          "water"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.884Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlp-838847b9",
+      "word": "dusk",
+      "role": "time_change",
+      "concept_id": "dusk",
+      "gloss": "dusk; the fading of light; evening",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "knowing to return to camp before dusk to avoid darkness",
+      "compositions": [
+        [
+          "light",
+          "after"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "light",
+          "after"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.229Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2qo8u-00738fdb",
+      "word": "earthquake",
+      "role": "nature_environment",
+      "concept_id": "earthquake",
+      "gloss": "the ground shaking violently; an earthquake",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "an earthquake means immediate danger of rockfall and structural collapse — flee or shelter",
+      "compositions": [
+        [
+          "earth",
+          "move"
+        ],
+        [
+          "move",
+          "earth"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "earth",
+          "move"
+        ],
+        [
+          "move",
+          "earth"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:04.830Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8y-b7237ec2",
+      "word": "edge_of",
+      "role": "space_direction",
+      "concept_id": "edge_of",
+      "gloss": "the boundary or rim of a place or surface",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "warning your partner not to approach the edge of a cliff or riverbank",
+      "compositions": [
+        [
+          "bound",
+          "place"
+        ],
+        [
+          "outside",
+          "bound"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bound",
+          "place"
+        ],
+        [
+          "outside",
+          "bound"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.418Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlt-7eebd767",
+      "word": "elapsed",
+      "role": "time_change",
+      "concept_id": "elapsed",
+      "gloss": "elapsed; time that has passed and moved on",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "estimating how much time has elapsed since leaving camp to judge distance traveled",
+      "compositions": [
+        [
+          "move",
+          "time"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "time"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.233Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh3-2b7e707f",
+      "word": "elbow",
+      "role": "body_health",
+      "concept_id": "elbow",
+      "gloss": "the elbow; joint in the middle of the arm",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "elbow injury limits tool use and carrying ability",
+      "compositions": [
+        [
+          "arm",
+          "bound"
+        ],
+        [
+          "arm",
+          "stone"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "arm",
+          "bound"
+        ],
+        [
+          "arm",
+          "stone"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.887Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzqz-c75c4b7f",
+      "word": "emergency",
+      "role": "survival",
+      "concept_id": "emergency",
+      "gloss": "an urgent crisis requiring immediate help; an emergency",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "the most critical concept — conveying that help is needed right now",
+      "compositions": [
+        [
+          "bad",
+          "now"
+        ],
+        [
+          "need",
+          "help"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bad",
+          "now"
+        ],
+        [
+          "need",
+          "help"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.227Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwly-384e6d02",
+      "word": "encircle",
+      "role": "space_direction",
+      "concept_id": "encircle",
+      "gloss": "to move in a circle around something; to encircle",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "describing how to go around an obstacle or how animals circle prey",
+      "compositions": [
+        [
+          "move",
+          "around"
+        ],
+        [
+          "around",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "around"
+        ],
+        [
+          "around",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.814Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup4-70d1830e",
+      "word": "excited",
+      "role": "emotion_mind",
+      "concept_id": "excited",
+      "gloss": "wanting something with fast energy; excitement",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing eagerness about finding a new resource or path",
+      "compositions": [
+        [
+          "fast",
+          "want"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "fast",
+          "want"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.880Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlns-a634a11b",
+      "word": "exhausted",
+      "role": "survival",
+      "concept_id": "exhausted",
+      "gloss": "completely drained of energy; exhausted",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Severe exhaustion can be as dangerous as injury in survival",
+      "compositions": [
+        [
+          "body",
+          "empty"
+        ],
+        [
+          "life",
+          "empty"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "empty"
+        ],
+        [
+          "life",
+          "empty"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.888Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8i7-e3e9fb64",
+      "word": "expire",
+      "role": "time_change",
+      "concept_id": "expire",
+      "gloss": "to reach the end of life or usefulness; to run out",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "knowing when food or fire fuel will expire drives urgent action",
+      "compositions": [
+        [
+          "bound",
+          "life"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bound",
+          "life"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.199Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh5-6b5150a5",
+      "word": "faint",
+      "role": "body_health",
+      "concept_id": "faint",
+      "gloss": "to faint; lose consciousness briefly",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "fainting from heat, hunger, or injury is a medical emergency",
+      "compositions": [
+        [
+          "body",
+          "sleep"
+        ],
+        [
+          "life",
+          "still"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "sleep"
+        ],
+        [
+          "life",
+          "still"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.889Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlk-823ff66e",
+      "word": "far_future",
+      "role": "time_change",
+      "concept_id": "far_future",
+      "gloss": "a long time from now; distant future",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "discussing long-term plans like building a shelter versus surviving today",
+      "compositions": [
+        [
+          "far",
+          "after"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "far",
+          "after"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.224Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj91-dd4149db",
+      "word": "far_place",
+      "role": "space_direction",
+      "concept_id": "far_place",
+      "gloss": "a distant location; somewhere far away",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "discussing whether to attempt a journey to a distant resource or settlement",
+      "compositions": [
+        [
+          "place",
+          "far"
+        ],
+        [
+          "far",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "far"
+        ],
+        [
+          "far",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.421Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8ic-e0e4dfa0",
+      "word": "finish",
+      "role": "time_change",
+      "concept_id": "finish",
+      "gloss": "to complete an action; to be done",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "signaling that a task is finished so the group can move on",
+      "compositions": [
+        [
+          "bound",
+          "do"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bound",
+          "do"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.204Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlnt-ae30f781",
+      "word": "fire_wood",
+      "role": "survival",
+      "concept_id": "fire_wood",
+      "gloss": "wood used as fuel for fire; firewood",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Collecting enough firewood before dark is a nightly survival task",
+      "compositions": [
+        [
+          "plant",
+          "fire"
+        ],
+        [
+          "make",
+          "fire"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "plant",
+          "fire"
+        ],
+        [
+          "make",
+          "fire"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.889Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tll-e1180d41",
+      "word": "flee",
+      "role": "action_motion",
+      "concept_id": "flee",
+      "gloss": "to run away from danger",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "escaping a predator or hostile situation",
+      "compositions": [
+        [
+          "far",
+          "fast",
+          "move"
+        ],
+        [
+          "fear",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "far",
+          "fast",
+          "move"
+        ],
+        [
+          "fear",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.849Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rxdnv-a8208b88",
+      "word": "focused",
+      "role": "emotion_mind",
+      "concept_id": "focused",
+      "gloss": "thinking on one thing only; focused attention",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "telling your companion to concentrate on a single critical task",
+      "compositions": [
+        [
+          "one",
+          "think"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "one",
+          "think"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:17.227Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzqk-d06ba71c",
+      "word": "food_source",
+      "role": "survival",
+      "concept_id": "food_source",
+      "gloss": "a location or thing that provides food; a food source",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "marking or communicating where food can be reliably gathered",
+      "compositions": [
+        [
+          "place",
+          "food"
+        ],
+        [
+          "plant",
+          "food"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "food"
+        ],
+        [
+          "plant",
+          "food"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.212Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlnw-c023c3dd",
+      "word": "food_storage",
+      "role": "survival",
+      "concept_id": "food_storage",
+      "gloss": "keeping food preserved for later use; food storage",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Storing surplus food prevents future starvation between hunts",
+      "compositions": [
+        [
+          "hold",
+          "food"
+        ],
+        [
+          "food",
+          "after"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "hold",
+          "food"
+        ],
+        [
+          "food",
+          "after"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.892Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj94-16884a09",
+      "word": "fork",
+      "role": "space_direction",
+      "concept_id": "fork",
+      "gloss": "a point where a path splits into multiple routes",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "deciding which branch of a trail to take when routes diverge",
+      "compositions": [
+        [
+          "path",
+          "many"
+        ],
+        [
+          "many",
+          "path"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "many"
+        ],
+        [
+          "many",
+          "path"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.424Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s01is-67374fa5",
+      "word": "funnel",
+      "role": "tools_objects",
+      "concept_id": "funnel",
+      "gloss": "a cone-shaped tool for directing liquid into a container",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "helps pour water into narrow containers without spilling",
+      "compositions": [
+        [
+          "through",
+          "hold"
+        ],
+        [
+          "water",
+          "path"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "through",
+          "hold"
+        ],
+        [
+          "water",
+          "path"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:21.460Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8ii-9cf8918d",
+      "word": "future",
+      "role": "time_change",
+      "concept_id": "future",
+      "gloss": "time that has not yet happened; the future",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "planning for future needs like storing food before winter",
+      "compositions": [
+        [
+          "after",
+          "time"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "after",
+          "time"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.210Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwm3-537604b7",
+      "word": "gather_here",
+      "role": "space_direction",
+      "concept_id": "gather_here",
+      "gloss": "to come together at this spot; to converge here",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "calling your partner to come to your current location immediately",
+      "compositions": [
+        [
+          "move",
+          "here"
+        ],
+        [
+          "collective",
+          "here"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "here"
+        ],
+        [
+          "collective",
+          "here"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.819Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj92-1b7086f9",
+      "word": "gathering_place",
+      "role": "space_direction",
+      "concept_id": "gathering_place",
+      "gloss": "a place where people come together; a meeting point",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "designating a spot to regroup if the two of you get separated",
+      "compositions": [
+        [
+          "place",
+          "collective"
+        ],
+        [
+          "collective",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "collective"
+        ],
+        [
+          "collective",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.422Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup5-3de1bd9d",
+      "word": "grief",
+      "role": "emotion_mind",
+      "concept_id": "grief",
+      "gloss": "feeling deep pain inside; grief",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing sorrow after losing someone or something important",
+      "compositions": [
+        [
+          "pain",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "pain",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.881Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup6-23c4b7bc",
+      "word": "guilt",
+      "role": "emotion_mind",
+      "concept_id": "guilt",
+      "gloss": "feeling pain about one's own actions; guilt",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "feeling responsible for harm that came to your companion",
+      "compositions": [
+        [
+          "pain",
+          "self",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "pain",
+          "self",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.882Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rkst-d67aa5a8",
+      "word": "handle",
+      "role": "tools_objects",
+      "concept_id": "handle",
+      "gloss": "the part of a tool gripped by the hand",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "attaching stone heads to wooden shafts for better tools",
+      "compositions": [
+        [
+          "hand",
+          "hold"
+        ],
+        [
+          "hold",
+          "hand"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "hand",
+          "hold"
+        ],
+        [
+          "hold",
+          "hand"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.021Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tly-e4a03b62",
+      "word": "hang",
+      "role": "action_motion",
+      "concept_id": "hang",
+      "gloss": "to suspend something from above",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "hanging food out of reach of animals or drying hides",
+      "compositions": [
+        [
+          "up",
+          "hold"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "up",
+          "hold"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.862Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup3-07ca7e31",
+      "word": "hate",
+      "role": "emotion_mind",
+      "concept_id": "hate",
+      "gloss": "the opposite of love; strong dislike or hatred",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "warning your companion about an enemy you strongly oppose",
+      "compositions": [
+        [
+          "bad",
+          "love"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bad",
+          "love"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.879Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlnr-0849fcd2",
+      "word": "healing",
+      "role": "survival",
+      "concept_id": "healing",
+      "gloss": "the process of recovering from injury; healing",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Tracking whether a wound is healing or worsening guides care",
+      "compositions": [
+        [
+          "body",
+          "good"
+        ],
+        [
+          "pain",
+          "after"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "good"
+        ],
+        [
+          "pain",
+          "after"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.887Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh7-67bd1233",
+      "word": "healthy",
+      "role": "body_health",
+      "concept_id": "healthy",
+      "gloss": "healthy; body in good working condition",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "confirming you are healthy reassures your partner and aids planning",
+      "compositions": [
+        [
+          "body",
+          "good"
+        ],
+        [
+          "life",
+          "good"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "good"
+        ],
+        [
+          "life",
+          "good"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.891Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rxdo1-c6e04166",
+      "word": "hesitant",
+      "role": "emotion_mind",
+      "concept_id": "hesitant",
+      "gloss": "wanting but staying still; hesitation",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "showing reluctance before a risky action like crossing water",
+      "compositions": [
+        [
+          "still",
+          "want"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "still",
+          "want"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:17.233Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj91-7d55a47f",
+      "word": "hidden_path",
+      "role": "space_direction",
+      "concept_id": "hidden_path",
+      "gloss": "a concealed or non-obvious route",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "discovering a secret trail that avoids danger or cuts through terrain",
+      "compositions": [
+        [
+          "path",
+          "dark"
+        ],
+        [
+          "path",
+          "inside"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "dark"
+        ],
+        [
+          "path",
+          "inside"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.421Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj93-66621faa",
+      "word": "home_place",
+      "role": "space_direction",
+      "concept_id": "home_place",
+      "gloss": "one's home base; the place one belongs to",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "referring to the camp or origin point as the base to return to",
+      "compositions": [
+        [
+          "place",
+          "self"
+        ],
+        [
+          "self",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "self"
+        ],
+        [
+          "self",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.423Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2qo8s-77d4856b",
+      "word": "horizon",
+      "role": "nature_environment",
+      "concept_id": "horizon",
+      "gloss": "the line where earth meets sky; the horizon",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "the horizon is used to judge distance, weather, and direction of travel",
+      "compositions": [
+        [
+          "sky",
+          "bound"
+        ],
+        [
+          "bound",
+          "far"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "sky",
+          "bound"
+        ],
+        [
+          "bound",
+          "far"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:04.828Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwkpd-4b77ac46",
+      "word": "host",
+      "role": "social",
+      "concept_id": "host",
+      "gloss": "one who gives shelter and welcome; a host",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "knowing who is responsible for providing shelter and food to newcomers",
+      "compositions": [
+        [
+          "inside",
+          "give"
+        ],
+        [
+          "give",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "inside",
+          "give"
+        ],
+        [
+          "give",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.697Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlns-6565913f",
+      "word": "hunt",
+      "role": "survival",
+      "concept_id": "hunt",
+      "gloss": "to pursue and catch animals for food; hunt",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Hunting is a primary food source when plant food is scarce",
+      "compositions": [
+        [
+          "take",
+          "animal"
+        ],
+        [
+          "move",
+          "animal"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "take",
+          "animal"
+        ],
+        [
+          "move",
+          "animal"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.888Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup7-5dfde6ab",
+      "word": "indifferent",
+      "role": "emotion_mind",
+      "concept_id": "indifferent",
+      "gloss": "feeling nothing; indifference",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing you have no strong reaction to a situation",
+      "compositions": [
+        [
+          "empty",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "empty",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.883Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwld-996b77da",
+      "word": "inner_place",
+      "role": "space_direction",
+      "concept_id": "inner_place",
+      "gloss": "the interior of a space; the inside area",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "describing the interior of a cave or shelter as the safe sleeping area",
+      "compositions": [
+        [
+          "inside",
+          "place"
+        ],
+        [
+          "place",
+          "inside"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "inside",
+          "place"
+        ],
+        [
+          "place",
+          "inside"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.793Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwkpl-745c7cd1",
+      "word": "insult",
+      "role": "social",
+      "concept_id": "insult",
+      "gloss": "hurtful words directed at someone; an insult",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "recognizing verbal attacks helps manage conflict and protect group harmony",
+      "compositions": [
+        [
+          "bad",
+          "speak"
+        ],
+        [
+          "pain",
+          "speak"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bad",
+          "speak"
+        ],
+        [
+          "pain",
+          "speak"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.705Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8in-8ba8be96",
+      "word": "interval",
+      "role": "time_change",
+      "concept_id": "interval",
+      "gloss": "a gap or space between two times",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "the interval between tides determines when you can cross the flats",
+      "compositions": [
+        [
+          "between",
+          "time"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "between",
+          "time"
+        ]
+      ],
+      "redundancy_warnings": [
+        "adjacent_repeat"
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.215Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8u-0e3e8059",
+      "word": "left_side",
+      "role": "space_direction",
+      "concept_id": "left_side",
+      "gloss": "the left side; the flank opposite the leading hand",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "giving directional instructions when splitting up to search",
+      "compositions": [
+        [
+          "back",
+          "bound"
+        ],
+        [
+          "bound",
+          "back"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "back",
+          "bound"
+        ],
+        [
+          "bound",
+          "back"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.414Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rksp-feb75953",
+      "word": "lid",
+      "role": "tools_objects",
+      "concept_id": "lid",
+      "gloss": "a cover placed over a container to close it",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "keeping insects and dirt out of stored food and water",
+      "compositions": [
+        [
+          "bound",
+          "container"
+        ],
+        [
+          "hold",
+          "bound"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bound",
+          "container"
+        ],
+        [
+          "hold",
+          "bound"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.017Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh6-7f01895e",
+      "word": "limp",
+      "role": "body_health",
+      "concept_id": "limp",
+      "gloss": "to limp; walk unevenly due to leg or foot pain",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "limping slows travel and signals injury needing attention",
+      "compositions": [
+        [
+          "move",
+          "pain"
+        ],
+        [
+          "foot",
+          "bad"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "pain"
+        ],
+        [
+          "foot",
+          "bad"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.890Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rvo8a-09f1569c",
+      "word": "lip",
+      "role": "body_health",
+      "concept_id": "lip",
+      "gloss": "the lip; skin edge of the mouth",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "cracked or bleeding lips are a common survival discomfort",
+      "compositions": [
+        [
+          "mouth",
+          "skin"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "mouth",
+          "skin"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:57.610Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh4-f823f10e",
+      "word": "liver",
+      "role": "body_health",
+      "concept_id": "liver",
+      "gloss": "internal organ; the liver",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "internal organ pain needs rough location communicated to a helper",
+      "compositions": [
+        [
+          "body",
+          "inside"
+        ],
+        [
+          "inside",
+          "body"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "inside"
+        ],
+        [
+          "inside",
+          "body"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.888Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwli-66b67b9f",
+      "word": "long_path",
+      "role": "space_direction",
+      "concept_id": "long_path",
+      "gloss": "a long route; a path that covers great distance",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "warning your partner that the route will take much longer than expected",
+      "compositions": [
+        [
+          "path",
+          "far"
+        ],
+        [
+          "far",
+          "path"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "far"
+        ],
+        [
+          "far",
+          "path"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.798Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8hw-2ac4335c",
+      "word": "long_time",
+      "role": "time_change",
+      "concept_id": "long_time",
+      "gloss": "a long duration; a great while",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "this will take a long time to dry — managing expectations",
+      "compositions": [
+        [
+          "big",
+          "time"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "big",
+          "time"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.188Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwlr-7c902357",
+      "word": "loop_path",
+      "role": "space_direction",
+      "concept_id": "loop_path",
+      "gloss": "a circular route; a path that loops back to the start",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "planning a scouting route that circles back to camp without retracing steps",
+      "compositions": [
+        [
+          "path",
+          "around"
+        ],
+        [
+          "around",
+          "path"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "around"
+        ],
+        [
+          "around",
+          "path"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.807Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup2-6ad9b1dd",
+      "word": "love_feel",
+      "role": "emotion_mind",
+      "concept_id": "love_feel",
+      "gloss": "feeling deep love; being in love",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing that you deeply care for someone present",
+      "compositions": [
+        [
+          "love",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "love",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.878Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8x-43fb32d3",
+      "word": "low_ground",
+      "role": "space_direction",
+      "concept_id": "low_ground",
+      "gloss": "low-lying terrain; a valley or depression",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "finding where water collects or where fog and cold air settle",
+      "compositions": [
+        [
+          "place",
+          "down"
+        ],
+        [
+          "earth",
+          "down"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "down"
+        ],
+        [
+          "earth",
+          "down"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.417Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rksq-8d788387",
+      "word": "mat",
+      "role": "tools_objects",
+      "concept_id": "mat",
+      "gloss": "a flat woven plant surface to sit or sleep on",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "insulating the body from cold wet ground while sleeping",
+      "compositions": [
+        [
+          "plant",
+          "down"
+        ],
+        [
+          "down",
+          "plant"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "plant",
+          "down"
+        ],
+        [
+          "down",
+          "plant"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.018Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwlt-58dfbde1",
+      "word": "meeting_place",
+      "role": "space_direction",
+      "concept_id": "meeting_place",
+      "gloss": "a designated place to meet; a rendezvous point",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "agreeing on where to reunite if the two of you get separated",
+      "compositions": [
+        [
+          "place",
+          "bond"
+        ],
+        [
+          "collective",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "bond"
+        ],
+        [
+          "collective",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.809Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlm-f3c4fcf0",
+      "word": "moment",
+      "role": "time_change",
+      "concept_id": "moment",
+      "gloss": "a very brief period; an instant",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "asking someone to wait just a moment while you finish a task",
+      "compositions": [
+        [
+          "small",
+          "time"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "small",
+          "time"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.226Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2qo8o-ca30e4a1",
+      "word": "mud",
+      "role": "nature_environment",
+      "concept_id": "mud",
+      "gloss": "wet earth; mud",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "mud affects movement speed, can trap you, and is used for shelter building",
+      "compositions": [
+        [
+          "water",
+          "earth"
+        ],
+        [
+          "earth",
+          "water"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "water",
+          "earth"
+        ],
+        [
+          "earth",
+          "water"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:04.824Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh6-aba7d463",
+      "word": "mute",
+      "role": "body_health",
+      "concept_id": "mute",
+      "gloss": "mute; unable to speak",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "knowing someone cannot speak changes how you communicate with them",
+      "compositions": [
+        [
+          "speak",
+          "empty"
+        ],
+        [
+          "mouth",
+          "still"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "speak",
+          "empty"
+        ],
+        [
+          "mouth",
+          "still"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.890Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj92-78217fbf",
+      "word": "near_place",
+      "role": "space_direction",
+      "concept_id": "near_place",
+      "gloss": "a close location; somewhere nearby",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "pointing out a close source of water or shelter to prioritize first",
+      "compositions": [
+        [
+          "place",
+          "near"
+        ],
+        [
+          "near",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "near"
+        ],
+        [
+          "near",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.422Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh4-f7494798",
+      "word": "neck",
+      "role": "body_health",
+      "concept_id": "neck",
+      "gloss": "the neck; part connecting head to body",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "neck injury or pain needs to be located and communicated",
+      "compositions": [
+        [
+          "head",
+          "body"
+        ],
+        [
+          "head",
+          "bound"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "head",
+          "body"
+        ],
+        [
+          "head",
+          "bound"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.888Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8il-4687f90d",
+      "word": "new",
+      "role": "time_change",
+      "concept_id": "new",
+      "gloss": "recently made or arrived; new",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "new growth on plants signals the season is changing",
+      "compositions": [
+        [
+          "near",
+          "before"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "near",
+          "before"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.213Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzqm-9d66b663",
+      "word": "night_camp",
+      "role": "survival",
+      "concept_id": "night_camp",
+      "gloss": "a place chosen to sleep for the night; a camp",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "agreeing on where to stop and rest when darkness falls",
+      "compositions": [
+        [
+          "dark",
+          "place"
+        ],
+        [
+          "sleep",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "dark",
+          "place"
+        ],
+        [
+          "sleep",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.214Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlnu-c35d52d5",
+      "word": "night_watch",
+      "role": "survival",
+      "concept_id": "night_watch",
+      "gloss": "staying awake to watch for danger at night; keeping watch",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Taking turns watching at night protects both partners from threats",
+      "compositions": [
+        [
+          "dark",
+          "see"
+        ],
+        [
+          "sleep",
+          "one"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "dark",
+          "see"
+        ],
+        [
+          "sleep",
+          "one"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.890Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwkqb-6eb01ad4",
+      "word": "obey",
+      "role": "social",
+      "concept_id": "obey",
+      "gloss": "to act on another's words; to obey",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "following instructions from a leader is essential for coordinated survival tasks",
+      "compositions": [
+        [
+          "do",
+          "speak"
+        ],
+        [
+          "take",
+          "speak"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "do",
+          "speak"
+        ],
+        [
+          "take",
+          "speak"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.731Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8w-83b1ad5c",
+      "word": "open_ground",
+      "role": "space_direction",
+      "concept_id": "open_ground",
+      "gloss": "a clear, unobstructed area of land",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "identifying safe flat ground for camp or travel",
+      "compositions": [
+        [
+          "place",
+          "empty"
+        ],
+        [
+          "earth",
+          "empty"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "empty"
+        ],
+        [
+          "earth",
+          "empty"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.416Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8m-a3384626",
+      "word": "opposite_side",
+      "role": "space_direction",
+      "concept_id": "opposite_side",
+      "gloss": "the far side; the other end of something",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "pointing out where the path continues after crossing a river",
+      "compositions": [
+        [
+          "far",
+          "bound"
+        ],
+        [
+          "through",
+          "bound"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "far",
+          "bound"
+        ],
+        [
+          "through",
+          "bound"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.406Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj93-1a4e3447",
+      "word": "outer_edge",
+      "role": "space_direction",
+      "concept_id": "outer_edge",
+      "gloss": "the outermost boundary; the perimeter of an area",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "defining how far out to scout before turning back",
+      "compositions": [
+        [
+          "far",
+          "bound"
+        ],
+        [
+          "outside",
+          "bound"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "far",
+          "bound"
+        ],
+        [
+          "outside",
+          "bound"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.423Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwle-11abf441",
+      "word": "outer_place",
+      "role": "space_direction",
+      "concept_id": "outer_place",
+      "gloss": "the exterior area; the outside region",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "distinguishing the exposed outer area from the sheltered interior",
+      "compositions": [
+        [
+          "outside",
+          "place"
+        ],
+        [
+          "place",
+          "outside"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "outside",
+          "place"
+        ],
+        [
+          "place",
+          "outside"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.794Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlr-365ef9c7",
+      "word": "overdue",
+      "role": "time_change",
+      "concept_id": "overdue",
+      "gloss": "overdue; much later than expected; past due time",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "realizing a partner is overdue returning from scouting — time to search",
+      "compositions": [
+        [
+          "far",
+          "after"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "far",
+          "after"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.231Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlnw-f5ecc277",
+      "word": "overheating",
+      "role": "survival",
+      "concept_id": "overheating",
+      "gloss": "dangerously high body temperature; overheating or heat stroke",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Heat stroke can kill quickly; partners must recognize the signs",
+      "compositions": [
+        [
+          "body",
+          "fire"
+        ],
+        [
+          "hot",
+          "bad"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "fire"
+        ],
+        [
+          "hot",
+          "bad"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.892Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2oup9-54653956",
+      "word": "overwhelmed",
+      "role": "emotion_mind",
+      "concept_id": "overwhelmed",
+      "gloss": "feeling too many things at once; overwhelmed",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing that too much is happening to process or handle",
+      "compositions": [
+        [
+          "many",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "many",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:59:39.885Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rkso-d28151b8",
+      "word": "paddle",
+      "role": "tools_objects",
+      "concept_id": "paddle",
+      "gloss": "a flat tool used to push through water",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "steering and propelling a raft or boat",
+      "compositions": [
+        [
+          "hand",
+          "water"
+        ],
+        [
+          "water",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "hand",
+          "water"
+        ],
+        [
+          "water",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.016Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlnv-2970540f",
+      "word": "pain_relief",
+      "role": "survival",
+      "concept_id": "pain_relief",
+      "gloss": "reduction of pain; pain relief",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Managing pain allows an injured person to keep functioning",
+      "compositions": [
+        [
+          "pain",
+          "less"
+        ],
+        [
+          "help",
+          "pain"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "pain",
+          "less"
+        ],
+        [
+          "help",
+          "pain"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.891Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj90-5d696131",
+      "word": "pass_through",
+      "role": "space_direction",
+      "concept_id": "pass_through",
+      "gloss": "a gap or passage through an obstacle such as mountains",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "finding a navigable gap through hills or dense forest",
+      "compositions": [
+        [
+          "through",
+          "path"
+        ],
+        [
+          "move",
+          "through"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "through",
+          "path"
+        ],
+        [
+          "move",
+          "through"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.420Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8ig-a53cb160",
+      "word": "past",
+      "role": "time_change",
+      "concept_id": "past",
+      "gloss": "time that has already happened; the past",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "recalling past events like where food was found last time",
+      "compositions": [
+        [
+          "before",
+          "time"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "before",
+          "time"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.208Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rksr-2d7a4e09",
+      "word": "pouch",
+      "role": "tools_objects",
+      "concept_id": "pouch",
+      "gloss": "a small soft bag for carrying small items",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "carrying seeds, medicine, and small tools on the body",
+      "compositions": [
+        [
+          "small",
+          "empty"
+        ],
+        [
+          "skin",
+          "hold"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "small",
+          "empty"
+        ],
+        [
+          "skin",
+          "hold"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.019Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlr-243d4c62",
+      "word": "previous",
+      "role": "time_change",
+      "concept_id": "previous",
+      "gloss": "the previous one; the one just before",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "referring back to the previous campsite or action taken",
+      "compositions": [
+        [
+          "one",
+          "before"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "one",
+          "before"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.231Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2qo8m-a7debc6a",
+      "word": "prey",
+      "role": "nature_environment",
+      "concept_id": "prey",
+      "gloss": "an animal hunted for food; prey",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "identifying prey animals helps plan hunting and food gathering strategy",
+      "compositions": [
+        [
+          "animal",
+          "take"
+        ],
+        [
+          "take",
+          "animal"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "animal",
+          "take"
+        ],
+        [
+          "take",
+          "animal"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:04.822Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwkqe-e1600b5b",
+      "word": "reject",
+      "role": "social",
+      "concept_id": "reject",
+      "gloss": "to push someone or something away; to reject",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "excluding harmful individuals or ideas protects the group",
+      "compositions": [
+        [
+          "outside",
+          "give"
+        ],
+        [
+          "bad",
+          "bond"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "outside",
+          "give"
+        ],
+        [
+          "bad",
+          "bond"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.734Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rxdnr-a340a342",
+      "word": "restless",
+      "role": "emotion_mind",
+      "concept_id": "restless",
+      "gloss": "feeling a need to move or change; restlessness",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing the urge to leave camp and explore or travel",
+      "compositions": [
+        [
+          "want",
+          "move",
+          "feel"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "want",
+          "move",
+          "feel"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:17.223Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8i8-bcb1e6fe",
+      "word": "restore",
+      "role": "time_change",
+      "concept_id": "restore",
+      "gloss": "to bring back to a good state; to fix or heal",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "restoring a broken tool or healing an injury is critical survival work",
+      "compositions": [
+        [
+          "back",
+          "good"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "back",
+          "good"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.200Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8v-e4096f8d",
+      "word": "right_side",
+      "role": "space_direction",
+      "concept_id": "right_side",
+      "gloss": "the right side; the forward-hand flank",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "coordinating which direction each person takes when scouting",
+      "compositions": [
+        [
+          "front",
+          "bound"
+        ],
+        [
+          "bound",
+          "front"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "front",
+          "bound"
+        ],
+        [
+          "bound",
+          "front"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.415Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tl1-9e3296b9",
+      "word": "roll",
+      "role": "action_motion",
+      "concept_id": "roll",
+      "gloss": "to move by turning over and over along a surface",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "rolling a log or stone to move it more easily",
+      "compositions": [
+        [
+          "around",
+          "path"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "around",
+          "path"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.829Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rksm-efb89b5f",
+      "word": "roof",
+      "role": "tools_objects",
+      "concept_id": "roof",
+      "gloss": "the covering on top of a shelter",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "keeping rain and sun off the people inside",
+      "compositions": [
+        [
+          "up",
+          "bound"
+        ],
+        [
+          "up",
+          "inside"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "up",
+          "bound"
+        ],
+        [
+          "up",
+          "inside"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.014Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwlv-c90a8dba",
+      "word": "safe_place",
+      "role": "space_direction",
+      "concept_id": "safe_place",
+      "gloss": "a safe or favorable location; a refuge",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "identifying where to shelter or rest without danger",
+      "compositions": [
+        [
+          "place",
+          "good"
+        ],
+        [
+          "good",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "good"
+        ],
+        [
+          "good",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.811Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2qo8q-76ab2341",
+      "word": "sand",
+      "role": "nature_environment",
+      "concept_id": "sand",
+      "gloss": "tiny rock particles; sand",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "sand signals desert or beach terrain, affecting water availability and navigation",
+      "compositions": [
+        [
+          "small",
+          "stone"
+        ],
+        [
+          "stone",
+          "small"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "small",
+          "stone"
+        ],
+        [
+          "stone",
+          "small"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:04.826Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlm-b3764b8f",
+      "word": "season",
+      "role": "time_change",
+      "concept_id": "season",
+      "gloss": "a season; a recurring period marked by sky and weather changes",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "knowing which season is coming determines what food to gather",
+      "compositions": [
+        [
+          "around",
+          "sky"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "around",
+          "sky"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.226Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh5-508c12a4",
+      "word": "shiver",
+      "role": "body_health",
+      "concept_id": "shiver",
+      "gloss": "shivering; body trembling from cold or fever",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "shivering signals dangerous cold exposure or fever",
+      "compositions": [
+        [
+          "body",
+          "cold"
+        ],
+        [
+          "cold",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "cold"
+        ],
+        [
+          "cold",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.889Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rz4e0-76649a54",
+      "word": "shore",
+      "role": "nature_environment",
+      "concept_id": "shore",
+      "gloss": "the edge where water meets land; a shore or bank",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "shores are meeting points, navigation landmarks, and food sources",
+      "compositions": [
+        [
+          "bound",
+          "water"
+        ],
+        [
+          "water",
+          "earth"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bound",
+          "water"
+        ],
+        [
+          "water",
+          "earth"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:48:38.520Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rksn-08cee624",
+      "word": "shovel",
+      "role": "tools_objects",
+      "concept_id": "shovel",
+      "gloss": "a tool for digging and moving earth",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "digging fire pits, latrines, and planting holes",
+      "compositions": [
+        [
+          "hand",
+          "earth"
+        ],
+        [
+          "earth",
+          "move"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "hand",
+          "earth"
+        ],
+        [
+          "earth",
+          "move"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.015Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwlo-fb4c3f0c",
+      "word": "skyward",
+      "role": "space_direction",
+      "concept_id": "skyward",
+      "gloss": "directed upward toward the sky; skyward",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "pointing out smoke rising or a bird flying up as a directional signal",
+      "compositions": [
+        [
+          "move",
+          "sky"
+        ],
+        [
+          "path",
+          "sky"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "sky"
+        ],
+        [
+          "path",
+          "sky"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.804Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s01iu-7fdc14ae",
+      "word": "sling",
+      "role": "tools_objects",
+      "concept_id": "sling",
+      "gloss": "a strap used to hurl stones at a distance",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "allows hunting and defense from a safe distance using only stones",
+      "compositions": [
+        [
+          "far",
+          "stone"
+        ],
+        [
+          "throw",
+          "bond"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "far",
+          "stone"
+        ],
+        [
+          "throw",
+          "bond"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:21.462Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8io-daf268d1",
+      "word": "slow",
+      "role": "time_change",
+      "concept_id": "slow",
+      "gloss": "moving or happening at low speed; slow",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "a slow-moving river is safer to cross than a fast one",
+      "compositions": [
+        [
+          "less",
+          "fast"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "less",
+          "fast"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.216Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzqw-abcd8c24",
+      "word": "smoke_signal",
+      "role": "survival",
+      "concept_id": "smoke_signal",
+      "gloss": "using smoke to communicate over distance; a smoke signal",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "alerting distant rescuers or partners to your location",
+      "compositions": [
+        [
+          "fire",
+          "speak"
+        ],
+        [
+          "air",
+          "speak"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "fire",
+          "speak"
+        ],
+        [
+          "air",
+          "speak"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.224Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rvo9x-5f94ab00",
+      "word": "sore",
+      "role": "body_health",
+      "concept_id": "sore",
+      "gloss": "sore; a part of the body that hurts",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "locating soreness helps partner assist with treatment",
+      "compositions": [
+        [
+          "body",
+          "pain"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "pain"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:57.669Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rtzqs-d498f4e4",
+      "word": "splint",
+      "role": "survival",
+      "concept_id": "splint",
+      "gloss": "a rigid support for a broken bone; a splint",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "improvising support for a broken limb using hard materials",
+      "compositions": [
+        [
+          "stone",
+          "bone"
+        ],
+        [
+          "hold",
+          "bone"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "stone",
+          "bone"
+        ],
+        [
+          "hold",
+          "bone"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:44:39.220Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwm1-beb15bdc",
+      "word": "spread_out",
+      "role": "space_direction",
+      "concept_id": "spread_out",
+      "gloss": "to disperse outward; to spread apart in different directions",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "coordinating a search pattern where both people fan out to cover more ground",
+      "compositions": [
+        [
+          "move",
+          "far"
+        ],
+        [
+          "many",
+          "outside"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "far"
+        ],
+        [
+          "many",
+          "outside"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.817Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rz4e2-81f9109e",
+      "word": "spring_water",
+      "role": "nature_environment",
+      "concept_id": "spring_water",
+      "gloss": "water emerging naturally from the ground; a spring",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "finding a freshwater spring is a critical survival discovery",
+      "compositions": [
+        [
+          "water",
+          "earth"
+        ],
+        [
+          "earth",
+          "water"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "water",
+          "earth"
+        ],
+        [
+          "earth",
+          "water"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:48:38.522Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rksu-02078f3a",
+      "word": "stake",
+      "role": "tools_objects",
+      "concept_id": "stake",
+      "gloss": "a pointed stick driven into the ground to anchor things",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "anchoring shelters, fencing, and traps",
+      "compositions": [
+        [
+          "plant",
+          "down"
+        ],
+        [
+          "down",
+          "hold"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "plant",
+          "down"
+        ],
+        [
+          "down",
+          "hold"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.022Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8ie-d24ddd09",
+      "word": "start",
+      "role": "time_change",
+      "concept_id": "start",
+      "gloss": "to begin an action; to start doing something",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "coordinating when to start building shelter before rain arrives",
+      "compositions": [
+        [
+          "front",
+          "do"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "front",
+          "do"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.206Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwm5-d9c3107d",
+      "word": "stay_put",
+      "role": "space_direction",
+      "concept_id": "stay_put",
+      "gloss": "to remain in one place; to not move from a spot",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "telling your partner to wait and not move while you scout ahead",
+      "compositions": [
+        [
+          "still",
+          "place"
+        ],
+        [
+          "place",
+          "still"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "still",
+          "place"
+        ],
+        [
+          "place",
+          "still"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.821Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s01if-dc84ac01",
+      "word": "stick",
+      "role": "tools_objects",
+      "concept_id": "stick",
+      "gloss": "a thin straight piece of wood",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "used for fire-starting, tools, and building frames",
+      "compositions": [
+        [
+          "small",
+          "plant"
+        ],
+        [
+          "hand",
+          "plant"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "small",
+          "plant"
+        ],
+        [
+          "hand",
+          "plant"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:21.447Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwl5-61cb719f",
+      "word": "straight_ahead",
+      "role": "space_direction",
+      "concept_id": "straight_ahead",
+      "gloss": "directly forward; straight ahead",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "giving simple navigation: keep going straight, do not turn",
+      "compositions": [
+        [
+          "path",
+          "front"
+        ],
+        [
+          "move",
+          "front"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "front"
+        ],
+        [
+          "move",
+          "front"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.785Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rkss-4ab99071",
+      "word": "strap",
+      "role": "tools_objects",
+      "concept_id": "strap",
+      "gloss": "a strip of hide or plant fiber used to bind or carry",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "securing loads, making sandals, and binding tools to handles",
+      "compositions": [
+        [
+          "skin",
+          "bond"
+        ],
+        [
+          "bond",
+          "hold"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "skin",
+          "bond"
+        ],
+        [
+          "bond",
+          "hold"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.020Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6s0tln-2cd48f79",
+      "word": "stretch",
+      "role": "action_motion",
+      "concept_id": "stretch",
+      "gloss": "to extend a limb or the body outward",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "reaching for something just out of grasp",
+      "compositions": [
+        [
+          "far",
+          "body"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "far",
+          "body"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:49:57.851Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh6-d86815a3",
+      "word": "swell",
+      "role": "body_health",
+      "concept_id": "swell",
+      "gloss": "swelling; abnormal enlargement of a body part due to injury or illness",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "swelling after injury indicates severity and need for rest or treatment",
+      "compositions": [
+        [
+          "body",
+          "big"
+        ],
+        [
+          "skin",
+          "big"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "body",
+          "big"
+        ],
+        [
+          "skin",
+          "big"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.890Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2qo8k-d410b57c",
+      "word": "thorn",
+      "role": "nature_environment",
+      "concept_id": "thorn",
+      "gloss": "a sharp spine on a plant; a thorn",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "thorns cause injury and block paths — you need to warn your partner about them",
+      "compositions": [
+        [
+          "plant",
+          "pain"
+        ],
+        [
+          "pain",
+          "plant"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "plant",
+          "pain"
+        ],
+        [
+          "pain",
+          "plant"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:04.820Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rksv-860c3ef3",
+      "word": "tinder",
+      "role": "tools_objects",
+      "concept_id": "tinder",
+      "gloss": "dry plant material used to start a fire",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "starting fire is the most critical skill in week one",
+      "compositions": [
+        [
+          "fire",
+          "plant"
+        ],
+        [
+          "plant",
+          "fire"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "fire",
+          "plant"
+        ],
+        [
+          "plant",
+          "fire"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.023Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwl7-59124f2b",
+      "word": "turn_back",
+      "role": "space_direction",
+      "concept_id": "turn_back",
+      "gloss": "to go back the way you came; to return",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "telling your partner to reverse course if the path is blocked or dangerous",
+      "compositions": [
+        [
+          "move",
+          "back"
+        ],
+        [
+          "path",
+          "back"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "back"
+        ],
+        [
+          "path",
+          "back"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.787Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqlu-e11163f4",
+      "word": "turning_point",
+      "role": "time_change",
+      "concept_id": "turning_point",
+      "gloss": "a turning point; the edge where change begins; a threshold",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "recognizing the turning point of a storm or illness — when things start improving",
+      "compositions": [
+        [
+          "bound",
+          "change"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "bound",
+          "change"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.234Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwlm-e614aede",
+      "word": "underground",
+      "role": "space_direction",
+      "concept_id": "underground",
+      "gloss": "beneath the ground; underground",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "describing roots, water, or a tunnel that goes below the surface",
+      "compositions": [
+        [
+          "earth",
+          "inside"
+        ],
+        [
+          "inside",
+          "earth"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "earth",
+          "inside"
+        ],
+        [
+          "inside",
+          "earth"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.802Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8q-d3059382",
+      "word": "uphill",
+      "role": "space_direction",
+      "concept_id": "uphill",
+      "gloss": "going upward; ascending a slope",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "directing your partner to climb for a better view or higher ground",
+      "compositions": [
+        [
+          "move",
+          "up"
+        ],
+        [
+          "path",
+          "up"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "move",
+          "up"
+        ],
+        [
+          "path",
+          "up"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.410Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2leh6-5b867d48",
+      "word": "vomit",
+      "role": "body_health",
+      "concept_id": "vomit",
+      "gloss": "to vomit; expel stomach contents through the mouth",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "vomiting signals poisoning or illness, critical survival information",
+      "compositions": [
+        [
+          "eat",
+          "back"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "eat",
+          "back"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:58.890Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2jlns-667a8f53",
+      "word": "water_source",
+      "role": "survival",
+      "concept_id": "water_source",
+      "gloss": "a location where water can be found; water source",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "Finding and remembering where water is located is essential",
+      "compositions": [
+        [
+          "place",
+          "water"
+        ],
+        [
+          "water",
+          "here"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "place",
+          "water"
+        ],
+        [
+          "water",
+          "here"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:55:34.888Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ruwlp-78e1fbb4",
+      "word": "waterside",
+      "role": "space_direction",
+      "concept_id": "waterside",
+      "gloss": "the area beside water; a waterside location",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "designating the riverbank or lakeshore as a camp or meeting location",
+      "compositions": [
+        [
+          "near",
+          "water"
+        ],
+        [
+          "place",
+          "water"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "near",
+          "water"
+        ],
+        [
+          "place",
+          "water"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:45:21.805Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2kj8v-069a4e88",
+      "word": "waypoint",
+      "role": "space_direction",
+      "concept_id": "waypoint",
+      "gloss": "a stopping or reference point along a route",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "marking intermediate stops on a long journey so neither person gets lost",
+      "compositions": [
+        [
+          "path",
+          "place"
+        ],
+        [
+          "move",
+          "place"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "path",
+          "place"
+        ],
+        [
+          "move",
+          "place"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T19:56:18.415Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2rksq-dfd940b9",
+      "word": "wedge",
+      "role": "tools_objects",
+      "concept_id": "wedge",
+      "gloss": "a tapered stone or wood tool used to split material",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "splitting logs for building and firewood",
+      "compositions": [
+        [
+          "stone",
+          "through"
+        ],
+        [
+          "through",
+          "stone"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "stone",
+          "through"
+        ],
+        [
+          "through",
+          "stone"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:01:47.018Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rwkq2-33bcaf60",
+      "word": "welcome",
+      "role": "social",
+      "concept_id": "welcome",
+      "gloss": "an invitation to enter and belong; a welcome",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "formally accepting someone into the group sets expectations for all members",
+      "compositions": [
+        [
+          "good",
+          "inside"
+        ],
+        [
+          "give",
+          "inside"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "good",
+          "inside"
+        ],
+        [
+          "give",
+          "inside"
+        ]
+      ],
+      "redundancy_warnings": [
+        null,
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:46:39.722Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mrb2pqls-3181dc00",
+      "word": "wither",
+      "role": "time_change",
+      "concept_id": "wither",
+      "gloss": "to wither; to shrink and die as a plant does; to diminish",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "recognizing withering plants signals drought or poor soil — affects camp location",
+      "compositions": [
+        [
+          "less",
+          "plant"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "less",
+          "plant"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-07T20:00:21.232Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6ry8ij-3693ea25",
+      "word": "worn_out",
+      "role": "time_change",
+      "concept_id": "worn_out",
+      "gloss": "degraded through use; worn out over time",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "a worn-out tool needs replacing before it fails at a critical moment",
+      "compositions": [
+        [
+          "use",
+          "bad"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "use",
+          "bad"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:57.211Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    },
+    {
+      "id": "cp-mr6rxdnm-cea143a2",
+      "word": "worry",
+      "role": "emotion_mind",
+      "concept_id": "worry",
+      "gloss": "thinking fearfully about something; worry",
+      "source": "vocab_survey",
+      "classification": "compound",
+      "rationale": "expressing anxious thoughts about danger, weather, or food supply",
+      "compositions": [
+        [
+          "fear",
+          "think"
+        ]
+      ],
+      "valid_compositions": [
+        [
+          "fear",
+          "think"
+        ]
+      ],
+      "redundancy_warnings": [
+        null
+      ],
+      "primitive_proposal": null,
+      "alias_proposal": null,
+      "status": "open",
+      "created_at": "2026-07-04T19:47:17.218Z",
+      "resolved_at": null,
+      "resolved_by": null,
+      "resolution_note": null
+    }
+  ]
+}

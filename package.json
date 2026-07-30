@@ -1,6 +1,6 @@
 {
   "name": "fonora",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "description": "Open-source research exploring phonetic writing, constructed language design, and fast cross-linguistic communication",
   "homepage": "https://fonora.org",
   "repository": {
@@ -33,10 +33,6 @@
     "audit:ipa-vowels": "node scripts/ipa-vowel-normalization-audit.js",
     "report:ipa-diagnostics": "node scripts/ipa-normalization-diagnostics.js",
     "fonoran:explore": "node -e \"console.log('Open http://localhost:' + (process.env.PORT||8000) + '/language/')\"",
-    "fonoran:import": "node scripts/fonoran-import-json.js",
-    "fonoran:export": "node scripts/fonoran-export-json.js",
-    "fonoran:snapshot:export": "node scripts/fonoran-snapshot-export.js",
-    "fonoran:snapshot:import": "node scripts/fonoran-snapshot-import.js",
     "fonoran:data:init": "git submodule update --init --recursive",
     "fonoran:data:fetch": "node scripts/fonoran-data-fetch.js",
     "fonoran:data:status": "node scripts/fonoran-data-status.js",
@@ -46,7 +42,6 @@
     "fonoran:lexicon:hygiene": "node scripts/fonoran-lexicon-hygiene-apply.js",
     "fonoran:reset": "node tools/fonoran-reset.js",
     "fonoran:regenerate": "node scripts/fonoran-regenerate.js",
-    "fonoran:editorial:import": "node scripts/fonoran-editorial-import.js",
     "fonoran:build": "node tools/fonoran-build.js",
     "fonoran:build:approved": "node tools/fonoran-build.js --approve-all",
     "fonoran:compound-prune": "node scripts/fonoran-compound-prune.js",

@@ -20,7 +20,6 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveDataPath } from './fonoran-data-paths.js';
-import { closeStore } from './fonoran-store.js';
 import { compilePhrase } from './fonoran-course-phrases-compile.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
@@ -119,5 +118,4 @@ main()
   .catch((err) => {
     console.error(err);
     process.exitCode = 1;
-  })
-  .finally(() => closeStore().catch(() => {}));
+  });

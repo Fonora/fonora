@@ -102,6 +102,5 @@ Historical experiments, audits, and the retired research notebook. Not the activ
 | `npm run fonoran:compound-audit` | Live compound count and quality report |
 | `npm run fonoran:translation-gaps` | What the corpus cannot say yet |
 | `npm run fonoran:verify-quarantine` | Fail if deterministic code depends on model output |
-| `npm run fonoran:import` / `fonoran:export` | PostgreSQL bucket sync |
 
 See [fonoran-cli-tools.md](fonoran-cli-tools.md) for the full operator command reference.

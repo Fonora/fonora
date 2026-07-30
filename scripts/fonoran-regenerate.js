@@ -1,16 +1,13 @@
 #!/usr/bin/env node
 /**
- * Generator pipeline: editorial import → LLM optimize → build.
+ * Generator pipeline: promote accepted proposals into the seeds, re-rank, build.
  *
  * Usage:
  *   npm run fonoran:regenerate
- *   npm run fonoran:regenerate -- --use-llm
  */
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runRegenerate } from '../tools/fonoran-regen.js';
-import { closeStore } from '../tools/fonoran-store.js';
-import { closeCompoundProposalsStore } from '../tools/fonoran-compound-proposals.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -24,7 +21,4 @@ try {
 } catch (err) {
   console.error(err instanceof Error ? err.message : err);
   process.exitCode = 1;
-} finally {
-  await closeStore();
-  await closeCompoundProposalsStore();
 }

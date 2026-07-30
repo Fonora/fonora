@@ -59,19 +59,14 @@ function confirmDangerAction({ title, message, typeToConfirm }) {
 
 function formatRegenStatusHtml(status) {
   if (!status) return '<p class="empty">Could not load regeneration status.</p>';
-  const imp = status.editorial_imported_at
-    ? new Date(status.editorial_imported_at).toLocaleString()
-    : 'never';
   const labUp = status.lab?.updated_at
     ? new Date(status.lab.updated_at).toLocaleString()
-    : '—';
-  const cmpStore = status.store_docs?.compounds?.counts?.compounds ?? 0;
-  const cmpSeed = status.seed_files?.compounds?.counts?.compounds ?? 0;
+    : 'never built';
+  const seedCompounds = status.seed_files?.compounds?.counts?.compounds ?? 0;
+  const seedRoots = status.seed_files?.approved_roots?.counts?.roots ?? 0;
   return `<dl>
-    <dt>Storage</dt><dd>${escapeHtml(status.storage_mode ?? '—')}</dd>
-    <dt>Dictionary</dt><dd>${status.lab?.sounds ?? 0} roots · ${status.lab?.compounds ?? 0} words · updated ${escapeHtml(labUp)}</dd>
-    <dt>Seeds imported</dt><dd>${escapeHtml(imp)}</dd>
-    <dt>Compound recipes</dt><dd>Postgres ${cmpStore} · deploy slug ${cmpSeed}${cmpStore === cmpSeed ? '' : ' (drift)'}</dd>
+    <dt>Seeds</dt><dd>${seedRoots} roots · ${seedCompounds} compound recipes in data/</dd>
+    <dt>Dictionary</dt><dd>${status.lab?.sounds ?? 0} roots · ${status.lab?.compounds ?? 0} words · built ${escapeHtml(labUp)}</dd>
   </dl>`;
 }
 
@@ -97,7 +92,7 @@ async function refreshAdvancedPage() {
       if (rootsStat) rootsStat.textContent = `${roots} primitive roots`;
       if ($('adv-storage-status')) {
         $('adv-storage-status').textContent =
-          `Storage: ${status.storage_mode} · ${roots} roots · ${status.lab?.compounds ?? 0} words`;
+          `${roots} roots · ${status.lab?.compounds ?? 0} words, built from the seeds in data/`;
       }
     } catch {
       if ($('adv-regen-status')) $('adv-regen-status').textContent = 'Could not load regeneration status.';
@@ -124,18 +119,6 @@ async function refreshAdvancedPage() {
   } catch {
     /* ignore */
   }
-}
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const dataUrl = reader.result;
-      resolve(String(dataUrl).split(',')[1] ?? '');
-    };
-    reader.onerror = () => reject(reader.error ?? new Error('Could not read file'));
-    reader.readAsDataURL(file);
-  });
 }
 
 let _wired = false;
@@ -248,38 +231,6 @@ function wireAdvancedPage() {
     }
   });
 
-  $('adv-snapshot-import')?.addEventListener('change', async (e) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file) return;
-    try {
-      const zip_base64 = await fileToBase64(file);
-      const preview = await api('/api/fonoran/snapshot/preview', {
-        method: 'POST',
-        body: JSON.stringify({ zip_base64 }),
-      });
-      const summary = preview.summary ?? {};
-      const previewEl = $('adv-snapshot-preview');
-      if (previewEl) {
-        previewEl.textContent = JSON.stringify(preview, null, 2);
-        previewEl.hidden = false;
-      }
-      const ok = confirmDangerAction({
-        title: 'Restore snapshot',
-        message: `Replace all Fonoran state with this backup?\n\n${summary.sounds ?? 0} roots · ${summary.compounds ?? 0} words · ${summary.primitives ?? 0} concepts · ${summary.candidates ?? 0} candidates`,
-        typeToConfirm: 'RESTORE',
-      });
-      if (!ok) return;
-      await api('/api/fonoran/snapshot/import', {
-        method: 'POST',
-        body: JSON.stringify({ confirm: 'RESTORE', zip_base64 }),
-      });
-      toast('Snapshot restored');
-      await refreshAdvancedPage();
-    } catch (err) {
-      toast(err.message, true);
-    }
-  });
 }
 
 export async function onAdvancedTabActivated() {

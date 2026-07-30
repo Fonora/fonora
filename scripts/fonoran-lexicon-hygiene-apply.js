@@ -12,7 +12,7 @@
  */
 
 import '../load-env.js';
-import { readDoc, writeDoc, closeStore } from '../tools/fonoran-store.js';
+import { readDoc, writeDoc } from '../tools/fonoran-store.js';
 import { loadConceptInventory } from '../tools/fonoran-concepts.js';
 import { clearLocalizationCache } from '../tools/fonoran-concepts.js';
 import {
@@ -97,5 +97,4 @@ main().catch(err => {
   console.error(err);
   process.exitCode = 1;
 }).finally(async () => {
-  await closeStore();
 });

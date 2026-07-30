@@ -12,57 +12,51 @@
 flowchart TD
   Q{"What changed?"}
   Q -->|"Editorial JSON only\n(compounds.json, seeds)"| Build["npm run fonoran:build:approved\nrebuilds lab from git seeds"]
-  Q -->|"Heroku deploy\nor accepted proposals"| Regen["npm run fonoran:regenerate\nimport seeds → promote proposals → build"]
+  Q -->|"Accepted proposals"| Regen["npm run fonoran:regenerate\npromote proposals → rank → build"]
   Q -->|"Fresh clone / reset lab"| Reset["npm run fonoran:reset\nthen build"]
-  Build --> Local["Local: JSON bucket or Postgres"]
-  Regen --> Prod["Production: Advanced UI\nor heroku run regenerate"]
+  Build --> Local["data/fonoran-sound-bucket.json"]
+  Regen --> Local
 ```
 
 | Situation | Command | Why |
 | --- | --- | --- |
 | Edited `compounds.json` locally | `fonoran:build:approved` | Rebuilds lab from editorial JSON |
-| Merged to Heroku | **`fonoran:regenerate`** (not build alone) | Postgres still has old editorial state until import + full pipeline |
 | Accepted proposals in Review | `fonoran:regenerate` | Promotes queue → compounds.json → build |
 | Destructive fresh start | `fonoran:reset` then `build` | Wipes lab |
 
 ---
 
-## Storage paths (local vs production)
+## Storage paths
 
 ```mermaid
 flowchart TB
-  subgraph git [Git seeds — committed]
+  subgraph git [Git seeds — the language]
     Compounds["fonoran-compounds.json"]
     Inventory["fonoran-concept-inventory.json"]
     Roots["fonoran-approved-roots.json"]
+    Props["fonoran-compound-proposals.json"]
   end
-  subgraph local [Local dev — no DATABASE_URL]
-    JSONLab["fonoran-sound-bucket.json\ngitignored"]
-    JSONProp["fonoran-compound-proposals.json"]
-  end
-  subgraph prod [Production — DATABASE_URL set]
-    PGLab["PostgreSQL lab rows"]
-    PGProp["PostgreSQL proposal queue"]
-  end
-  git -->|"fonoran:build"| JSONLab
-  git -->|"fonoran:regenerate"| PGLab
-  git -->|"editorial:import"| PGLab
+  Built["fonoran-sound-bucket.json\nbuilt dictionary, gitignored"]
+  git -->|"fonoran:build"| Built
+  git -->|"fonoran:regenerate"| Built
 ```
+
+There is one path, and it is the same on every machine. The seeds were once mirrored into PostgreSQL on production and into a local JSON copy in development, which meant the answer to "what is in the lexicon" depended on where you asked. It does not any more.
 
 ---
 
 ## What gets committed vs what stays runtime-only
 
-| In git (seed / editorial) | Runtime only (not in git) |
+| In git (the language) | Runtime only (not in git) |
 | --- | --- |
-| `data/fonoran-compounds.json` — preferred forms + alternates | `data/fonoran-sound-bucket.json` — built lab (gitignored) |
-| `data/fonoran-concept-inventory.json` | Live PostgreSQL lab rows on Heroku |
+| `data/fonoran-compounds.json` — preferred forms + alternates | `data/fonoran-sound-bucket.json` — the built dictionary |
+| `data/fonoran-concept-inventory.json` | |
 | `data/fonoran-approved-roots.json` | |
 | `data/fonoran-root-candidates.json` | |
-| `data/fonoran-compound-proposals.json` — proposal queue (JSON mirror; **Postgres on Heroku**) | |
+| `data/fonoran-compound-proposals.json` — the review queue | |
 | `tools/fonoran-expression-candidates.js` — `ASSOCIATION_SEEDS` | |
 
-**Build** reads editorial JSON → writes the lab bucket. Production Postgres is seeded once from git; later updates require an explicit import + rebuild (below).
+**Build** reads the editorial JSON and writes the lab bucket. The bucket is derived, so it is not committed and never needs to be reconciled with anything.
 
 ---
 
@@ -130,95 +124,38 @@ git commit -m "..."
 
 ---
 
-## Local: PostgreSQL mode (matches production storage)
-
-When `DATABASE_URL` is set locally, `readDoc` / `writeDoc` use Postgres instead of JSON files.
-
-```bash
-# Bootstrap Postgres from git seeds (first time or full replace)
-npm run fonoran:snapshot:import -- --from=data/
-
-# Then run the compound loop above — build writes lab to Postgres
-
-# Export Postgres → git seed paths (for commit)
-npm run fonoran:snapshot:export -- --to=data/
-```
-
-Without `DATABASE_URL`, storage falls back to JSON under `data/` automatically.
-
----
-
 ## Production (Heroku): ship vocabulary changes
 
-Deploy **does not** auto-run `fonoran:build`. Git seed files update on the dyno filesystem at deploy time, but **existing Postgres rows are not overwritten** on boot.
+Edit locally, commit the seeds, deploy. The dyno reads the seed files out of the slug, so the deployed lexicon is exactly the one in the commit you pushed.
 
-### Prerequisites (once)
+There is no post-deploy step and no admin editing on production. A dyno filesystem does not survive a restart, so an edit made there would be lost; the compensating machinery that used to exist for this (a Postgres mirror, a seed import step, a snapshot restore) is what made the lexicon ambiguous in the first place.
+
+**Step A — commit the seeds**
 
 ```bash
-heroku login
-heroku git:remote -a fonora          # if not already linked
-heroku config:set FONORAN_SKIP_JSON_MIRROR=1 -a fonora
-# DATABASE_URL, OAuth vars — see deploy.md
+npm run fonoran:build:approved
+npm test
+git add data/ && git commit
 ```
 
-### Sequence after merging to `staging` / `main`
-
-**Step A — deploy code + seed JSON**
+**Step B — deploy**
 
 ```bash
-git checkout staging
-git pull origin staging
-# merge your branch, or commit directly on staging
 git push heroku staging:main -a fonora
 # or: git push heroku main:main -a fonora
 ```
 
-Release phase runs `scripts/fonoran-data-fetch.js` (`Procfile` `release:`), which fetches the pinned external data submodule. Vocabulary is **not** rebuilt yet.
-
-**Step B — reload editorial seeds + rebuild lab (GUI or CLI)**
-
-After deploy, regenerate vocabulary from git seeds. **Do not run build alone** — it uses stale Postgres editorial state.
-
-**Advanced UI (recommended on Heroku):**
-
-1. Sign in as admin → `/tools#advanced`
-2. Click **Regenerate dictionary from git seeds** → type `REGENERATE`
-3. Click **Run translation tests** to verify
-
-**CLI (local or one-off dyno):**
-
-```bash
-npm run fonoran:regenerate
-```
+The release phase runs `scripts/fonoran-data-fetch.js` (`Procfile` `release:`), which fetches the pinned external data submodule.
 
 **Step C — verify**
 
 ```bash
-heroku open /language -a fonora
-# or
 curl -s https://fonora.org/health
+heroku open /language -a fonora
 # Dictionary: search "world" → should show fenfo (earth + life)
 ```
 
-**Step D — backup (recommended after milestone vocab changes)**
-
-```bash
-heroku run "npm run fonoran:snapshot:export" -a fonora
-# download via Advanced → Backup, or periodic zip to backups/
-```
-
-### Alternative: zip snapshot from local
-
-If you built and verified locally with Postgres pointing at a staging DB, or exported after local JSON build:
-
-```bash
-# Local: after build:approved
-npm run fonoran:snapshot:export -- backups/fonoran-milestone.zip
-
-# Upload + import on Heroku (Advanced UI → Import snapshot, type RESTORE)
-# or CLI if zip is on dyno:
-heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a fonora
-```
+Backups: the language is in git, so it is already backed up. Heroku Postgres backups cover user data.
 
 ---
 
@@ -231,9 +168,7 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 | Build lab | `npm run fonoran:build:approved` | yes | yes |
 | Audit | `npm run fonoran:compound-audit` | yes | optional |
 | Tests | `npm test` | yes | CI / local before push |
-| Import editorial seeds → Postgres | `npm run fonoran:editorial:import -- --from=data/` | yes | **required on prod** (or use Advanced GUI) |
-| Full generator pipeline | `npm run fonoran:regenerate` | yes | **Advanced GUI on prod** |
-| Export Postgres → seeds | `npm run fonoran:snapshot:export -- --to=data/` | yes | optional |
+| Full generator pipeline | `npm run fonoran:regenerate` | yes | not needed |
 | Start app | `npm start` | yes | automatic (`web` dyno) |
 
 ---
@@ -287,13 +222,12 @@ human-authored proposals.
 
 ### Storage reminder
 
-| Environment | Editorial + proposal queue | Gap artifacts |
-|-------------|---------------------------|-------------------------|
-| Local dev (default) | `FONORAN_STORAGE=json` — `data/fonoran-*.json` | `data/` + fonora-data submodule |
-| Heroku production | `FONORAN_STORAGE=postgres` + `DATABASE_URL` | fonora-data submodule (not Postgres) |
+The editorial seeds and the proposal queue are committed files under `data/`, everywhere. Gap
+artifacts come from the fonora-data submodule.
 
-Promote → build → gap report **must** use the same storage backend. Mixing a JSON promote with
-a Postgres build silently drops coverage gains.
+Promote, build, and gap report therefore always read the same copy. They did not always: a
+promote that wrote JSON while the build read Postgres reported success and produced no coverage
+gain at all, which is the failure that ended the dual store.
 
 ### Seed integrity
 

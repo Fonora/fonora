@@ -64,9 +64,8 @@ Use for uptime monitors.
 | --- | --- | --- |
 | `PORT` | `8000` | HTTP port (set by Heroku) |
 | `HOST` | `0.0.0.0` | Bind address |
-| `DATABASE_URL` | - | PostgreSQL connection string for Fonoran lab data |
-| `FONORAN_STORAGE` | `postgres` if `DATABASE_URL` set, else `json` | Force `json` or `postgres` storage |
-| `FONORAN_SKIP_JSON_MIRROR` | - | Set to `1` to skip writing JSON mirror when using PostgreSQL |
+| `DATABASE_URL` | - | PostgreSQL connection string for user data. The language does not use it. |
+| `FONORAN_STORAGE` | `postgres` if `DATABASE_URL` set, else `json` | Force user data to `json` or `postgres` |
 | `PGSSLMODE` | - | Set to `disable` for local PostgreSQL without SSL |
 | `GOOGLE_CLIENT_ID` | - | Google OAuth client ID (Fonoran write auth) |
 | `GOOGLE_CLIENT_SECRET` | - | Google OAuth client secret |
@@ -92,85 +91,48 @@ flowchart TB
     OAuth["OAuth session"]
     Static["Static files + WASM"]
   end
-  subgraph postgres [PostgreSQL — when DATABASE_URL set]
-    Lab["Lab bucket\nroots · compounds · history"]
-    Editorial["Editorial seeds\ninventory · compounds recipes"]
-    Community["Community\users · learn progress · votes · proposals"]
-    PropQueue["Compound proposal queue"]
+  subgraph postgres [PostgreSQL — user data only]
+    Community["Accounts · lesson progress\ncommunity proposals · votes"]
   end
-  subgraph gitSeeds [Git — committed seeds]
-    DataJSON["data/*.json\neditorial JSON"]
+  subgraph gitSeeds [Git — the language]
+    DataJSON["data/*.json\nroots · compound recipes · inventory\nword banks · proposal queue"]
   end
   subgraph fonoraData [fonora-data submodule]
     Cache["Gap reports · test snapshots\nstranger corpus"]
   end
   SPA --> API
   SPA --> Static
-  API --> postgres
-  gitSeeds -->|"first boot seed\nor regenerate/import"| postgres
+  API -->|"read + write"| postgres
+  API -->|"read only on a deployed host"| gitSeeds
   API --> fonoraData
 ```
 
-- Lab bucket (roots, words, review state, history)
-- Concept inventory, root candidates, approved roots
-- English word banks (`localizations/en.json`)
-- Build inputs (compound recipes, phonetics config)
-- **Compound proposal queue** (Review tab)
-- Community users, learn progress, community proposals/votes
+**In PostgreSQL:** accounts, lesson progress, community proposals, votes. State a person creates by using the site.
 
-**Not in PostgreSQL:** fonora-data artifacts (stranger corpus, gap reports, test snapshots).
+**In git, under `data/`:** the language. Roots, compound recipes, the concept inventory, the English word banks, and the review queue. The server reads these files; it does not copy them into a database first.
 
-**fonora-data submodule** (via `FONORAN_DATA_DIR` / `external/fonora-data`): stranger corpus, gap reports, test snapshots. Generated artifacts, not live lab state.
+**In the fonora-data submodule** (via `FONORAN_DATA_DIR` / `external/fonora-data`): the phrase corpus, gap reports, and test snapshots. Generated artifacts.
 
-Git-tracked JSON under `data/` is the **seed** format. On first boot with an empty database, the server seeds from those files automatically.
+### The language cannot be edited on a deployed host
+
+A dyno filesystem does not survive a restart, so a Word Manager edit made against production would be lost. This is deliberate. The language is edited in a checkout, reviewed as a diff, and shipped as a deploy, which is what makes the deployed site show exactly what the repository says.
+
+It used to work the other way: production wrote the language to Postgres and skipped the file mirror, so the live lexicon existed only in a database and never in git. That arrangement caused a silent failure where a batch of accepted compounds was written to `data/fonoran-compounds.json` while the build read the database copy, and the run reported success having changed nothing.
+
+Backups follow from this: the language is backed up by git. Only user data needs a database backup, which Heroku Postgres provides.
 
 ### Heroku Postgres
 
 ```bash
 heroku addons:create heroku-postgresql:essential-0
 heroku config:get DATABASE_URL
-heroku config:set FONORAN_SKIP_JSON_MIRROR=1
 ```
 
-Set `FONORAN_SKIP_JSON_MIRROR=1` on Heroku so the dyno filesystem is not relied on for persistence.
-
-On first boot with an empty database, the server **seeds** from git JSON if present. Your seed files are **not deleted**.
-
-### Snapshots (backup & disaster recovery)
-
-Full-state backups use the same JSON layout as seed files, bundled in a zip with `manifest.json`.
-
-**Advanced UI** (More → Advanced → Backup & sync):
-
-- **Download snapshot** — zip of all runtime + build-input docs
-- **Import snapshot** — replace all state (requires typing `RESTORE`)
-
-**CLI:**
-
-```bash
-# Export to timestamped zip (default: backups/fonoran-YYYY-MM-DD.zip)
-npm run fonoran:snapshot:export
-
-# Export Postgres → local seed paths (for git commit)
-npm run fonoran:snapshot:export -- --to=data/
-
-# Import zip → Postgres
-npm run fonoran:snapshot:import -- backups/fonoran-2026-06-28.zip
-
-# Import local seed paths → Postgres (local bootstrap)
-npm run fonoran:snapshot:import -- --from=data/
-```
-
-Legacy lab-only commands (still supported):
-
-```bash
-npm run fonoran:import   # lab bucket JSON → PostgreSQL only
-npm run fonoran:export   # lab bucket PostgreSQL → JSON only
-```
+The four user tables are created on first boot. Nothing needs seeding.
 
 ### Local development
 
-Without `DATABASE_URL`, storage falls back to JSON files under `data/`. Use snapshot export/import to sync between JSON mode and a local Postgres instance.
+Without `DATABASE_URL`, user data falls back to `data/fonoran-community.json`. The language reads from the seed files either way, so a local checkout with no database is fully functional apart from sign-in.
 
 **External generated data:** the phrase corpus, gap reports, and test snapshots live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data), checked out as `external/fonora-data` (git submodule). After clone:
 
@@ -214,11 +176,10 @@ Because WASM assets are large (~90 MB in `vendor/` after install), a Node static
 - [ ] `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`, `ADMIN_EMAILS` set on Heroku
 - [ ] `FONORAN_AUTH` omitted in production (opt-out only; do not set to `off` on Heroku)
 - [ ] Community users can vote/propose; admin writes require a listed `ADMIN_EMAILS` session
-- [ ] `DATABASE_URL` set; `FONORAN_SKIP_JSON_MIRROR=1` on Heroku
-- [ ] On first deploy: run `npm run fonoran:regenerate` (via **Advanced** at `/tools#advanced`, or Heroku one-off dyno) to populate Postgres from git seed data — `data/fonoran-compounds.json` + `data/fonoran-approved-roots.json` are the canonical sources
+- [ ] `DATABASE_URL` set on Heroku (user data only; the language ships in the slug)
 - [ ] Verify dictionary via `GET /api/fonoran/lab/compounds` (run `npm run fonoran:compound-audit` for live count)
 - [ ] Contributor Google Form linked from `/language/` lander
-- [ ] Periodic backup: **Advanced** at `/tools#advanced` → Download snapshot, or `npm run fonoran:snapshot:export`
+- [ ] Periodic backup of user data via Heroku Postgres backups. The language is backed up by git.
 
 ## CI
 

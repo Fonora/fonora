@@ -128,7 +128,7 @@ Details: [fonoran.md#pipeline](fonoran.md#pipeline).
 
 ### PostgreSQL
 
-When `DATABASE_URL` is set, the lab can live in PostgreSQL. JSON is imported on first boot and remains the export format (`npm run fonoran:export`). See [deploy.md](deploy.md).
+User data only: accounts, lesson progress, community proposals, votes. The language is read from the files above in every environment. See [deploy.md](deploy.md).
 
 ---
 

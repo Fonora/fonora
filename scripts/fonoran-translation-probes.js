@@ -13,7 +13,6 @@
  *   node scripts/fonoran-translation-probes.js --assert
  */
 import { runTranslationProbes } from '../tools/fonoran-translation-probes.js';
-import { closeStore } from '../tools/fonoran-store.js';
 
 const argv = process.argv.slice(2);
 const asJson = argv.includes('--json');
@@ -65,4 +64,3 @@ if (asJson) {
 
 if (doAssert && !report.ok) process.exitCode = 1;
 
-await closeStore();

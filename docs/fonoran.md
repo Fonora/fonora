@@ -151,10 +151,10 @@ Distinctiveness, collision, and boundary scores plus any warnings are surfaced p
 | `data/fonora-data.manifest.json` | Pin of external data repo commit/tag |
 | `data/fonoran-primitive-roots-config.json` | Phonetics rules + active `collision_profile` |
 | `data/fonoran-collision-profiles/` | Editorial collision profiles (default `en.json`) |
-| `data/fonoran-sound-bucket.json` | Runtime lab: sounds, compounds, history (seed + snapshot format) |
+| `data/fonoran-sound-bucket.json` | The built dictionary: sounds, compounds, history. Derived from the seeds above by `fonoran:build`, so it is not committed. |
 | `data/localizations/en.json` | English word banks per concept |
 
-Runtime state is stored in **PostgreSQL** in production. JSON files are seeds and snapshot interchange format — update git milestones via `npm run fonoran:snapshot:export -- --to=data/`.
+These files are the language, in every environment. PostgreSQL holds user data only: accounts, lesson progress, community proposals, votes.
 
 ### Commands
 
@@ -164,8 +164,6 @@ npm run fonoran:build              # full pipeline → lab (needs review)
 npm run fonoran:build:approved     # same, everything pre-approved (testing)
 npm run fonoran:root-candidates    # refresh candidates only (no lab import)
 npm run fonoran:inventory-migrate  # seed editorial metadata fields on the concept inventory
-npm run fonoran:snapshot:export -- --to=data/   # Postgres → seed JSON (commit milestones)
-npm run fonoran:snapshot:import -- --from=data/ # seed JSON → Postgres (local bootstrap)
 npm run fonoran:regen:four-rules -- --apply     # rank preferred forms by the four rules
 npm run fonoran:compound-audit                  # quality report → reports/ (not committed)
 ```

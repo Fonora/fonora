@@ -774,19 +774,7 @@
           </li>
         </ol>
 
-        <details class="adv-optional-zone">
-          <summary>Optional: milestone export</summary>
-          <p class="sans adv-optional-zone__lead">Export a zip for milestones or Postgres sync — not required for regeneration.</p>
-          <p id="adv-storage-status" class="sans adv-storage-status"></p>
-          <div class="actions adv-backup-zone__actions">
-            <a class="btn" id="adv-snapshot-download" href="/api/fonoran/snapshot/export" download data-write>Download snapshot zip</a>
-            <label class="btn" id="adv-snapshot-import-label" data-write>
-              Import snapshot zip
-              <input type="file" id="adv-snapshot-import" accept=".zip,application/zip" hidden data-write-input>
-            </label>
-          </div>
-          <pre id="adv-snapshot-preview" class="debug-panel" hidden></pre>
-        </details>
+        <p id="adv-storage-status" class="sans adv-storage-status"></p>
 
         <div class="adv-danger-zone">
           <h3>Danger zone</h3>
@@ -838,11 +826,10 @@
       </div>
       <div class="wm-publish-panel sans" id="wm-publish-panel">
         <span class="wm-publish-panel__label">Publish</span>
-        <span class="wm-publish-panel__hint" id="wm-seed-status">Local Translator uses the full lab. <strong>Build dictionary</strong> compiles seeds for release.</span>
+        <span class="wm-publish-panel__hint" id="wm-seed-status">Saves write straight to data/*.json. Commit them to publish.</span>
         <button type="button" class="btn btn--sm btn--primary" id="wm-build-approved">Build dictionary</button>
         <a class="btn btn--sm" href="/language#dictionary" target="_blank" rel="noopener noreferrer">Verify</a>
         <a class="btn btn--sm" href="/tools#gap-workshop" id="wm-legacy-review">Legacy Review</a>
-        <button type="button" class="btn btn--sm" id="wm-export-seeds" hidden>Export seeds to disk</button>
       </div>
       <div class="fonoran-split-grid">
         <aside class="fonoran-split-picker wm-picker" aria-label="Roots and words">

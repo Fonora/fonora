@@ -6,11 +6,7 @@ import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { handleAuthRoutes, logAuthStatus } from './tools/fonoran-auth.js';
 import { handleFonoranApi } from './tools/fonoran-api.js';
-import { maybeAutoSeedOnStartup, initStore } from './tools/fonoran-store.js';
-import {
-  initCompoundProposalsStore,
-  maybeImportCompoundProposalsFromJson,
-} from './tools/fonoran-compound-proposals.js';
+import { initCommunityStore } from './tools/fonoran-community-store.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const host = process.env.HOST || '0.0.0.0';
@@ -181,14 +177,13 @@ function cacheControl(pathname) {
   return 'public, max-age=3600';
 }
 
+// The language is read from the committed seeds, so it needs no startup step. Only user data
+// (accounts, lesson progress, votes) lives in Postgres, and only that needs a warm pool.
 async function bootstrapServerData() {
   try {
-    await initStore();
-    await initCompoundProposalsStore();
-    await maybeAutoSeedOnStartup();
-    await maybeImportCompoundProposalsFromJson();
+    await initCommunityStore();
   } catch (err) {
-    console.warn('Fonoran startup init skipped:', err instanceof Error ? err.message : err);
+    console.warn('Fonoran user store init skipped:', err instanceof Error ? err.message : err);
   }
 }
 

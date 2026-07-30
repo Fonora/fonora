@@ -124,7 +124,7 @@ https://docs.google.com/forms/d/e/FORM_ID/viewform
 - [ ] Heroku config: `GOOGLE_*`, `SESSION_SECRET`, `ADMIN_EMAILS`, `DATABASE_URL`
 - [ ] Smoke test: unsigned user can browse dictionary; cannot POST lab writes
 - [ ] Signed-in admin can create and approve words
-- [ ] Export backup: `npm run fonoran:snapshot:export` after deploy
+- [ ] User data backup: Heroku Postgres backups. The language is backed up by git.
 
 ### Post-deploy
 

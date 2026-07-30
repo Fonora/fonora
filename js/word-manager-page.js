@@ -138,7 +138,6 @@ export async function onWordManagerTabActivated() {
 
 function wirePublishPanel() {
   const buildBtn = document.getElementById('wm-build-approved');
-  const exportBtn = document.getElementById('wm-export-seeds');
   const statusEl = document.getElementById('wm-seed-status');
   if (!buildBtn || buildBtn.dataset.wired) return;
   buildBtn.dataset.wired = '1';
@@ -164,26 +163,9 @@ function wirePublishPanel() {
     }
   });
 
-  exportBtn?.addEventListener('click', async () => {
-    exportBtn.disabled = true;
-    try {
-      const res = await api('/api/fonoran/editorial/export-seeds', { method: 'POST', body: '{}' });
-      toast(`Exported seeds (${res.compounds ?? '?'} compounds)`);
-    } catch (e) {
-      toast(e.message);
-    } finally {
-      exportBtn.disabled = false;
-    }
-  });
-
-  api('/api/fonoran/snapshot/status').then((st) => {
-    if (st.storage_mode === 'postgres' && exportBtn) exportBtn.hidden = false;
-    if (statusEl && st.storage_mode) {
-      statusEl.textContent = st.storage_mode === 'json'
-        ? 'Local Translator uses the full lab. JSON saves write directly to data/*.json.'
-        : 'Local Translator uses the full lab. Use Export seeds before git commit.';
-    }
-  }).catch(() => {});
+  if (statusEl) {
+    statusEl.textContent = 'Saves write straight to data/*.json. Commit them to publish.';
+  }
 }
 
 async function applyProposalPrefill() {

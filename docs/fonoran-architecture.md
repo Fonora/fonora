@@ -35,25 +35,24 @@ flowchart LR
 
 Read that middle path carefully, because it is the whole problem. Root generation writes the **lab bucket**, and translation reads the **lab bucket**, not the seeds. Editing a seed changes nothing a reader can see until the build runs.
 
-## Where the truth lives, and why that broke
+## Where the truth lives
 
-The same document can exist in four places at once.
+One place: the committed files under `data/`.
 
 ```mermaid
 flowchart TD
-  MEM["1. in-process docCache"]
-  PG["2. Postgres rows\nactive whenever DATABASE_URL is set"]
-  GIT["3. data/*.json in git\ndeclared the source of truth"]
+  GIT["data/*.json in git\nthe language"]
   EXT["external/fonora-data submodule\nphrase corpus, gap reports, test snapshots"]
-  READ["readDoc\npicks the first one it finds"]
+  MEM["in-process cache\ndropped on write"]
+  READ["readDoc"]
   ALGOS["every algorithm"]
   BUILD["fonoran-build"]
-  LAB["lab bucket\nrebuilt from git, read by the translator"]
+  LAB["lab bucket\nderived, gitignored"]
   TRANSLATE["translator"]
+  PGUSER["Postgres\naccounts · lesson progress · votes"]
 
-  MEM -->|"first"| READ
-  PG -->|"second"| READ
-  GIT -->|"only as fallback"| READ
+  GIT --> READ
+  MEM --> READ
   EXT --> READ
   READ --> ALGOS
   GIT --> BUILD
@@ -61,11 +60,7 @@ flowchart TD
   LAB --> TRANSLATE
 ```
 
-`readDoc` returns the memory cache if warm, then Postgres if configured, and only falls back to the git seed file. So on any machine with `DATABASE_URL` set, **the file you just edited is the last place the code looks.**
-
-That is the mechanism behind translations that looked finished while running on the wrong seeds. There is no bug to find. It is the design: eight documents are store-managed and can diverge from git, and a fifth copy of the vocabulary lives in the lab bucket that the translator actually reads.
-
-| Store-managed doc | Seed path |
+| Editorial doc | Seed path |
 | --- | --- |
 | concept_inventory | `data/fonoran-concept-inventory.json` |
 | approved_roots | `data/fonoran-approved-roots.json` |
@@ -73,7 +68,16 @@ That is the mechanism behind translations that looked finished while running on 
 | root_candidates | `data/fonoran-root-candidates.json` |
 | phonetics_config | `data/fonoran-primitive-roots-config.json` |
 | localization_en | `data/localizations/en.json` |
-| llm_evaluations | external data dir when configured |
+
+Postgres is still in the system, holding accounts, lesson progress, community proposals, and votes. It holds no part of the language.
+
+### Why this is worth stating
+
+It used to be otherwise, and the cost was high enough to be worth remembering. The same document could exist in four places: an in-process cache, Postgres rows active whenever `DATABASE_URL` was set, the git seed file, and a fifth copy of the vocabulary in the lab bucket that the translator actually read. `readDoc` checked the cache, then Postgres, and reached the git file last, so on any machine with a database configured, the file you had just edited was the last place the code looked.
+
+That produced translations that looked finished while running on the wrong seeds, and an automated refine loop that accepted compounds into `fonoran-compounds.json`, reported success, and changed nothing, because the build was reading the database. There was no bug to find either time. It was the design.
+
+The lab bucket still exists, but it is derived rather than authoritative: `fonoran-build` writes it from the seeds, it is gitignored, and it carries only state no seed has a place for, namely the undo history, the activity log, and the DDA cache. Editing a seed still changes nothing a reader can see until the build runs, which is the one piece of indirection that remains, and it is a build step rather than a second source.
 
 ## The three pipelines, in detail
 
@@ -167,17 +171,18 @@ Measured, not guessed. Each is a candidate, not a decision.
 
 **Structural fat, in the order that would help most:**
 
-1. **Collapse the store to one source.** Delete the Postgres path and the lab bucket, read seeds directly. This removes the class of bug that cost you the most, and it is what the Cursor-based workflow needs: edit seed, regenerate, done.
+1. ~~**Collapse the store to one source.**~~ Done. The Postgres path is gone and the seeds are read directly; the lab bucket survives as a derived build artifact.
 2. **Isolate the English front end.** The tokenizer, lemmatizer, irregular verb tables, phrase merging, and interpretation rules are why translation needs 48 modules to Fonoran's handful. They are one subsystem threaded through everything rather than one module.
 3. **The GUI.** If the workflow is you and me editing seeds directly, then Word Manager and the proposal review screens are surface area maintaining a second way to change the language.
 
-## Where the truth lives
+## If this page and the code disagree
 
-If this page and the code disagree, the code wins, and this page is the bug.
+The code wins, and this page is the bug.
 
 | Thing | Source |
 | --- | --- |
-| Store layering and doc keys | `tools/fonoran-store.js` |
+| Seed paths and doc keys | `tools/fonoran-store.js` |
+| User data schema | `tools/fonoran-community-store.js` |
 | External data paths | `tools/fonoran-data-paths.js` |
-| Import graph and LLM boundary | `scripts/fonoran-verify-llm-quarantine.js` |
+| Import graph and model boundary | `scripts/fonoran-verify-llm-quarantine.js` |
 | Build pipeline | `tools/fonoran-build.js` |

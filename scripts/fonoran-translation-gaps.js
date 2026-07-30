@@ -33,7 +33,6 @@ import {
   diffGapsAgainstBaseline,
   GOLDEN_FIELDS,
 } from '../tools/fonoran-translation-gaps.js';
-import { closeStore } from '../tools/fonoran-store.js';
 
 const argv = process.argv.slice(2);
 const gapsOnly = argv.includes('--gaps');
@@ -250,5 +249,4 @@ main().catch(err => {
   console.error(err);
   process.exitCode = 1;
 }).finally(async () => {
-  await closeStore();
 });

@@ -53,7 +53,6 @@ These commands assign root spellings, resolve compounds, and import into the lab
 | `npm run fonoran:regenerate` | Regenerate the live dictionary export after lab changes (used after accepting proposals in Review). |
 | `npm run fonoran:regen-compounds` | Re-resolve compound compositions from current roots. |
 | `npm run fonoran:regen:four-rules` | Re-rank preferred compound forms by the four word rules. Add `-- --apply` to write. |
-| `npm run fonoran:editorial:import` | Import editorial compound data into the lab. |
 | `npm run fonoran:build:policy` | Rebuild the generated language policy module from seeds. |
 | `npm run fonoran:policy:check` | Fail if the generated policy is stale (wired into `npm test`). |
 
@@ -89,7 +88,7 @@ New vocabulary is authored by a human, either in the **Words** tab or directly i
 
 Accepted compounds require dictionary regeneration (Advanced tab or `npm run fonoran:regenerate`).
 
-**Production storage:** With `DATABASE_URL` set, the proposal queue uses PostgreSQL (shared by web dynos and `heroku run` one-offs). Without Postgres, proposals use local JSON only. Generated artifacts (gap reports, test snapshots) live in the **fonora-data** submodule via `resolveDataPath()`.
+The queue lives in `data/fonoran-compound-proposals.json` and is committed, so it is the same list on every machine. Generated artifacts (gap reports, test snapshots) live in the **fonora-data** submodule via `resolveDataPath()`.
 
 ---
 
@@ -152,10 +151,6 @@ External vocabulary data lives in the `fonora-data` submodule.
 | `npm run fonoran:data:init` | Initialize git submodules (`fonora-data`). |
 | `npm run fonoran:data:fetch` | Fetch latest pinned data from remote. |
 | `npm run fonoran:data:status` | Show submodule commit vs manifest pin. |
-| `npm run fonoran:snapshot:export -- --to=data/` | Export Postgres lab state → seed JSON (commit milestones). |
-| `npm run fonoran:snapshot:import -- --from=data/` | Import seed JSON → Postgres (local bootstrap). |
-| `npm run fonoran:import` | Import JSON bundle into runtime store. |
-| `npm run fonoran:export` | Export runtime store to JSON. |
 
 ---
 
@@ -180,7 +175,7 @@ External vocabulary data lives in the `fonora-data` submodule.
 | --- | --- |
 | Approve roots & compounds | **Words** — [`/tools#word-manager`](/tools#word-manager) |
 | Review the proposal queue | **Review** — [`/tools#gap-workshop`](/tools#gap-workshop) |
-| Regenerate dictionary, snapshots, lab reset | **Advanced** — [`/tools#advanced`](/tools#advanced) |
+| Regenerate dictionary, lab reset | **Advanced** — [`/tools#advanced`](/tools#advanced) |
 | Translation gap visualization | **Translation Test** — [`/tools#translation-test`](/tools#translation-test) |
 
 ---
@@ -189,7 +184,7 @@ External vocabulary data lives in the `fonora-data` submodule.
 
 | Variable | Purpose |
 | --- | --- |
-| `DATABASE_URL` | PostgreSQL for production lab state |
+| `DATABASE_URL` | PostgreSQL for user data (accounts, lesson progress, votes). The language reads from `data/`. |
 | `PORT` | Dev server port (default `8000`) |
 
 See also: [Rulebook](fonoran-rulebook.md) · [Architecture](fonoran-architecture.md) · [Compound workflow](fonoran-compound-workflow.md) · [Deploy](deploy.md)

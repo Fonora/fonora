@@ -828,18 +828,21 @@ async function runLanguagePolicyTests() {
   }));
 
   /**
-   * Publishing guarantee: the public surfaces must show exactly the vocabulary that was
-   * committed. The database is seeded from the seeds only when its tables are empty, so
-   * once populated it serves whatever existed at that first boot and no later deploy
-   * refreshes it. Reading the seeds by default is what makes "deploy the site and it is
-   * accurate" true without a manual post-deploy step.
+   * Publishing guarantee: the public surfaces show exactly the vocabulary that was committed.
+   * This used to be a runtime check that the default read mode was "seeds", because the language
+   * also lived in Postgres and a populated database kept serving whatever existed at its first
+   * boot. The language store no longer has a database at all, so the guarantee is now structural
+   * and this asserts the structure instead of the setting: if a connection ever reappears in the
+   * language store, a stale copy can be published again.
    */
-  const store = await import('../tools/fonoran-store.js');
-  results.push(test('publishing: vocabulary reads from the committed seeds by default', () => {
-    assert(
-      store.resolveLabReadMode() === 'seeds',
-      `lab reads default to ${store.resolveLabReadMode()}, so a stale database could be published`,
-    );
+  const storeSource = readFileSync(new URL('../tools/fonoran-store.js', import.meta.url), 'utf8');
+  results.push(test('publishing: the language store has no database connection', () => {
+    for (const marker of ['DATABASE_URL', "'pg'", 'fonoran_lab_bucket', 'fonoran_editorial_docs']) {
+      assert(
+        !storeSource.includes(marker),
+        `fonoran-store.js mentions ${marker}: the language must come from the committed seeds only`,
+      );
+    }
   }));
 
   results.push(test('language policy: every root is assigned to exactly one ring', () => {
