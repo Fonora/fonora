@@ -2653,7 +2653,6 @@
     const TRANSLATOR_SYLLABLE_MODE_KEY = 'fonoran:translator:syllable-by-syllable';
     const TRANSLATOR_SYLLABLE_MODE_LEGACY_KEY = 'fonoran:translator:word-by-word';
     const TRANSLATOR_SOURCE_LANG_KEY = 'fonoran:translator:source-lang';
-    const TRANSLATOR_TARGET_LANG_KEY = 'fonoran:translator:target-lang';
 
     const TRANSLATOR_FORWARD_EXAMPLES = [
       'Do you want to go to the beach?',
@@ -2702,13 +2701,6 @@
       const fromSelect = el?.value?.trim();
       if (fromSelect) return fromSelect;
       return localStorage.getItem(TRANSLATOR_SOURCE_LANG_KEY) || 'auto';
-    }
-
-    function readTranslatorTargetLang() {
-      const el = $('tr-target-lang');
-      const fromSelect = el?.value?.trim();
-      if (fromSelect) return fromSelect;
-      return localStorage.getItem(TRANSLATOR_TARGET_LANG_KEY) || 'en';
     }
 
     function syncTranslatorDirectionUi() {
@@ -2903,26 +2895,11 @@
       document.querySelectorAll('.translator-token--speaking').forEach(el => {
         el.classList.remove('translator-token--speaking');
       });
-      document.querySelectorAll('.translator-alternate--speaking').forEach(el => {
-        el.classList.remove('translator-alternate--speaking');
-      });
-      $('tr-output')?.classList.remove('translator-output--alternate-playing');
     }
 
-    function highlightTranslatorToken(tokenIndex, { alternateIndex = null } = {}) {
+    function highlightTranslatorToken(tokenIndex) {
       clearTranslatorSpeakingHighlight();
       if (tokenIndex == null || tokenIndex < 0) return;
-
-      if (alternateIndex != null) {
-        $('tr-output')?.classList.add('translator-output--alternate-playing');
-        document.querySelector(`.translator-alternate[data-tr-alt-index="${alternateIndex}"]`)
-          ?.classList.add('translator-alternate--speaking');
-        document.querySelector(
-          `.translator-alternate[data-tr-alt-index="${alternateIndex}"] .translator-token[data-tr-word="${tokenIndex}"]`,
-        )?.classList.add('translator-token--speaking');
-        return;
-      }
-
       document.querySelector(
         `.translator-token-list--primary .translator-token[data-tr-word="${tokenIndex}"]`,
       )?.classList.add('translator-token--speaking');
@@ -2936,7 +2913,7 @@
       el.classList.toggle('translator-playback-status--error', Boolean(isError));
     }
 
-    async function speakTranslatorResult(result, { alternateIndex = null } = {}) {
+    async function speakTranslatorResult(result) {
       if (!result?.tokens?.some(t => !isSkippablePlaybackToken(t)) || STATE.translatorPlaying) return;
       await ensureRules();
       primeAudioContext();
@@ -2971,7 +2948,7 @@
           if (STATE.translatorCancel) break;
 
           const seg = playback.segments[i];
-          highlightTranslatorToken(seg.tokenIndex ?? -1, { alternateIndex });
+          highlightTranslatorToken(seg.tokenIndex ?? -1);
 
           if (seg.kind === 'pause') {
             const pauseMs = pauseMsForPunctuation(
@@ -3064,7 +3041,12 @@
           ? `<span class="${resClass}">${escapeHtml(token.fonoran)}</span>`
           : escapeHtml(token.fonoran))
         : `<span class="translator-unresolved-sample">${escapeHtml(token.english)}</span>`;
-      const gloss = token.gloss ? `<span class="translator-token__gloss">${escapeHtml(token.gloss)}</span>` : '';
+      // Reverse tokens name the concept by its id, so their gloss repeats the English column;
+      // the dictionary definition is the part worth showing beside it.
+      const glossText = token.definition || token.gloss || '';
+      const gloss = glossText && glossText !== token.english
+        ? `<span class="translator-token__gloss">${escapeHtml(glossText)}</span>`
+        : '';
       const showInterp = token.interpreted || (kind !== 'direct' && kind !== 'unknown');
       const interp = showInterp
         ? `<span class="translator-token__interp">${escapeHtml(token.interpreted_from ?? token.english)} → ${escapeHtml(token.concept_id ?? token.lookup ?? '')}${token.interpret_reason ? ` (${escapeHtml(token.interpret_reason)})` : ''}</span>`
@@ -3077,68 +3059,6 @@
         ${gloss}
         ${interp}
       </li>`;
-    }
-
-    function swapTranslatorAlternate(index) {
-      const r = STATE.translatorResult;
-      const alt = r?.alternates?.[index];
-      if (!alt) return;
-      const previous = {
-        id: 'previous_primary',
-        note: 'Previous primary reading.',
-        roman: r.surface?.roman ?? '',
-        surface: r.surface,
-        playback: r.playback,
-        tokens: r.tokens,
-        frame: r.llm_frame,
-      };
-      const otherAlts = (r.alternates ?? []).filter((_, i) => i !== index);
-      STATE.translatorResult = {
-        ...r,
-        tokens: alt.tokens,
-        surface: alt.surface,
-        playback: alt.playback,
-        llm_frame: alt.frame ?? r.llm_frame,
-        alternates: [...otherAlts, previous],
-      };
-      void renderTranslatorOutput(STATE.translatorResult);
-    }
-
-    async function speakTranslatorAlternate(index) {
-      const alt = STATE.translatorResult?.alternates?.[index];
-      if (!alt?.tokens?.length || STATE.translatorPlaying) return;
-      await speakTranslatorResult({
-        ...STATE.translatorResult,
-        tokens: alt.tokens,
-        playback: alt.playback,
-        surface: alt.surface,
-      }, { alternateIndex: index });
-    }
-
-    function translatorAlternatesHtml(result) {
-      if (!result?.alternates?.length) return '';
-      const items = result.alternates.map((alt, i) => {
-        const script = alt.playback?.script || alt.roman || '';
-        const tokenList = alt.tokens?.length
-          ? `<ul class="translator-token-list translator-token-list--alternate">${alt.tokens.map((t, ti) => translatorTokenHtml(t, ti)).join('')}</ul>`
-          : '';
-        return `<li class="translator-alternate" data-tr-alt-index="${i}">
-          <div class="translator-alternate__actions">
-            <button type="button" class="chip translator-alternate__use" data-tr-alt-use="${i}">Use</button>
-            <button type="button" class="chip translator-alternate__hear" data-tr-alt-hear="${i}" aria-label="Listen to alternate">${playButtonMarkup('', { iconOnly: true, solo: true })}</button>
-          </div>
-          <div class="translator-alternate__body">
-            ${script ? `<div class="translator-alternate__script fonora-script symbol-text">${escapeHtml(script)}</div>` : ''}
-            <p class="translator-alternate__roman sans">${escapeHtml(alt.roman)}</p>
-            <p class="translator-alternate__note sans">${escapeHtml(alt.note)}</p>
-            ${tokenList}
-          </div>
-        </li>`;
-      }).join('');
-      return `<div class="translator-output__alternates">
-        <p class="translator-output__alternates-label sans">Also sayable</p>
-        <ul class="translator-alternates-list">${items}</ul>
-      </div>`;
     }
 
     function translatorReverseEmptyMessage() {
@@ -3245,15 +3165,7 @@
           ${pronHtml}
         </div>
         ${translatorLegendHtml(result)}
-        <ul class="translator-token-list translator-token-list--primary">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>
-        ${translatorAlternatesHtml(result)}`;
-
-      out.querySelectorAll('[data-tr-alt-use]').forEach((btn) => {
-        btn.addEventListener('click', () => swapTranslatorAlternate(Number(btn.dataset.trAltUse)));
-      });
-      out.querySelectorAll('[data-tr-alt-hear]').forEach((btn) => {
-        btn.addEventListener('click', () => { void speakTranslatorAlternate(Number(btn.dataset.trAltHear)); });
-      });
+        <ul class="translator-token-list translator-token-list--primary">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>`;
 
       syncTranslatorPlaybackUi(result);
     }
@@ -3299,7 +3211,6 @@
         if (reverse) {
           body.direction = 'from-fonoran';
           body.inputMode = sourceLang === 'fonoran-fonora' ? 'fonora' : 'roman';
-          body.targetLang = readTranslatorTargetLang();
         }
         const result = await api('/api/fonoran/translate', {
           method: 'POST',
@@ -3354,9 +3265,6 @@
       const langEl = $('tr-source-lang');
       const savedLang = localStorage.getItem(TRANSLATOR_SOURCE_LANG_KEY);
       if (langEl && savedLang) langEl.value = savedLang;
-      const targetEl = $('tr-target-lang');
-      const savedTarget = localStorage.getItem(TRANSLATOR_TARGET_LANG_KEY);
-      if (targetEl && savedTarget) targetEl.value = savedTarget;
       void syncTranslatorDirectionUiAsync();
       syncTranslatorSpeedLabel();
       syncTranslatorPlaybackUi(STATE.translatorResult);
@@ -3651,10 +3559,6 @@
     $('tr-source-lang')?.addEventListener('change', (e) => {
       localStorage.setItem(TRANSLATOR_SOURCE_LANG_KEY, e.target.value);
       void syncTranslatorDirectionUiAsync().then(() => runTranslator());
-    });
-    $('tr-target-lang')?.addEventListener('change', (e) => {
-      localStorage.setItem(TRANSLATOR_TARGET_LANG_KEY, e.target.value);
-      void runTranslator();
     });
     $('tr-keyboard-toggle')?.addEventListener('click', () => {
       void translatorDockController().toggle();

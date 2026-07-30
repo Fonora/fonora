@@ -91,11 +91,9 @@ flowchart LR
     TOK["tokens + resolution_kind"]
     SUR["surface (roman, script, pronunciation)"]
     PBK["playback (script, segments, wordSources)"]
-    ALT["alternates (we readings + casual Actor-drop)"]
     ST --> TOK
     BS --> SUR
     PB --> PBK
-    TOK --> ALT
   end
 ```
 
@@ -113,15 +111,14 @@ flowchart TB
   end
 
   subgraph OutputPanel["Output panel (auto height, no scroll)"]
-    HDR["Header: Fonoran, or target-lang select when source is Fonoran · Why this reading"]
+    HDR["Header: Fonoran, or English when source is Fonoran · Why this reading"]
     SURF["Surface block"]
     SCRIPT["Fonora script (forward) / English reading (reverse)"]
     ROMAN["Roman line + resolution colors"]
     PRON["Pronunciation ▸ (collapsed details)"]
     TOK["Token list (role → english → fonoran)"]
-    ALT2["Also sayable (we alternates: Use / ▶) — forward only"]
     HDR --- SURF
-    SURF --> SCRIPT --> ROMAN --> PRON --> TOK --> ALT2
+    SURF --> SCRIPT --> ROMAN --> PRON --> TOK
   end
 
   subgraph Playback["Playback bar (page top)"]
@@ -143,12 +140,11 @@ flowchart TB
 | Element | Behavior |
 | --- | --- |
 | **Source language** | English plus **Fonoran (Roman)** and **Fonoran (Fonora)**. Choosing either switches to reverse mode and shows a target-language select (default English) |
-| **Translate** | Debounced (~280 ms) POST to `/api/fonoran/translate`; spinner while busy. Every keystroke is answerable because nothing costs money. Reverse sends `direction: "from-fonoran"`, `inputMode`, and `targetLang` |
+| **Translate** | Debounced (~280 ms) POST to `/api/fonoran/translate`; spinner while busy. Every keystroke is answerable because nothing costs money. Reverse sends `direction: "from-fonoran"` and `inputMode` |
 | **Resolution colors** | Default text = direct lexicon hit; gold = interpreted; orange = semantic / weak alias; red = unresolved |
 | **Pronunciation** | Collapsed `<details>` under roman; phonetic key + “sounds like” hint |
 | **Why this reading** | Hover/focus popup in output header; shows the compiler's one-sentence note |
 | **Listen** | Uses server `playback` as source of truth; speaks Fonoran IPA via Piper; unresolved gaps may use English TTS; Fonoran tokens never fall back to English orthography; `.` and `!` retained on roman/script and pause Listen between sentences; a question's `?` is written as `.`, because `ka` already marks it as a question |
-| **Also sayable** | Rule-based alternates (e.g. collective `dan` ↔ dyadic `mi be` for *we*); alternate ▶ highlights alternate tokens |
 | **Layout** | 15 px gap below nav; panels `align-items: start`; independent auto heights |
 
 Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
@@ -165,7 +161,6 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | `tools/fonoran-reverse-translate.js` | Fonoran → English (script/roman normalize, lexical resolve) |
 | `tools/fonoran-english-resolve.js` | Concept resolution cascade, spelling fallback |
 | `tools/fonoran-interpretation.js` | Motion rules, existential *there* peel, frame helpers |
-| `tools/fonoran-translate-alternates.js` | Optional we-reading alternates |
 | `tools/fonoran-playback-build.js` | Server wrapper; attaches `playback` to every result |
 | `js/fonoran-playback-build.js` | Browser-safe playback builder (shared with Samples pipeline) |
 | `language/fonoran-app.js` | Translator page UI |
@@ -192,7 +187,6 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
   "text": "mi gi ye",
   "direction": "from-fonoran",
   "inputMode": "roman",
-  "targetLang": "en",
   "sourceLang": "fonoran-roman"
 }
 ```
@@ -209,7 +203,6 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id` |
 | `playback` | `{ script, segments, wordSources, tokenIndices, playable }` |
 | `reasoning` | One-sentence compiler note (shown in “Why this reading”) |
-| `alternates[]` | Optional rule-based readings (`roman`, `tokens`, `playback`, `note`) |
 | `unresolved[]` | Honest gaps (render red; never fabricated) |
 | `engine` | `legacy` |
 
@@ -221,9 +214,13 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | `translation` | English reading |
 | `literal` | Lexical gloss (shown when it differs from `translation`) |
 | `surface.roman` | Normalized Fonoran roman from the input |
-| `tokens[]` | Resolved particles / roots / compounds (or unresolved gaps) |
+| `tokens[]` | Resolved particles / roots / compounds (or unresolved gaps), each with `definition` |
 | `playback` | Speaks the **source** Fonoran |
 | `engine` | `lexical` |
+
+Reverse is English only. The picker used to offer Spanish, French, German, Japanese, Arabic, and Mandarin, but those were translated by the model; the lexical glosser has only English concept names, so the other six returned English under a foreign label.
+
+Each concept is named by its **id**, not its dictionary definition. Definitions read as standalone entries ("the entity spoken to", "a group seen as one"), so splicing them into a sentence gave *the entity spoken to safe at this place* where the id gives *addressee safe here*. A concept whose id reads oddly in a gloss reads oddly everywhere, which makes it a naming decision in the seed rather than something to patch here. The full definition rides along on each token as `definition`.
 
 Module: `tools/fonoran-reverse-translate.js`. See [fonoran-cli-tools.md](fonoran-cli-tools.md).
 

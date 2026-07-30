@@ -1,10 +1,16 @@
 /**
- * Fonoran to natural-language reverse translator.
+ * Fonoran to English reverse translator.
  *
  * Normalizes Fonora script or roman input and resolves spellings to concepts and particles,
  * producing a lexical gloss. The fluency layer that used to smooth that gloss into an idiomatic
  * sentence was a model call, and it is gone: a reading of Fonoran that no rule can account for
  * is not a reading of Fonoran. What the glosser cannot resolve stays visible as a gap.
+ *
+ * The gloss names each concept by its id, not by its dictionary definition. Definitions are
+ * written to be read alone ("the entity spoken to", "a group seen as one"), so splicing them
+ * into a sentence produced text that was neither English nor a faithful gloss. The id is the
+ * name the lexicon already uses for the concept, so a word that reads oddly here reads oddly
+ * everywhere and is a naming decision to make in the seed rather than to paper over here.
  */
 
 import { buildResolveContext } from './fonoran-english-resolve.js';
@@ -13,26 +19,8 @@ import { fonoraScriptToRoman } from './fonoran-fonora-bridge.js';
 import { loadFonoraLanguageRules, attachTranslatorPlayback } from './fonoran-playback-build.js';
 import { phoneticKeyBold } from './fonoran-pronunciation.js';
 
-const TARGET_LANG_LABELS = {
-  en: 'English',
-  es: 'Spanish',
-  fr: 'French',
-  de: 'German',
-  ja: 'Japanese',
-  ar: 'Arabic',
-  zh: 'Mandarin Chinese',
-};
-
 const PUNCT_RE = /^[.!?…,;:]+$/;
 const WORD_SPLIT_RE = /([.!?…,;:])|\s+/;
-
-/**
- * @param {string} [targetLang]
- */
-export function normalizeTargetLang(targetLang) {
-  const lang = String(targetLang ?? 'en').trim().toLowerCase();
-  return TARGET_LANG_LABELS[lang] ? lang : 'en';
-}
 
 /**
  * @param {string} [inputMode]
@@ -136,14 +124,20 @@ function particleByForm(particles) {
   return map;
 }
 
-function glossForConcept(ctx, conceptId) {
+/** The English word for a concept: its id, which the lexicon treats as the concept's name. */
+function headwordForConcept(conceptId) {
+  return String(conceptId ?? '').trim().replace(/_/g, ' ');
+}
+
+/** The concept's dictionary definition, shown beside the headword rather than inside the gloss. */
+function definitionForConcept(ctx, conceptId) {
   const id = String(conceptId ?? '').trim();
   if (!id) return '';
   const compound = ctx.compoundByConceptId?.get(id);
   if (compound?.gloss) return String(compound.gloss);
   const root = ctx.rootById?.get(id);
   if (root?.gloss) return String(root.gloss);
-  return id.replace(/_/g, ' ');
+  return '';
 }
 
 /**
@@ -203,7 +197,7 @@ export function resolveRomanSpelling(spelling, ctx, byForm) {
 
   const conceptId = ctx.spellingByConceptId?.get(key) ?? null;
   if (conceptId) {
-    const gloss = shortGloss(glossForConcept(ctx, conceptId), conceptId);
+    const gloss = headwordForConcept(conceptId);
     const compound = ctx.compoundByConceptId?.get(conceptId);
     return {
       kind: compound ? 'compound' : 'root',
@@ -211,6 +205,7 @@ export function resolveRomanSpelling(spelling, ctx, byForm) {
       fonoran: key,
       english: gloss,
       gloss,
+      definition: definitionForConcept(ctx, conceptId),
       role: 'concept',
       concept_id: conceptId,
       resolution_kind: 'direct',
@@ -305,7 +300,6 @@ const WRONG_SOURCE_LANG_ERROR =
  * @param {{
  *   inputMode?: 'fonora'|'roman',
  *   sourceLang?: string,
- *   targetLang?: string,
  *   lab?: object,
  *   skipCache?: boolean,
  *   devLab?: boolean,
@@ -314,7 +308,6 @@ const WRONG_SOURCE_LANG_ERROR =
 export async function translateFromFonoran(text, options = {}) {
   const input = String(text ?? '').trim();
   const inputMode = resolveInputMode(options.sourceLang, options.inputMode);
-  const targetLang = normalizeTargetLang(options.targetLang);
   const rules = await loadFonoraLanguageRules();
 
   if (!input) {
@@ -322,7 +315,6 @@ export async function translateFromFonoran(text, options = {}) {
       ok: true,
       direction: 'from-fonoran',
       inputMode,
-      targetLang,
       input: '',
       mode: 'empty',
       tokens: [],
@@ -339,7 +331,6 @@ export async function translateFromFonoran(text, options = {}) {
       ok: false,
       direction: 'from-fonoran',
       inputMode,
-      targetLang,
       input,
       error: normalized.warnings?.[0] || 'Could not normalize Fonoran input',
       status: 422,
@@ -357,7 +348,6 @@ export async function translateFromFonoran(text, options = {}) {
       ok: false,
       direction: 'from-fonoran',
       inputMode,
-      targetLang,
       input,
       error: WRONG_SOURCE_LANG_ERROR,
       code: 'wrong_source_language',
@@ -397,8 +387,6 @@ export async function translateFromFonoran(text, options = {}) {
     ok: true,
     direction: 'from-fonoran',
     inputMode,
-    targetLang,
-    target_lang_label: TARGET_LANG_LABELS[targetLang] || 'English',
     input,
     mode: 'reverse',
     tokens,
@@ -417,5 +405,3 @@ export async function translateFromFonoran(text, options = {}) {
   await attachTranslatorPlayback(result, rules);
   return result;
 }
-
-export { TARGET_LANG_LABELS };

@@ -65,15 +65,12 @@ function formatRegenStatusHtml(status) {
   const labUp = status.lab?.updated_at
     ? new Date(status.lab.updated_at).toLocaleString()
     : '—';
-  const llmStore = status.store_docs?.llm_evaluations?.counts?.rounds ?? 0;
-  const llmSeed = status.seed_files?.llm_evaluations?.counts?.rounds ?? 0;
   const cmpStore = status.store_docs?.compounds?.counts?.compounds ?? 0;
   const cmpSeed = status.seed_files?.compounds?.counts?.compounds ?? 0;
   return `<dl>
     <dt>Storage</dt><dd>${escapeHtml(status.storage_mode ?? '—')}</dd>
     <dt>Dictionary</dt><dd>${status.lab?.sounds ?? 0} roots · ${status.lab?.compounds ?? 0} words · updated ${escapeHtml(labUp)}</dd>
     <dt>Seeds imported</dt><dd>${escapeHtml(imp)}</dd>
-    <dt>LLM eval rounds</dt><dd>Postgres ${llmStore} · deploy slug ${llmSeed}${llmStore === llmSeed ? '' : ' (drift)'}</dd>
     <dt>Compound recipes</dt><dd>Postgres ${cmpStore} · deploy slug ${cmpSeed}${cmpStore === cmpSeed ? '' : ' (drift)'}</dd>
   </dl>`;
 }

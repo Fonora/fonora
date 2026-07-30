@@ -422,7 +422,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const result = await translate(body.text ?? '', {
         lab,
         sourceLang: body.sourceLang ?? url.searchParams.get('sourceLang') ?? 'auto',
-        targetLang: body.targetLang ?? url.searchParams.get('targetLang') ?? 'en',
         direction: body.direction ?? url.searchParams.get('direction') ?? undefined,
         inputMode: body.inputMode ?? url.searchParams.get('inputMode') ?? undefined,
         devLab: body.dev_lab === true

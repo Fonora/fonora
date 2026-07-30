@@ -294,7 +294,7 @@ function buildProposalRecord(p) {
     role: p.role ?? 'concept',
     concept_id: p.concept_id ?? null,
     gloss: p.gloss ?? null,
-    source: p.source ?? 'llm_gap_analyzer',
+    source: p.source ?? 'manual',
     classification: p.classification ?? 'compound',
     rationale: p.rationale ?? null,
     compositions: p.compositions ?? [],

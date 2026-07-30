@@ -1,6 +1,6 @@
 /**
  * Unified Fonoran translate API: the deterministic English compiler, or the reverse
- * Fonoran to natural-language path.
+ * Fonoran to English gloss.
  *
  * There is one forward engine, and it is the language. A model-backed compiler used to sit
  * behind `engine: 'llm'` here, which meant every consumer of this module loaded LLM code and
@@ -14,7 +14,6 @@ import {
   translateFromFonoran,
   isFonoranSourceLang,
   resolveInputMode,
-  normalizeTargetLang,
 } from './fonoran-reverse-translate.js';
 
 function resolveDirection(options = {}) {
@@ -29,7 +28,6 @@ function resolveDirection(options = {}) {
  * @param {string} text
  * @param {{
  *   sourceLang?: string,
- *   targetLang?: string,
  *   direction?: string,
  *   inputMode?: string,
  *   lab?: object,
@@ -45,7 +43,6 @@ export async function translate(text, options = {}) {
       lab: options.lab,
       sourceLang: options.sourceLang,
       inputMode: resolveInputMode(options.sourceLang, options.inputMode),
-      targetLang: normalizeTargetLang(options.targetLang),
       skipCache: options.skipCache,
       devLab: options.devLab,
     });

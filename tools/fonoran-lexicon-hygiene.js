@@ -291,7 +291,7 @@ function pickAgentiveCanonical(members, compoundByConcept) {
     const def = compoundByConcept.get(m.concept);
     const u = def?.understandability ?? def?.preferred?.understandability ?? 0;
     const source = def?.preferred_source ?? '';
-    const sourceRank = source === 'heuristic' || source === 'llm_consensus' ? 2 : source === 'proposal' ? 1 : 0;
+    const sourceRank = source === 'heuristic' ? 2 : source === 'proposal' ? 1 : 0;
     return { ...m, score: u + sourceRank * 0.01, len: m.concept.length };
   });
   scored.sort((a, b) => b.score - a.score || a.len - b.len || a.concept.localeCompare(b.concept));

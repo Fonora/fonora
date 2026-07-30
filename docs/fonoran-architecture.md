@@ -131,22 +131,24 @@ flowchart TD
 
 ## How big it actually is
 
-| Scope | JS modules |
-| --- | --- |
-| Root generation, everything it needs | 18 |
-| Compound selection, everything it needs | 17 |
-| Translation, everything it needs | 44 |
-| **The language, all three combined** | **53** |
-| Booting the web server | 90 |
-| The whole repo | 329 |
+Each row is the transitive import closure of one entry point, so a module needed by two stages is counted in both.
 
-Supporting cast: 120 browser files under `js/`, 101 under `tools/`, 59 under `scripts/`, 39 vendored text-to-speech files, 49 JSON files in `data/`, and 9 more in the external data repo.
+| Scope | Entry point | JS modules |
+| --- | --- | --- |
+| Root generation, everything it needs | `tools/fonoran-root-sound-assign.js` | 8 |
+| Compound selection, everything it needs | `tools/fonoran-preferred-select.js` | 16 |
+| Translation, everything it needs | `tools/fonoran-translate.js` | 48 |
+| **The language, all three combined** | | **56** |
+| Booting the web server | `server.js` | 72 |
+| The whole repo, excluding vendored code | | 236 |
 
-**59 of the 101 `tools/` files are not part of the language at any point.**
+Supporting cast: 112 browser files under `js/`, 75 under `tools/`, 40 under `scripts/`, 38 vendored text-to-speech files, 47 JSON files in `data/`, and 9 more in the external data repo.
+
+**31 of the 75 `tools/` files are not part of the language at any point.**
 
 ## So could it be five files?
 
-Not five, but 53 is not defensible either. The honest breakdown of what translation's 44 modules are doing: a large part is English-side machinery rather than Fonoran, namely the tokenizer, lemmatizer, irregular verb tables, phrase merging, interpretation rules, and concept bridges. Fonoran itself is small. Understanding English is what sprawled.
+Not five, but 56 is not defensible either. The honest breakdown of what translation's 48 modules are doing: a large part is English-side machinery rather than Fonoran, namely the tokenizer, lemmatizer, irregular verb tables, phrase merging, interpretation rules, and concept bridges. Fonoran itself is small. Understanding English is what sprawled.
 
 A realistic target is one module per stage, so roughly 10 to 15 for the language, with the English front end isolated in one place instead of threaded through everything.
 
@@ -154,40 +156,20 @@ A realistic target is one module per stage, so roughly 10 to 15 for the language
 
 Measured, not guessed. Each is a candidate, not a decision.
 
-**Not imported anywhere, not an npm script, not loaded by any page.** These are the safest deletions:
+**Nothing outside `vendor/` is currently unreachable.** Every JS file is imported by another module, named in an npm script, or loaded by a `<script>` tag. The eleven files this section used to list have been deleted, except `scripts/fonoran-word-ownership.js`, which turned out to be a live maintenance CLI: it writes `data/fonoran-word-ownership.json`, which `tools/fonoran-invariants.js` reads on every `npm test`.
 
-```text
-js/platform-showcase.js
-js/safe-html.js
-load-env.js
-scripts/fonoran-apply-experience-tiers.js
-scripts/fonoran-migrate-compounds.js
-scripts/fonoran-word-bank-propose.js
-scripts/fonoran-word-ownership.js
-scripts/inject-research-note-frontmatter.js
-scripts/migrate-research-note-slugs.js
-scripts/polish-research-notes-md.js
-scripts/research-notes-sync-deploy.js
-```
-
-Four of those exist only to maintain research notes.
-
-**Do not delete these, despite an import scan calling them orphans.** They are `<script>` entry points, so no JS file imports them and a graph walk cannot see them:
+**A dead-code sweep must check HTML script tags as well as imports**, or it will propose deleting the main page. No JS file imports these:
 
 | File | Entry point |
 | --- | --- |
 | `language/fonoran-app.js` | `language/index.html`, the whole `/language` page |
-| `js/research-app.js` | `research/index.html` |
 | `showcase/showcase.js` | `showcase/index.html` |
-
-Any future dead-code sweep has to check HTML script tags as well as imports, or it will propose deleting the main page.
 
 **Structural fat, in the order that would help most:**
 
 1. **Collapse the store to one source.** Delete the Postgres path and the lab bucket, read seeds directly. This removes the class of bug that cost you the most, and it is what the Cursor-based workflow needs: edit seed, regenerate, done.
-2. **27 pending LLM cuts**, listed with individual fixes in `data/fonoran-llm-quarantine.json`. Start with `fonoran-translator.js`, which only needs three grammar helpers rehoused.
-3. **The GUI.** If the workflow is you and me editing seeds directly, then Word Manager, the pipeline wizard, and the proposal review screens are surface area maintaining a second way to change the language.
-4. **The research-note subsystem**: notes, a store, an API, verification scripts, and sync tooling.
+2. **Isolate the English front end.** The tokenizer, lemmatizer, irregular verb tables, phrase merging, and interpretation rules are why translation needs 48 modules to Fonoran's handful. They are one subsystem threaded through everything rather than one module.
+3. **The GUI.** If the workflow is you and me editing seeds directly, then Word Manager and the proposal review screens are surface area maintaining a second way to change the language.
 
 ## Where the truth lives
 

@@ -311,7 +311,7 @@ export function selectPreferred(conceptId, {
         : (winnerKey === currentKey ? 'already optimal' : 'policy held current'));
     return {
       preferred: { composition: current, gloss },
-      preferred_source: preferredSource === 'llm_consensus' ? preferredSource : 'heuristic',
+      preferred_source: 'heuristic',
       promoted: false,
       reason: holdReason,
       flat_count: currentFlat,

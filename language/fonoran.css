@@ -2090,7 +2090,6 @@
       background-repeat:no-repeat;
       background-position:right 0.45rem center;
     }
-    .translator-panel__lang--select .translator-panel__lang-select { display:block; }
     .translator-panel--output .translator-output { flex:none; }
     .translator-input.translator-input--fonora.symbol-text {
       font-family:var(--font-symbol);
@@ -2322,84 +2321,6 @@
       letter-spacing:0.02em;
     }
     .translator-output__like { font-style:italic; }
-    .translator-output__alternates {
-      margin-top:0.85rem;
-      padding-top:0.75rem;
-      border-top:1px dashed var(--border);
-    }
-    .translator-output__alternates-label {
-      margin:0 0 0.5rem;
-      font-size:0.78rem;
-      letter-spacing:0.06em;
-      text-transform:uppercase;
-      color:var(--muted);
-    }
-    .translator-alternates-list {
-      list-style:none;
-      margin:0;
-      padding:0;
-      display:flex;
-      flex-direction:column;
-      gap:0.55rem;
-    }
-    .translator-alternate {
-      display:flex;
-      gap:0.55rem;
-      align-items:flex-start;
-      padding:0.45rem 0.55rem;
-      border-radius:8px;
-      background:var(--surface);
-      border:1px solid var(--border);
-    }
-    .translator-alternate__actions {
-      display:flex;
-      flex-direction:column;
-      gap:0.25rem;
-      flex-shrink:0;
-    }
-    .translator-alternate__hear {
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:2.75rem;
-      min-height:2.75rem;
-      padding:0.35rem 0.55rem;
-    }
-    .translator-alternate__hear .btn-play-icon {
-      width:1em;
-      height:1em;
-    }
-    .translator-alternate__body { min-width:0; flex:1; }
-    .translator-alternate__script {
-      font-size:1.05rem;
-      line-height:1.35;
-      margin-bottom:0.2rem;
-    }
-    .translator-alternate__roman {
-      margin:0;
-      font-size:0.9rem;
-      color:var(--text);
-    }
-    .translator-alternate__note {
-      margin:0.2rem 0 0;
-      font-size:0.8rem;
-      color:var(--muted);
-    }
-    .translator-token-list--alternate {
-      margin-top:0.45rem;
-      gap:0.25rem;
-    }
-    .translator-token-list--alternate .translator-token {
-      font-size:0.82rem;
-      padding:0.28rem 0.4rem;
-    }
-    .translator-output--alternate-playing .translator-token-list--primary {
-      opacity:0.42;
-    }
-    .translator-alternate--speaking {
-      border-color:var(--accent);
-      box-shadow:0 0 0 1px var(--accent-soft);
-    }
     .translator-token-list {
       display:flex;
       flex-direction:column;
