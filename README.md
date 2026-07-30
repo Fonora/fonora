@@ -39,7 +39,7 @@ Docs: [language-rules.md](docs/language-rules.md) · [multilingual-support.md](d
 | --- | --- |
 | [Language app](https://fonora.org/language) | About, Translator, Dictionary, Grammar |
 | [fonoran.md](docs/fonoran.md) | Guide, pipeline, API |
-| [Constitution](docs/fonoran-constitution.md) | Philosophy and campfire test |
+| [Rulebook](docs/fonoran-rulebook.md) | The whole language: three layers, 13 rules |
 
 Live vocabulary: `data/fonoran-sound-bucket.json` (local runtime; gitignored).
 

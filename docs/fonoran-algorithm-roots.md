@@ -42,7 +42,7 @@ Only one-syllable forms: **CV** or **CVC**. Multi-syllable forms are reserved fo
 
 Vowels are themselves ordered by cost in that order, so `ba` is cheaper than `bu`.
 
-Three sets never enter the pool: the 15 reserved particle forms, an excluded list (`pi`, `pee`, `po`, `poo`, `pu`, `fa`, `fu`), and anything starting with `r` or `j`, which Constitution Rule 1 bans outright.
+Three sets never enter the pool: the 15 reserved particle forms, an excluded list (`pi`, `pee`, `po`, `poo`, `pu`, `fa`, `fu`), and anything starting with `r` or `j`, which rulebook rule 4 bans outright.
 
 ## Step 3: give each concept a cost it should be aiming at
 
@@ -60,7 +60,7 @@ These are hard blocks, checked before scoring. A blocked form is skipped entirel
 
 - the form is already taken
 - it starts with `r` or `j`
-- it is **not prefix-safe** against every root already assigned, meaning no root may be the start of another (Constitution Rule 5). Enforced here rather than left to CI
+- it is **not prefix-safe** against every root already assigned, meaning no root may be the start of another (rulebook rule 5). Enforced here rather than left to CI
 - the editorial collision profile blocks it
 - it duplicates an existing root, or overlaps a prefix while the concept sits in the top half of priority
 
@@ -116,4 +116,4 @@ If this page and the code disagree, the code wins, and this page is the bug.
 | Onsets, vowels, caps, exclusions | `data/fonoran-primitive-roots-config.json` |
 | The concepts themselves | `data/fonoran-concept-inventory.json` |
 | Approved output | `data/fonoran-approved-roots.json` |
-| Rules 1 and 5 this enforces | [fonoran-constitution.md](fonoran-constitution.md) |
+| Rules 1 and 5 this enforces | [fonoran-rulebook.md](fonoran-rulebook.md) |

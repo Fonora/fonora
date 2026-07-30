@@ -46,7 +46,7 @@
     "known_violations": []
   },
   "phonetics": {
-    "note": "r and j onsets are excluded from primitive assignment (constitution rule 1). See tools/fonoran-phonetic-weights.js isBannedPrimitiveSpelling().",
+    "note": "r and j onsets are excluded from primitive assignment (rulebook rule 4). See tools/fonoran-phonetic-weights.js isBannedPrimitiveSpelling().",
     "preferred_onsets": [
       "b",
       "d",

@@ -1,7 +1,7 @@
 /**
  * Understandability — an advisory estimate of communicative success.
  *
- * THIS IS A RANKING AID, NOT AN AUTHORITY. See docs/fonoran-constitution.md.
+ * THIS IS A RANKING AID, NOT AN AUTHORITY. See docs/fonoran-algorithm-compounds.md.
  * The number estimates "would another root-knower likely recover the intended meaning?"
  * It exists to *order* candidate expressions. A human decides
  * which form is preferred, and the playtest overrides this score whenever they disagree.

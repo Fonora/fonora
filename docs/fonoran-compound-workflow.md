@@ -1,10 +1,10 @@
 # Fonoran compound workflow (local + production)
 
-> **Read first:** [fonoran-constitution.md](fonoran-constitution.md) (one page) · Agent rules: [CLAUDE.md](../CLAUDE.md)
+> **Read first:** [fonoran-rulebook.md](fonoran-rulebook.md) (one page) · Agent rules: [CLAUDE.md](../CLAUDE.md)
 
 > Sequential commands for producing and shipping vocabulary from editorial inputs through **deterministic four-rules regeneration**, build, audit, and deploy. Every command here is deterministic, and no step calls a model.
 >
-> See also: [fonoran.md](fonoran.md) (pipeline overview), [deploy.md](deploy.md) (Heroku), [fonoran-constitution.md](fonoran-constitution.md) (success criteria).
+> See also: [fonoran.md](fonoran.md) (pipeline overview), [deploy.md](deploy.md) (Heroku), [fonoran-rulebook.md](fonoran-rulebook.md) (the rules a word must pass).
 
 ## Build vs regenerate — which command?
 
@@ -259,7 +259,7 @@ flowchart TB
   subgraph scored [Scored]
     Rules["four_rules\ncampfire + four rules"]
   end
-  Playtest -->|"constitutional authority"| Preferred["preferred form\nin compounds.json"]
+  Playtest -->|"human ruling"| Preferred["preferred form\nin compounds.json"]
   Rules --> Preferred
 ```
 

@@ -4,7 +4,7 @@
 >
 > **Implementation state:** this document describes a designed system that does not exist in the seed layer. No numeral appears in `data/fonoran-approved-roots.json`, `data/fonoran-compounds.json`, or `data/fonoran-concept-inventory.json`, and the translator returns number words as unresolved (translating *two* yields `unresolved: ["two"]`). The only counting-adjacent lexical root is `one` (`lu`), which is a quantity value rather than a numeral. Number words are also absent from `data/fonoran-translation-gap-baseline.json`, so nothing currently tracks their absence. Treat the tables below as a proposal pending seed work, not as live language state.
 >
-> **Read first:** [Fonoran Constitution](fonoran-constitution.md) · [Fonoran grammar](fonoran-grammar.md) · [Language rules (Fonora script)](language-rules.md)
+> **Read first:** [Fonoran rulebook](fonoran-rulebook.md) · [Fonoran grammar](fonoran-grammar.md) · [Language rules (Fonora script)](language-rules.md)
 
 Fonoran cardinal numerals are **phonetic compounds**: speakable CV syllables written in Fonora script by concatenation, the same way lexical compounds (`yenan`, `hudi`) are formed. They are not symbolic place-value notation.
 

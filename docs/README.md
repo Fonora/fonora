@@ -44,22 +44,22 @@ Read in this order for a new contributor:
 
 | # | Topic | Document |
 | --- | --- | --- |
-| 0 | **Rulebook** (all three layers, 13 rules, plain language) | [fonoran-rulebook.md](fonoran-rulebook.md) |
-| 0a | **Algorithm: how a concept gets its sound** (one page) | [fonoran-algorithm-roots.md](fonoran-algorithm-roots.md) |
-| 0b | **Algorithm: how a compound is chosen** (one page) | [fonoran-algorithm-compounds.md](fonoran-algorithm-compounds.md) |
-| 0c | **Algorithm: how English becomes Fonoran** (one page) | [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md) |
-| 0d | **Architecture map** (what reads what, where the fat is) | [fonoran-architecture.md](fonoran-architecture.md) |
-| 1 | **Fonoran constitution** (read first — one page) | [fonoran-constitution.md](fonoran-constitution.md) |
-| 2 | **Fonoran grammar** | [fonoran-grammar.md](fonoran-grammar.md) |
-| 3 | **Philosophy & rationale** (optional deep read) | [fonoran-philosophy.md](fonoran-philosophy.md) |
-| 4 | **Fonoran guide** (builder pipeline) | [fonoran.md](fonoran.md) |
-| 4b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
-| 4c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
-| 4d | **Prefix-safe CV / CVC roots** | [fonoran-prefix-safe-roots.md](fonoran-prefix-safe-roots.md) |
-| 5 | **Fonoran numerals** (1–99) | [fonoran-numerals.md](fonoran-numerals.md) |
-| 6 | **Fonoran Learn** (`/learn`) | [fonoran-learn.md](fonoran-learn.md) |
-| 7 | **Translator (live)** | [fonoran-translator.md](fonoran-translator.md) |
-| 8 | Interpretive translator (legacy) | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
+| 1 | **Rulebook** — the whole language, three layers, 13 rules. Start here | [fonoran-rulebook.md](fonoran-rulebook.md) |
+| 2 | **Algorithm: how a concept gets its sound** | [fonoran-algorithm-roots.md](fonoran-algorithm-roots.md) |
+| 3 | **Algorithm: how a compound is chosen** | [fonoran-algorithm-compounds.md](fonoran-algorithm-compounds.md) |
+| 4 | **Algorithm: how English becomes Fonoran** | [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md) |
+| 5 | **Architecture map** — what reads what, where the fat is | [fonoran-architecture.md](fonoran-architecture.md) |
+| 6 | Fonoran grammar (full syntax reference) | [fonoran-grammar.md](fonoran-grammar.md) |
+| 7 | Fonoran guide (builder pipeline) | [fonoran.md](fonoran.md) |
+| 8 | Compound workflow (local + Heroku) | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
+| 9 | CLI tools reference | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
+| 10 | Prefix-safe CV / CVC roots | [fonoran-prefix-safe-roots.md](fonoran-prefix-safe-roots.md) |
+| 11 | Fonoran numerals (1–99) | [fonoran-numerals.md](fonoran-numerals.md) |
+| 12 | Fonoran Learn (`/learn`) | [fonoran-learn.md](fonoran-learn.md) |
+| 13 | Translator (live) | [fonoran-translator.md](fonoran-translator.md) |
+| 14 | Interpretive translator (legacy) | [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) |
+
+The first five are the living documents. Everything else is reference or workflow detail.
 
 ---
 
@@ -84,6 +84,8 @@ Historical experiments, audits, and the retired research notebook. Not the activ
 | [fonoran-grammar-redesign-proposal.md](archive/fonoran-grammar-redesign-proposal.md) | Grammar proposal, not adopted as written |
 | [fonoran-learning-sessions-log.md](archive/fonoran-learning-sessions-log.md) | Learnability session log |
 | [fonoran-llm-playtest-experiment.md](archive/fonoran-llm-playtest-experiment.md) | LLM playtest protocol and results |
+| [fonoran-constitution.md](archive/fonoran-constitution.md) | Retired July 2026. Its rules are rulebook rules 4 to 7; its hypothesis about two strangers is a claim the project no longer makes |
+| [fonoran-philosophy.md](archive/fonoran-philosophy.md) | Retired July 2026. Rationale written around human playtesting and the campfire test, and it described Fonoran as explicitly *not* a deterministic compound generator, which is what it now is |
 | [research-notes/](archive/research-notes/README.md) | 38 research notes, retired July 2026 |
 
 **Generated (not committed):** `npm run fonoran:compound-audit` writes a live compound report to `reports/`.

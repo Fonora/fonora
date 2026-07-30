@@ -844,7 +844,7 @@ async function runLanguagePolicyTests() {
 
   results.push(test('language policy: every root is assigned to exactly one ring', () => {
     const caps = policy.ringCaps();
-    assert(caps.ring_3_cumulative === 150, `constitution cap changed: ${caps.ring_3_cumulative}`);
+    assert(caps.ring_3_cumulative === 150, `root cap changed: ${caps.ring_3_cumulative}`);
     assert(policy.ringFor('water'), 'a Ring 1 concept has no ring assignment');
   }));
 

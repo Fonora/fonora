@@ -205,7 +205,7 @@ export function ringFor(conceptId) {
   return POLICY.ring_by_concept[normalize(conceptId)] ?? null;
 }
 
-/** Cumulative root caps per ring, from the Constitution's 150 ceiling. */
+/** Cumulative root caps per ring, under the 150-root ceiling (rulebook, layer 2). */
 export function ringCaps() {
   return { ...POLICY.ring_caps };
 }

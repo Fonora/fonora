@@ -4,7 +4,7 @@
 
 > **Start here** for the experimental Fonoran language and its builder at [`/language`](/language). For structured learner drills (Script + Fonoran skills), see [`/learn`](/learn) and [fonoran-learn.md](fonoran-learn.md); this document covers the builder/lab side.
 >
-> **Why Fonoran exists:** read the one-page [Fonoran Constitution](fonoran-constitution.md). Extended rationale → [fonoran-philosophy.md](fonoran-philosophy.md).
+> **The rules this pipeline enforces:** [fonoran-rulebook.md](fonoran-rulebook.md).
 
 **Fonoran** is a constructed language written in the [Fonora phonetic script](platform-overview.md). You assign CV/CVC sounds to semantic concepts, compose roots into compound words, and approve what enters the live vocabulary. Human review is canonical: generators propose, you decide. Compounds are treated as **meaning-attempts** with a *preferred* form and tracked *alternate understandable* forms, not as single canonical answers.
 
@@ -147,7 +147,7 @@ Distinctiveness, collision, and boundary scores plus any warnings are surfaced p
 | `data/fonoran-concept-inventory.json` | Semantic concepts + editorial metadata + experience/language tier + campfire pass (no phonetics) |
 | `data/fonoran-root-candidates.json` | Proposed spellings + scores + warnings + review status + tier metadata |
 | `data/fonoran-approved-roots.json` | Canonical approved roots (with experience/language tier + campfire pass) |
-| `data/fonoran-compounds.json` | Curated compounds as ranked meaning-attempts: a `preferred` form + `alternates[]` with advisory `understandability` (see [constitution](fonoran-constitution.md)) |
+| `data/fonoran-compounds.json` | Curated compounds as ranked meaning-attempts: a `preferred` form + `alternates[]` with advisory `understandability` (see [how a compound is chosen](fonoran-algorithm-compounds.md)) |
 | `data/fonora-data.manifest.json` | Pin of external data repo commit/tag |
 | `data/fonoran-primitive-roots-config.json` | Phonetics rules + active `collision_profile` |
 | `data/fonoran-collision-profiles/` | Editorial collision profiles (default `en.json`) |
@@ -243,7 +243,7 @@ The translator's semantic lookup uses **WordNet** (via **wordpos**). See [third-
 
 ## Related
 
-- [fonoran-constitution.md](fonoran-constitution.md) — what Fonoran is for: the communication experiment, the campfire test, the tiered language
+- [fonoran-rulebook.md](fonoran-rulebook.md) — the three layers, the 13 rules, the vocabulary rings
 - [fonoran-grammar.md](fonoran-grammar.md) — syntax and composition rules
 - [fonoran-translator.md](fonoran-translator.md) — live translator (deterministic compiler, UI, playback, API)
 - [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — legacy English compiler

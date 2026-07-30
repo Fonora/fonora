@@ -3,7 +3,7 @@
  * Expression candidate generator.
  *
  * The OLD model was: English concept → one deterministic decomposition → one canonical
- * compound. The NEW model (docs/fonoran-constitution.md) is:
+ * compound. The NEW model (docs/fonoran-rulebook.md) is:
  *
  *   communicative intent → several simple root-expression candidates
  *     → understandability ranking → preferred + alternate understandable forms

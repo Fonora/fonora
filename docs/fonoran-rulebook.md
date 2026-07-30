@@ -1,7 +1,7 @@
 # The Fonoran Rulebook
 
 > **The whole language on one page, ground up.** Three layers, thirteen rules.
-> Nothing here is new. This is the [Constitution](fonoran-constitution.md), the [script rules](language-rules.md), and the [grammar](fonoran-grammar.md) restated so a human can hold all of it at once.
+> This is the authority on what the rules are. The [script rules](language-rules.md) and the [grammar reference](fonoran-grammar.md) carry the same rules in more detail.
 
 ## The three layers
 
@@ -71,7 +71,7 @@ So the word `mi` is written `⏌∋⚬∩`, which reads literally as *nasal-at-l
 
 ## Layer 2: The Words (4 rules)
 
-These are the four rules from the Constitution. They are enforced by the build, not by good intentions: a word that breaks them is rejected before it can enter the language.
+These four are enforced by the build, not by good intentions: a word that breaks them is rejected before it can enter the language.
 
 ### Rule 4: Anyone can say it
 
@@ -150,7 +150,7 @@ mi ta san be    I loved you
 mi sa san be    I will love you
 ```
 
-Closed means closed. Adding a particle is a constitutional change, not a vocabulary addition.
+Closed means closed. Adding a particle changes the grammar itself, not the vocabulary.
 
 ### Rule 10: `no` goes immediately before what it denies
 
@@ -246,7 +246,8 @@ If this page and a data file disagree, the data file wins.
 | Layer | Canonical source |
 | --- | --- |
 | Script symbols and sounds | [docs/language-rules.md](language-rules.md) |
-| The four word rules, rings, caps | [docs/fonoran-constitution.md](fonoran-constitution.md) |
+| The word rules, rings, caps | This page |
+| Ring membership | [data/fonoran-root-rings.json](../data/fonoran-root-rings.json) |
 | Particles | [data/fonoran-grammar-particles.json](../data/fonoran-grammar-particles.json) |
 | Roots | [data/fonoran-approved-roots.json](../data/fonoran-approved-roots.json) |
 | Compounds | [data/fonoran-compounds.json](../data/fonoran-compounds.json) |

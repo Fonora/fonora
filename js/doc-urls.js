@@ -90,6 +90,8 @@ const DOC_PATH_ALIASES = {
   'docs/fonoran-grammar-redesign-proposal.md': 'docs/archive/fonoran-grammar-redesign-proposal.md',
   'docs/fonoran-learning-sessions-log.md': 'docs/archive/fonoran-learning-sessions-log.md',
   'docs/fonoran-llm-playtest-experiment.md': 'docs/archive/fonoran-llm-playtest-experiment.md',
+  'docs/fonoran-constitution.md': 'docs/archive/fonoran-constitution.md',
+  'docs/fonoran-philosophy.md': 'docs/archive/fonoran-philosophy.md',
 };
 
 /** @param {string} path */
@@ -128,9 +130,7 @@ function buildDocCatalog() {
     { path: 'docs/fonoran-algorithm-compounds.md', label: 'Algorithm: compounds', layer: 'language' },
     { path: 'docs/fonoran-algorithm-translation.md', label: 'Algorithm: translation', layer: 'language' },
     { path: 'docs/fonoran-architecture.md', label: 'Architecture map', layer: 'language' },
-    { path: 'docs/fonoran-constitution.md', label: 'Fonoran constitution', layer: 'language' },
     { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
-    { path: 'docs/fonoran-philosophy.md', label: 'Fonoran philosophy', layer: 'language' },
     { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
     { path: 'docs/fonoran-compound-workflow.md', label: 'Compound workflow', layer: 'language' },
     { path: 'docs/fonoran-cli-tools.md', label: 'CLI tools reference', layer: 'language' },
@@ -155,6 +155,8 @@ function buildDocCatalog() {
     { path: 'docs/archive/fonoran-grammar-redesign-proposal.md', label: 'Grammar redesign proposal', layer: 'archive' },
     { path: 'docs/archive/fonoran-learning-sessions-log.md', label: 'Learning sessions log', layer: 'archive' },
     { path: 'docs/archive/fonoran-llm-playtest-experiment.md', label: 'LLM playtest experiment', layer: 'archive' },
+    { path: 'docs/archive/fonoran-constitution.md', label: 'Constitution (retired)', layer: 'archive' },
+    { path: 'docs/archive/fonoran-philosophy.md', label: 'Philosophy (retired)', layer: 'archive' },
     { path: 'docs/archive/research-notes/README.md', label: 'Research notes (archived)', layer: 'archive' },
   ];
 }

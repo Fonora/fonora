@@ -1,6 +1,6 @@
 /**
  * Research-backed articulatory ease weights for Fonoran roots and compounds.
- * Primitive roots: r/j onsets are hard-banned (rulebook rule 1).
+ * Primitive roots: r/j onsets are hard-banned (rulebook rule 4).
  * Compounds inherit clean roots; difficult onsets are tie-break penalties only.
  */
 

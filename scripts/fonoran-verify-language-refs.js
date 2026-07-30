@@ -10,7 +10,7 @@
  * seeds with nothing to detect it. Respell a root and every hand-copied spelling silently
  * becomes a lie.
  *
- * Not hypothetical. In one sitting the Constitution was found describing `law` as
+ * Not hypothetical. In one sitting a core doc was found describing `law` as
  * collective + path when it is collective + still, the grammar reference carried three
  * retired spellings (`pedal`, `daktopa`, `tampe`), and the Learn practice fixture was
  * teaching `mi le` and `mi sak telto`, neither of which exists in the seeds. A learner
@@ -60,7 +60,7 @@ const ARCHIVAL_MARKER = 'language-ref: archival';
 const ARCHIVAL_FILES = new Set();
 
 /**
- * Tokens that are deliberately not words. The Constitution and the rulebook teach the
+ * Tokens that are deliberately not words. The rulebook teaches the
  * phonotactic rules by showing what they REJECT, so these must survive the check or those
  * documents cannot explain themselves.
  */

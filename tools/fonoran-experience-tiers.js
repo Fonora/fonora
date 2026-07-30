@@ -1,7 +1,7 @@
 /**
  * Root rings — capped primitive vocabulary (50 → 100 → 150 max).
  *
- * See data/fonoran-root-rings.json and docs/fonoran-constitution.md.
+ * See data/fonoran-root-rings.json and docs/fonoran-rulebook.md.
  * Anything not in these rings is compound-only (not a primitive root).
  */
 

@@ -189,5 +189,5 @@ Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 ## Related
 
 - Platform overview: [platform-overview.md](platform-overview.md)
-- Fonoran philosophy (campfire tiers): [fonoran-constitution.md](fonoran-constitution.md)
+- Vocabulary rings and caps: [fonoran-rulebook.md](fonoran-rulebook.md)
 - Grammar rules for drills: [fonoran-grammar.md](fonoran-grammar.md)

@@ -52,7 +52,7 @@ These commands assign root spellings, resolve compounds, and import into the lab
 | `npm run fonoran:root-candidates` | Refresh root candidate spellings and scores without importing into the lab. |
 | `npm run fonoran:regenerate` | Regenerate the live dictionary export after lab changes (used after accepting proposals in Review). |
 | `npm run fonoran:regen-compounds` | Re-resolve compound compositions from current roots. |
-| `npm run fonoran:regen:four-rules` | Re-rank preferred compound forms by the four constitution rules. Add `-- --apply` to write. |
+| `npm run fonoran:regen:four-rules` | Re-rank preferred compound forms by the four word rules. Add `-- --apply` to write. |
 | `npm run fonoran:editorial:import` | Import editorial compound data into the lab. |
 | `npm run fonoran:build:policy` | Rebuild the generated language policy module from seeds. |
 | `npm run fonoran:policy:check` | Fail if the generated policy is stale (wired into `npm test`). |

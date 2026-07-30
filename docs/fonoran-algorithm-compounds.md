@@ -48,7 +48,7 @@ These are hard gates. A candidate that fails is discarded no matter how well it 
 - it would shadow a primitive root id
 - a part does not resolve
 - its spelling is already taken by another word
-- it collides two identical consonants at the seam (Constitution Rule 7)
+- it collides two identical consonants at the seam (rulebook rule 7)
 - **it does not segment back to itself uniquely.** The spelling is re-split against the whole root inventory, and the candidate is rejected unless there is exactly one way to read it and that way is the intended parts
 
 The segmentation gate is the one that does the most work, and it is the reason a compound cannot be a riddle: if `yenan` could be read as two different root sequences, nobody can decode it in conversation.
@@ -96,4 +96,4 @@ If this page and the code disagree, the code wins, and this page is the bug.
 | Semantic-role check | `tools/fonoran-campfire-composition.js` |
 | Seam and segmentation rules | `tools/fonoran-gen3-readability.js` |
 | The compounds themselves | `data/fonoran-compounds.json` |
-| Rules 6 and 7 this enforces | [fonoran-constitution.md](fonoran-constitution.md) |
+| Rules 6 and 7 this enforces | [fonoran-rulebook.md](fonoran-rulebook.md) |

@@ -260,7 +260,7 @@ The golden corpus is 1,000 phrases in `data/fonoran-translation-tests.json`, wit
 ## Related
 
 - [fonoran-learn.md](fonoran-learn.md) — structured drills (shared vocabulary, different exercise engine)
-- [fonoran-grammar.md · Rule 7](fonoran-grammar.md#rule-7-translator-architecture) — constitutional translator rules
+- [fonoran-grammar.md · Rule 7](fonoran-grammar.md#rule-7-translator-architecture) — translator rules
 - [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — legacy English compiler
 - [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md) — the deterministic pipeline in one page
 - [fonoran-rulebook.md](fonoran-rulebook.md) — the 13 rules the renderer obeys

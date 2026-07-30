@@ -179,7 +179,7 @@ export async function runFourRulesRegen(argv = []) {
     status: 'canonical',
     philosophy:
       'Compounds are meaning-attempts, not canonical answers. Each concept keeps a preferred '
-      + 'form and alternate understandable forms. Ranking uses the four constitution rules '
+      + 'form and alternate understandable forms. Ranking uses the four word rules '
       + '(universal phonetics, audible distinction, lego recoverability ≤4 roots, no double '
       + 'consonants) plus campfire heuristics — not LLM validators.',
     description:

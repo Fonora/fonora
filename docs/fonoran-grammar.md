@@ -1,6 +1,6 @@
 # Grammar
 
-> **Read [the Fonoran Constitution](fonoran-constitution.md) first** — hypothesis, four rules, vocabulary tiers, and grammar skeleton. For extended rationale see [fonoran-philosophy.md](fonoran-philosophy.md). Why grammar lives in closed-class particles: see [fonoran-rulebook.md](fonoran-rulebook.md) rule 5 and `data/fonoran-grammar-particles.json`.
+> **Read [the Fonoran rulebook](fonoran-rulebook.md) first** — the three layers and all thirteen rules on one page. This document is the detailed syntax reference for layer 3. Why grammar lives in closed-class particles: rulebook rule 9 and `data/fonoran-grammar-particles.json`.
 
 > **Status**: Living specification. Authoritative syntax reference for humans and the Fonoran Translator. Sections marked *Under Development* are intentional placeholders.
 
@@ -23,7 +23,7 @@ Roots are organized by **human experience** (survival/body, space/motion, social
 time, thinking, abstract) and gated by the **campfire test**: *could two strangers stranded
 with no common language plausibly need this root in their first week?* If yes, it belongs in
 the communicative core; if no, it belongs in the extended or complete vocabulary. See the
-[constitution](fonoran-constitution.md) for the tiered language model (~50 core → ~100
+[rulebook](fonoran-rulebook.md) for the tiered language model (~50 core → ~100
 extended → unlimited).
 
 ### The fundamental experience test
@@ -86,7 +86,7 @@ Read the examples first. You can already start understanding this language.
 
 Fonoran grammar **minimizes lexical categories**. Every lexical item is an **invariant concept**; its role comes from **grammar particles** and **sentence position**, not from noun, verb, or adjective labels.
 
-For the *why* — the communication experiment, campfire test, meaning-attempts, and tiered vocabulary — read **[the Fonoran Constitution](fonoran-constitution.md)**. The **Rules** below are the authoritative syntax reference.
+For the vocabulary rings and the four word rules, read **[the Fonoran rulebook](fonoran-rulebook.md)**. The **Rules** below are the authoritative syntax reference.
 
 | Idea | Rule |
 | --- | --- |
@@ -735,7 +735,7 @@ node scripts/fonoran-translation-gaps.js --update-gap-baseline  # accept current
 ```
 
 **Gap baseline — the growth backbone.**
-[../data/fonoran-translation-gap-baseline.json](../data/fonoran-translation-gap-baseline.json)
+[../data/fonoran-translation-gap-baseline-deterministic.json](../data/fonoran-translation-gap-baseline-deterministic.json)
 tracks the set of English words the language does not yet express (honest gaps).
 `--assert` fails on any **new** gap beyond the baseline, so curation is
 measurable and regressions are caught while the baseline can only shrink as roots
@@ -821,7 +821,7 @@ This architecture allows multiple English expressions to converge into the **sam
 
 ## Semantic coordinates (archive / DDA)
 
-> **Constitution demoted the DDA coordinate track** as production design. Roots are organized by human experience and the campfire test; compounds are judged by recoverable meaning, not coordinate correctness. This section documents the **legacy internal mapping** still used by the lab's DDA inference (Advanced tab).
+> **The DDA coordinate track is not production design.** Roots are organized by human experience and the campfire test; compounds are judged by recoverable meaning, not coordinate correctness. This section documents the **legacy internal mapping** still used by the lab's DDA inference (Advanced tab).
 
 Each word may carry internal **depth**, **mode**, and **aspect** coordinates — a compact address in semantic space. They are assigned automatically (**DDA inference**) from sound shape and English gloss match, blended for compounds, with status `pending | inferred | confirmed | stale`. You do not edit them in normal workflow; re-run DDA from the Advanced tab when coordinates go stale after a meaning or recipe change. The word detail view shows the three values plus how they were inferred.
 

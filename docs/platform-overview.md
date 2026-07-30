@@ -3,7 +3,7 @@
 Fonora is an open-source project exploring new approaches to writing systems, language
 design, and language learning.
 
-**Our hypothesis:** see [fonoran-constitution.md](fonoran-constitution.md) — two strangers with ~50 shared roots can communicate after ~1 hour.
+**What Fonoran is:** a constructed language generated from first principles by deterministic algorithms. The rules it obeys are in [fonoran-rulebook.md](fonoran-rulebook.md).
 
 Fonora has three projects, surfaced as top-level tabs (one more when signed in):
 
@@ -11,7 +11,7 @@ Fonora has three projects, surfaced as top-level tabs (one more when signed in):
 | --- | --- | --- | --- |
 | **Fonora** | [`/`](/) | Platform home: the project and the hypothesis | This document · [fonoran-rulebook.md](fonoran-rulebook.md) |
 | **Script** | [`/script`](/script) | Fonora Script: phonetic writing system | [language-rules.md](language-rules.md) · [Sound Grid](/script#grid) |
-| **Language** | [`/language`](/language) | Fonoran: experimental language built on Fonora Script | [fonoran-constitution.md](fonoran-constitution.md) · [fonoran-grammar.md](fonoran-grammar.md) |
+| **Language** | [`/language`](/language) | Fonoran: experimental language built on Fonora Script | [fonoran-rulebook.md](fonoran-rulebook.md) · [fonoran-grammar.md](fonoran-grammar.md) |
 | **Learn** | [`/learn`](/learn) | Structured drills: Fonora Script + Fonoran language skills | [fonoran-learn.md](fonoran-learn.md) · [`/learn`](/learn) |
 | **Tools** | [`/tools`](/tools) | QA/build tooling for Script and Language (sign-in required when OAuth is configured) | [`/tools#tools-home`](/tools#tools-home) |
 
@@ -87,7 +87,7 @@ intertwined by design — splitting the data model is explicitly out of scope fo
 
 ### Learn Fonoran
 
-1. [fonoran-constitution.md](fonoran-constitution.md) — philosophy, the campfire test, the tiered language
+1. [fonoran-rulebook.md](fonoran-rulebook.md) — the three layers, the 13 rules, the vocabulary rings
 2. [fonoran-learn.md](fonoran-learn.md) — Learn architecture (Script + Fonoran skill tracks)
 3. [`/learn`](/learn) — structured drills: [`#fonoran-reading`](/learn#fonoran-reading), [`#fonoran-writing`](/learn#fonoran-writing), [`#fonoran-hearing`](/learn#fonoran-hearing), [`#fonoran-grammar`](/learn#fonoran-grammar)
 4. [`/language`](/language) — Translator / Dictionary / Grammar (exploration)
@@ -136,6 +136,6 @@ When `DATABASE_URL` is set, the lab can live in PostgreSQL. JSON is imported on 
 
 - Doc index: [README.md](README.md)
 - Fonoran Learn: [fonoran-learn.md](fonoran-learn.md)
-- Fonoran philosophy: [fonoran-constitution.md](fonoran-constitution.md)
+- Fonoran rules: [fonoran-rulebook.md](fonoran-rulebook.md)
 - Third-party licenses: [third-party.md](third-party.md)
 - Contributing: [../CONTRIBUTING.md](../CONTRIBUTING.md)
