@@ -13,6 +13,10 @@ import { scoreUnderstandability } from './fonoran-understandability.js';
 import { rankCandidates, ASSOCIATION_SEEDS } from './fonoran-expression-candidates.js';
 import { computeBoundaryQuality } from './fonoran-compound-confusability.js';
 
+// 'playtest' is historical provenance: the guess-the-meaning game that produced those 54
+// decisions was removed in July 2026, but the decisions themselves were human judgements and
+// stay locked. Dropping it from this set would silently hand 54 preferred forms back to the
+// scorer and respell them.
 const LOCKED_SOURCES = new Set(['playtest', 'human', 'locked']);
 const DEFAULT_SCORE_MARGIN = 0.02;
 

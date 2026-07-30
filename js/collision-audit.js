@@ -562,7 +562,6 @@ export function formatCollisionAuditMarkdown(audit) {
   lines.push('');
   lines.push('Every simple or long vowel followed by a glide consonant (`w`, `l`, `r`, `y`) concatenates to v3 diphthong shape `⚬XᵔY`. Four pairs are registered diphthong keys (Category A, also listed in §3). The remainder are **phantom diphthongs**: valid vowel grammar, decode as two phonemes, but look like single vowel tokens in unsegmented text.');
   lines.push('');
-  lines.push('See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phantom-diphthongs) for the full matrix and phonetic expansion analysis.');
   lines.push('');
 
   const registeredRows = audit.vowelShaped.filter((r) => r.category === 'registered-diphthong');

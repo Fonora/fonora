@@ -13,10 +13,9 @@ import { closeStore } from '../tools/fonoran-store.js';
 import { closeCompoundProposalsStore } from '../tools/fonoran-compound-proposals.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const applyLlm = process.argv.includes('--use-llm');
 
 try {
-  const result = await runRegenerate({ baseDir: ROOT, applyLlm, approveAll: true });
+  const result = await runRegenerate({ baseDir: ROOT, approveAll: true });
   for (const step of result.steps) {
     console.log(`✓ ${step.step}`, JSON.stringify(step, null, 0).slice(0, 120));
   }

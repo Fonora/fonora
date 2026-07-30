@@ -6,17 +6,11 @@ import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { handleAuthRoutes, logAuthStatus } from './tools/fonoran-auth.js';
 import { handleFonoranApi } from './tools/fonoran-api.js';
-import { handleResearchApi } from './tools/research-notes-api.js';
 import { maybeAutoSeedOnStartup, initStore } from './tools/fonoran-store.js';
 import {
   initCompoundProposalsStore,
   maybeImportCompoundProposalsFromJson,
 } from './tools/fonoran-compound-proposals.js';
-import {
-  getResearchBootstrapData,
-  initResearchNotesStore,
-  warmPublishedCache,
-} from './tools/research-notes-store.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const host = process.env.HOST || '0.0.0.0';
@@ -106,12 +100,6 @@ function isScriptAppRoute(pathname) {
   return path === '/script' || path === '/tools' || path === '/learn';
 }
 
-/** /research, /research/timeline, /research/notes/* all render the research notebook shell. */
-function isResearchAppRoute(pathname) {
-  const path = pathname.replace(/\/$/, '') || '/';
-  return path === '/research' || path.startsWith('/research/');
-}
-
 /** /fonoran is a legacy alias for the Language tab (Fonoran the language). */
 function legacyFonoranRedirect(pathname, search, hash) {
   if (pathname === '/fonoran' || pathname.startsWith('/fonoran/')) {
@@ -129,7 +117,6 @@ function sectionCanonicalRedirect(pathname, search, hash) {
     pathname === '/tools/' ||
     pathname === '/learn/' ||
     pathname === '/language/' ||
-    pathname === '/research/' ||
     pathname === '/showcase/'
   ) {
     return `${pathname.slice(0, -1)}${search}${hash}`;
@@ -178,7 +165,6 @@ function cacheControl(pathname) {
     pathname === '/learn' ||
     pathname === '/tools' ||
     pathname === '/language' ||
-    pathname === '/research' ||
     pathname === '/showcase'
   ) {
     return 'no-cache';
@@ -195,41 +181,10 @@ function cacheControl(pathname) {
   return 'public, max-age=3600';
 }
 
-function researchNoteSlugFromPath(pathname) {
-  const match = pathname.match(/^\/research\/notes\/([^/]+)/);
-  return match ? decodeURIComponent(match[1]) : null;
-}
-
-function injectResearchBootstrap(html, bootstrap) {
-  const json = JSON.stringify(bootstrap).replace(/</g, '\\u003c');
-  const script = `<script type="application/json" id="research-notes-bootstrap">${json}</script>`;
-  return html.replace('</head>', `${script}\n</head>`);
-}
-
-async function serveResearchApp(res, pathname) {
-  const indexPath = join(root, 'research', 'index.html');
-  let body = await readFile(indexPath, 'utf8');
-  try {
-    const slug = researchNoteSlugFromPath(pathname);
-    const bootstrap = await getResearchBootstrapData(slug);
-    body = injectResearchBootstrap(body, bootstrap);
-  } catch (err) {
-    console.warn('Research bootstrap skipped:', err instanceof Error ? err.message : err);
-  }
-  res.writeHead(200, {
-    'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'no-cache',
-    ...SECURITY_HEADERS,
-  });
-  res.end(body);
-}
-
 async function bootstrapServerData() {
   try {
     await initStore();
-    await initResearchNotesStore();
     await initCompoundProposalsStore();
-    await warmPublishedCache();
     await maybeAutoSeedOnStartup();
     await maybeImportCompoundProposalsFromJson();
   } catch (err) {
@@ -292,14 +247,6 @@ createServer(async (req, res) => {
       return;
     }
 
-    if (url.pathname.startsWith('/api/research/')) {
-      const handled = await handleResearchApi(req, res, url.pathname, method);
-      if (handled) return;
-      res.writeHead(404, { 'Content-Type': 'application/json', ...SECURITY_HEADERS });
-      res.end(JSON.stringify({ error: 'Not found' }));
-      return;
-    }
-
     const legacyRedirect = legacyFonoranRedirect(url.pathname, url.search, url.hash);
     if (legacyRedirect) {
       res.writeHead(301, { Location: legacyRedirect, ...SECURITY_HEADERS });
@@ -323,11 +270,6 @@ createServer(async (req, res) => {
         ...SECURITY_HEADERS,
       });
       res.end(body);
-      return;
-    }
-
-    if (isResearchAppRoute(url.pathname)) {
-      await serveResearchApp(res, url.pathname);
       return;
     }
 

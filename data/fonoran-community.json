@@ -8,7 +8,7 @@
       "email": "info@fonora.org",
       "name": "James Calhoun",
       "created_at": "2026-07-03T19:24:02.107Z",
-      "last_login": "2026-07-19T06:25:41.918Z"
+      "last_login": "2026-07-30T14:12:30.087Z"
     },
     {
       "id": "usr-mr5e5763-05fa58e9",
@@ -139,7 +139,7 @@
     },
     "usr-mr5bnmik-a2214bda": {
       "payload": {
-        "totalXp": 1780,
+        "totalXp": 2215,
         "streak": 2,
         "lastPracticeDate": "2026-07-03",
         "dailyGoalXp": 50,
@@ -165,9 +165,9 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1443,
-              "totalLessons": 100,
-              "ring": "First contact & identity"
+              "total": 1355,
+              "totalLessons": 159,
+              "ring": "Ring 1 — Campfire core (50)"
             }
           },
           "script-words": {
@@ -177,9 +177,9 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1443,
-              "totalLessons": 100,
-              "ring": "First contact & identity"
+              "total": 1355,
+              "totalLessons": 159,
+              "ring": "Ring 1 — Campfire core (50)"
             }
           },
           "fonoran-reading": {
@@ -482,9 +482,9 @@
               }
             },
             "curriculum": {
-              "total": 1443,
-              "totalLessons": 100,
-              "ring": "Immediate needs"
+              "total": 1355,
+              "totalLessons": 159,
+              "ring": "Ring 1 — Campfire core (50)"
             }
           },
           "fonoran-writing": {
@@ -499,9 +499,9 @@
               }
             },
             "curriculum": {
-              "total": 1443,
-              "totalLessons": 100,
-              "ring": "First contact & identity"
+              "total": 1355,
+              "totalLessons": 159,
+              "ring": "Ring 1 — Campfire core (50)"
             }
           },
           "fonoran-hearing": {
@@ -511,13 +511,13 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 1443,
-              "totalLessons": 100,
-              "ring": "First contact & identity"
+              "total": 1355,
+              "totalLessons": 159,
+              "ring": "Ring 1 — Campfire core (50)"
             }
           },
           "fonoran-grammar": {
-            "xp": 0,
+            "xp": 15,
             "sessions": 0,
             "lastPlayed": null,
             "lessonIndex": 0,
@@ -525,12 +525,16 @@
               "gen-15": {
                 "seen": 1,
                 "correct": 0
+              },
+              "gb-tribe": {
+                "seen": 1,
+                "correct": 1
               }
             },
             "curriculum": {
-              "total": 656,
-              "totalLessons": 100,
-              "ring": "First contact & identity"
+              "total": 2111,
+              "totalLessons": 212,
+              "ring": "Ring 1 — Campfire core (50)"
             }
           },
           "fonoran-speaking": {
@@ -540,14 +544,14 @@
             "lessonIndex": 0,
             "mastery": {},
             "curriculum": {
-              "total": 656,
+              "total": 765,
               "totalLessons": 100,
               "ring": "First contact & identity"
             }
           }
         }
       },
-      "updated_at": "2026-07-19T06:27:40.653Z"
+      "updated_at": "2026-07-30T14:22:42.744Z"
     }
   },
   "proposals": [],

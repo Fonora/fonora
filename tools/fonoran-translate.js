@@ -1,34 +1,23 @@
 /**
- * Unified Fonoran translate API. Routes to the deterministic English compiler (default), the
- * LLM compiler, or the reverse Fonoran to natural-language path.
+ * Unified Fonoran translate API: the deterministic English compiler, or the reverse
+ * Fonoran to natural-language path.
  *
- * The deterministic engine is the default because it is the language, and because the LLM was
- * never a fallback in practice: it answered essentially every request, which meant the public
- * translator cost money per phrase and stopped working entirely when no API key was present,
- * which is what it was doing. The deterministic engine needs no key, costs nothing, answers
- * instantly, and brackets what it cannot say instead of inventing it.
+ * There is one forward engine, and it is the language. The model-backed compiler used to sit
+ * behind `engine: 'llm'` here, which meant every consumer of this module loaded LLM code and
+ * any caller could silently opt into output no rule can reproduce. Model tooling that still
+ * exists imports `fonoran-llm-translate.js` directly and is declared in
+ * `data/fonoran-llm-quarantine.json`.
  *
- * `legacy` and `lexical` remain accepted names for it, since scripts and tests pass them.
+ * `legacy` and `lexical` remain accepted engine names, since scripts and tests pass them.
  */
 
-import { translateViaLlm, translatorLlmConfigured } from './fonoran-llm-translate.js';
 import { translateEnglishLegacy } from './fonoran-translator.js';
-import { ANTHROPIC_TRANSLATOR_API_KEY_ENV } from './fonoran-llm-client.js';
 import {
   translateFromFonoran,
   isFonoranSourceLang,
   resolveInputMode,
   normalizeTargetLang,
 } from './fonoran-reverse-translate.js';
-
-function resolveEngine(requested) {
-  const fromEnv = process.env.FONORAN_TRANSLATOR_ENGINE?.trim().toLowerCase();
-  const engine = (requested ?? fromEnv ?? 'legacy').toLowerCase();
-  // Only an explicit request reaches the LLM, so an unrecognised engine name costs nothing
-  // rather than silently billing. Set FONORAN_TRANSLATOR_ENGINE=llm to invert this.
-  if (engine === 'llm') return 'llm';
-  return 'legacy';
-}
 
 function resolveDirection(options = {}) {
   const explicit = String(options.direction ?? '').trim().toLowerCase();
@@ -46,10 +35,7 @@ function resolveDirection(options = {}) {
  *   direction?: string,
  *   inputMode?: string,
  *   lab?: object,
- *   engine?: string,
  *   skipCache?: boolean,
- *   cacheOnly?: boolean,
- *   simplify?: boolean|'auto',
  *   devLab?: boolean,
  * }} [options]
  */
@@ -62,45 +48,14 @@ export async function translate(text, options = {}) {
       sourceLang: options.sourceLang,
       inputMode: resolveInputMode(options.sourceLang, options.inputMode),
       targetLang: normalizeTargetLang(options.targetLang),
-      engine: resolveEngine(options.engine),
       skipCache: options.skipCache,
       devLab: options.devLab,
     });
   }
 
-  const engine = resolveEngine(options.engine);
-
-  if (engine === 'legacy' || engine === 'lexical') {
-    const result = await translateEnglishLegacy(text, { lab: options.lab });
-    return { ...result, engine: 'legacy', direction: 'to-fonoran' };
-  }
-
-  // Cache-only mode never calls the API, so it does not require a configured key.
-  if (!options.cacheOnly && !translatorLlmConfigured()) {
-    return {
-      ok: false,
-      error: `${ANTHROPIC_TRANSLATOR_API_KEY_ENV} not set. Configure translator API key or use engine=legacy.`,
-      engine: 'llm',
-      status: 503,
-    };
-  }
-
-  const result = await translateViaLlm(text, {
-    sourceLang: options.sourceLang,
-    lab: options.lab,
-    skipCache: options.skipCache,
-    cacheOnly: options.cacheOnly,
-    simplify: options.simplify,
-    devLab: options.devLab,
-  });
-
-  if (result.ok === false) {
-    return result;
-  }
-
-  return { ...result, direction: 'to-fonoran' };
+  const result = await translateEnglishLegacy(text, { lab: options.lab });
+  return { ...result, engine: 'legacy', direction: 'to-fonoran' };
 }
 
-export { translateViaLlm } from './fonoran-llm-translate.js';
 export { translateEnglishLegacy, translateFromFrame } from './fonoran-translator.js';
 export { translateFromFonoran } from './fonoran-reverse-translate.js';

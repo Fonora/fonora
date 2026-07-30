@@ -233,7 +233,7 @@ function sanitizeReturnTo(raw) {
   if (path === '/script/') path = '/script';
 
   if (path === '/') return '/';
-  const allowedRoots = ['/language', '/script', '/learn', '/tools', '/research'];
+  const allowedRoots = ['/language', '/script', '/learn', '/tools'];
   for (const root of allowedRoots) {
     if (path === root || path.startsWith(`${root}/`)) return path;
   }
@@ -338,8 +338,6 @@ export function isAdminWriteRequired(pathname, method) {
   if (m === 'POST' && pathname === '/api/fonoran/translate') return false;
   if (m === 'POST' && pathname === '/api/fonoran/translation-tests/run') return false;
   if (m === 'POST' && pathname === '/api/fonoran/snapshot/preview') return false;
-  if (m === 'POST' && pathname === '/api/fonoran/puzzle/guess') return false;
-  if (m === 'POST' && pathname === '/api/fonoran/puzzle/feedback') return false;
   if (m === 'POST' && pathname === '/api/fonoran/expressions/candidates') return false;
   if (m === 'POST' && pathname === '/api/fonoran/analyze/word') return false;
   // Vote endpoints are community-only (handled by isCommunityWriteRequired); everything else requires admin

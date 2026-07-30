@@ -125,7 +125,7 @@ async function main() {
     philosophy:
       'Compounds are meaning-attempts, not canonical answers. Each concept keeps a preferred '
       + 'form and alternate understandable forms. understandability is an advisory ranking aid; '
-      + 'human guess-the-meaning playtests decide the preferred form (docs/fonoran-constitution.md).',
+      + 'a human decides the preferred form (docs/fonoran-constitution.md).',
     description:
       'Curated transparent Fonoran compounds with ranked alternates. Components reference ids '
       + 'in data/fonoran-concept-inventory.json (primitive roots) OR other compounds in this file.',

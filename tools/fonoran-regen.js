@@ -21,7 +21,6 @@ import {
 } from './fonoran-store.js';
 import { loadCandidateContext } from './fonoran-expression-candidates.js';
 import { buildCompositionResolver } from './fonoran-composition-resolve.js';
-import { mergePromptAggregates } from './fonoran-llm-aggregate.js';
 import {
   deriveAlternatesForCompound,
   loadRootGraph,
@@ -70,8 +69,6 @@ export async function getRegenStatus({ baseDir = ROOT } = {}) {
   const labUpdatedAt = bucket?.updated_at ?? null;
   const warnings = computeRegenWarnings({ labUpdatedAt, importedAt });
 
-  const llmStore = storeDocs.llm_evaluations?.counts?.rounds ?? 0;
-  const llmSeed = seedFiles.llm_evaluations?.counts?.rounds ?? 0;
   const compoundsStore = storeDocs.compounds?.counts?.compounds ?? 0;
   const compoundsSeed = seedFiles.compounds?.counts?.compounds ?? 0;
 
@@ -87,7 +84,6 @@ export async function getRegenStatus({ baseDir = ROOT } = {}) {
     seed_files: seedFiles,
     seed_paths: EDITORIAL_DOCS,
     drift: {
-      llm_rounds: { store: llmStore, seed: llmSeed, match: llmStore === llmSeed },
       compounds: { store: compoundsStore, seed: compoundsSeed, match: compoundsStore === compoundsSeed },
     },
     warnings,
@@ -95,8 +91,8 @@ export async function getRegenStatus({ baseDir = ROOT } = {}) {
   };
 }
 
-/** Apply LLM rankings from stored eval doc to compounds inventory. */
-export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = false } = {}) {
+/** Re-rank compounds with the deterministic four-rules scorer. */
+export async function optimizeCompoundsInStore({ lengthOnly = false } = {}) {
   let doc = await readDoc('compounds');
   if (!doc?.compounds) throw new Error('compounds doc missing compounds array');
 
@@ -108,24 +104,18 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
     await writeDoc('compounds', doc);
   }
 
-  const [candidateCtx, rootGraph, demoTrees, llmDoc] = await Promise.all([
+  const [candidateCtx, rootGraph, demoTrees] = await Promise.all([
     loadCandidateContext(),
     loadRootGraph(),
     Promise.resolve(loadDemoTrees()),
-    useLlm && !lengthOnly ? readDoc('llm_evaluations') : Promise.resolve(null),
   ]);
-
-  const llmAggregates = useLlm && !lengthOnly
-    ? mergePromptAggregates(llmDoc?.rounds ?? [])
-    : null;
 
   const { compounds: optimized, promotions } = optimizeCompoundInventory(doc.compounds, {
     ...rootGraph,
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
     demoTrees,
-    llmAggregates,
-  }, { useLlm: lengthOnly ? false : useLlm, lengthOnly });
+  }, { lengthOnly });
 
   const finalDefs = optimized.map(r => ({
     concept: r.concept,
@@ -164,8 +154,7 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
     promotions: promotions.length,
     promotion_details: promotions,
     pruned_shadow_compounds: shadowPruned.length,
-    mode: lengthOnly ? 'length-only' : (useLlm ? 'llm_consensus' : 'heuristic'),
-    llm_rounds: llmDoc?.rounds?.length ?? 0,
+    mode: lengthOnly ? 'length-only' : 'four-rules',
   };
 }
 
@@ -294,11 +283,11 @@ export async function promoteAcceptedAliases(_baseDir = ROOT) {
 }
 
 /**
- * Full generator pipeline: editorial import → optional LLM optimize → build.
+ * Full generator pipeline: editorial import, deterministic re-rank, build.
  */
 export async function runRegenerate({
   baseDir = ROOT,
-  applyLlm = true,
+  reRank = true,
   approveAll = true,
 } = {}) {
   const steps = [];
@@ -313,8 +302,8 @@ export async function runRegenerate({
   steps.push({ step: 'editorial_import', ...editorial });
 
   let optimize = null;
-  if (applyLlm) {
-    optimize = await optimizeCompoundsInStore({ useLlm: true });
+  if (reRank) {
+    optimize = await optimizeCompoundsInStore();
     steps.push({ step: 'optimize_compounds', ...optimize });
   }
 

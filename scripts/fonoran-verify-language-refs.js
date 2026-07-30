@@ -55,14 +55,9 @@ const ARCHIVAL_MARKER = 'language-ref: archival';
  * Generated snapshots, exempt by path rather than by marker: they are overwritten by their
  * generators, which would strip an in-file marker on the next run. They record the state of
  * the lexicon at a past moment and are supposed to keep the spellings of that moment.
+ * Empty today: generated reports now land in untracked `reports/`, outside the scan.
  */
-const ARCHIVAL_FILES = new Set([
-  'docs/fonoran-phase4-playtest-baseline.md',
-  'docs/fonoran-compound-audit-latest.md',
-  // A word bank proposal is a list of ENGLISH words, so its contents are not Fonoran spellings
-  // at all: "chase" and "hide" read as retired compounds to a scanner looking for Fonoran.
-  'docs/fonoran-word-bank-proposal.md',
-]);
+const ARCHIVAL_FILES = new Set();
 
 /**
  * Tokens that are deliberately not words. The Constitution and the rulebook teach the

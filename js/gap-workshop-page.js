@@ -1,10 +1,9 @@
 /**
  * Gap Workshop — admin tab at /tools#gap-workshop
  *
- * Three-panel workflow:
- *   1. Queue (left) — gaps, open LLM proposals, playtest promotions
+ * Two-panel workflow:
+ *   1. Queue (left) — translation gaps and the compound proposal queue, open and resolved
  *   2. Detail (right) — selected item details + action buttons
- *   3. Inline LLM analysis — runs on demand per gap
  */
 
 import { escapeHtml } from './utils.js';
@@ -90,10 +89,9 @@ async function api(path, opts = {}) {
 // ── State ─────────────────────────────────────────────────────────────────────
 
 const state = {
-  activeTab: 'proposals',   // 'proposals' | 'resolved' | 'playtests'
+  activeTab: 'proposals',   // 'proposals' | 'resolved'
   openProposals: [],
   resolvedProposals: [],
-  promotions: [],
   selectedId: null,
   analyzing: false,
   loading: false,
@@ -191,17 +189,6 @@ function proposalSpellings(prop) {
   return [];
 }
 
-function promotionSpellings(promo) {
-  if (promo.current_composition?.length) {
-    return flatSpellingsForComposition(promo.current_composition);
-  }
-  const compound = findCompound(promo.concept_id);
-  if (compound?.spelling) return flatSpellingsForComposition([promo.concept_id]);
-  const sound = findSound(promo.concept_id);
-  if (sound?.spelling) return [sound.spelling];
-  return [];
-}
-
 // ── Data loading ──────────────────────────────────────────────────────────────
 
 async function loadProposals() {
@@ -224,19 +211,10 @@ async function loadProposals() {
   }
 }
 
-async function loadPromotions() {
-  try {
-    const r = await api('/api/fonoran/playtests/promotions?min_rounds=2&min_rate=0.6');
-    state.promotions = r?.promotions ?? [];
-  } catch {
-    state.promotions = [];
-  }
-}
-
 async function reloadAll() {
   state.loading = true;
   renderQueue();
-  await Promise.all([loadProposals(), loadPromotions()]);
+  await loadProposals();
   state.loading = false;
   renderQueue();
   // Re-select if still present
@@ -250,13 +228,6 @@ function classificationBadge(cls) {
   return `<span class="gw-badge ${colors[cls] ?? 'badge--muted'}">${escapeHtml(cls)}</span>`;
 }
 
-function recoveryBar(rate) {
-  if (rate == null) return '';
-  const pct = Math.round(rate * 100);
-  const color = pct >= 70 ? '#2d6a4f' : pct >= 40 ? '#c4a574' : '#9a3b3b';
-  return `<span class="gw-rate" style="--gw-rate-pct:${pct}%;--gw-rate-color:${color}" title="${pct}% recovery">${pct}%</span>`;
-}
-
 // ── Queue panel ───────────────────────────────────────────────────────────────
 
 function renderQueue() {
@@ -266,10 +237,8 @@ function renderQueue() {
   // Tab counts
   const tabProposals = root.querySelector('[data-gw-tab="proposals"]');
   const tabResolved = root.querySelector('[data-gw-tab="resolved"]');
-  const tabPlaytests = root.querySelector('[data-gw-tab="playtests"]');
   if (tabProposals) tabProposals.dataset.count = state.openProposals.length;
   if (tabResolved) tabResolved.dataset.count = state.resolvedProposals.length;
-  if (tabPlaytests) tabPlaytests.dataset.count = state.promotions.length;
 
   // Active tab label
   root.querySelectorAll('[data-gw-tab]').forEach(btn => {
@@ -286,19 +255,17 @@ function renderQueue() {
     return;
   }
 
-  if (state.activeTab === 'proposals') {
-    renderOpenProposalsList(list);
-  } else if (state.activeTab === 'resolved') {
+  if (state.activeTab === 'resolved') {
     renderResolvedProposalsList(list);
   } else {
-    renderPromotionsList(list);
+    renderOpenProposalsList(list);
   }
   requestAnimationFrame(syncStickyOffsets);
 }
 
 function renderOpenProposalsList(list) {
   if (!state.openProposals.length) {
-    list.innerHTML = '<p class="gw-empty sans">No open proposals. Run <code>npm run fonoran:vocab-survey</code> to generate compound proposals.</p>';
+    list.innerHTML = '<p class="gw-empty sans">No open proposals. New compounds are authored by hand in <code>data/fonoran-compounds.json</code> or in the Words tab.</p>';
     return;
   }
   list.innerHTML = state.openProposals.map((p) => renderProposalItem(p)).join('');
@@ -328,23 +295,6 @@ function renderProposalItem(p) {
   </button>`;
 }
 
-function renderPromotionsList(list) {
-  if (!state.promotions.length) {
-    list.innerHTML = '<p class="gw-empty sans">No playtest promotions ready yet. Need ≥2 rounds with ≥60% recovery rate.</p>';
-    return;
-  }
-  list.innerHTML = state.promotions.map(p => {
-    const active = state.selectedId === `promo:${p.concept_id}` ? ' gw-item--active' : '';
-    return `<button type="button" class="gw-item${active}" data-gw-id="promo:${p.concept_id}">
-      <span class="gw-item__label">
-        <span class="gw-item__word">${escapeHtml(p.concept_id)}</span>
-        ${glyphHtml(promotionSpellings(p), 'gw-item__glyphs')}
-      </span>
-      <span class="gw-item__meta sans">${recoveryBar(p.recovery_rate)} · ${p.rounds} rounds</span>
-    </button>`;
-  }).join('');
-}
-
 // ── Detail panel ──────────────────────────────────────────────────────────────
 
 function renderDetail() {
@@ -355,7 +305,7 @@ function renderDetail() {
     panel.innerHTML = `<div class="wm-empty-state">
       <div class="wm-empty-state__body">
         <p class="wm-empty-state__lead">Pick an item from the queue</p>
-        <p class="wm-empty-state__hint">Select an open proposal to review, a resolved item to inspect, or a playtest promotion to accept.</p>
+        <p class="wm-empty-state__hint">Select an open proposal to review, or a resolved item to inspect.</p>
       </div>
     </div>`;
     return;
@@ -367,10 +317,6 @@ function renderDetail() {
     const id = state.selectedId.slice(9);
     const prop = findProposal(id);
     if (prop) renderProposalDetail(panel, prop);
-  } else if (state.selectedId.startsWith('promo:')) {
-    const conceptId = state.selectedId.slice(6);
-    const promo = state.promotions.find(p => p.concept_id === conceptId);
-    if (promo) renderPromotionDetail(panel, promo);
   }
 }
 
@@ -402,56 +348,7 @@ function renderGapDetail(panel, word) {
     </div>
     ${samplesHtml}
     ${existingProposalsHtml}
-    <div class="gw-section gw-analyze-section">
-      <h4 class="gw-section-title">LLM Analysis</h4>
-      <p class="sans gw-hint">The LLM will classify this as compound, primitive, or alias and propose compositions or concept metadata.</p>
-      <button type="button" class="btn btn--primary" id="gw-analyze-btn" ${state.analyzing ? 'disabled' : ''}>
-        ${state.analyzing ? 'Analyzing…' : '✦ Analyze with LLM'}
-      </button>
-    </div>
-    <div id="gw-analysis-result"></div>
   `;
-
-  const analyzeBtn = $('gw-analyze-btn');
-  if (analyzeBtn) {
-    analyzeBtn.addEventListener('click', () => runGapAnalysis(word, gap.role ?? 'concept'));
-  }
-}
-
-async function runGapAnalysis(word, role) {
-  if (state.analyzing) return;
-  state.analyzing = true;
-  const resultEl = $('gw-analysis-result');
-  const analyzeBtn = $('gw-analyze-btn');
-  if (analyzeBtn) { analyzeBtn.disabled = true; analyzeBtn.textContent = 'Analyzing…'; }
-  if (resultEl) resultEl.innerHTML = '<div class="gw-spinner sans">Asking LLM…</div>';
-
-  try {
-    const { analysis, proposal } = await api('/api/fonoran/gaps/suggest', {
-      method: 'POST',
-      body: JSON.stringify({ word, role }),
-    });
-
-    // Reload proposals so the new one shows
-    await loadProposals();
-    renderQueue();
-
-    if (resultEl) {
-      try {
-        resultEl.innerHTML = renderAnalysisResult(analysis, proposal);
-        wireProposalActions(resultEl, proposal?.id, proposal ?? analysis);
-      } catch (renderErr) {
-        resultEl.innerHTML = `<p class="gw-error sans">Render error: ${escapeHtml(String(renderErr))}</p>`;
-        console.error('[gap-workshop] renderAnalysisResult failed:', renderErr);
-      }
-    }
-    if (analyzeBtn) { analyzeBtn.textContent = 'Re-analyze'; analyzeBtn.disabled = false; }
-  } catch (err) {
-    toast(`Analysis failed: ${err.message}`, true);
-    if (resultEl) resultEl.innerHTML = `<p class="gw-error sans">${escapeHtml(err.message)}</p>`;
-    if (analyzeBtn) { analyzeBtn.disabled = false; analyzeBtn.textContent = '✦ Analyze with LLM'; }
-  }
-  state.analyzing = false;
 }
 
 function redundancyBadge(warning) {
@@ -535,59 +432,6 @@ function getSelectedCompositionIndex(container) {
   return Number.isFinite(idx) && idx >= 0 ? idx : 0;
 }
 
-function renderAnalysisResult(analysis, proposal) {
-  if (!analysis) return '';
-  const cls = analysis.classification;
-
-  let bodyHtml = '';
-
-  const validComps = (analysis.valid_compositions ?? []).filter(Array.isArray);
-  const warnings = analysis.redundancy_warnings ?? [];
-  if (cls === 'compound' && validComps.length) {
-    bodyHtml = renderCompositionList(validComps, warnings, {
-      selectable: Boolean(proposal?.id),
-      title: 'Proposed compositions',
-    });
-  } else if (cls === 'primitive' && analysis.primitive_proposal) {
-    const pp = analysis.primitive_proposal;
-    bodyHtml = `
-      <div class="gw-primitive-card">
-        <div class="gw-primitive-field"><span class="gw-field-label sans">id:</span> <code>${escapeHtml(pp.suggested_id)}</code> ${glyphHtml(pp.suggested_id ? [pp.suggested_id] : [], 'gw-comp-glyphs')}</div>
-        <div class="gw-primitive-field"><span class="gw-field-label sans">gloss:</span> ${escapeHtml(pp.gloss ?? '')}</div>
-        <div class="gw-primitive-field"><span class="gw-field-label sans">domain:</span> ${escapeHtml(pp.domain ?? '')}</div>
-        <div class="gw-primitive-field"><span class="gw-field-label sans">priority:</span> ${escapeHtml(pp.priority_class ?? '')}</div>
-        <div class="gw-primitive-field gw-primitive-field--full"><span class="gw-field-label sans">campfire:</span> ${escapeHtml(pp.campfire_rationale ?? '')}</div>
-      </div>`;
-  } else if (cls === 'alias' && analysis.alias_proposal) {
-    const aliasId = analysis.alias_proposal.existing_concept_id;
-    bodyHtml = `
-      <div class="gw-alias-card">
-        <p class="sans">Maps to existing concept: <code>${escapeHtml(aliasId)}</code> ${glyphHtml(flatSpellingsForComposition([aliasId]), 'gw-comp-glyphs')}</p>
-        <p class="sans gw-hint">${escapeHtml(analysis.alias_proposal.rationale ?? '')}</p>
-      </div>`;
-  }
-
-  const proposalId = proposal?.id;
-  return `
-    <div class="gw-analysis-card">
-      <div class="gw-analysis-card__head">
-        ${classificationBadge(cls)}
-        <span class="gw-analysis-rationale sans">${escapeHtml(analysis.rationale ?? '')}</span>
-      </div>
-      ${bodyHtml}
-      ${proposalId ? `
-        <div class="gw-proposal-actions" data-proposal-id="${escapeHtml(proposalId)}">
-          <span class="sans gw-proposal-id">Proposal ${escapeHtml(proposalId)}</span>
-          <div class="gw-action-row">
-            <button type="button" class="btn btn--sm" data-gw-edit>Edit in Word Manager</button>
-            <button type="button" class="btn btn--sm btn--primary" data-action="accepted">Accept</button>
-            <button type="button" class="btn btn--sm gw-btn--skip" data-action="skipped">Skip</button>
-            <button type="button" class="btn btn--sm wm-btn--reject" data-action="rejected">Reject</button>
-          </div>
-        </div>` : ''}
-    </div>`;
-}
-
 function renderProposalDetail(panel, prop) {
   const propValidComps = (prop.valid_compositions ?? []).filter(Array.isArray);
   const propWarnings = prop.redundancy_warnings ?? [];
@@ -633,42 +477,6 @@ function renderProposalDetail(panel, prop) {
   `;
 
   wireProposalActions(panel, prop.id, prop);
-}
-
-function renderPromotionDetail(panel, promo) {
-  panel.innerHTML = `
-    <div class="gw-detail-head">
-      <h2 class="gw-detail-title">${escapeHtml(promo.concept_id)}</h2>
-      ${glyphHtml(promotionSpellings(promo), 'gw-detail-glyphs')}
-      <p class="gw-detail-meta sans">Playtest authority: ${recoveryBar(promo.recovery_rate)} over ${promo.rounds} round(s)</p>
-    </div>
-    <div class="gw-section">
-      <div class="gw-primitive-card">
-        <div class="gw-primitive-field"><span class="gw-field-label sans">current source:</span> ${escapeHtml(promo.current_preferred_source)}</div>
-        <div class="gw-primitive-field"><span class="gw-field-label sans">composition:</span> <code>${(promo.current_composition ?? []).map(escapeHtml).join(' + ')}</code> ${glyphHtml(promotionSpellings(promo), 'gw-comp-glyphs')}</div>
-        <div class="gw-primitive-field"><span class="gw-field-label sans">avg repair turns:</span> ${promo.avg_repair_turns ?? '–'}</div>
-        <div class="gw-primitive-field"><span class="gw-field-label sans">last tested:</span> ${promo.last_playtest ? new Date(promo.last_playtest).toLocaleDateString() : '–'}</div>
-      </div>
-      <p class="sans gw-hint">Accepting this will promote the preferred_source to "playtest" in compounds.json on the next editorial commit. This marks the current composition as human-confirmed via playtest authority.</p>
-      <div class="gw-action-row">
-        <button type="button" class="btn btn--primary" id="gw-promote-btn" data-concept="${escapeHtml(promo.concept_id)}">Mark as playtest-approved</button>
-      </div>
-    </div>`;
-
-  panel.querySelector('#gw-promote-btn')?.addEventListener('click', async (e) => {
-    const conceptId = e.target.dataset.concept;
-    e.target.disabled = true;
-    try {
-      await api(`/api/fonoran/lab/optimize-compounds`, {
-        method: 'POST',
-        body: JSON.stringify({ use_llm: false }),
-      });
-      toast(`Marked ${conceptId} for playtest promotion. Run fonoran:optimize-compounds to apply.`);
-    } catch (err) {
-      toast(`Could not promote: ${err.message}`, true);
-      e.target.disabled = false;
-    }
-  });
 }
 
 function wireProposalActions(container, proposalId, analysisOrProp) {

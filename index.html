@@ -58,9 +58,6 @@
       <nav class="main-nav" aria-label="Fonora">
         <div class="main-nav-primary">
           <button type="button" class="tab-btn" data-platform-tab="platform">About</button>
-          <a href="/research" class="tab-btn" data-platform-tab="research">Research</a>
-          <a href="/research/timeline" class="tab-btn" data-platform-tab="timeline">Timeline</a>
-          <a href="/research#open" class="tab-btn" data-platform-tab="open">Open Questions</a>
           <button type="button" class="tab-btn" data-platform-tab="docs">Docs</button>
         </div>
       </nav>
@@ -93,7 +90,6 @@
           <button type="button" class="tab-btn" data-learn-hub="hub">About</button>
           <button type="button" class="tab-btn" data-learn-hub="script">Read &amp; Write</button>
           <button type="button" class="tab-btn" data-learn-hub="fonoran">Speak</button>
-          <button type="button" class="tab-btn" data-learn-tab="puzzle">Puzzle</button>
           <button type="button" class="tab-btn" data-learn-hub="progress">Progress</button>
         </div>
       </nav>
@@ -243,7 +239,7 @@
               Fonora combines a phonetic writing system, a constructed language, and software for building and testing both. Every symbol, sound mapping, root, and grammar rule is treated as a hypothesis rather than a conclusion.
             </p>
             <p>
-              Ideas are refined through experimentation, measurement, and community feedback. Follow the <a href="/research">research notebook</a> for experiment write-ups, or browse the <a href="/research/timeline">timeline</a> to see how the project evolved.
+              Ideas are refined through experimentation and measurement. The language is described by five documents, kept in the Docs tab: the rulebook, three algorithm pages, and the architecture map.
             </p>
           </div>
         </article>
@@ -278,15 +274,6 @@
             </div>
           </article>
           <article class="home-layer-card">
-            <p class="home-layer-card__tag">Research</p>
-            <h3>Research notebook</h3>
-            <p>The public laboratory record of how the script and language evolved — experiments, decisions, and open questions.</p>
-            <div class="home-layer-card__actions">
-              <a href="/research" class="btn btn--primary">Open Research</a>
-              <a href="/research/timeline" class="btn">Timeline</a>
-            </div>
-          </article>
-          <article class="home-layer-card">
             <p class="home-layer-card__tag">Reference</p>
             <h3>Documentation</h3>
             <p>Platform overview, grammar notes, and guides for contributors and operators.</p>
@@ -295,10 +282,6 @@
             </div>
           </article>
         </div>
-        <article class="content-card script-explore-more">
-          <p class="home-layer-card__tag">Learn more</p>
-          <p class="script-explore-more__text">Follow the <a href="/research/timeline">research timeline</a> or read the current <a href="/research#open">open questions</a>.</p>
-        </article>
       </section>
     </section>
 
@@ -642,7 +625,6 @@
             <div class="gw-queue-tabs" role="tablist" aria-label="Queue type">
               <button type="button" class="gw-tab-btn chip" data-gw-tab="proposals" data-gw-label="Proposals">Proposals</button>
               <button type="button" class="gw-tab-btn chip" data-gw-tab="resolved" data-gw-label="Resolved">Resolved</button>
-              <button type="button" class="gw-tab-btn chip" data-gw-tab="playtests" data-gw-label="Playtests">Playtests</button>
             </div>
             <button type="button" class="btn btn--sm" id="gw-refresh">↺ Refresh</button>
           </div>
@@ -726,20 +708,7 @@
         </header>
       </div>
       <div class="box advanced-page">
-        <section class="lpw-wizard" id="lpw-wizard" aria-labelledby="lpw-heading">
-          <h2 class="lpw-heading" id="lpw-heading">LLM evaluation wizard</h2>
-          <p class="sans lpw-lead">Step-by-step pipeline from pilot smoke test through production deploy. Run expensive steps from this server; follow the verify checklist before continuing.</p>
-          <div id="lpw-reliability" class="lpw-panel" aria-live="polite"></div>
-          <div id="lpw-confusability" class="lpw-panel" aria-live="polite"></div>
-          <div id="lpw-seed-quality" class="lpw-panel" aria-live="polite"></div>
-          <details class="lpw-winners-details">
-            <summary class="sans">Calibration winners (spot-check your intuition)</summary>
-            <div id="lpw-winners" class="lpw-winners"></div>
-          </details>
-          <div id="lpw-steps" class="lpw-steps" aria-live="polite">Loading pipeline status…</div>
-        </section>
-
-        <h2 class="lpw-heading lpw-heading--secondary">Dictionary pipeline</h2>
+        <h2 class="adv-heading">Dictionary pipeline</h2>
         <ol class="adv-pipeline">
           <li class="adv-step">
             <div class="adv-step__number">1</div>
@@ -756,9 +725,9 @@
           <li class="adv-step">
             <div class="adv-step__number">2</div>
             <div class="adv-step__body">
-              <h3 class="adv-step__title">Run vocab survey</h3>
-              <p class="sans adv-step__desc">Ask the LLM to propose 300–500 compound words across semantic domains — all validated against the current primitive set. Proposals are queued for review.</p>
-              <p class="adv-step__cmd sans"><code>npm run fonoran:vocab-survey</code></p>
+              <h3 class="adv-step__title">Add compounds to the seed</h3>
+              <p class="sans adv-step__desc">Compounds are authored by hand in <code>data/fonoran-compounds.json</code>, then scored deterministically by the four rules. Proposals are queued for review.</p>
+              <p class="adv-step__cmd sans"><code>npm run fonoran:regen:four-rules -- --apply</code></p>
               <div class="adv-step__actions">
                 <button type="button" class="btn btn--sm" data-tab="docs" data-doc-path="docs/fonoran-cli-tools.md">CLI reference</button>
               </div>
@@ -786,7 +755,6 @@
               <ul id="adv-regen-warnings" class="adv-regen-warnings sans" hidden></ul>
               <div class="adv-step__actions">
                 <button type="button" class="btn btn--sm btn--primary" id="adv-regenerate" data-write>Regenerate dictionary</button>
-                <label class="adv-regen-opt sans"><input type="checkbox" id="adv-regen-apply-llm" data-write-input> Re-run LLM optimizer</label>
               </div>
               <pre id="adv-regen-result" class="debug-panel adv-regen-result" hidden></pre>
             </div>
@@ -1099,7 +1067,7 @@
         </div>
         <article class="content-card script-explore-more">
           <p class="home-layer-card__tag">Learn more</p>
-          <p class="script-explore-more__text">For design rationale and experiments behind the script, see the <a href="/research">Research notebook</a>.</p>
+          <p class="script-explore-more__text">For design rationale behind the script, see <a href="/?path=docs/language-rules.md">the language rules</a>.</p>
         </article>
       </section>
     </section>
@@ -1838,11 +1806,6 @@
         </div>
         <div id="fonoran-speaking-feedback" class="learn-exercise__feedback quiz-feedback"></div>
       </div>
-    </section>
-
-    <!-- Puzzle Conversation -->
-    <section class="tab-panel" id="tab-puzzle" data-tab-panel="puzzle" hidden>
-      <div id="puzzle-body"></div>
     </section>
   </main>
 

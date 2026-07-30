@@ -1,5 +1,8 @@
 # Fonora / Fonoran gap assessment
 
+> **Archive, superseded. The live list of what the language cannot do yet is the "What the language cannot do yet" section of [fonoran-rulebook.md](../fonoran-rulebook.md), and measured gaps are in `data/fonoran-translation-gap-baseline-deterministic.json`. Kept for the reasoning behind decisions taken in mid 2026.**
+
+
 > **Status**: Audit, 2026-07-28. Assesses the project against descriptive-linguistics criteria and against named comparator languages. Findings are evidence-based and cite files; recommendations are proposals, not decisions. The human owns the lexicon.
 
 ## Verdict

@@ -1,6 +1,7 @@
 /**
  * Browser-safe multiple-choice helpers for Fonoran meaning exercises.
- * Kept separate from fonoran-playtests.js so Learn UI does not import Node storage.
+ * Builds multiple-choice meaning options for Learn drills, with no Node storage imports so
+ * the browser can use it directly.
  */
 
 function normalizeMeaning(text) {

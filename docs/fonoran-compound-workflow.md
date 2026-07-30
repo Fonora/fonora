@@ -2,7 +2,7 @@
 
 > **Read first:** [fonoran-constitution.md](fonoran-constitution.md) (one page) · Agent rules: [CLAUDE.md](../CLAUDE.md)
 
-> Sequential commands for producing and shipping vocabulary from editorial inputs through **deterministic four-rules regeneration**, build, audit, and deploy. LLM scripts are optional advisory tools — not validators.
+> Sequential commands for producing and shipping vocabulary from editorial inputs through **deterministic four-rules regeneration**, build, audit, and deploy. Every command here is deterministic, and no step calls a model.
 >
 > See also: [fonoran.md](fonoran.md) (pipeline overview), [deploy.md](deploy.md) (Heroku), [fonoran-constitution.md](fonoran-constitution.md) (success criteria).
 
@@ -47,8 +47,6 @@ flowchart TB
   git -->|"fonoran:build"| JSONLab
   git -->|"fonoran:regenerate"| PGLab
   git -->|"editorial:import"| PGLab
-  JSONProp -->|"local vocab-survey"| JSONProp
-  PGProp -->|"heroku run vocab-survey"| PGProp
 ```
 
 ---
@@ -61,8 +59,7 @@ flowchart TB
 | `data/fonoran-concept-inventory.json` | Live PostgreSQL lab rows on Heroku |
 | `data/fonoran-approved-roots.json` | |
 | `data/fonoran-root-candidates.json` | |
-| `data/fonoran-llm-evaluations.json` — intuition rounds | |
-| `data/fonoran-compound-proposals.json` — LLM gap proposals (JSON mirror; **Postgres on Heroku**) | |
+| `data/fonoran-compound-proposals.json` — proposal queue (JSON mirror; **Postgres on Heroku**) | |
 | `tools/fonoran-expression-candidates.js` — `ASSOCIATION_SEEDS` | |
 
 **Build** reads editorial JSON → writes the lab bucket. Production Postgres is seeded once from git; later updates require an explicit import + rebuild (below).
@@ -75,7 +72,7 @@ Use when resetting the lab or onboarding a fresh clone.
 
 ```bash
 npm install
-cp .env.example .env          # optional: ANTHROPIC_API_KEY, DATABASE_URL, OAuth
+cp .env.example .env          # optional: DATABASE_URL, OAuth
 
 # 1. Blank lab + review queue (optional — destructive)
 npm run fonoran:reset
@@ -103,30 +100,24 @@ Use after editing seeds or `compounds.json` — e.g. compressing `world`, fixing
 #    tools/fonoran-expression-candidates.js  → ASSOCIATION_SEEDS
 #    data/fonoran-compounds.json             → preferred / alternates / gloss
 
-# 1. Deterministic four-rules regeneration (default path — no LLM)
+# 1. Deterministic four-rules regeneration (the only path)
 npm run fonoran:regen:four-rules -- --dry-run
 npm run fonoran:regen:four-rules -- --apply
 #    Skips playtest/human/locked rows; ranks by campfire + four rules.
-#    Legacy: npm run fonoran:optimize-compounds -- --length-only
 
 # 2. Rebuild lab from editorial JSON
 npm run fonoran:build:approved
 
-# 3. Audit + tests (free gates — no API spend)
+# 3. Audit + tests
 npm run fonoran:seed-quality-audit
 npm run fonoran:compound-confusability
-npm run fonoran:compound-audit -- --out=docs/fonoran-compound-audit-latest.md
+npm run fonoran:compound-audit -- --out=reports/fonoran-compound-audit.md
 npm test
 
-# 4. Optional advisory only (needs ANTHROPIC_API_KEY) — does NOT set preferred forms
-#    npm run fonoran:llm-intuition -- world
+# 4. Lock a human decision
+# Set preferred_source to "human" in compounds.json so the scorer cannot demote it
 
-# 5. Human playtest (constitutional authority)
-npm start
-# → /language#puzzle?concept=world
-# Lock winner: set preferred_source to "playtest" in compounds.json
-
-# 6. Commit seed files (see checklist below)
+# 5. Commit seed files (see checklist below)
 git add data/fonoran-compounds.json tools/fonoran-expression-candidates.js ...
 git commit -m "..."
 ```
@@ -198,11 +189,7 @@ After deploy, regenerate vocabulary from git seeds. **Do not run build alone** �
 
 ```bash
 npm run fonoran:regenerate
-# optional — re-promote from llm-evaluations.json (may change compounds.json):
-npm run fonoran:regenerate -- --use-llm
 ```
-
-Reference: [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md)
 
 **Step C — verify**
 
@@ -240,12 +227,9 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 | Step | Command | Local | Heroku one-off |
 | --- | --- | --- | --- |
 | Reset lab | `npm run fonoran:reset` | yes | rarely |
-| Length-only optimize | `npm run fonoran:optimize-compounds -- --length-only` | yes | yes |
-| Heuristic optimize | `npm run fonoran:optimize-compounds` | yes | yes |
-| LLM optimize | `npm run fonoran:optimize-compounds -- --use-llm` | after v4 calibration | after v4 calibration |
+| Rank preferred forms | `npm run fonoran:regen:four-rules -- --apply` | yes | yes |
 | Build lab | `npm run fonoran:build:approved` | yes | yes |
 | Audit | `npm run fonoran:compound-audit` | yes | optional |
-| LLM intuition (one concept) | `npm run fonoran:llm-intuition -- world` | yes (API key) | yes (API key on dyno) |
 | Tests | `npm test` | yes | CI / local before push |
 | Import editorial seeds → Postgres | `npm run fonoran:editorial:import -- --from=data/` | yes | **required on prod** (or use Advanced GUI) |
 | Full generator pipeline | `npm run fonoran:regenerate` | yes | **Advanced GUI on prod** |
@@ -259,7 +243,7 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 - [ ] `npm run fonoran:build:approved` — 0 dropped (run `npm run fonoran:compound-audit` for live compound count)
 - [ ] `npm run fonoran:compound-audit` — 0 flattened-length warnings (or documented exceptions)
 - [ ] `npm test` — unit + golden translator pass
-- [ ] Commit: `data/fonoran-compounds.json`, `tools/fonoran-expression-candidates.js`, tool/script changes, audit markdown, LLM eval JSON if re-run
+- [ ] Commit: `data/fonoran-compounds.json`, `tools/fonoran-expression-candidates.js`, tool/script changes
 - [ ] Do **not** commit `data/fonoran-sound-bucket.json` (gitignored)
 - [ ] After Heroku deploy: Advanced → **Regenerate dictionary from git seeds** → **Run translation tests**
 
@@ -270,95 +254,46 @@ heroku run "npm run fonoran:snapshot:import -- backups/fonoran-milestone.zip" -a
 ```mermaid
 flowchart TB
   subgraph locked [Locked — optimizer will not demote]
-    Playtest["playtest / human\npuzzle conversation winner"]
+    Playtest["human / playtest\nhuman decision, locked"]
   end
-  subgraph advisory [Advisory]
-    LLM["llm_consensus\nintuition + length gate"]
-    Heur["heuristic\noptimize-compounds"]
+  subgraph scored [Scored]
+    Rules["four_rules\ncampfire + four rules"]
   end
   Playtest -->|"constitutional authority"| Preferred["preferred form\nin compounds.json"]
-  LLM --> Preferred
-  Heur -->|"--length-only safe bulk"| Preferred
+  Rules --> Preferred
 ```
 
-1. **`playtest` / `human`** — locked; optimizer will not demote
-2. **Human puzzle conversation** — decides preferred form
-3. **`llm_consensus`** — advisory; length gate overrides when flat > 4
-4. **Heuristic** — `optimize-compounds`, `--length-only` for safe bulk compression
+1. **`human`** — a person chose this form; locked, the scorer will not demote it
+2. **`playtest`** — historical provenance from the retired guess-the-meaning game; also human, also locked
+3. **`four_rules`** — deterministic scoring for everything not locked, with the length gate overriding when flat > 4
 
-Preferred-form policy: [fonoran.md](fonoran.md) · LLM protocol: [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md)
+Preferred-form policy: [fonoran.md](fonoran.md)
 
 ---
 
-## LLM-assisted vocabulary growth loop
+## Vocabulary growth (model paths deleted)
 
-Two complementary paths share the same proposal store and the same accept → `fonoran:regenerate`
-promotion step. See [RN-26 · LLM-assisted word generation](/research/notes/llm-assisted-word-generation)
-for architecture; [RN-27 · Automated refine loop](/research/notes/automated-refine-loop) for the
-corpus-driven auto-accept experiment.
+Vocabulary is no longer generated or judged by models. New words are added by editing the
+seeds (`data/fonoran-concept-inventory.json`, `data/fonoran-compounds.json`) and rerunning
+the deterministic pipeline described in
+[fonoran-algorithm-roots.md](fonoran-algorithm-roots.md) and
+[fonoran-algorithm-compounds.md](fonoran-algorithm-compounds.md).
 
-### Path A — Bulk survey + human review (default editorial)
-
-The **Vocabulary Survey** is the primary way to generate new compound proposals in bulk.
-On **Heroku** (with `DATABASE_URL`), proposals persist in **PostgreSQL** and are visible
-to the live Review UI on the same dyno. Locally they use `data/fonoran-compound-proposals.json`.
-
-```bash
-# Production (DATABASE_URL → shared Postgres; visible to live Review UI)
-heroku run npm run fonoran:vocab-survey -a fonora
-
-# Local (JSON file)
-npm run fonoran:vocab-survey
-npm run fonoran:vocab-survey:dry    # seeds only — no LLM writes
-```
-
-No second LLM call is needed on subsequent `fonoran:regenerate` runs.
-
-Proposals land in the compound proposal store (Postgres or local JSON). Review them in the
-**Review** tab at `/tools#gap-workshop`, or via the API
-(`GET /api/fonoran/compound-proposals`).
-
-For each proposal: **accept** (merges the composition into `fonoran-compounds.json` on the
-next `fonoran:regenerate` run) or **reject** / **skip**.
-
-`promoteAcceptedProposals` runs automatically as the first step of `fonoran:regenerate`,
-so accepted proposals are baked into `fonoran-compounds.json` before the build begins.
-
-```bash
-# After accepting proposals, regenerate the full dictionary (promotes + rebuilds)
-npm run fonoran:regenerate
-
-# See playtest data suggesting preferred form promotions (no LLM needed)
-curl http://localhost:8000/api/fonoran/playtests/promotions
-```
-
-For targeted gap words (not full survey), use `npm run fonoran:gap-analyze-batch`.
-
-### Path B — Automated refine loop (corpus experiment)
-
-Runs gap → propose → gate → auto-accept → build → measure on the 1,000-phrase stranger
-corpus. Requires **`FONORAN_STORAGE=json`** locally so promote, build, and gap report share
-one backend (see RN-27). Human playtests remain constitutional authority for preferred-form
-promotion in production.
-
-```bash
-npm run fonoran:refine
-npm run fonoran:refine:dry              # limited gaps, no writes
-npm run fonoran:refine -- --skip-llm --max-iterations 1   # gates only, no LLM Task A
-```
-
-Auto-accepted compounds still flow through the same proposal store; review or revert via git
-if an iteration regresses coverage or phonetic distribution.
+The survey, refine loop, model playtest, and intuition scripts were **deleted** in July 2026.
+`data/fonoran-llm-quarantine.json` lists what remains reachable, and
+`npm run fonoran:verify-quarantine` fails the build if deterministic code gains a new
+dependency on model code or model output. The proposal store and Review UI remain usable for
+human-authored proposals.
 
 ### Storage reminder
 
-| Environment | Editorial + proposal queue | Gap / refine artifacts |
+| Environment | Editorial + proposal queue | Gap artifacts |
 |-------------|---------------------------|-------------------------|
 | Local dev (default) | `FONORAN_STORAGE=json` — `data/fonoran-*.json` | `data/` + fonora-data submodule |
 | Heroku production | `FONORAN_STORAGE=postgres` + `DATABASE_URL` | fonora-data submodule (not Postgres) |
 
-Promote → build → gap report **must** use the same storage backend. Mixing JSON promote with
-Postgres build silently drops coverage gains (RN-27 finding).
+Promote → build → gap report **must** use the same storage backend. Mixing a JSON promote with
+a Postgres build silently drops coverage gains.
 
 ### Seed integrity
 
@@ -376,5 +311,5 @@ console.log(v.length ? v : '✓ No phantom IDs');
 
 See also:
 
-- [RN-26 · LLM-assisted word generation](/research/notes/llm-assisted-word-generation) — foundational pipeline (gap analyzer, proposal store, vocab survey, review UI)
-- [RN-27 · Automated refine loop](/research/notes/automated-refine-loop) — corpus auto-accept experiment (`fonoran:refine`)
+- [fonoran-algorithm-compounds.md](fonoran-algorithm-compounds.md) — how a preferred compound is chosen
+- [fonoran-architecture.md](fonoran-architecture.md) — what reads what

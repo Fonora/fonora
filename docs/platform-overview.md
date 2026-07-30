@@ -1,28 +1,28 @@
 # Fonora platform overview
 
-Fonora is an open research project exploring new approaches to writing systems, language
-design, and language learning through open-source experiments.
+Fonora is an open-source project exploring new approaches to writing systems, language
+design, and language learning.
 
 **Our hypothesis:** see [fonoran-constitution.md](fonoran-constitution.md) — two strangers with ~50 shared roots can communicate after ~1 hour.
 
-Fonora has three projects plus a public research notebook, surfaced as four top-level tabs (five when signed in):
+Fonora has three projects, surfaced as top-level tabs (one more when signed in):
 
 | Tab | Route | What it is | Start here |
 | --- | --- | --- | --- |
-| **Fonora** | [`/`](/) | Platform home: the project, the hypothesis, research notebook | This document · [`/research`](/research) · [`/research/timeline`](/research/timeline) |
+| **Fonora** | [`/`](/) | Platform home: the project and the hypothesis | This document · [fonoran-rulebook.md](fonoran-rulebook.md) |
 | **Script** | [`/script`](/script) | Fonora Script: phonetic writing system | [language-rules.md](language-rules.md) · [Sound Grid](/script#grid) |
 | **Language** | [`/language`](/language) | Fonoran: experimental language built on Fonora Script | [fonoran-constitution.md](fonoran-constitution.md) · [fonoran-grammar.md](fonoran-grammar.md) |
 | **Learn** | [`/learn`](/learn) | Structured drills: Fonora Script + Fonoran language skills | [fonoran-learn.md](fonoran-learn.md) · [`/learn`](/learn) |
 | **Tools** | [`/tools`](/tools) | QA/build tooling for Script and Language (sign-in required when OAuth is configured) | [`/tools#tools-home`](/tools#tools-home) |
 
-The **Fonora** sub-nav links to **About**, **Research**, **Timeline**, **Open Questions**, and **Docs**. The research notebook is the narrative layer of the project: each major experiment is written up as a standalone research note (question → hypothesis → constraints → implementation → outcome → next question), with a [visual timeline](/research/timeline) connecting them. The docs in this folder are the *reference* layer the notebook links to.
+The **Fonora** sub-nav links to **About** and **Docs**. The language is described by five living documents: the [rulebook](fonoran-rulebook.md), three algorithm pages ([roots](fonoran-algorithm-roots.md), [compounds](fonoran-algorithm-compounds.md), [translation](fonoran-algorithm-translation.md)), and the [architecture map](fonoran-architecture.md). Everything else in this folder is reference material.
 
 [`/learn`](/learn) is public structured practice: **Fonora Script** skills (sounds, writing, words)
 and **Fonoran language** skills (reading, writing, hearing, grammar). See [fonoran-learn.md](fonoran-learn.md).
 [`/tools`](/tools) hosts Script QA/debugging (Pronunciation Testing, Validation, Samples)
 **and** the Fonoran builder admin tools (Word Manager, Gap Workshop, Advanced pipeline, Translation Test).
 `/script`, `/learn`, and `/tools` share the same front-end bundle. `/language` is a separate public app
-(Translator, Dictionary, Grammar, Puzzle).
+(Translator, Dictionary, Grammar).
 
 ```mermaid
 flowchart TB
@@ -58,7 +58,7 @@ flowchart TB
 flowchart LR
   subgraph learnerPath [Learner path]
     LearnRoute["/learn\ndrills + XP"]
-    LangRoute["/language\nTranslator · Dictionary · Puzzle"]
+    LangRoute["/language\nTranslator · Dictionary · Grammar"]
   end
   subgraph builderPath [Builder path]
     ToolsRoute["/tools\nbuild + test"]
@@ -90,7 +90,7 @@ intertwined by design — splitting the data model is explicitly out of scope fo
 1. [fonoran-constitution.md](fonoran-constitution.md) — philosophy, the campfire test, the tiered language
 2. [fonoran-learn.md](fonoran-learn.md) — Learn architecture (Script + Fonoran skill tracks)
 3. [`/learn`](/learn) — structured drills: [`#fonoran-reading`](/learn#fonoran-reading), [`#fonoran-writing`](/learn#fonoran-writing), [`#fonoran-hearing`](/learn#fonoran-hearing), [`#fonoran-grammar`](/learn#fonoran-grammar)
-4. [`/language`](/language) — Translator / Dictionary / Grammar / Puzzle (exploration)
+4. [`/language`](/language) — Translator / Dictionary / Grammar (exploration)
 5. [fonoran-grammar.md](fonoran-grammar.md)
 
 ### Build the language

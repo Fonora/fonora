@@ -84,24 +84,15 @@ import {
   exportSnapshotToDir,
 } from './fonoran-snapshot.js';
 import {
-  buildPuzzleChallenge,
-  recordPlaytestFeedback,
-  recordPlaytestRound,
-  summarizePlaytests,
-  buildPlaytestPromotionCandidates,
-} from './fonoran-playtests.js';
-import {
   generateCandidates,
   loadCandidateContext,
 } from './fonoran-expression-candidates.js';
-import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
 import {
   listCompoundProposals,
   resolveCompoundProposal,
   createCompoundProposals,
   getProposalStats,
 } from './fonoran-compound-proposals.js';
-import { analyzeGap, analyzeGaps } from './fonoran-gap-analyzer.js';
 import {
   getRegenStatus,
   runRegenerate,
@@ -110,12 +101,6 @@ import {
 } from './fonoran-regen.js';
 import { importEditorialFromSeedPaths } from './fonoran-store.js';
 import { sanitizeForJsonResponse } from '../js/utils.js';
-import {
-  getLlmPipelineStatus,
-  getLlmPipelineJob,
-  startLlmPipelineJob,
-  getConfusabilityResult,
-} from './fonoran-llm-pipeline.js';
 
 function writeJsonPayload(res, status, payload) {
   res.writeHead(status, {
@@ -434,27 +419,12 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const body = await readJsonBody(req);
       const url = new URL(req.url ?? '', 'http://localhost');
       const lab = await getLab();
-      const engine = body.engine ?? url.searchParams.get('engine') ?? undefined;
-      const simplifyRaw = body.simplify ?? url.searchParams.get('simplify') ?? undefined;
-      const simplify = simplifyRaw === 'auto' ? 'auto'
-        : simplifyRaw === true || simplifyRaw === 'true' ? true
-          : simplifyRaw === false || simplifyRaw === 'false' ? false
-            : undefined;
-      // Every LLM call here costs money, so a caller must not be able to force one.
-      // `skipCache` bypasses the cache entirely and is admin-only; `cacheOnly` is the
-      // opposite and is always honoured, so the UI can answer keystrokes for free and
-      // spend only when someone deliberately submits.
-      const cacheOnly = body.cacheOnly === true || url.searchParams.get('cacheOnly') === 'true';
       const result = await translate(body.text ?? '', {
         lab,
         sourceLang: body.sourceLang ?? url.searchParams.get('sourceLang') ?? 'auto',
         targetLang: body.targetLang ?? url.searchParams.get('targetLang') ?? 'en',
         direction: body.direction ?? url.searchParams.get('direction') ?? undefined,
         inputMode: body.inputMode ?? url.searchParams.get('inputMode') ?? undefined,
-        engine,
-        skipCache: body.skipCache === true && isAdminUser(req),
-        cacheOnly,
-        simplify,
         devLab: body.dev_lab === true
           || process.env.FONORAN_DEV_LAB === '1'
           || process.env.FONORAN_DEV_LAB === 'true',
@@ -462,54 +432,15 @@ export async function handleFonoranApi(req, res, pathname, method) {
       if (result.ok === false) {
         return done(result.status ?? 503, {
           error: result.error,
-          engine: result.engine ?? 'llm',
+          engine: result.engine ?? 'legacy',
           code: result.code,
           hint: result.hint,
-          // A cache miss is "not warmed yet", not a failure. The caller needs to tell them
-          // apart so typing can stay quiet while a real error still surfaces.
-          ...(result.cache_miss ? { cache_miss: true } : {}),
         });
       }
       return done(200, result);
     }
     if (pathname === '/api/fonoran/grammar-particles' && method === 'GET') {
       return done(200, await loadParticles());
-    }
-    if (pathname === '/api/fonoran/puzzle/challenge' && method === 'GET') {
-      const url = new URL(req.url ?? '', 'http://localhost');
-      const coreOnly = ['1', 'true', 'yes'].includes((url.searchParams.get('core') ?? '').toLowerCase());
-      const missed = url.searchParams.has('missed');
-      const conceptId = missed ? null : url.searchParams.get('concept');
-      const missedIndex = missed ? Number(url.searchParams.get('index') ?? 0) : null;
-      const lab = await getLab();
-      return done(200, await buildPuzzleChallenge({
-        lab,
-        coreOnly,
-        conceptId: conceptId || null,
-        missedIndex,
-      }));
-    }
-    if (pathname === '/api/fonoran/puzzle/guess' && method === 'POST') {
-      const body = await readJsonBody(req);
-      if (body.feedback_only) {
-        return done(200, await recordPlaytestFeedback(body));
-      }
-      return done(200, await recordPlaytestRound(body));
-    }
-    if (pathname === '/api/fonoran/puzzle/feedback' && method === 'POST') {
-      const body = await readJsonBody(req);
-      return done(200, await recordPlaytestFeedback(body));
-    }
-    if (pathname === '/api/fonoran/playtests/summary' && method === 'GET') {
-      return done(200, await summarizePlaytests());
-    }
-    if (pathname === '/api/fonoran/playtests/promotions' && method === 'GET') {
-      const url = new URL(req.url ?? '', 'http://localhost');
-      const minRounds = Number(url.searchParams.get('min_rounds') ?? 3);
-      const minRate = Number(url.searchParams.get('min_rate') ?? 0.7);
-      return done(200, {
-        promotions: await buildPlaytestPromotionCandidates({ minRounds, minRecoveryRate: minRate }),
-      });
     }
     if (pathname === '/api/fonoran/compound-proposals' && method === 'GET') {
       const url = new URL(req.url ?? '', 'http://localhost');
@@ -549,46 +480,11 @@ export async function handleFonoranApi(req, res, pathname, method) {
       }
       return done(200, { ...proposal, editorial });
     }
-    if (pathname === '/api/fonoran/gaps/suggest' && method === 'POST') {
-      const body = await readJsonBody(req);
-      const word = body.word;
-      const role = body.role ?? 'concept';
-      if (!word) return done(400, { error: 'word is required' });
-      const [inv, compoundsDoc] = await Promise.all([
-        import('./fonoran-concepts.js').then(m => m.loadConceptInventory()),
-        import('./fonoran-store.js').then(m => m.readDoc('compounds')),
-      ]);
-      const primitiveIds = (inv?.concepts ?? []).map(c => c.id);
-      const compoundDefs = compoundsDoc?.compounds ?? [];
-      const analysis = await analyzeGap(word, role, primitiveIds, compoundDefs, inv);
-      // Persist as a proposal if valid — use word as the concept_id so
-      // getAcceptedCompositionSeeds can index it into generateCandidates.
-      let created = null;
-      if (analysis.classification !== 'unknown') {
-        const records = await createCompoundProposals([{
-          ...analysis,
-          concept_id: analysis.concept_id ?? word.toLowerCase().replace(/\s+/g, '_'),
-        }]);
-        created = records[0] ?? null;
-      }
-      return done(200, { analysis, proposal: created });
-    }
     if (pathname === '/api/fonoran/expressions/candidates' && method === 'POST') {
       const body = await readJsonBody(req);
       if (!body.concept_id) return done(400, { error: 'concept_id is required' });
       const ctx = await loadCandidateContext();
-      let extra = Array.isArray(body.extra) ? body.extra : [];
-      if (body.llm) {
-        const compound = ctx.compoundsDoc?.compounds?.find(c => c.concept === body.concept_id);
-        const gloss = compound?.preferred?.gloss ?? compound?.gloss ?? body.concept_id;
-        const llmExtra = await proposeLlmCandidates(body.concept_id, {
-          gloss,
-          primitiveIds: ctx.primitiveIds,
-          compoundDefs: ctx.compoundsDoc?.compounds ?? [],
-          maxFlattened: body.max_flattened ?? 4,
-        });
-        extra = [...extra, ...llmExtra];
-      }
+      const extra = Array.isArray(body.extra) ? body.extra : [];
       const candidates = generateCandidates(body.concept_id, {
         metaFor: ctx.metaFor,
         collisionCounts: ctx.collisionCounts,
@@ -608,11 +504,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const body = await readJsonBody(req);
       const lab = await getLab();
       const level = body.level != null ? Number(body.level) : null;
-      // Admin Translation Test mirrors the live app: LLM engine (cache-first,
-      // API on miss), so the report reflects what users actually get.
       // suggest: attach offline WordNet curation suggestions to each gap so the
       // lab GUI / concept editor can propose aliases for human approval.
-      return done(200, await runTranslationGapReport({ level, lab, engine: 'llm', suggest: true }));
+      return done(200, await runTranslationGapReport({ level, lab, suggest: true }));
     }
     if (pathname === '/api/fonoran/lab/health' && method === 'GET') {
       return done(200, await getHealth());
@@ -644,29 +538,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/lab/regen/status' && method === 'GET') {
       return done(200, await getRegenStatus());
     }
-    if (pathname === '/api/fonoran/llm-pipeline/status' && method === 'GET') {
-      const confusability = await getConfusabilityResult();
-      return done(200, await getLlmPipelineStatus({ confusabilityCache: confusability }));
-    }
-    const pipelineJobMatch = pathname.match(/^\/api\/fonoran\/llm-pipeline\/job\/([^/]+)$/);
-    if (pipelineJobMatch && method === 'GET') {
-      const job = getLlmPipelineJob(decodeURIComponent(pipelineJobMatch[1]));
-      if (!job) return done(404, { error: 'Job not found' });
-      return done(200, job);
-    }
-    if (pathname === '/api/fonoran/llm-pipeline/run' && method === 'POST') {
-      const body = await readJsonBody(req);
-      const step = String(body.step ?? '').trim();
-      if (!step) return done(400, { error: 'step is required' });
-      try {
-        return done(202, await startLlmPipelineJob(step, {
-          reviewAcknowledged: Boolean(body.review_acknowledged),
-          spotCheck: Boolean(body.spot_check),
-        }));
-      } catch (err) {
-        return done(err.status ?? 400, { error: err.message });
-      }
-    }
     if (pathname === '/api/fonoran/lab/editorial/import' && method === 'POST') {
       const body = await readJsonBody(req);
       if (body.confirm !== 'IMPORT') {
@@ -681,7 +552,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/lab/optimize-compounds' && method === 'POST') {
       const body = await readJsonBody(req);
       return done(200, await optimizeCompoundsInStore({
-        useLlm: body.use_llm !== false,
         lengthOnly: Boolean(body.length_only),
       }));
     }
@@ -691,7 +561,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
         return done(400, { error: 'Type REGENERATE in confirm field to run the full generator pipeline' });
       }
       return done(200, await runRegenerate({
-        applyLlm: body.apply_llm === true,
         approveAll: body.approve_all !== false,
       }));
     }

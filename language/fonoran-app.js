@@ -2,7 +2,7 @@
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
     import { romanToFonoraScript, romanWordToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
     import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
-    import { createFonoraKeyboard } from '../js/fonora-keyboard-ui.js';
+    import { createKeyboardDockController } from '../js/fonora-keyboard-dock.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
     import { getSamplePlaybackPlan, getPiperVoiceForLang, initPiperAudio } from '../js/piper-audio.js';
@@ -257,13 +257,7 @@
         await refreshAuth();
         throw new Error('Sign in required');
       }
-      if (!res.ok) {
-        const err = new Error(data.error || res.statusText);
-        // "Not warmed in the cache" is a normal answer, not a failure. Callers that ask
-        // for cache-only results need to tell the two apart.
-        if (data.cache_miss) err.cacheMiss = true;
-        throw err;
-      }
+      if (!res.ok) throw new Error(data.error || res.statusText);
       return data;
     }
     function toast(msg) {
@@ -697,7 +691,6 @@
       const footer = preferredPct != null || alts.length
         ? `<footer class="dict-alternates-panel__footer">
             ${preferredPct != null ? `<span class="dict-alt__pill dict-alt__pill--preferred">Preferred · ${preferredPct}%</span>` : ''}
-            <a class="dict-alternates-panel__cta" href="/learn#puzzle">Try in Puzzle Conversation</a>
           </footer>`
         : '';
       return `<div class="dict-alternates-panel">
@@ -2653,9 +2646,8 @@
 
     /* ---------- TRANSLATOR ---------- */
     let translatorToken = 0;
-    /** @type {ReturnType<typeof createFonoraKeyboard> | null} */
-    let translatorKeyboard = null;
-    let translatorKeyboardOpen = false;
+    /** @type {ReturnType<typeof createKeyboardDockController> | null} */
+    let translatorDock = null;
 
     const TRANSLATOR_SPEED_KEY = 'fonoran:translator:speed';
     const TRANSLATOR_SYLLABLE_MODE_KEY = 'fonoran:translator:syllable-by-syllable';
@@ -2685,62 +2677,24 @@
       return readTranslatorSourceLang() === 'fonoran-fonora';
     }
 
-    function isTranslatorKeyboardActive() {
-      return translatorKeyboardOpen
-        && STATE.page === 'translator'
-        && isTranslatorFonoraMode();
-    }
-
-    function syncTranslatorKeyboardToggle() {
-      const toggle = $('tr-keyboard-toggle');
-      const fonoraMode = isTranslatorFonoraMode();
-      if (toggle) {
-        toggle.hidden = !fonoraMode;
-        toggle.setAttribute('aria-pressed', translatorKeyboardOpen && fonoraMode ? 'true' : 'false');
-        toggle.textContent = translatorKeyboardOpen && fonoraMode ? 'Hide keyboard' : 'Keyboard';
+    function translatorDockController() {
+      if (!translatorDock) {
+        translatorDock = createKeyboardDockController({
+          toggleId: 'tr-keyboard-toggle',
+          dockId: 'tr-keyboard-dock',
+          inputId: 'tr-input',
+          keyboardId: 'tr-keyboard',
+          getRules: () => ensureRules(),
+          isFonoraMode: isTranslatorFonoraMode,
+          isViewActive: () => STATE.page === 'translator',
+          onEnter: () => { void runTranslator(); },
+        });
       }
-      const dock = $('tr-keyboard-dock');
-      if (dock) dock.hidden = !(translatorKeyboardOpen && fonoraMode);
-      document.body.classList.toggle(
-        'fonora-keyboard-dock-open',
-        Boolean(document.querySelector('.fonora-keyboard-dock:not([hidden])')),
-      );
-    }
-
-    async function ensureTranslatorKeyboard() {
-      const input = $('tr-input');
-      const container = $('tr-keyboard');
-      if (!input || !container) return null;
-      const rules = await ensureRules();
-      if (!rules) return null;
-      if (translatorKeyboard) {
-        translatorKeyboard.refresh(rules);
-        translatorKeyboard.setTarget(input);
-        return translatorKeyboard;
-      }
-      translatorKeyboard = createFonoraKeyboard({
-        rules,
-        container,
-        target: input,
-        isActive: isTranslatorKeyboardActive,
-        layout: 'practice',
-        enterKeyLabel: 'go',
-        onEnter: () => { void runTranslator(); },
-      });
-      return translatorKeyboard;
+      return translatorDock;
     }
 
     async function setTranslatorKeyboardOpen(open) {
-      if (open && !isTranslatorFonoraMode()) open = false;
-      if (open) {
-        await ensureTranslatorKeyboard();
-        translatorKeyboardOpen = true;
-        translatorKeyboard?.activate();
-      } else {
-        translatorKeyboardOpen = false;
-        translatorKeyboard?.deactivate();
-      }
-      syncTranslatorKeyboardToggle();
+      await translatorDockController().setOpen(open);
     }
 
     function readTranslatorSourceLang() {
@@ -2811,10 +2765,10 @@
         });
       }
 
-      if (!isTranslatorFonoraMode() && translatorKeyboardOpen) {
+      if (!isTranslatorFonoraMode() && translatorDockController().isOpen()) {
         void setTranslatorKeyboardOpen(false);
       } else {
-        syncTranslatorKeyboardToggle();
+        translatorDockController().sync();
       }
     }
 
@@ -2827,12 +2781,9 @@
     }
 
     function translatorEngineLabel(engine) {
-      if (engine === 'cached') return 'Cached';
-      // "Legacy" is the internal token, kept because scripts and tests pass it, but it is the
-      // wrong word for the reader: this is the rule-based engine, and it is now the default.
-      if (engine === 'legacy') return 'Deterministic';
-      if (engine === 'lexical') return 'Deterministic';
-      if (engine === 'llm') return 'LLM';
+      // "Legacy" and "lexical" are the internal tokens, kept because scripts and tests pass
+      // them, but they are the wrong words for the reader: there is one rule-based engine.
+      if (engine === 'legacy' || engine === 'lexical') return 'Deterministic';
       return engine ? String(engine) : '';
     }
 
@@ -2870,22 +2821,6 @@
       return `<p class="translator-output__legend sans">${items.join(' · ')}</p>`;
     }
 
-    function translatorSimplifiedHtml(result) {
-      const simplified = result?.simplified;
-      const clauses = Array.isArray(simplified?.clauses) ? simplified.clauses.filter(Boolean) : [];
-      if (!clauses.length) return '';
-      const items = clauses.map(c => `<li>${escapeHtml(c)}</li>`).join('');
-      const note = simplified.note
-        ? `<p class="translator-output__plain-note sans">${escapeHtml(simplified.note)}</p>`
-        : '';
-      return `<details class="translator-output__plain sans">
-        <summary>Plain meaning <span class="translator-output__plain-hint">(what we translated)</span></summary>
-        <div class="translator-output__plain-body">
-          <ol class="translator-output__plain-list">${items}</ol>
-          ${note}
-        </div>
-      </details>`;
-    }
 
     function translatorPronHtml(pron) {
       if (!pron?.sayLine) return '';
@@ -3304,7 +3239,6 @@
       syncTranslatorOutputHeader(result);
 
       out.innerHTML = `
-        ${translatorSimplifiedHtml(result)}
         <div class="translator-output__surface">
           ${playbackScript ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(playbackScript)}</div>` : ''}
           <p class="translator-output__roman">${romanHtml}</p>
@@ -3360,10 +3294,6 @@
         const body = {
           text,
           sourceLang,
-          // Auto-simplify can fire a second call for long or abstract text, so it waits
-          // for a deliberate submit too.
-          simplify: reverse || live ? false : 'auto',
-          ...(live ? { cacheOnly: true } : {}),
           dev_lab: isLocalDevHost(),
         };
         if (reverse) {
@@ -3386,16 +3316,6 @@
       } catch (e) {
         if (token !== translatorToken) return;
         const out = $('tr-output');
-        // Typing runs ahead of the cache constantly. That is not an error worth shouting
-        // about: invite the reader to submit, which is what actually spends a call.
-        if (live && e.cacheMiss) {
-          if (out) {
-            out.innerHTML = '<p class="translator-output__empty sans">Press Enter to translate.</p>';
-          }
-          syncTranslatorOutputHeader(null);
-          syncTranslatorPlaybackUi(null);
-          return;
-        }
         const msg = e.message || 'Translation failed';
         const wrongSource = /natural language, not Fonoran/i.test(msg);
         if (out) {
@@ -3616,7 +3536,7 @@
         return;
       }
       if (name !== 'dictionary') closeSheet();
-      if (name !== 'translator' && translatorKeyboardOpen) {
+      if (name !== 'translator' && translatorDockController().isOpen()) {
         void setTranslatorKeyboardOpen(false);
       }
       STATE.page = name;
@@ -3717,7 +3637,7 @@
       // ask. In a textarea an unhandled Enter just inserts a newline, so the hint sat there
       // while nothing happened. Shift+Enter still breaks the line.
       // Physical Enter while the Fonora keyboard is active belongs to the keyboard module.
-      if (isTranslatorFonoraMode() && translatorKeyboardOpen) return;
+      if (isTranslatorFonoraMode() && translatorDockController().isOpen()) return;
       e.preventDefault();
       void runTranslator();
     });
@@ -3737,7 +3657,7 @@
       void runTranslator();
     });
     $('tr-keyboard-toggle')?.addEventListener('click', () => {
-      void setTranslatorKeyboardOpen(!translatorKeyboardOpen);
+      void translatorDockController().toggle();
     });
     $('tr-keyboard-close')?.addEventListener('click', () => {
       void setTranslatorKeyboardOpen(false);

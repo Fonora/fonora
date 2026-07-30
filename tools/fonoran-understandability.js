@@ -3,7 +3,7 @@
  *
  * THIS IS A RANKING AID, NOT AN AUTHORITY. See docs/fonoran-constitution.md.
  * The number estimates "would another root-knower likely recover the intended meaning?"
- * It exists to *order* candidate expressions. Human guess-the-meaning playtests decide
+ * It exists to *order* candidate expressions. A human decides
  * which form is preferred, and the playtest overrides this score whenever they disagree.
  *
  * Pure and dependency-free so it runs in the browser (UI), in tools, and in tests.

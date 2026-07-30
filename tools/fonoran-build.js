@@ -122,7 +122,7 @@ function resolveCompounds(compoundDefsRaw, rootById, rootSpellings) {
 
   // Best-effort: resolve an alternate composition to a transparent spelling. Returns null
   // when any component is unresolved or the join breaks the boundary constraint. Alternates
-  // are recognizable input forms for puzzle/repair mode, so they may collide with the
+  // are recognizable input forms for repair mode, so they may collide with the
   // preferred spelling space without being dropped.
   const resolveAlternate = comp => {
     if (!Array.isArray(comp) || !comp.length) return null;

@@ -78,7 +78,7 @@ export async function runFonoranAuthTests() {
         assert(__testSanitizeReturnTo('//evil.example') === '/language', 'protocol-relative');
         assert(__testSanitizeReturnTo('/evil') === '/language', 'unknown path');
         assert(__testSanitizeReturnTo('/tools') === '/tools', 'allowed root');
-        assert(__testSanitizeReturnTo('/research/notes/foo') === '/research/notes/foo', 'allowed subpath');
+        assert(__testSanitizeReturnTo('/language/words') === '/language/words', 'allowed subpath');
       }),
     );
     results.push(

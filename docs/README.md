@@ -1,8 +1,8 @@
 # Fonora documentation
 
-Index of project docs. See **[platform-overview.md](platform-overview.md)** for the section map (Fonora, Script, Language, Research, Tools) and the project's hypothesis.
+Index of project docs. See **[platform-overview.md](platform-overview.md)** for the section map (Fonora, Script, Language, Tools) and the project's hypothesis.
 
-For the *story* of how the project evolved — each experiment as a research note — see the **[Research notebook](/research)** and its **[timeline](/research/timeline)**. The notebook is the narrative layer; the docs below are the reference layer it links to.
+The language is described by five living documents: the [rulebook](fonoran-rulebook.md), the three algorithm pages ([roots](fonoran-algorithm-roots.md), [compounds](fonoran-algorithm-compounds.md), [translation](fonoran-algorithm-translation.md)), and the [architecture map](fonoran-architecture.md). Everything else here is reference material or history.
 
 The **Docs viewer** sidebar in the app mirrors this index (see `js/doc-urls.js`).
 
@@ -52,7 +52,6 @@ Read in this order for a new contributor:
 | 1 | **Fonoran constitution** (read first — one page) | [fonoran-constitution.md](fonoran-constitution.md) |
 | 2 | **Fonoran grammar** | [fonoran-grammar.md](fonoran-grammar.md) |
 | 3 | **Philosophy & rationale** (optional deep read) | [fonoran-philosophy.md](fonoran-philosophy.md) |
-| 3b | **Gap assessment** (audit vs. real conlang standards) | [fonoran-gap-assessment.md](fonoran-gap-assessment.md) |
 | 4 | **Fonoran guide** (builder pipeline) | [fonoran.md](fonoran.md) |
 | 4b | **Compound workflow (local + Heroku)** | [fonoran-compound-workflow.md](fonoran-compound-workflow.md) |
 | 4c | **CLI tools reference** | [fonoran-cli-tools.md](fonoran-cli-tools.md) |
@@ -64,23 +63,9 @@ Read in this order for a new contributor:
 
 ---
 
-## Research notebook (`/research`)
-
-Narrative research notes (one per major experiment), authored in `docs/research-notes/`. Open the rendered notebook at [/research](/research); each note links back to the reference docs and tools below.
-
-| Era | Notes |
-| --- | --- |
-| Phase I: Writing sound | the articulation grid, IPA pipeline, vowel v2 → v3, multilingual script, collision audit |
-| Phase II: Inventing a language | Gen 1/2 roots, Gen 3 DDA, Gen 3.1 distinctiveness, the 200-primitive allocation |
-| Phase III: A usable language | semantic foundation, the Constitution, the editorial pipeline, grammar particles, the translator, typing, puzzle conversation |
-| Phase IV: Reconstructing compounds | teaching trees, meaning-attempts, seed expansion, playtest-driven preferred forms |
-| Phase V: Foundations under the Constitution | root-tier campfire test, script pedagogy (vowel glyphs, collision audit), grammar constitutional audit, concept-first translation, **RN-26** LLM-assisted word generation (foundational pipeline), **RN-27** automated refine loop (corpus experiment), **RN-28** multilingual semantic compiler, **RN-33** seeds-are-truth + four-rules preferred regen, **RN-35** CV density vs CVC audibility (thought experiment), **RN-37** interrogatives need dimensions not values (quantity type error), **RN-38** tests shaped by the language cannot measure it (corpus bias + probe engine mismatch; disjunction fix) |
-
----
-
 ## Archive
 
-Historical experiments and audits, preserved as primary sources for the research notes above. Not the active Fonoran workflow (see [fonoran.md](fonoran.md)).
+Historical experiments, audits, and the retired research notebook. Not the active Fonoran workflow (see [fonoran.md](fonoran.md)).
 
 | Document | Notes |
 | --- | --- |
@@ -93,10 +78,15 @@ Historical experiments and audits, preserved as primary sources for the research
 | [FONORA_COLLISION_AUDIT.md](archive/FONORA_COLLISION_AUDIT.md) | Collision audit |
 | [IPA_VOWEL_NORMALIZATION_AUDIT.md](archive/IPA_VOWEL_NORMALIZATION_AUDIT.md) | Vowel normalization audit |
 | [FONORA_VOWEL_DECISION_REPORT.md](archive/FONORA_VOWEL_DECISION_REPORT.md) | Vowel decision report (v2) |
+| [fonoran-gap-assessment.md](archive/fonoran-gap-assessment.md) | Gap audit, superseded by the rulebook |
+| [fonoran-generation-2.md](archive/fonoran-generation-2.md) | Generation 2 pipeline |
+| [fonoran-grammar-constitutional-audit.md](archive/fonoran-grammar-constitutional-audit.md) | Grammar audit snapshot |
+| [fonoran-grammar-redesign-proposal.md](archive/fonoran-grammar-redesign-proposal.md) | Grammar proposal, not adopted as written |
+| [fonoran-learning-sessions-log.md](archive/fonoran-learning-sessions-log.md) | Learnability session log |
+| [fonoran-llm-playtest-experiment.md](archive/fonoran-llm-playtest-experiment.md) | LLM playtest protocol and results |
+| [research-notes/](archive/research-notes/README.md) | 38 research notes, retired July 2026 |
 
-**Not in sidebar:** [fonoran-root-workflow.md](fonoran-root-workflow.md) is a stub redirecting to [fonoran.md#pipeline](fonoran.md#pipeline).
-
-**Generated (not in doc index):** [fonoran-compound-audit-latest.md](fonoran-compound-audit-latest.md) — overwritten by `npm run fonoran:compound-audit`; reference only, not maintained prose.
+**Generated (not committed):** `npm run fonoran:compound-audit` writes a live compound report to `reports/`.
 
 ---
 
@@ -106,10 +96,10 @@ Historical experiments and audits, preserved as primary sources for the research
 | --- | --- |
 | `npm test` | Unit/integration + golden translator regression |
 | `npm run test:pronunciation-validation` | IPA round-trip report |
-| `npm run research:verify-md` | Validate research note frontmatter |
 | `npm run fonoran:build` | Converged Fonoran pipeline |
 | `npm run fonoran:compound-audit` | Live compound count and quality report |
-| `npm run fonoran:refine` | Automated gap → propose → build loop |
+| `npm run fonoran:translation-gaps` | What the corpus cannot say yet |
+| `npm run fonoran:verify-quarantine` | Fail if deterministic code depends on model output |
 | `npm run fonoran:import` / `fonoran:export` | PostgreSQL bucket sync |
 
 See [fonoran-cli-tools.md](fonoran-cli-tools.md) for the full operator command reference.

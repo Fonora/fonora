@@ -1,5 +1,5 @@
 # Interpretive Translator
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-15 · Compiling English into meaning](/research/notes/concepts-are-canonical-sounds-are-editorial-proposals).
+> **Superseded spec.** The live translator is described in [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md) and [fonoran-translator.md](fonoran-translator.md). Kept for the original interpretive compiler design.
 
 
 > **Status**: Superseded for live translation by the multilingual LLM semantic compiler. **Current architecture:** [fonoran-translator.md](fonoran-translator.md). This document describes the legacy English-only frame parser kept for regression comparison (`engine=legacy`).

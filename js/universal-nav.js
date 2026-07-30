@@ -27,7 +27,6 @@ const BUILDER_TABS = [
 
 const LEARN_TITLES = {
   'learn-home': 'Learn',
-  puzzle: 'Puzzle Conversation',
   'script-writing': 'Script · Writing',
   'script-sounds': 'Script · Symbol Sounds',
   'script-words': 'Script · Read Words',
@@ -83,18 +82,11 @@ const TOOLS_ROW_TABS = [
 
 const PLATFORM_TABS = [
   { id: 'platform', label: 'About' },
-  { id: 'research', label: 'Research', href: '/research' },
-  { id: 'timeline', label: 'Timeline', href: '/research/timeline' },
-  { id: 'open', label: 'Open Questions', href: '/research#open' },
   { id: 'docs', label: 'Docs' },
 ];
 
 const PLATFORM_TITLES = {
   platform: PLATFORM_PAGE_TITLE,
-  research: 'Research Notebook',
-  timeline: 'Research Timeline',
-  open: 'Open Questions',
-  note: 'Research Note',
   docs: 'Docs',
 };
 
@@ -277,15 +269,10 @@ function renderLearnRow2(activeTab) {
         }>${t.label}</button>`,
     )
     .join('');
-  const puzzleActive = activeTab === 'puzzle';
-  const puzzleBtn = `<button type="button" class="tab-btn${puzzleActive ? ' tab-btn--active' : ''}" data-learn-tab="puzzle"${
-    puzzleActive ? ' aria-current="page"' : ''
-  }>Puzzle</button>`;
-
   return `
     <div class="app-header__row app-header__row--tools" data-nav-row="learn-tools">
       <nav class="main-nav" aria-label="Learn">
-        <div class="main-nav-primary">${hubTabs}${puzzleBtn}</div>
+        <div class="main-nav-primary">${hubTabs}</div>
       </nav>
     </div>`;
 }
@@ -977,13 +964,11 @@ export function initUniversalNav(options = {}) {
         ? 'learn'
         : normalizedPath === '/tools'
           ? 'tools'
-          : normalizedPath === '/research' || normalizedPath.startsWith('/research/')
-            ? 'platform'
-            : normalizedPath === '/script'
-              ? 'script'
-              : !window.location.hash && !isDocsRoute()
-                ? 'platform'
-                : 'script');
+          : normalizedPath === '/script'
+            ? 'script'
+            : !window.location.hash && !isDocsRoute()
+              ? 'platform'
+              : 'script');
   state.activeTab =
     options.activeTab ??
     (state.context === 'platform'

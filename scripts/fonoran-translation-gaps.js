@@ -4,8 +4,8 @@
  *
  * Runs the English phrase corpus (data/fonoran-translation-tests.json) through
  * the translator. The corpus is a GOLDEN snapshot: every phrase carries the
- * expected `fon` (roman) output the project commits to. This is the permanent
- * regression suite — run it on every grammar/root/rule change.
+ * expected `fon_deterministic` roman output the project commits to. This is the
+ * permanent regression suite, so run it on every grammar, root, or rule change.
  *
  * Usage:
  *   node scripts/fonoran-translation-gaps.js              # full human report
@@ -24,13 +24,6 @@
  *                                                         #   as the new baseline
  *   node scripts/fonoran-translation-gaps.js --corpus stranger   # stranger corpus gap report
  *   node scripts/fonoran-translation-gaps.js --corpus stranger --json
- *   node scripts/fonoran-translation-gaps.js --engine llm   # LLM semantic compiler
- *   node scripts/fonoran-translation-gaps.js --engine llm --cache-only  # deterministic:
- *                                                         #   read the committed cache,
- *                                                         #   never call the API; a cache
- *                                                         #   miss is a "needs warming"
- *                                                         #   failure (warm with
- *                                                         #   --update-golden --engine llm)
  */
 import {
   runTranslationGapReport,
@@ -38,7 +31,7 @@ import {
   loadGapBaseline,
   saveGapBaseline,
   diffGapsAgainstBaseline,
-  goldenFieldForEngine,
+  GOLDEN_FIELDS,
 } from '../tools/fonoran-translation-gaps.js';
 import { closeStore } from '../tools/fonoran-store.js';
 
@@ -52,30 +45,15 @@ const levelIdx = argv.indexOf('--level');
 const onlyLevel = levelIdx !== -1 ? Number(argv[levelIdx + 1]) : null;
 const corpusIdx = argv.indexOf('--corpus');
 const corpusArg = corpusIdx !== -1 ? argv[corpusIdx + 1] : 'golden';
-const engineIdx = argv.indexOf('--engine');
-const engineArg = engineIdx !== -1 ? argv[engineIdx + 1] : 'legacy';
-const cacheOnly = argv.includes('--cache-only');
-const concurrencyIdx = argv.indexOf('--concurrency');
-// Parallel warm only makes sense for the API-backed LLM engine; default 6 there.
-const concurrency = concurrencyIdx !== -1
-  ? Math.max(1, Number(argv[concurrencyIdx + 1]) || 1)
-  : (engineArg === 'llm' ? 6 : 1);
-
 const gapReportOpts = () => ({
   level: onlyLevel,
   resetCache: true,
   corpus: corpusArg,
-  engine: engineArg,
-  cacheOnly,
 });
 
-// Each engine keeps its own golden field and gap baseline, so every "accept this"
-// hint has to name the engine it applies to. A hint that omits it sends the reader
-// to a command that rewrites the other engine's baseline.
-const goldenField = goldenFieldForEngine(engineArg).golden;
-const engineFlags = `--engine ${engineArg}${cacheOnly ? ' --cache-only' : ''}`;
-const acceptCommand = `node scripts/fonoran-translation-gaps.js --update-golden ${engineFlags}`;
-const baselineCommand = `node scripts/fonoran-translation-gaps.js --update-gap-baseline ${engineFlags}`;
+const goldenField = GOLDEN_FIELDS.golden;
+const acceptCommand = 'node scripts/fonoran-translation-gaps.js --update-golden';
+const baselineCommand = 'node scripts/fonoran-translation-gaps.js --update-gap-baseline';
 
 const C = {
   reset: '\x1b[0m', dim: '\x1b[2m', bold: '\x1b[1m',
@@ -91,11 +69,10 @@ async function runAssert() {
 
   // Gap-baseline regression: fail on any NEW honest gap beyond the tracked
   // baseline (curation may only shrink it). Skipped if no baseline exists yet.
-  const baseline = await loadGapBaseline(engineArg);
+  const baseline = await loadGapBaseline();
   const gapDiff = baseline ? diffGapsAgainstBaseline(report, baseline) : null;
   const newGaps = gapDiff?.new ?? [];
-  const warmNeeded = report.warm_needed ?? [];
-  const ok = mismatches.length === 0 && newGaps.length === 0 && warmNeeded.length === 0;
+  const ok = mismatches.length === 0 && newGaps.length === 0;
 
   if (asJson) {
     console.log(JSON.stringify({
@@ -104,19 +81,10 @@ async function runAssert() {
       mismatches: mismatches.map(p => ({ phrase: p.phrase, expected: p.expected, got: p.roman })),
       new_gaps: newGaps,
       resolved_gaps: gapDiff?.resolved ?? [],
-      warm_needed: warmNeeded,
       quality: report.quality,
       collapses: report.collapses,
     }, null, 2));
     return ok;
-  }
-
-  if (warmNeeded.length) {
-    console.log(color(C.red + C.bold, `✗ ${warmNeeded.length} phrase(s) not warmed in the cache`) +
-      color(C.dim, ' (cache-only mode makes CI deterministic — no live API calls).'));
-    for (const p of warmNeeded.slice(0, 10)) console.log(`    ${color(C.dim, p)}`);
-    if (warmNeeded.length > 10) console.log(color(C.dim, `    …and ${warmNeeded.length - 10} more`));
-    console.log(color(C.dim, 'Warm them with an API key: npm run test:translator:warm\n'));
   }
 
   if (newGaps.length) {
@@ -129,7 +97,6 @@ async function runAssert() {
   }
 
   if (!graded.length) {
-    if (warmNeeded.length) return false;
     console.log(color(C.yellow, `No golden \`${goldenField}\` values found in corpus — nothing to assert.`));
     console.log(color(C.dim, `Seed them with: ${acceptCommand}`));
     return true;
@@ -168,20 +135,12 @@ async function runUpdate() {
   const startedAt = Date.now();
   let lastLog = 0;
   const onProgress = (d, total) => {
-    // Throttle progress lines so parallel workers don't flood the terminal.
-    if (d !== total && d - lastLog < 25) return;
+    if (d !== total && d - lastLog < 100) return;
     lastLog = d;
     const secs = (Date.now() - startedAt) / 1000;
-    const rate = d / Math.max(secs, 0.001);
-    const eta = rate > 0 ? Math.round((total - d) / rate) : 0;
-    console.log(color(C.dim, `  warmed ${d}/${total}  (${secs.toFixed(0)}s, ~${eta}s left)`));
+    console.log(color(C.dim, `  rendered ${d}/${total}  (${secs.toFixed(0)}s)`));
   };
-  const { updated, levels, gaps } = await updateGoldenCorpus({
-    engine: engineArg,
-    cacheOnly,
-    concurrency,
-    onProgress,
-  });
+  const { updated, levels, gaps } = await updateGoldenCorpus({ onProgress });
   console.log(color(C.green + C.bold, `Updated golden corpus`) +
     ` — ${updated} phrases across ${levels} levels rewritten from current output.`);
   console.log(color(C.dim, `Gap baseline refreshed — ${gaps} distinct honest gap(s).`));
@@ -191,7 +150,7 @@ async function runUpdate() {
 async function runUpdateBaseline() {
   const report = await runTranslationGapReport({ ...gapReportOpts(), suggest: false });
   const words = (report.gaps ?? []).map(g => g.word);
-  const gaps = await saveGapBaseline(words, engineArg);
+  const gaps = await saveGapBaseline(words);
   console.log(color(C.green + C.bold, `Updated gap baseline`) +
     ` — ${gaps.length} distinct honest gap(s) accepted.`);
   console.log(color(C.dim, 'Review the git diff to confirm the new baseline is intended.'));

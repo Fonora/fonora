@@ -1,5 +1,8 @@
 # Fonoran grammar — constitutional audit (Phase V)
 
+> **Archive, audit snapshot. Its verdicts are folded into [fonoran-rulebook.md](../fonoran-rulebook.md); the particle inventory is authoritative in `data/fonoran-grammar-particles.json`.**
+
+
 > Structured audit of the wired particle inventory against [fonoran-constitution.md](fonoran-constitution.md) criteria. Feeds [RN-24 · Grammar under the Constitution](research-notes/RN-24-grammar-under-the-constitution.md). **Status:** superseded by shipped grammar v1 (Jul 2026) — see [fonoran-grammar.md](fonoran-grammar.md) for the current specification.
 
 ## Audit criteria (from the Constitution)

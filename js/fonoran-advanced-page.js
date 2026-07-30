@@ -4,7 +4,6 @@
 
 import { escapeHtml } from './utils.js';
 import { refreshAuth } from './auth-session.js';
-import { initLlmPipelineWizard } from './fonoran-llm-pipeline-wizard.js';
 
 const TAB_ROOT = () => document.getElementById('tab-advanced');
 
@@ -149,20 +148,18 @@ function wireAdvancedPage() {
   _wired = true;
 
   $('adv-regenerate')?.addEventListener('click', async () => {
-    const applyLlm = $('adv-regen-apply-llm')?.checked !== false;
     if (!confirmDangerAction({
       title: 'Regenerate dictionary from git seeds',
-      message: 'This will:\n1. Reload editorial seeds from deploy (compounds, LLM evaluations, roots…)\n'
-        + (applyLlm ? '2. Re-run LLM optimizer (may change preferred forms)\n' : '')
-        + `${applyLlm ? '3' : '2'}. Rebuild the live dictionary (approve all)\n\n`
-        + 'LLM promotions already in git compounds.json are loaded in step 1. '
+      message: 'This will:\n1. Reload editorial seeds from deploy (compounds, roots…)\n'
+        + '2. Re-rank preferred compounds with the four rules\n'
+        + '3. Rebuild the live dictionary (approve all)\n\n'
         + 'User-created roots and words (created_by: user) are preserved.',
       typeToConfirm: 'REGENERATE',
     })) return;
     try {
       const r = await api('/api/fonoran/lab/regenerate', {
         method: 'POST',
-        body: JSON.stringify({ confirm: 'REGENERATE', apply_llm: applyLlm, approve_all: true }),
+        body: JSON.stringify({ confirm: 'REGENERATE', approve_all: true }),
       });
       const build = r.steps?.find((s) => s.step === 'build');
       toast(`Regenerated ${build?.roots ?? '?'} roots, ${build?.compounds ?? '?'} words`);
@@ -290,5 +287,5 @@ function wireAdvancedPage() {
 
 export async function onAdvancedTabActivated() {
   wireAdvancedPage();
-  await Promise.all([refreshAdvancedPage(), initLlmPipelineWizard()]);
+  await refreshAdvancedPage();
 }

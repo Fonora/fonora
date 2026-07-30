@@ -817,17 +817,6 @@ export function runTests(options) {
     assert(parseDocFromLocation({ pathname: '/docs', hash: '', search: '' })?.path === 'docs/platform-overview.md');
   });
 
-  t('navigable doc catalog excludes runtime research routes', async () => {
-    const { getNavigableDocCatalog, setResearchDocEntries } = await import('./doc-urls.js');
-    setResearchDocEntries([
-      { path: 'research/example', label: 'RN-01 · Example', layer: 'research' },
-    ]);
-    const paths = getNavigableDocCatalog().map((entry) => entry.path);
-    assert(!paths.includes('research/example'));
-    assert(paths.includes('docs/fonoran-constitution.md'));
-    setResearchDocEntries([]);
-  });
-
   t('markdown renderer handles headings and tables', () => {
     const html = renderMarkdown('# Title\n\n| a | b |\n| --- | --- |\n| 1 | 2 |', {
       docPath: 'docs/README.md',
@@ -863,7 +852,7 @@ export function runTests(options) {
   });
 
   t('markdown renderer keeps inline code inside link labels', () => {
-    const html = renderMarkdown('[`tools/foo.js`](../tools/foo.js)', { docPath: 'research/test' });
+    const html = renderMarkdown('[`tools/foo.js`](../tools/foo.js)', { docPath: 'docs/test' });
     assert(html.includes('<a href="../tools/foo.js"><code>tools/foo.js</code></a>'));
     assert(!html.includes('&lt;code&gt;'));
   });

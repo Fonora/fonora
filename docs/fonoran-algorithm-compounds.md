@@ -63,7 +63,7 @@ Winning the ranking is not enough to change the language. The gates:
 
 | Situation | Result |
 | --- | --- |
-| The form is locked by playtest or human decision | never changes |
+| The form is locked by a human decision (`human` or the historical `playtest`) | never changes |
 | Top candidate beats the current form by 0.02 or more | promote |
 | Current form is longer than 4 flattened roots and a shorter valid one exists | promote the shortest |
 | Current form is invalid | promote the top |

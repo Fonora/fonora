@@ -1,5 +1,5 @@
 # IPA Pipeline Implementation Report
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-02 · Teaching the machine to hear](/research/notes/teaching-the-machine-to-hear).
+> **Primary source.** How the IPA pipeline was built and validated. Reference only; the live rules are in [language-rules.md](language-rules.md).
 
 
 ## Architecture

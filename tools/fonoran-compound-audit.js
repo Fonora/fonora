@@ -7,10 +7,10 @@
  *
  * Run: npm run fonoran:compound-audit
  *      npm run fonoran:compound-audit -- --json
- *      npm run fonoran:compound-audit -- --out=docs/fonoran-compound-audit-latest.md
+ *      npm run fonoran:compound-audit -- --out=reports/compound-audit.md
  */
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isMainModule } from './is-main.js';
@@ -23,7 +23,6 @@ import { buildCompositionResolver, maxFlattenedRoots } from './fonoran-compositi
 import { isPreferredLocked, optimizeCompoundInventory } from './fonoran-preferred-select.js';
 import { auditCompoundConfusability } from './fonoran-compound-confusability.js';
 import { buildSemanticContext, rankAllCandidates, scoreAllCompounds } from './fonoran-compound-semantics.js';
-import { computeSeedBankFingerprint, isLlmEvalStale } from './fonoran-seed-fingerprint.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -87,15 +86,13 @@ function topologicalSort(compounds) {
 }
 
 export async function runCompoundAudit() {
-  const [compoundsDoc, inventory, approved, candidatesDoc, playtestsDoc, candidateCtx, llmDoc] =
+  const [compoundsDoc, inventory, approved, candidatesDoc, candidateCtx] =
     await Promise.all([
       readDoc('compounds'),
       readDoc('concept_inventory'),
       readDoc('approved_roots'),
       readDoc('root_candidates'),
-      readDoc('playtests'),
       loadCandidateContext(),
-      readDoc('llm_evaluations'),
     ]);
   const demoDoc = JSON.parse(
     readFileSync(join(ROOT, 'data/fonoran-semantic-demo-compounds.json'), 'utf8'),
@@ -129,15 +126,6 @@ export async function runCompoundAudit() {
     rankCtx,
   };
 
-  // LLM playtests no longer take part in choosing a compound. Their recovery figure was
-  // scored by exact string match against the English headword, which is a test of lexical
-  // recall rather than of understanding, and it ranked world as whole+place+earth+life
-  // (2/16) above earth+life (0/8). The rounds on disk are stale as well: they were collected
-  // against an earlier seed bank, and this audit never checked the fingerprint that exists
-  // to say so. Semantics are scored from each concept's own gloss instead, below.
-  const { fingerprint: seedFingerprint } = await computeSeedBankFingerprint();
-  const playtestStale = isLlmEvalStale(llmDoc, seedFingerprint);
-  const playtestRoundCount = (llmDoc?.rounds ?? []).length;
   const optimizeCtx = {
     rootById: rootGraph.rootById,
     rootSpellings: rootGraph.rootSpellings,
@@ -285,14 +273,6 @@ export async function runCompoundAudit() {
       });
   }
 
-  if (playtestRoundCount) {
-    add('info', 'playtest_data_ignored', null,
-      playtestStale
-        ? `${playtestRoundCount} playtest round(s) on disk were collected against an earlier seed bank and take no part in selection`
-        : `${playtestRoundCount} playtest round(s) take no part in selection: recovery was scored by exact headword match`,
-      { stale: playtestStale, seed_fingerprint: seedFingerprint });
-  }
-
   // --- Phonetic checks ---
   for (const r of roots) {
     const tier = onsetTier(r.spelling);
@@ -344,10 +324,6 @@ export async function runCompoundAudit() {
       issue);
   }
 
-  // --- Playtest coverage ---
-  const playtested = new Set((playtestsDoc?.rounds ?? []).map(r => r.concept_id));
-  const untested = live.filter(c => !playtested.has(c.concept)).map(c => c.concept);
-
   // --- Summary stats ---
   const treeAware = live.filter(c => usesIntermediateCompound(c.composition, compoundIds)).length;
   const seeded = live.filter(c => ASSOCIATION_SEEDS[c.concept]?.length).length;
@@ -373,9 +349,6 @@ export async function runCompoundAudit() {
     gloss_fully_supported: glossFullySupported,
     gloss_mismatch: glossMismatches.length,
     gloss_mismatch_locked: glossMismatches.filter(r => isPreferredLocked(r.preferred_source)).length,
-    playtest_rounds_on_disk: playtestRoundCount,
-    playtest_data_stale: playtestStale,
-    playtest_used_in_selection: false,
     heuristic_preferred_count: live.filter(c => (c.preferred_source ?? 'heuristic') === 'heuristic').length,
     locked_preferred_count: live.filter(c => isPreferredLocked(c.preferred_source)).length,
     max_flattened_roots: maxFlat,
@@ -388,8 +361,6 @@ export async function runCompoundAudit() {
       low: findings.filter(f => f.severity === 'low').length,
     },
     phonetic: phoneticSummary,
-    playtested_concepts: playtested.size,
-    untested_compound_count: untested.length,
   };
 
   findings.sort((a, b) =>
@@ -431,7 +402,6 @@ function renderMarkdown({ summary, findings, dependencyGraph }) {
   lines.push(`| Every root named by the gloss | ${summary.gloss_fully_supported} |`);
   lines.push(`| Gloss supports a listed candidate better | ${summary.gloss_mismatch} (${summary.gloss_mismatch_locked} locked) |`);
   lines.push(`| Heuristic preferred / locked | ${summary.heuristic_preferred_count} / ${summary.locked_preferred_count} |`);
-  lines.push(`| Playtest rounds on disk | ${summary.playtest_rounds_on_disk}${summary.playtest_data_stale ? ' (stale, not used in selection)' : ' (not used in selection)'} |`);
   lines.push('');
   lines.push('### Findings by severity');
   lines.push('');
@@ -487,9 +457,11 @@ async function main() {
   const argv = process.argv.slice(2);
   const jsonOut = argv.includes('--json');
   const outArg = argv.find(a => a.startsWith('--out='));
+  // The report is a regenerated snapshot, not prose: it lives in reports/ (untracked)
+  // so a stale copy never masquerades as documentation.
   const outPath = outArg
     ? outArg.slice('--out='.length)
-    : join(ROOT, 'docs/fonoran-compound-audit-latest.md');
+    : join(ROOT, 'reports/fonoran-compound-audit.md');
 
   const audit = await runCompoundAudit();
 
@@ -499,6 +471,7 @@ async function main() {
   }
 
   const md = renderMarkdown(audit);
+  mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, md);
   console.log(`Compound audit written to ${outPath}`);
   console.log(`  ${audit.summary.live_compound_count} compounds, ${audit.findings.length} findings`);

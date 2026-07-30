@@ -44,7 +44,7 @@ flowchart TD
   MEM["1. in-process docCache"]
   PG["2. Postgres rows\nactive whenever DATABASE_URL is set"]
   GIT["3. data/*.json in git\ndeclared the source of truth"]
-  EXT["external/fonora-data submodule\nplaytests, llm evaluations, translation cache"]
+  EXT["external/fonora-data submodule\ntranslation cache, phrase corpus, gap reports"]
   READ["readDoc\npicks the first one it finds"]
   ALGOS["every algorithm"]
   BUILD["fonoran-build"]
@@ -73,7 +73,6 @@ That is the mechanism behind translations that looked finished while running on 
 | root_candidates | `data/fonoran-root-candidates.json` |
 | phonetics_config | `data/fonoran-primitive-roots-config.json` |
 | localization_en | `data/localizations/en.json` |
-| playtests | external data dir when configured |
 | llm_evaluations | external data dir when configured |
 
 ## The three pipelines, in detail

@@ -237,7 +237,7 @@ Read the script back and you get the sounds. Read the sounds and you get the wor
 
 ## What the language cannot do yet
 
-An honest rulebook lists its holes. As of this writing Fonoran has no comparison (*bigger than*), no aspect (*was running*), no relative clauses (*the person who left*), no implemented numbers, and no way to say *should* or to grant permission. Full detail in the [gap assessment](fonoran-gap-assessment.md).
+An honest rulebook lists its holes. As of this writing Fonoran has no comparison (*bigger than*), no aspect (*was running*), no relative clauses (*the person who left*), no implemented numbers, and no way to say *should* or to grant permission. Measured translation gaps live in `data/fonoran-translation-gap-baseline-deterministic.json`; run `npm run fonoran:translation-gaps` to refresh the count.
 
 ## Where the truth lives
 

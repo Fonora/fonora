@@ -2,15 +2,13 @@
 
 > **Status**: Active (July 2026). Live path at `/language#translator` and `POST /api/fonoran/translate`.
 
-The Fonoran Translator compiles **meaning** from any source language into Fonoran — it is not a word-for-word gloss. It also supports the reverse path: **Fonoran → natural language** (English or another selected target), with input as **Fonoran (Roman)** or **Fonoran (Fonora)** script. Grammar is language-neutral ([Rule 7](fonoran-grammar.md#rule-7-translator-architecture)); concepts are canonical; spellings come only from the approved lab inventory.
+The Fonoran Translator compiles **meaning** into Fonoran, not a word-for-word gloss. It also supports the reverse path, **Fonoran → English**, with input as **Fonoran (Roman)** or **Fonoran (Fonora)** script. Grammar is language-neutral ([Rule 7](fonoran-grammar.md#rule-7-translator-architecture)); concepts are canonical; spellings come only from the approved lab inventory.
 
-The **default engine** is the **deterministic English compiler** (`translateEnglishLegacy()` in `tools/fonoran-translator.js`, named `engine=legacy` in the API and scripts). It needs no API key, costs nothing per phrase, answers offline, and brackets what it cannot say, for example `[how]`, instead of inventing a form.
+There is **one engine**, the deterministic English compiler (`translateEnglishLegacy()` in `tools/fonoran-translator.js`, named `engine=legacy` in the API and scripts). It needs no API key, costs nothing per phrase, answers offline, and brackets what it cannot say, for example `[how]`, instead of inventing a form.
 
-A multilingual **LLM semantic compiler** (`tools/fonoran-llm-translate.js`) is available on `engine=llm` or by setting `FONORAN_TRANSLATOR_ENGINE=llm`. It emits a concept frame that the same **deterministic renderer** (`translateFromFrame()`) turns into roman, script, tokens, and playback. It is now an authoring tool, used to warm the golden corpus and to probe phrasing the rule engine cannot yet parse, rather than the path public traffic takes.
+A model-driven semantic compiler ran as the default until July 2026. It was removed: it answered essentially every request, so every public translation cost money, the translator failed outright wherever no key was configured, and no golden output could be reproduced from the repo alone. What it left behind is a translation cache that Learn still reads, tracked as the last open item in `data/fonoran-llm-quarantine.json`.
 
-The default was the LLM until it became clear it was not a fallback in practice: it answered essentially every request, so every public translation cost money and the translator failed outright wherever no key was configured.
-
-Research context: [RN-28 · Multilingual LLM semantic compiler](research-notes/RN-28-multilingual-llm-semantic-compiler.md). Legacy compiler spec: [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md).
+One-page algorithm: [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md). Legacy compiler spec: [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md).
 
 ---
 
@@ -29,10 +27,8 @@ flowchart TB
 
   subgraph API["Server"]
     RT["tools/fonoran-translate.js<br/>translate() router"]
-    LLM["tools/fonoran-llm-translate.js<br/>compileFrameViaLlm()"]
-    CACHE[("fonoran-translation-cache.json")]
-    REPAIR["repairLlmFrame()"]
-    RENDER["translateFromFrame()"]
+    LEG["tools/fonoran-translator.js<br/>translateEnglishLegacy()"]
+    REV["tools/fonoran-reverse-translate.js<br/>lexical gloss"]
     PLAY["attachTranslatorPlayback()"]
     ALT["attachTranslateAlternates()"]
   end
@@ -40,64 +36,55 @@ flowchart TB
   subgraph Lab["Approved inventory"]
     ROOTS["Roots + compounds"]
     PART["Grammar particles"]
-    GRAM["docs/fonoran-grammar.md + grammar brief"]
+    POLICY["Generated language policy"]
   end
 
   API --> RT
-  RT -->|engine=llm default| LLM
-  RT -->|engine=legacy| LEG["translateEnglishLegacy()"]
-  LLM --> CACHE
-  CACHE -->|hit| REPAIR
-  LLM -->|miss| REPAIR
-  REPAIR --> RENDER
+  RT -->|to-fonoran| LEG
+  RT -->|from-fonoran| REV
   LEG --> PLAY
-  RENDER --> PLAY
+  REV --> PLAY
   PLAY --> ALT
-  ROOTS --> RENDER
-  PART --> RENDER
-  GRAM --> LLM
-  GRAM --> REPAIR
+  ROOTS --> LEG
+  PART --> LEG
+  POLICY --> LEG
   ALT --> OUT
 ```
 
+**Key invariant:** every `fonoran` token on the surface resolves through the live lab (`buildResolveContext()`). Nothing invents a spelling, and an unresolvable word renders as a visible gap rather than a guess.
+
 ---
 
-## Compile pipeline (LLM path)
+## Compile pipeline
 
 ```mermaid
 flowchart LR
   subgraph Input
-    T["Source text"]
-    SL["sourceLang (auto | en | es | …)"]
+    T["English text"]
   end
 
-  subgraph LLM["Anthropic (ANTHROPIC_API_KEY_FONORA_TRANSLATOR)"]
-    P["Prompt: grammar brief + concept inventory + few-shot"]
-    F["Concept frame JSON<br/>{ slots, is_question, unresolved, reasoning }"]
-    T --> P --> F
+  subgraph Parse["Frame build"]
+    TOKS["tokenize + lemmatize"]
+    SLOTS["assign slots (Time, Actor, Action, Object, Place, Manner)"]
+    RES["resolveEnglishToken() per slot"]
+    T --> TOKS --> SLOTS --> RES
   end
 
-  subgraph Repair["Deterministic repair"]
+  subgraph Rules["Deterministic grammar passes"]
     N1["normalizeWePrimaryFrame()"]
     N2["stripExistentialThereFromFrame()"]
     N3["normalizeFrameParticles()"]
-    N3b["restoreDroppedNegation() / stripInventedNegation()"]
     N3c["promoteTemporalSceneToTime() — scene out of modifiers"]
     N4["simplifyMotionFrame() — serial want+move, bare destinations"]
-    G["checkLlmGrammarViolations()"]
-    L["repairFromLegacySlots() on WH misuse / removed particles"]
-    F --> N1 --> N2 --> N3 --> N3b --> N3c --> N4 --> G
-    G -->|violations| L
+    N5["applyDisjunction()"]
+    RES --> N1 --> N2 --> N3 --> N3c --> N4 --> N5
   end
 
   subgraph Render["Deterministic render"]
-    V["validateLlmFrame()"]
     ST["slotsToTokens()"]
     BS["buildSurface()"]
     PB["buildPlaybackFromTokens()"]
-    L --> V
-    G -->|ok| V
-    V --> ST --> BS --> PB
+    N5 --> ST --> BS --> PB
   end
 
   subgraph Output
@@ -110,12 +97,9 @@ flowchart LR
     PB --> PBK
     TOK --> ALT
   end
-
-  CACHE[("Cache lookup / write")] -.-> F
-  CACHE -.-> Output
 ```
 
-**Key invariant:** the LLM chooses **concept ids and slot roles** only. It never invents spellings. Every `fonoran` token on the surface resolves through the live lab (`buildResolveContext()`), including spelling→concept fallback for LLM outputs that used roman instead of ids.
+The grammar passes live in `tools/fonoran-frame-grammar.js` and `tools/fonoran-interpretation.js`. They read the frame, the particle seed, and the temporal-scene lists, and nothing else, so the same input always produces the same surface.
 
 ---
 
@@ -131,7 +115,7 @@ flowchart TB
   subgraph OutputPanel["Output panel (auto height, no scroll)"]
     HDR["Header: Fonoran, or target-lang select when source is Fonoran · Why this reading"]
     SURF["Surface block"]
-    SCRIPT["Fonora script (forward) / fluent translation (reverse)"]
+    SCRIPT["Fonora script (forward) / English reading (reverse)"]
     ROMAN["Roman line + resolution colors"]
     PRON["Pronunciation ▸ (collapsed details)"]
     TOK["Token list (role → english → fonoran)"]
@@ -158,11 +142,11 @@ flowchart TB
 
 | Element | Behavior |
 | --- | --- |
-| **Source language** | Includes natural languages plus **Fonoran (Roman)** and **Fonoran (Fonora)**. Choosing either switches to reverse mode and shows a target-language select (default English) |
-| **Translate** | Debounced (~280 ms) POST to `/api/fonoran/translate`; spinner while busy. Reverse sends `direction: "from-fonoran"`, `inputMode`, and `targetLang` |
+| **Source language** | English plus **Fonoran (Roman)** and **Fonoran (Fonora)**. Choosing either switches to reverse mode and shows a target-language select (default English) |
+| **Translate** | Debounced (~280 ms) POST to `/api/fonoran/translate`; spinner while busy. Every keystroke is answerable because nothing costs money. Reverse sends `direction: "from-fonoran"`, `inputMode`, and `targetLang` |
 | **Resolution colors** | Default text = direct lexicon hit; gold = interpreted; orange = semantic / weak alias; red = unresolved |
 | **Pronunciation** | Collapsed `<details>` under roman; phonetic key + “sounds like” hint |
-| **Why this reading** | Hover/focus popup in output header; shows LLM `reasoning` + engine badge (Cached / LLM) |
+| **Why this reading** | Hover/focus popup in output header; shows the compiler's one-sentence note |
 | **Listen** | Uses server `playback` as source of truth; speaks Fonoran IPA via Piper; unresolved gaps may use English TTS; Fonoran tokens never fall back to English orthography; `.` and `!` retained on roman/script and pause Listen between sentences; a question's `?` is written as `.`, because `ka` already marks it as a question |
 | **Also sayable** | Rule-based alternates (e.g. collective `dan` ↔ dyadic `mi be` for *we*); alternate ▶ highlights alternate tokens |
 | **Layout** | 15 px gap below nav; panels `align-items: start`; independent auto heights |
@@ -176,37 +160,33 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | Module | Role |
 | --- | --- |
 | `tools/fonoran-translate.js` | Unified `translate()` router (`to-fonoran` / `from-fonoran`) |
-| `tools/fonoran-reverse-translate.js` | Fonoran → natural language (script/roman normalize, lexical resolve, fluent LLM) |
-| `tools/fonoran-llm-translate.js` | LLM prompt, frame compile, cache, validation, repair |
-| `tools/fonoran-llm-grammar-brief.js` | Grammar rules excerpt + `checkLlmGrammarViolations()` |
-| `tools/fonoran-translator.js` | `translateFromFrame()`, `slotsToTokens()`, `buildSurface()`, legacy English compiler |
+| `tools/fonoran-translator.js` | `translateEnglishLegacy()`, `translateFromFrame()`, `slotsToTokens()`, `buildSurface()` |
+| `tools/fonoran-frame-grammar.js` | Frame grammar passes: time fronting, temporal scene promotion, disjunction |
+| `tools/fonoran-reverse-translate.js` | Fonoran → English (script/roman normalize, lexical resolve) |
 | `tools/fonoran-english-resolve.js` | Concept resolution cascade, spelling fallback |
 | `tools/fonoran-interpretation.js` | Motion rules, existential *there* peel, frame helpers |
-| `tools/fonoran-translate-alternates.js` | Optional we-reading alternates (no second LLM call) |
+| `tools/fonoran-translate-alternates.js` | Optional we-reading alternates |
 | `tools/fonoran-playback-build.js` | Server wrapper; attaches `playback` to every result |
 | `js/fonoran-playback-build.js` | Browser-safe playback builder (shared with Samples pipeline) |
-| `tools/fonoran-translation-cache.js` | Read/write `fonoran-translation-cache.json` |
+| `tools/fonoran-translation-cache.js` | Read/write `fonoran-translation-cache.json` (read path for Learn) |
 | `language/fonoran-app.js` | Translator page UI |
 
 ---
 
 ## API
 
-**`POST /api/fonoran/translate`** (public, read-only)
+**`POST /api/fonoran/translate`** (public, read-only, no key required)
 
-**Forward** (any language → Fonoran):
+**Forward** (English → Fonoran):
 
 ```json
 {
   "text": "We need shelter",
-  "sourceLang": "auto",
-  "engine": "llm",
-  "skipCache": false,
-  "simplify": "auto"
+  "sourceLang": "auto"
 }
 ```
 
-**Reverse** (Fonoran → English / selected language):
+**Reverse** (Fonoran → English):
 
 ```json
 {
@@ -230,27 +210,23 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | `tokens[]` | Per-slot tokens with `role`, `english`, `fonoran`, `resolution_kind`, `concept_id` |
 | `playback` | `{ script, segments, wordSources, tokenIndices, playable }` |
 | `reasoning` | One-sentence compiler note (shown in “Why this reading”) |
-| `simplified` | Plain-meaning pivot `{ clauses[], text, note }` when the pre-pass ran (shown as “Plain meaning”) |
-| `llm_frame` | Normalized concept frame `{ slots, is_question, … }` |
 | `alternates[]` | Optional rule-based readings (`roman`, `tokens`, `playback`, `note`) |
 | `unresolved[]` | Honest gaps (render red; never fabricated) |
-| `engine` | `llm` \| `cached` \| `legacy` |
+| `engine` | `legacy` |
 
 **Response (success, reverse):**
 
 | Field | Description |
 | --- | --- |
 | `direction` | `from-fonoran` |
-| `translation` | Fluent reading in `targetLang` |
+| `translation` | English reading |
 | `literal` | Lexical gloss (shown when it differs from `translation`) |
 | `surface.roman` | Normalized Fonoran roman from the input |
 | `tokens[]` | Resolved particles / roots / compounds (or unresolved gaps) |
 | `playback` | Speaks the **source** Fonoran |
-| `engine` | `llm` (fluent) or `lexical` (gloss-only fallback) |
+| `engine` | `lexical` |
 
-Requires `ANTHROPIC_API_KEY_FONORA_TRANSLATOR` for fluent `engine=llm` (both directions). Reverse falls back to a lexical gloss when the key is unset. See [fonoran-cli-tools.md](fonoran-cli-tools.md).
-
-Module: `tools/fonoran-reverse-translate.js`.
+Module: `tools/fonoran-reverse-translate.js`. See [fonoran-cli-tools.md](fonoran-cli-tools.md).
 
 ---
 
@@ -269,21 +245,7 @@ Each token carries `resolution_kind` (see [Rule 7 · Resolution cascade](fonoran
 
 ### Concept bridges (abstract / technical vocabulary)
 
-Abstract source words with no root are resolved through curated **concept bridges** ([data/fonoran-concept-bridges.json](../data/fonoran-concept-bridges.json)) plus an optional, untracked **local glossary** ([data/local/glossary.json](../data/local/glossary.json)) for pinning proper-noun/loanword decisions on a private corpus. The local glossary loads **first** so its pins win over the general bridge set. A bridge is one of: `compose` (multi-root path → `composed`), `concept` (redirect to an existing approved concept → `interpreted`), or `loan` (marked phonetic borrow → `loan`). Bridges never invent spellings — every composed part comes from an approved root or compound (Design Rule 0 / Rule 5). Loaded in `loadConceptBridges()` / `buildResolveContext()` and applied in both `resolveConceptId()` (LLM path) and `resolveEnglishToken()` (legacy path).
-
-### Conceptual simplification pre-pass (`simplify`)
-
-For abstract or long prose, the translator can run a **plain-meaning pre-pass** (`simplifyForFonoran()` in [tools/fonoran-llm-translate.js](../tools/fonoran-llm-translate.js)) that rewrites the source into simple, Fonoran-expressible propositions *before* frame compilation — the same "simplify first" step a human translator does. Controlled by the `simplify` request field: `true` (force), `false` (never), `'auto'` (heuristic on abstract/long input; the default the Language app sends). The pivot is returned as `simplified` (`{ clauses, text, note }`) and shown in the UI as a collapsible **Plain meaning** panel, so the compiler stays a language tool rather than a black box.
-
----
-
-## Cache & warm-up
-
-Successful frames are stored in `external/fonora-data/data/fonoran-translation-cache.json`. Cache hits re-run **repair + render** against the current lab so vocabulary changes propagate without a new LLM call.
-
-```bash
-npm run fonoran:translate:cache-warm   # batch warm stranger corpus
-```
+Abstract source words with no root are resolved through curated **concept bridges** ([data/fonoran-concept-bridges.json](../data/fonoran-concept-bridges.json)) plus an optional, untracked **local glossary** ([data/local/glossary.json](../data/local/glossary.json)) for pinning proper-noun/loanword decisions on a private corpus. The local glossary loads **first** so its pins win over the general bridge set. A bridge is one of: `compose` (multi-root path → `composed`), `concept` (redirect to an existing approved concept → `interpreted`), or `loan` (marked phonetic borrow → `loan`). Bridges never invent spellings, every composed part comes from an approved root or compound (Design Rule 0 / Rule 5). Loaded in `loadConceptBridges()` / `buildResolveContext()` and applied in `resolveEnglishToken()`.
 
 ---
 
@@ -291,11 +253,11 @@ npm run fonoran:translate:cache-warm   # batch warm stranger corpus
 
 | Command | Purpose |
 | --- | --- |
-| `npm run test:translator` | Golden regression — fails on unexpected drift |
+| `npm run test:translator` | Grammar spec, golden regression, frame probes |
 | `npm run test:translator:update` | Accept current output as new baseline |
-| `node scripts/fonoran-translate-frame-test.js` | Frame repair + we-alternate smoke tests |
+| `npm run test:translator:probes` | Frame probes with full output |
 
-Legacy English golden suite still exercises `engine=legacy` until LLM coverage matches the 1,000-phrase stranger corpus.
+The golden corpus is 1,000 phrases in `data/fonoran-translation-tests.json`, with measured gaps in `data/fonoran-translation-gap-baseline.json`. Both are reproducible from the repo with no network access.
 
 ---
 
@@ -304,6 +266,5 @@ Legacy English golden suite still exercises `engine=legacy` until LLM coverage m
 - [fonoran-learn.md](fonoran-learn.md) — structured drills (shared vocabulary, different exercise engine)
 - [fonoran-grammar.md · Rule 7](fonoran-grammar.md#rule-7-translator-architecture) — constitutional translator rules
 - [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — legacy English compiler
-- [RN-28](research-notes/RN-28-multilingual-llm-semantic-compiler.md) — decision record
-- [RN-25](research-notes/RN-25-concept-first-translation-and-honest-gaps.md) — honest gaps
-- [RN-15](research-notes/RN-15-compiling-english-into-meaning.md) — original interpretive compiler
+- [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md) — the deterministic pipeline in one page
+- [fonoran-rulebook.md](fonoran-rulebook.md) — the 13 rules the renderer obeys

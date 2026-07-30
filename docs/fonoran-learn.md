@@ -2,7 +2,7 @@
 
 > **Status**: Active. Live at [`/learn`](/learn) — public, no sign-in required (optional progress sync when signed in).
 
-Learn is the **structured drill layer** for Fonora Script and Fonoran language skills. It runs 10-question sessions with XP, streaks, and ring-based lesson progression. It is separate from the exploration tools on [`/language`](/language) (Translator, Dictionary, Puzzle).
+Learn is the **structured drill layer** for Fonora Script and Fonoran language skills. It runs 10-question sessions with XP, streaks, and ring-based lesson progression. It is separate from the exploration tools on [`/language`](/language) (Translator, Dictionary, Grammar).
 
 See also: [platform-overview.md](platform-overview.md) · [fonoran-grammar.md](fonoran-grammar.md) · [fonoran-auth-and-release.md](fonoran-auth-and-release.md) (progress sync).
 
@@ -14,7 +14,7 @@ See also: [platform-overview.md](platform-overview.md) · [fonoran-grammar.md](f
 flowchart LR
   subgraph learner [Learner path]
     Learn["/learn\nstructured drills"]
-    Lang["/language\nTranslator · Dictionary · Puzzle"]
+    Lang["/language\nTranslator · Dictionary · Grammar"]
   end
   subgraph builder [Builder path]
     Tools["/tools\nWord Manager · Gap Workshop · Translation Test"]
@@ -27,7 +27,7 @@ flowchart LR
 | Route | Purpose | Progress |
 | --- | --- | --- |
 | [`/learn`](/learn) | Fixed exercises, lesson slicing, mastery | localStorage (+ optional cloud sync) |
-| [`/language`](/language) | Open-ended translation, dictionary browse, puzzle playtests | Session logs, not Learn XP |
+| [`/language`](/language) | Open-ended translation, dictionary browse, grammar reference | Not Learn XP |
 | [`/tools`](/tools) | Build and test vocabulary | Admin/community workflows |
 
 ---
@@ -189,4 +189,3 @@ Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 - Platform overview: [platform-overview.md](platform-overview.md)
 - Fonoran philosophy (campfire tiers): [fonoran-constitution.md](fonoran-constitution.md)
 - Grammar rules for drills: [fonoran-grammar.md](fonoran-grammar.md)
-- Learning experiment log: [fonoran-learning-sessions-log.md](fonoran-learning-sessions-log.md)

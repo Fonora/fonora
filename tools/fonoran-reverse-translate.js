@@ -1,19 +1,16 @@
 /**
- * Fonoran → natural-language reverse translator.
- * Normalizes Fonora script or roman input, resolves spellings to concepts/particles,
- * then (optionally) asks the LLM for a fluent reading in the target language.
+ * Fonoran to natural-language reverse translator.
+ *
+ * Normalizes Fonora script or roman input and resolves spellings to concepts and particles,
+ * producing a lexical gloss. The fluency layer that used to smooth that gloss into an idiomatic
+ * sentence was a model call, and it is gone: a reading of Fonoran that no rule can account for
+ * is not a reading of Fonoran. What the glosser cannot resolve stays visible as a gap.
  */
 
-import {
-  completeJson,
-  anthropicTranslatorConfigured,
-  ANTHROPIC_TRANSLATOR_API_KEY_ENV,
-} from './fonoran-llm-client.js';
 import { buildResolveContext } from './fonoran-english-resolve.js';
 import { getParticleRuntime } from './fonoran-particles.js';
 import { fonoraScriptToRoman } from './fonoran-fonora-bridge.js';
 import { loadFonoraLanguageRules, attachTranslatorPlayback } from './fonoran-playback-build.js';
-import { buildLlmGrammarBrief } from './fonoran-llm-grammar-brief.js';
 import { phoneticKeyBold } from './fonoran-pronunciation.js';
 
 const TARGET_LANG_LABELS = {
@@ -303,95 +300,6 @@ const WRONG_SOURCE_LANG_ERROR =
   'This looks like natural language, not Fonoran. Switch the source language to English (or Auto-detect) to translate into Fonoran.';
 
 /**
- * Ask the LLM for a fluent reverse reading.
- * @param {{ roman: string, tokens: object[], literal: string, targetLang: string, isQuestion?: boolean }} payload
- */
-const REVERSE_SYSTEM_PROMPT = `You are a Fonoran → natural-language interpreter.
-You receive a Fonoran phrase that has already been lexically resolved into particles and concept glosses.
-Produce a fluent, natural reading in the requested target language.
-
-Rules:
-- Compile MEANING from the glossed tokens and Fonoran grammar — do not invent extra content.
-- Particles: mi = I/speaker; ta = past; sa = future; no = not; ya = yes; von = if. Present tense has no particle.
-- Word order follows Fonoran skeleton (Actor · Action · Target/Place · Time); rearrange into natural target-language order.
-- Unknown / unresolved tokens are honest gaps — keep them visible (e.g. wrap in «…») rather than guessing.
-- Questions ending in "?" (or marked is_question) should read as questions.
-- Prefer a short everyday sentence over a word-for-word gloss when the meaning is clear.
-- Never invent Fonoran spellings or claim a gap is resolved.
-
-Return JSON only:
-{
-  "translation": "fluent sentence in the target language",
-  "literal": "optional tighter gloss if helpful, else same as translation",
-  "reasoning": "one sentence on how you read the structure",
-  "unresolved": ["any tokens you still could not interpret"]
-}`;
-
-async function fluentReverseViaLlm(payload) {
-  if (!anthropicTranslatorConfigured()) {
-    return {
-      ok: false,
-      error: `${ANTHROPIC_TRANSLATOR_API_KEY_ENV} not set`,
-      status: 503,
-    };
-  }
-
-  const langLabel = TARGET_LANG_LABELS[payload.targetLang] || 'English';
-  const glossLines = (payload.tokens ?? [])
-    .filter(t => t.kind !== 'empty')
-    .map((t) => {
-      if (t.kind === 'punctuation') return `PUNCT ${t.fonoran}`;
-      if (t.kind === 'particle') return `PARTICLE ${t.fonoran} = ${t.gloss}`;
-      if (!t.resolved) return `UNKNOWN ${t.fonoran}`;
-      return `LEX ${t.fonoran} (${t.concept_id ?? '?'}) = ${t.gloss}`;
-    })
-    .join('\n');
-
-  const grammar = buildLlmGrammarBrief();
-  const user = `Target language: ${langLabel} (${payload.targetLang})
-is_question: ${payload.isQuestion ? 'true' : 'false'}
-
-Fonoran roman:
-"""
-${payload.roman}
-"""
-
-Resolved tokens:
-${glossLines}
-
-Lexical gloss (fallback):
-${payload.literal}
-
-Return the JSON object.`;
-
-  const result = await completeJson({
-    system: REVERSE_SYSTEM_PROMPT,
-    cachePrefix: grammar,
-    user,
-    temperature: 0,
-    maxTokens: 512,
-    apiKeyEnv: ANTHROPIC_TRANSLATOR_API_KEY_ENV,
-  });
-
-  if (!result.ok) return result;
-  const data = result.data ?? {};
-  const translation = String(data.translation ?? '').trim();
-  if (!translation) {
-    return { ok: false, error: 'LLM returned empty reverse translation', status: 502 };
-  }
-  return {
-    ok: true,
-    model: result.model,
-    translation,
-    literal: String(data.literal ?? translation).trim() || translation,
-    reasoning: String(data.reasoning ?? '').trim() || null,
-    unresolved: Array.isArray(data.unresolved)
-      ? data.unresolved.map(x => String(x).trim()).filter(Boolean)
-      : [],
-  };
-}
-
-/**
  * Translate Fonoran (script or roman) into a natural-language target.
  * @param {string} text
  * @param {{
@@ -401,7 +309,6 @@ Return the JSON object.`;
  *   lab?: object,
  *   skipCache?: boolean,
  *   devLab?: boolean,
- *   engine?: string,
  * }} [options]
  */
 export async function translateFromFonoran(text, options = {}) {
@@ -461,40 +368,12 @@ export async function translateFromFonoran(text, options = {}) {
     };
   }
 
-  let translation = glossed.literal;
-  let literal = glossed.literal;
-  let reasoning = 'Lexical gloss from approved spellings and grammar particles.';
-  let engine = 'lexical';
-  let model = null;
-  let llmUnresolved = [];
+  const translation = glossed.literal;
+  const literal = glossed.literal;
+  const reasoning = 'Lexical gloss from approved spellings and grammar particles.';
+  const engine = 'lexical';
 
-  const wantLlm = (options.engine ?? 'llm') !== 'legacy'
-    && (options.engine ?? 'llm') !== 'lexical';
-
-  if (wantLlm && anthropicTranslatorConfigured()) {
-    const llm = await fluentReverseViaLlm({
-      roman: normalized.roman,
-      tokens: glossed.tokens,
-      literal: glossed.literal,
-      targetLang,
-      isQuestion,
-    });
-    if (llm.ok) {
-      translation = llm.translation;
-      literal = llm.literal || glossed.literal;
-      reasoning = llm.reasoning || reasoning;
-      engine = 'llm';
-      model = llm.model ?? null;
-      llmUnresolved = llm.unresolved ?? [];
-    } else if (options.engine === 'llm') {
-      // Explicit llm request with no usable fallback key path — still return lexical.
-      reasoning = `${reasoning} (LLM unavailable: ${llm.error})`;
-    }
-  } else if (wantLlm && !anthropicTranslatorConfigured()) {
-    reasoning = `${reasoning} (LLM key not set — showing lexical gloss.)`;
-  }
-
-  const unresolved = [...new Set([...(glossed.unresolved ?? []), ...llmUnresolved])];
+  const unresolved = [...new Set(glossed.unresolved ?? [])];
   const tokens = glossed.tokens.map(t => ({
     ...t,
     pronunciation: t.pronunciation ?? {
@@ -529,7 +408,7 @@ export async function translateFromFonoran(text, options = {}) {
     reasoning,
     unresolved,
     engine,
-    model,
+    model: null,
     is_question: isQuestion,
     warnings: normalized.warnings ?? [],
     detected_lang: inputMode === 'fonora' ? 'fonoran-fonora' : 'fonoran-roman',

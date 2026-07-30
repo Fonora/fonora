@@ -5,7 +5,6 @@ import { readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { translateEnglish, resetTranslatorCache } from './fonoran-translator.js';
-import { translate } from './fonoran-translate.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PROBES_PATH = join(ROOT, 'data/fonoran-translation-probes.json');
@@ -65,53 +64,17 @@ export function classifyProbeResult(entry, check) {
   return { status, framePass, regression };
 }
 
-/**
- * Translate one probe on the requested engine.
- *
- * `llm` is the shipped compiler and the default. `legacy` is selectable for
- * comparison only: it is @deprecated and diverges from production in ways that
- * change probe verdicts, since it does not group coordinated constituents and
- * drops WH words when a destination path is present (RN-38). Verdicts taken
- * from it do not describe what ships.
- */
-async function translateProbe(en, { engine, cacheOnly, lab }) {
-  if (engine === 'legacy') return translateEnglish(en, lab ? { lab } : {});
-  // sourceLang must be explicit: the cache key is `${lang}|${text}`, so omitting
-  // it looks up `auto|...` and misses every warmed English entry.
-  return translate(en, { engine: 'llm', cacheOnly, sourceLang: 'en', ...(lab ? { lab } : {}) });
-}
-
-export async function runTranslationProbes({ lab = null, engine = 'llm', cacheOnly = true } = {}) {
+export async function runTranslationProbes({ lab = null } = {}) {
   const corpus = await loadTranslationProbes();
   resetTranslatorCache();
   const phrases = [];
-  const warmNeeded = [];
   let framePassCount = 0;
   let committedPass = 0;
   let committedFail = 0;
   let regressions = 0;
 
   for (const entry of corpus.phrases) {
-    const r = await translateProbe(entry.en, { engine, cacheOnly, lab });
-
-    // A cache miss is an infrastructure state, not a language failure: it says
-    // nothing about the frame, so it is reported for warming rather than scored.
-    if (r?.cache_miss) {
-      warmNeeded.push(entry.en);
-      phrases.push({
-        en: entry.en,
-        target_frame: entry.target_frame,
-        status: entry.status ?? 'pass',
-        note: entry.note ?? null,
-        roman: '',
-        unresolved: [],
-        frame_pass: false,
-        regression: false,
-        cache_miss: true,
-        missing: [],
-      });
-      continue;
-    }
+    const r = await translateEnglish(entry.en, lab ? { lab } : {});
 
     const check = checkTargetFrame(entry.target_frame, r);
     const unresolved = r.unresolved ?? [];
@@ -132,21 +95,19 @@ export async function runTranslationProbes({ lab = null, engine = 'llm', cacheOn
       unresolved,
       frame_pass: verdict.framePass,
       regression: verdict.regression,
-      cache_miss: false,
       missing: check.missing,
     });
   }
 
   return {
     version: corpus.version,
-    engine,
+    engine: 'legacy',
     total: phrases.length,
     frame_pass: framePassCount,
     committed_pass: committedPass,
     committed_broken: committedFail,
     regressions,
-    warm_needed: warmNeeded,
-    ok: regressions === 0 && warmNeeded.length === 0,
+    ok: regressions === 0,
     phrases,
   };
 }

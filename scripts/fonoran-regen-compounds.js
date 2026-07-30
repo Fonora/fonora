@@ -156,7 +156,7 @@ async function main() {
     philosophy:
       'Compounds are meaning-attempts, not canonical answers. Each concept keeps a preferred '
       + 'form and alternate understandable forms. understandability is an advisory ranking aid; '
-      + 'human guess-the-meaning playtests decide the preferred form (docs/fonoran-constitution.md).',
+      + 'a human decides the preferred form (docs/fonoran-constitution.md).',
     description:
       'Phase IV regenerated from semantic-foundation teaching trees '
       + '(data/fonoran-semantic-demo-compounds.json) with deterministic preferred selection.',

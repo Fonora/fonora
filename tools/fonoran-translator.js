@@ -69,7 +69,7 @@ import {
 import { getParticleRuntime, resetParticleCache } from './fonoran-particles.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
 import { enforceModifierOrder } from './fonoran-grammar-spec.js';
-import { promoteTemporalSceneToTime, applyDisjunction } from './fonoran-llm-grammar-brief.js';
+import { promoteTemporalSceneToTime, applyDisjunction } from './fonoran-frame-grammar.js';
 
 /**
  * Cached grammar-particle runtime: { index, byId, quantifiers }.

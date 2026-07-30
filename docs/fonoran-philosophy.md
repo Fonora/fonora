@@ -152,19 +152,25 @@ Understandability is judged in two layers, and the layers are **not** equal:
 1. **An automated heuristic** estimates communicative success — transparency,
    simplicity, ambiguity, and root familiarity. It **ranks** candidate expressions.
    It is a *ranking aid only*. It is never the authority.
-2. **Human "guess-the-meaning" playtests** decide. A compound is preferred when real
-   root-knowers recover its meaning. Where the score and the playtest disagree, **the
-   playtest wins.**
+2. **A human** decides. A compound is preferred when a real root-knower recovers its
+   meaning. Where the score and the person disagree, **the person wins**, and the
+   decision is recorded as `preferred_source: "human"` so the scorer cannot undo it.
 
-> The score estimates communicative success. Recovery by humans *is* communicative
+> The score estimates communicative success. Recovery by a human *is* communicative
 > success.
+
+The in-app guess-the-meaning game that once collected this judgement was removed in
+July 2026: it scored recovery by exact match against the English headword, which tests
+lexical recall rather than understanding, and it ranked *world* as
+whole+place+earth+life above earth+life on that basis. The 54 decisions it did produce
+were human judgements and remain locked under `preferred_source: "playtest"`.
 
 ## Puzzle conversation
 
 Fonoran must support **puzzle conversation**: speakers try a combination, sometimes
-fail, then repair and clarify until meaning is recovered. The tools exist to make
-this loop fast, to record what worked, and to let the language learn from real
-attempts rather than from a designer's intuition alone.
+fail, then repair and clarify until meaning is recovered. This is a property the
+language has to have, so the translator brackets what it cannot say instead of
+inventing a form, and the dictionary keeps alternates rather than one canonical answer.
 
 ## Working principles (for contributors and generators)
 

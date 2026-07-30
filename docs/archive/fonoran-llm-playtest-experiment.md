@@ -1,5 +1,8 @@
 # LLM synthetic playtest experiment
 
+> **Archive, LLM era. The project no longer uses models to build or judge the language. Kept as a record of the playtest experiment. Live rules: [fonoran-rulebook.md](../fonoran-rulebook.md).**
+
+
 <!-- language-ref: archival — records spellings as they were when written; see scripts/fonoran-verify-language-refs.js -->
 
 > **Status:** v4 Compositional Intuition Battery — **synthetic-only validity strategy (RN-30)**  

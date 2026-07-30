@@ -22,8 +22,6 @@ export const EDITORIAL_DOCS = {
   localization_en: 'data/localizations/en.json',
   compounds: 'data/fonoran-compounds.json',
   phonetics_config: 'data/fonoran-primitive-roots-config.json',
-  playtests: 'data/fonoran-playtests.json',
-  llm_evaluations: 'data/fonoran-llm-evaluations.json',
 };
 
 /** Snapshot bundle file paths (includes lab bucket). */
@@ -57,16 +55,6 @@ CREATE TABLE IF NOT EXISTS fonoran_editorial_docs (
   doc_key TEXT PRIMARY KEY,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   body JSONB NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS research_notes (
-  slug TEXT PRIMARY KEY,
-  workflow TEXT NOT NULL DEFAULT 'draft',
-  metadata JSONB NOT NULL,
-  body TEXT NOT NULL,
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  published_at TIMESTAMPTZ,
-  updated_by TEXT
 );
 
 INSERT INTO fonoran_lab_meta (id, schema_version)
@@ -194,11 +182,6 @@ function isDocBodyEmpty(key, body) {
       return !(body.compounds?.length);
     case 'phonetics_config':
       return !body.phonetics && !body.version;
-    case 'playtests':
-      // A playtests doc with a version but no rounds yet is still a valid (empty) doc.
-      return !body.version && !(body.rounds?.length);
-    case 'llm_evaluations':
-      return !body.version && !(body.rounds?.length);
     default:
       return false;
   }
@@ -384,13 +367,6 @@ function docCounts(key, body) {
       return { compounds: body.compounds?.length ?? 0 };
     case 'phonetics_config':
       return { phonetics: Boolean(body.phonetics) };
-    case 'playtests':
-      return { rounds: body.rounds?.length ?? 0 };
-    case 'llm_evaluations':
-      return {
-        rounds: body.rounds?.length ?? 0,
-        concepts: Object.keys(body.aggregates ?? {}).length,
-      };
     default:
       return {};
   }
@@ -401,17 +377,10 @@ export async function readAllSnapshotDocs() {
   const bucket = await readBucketRaw();
   if (!bucket) throw new Error('Lab bucket is empty or unreadable');
 
-  // Docs that may be absent in older stores/snapshots; their absence must not break
-  // export or import of the rest of the language state.
-  const OPTIONAL_DOCS = new Set(['playtests', 'llm_evaluations']);
-
   const docs = {};
   for (const key of Object.keys(EDITORIAL_DOCS)) {
     const body = await readDoc(key);
-    if (!body) {
-      if (OPTIONAL_DOCS.has(key)) continue;
-      throw new Error(`Missing editorial doc: ${key}`);
-    }
+    if (!body) throw new Error(`Missing editorial doc: ${key}`);
     docs[key] = body;
   }
 
@@ -423,16 +392,10 @@ export async function readAllSnapshotDocs() {
  * @param {{ bucket: object, docs: Record<string, object> }} snapshot
  */
 export async function importAllSnapshotDocs({ bucket, docs }) {
-  // Optional docs (e.g. playtests) added after some snapshots were created — skip them
-  // when an older snapshot does not carry them rather than failing the whole restore.
-  const OPTIONAL_DOCS = new Set(['playtests', 'llm_evaluations']);
   clearStoreCache();
   await writeBucketRaw(bucket);
   for (const key of Object.keys(EDITORIAL_DOCS)) {
-    if (!docs[key]) {
-      if (OPTIONAL_DOCS.has(key)) continue;
-      throw new Error(`Snapshot missing doc: ${key}`);
-    }
+    if (!docs[key]) throw new Error(`Snapshot missing doc: ${key}`);
     await writeDoc(key, docs[key]);
   }
   clearStoreCache();
@@ -467,17 +430,12 @@ export async function readSnapshotFromSeedPaths(baseDir = ROOT) {
   const docs = {};
   for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
     const body = await readJsonFile(editorialSeedPath(key, rel, baseDir));
-    if (!body) {
-      if (OPTIONAL_EDITORIAL_DOCS.has(key)) continue;
-      throw new Error(`Missing or unreadable ${rel}`);
-    }
+    if (!body) throw new Error(`Missing or unreadable ${rel}`);
     docs[key] = body;
   }
 
   return importAllSnapshotDocs({ bucket, docs });
 }
-
-const OPTIONAL_EDITORIAL_DOCS = new Set(['playtests', 'llm_evaluations']);
 
 /** Read editorial seed JSON from disk (deploy slug / data/). */
 export async function readEditorialSeedsFromPaths(baseDir = ROOT) {
@@ -486,7 +444,6 @@ export async function readEditorialSeedsFromPaths(baseDir = ROOT) {
   for (const [key, rel] of Object.entries(EDITORIAL_DOCS)) {
     const body = await readJsonFile(editorialSeedPath(key, rel, baseDir));
     if (!body) {
-      if (OPTIONAL_EDITORIAL_DOCS.has(key)) continue;
       missing.push(rel);
       continue;
     }
@@ -586,7 +543,7 @@ export async function pgBucketIsEmpty() {
  * not refresh it. Reading the seeds removes that failure mode and the deploy step that
  * would otherwise be needed to avoid it.
  *
- * Everything else (research notes, community, proposals, auth) still uses the database,
+ * Everything else (community, proposals, auth) still uses the database,
  * since those are genuinely runtime state rather than published language.
  *
  * Set FONORAN_LAB_SOURCE=database to read the lab from Postgres instead, which is what

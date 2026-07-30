@@ -15,8 +15,6 @@ import { loadActiveRulesFixture, applyBundleMaps } from './load-rules-fixture.js
 import { LANGUAGE_RULES_PATH } from './fonora-config.js';
 import { runTests } from './tests-core.js';
 import { runKeyboardComposeTests } from './fonora-keyboard-compose.test.js';
-import { runResearchNoteMetaTests } from './research-note-meta.test.js';
-import { runResearchNotesStoreTests } from '../tools/research-notes-store.test.js';
 import { runFonoranAuthTests } from '../tools/fonoran-auth.test.js';
 import { runFonoranLabSearchTests } from '../tools/fonoran-lab-search.test.js';
 import { runFonoranCoursePhrasesTests } from '../tools/fonoran-course-phrases.test.js';
@@ -643,13 +641,7 @@ const keyboardPassed = keyboardComposeResults.passed;
 const keyboardTotal = keyboardComposeResults.total;
 const keyboardFailed = keyboardComposeResults.failed;
 
-const researchMetaResults = runResearchNoteMetaTests();
-const researchMetaFailed = researchMetaResults.filter((r) => !r.ok);
-const researchMetaPassed = researchMetaResults.length - researchMetaFailed.length;
 
-const researchStoreResults = await runResearchNotesStoreTests();
-const researchStoreFailed = researchStoreResults.filter((r) => !r.ok);
-const researchStorePassed = researchStoreResults.length - researchStoreFailed.length;
 
 const authResults = await runFonoranAuthTests();
 const authFailed = authResults.filter((r) => !r.ok);
@@ -1432,8 +1424,6 @@ const rootWorkflowResult = await (async () => {
 const allFailed = [
   ...failed,
   ...keyboardFailed,
-  ...researchMetaFailed,
-  ...researchStoreFailed,
   ...authFailed,
   ...corpusResults.filter((r) => !r.ok),
   ...languagePolicyResults.filter((r) => !r.ok),
@@ -1469,8 +1459,6 @@ const allFailed = [
 const allPassed =
   passed
   + keyboardPassed
-  + researchMetaPassed
-  + researchStorePassed
   + authPassed
   + coursePhrasesPassed
   + corpusResults.filter((r) => r.ok).length
@@ -1502,7 +1490,7 @@ const allPassed =
   + (prefixSafeResult.ok ? 1 : 0)
   + (rootWorkflowResult.ok ? 1 : 0)
   + (labSearchResult.ok ? 1 : 0);
-const allTotal = total + keyboardTotal + researchMetaResults.length + researchStoreResults.length + authResults.length + coursePhrasesResults.length + corpusResults.length + languagePolicyResults.length + 27;
+const allTotal = total + keyboardTotal + authResults.length + coursePhrasesResults.length + corpusResults.length + languagePolicyResults.length + 27;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

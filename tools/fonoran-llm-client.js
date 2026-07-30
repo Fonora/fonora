@@ -21,7 +21,7 @@ const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
  */
 const ADAPTIVE_THINKING_MODELS = /(?:fable|sonnet-5)/i;
 
-/** Backend/tooling LLM key (gap analysis, playtests, corpus generation). */
+/** Backend/tooling LLM key. No pipeline uses it any more; kept for the env-var name. */
 export const ANTHROPIC_API_KEY_ENV = 'ANTHROPIC_API_KEY';
 
 /** User-facing translator LLM key (Language app /api/fonoran/translate). */
