@@ -2,7 +2,7 @@
   "source": "merge of data/archive/fonoran-semantic-primitives.json (core, archived) + data/fonoran-primitive-roots-config.json (extended)",
   "status": "canonical",
   "version": "1.0-converged-editorial",
-  "core_count": 136,
+  "core_count": 145,
   "primitives": [
     {
       "id": "addressee",
@@ -304,6 +304,20 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "color",
+      "tier": "core",
+      "domain": "quality",
+      "description": "color; the visual quality of a surface",
+      "priority_class": "useful",
+      "suggested_status": "primitive",
+      "plain_description": "color; the visual quality of a surface",
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap.",
+      "primitive_test_note": "A dimension root: color words become compounds (color+light, color+dark) instead of one root each."
+    },
+    {
       "id": "conflict",
       "tier": "core",
       "domain": "relationships",
@@ -327,8 +341,8 @@
       "primitive_test_note": "Distinct from many/some/all/one (values on the scale). Pairing unknown with count is what English packs into how many and how much. One axis covers both people and water: Fonoran does not mark the English count/mass split, so the noun names what is being counted.",
       "experience_tier": "abstract",
       "language_tier": "fluent_core",
-      "campfire_pass": true,
-      "campfire_reason": "Ring 3 by capacity (Rings 1–2 are full). Still campfire-needed in spirit: strangers ask how many / how much early. The quantity axis, not a value."
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "dark",
@@ -526,6 +540,20 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "female",
+      "tier": "core",
+      "domain": "being",
+      "description": "female; the she-kind of a living being",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "female; the she-kind of a living being",
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap.",
+      "primitive_test_note": "With male, unlocks mother/father/boy/girl/man/woman as transparent compounds of parent, child, person."
+    },
+    {
       "id": "fire",
       "tier": "core",
       "domain": "element",
@@ -631,6 +659,20 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "happen",
+      "tier": "core",
+      "domain": "process",
+      "description": "an event takes place; occur",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "an event takes place; occur",
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap.",
+      "primitive_test_note": "NSM prime. Not doing (no agent) and not change (no end state claimed): something simply took place."
+    },
+    {
       "id": "happy",
       "domain": "emotion",
       "description": "feeling glad and content",
@@ -680,6 +722,19 @@
       "language_tier": "extended_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+    },
+    {
+      "id": "heavy",
+      "tier": "core",
+      "domain": "quality",
+      "description": "heavy; hard to lift",
+      "priority_class": "useful",
+      "suggested_status": "primitive",
+      "plain_description": "heavy; hard to lift",
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "help",
@@ -914,6 +969,19 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
+      "id": "male",
+      "tier": "core",
+      "domain": "being",
+      "description": "male; the he-kind of a living being",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "male; the he-kind of a living being",
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "many",
       "tier": "core",
       "domain": "quantity",
@@ -1041,6 +1109,19 @@
       "language_tier": "communicative_core",
       "campfire_pass": true,
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "new",
+      "tier": "core",
+      "domain": "quality",
+      "description": "new; recently come into being",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "new; recently come into being",
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "now",
@@ -1314,6 +1395,19 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "side",
+      "tier": "core",
+      "domain": "space",
+      "description": "the side of a thing; a flank, face or edge",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "the side of a thing; a flank, face or edge",
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "skin",
       "tier": "core",
       "domain": "body",
@@ -1389,6 +1483,20 @@
       "language_tier": "extended_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+    },
+    {
+      "id": "sound",
+      "tier": "core",
+      "domain": "element",
+      "description": "sound; what is heard",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "sound; what is heard",
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap.",
+      "primitive_test_note": "The phenomenon, not the act: hear is the action root, sound is what reaches the ear. Mirrors light (what lets you see)."
     },
     {
       "id": "source",
@@ -1741,6 +1849,19 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "wet",
+      "tier": "core",
+      "domain": "element",
+      "description": "wet; soaked with water",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "wet; soaked with water",
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "will",
       "tier": "core",
       "domain": "abstract",
@@ -1769,7 +1890,7 @@
   ],
   "description": "Converged Fonoran concept inventory: ring-redesigned primitive set with 4 new spatial primitives (around/front/back/through) and 16 demoted to compound_candidate. Derivable concepts live in data/fonoran-compounds.json; polarity/tense/mood are particles, not roots.",
   "extended_count": 8,
-  "primitive_count": 136,
+  "primitive_count": 145,
   "productive_dimensions": {
     "bond": [
       "family",
@@ -1833,8 +1954,8 @@
     "summary": {
       "ring_1": 50,
       "ring_2": 50,
-      "ring_3": 36,
-      "total_assigned": 136,
+      "ring_3": 45,
+      "total_assigned": 145,
       "cap": 150
     },
     "spec": "data/fonoran-root-rings.json"

@@ -149,7 +149,10 @@
         "friend",
         "friendship",
         "trusts",
-        "trusted"
+        "trusted",
+        "relationship",
+        "relation",
+        "relationships"
       ]
     },
     "bone": {
@@ -357,7 +360,8 @@
         "builds",
         "cook",
         "cooked",
-        "cooks"
+        "cooks",
+        "creation"
       ]
     },
     "many": {
@@ -666,7 +670,8 @@
         "shop",
         "shops",
         "market",
-        "markets"
+        "markets",
+        "area"
       ]
     },
     "plant": {
@@ -844,10 +849,6 @@
         "someone",
         "somebody",
         "people",
-        "man",
-        "woman",
-        "men",
-        "women",
         "healer",
         "healers",
         "she",
@@ -887,7 +888,9 @@
         "strength",
         "power",
         "force",
-        "hard"
+        "hard",
+        "solid",
+        "firm"
       ]
     },
     "outside": {
@@ -961,8 +964,7 @@
       "label": "parent",
       "aliases": [
         "parent",
-        "parents",
-        "father"
+        "parents"
       ]
     },
     "grandparent": {
@@ -1283,7 +1285,10 @@
     "wound": {
       "label": "wound",
       "aliases": [
-        "injured"
+        "injured",
+        "injury",
+        "injuries",
+        "wounds"
       ]
     },
     "closer": {
@@ -1345,17 +1350,166 @@
       "aliases": [
         "raw"
       ]
+    },
+    "center": {
+      "label": "center",
+      "aliases": [
+        "central",
+        "centre",
+        "middle",
+        "centered",
+        "centred"
+      ]
+    },
+    "include": {
+      "label": "include",
+      "aliases": [
+        "participate",
+        "participates",
+        "participated",
+        "join",
+        "joins",
+        "joined"
+      ]
+    },
+    "open_space": {
+      "label": "open space",
+      "aliases": [
+        "space"
+      ]
+    },
+    "cause": {
+      "label": "cause",
+      "aliases": [
+        "because"
+      ]
+    },
+    "greeting": {
+      "label": "greeting",
+      "aliases": [
+        "hello",
+        "hi"
+      ]
+    },
+    "lonely": {
+      "label": "lonely",
+      "aliases": [
+        "alone"
+      ]
+    },
+    "happen": {
+      "label": "happen",
+      "aliases": [
+        "occur",
+        "occurs",
+        "occurred",
+        "happens"
+      ]
+    },
+    "new": {
+      "label": "new",
+      "aliases": [
+        "fresh"
+      ]
+    },
+    "side": {
+      "label": "side",
+      "aliases": [
+        "sides",
+        "flank"
+      ]
+    },
+    "sound": {
+      "label": "sound",
+      "aliases": [
+        "sounds"
+      ]
+    },
+    "color": {
+      "label": "color",
+      "aliases": [
+        "colour",
+        "colors",
+        "colours"
+      ]
+    },
+    "wet": {
+      "label": "wet",
+      "aliases": [
+        "damp",
+        "moist",
+        "soaked"
+      ]
+    },
+    "heavy": {
+      "label": "heavy",
+      "aliases": [
+        "weight"
+      ]
+    },
+    "female": {
+      "label": "female",
+      "aliases": []
+    },
+    "male": {
+      "label": "male",
+      "aliases": []
+    },
+    "spirit": {
+      "label": "spirit",
+      "aliases": [
+        "spiritual",
+        "soul",
+        "souls"
+      ]
+    },
+    "tradition": {
+      "label": "tradition",
+      "aliases": [
+        "traditions",
+        "traditional",
+        "custom",
+        "customs"
+      ]
+    },
+    "weather": {
+      "label": "weather",
+      "aliases": []
+    },
+    "mother": {
+      "label": "mother",
+      "aliases": [
+        "mothers",
+        "mom",
+        "mama"
+      ]
+    },
+    "father": {
+      "label": "father",
+      "aliases": [
+        "fathers",
+        "dad",
+        "papa"
+      ]
+    },
+    "noise": {
+      "label": "noise",
+      "aliases": [
+        "noises"
+      ]
+    },
+    "worried": {
+      "label": "worried",
+      "aliases": [
+        "worry",
+        "worries",
+        "worrying",
+        "nervous",
+        "uneasy"
+      ]
     }
   },
   "version": "1.0-localization",
   "description": "English labels and word bank for Fonoran concept identifiers. English is one localization — not the semantic authority.",
-  "count": {
-    "label": "count",
-    "aliases": [
-      "amount",
-      "number",
-      "quantity",
-      "total"
-    ]
-  }
+  "count": 176
 }

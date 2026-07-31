@@ -2,7 +2,7 @@
  * Fonoran grammar practice: Rule 4 basics lesson, then phrase drills.
  *
  * Lesson 1 is the hand-authored five-minute grammar (preferred order, particles,
- * serial want+go, bare destinations, casual Actor drop). Later lessons mix
+ * serial want+go, bare destinations, Actor always spoken). Later lessons mix
  * reorder / particle / translation drills from course phrases.
  *
  * Question UI switches per item: typed answer (existing input) or MCQ

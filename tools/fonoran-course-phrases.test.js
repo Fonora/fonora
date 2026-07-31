@@ -97,7 +97,11 @@ const rule4LessonTest = test('Rule 4 grammar basics lesson has 10 live-lexicon d
   const beach = exercises.find((e) => e.id === 'gb-beach');
   assert(beach, 'beach drill present');
   assert(grammarLessonAnswerMatches(beach, 'be sak gi yetem ?'), 'full beach form');
-  assert(grammarLessonAnswerMatches(beach, 'sak gi yetem'), 'casual beach form accepted');
+  assert(!grammarLessonAnswerMatches(beach, 'sak gi yetem'), 'actorless beach form rejected');
+  const actorSpoken = exercises.find((e) => e.id === 'gb-actor-spoken');
+  assert(actorSpoken, 'actor-spoken drill present');
+  assert(grammarLessonAnswerMatches(actorSpoken, 'be sak gi yetem ?'), 'actor kept');
+  assert(!grammarLessonAnswerMatches(actorSpoken, 'sak gi yetem ?'), 'actor drop rejected');
   const bare = exercises.find((e) => e.id === 'gb-bare-dest');
   assert(
     grammarPhraseExerciseMatches(bare, 'to-fonoran', 'mi gi ye'),

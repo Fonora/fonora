@@ -33,6 +33,8 @@ The Action is the verb. The Actor is the head of the noun phrase before it, so a
 
 This is also where English grammar is consumed and discarded. Tense comes from verb form and becomes a particle rather than an ending; irregulars need no list of ours, since the tagger already reports `gave` as `give`. Negation words are re-emitted as the `no` particle in front of what they deny, scoped to their own clause. Ability and necessity modals become ordinary concepts before the Action. Words English marks and Fonoran does not (number, articles, degree adverbs) are dropped; everything else either resolves or is reported.
 
+Negating affixes are read as structure here too (`tools/fonoran-english-derivation.js`): *unsafe* becomes `no` + safe, *fearless* becomes `no` + fear — the same rule-9 constituent negation a speaker would use. The split fires only when the base is a known lexicon alias at full strength and the word is not itself in the lexicon whole; stoplists carry the traps (*unless* is not un+less). A word failing either guard flows on whole and gaps honestly.
+
 ## Step 3: resolve each word to a concept, in a fixed tier order
 
 For one word, the first tier that hits wins. The order is the whole point: certain routes are trustworthy and are tried before looser ones.
@@ -45,9 +47,12 @@ For one word, the first tier that hits wins. The order is the whole point: certa
 | 4 | Transparent phrase assembly over strong aliases only | medium |
 | 5 | Strong alias, concept id, or lemma | **high** |
 | 6 | Curated interpretation rule (spatial paths, classes, idioms) | medium |
-| 7 | Nothing matched, emit a gap | none |
+| 7 | Derivational base through the parser's morphology hooks (`safety`→safe via -ty, `creation`→make via -ion, `badly`→bad via -ly) | medium |
+| 8 | Nothing matched, emit a gap | none |
 
 A **weak** alias never produces output. It is recorded as a curation suggestion for a human instead, which is how the lexicon grows without the translator inventing entries.
+
+Tier 7 is not a stemmer: the affix rules (`tools/fonoran-english-derivation.js`) only propose lookup candidates, each candidate must still resolve at full strength, and a hit is marked interpreted with the affix named. A stripped form that resolves to nothing stays an honest gap, which is what separates this from the hand-rolled suffix-stripping the morphology module replaced. The hook is optional in the parser contract; a language whose parser supplies none skips the tier.
 
 Once a concept is identified, its spelling comes from the approved roots, or from a compound's composition, or is built from parts. Retired spellings are resolved through their live concept id, so a respelled root does not need every downstream artifact rebuilt.
 
@@ -94,7 +99,8 @@ A tagger knows English. It does not know Fonoran, and nothing off the shelf can:
 | Job | Owner |
 | --- | --- |
 | Part of speech, lemma, clause shape | `wink-nlp` |
-| Which of the 136 concepts an English word means | `data/localizations/en.json`, `data/fonoran-concept-bridges.json` |
+| Derivational affixes (candidates only, resolve-guarded) | `tools/fonoran-english-derivation.js` |
+| Which of the 145 concepts an English word means | `data/localizations/en.json`, `data/fonoran-concept-bridges.json` |
 | Slot order, particles, question marking, WH composition, gap reporting | this pipeline |
 
 ## What it looks like

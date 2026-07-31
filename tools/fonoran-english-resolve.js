@@ -37,6 +37,7 @@ import {
   headNounToken,
 } from './fonoran-interpretation.js';
 import { tokenizeEnglish, lemmatizeEnglish, inflectedLemma } from './fonoran-english-morphology.js';
+import { derivationalBases } from './fonoran-english-derivation.js';
 import { REUSABLE_WORD_STATES } from './fonoran-derivation.js';
 import { retiredSpellingConceptIds } from './fonoran-retired-spellings.js';
 
@@ -224,6 +225,7 @@ const ENGLISH_MORPHOLOGY = {
   lemmatize: lemmatizeEnglish,
   inflectedLemma,
   lemmaCandidates: word => lemmaCandidates(word),
+  derivationalBases,
 };
 
 /** Lookup keys for a surface form, via the context's language morphology. */
@@ -707,11 +709,14 @@ function weakSuggestionFromHit(hit) {
  * Deterministic, concept-first English → Fonoran resolution for one token or
  * phrase. Ordered tiers with a hard confidence floor:
  *
- *   HIGH   (direct):      curated strong alias / concept id / lemma / phrase.
- *   MEDIUM (interpreted): curated concept hint, curated interpretation rule
- *                         (spatial_path / classes / idioms), irregular past,
- *                         head-noun of a phrase, agentive morphology, and
- *                         transparent compound assembly over strong aliases.
+ *   HIGH   (direct):      curated strong alias / concept id / lemma / phrase;
+ *                         also a concept hint whose surface is already a strong
+ *                         alias of that concept (you→addressee).
+ *   MEDIUM (interpreted): curated concept hint (nearest-concept pin only),
+ *                         curated interpretation rule (spatial_path / classes /
+ *                         idioms), irregular past, head-noun of a phrase,
+ *                         agentive morphology, and transparent compound
+ *                         assembly over strong aliases.
  *   BELOW FLOOR:          honest gap — surfaces as `[english]`, never a
  *                         fabricated word (docs Design Rule 0). A demoted weak
  *                         (gloss-derived) alias is carried as a curation
@@ -749,16 +754,23 @@ export async function resolveEnglishToken(english, ctx, {
     return loanToken({ role, english: surface, roman: pinnedLoan.roman, gloss: pinnedLoan.gloss });
   }
 
-  // Tier MEDIUM: curated concept hint.
+  // Curated concept hint. When the typed word is already a strong alias of the
+  // hinted concept (you→addressee, we→collective), this is lexical resolution —
+  // the hint only pins the concept against a colliding alias. Mark it direct so
+  // the translator does not style ordinary pronoun roots as "interpreted".
   if (hints.concept_hint) {
     const hintHit = lookupByConceptId(ctx, hints.concept_hint);
     if (hintHit.resolved) {
+      const aliasHit = lookupByKeys(ctx, buildTryKeys(surface.toLowerCase(), ctx));
+      const lexical = aliasHit.resolved
+        && aliasHit.alias_strength !== 'weak'
+        && aliasHit.concept_id === hints.concept_hint;
       return enrichToken({ ...hintHit, role, english: surface }, {
-        resolution_kind: 'interpreted',
-        confidence: 'medium',
-        interpreted: true,
-        interpreted_from: surface,
-        interpret_reason: hints.interpret_reason ?? 'concept hint',
+        resolution_kind: lexical ? 'direct' : 'interpreted',
+        confidence: lexical ? 'high' : 'medium',
+        interpreted: !lexical,
+        interpreted_from: lexical ? null : surface,
+        interpret_reason: lexical ? null : (hints.interpret_reason ?? 'concept hint'),
       });
     }
   }
@@ -850,6 +862,26 @@ export async function resolveEnglishToken(english, ctx, {
   // power→pow, water→wat). Genuine agentive nouns (healer, hunter, traveler) are
   // curated as explicit aliases; unknown ones surface as honest gaps and the
   // offline WordNet assistant proposes agentive splits for human review.
+
+  // Tier MEDIUM: derivational morphology through the parser's hooks — safety
+  // reaches `safe` through -ty, creation reaches `make` through -ion + the
+  // create alias, badly reaches `bad` through -ly. Unlike the banned agentive
+  // stripping, each candidate must still resolve strongly, so a stripped
+  // non-word stays an honest gap, and the hit is marked interpreted with the
+  // affix named. The hook is optional in the parser contract: a language whose
+  // parser supplies none skips this tier.
+  const derived = (ctx.morph ?? ENGLISH_MORPHOLOGY).derivationalBases?.(lookupWord) ?? [];
+  for (const { base, suffix } of derived) {
+    const baseHit = lookupByKeys(ctx, buildTryKeys(base, ctx));
+    if (!baseHit.resolved || baseHit.alias_strength === 'weak') continue;
+    return enrichToken({ ...baseHit, role, english: surface }, {
+      resolution_kind: 'interpreted',
+      confidence: 'medium',
+      interpreted: true,
+      interpreted_from: surface,
+      interpret_reason: `derivation:-${suffix}\u2192${base}`,
+    });
+  }
 
   // Tier MEDIUM: transparent single-word assembly over strong aliases only.
   const wordAssembly = await tryTransparentWordAssembly(lookupWord, ctx, role);

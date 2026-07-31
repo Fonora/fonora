@@ -30,6 +30,7 @@ import {
 } from './fonoran-english-morphology.js';
 import { modalComposition } from './fonoran-language-policy.js';
 import { emptySlots, appendSlots } from './fonoran-source-parsers.js';
+import { derivationalBases, negatedBases } from './fonoran-english-derivation.js';
 
 /** Language this parser owns. */
 export const lang = 'en';
@@ -47,6 +48,8 @@ export const morphology = {
   inflectedLemma,
   /** Lookup-key candidates for a surface form: the word itself plus its lemma. */
   lemmaCandidates: word => lemmaCandidates(word),
+  /** Same-concept derivational bases (safety→safe), candidates only. */
+  derivationalBases,
 };
 
 /**
@@ -214,12 +217,14 @@ function compileSemanticSlotsFromPos(sentence, tokens, {
       rules,
     );
     const { text, phrases } = maskPhrases(clause.text, rawTokens, clauseTokens);
-    return posClauseToSlots(text, clauseTokens, {
+    const slots = posClauseToSlots(text, clauseTokens, {
       isQuestion,
       connector: clause.connector,
       rules,
       phrases,
     });
+    expandNegatedDerivations(slots, aliasIndex);
+    return slots;
   });
 
   // One slot set for the semantic report, plus the per-clause sets the renderer walks, so
@@ -445,6 +450,59 @@ function posClauseToSlots(sentence, tokens, {
 }
 
 /**
+ * Read negating affixes as structure: `unsafe` becomes `no` + safe (rulebook
+ * rule 9 constituent negation), `fearless` becomes `no` + fear. English affix
+ * knowledge lives with the parser; the engine only ever sees a particle id and
+ * an ordinary word.
+ *
+ * Guarded twice: the affix rules carry stoplists (`unless` is not un+less),
+ * and the base must be a known lexicon alias — checked with full strength, so
+ * a weak gloss-derived alias cannot invite the split. A word that fails either
+ * guard flows on whole and gaps honestly.
+ *
+ * @param {object} slots
+ * @param {Map|null} aliasIndex
+ */
+function expandNegatedDerivations(slots, aliasIndex) {
+  if (!aliasIndex) return;
+  const baseInLexicon = (base) => {
+    for (const key of [base, lemmatizeEnglish(base)]) {
+      const hit = key ? aliasIndex.get(key) : null;
+      if (hit && hit.alias_strength !== 'weak') return true;
+    }
+    return false;
+  };
+  for (const key of ['subject', 'event', 'object', 'path', 'modifiers']) {
+    const entries = slots[key];
+    for (let at = 0; at < entries.length; at += 1) {
+      const entry = entries[at];
+      if (entry.particle_id || entry.concept_hint || entry.possessor) continue;
+      const word = String(entry.english ?? '').trim().toLowerCase();
+      if (!word || word.includes(' ')) continue;
+      // Never split a word the lexicon already knows whole: `unbound` may one
+      // day be its own compound, and the whole-word claim must win.
+      if (baseInLexicon(word)) continue;
+      const candidate = negatedBases(word).find(({ base }) => baseInLexicon(base));
+      if (!candidate) continue;
+      entries.splice(at, 1,
+        {
+          english: 'not',
+          role: entry.role,
+          particle_id: 'logic_not',
+          interpret_reason: `negating affix:${candidate.affix} (${word})`,
+        },
+        {
+          english: candidate.base,
+          role: entry.role,
+          interpret_from: word,
+          interpret_reason: `negating affix:${candidate.affix}`,
+        });
+      at += 1;
+    }
+  }
+}
+
+/**
  * Label the scale word of a degree question, so the reader is told the question narrowed.
  * "How far is the water" is asked as "is the water far", which is answerable with `mas`
  * and `sha` (more, less) and is all the language can ask while it has no numerals.
@@ -526,9 +584,11 @@ export async function compileSlots(sentence, {
     return { ...emptySlots(), mode: 'sentence', time: [{ english: timeHit.english, role: 'time' }] };
   }
 
-  return {
+  const single = {
     ...emptySlots(),
     mode: 'word',
     event: tokens.length ? [{ english: tokens[0], role: 'concept' }] : [],
   };
+  expandNegatedDerivations(single, aliasIndex);
+  return single;
 }

@@ -70,6 +70,8 @@ export const RING_3_IDS = [
   'lonely', 'proud', 'scared', 'aggression', 'joy', 'depression', 'timid',
   'strong', 'still', 'reach', 'flow', 'metal',
   'form', 'substance', 'source', 'empty', 'surface', 'bound', 'center',
+  // July 2026 register review: operators and basic dimensions, not more nouns.
+  'happen', 'new', 'side', 'sound', 'color', 'wet', 'heavy', 'female', 'male',
 ];
 
 const RING_BY_ID = new Map();
@@ -97,6 +99,15 @@ export const NEW_ROOT_CONCEPTS = [
   { id: 'joy', domain: 'emotion', description: 'deep gladness; joyful feeling', priority_class: 'common', language_tier: 'fluent_core' },
   { id: 'depression', domain: 'emotion', description: 'heavy sadness; spirit pressed down', priority_class: 'extended', language_tier: 'fluent_core' },
   { id: 'timid', domain: 'emotion', description: 'shy fear; hesitation from fear', priority_class: 'extended', language_tier: 'fluent_core' },
+  { id: 'happen', domain: 'process', description: 'an event takes place; occur', priority_class: 'common', language_tier: 'fluent_core' },
+  { id: 'new', domain: 'quality', description: 'new; recently come into being', priority_class: 'common', language_tier: 'fluent_core' },
+  { id: 'side', domain: 'space', description: 'the side of a thing; a flank, face or edge', priority_class: 'common', language_tier: 'fluent_core' },
+  { id: 'sound', domain: 'element', description: 'sound; what is heard', priority_class: 'common', language_tier: 'fluent_core' },
+  { id: 'color', domain: 'quality', description: 'color; the visual quality of a surface', priority_class: 'useful', language_tier: 'fluent_core' },
+  { id: 'wet', domain: 'element', description: 'wet; soaked with water', priority_class: 'common', language_tier: 'fluent_core' },
+  { id: 'heavy', domain: 'quality', description: 'heavy; hard to lift', priority_class: 'useful', language_tier: 'fluent_core' },
+  { id: 'female', domain: 'being', description: 'female; the she-kind of a living being', priority_class: 'common', language_tier: 'fluent_core' },
+  { id: 'male', domain: 'being', description: 'male; the he-kind of a living being', priority_class: 'common', language_tier: 'fluent_core' },
 ];
 
 /** @deprecated use NEW_ROOT_CONCEPTS */
@@ -120,7 +131,9 @@ const EXPERIENCE_BY_ID = {
   metal: 'space_motion', fast: 'space_motion', flow: 'space_motion', wait: 'space_motion',
   around: 'space_motion', back: 'space_motion', front: 'space_motion', through: 'space_motion',
   motion: 'space_motion', point: 'space_motion', travel: 'space_motion', journey: 'space_motion',
-  straight: 'space_motion',
+  straight: 'space_motion', side: 'space_motion', sound: 'space_motion',
+  wet: 'survival_body', heavy: 'survival_body',
+  female: 'social', male: 'social',
   give: 'social', take: 'social', help: 'social', collective: 'social', bond: 'social',
   conflict: 'social', parent: 'social', addressee: 'social', name: 'social', mark: 'social',
   child: 'social', rule: 'social', justice: 'social', include: 'social', exclude: 'social',
@@ -136,6 +149,7 @@ const EXPERIENCE_BY_ID = {
   equal: 'abstract', true: 'abstract', same: 'abstract', part: 'abstract',
   cause: 'abstract', one: 'abstract', many: 'abstract', all: 'abstract',
   some: 'abstract', more: 'abstract', less: 'abstract', big: 'abstract', small: 'abstract',
+  happen: 'abstract', new: 'abstract', color: 'abstract',
 };
 
 const CAMPFIRE_REASONS = {

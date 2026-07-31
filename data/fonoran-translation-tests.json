@@ -10,8 +10,7 @@
       "phrases": [
         {
           "en": "Hello.",
-          "fon_deterministic": "[hello].",
-          "note_deterministic": "gap: hello (needs a root)"
+          "fon_deterministic": "sedal."
         },
         {
           "en": "I am a person.",
@@ -40,13 +39,11 @@
         },
         {
           "en": "Are you alone?",
-          "fon_deterministic": "ka be [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "ka be wo."
         },
         {
           "en": "I am alone too.",
-          "fon_deterministic": "mi [alone] ho.",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "mi wo ho."
         },
         {
           "en": "I do not understand your words.",
@@ -62,8 +59,7 @@
         },
         {
           "en": "I am friendly.",
-          "fon_deterministic": "mi [friendly].",
-          "note_deterministic": "gap: friendly (needs a root)"
+          "fon_deterministic": "mi kam."
         },
         {
           "en": "Are you hurt?",
@@ -145,8 +141,7 @@
         },
         {
           "en": "I am lost and I am alone.",
-          "fon_deterministic": "mi hufet mi [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "mi hufet mi wo."
         },
         {
           "en": "Can we sit together?",
@@ -213,8 +208,7 @@
         },
         {
           "en": "I feel nervous and unsure.",
-          "fon_deterministic": "mi nes metpa [nervous].",
-          "note_deterministic": "gap: nervous (needs a root)"
+          "fon_deterministic": "mi nes metpa pemet."
         },
         {
           "en": "Can we start again?",
@@ -310,8 +304,7 @@
         },
         {
           "en": "This place is dry.",
-          "fon_deterministic": "che [dry] to.",
-          "note_deterministic": "gap: dry (needs a root)"
+          "fon_deterministic": "che yetam to."
         },
         {
           "en": "We can stay here.",
@@ -413,8 +406,7 @@
         },
         {
           "en": "I see a dry place.",
-          "fon_deterministic": "mi wi che [dry].",
-          "note_deterministic": "gap: dry (needs a root)"
+          "fon_deterministic": "mi wi che yetam."
         },
         {
           "en": "Do you understand me?",
@@ -460,8 +452,7 @@
         },
         {
           "en": "This wound is very deep.",
-          "fon_deterministic": "to ta ges [deep].",
-          "note_deterministic": "gap: deep (needs a root)"
+          "fon_deterministic": "to ta ges mesfet."
         },
         {
           "en": "Please help me.",
@@ -547,8 +538,8 @@
         },
         {
           "en": "Let me look at your injury.",
-          "fon_deterministic": "[let] [at] mi [injury] wi be.",
-          "note_deterministic": "gap: let, at, injury (needs a root)"
+          "fon_deterministic": "[let] [at] mi tesfem wi be.",
+          "note_deterministic": "gap: let, at (needs a root)"
         },
         {
           "en": "The swelling is getting larger.",
@@ -607,8 +598,7 @@
         },
         {
           "en": "This area is red and swollen.",
-          "fon_deterministic": "[area] datwi tatni to.",
-          "note_deterministic": "gap: area (needs a root)"
+          "fon_deterministic": "che datwi tatni to."
         },
         {
           "en": "I am getting better slowly.",
@@ -723,8 +713,8 @@
         },
         {
           "en": "That sound is dangerous.",
-          "fon_deterministic": "[sound] [dangerous] to.",
-          "note_deterministic": "gap: sound, dangerous (needs a root)"
+          "fon_deterministic": "shim [dangerous] to.",
+          "note_deterministic": "gap: dangerous (needs a root)"
         },
         {
           "en": "We must hide now.",
@@ -749,8 +739,7 @@
         },
         {
           "en": "I feel very unsafe here.",
-          "fon_deterministic": "mi nes nam [unsafe].",
-          "note_deterministic": "gap: unsafe (needs a root)"
+          "fon_deterministic": "mi nes nam no kamgu."
         },
         {
           "en": "Stay low and do not speak.",
@@ -763,8 +752,7 @@
         },
         {
           "en": "We need to leave this area.",
-          "fon_deterministic": "dan les gi to [area].",
-          "note_deterministic": "gap: area (needs a root)"
+          "fon_deterministic": "dan les gi to che."
         },
         {
           "en": "I am shaking with fear.",
@@ -780,8 +768,7 @@
         },
         {
           "en": "Come with me to safety.",
-          "fon_deterministic": "gi nan mi [safety].",
-          "note_deterministic": "gap: safety (needs a root)"
+          "fon_deterministic": "gi nan mi kamgu."
         },
         {
           "en": "I see something in the dark.",
@@ -815,8 +802,7 @@
         },
         {
           "en": "I heard a loud noise nearby.",
-          "fon_deterministic": "mi ta len [noise] [loud] nam.",
-          "note_deterministic": "gap: noise, loud (needs a root)"
+          "fon_deterministic": "mi ta len shimgam shimni nam."
         },
         {
           "en": "Wait here and do not move.",
@@ -837,13 +823,11 @@
         },
         {
           "en": "Do not make that sound.",
-          "fon_deterministic": "no kel to [sound].",
-          "note_deterministic": "gap: sound (needs a root)"
+          "fon_deterministic": "no kel to shim."
         },
         {
           "en": "The noise stopped.",
-          "fon_deterministic": "[noise] ta ti.",
-          "note_deterministic": "gap: noise (needs a root)"
+          "fon_deterministic": "shimgam ta ti."
         },
         {
           "en": "I meant that, not this.",
@@ -959,8 +943,7 @@
         },
         {
           "en": "I feel worried about you.",
-          "fon_deterministic": "mi ta nes be [worry].",
-          "note_deterministic": "gap: worry (needs a root)"
+          "fon_deterministic": "mi ta nes be pemet."
         },
         {
           "en": "I feel happy with you.",
@@ -1016,8 +999,7 @@
         },
         {
           "en": "You are not alone.",
-          "fon_deterministic": "be no [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "be no wo."
         },
         {
           "en": "I am here with you.",
@@ -1042,8 +1024,7 @@
         },
         {
           "en": "I do not want to be alone.",
-          "fon_deterministic": "mi no sak [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "mi no sak wo."
         },
         {
           "en": "I am still worried.",
@@ -1139,8 +1120,7 @@
         },
         {
           "en": "I will not leave you alone.",
-          "fon_deterministic": "mi sa no gi be [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "mi sa no gi be wo."
         },
         {
           "en": "That was my mistake.",
@@ -1321,8 +1301,7 @@
         },
         {
           "en": "Leave me alone.",
-          "fon_deterministic": "gi mi [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "gi mi wo."
         },
         {
           "en": "Do not come closer.",
@@ -1343,8 +1322,7 @@
         },
         {
           "en": "This space is mine.",
-          "fon_deterministic": "[space] to mi.",
-          "note_deterministic": "gap: space (needs a root)"
+          "fon_deterministic": "chetam to mi."
         },
         {
           "en": "I said no.",
@@ -1385,8 +1363,8 @@
         },
         {
           "en": "Stay on your side.",
-          "fon_deterministic": "ti [on] [side] be.",
-          "note_deterministic": "gap: on, side (needs a root)"
+          "fon_deterministic": "ti [on] chon be.",
+          "note_deterministic": "gap: on (needs a root)"
         },
         {
           "en": "Do not look at my things.",
@@ -1399,8 +1377,7 @@
         },
         {
           "en": "I need space.",
-          "fon_deterministic": "mi les [space].",
-          "note_deterministic": "gap: space (needs a root)"
+          "fon_deterministic": "mi les chetam."
         },
         {
           "en": "Do not do that again.",
@@ -1436,8 +1413,7 @@
         },
         {
           "en": "This side is mine and that side is yours.",
-          "fon_deterministic": "[side] to mi [side] to be.",
-          "note_deterministic": "gap: side (needs a root)"
+          "fon_deterministic": "chon to mi chon to be."
         },
         {
           "en": "Are you taking my things?",
@@ -1526,8 +1502,7 @@
         },
         {
           "en": "What happened here?",
-          "fon_deterministic": "ka nohu to ta [happened] nam.",
-          "note_deterministic": "gap: happened (needs a root)"
+          "fon_deterministic": "ka nohu to ta chik nam."
         },
         {
           "en": "What do you want?",
@@ -1540,8 +1515,7 @@
         },
         {
           "en": "What is that sound?",
-          "fon_deterministic": "ka nohu to to [sound].",
-          "note_deterministic": "gap: sound (needs a root)"
+          "fon_deterministic": "ka nohu to to shim."
         },
         {
           "en": "What is that smell?",
@@ -1553,8 +1527,7 @@
         },
         {
           "en": "What is happening?",
-          "fon_deterministic": "ka nohu to [happening].",
-          "note_deterministic": "gap: happening (needs a root)"
+          "fon_deterministic": "ka nohu to chik."
         },
         {
           "en": "What is that animal?",
@@ -1566,8 +1539,8 @@
         },
         {
           "en": "What is that noise at night?",
-          "fon_deterministic": "ka nohu to [at] to gankan [noise].",
-          "note_deterministic": "gap: at, noise (needs a root)"
+          "fon_deterministic": "ka nohu to [at] to gankan shimgam.",
+          "note_deterministic": "gap: at (needs a root)"
         },
         {
           "en": "What do you have there?",
@@ -1596,13 +1569,11 @@
         },
         {
           "en": "What happened to your hand?",
-          "fon_deterministic": "ka nohu to ta [happened] nan dak.",
-          "note_deterministic": "gap: happened (needs a root)"
+          "fon_deterministic": "ka nohu to ta chik nan dak."
         },
         {
           "en": "What happened last night?",
-          "fon_deterministic": "ka nohu to ta [happened] gankan daldi.",
-          "note_deterministic": "gap: happened (needs a root)"
+          "fon_deterministic": "ka nohu to ta chik gankan daldi."
         },
         {
           "en": "What is that thing called?",
@@ -1626,8 +1597,7 @@
         },
         {
           "en": "Something happened here.",
-          "fon_deterministic": "tem ta [happened] nam.",
-          "note_deterministic": "gap: happened (needs a root)"
+          "fon_deterministic": "tem ta chik nam."
         },
         {
           "en": "I want to know what this is.",
@@ -1682,13 +1652,12 @@
         },
         {
           "en": "I want to know what happened.",
-          "fon_deterministic": "mi ta sak hu sesakhu [happen].",
-          "note_deterministic": "gap: happen (needs a root)"
+          "fon_deterministic": "mi ta sak hu sesakhu chik."
         },
         {
           "en": "What is this white powder?",
-          "fon_deterministic": "ka nohu to to [white] [powder].",
-          "note_deterministic": "gap: white, powder (needs a root)"
+          "fon_deterministic": "ka nohu to to shotkek [powder].",
+          "note_deterministic": "gap: powder (needs a root)"
         },
         {
           "en": "What is that structure?",
@@ -1709,8 +1678,8 @@
         },
         {
           "en": "What is that color in the sky?",
-          "fon_deterministic": "ka nohu to [in] to sam [color].",
-          "note_deterministic": "gap: in, color (needs a root)"
+          "fon_deterministic": "ka nohu to [in] to sam shot.",
+          "note_deterministic": "gap: in (needs a root)"
         },
         {
           "en": "Please show me what you mean.",
@@ -1810,13 +1779,12 @@
         },
         {
           "en": "Who is making that sound?",
-          "fon_deterministic": "ka nohu ba kel to [sound].",
-          "note_deterministic": "gap: sound (needs a root)"
+          "fon_deterministic": "ka nohu ba kel to shim."
         },
         {
           "en": "That person is alone and looks lost.",
-          "fon_deterministic": "ba [alone] to ta wi [lose].",
-          "note_deterministic": "gap: alone, lose (needs a root)"
+          "fon_deterministic": "ba wo to ta wi [lose].",
+          "note_deterministic": "gap: lose (needs a root)"
         },
         {
           "en": "Who is in danger?",
@@ -1842,11 +1810,11 @@
         },
         {
           "en": "Who is that woman?",
-          "fon_deterministic": "ka nohu ba to ba."
+          "fon_deterministic": "ka nohu ba to bachos."
         },
         {
           "en": "Who is that man?",
-          "fon_deterministic": "ka nohu ba to ba."
+          "fon_deterministic": "ka nohu ba to bashin."
         },
         {
           "en": "Point to who needs help.",
@@ -1875,8 +1843,7 @@
         },
         {
           "en": "I feel uneasy about that person.",
-          "fon_deterministic": "mi nes to [uneasy] ba.",
-          "note_deterministic": "gap: uneasy (needs a root)"
+          "fon_deterministic": "mi nes to pemet ba."
         },
         {
           "en": "Who is the youngest person here?",
@@ -2157,8 +2124,7 @@
         },
         {
           "en": "The dry land is to the right.",
-          "fon_deterministic": "fen nan gel [dry].",
-          "note_deterministic": "gap: dry (needs a root)"
+          "fon_deterministic": "fen nan gel yetam."
         },
         {
           "en": "We go left and then up.",
@@ -2359,8 +2325,7 @@
         },
         {
           "en": "The noise stopped just now.",
-          "fon_deterministic": "gem [noise] ta ti.",
-          "note_deterministic": "gap: noise (needs a root)"
+          "fon_deterministic": "gem shimgam ta ti."
         },
         {
           "en": "Is it still night?",
@@ -2454,13 +2419,11 @@
         },
         {
           "en": "Move slowly and carefully.",
-          "fon_deterministic": "gi gisha [carefully].",
-          "note_deterministic": "gap: carefully (needs a root)"
+          "fon_deterministic": "gi gisha san."
         },
         {
           "en": "I do not want to go alone.",
-          "fon_deterministic": "mi no sak gi [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "mi no sak gi wo."
         },
         {
           "en": "Come with me now.",
@@ -2504,8 +2467,7 @@
         },
         {
           "en": "Do not leave me alone.",
-          "fon_deterministic": "no gi mi [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "no gi mi wo."
         },
         {
           "en": "I will go and you stay.",
@@ -2544,13 +2506,11 @@
         },
         {
           "en": "You left and I was alone.",
-          "fon_deterministic": "be ta gi mi ta [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "be ta gi mi ta wo."
         },
         {
           "en": "Can I enter this space?",
-          "fon_deterministic": "ka mi felmes to [space].",
-          "note_deterministic": "gap: space (needs a root)"
+          "fon_deterministic": "ka mi felmes to chetam."
         },
         {
           "en": "I meant to go the other way.",
@@ -2678,8 +2638,7 @@
         },
         {
           "en": "I feel uneasy taking your food.",
-          "fon_deterministic": "mi nes la [uneasy] lo be.",
-          "note_deterministic": "gap: uneasy (needs a root)"
+          "fon_deterministic": "mi nes la pemet lo be."
         },
         {
           "en": "You can keep this.",
@@ -2691,8 +2650,8 @@
         },
         {
           "en": "Let us share everything equally.",
-          "fon_deterministic": "[let] dan kuket mel to [equally].",
-          "note_deterministic": "gap: let, equally (needs a root)"
+          "fon_deterministic": "[let] dan kuket mel to kat.",
+          "note_deterministic": "gap: let (needs a root)"
         },
         {
           "en": "Can I take one of those?",
@@ -2733,8 +2692,7 @@
         },
         {
           "en": "I feel worried that I have too little.",
-          "fon_deterministic": "mi ta nes [worry] mi gen to ho.",
-          "note_deterministic": "gap: worry (needs a root)"
+          "fon_deterministic": "mi ta nes pemet mi gen to ho."
         },
         {
           "en": "Can you give me a little water?",
@@ -2914,8 +2872,7 @@
         },
         {
           "en": "Is that water drinkable?",
-          "fon_deterministic": "ka ye [drinkable] to.",
-          "note_deterministic": "gap: drinkable (needs a root)"
+          "fon_deterministic": "ka ye ko to."
         },
         {
           "en": "I am hungry and thirsty.",
@@ -3059,13 +3016,11 @@
         },
         {
           "en": "I am cold and wet.",
-          "fon_deterministic": "mi mak [wet].",
-          "note_deterministic": "gap: wet (needs a root)"
+          "fon_deterministic": "mi mak chit."
         },
         {
           "en": "The rain is very heavy.",
-          "fon_deterministic": "gesye [heavy].",
-          "note_deterministic": "gap: heavy (needs a root)"
+          "fon_deterministic": "gesye chom."
         },
         {
           "en": "Is the storm dangerous?",
@@ -3094,8 +3049,7 @@
         },
         {
           "en": "We need dry wood for fire.",
-          "fon_deterministic": "dan les nu [dry] dat.",
-          "note_deterministic": "gap: dry (needs a root)"
+          "fon_deterministic": "dan les nu yetam dat."
         },
         {
           "en": "The sun will come tomorrow.",
@@ -3111,8 +3065,7 @@
         },
         {
           "en": "The ground is wet and cold.",
-          "fon_deterministic": "fen [wet] mak.",
-          "note_deterministic": "gap: wet (needs a root)"
+          "fon_deterministic": "fen chit mak."
         },
         {
           "en": "Come closer to the fire.",
@@ -3128,8 +3081,7 @@
         },
         {
           "en": "The storm is loud and strong.",
-          "fon_deterministic": "sampa [loud] bo.",
-          "note_deterministic": "gap: loud (needs a root)"
+          "fon_deterministic": "sampa shimni bo."
         },
         {
           "en": "I feel the cold wind.",
@@ -3150,13 +3102,11 @@
         },
         {
           "en": "I do not understand the weather here.",
-          "fon_deterministic": "mi no chu [weather] nam.",
-          "note_deterministic": "gap: weather (needs a root)"
+          "fon_deterministic": "mi no chu samnel nam."
         },
         {
           "en": "The air is cold and wet.",
-          "fon_deterministic": "ges mak [wet].",
-          "note_deterministic": "gap: wet (needs a root)"
+          "fon_deterministic": "ges mak chit."
         },
         {
           "en": "Please move away from the wind.",
@@ -3289,8 +3239,7 @@
         },
         {
           "en": "My stomach hurts badly.",
-          "fon_deterministic": "telmes tes [badly] mi.",
-          "note_deterministic": "gap: badly (needs a root)"
+          "fon_deterministic": "telmes tes gam mi."
         },
         {
           "en": "Can you walk?",
@@ -3325,12 +3274,11 @@
         },
         {
           "en": "I need to breathe fresh air.",
-          "fon_deterministic": "mi les mesges dalkel ges."
+          "fon_deterministic": "mi les mesges shok ges."
         },
         {
           "en": "My eyes are very heavy.",
-          "fon_deterministic": "kem [heavy] mi.",
-          "note_deterministic": "gap: heavy (needs a root)"
+          "fon_deterministic": "kem chom mi."
         },
         {
           "en": "I cannot stand up.",
@@ -3375,8 +3323,7 @@
         },
         {
           "en": "Can you breathe deeply?",
-          "fon_deterministic": "ka be mesges [deeply].",
-          "note_deterministic": "gap: deeply (needs a root)"
+          "fon_deterministic": "ka be mesges mesfet."
         },
         {
           "en": "My body is very sore.",
@@ -3401,8 +3348,8 @@
         },
         {
           "en": "I feel pain in my side.",
-          "fon_deterministic": "mi nes [in] tes [side] mi.",
-          "note_deterministic": "gap: in, side (needs a root)"
+          "fon_deterministic": "mi nes [in] tes chon mi.",
+          "note_deterministic": "gap: in (needs a root)"
         },
         {
           "en": "Please carry this for me.",
@@ -3472,8 +3419,7 @@
         },
         {
           "en": "Is your mother here?",
-          "fon_deterministic": "ka [mother] nam be.",
-          "note_deterministic": "gap: mother (needs a root)"
+          "fon_deterministic": "ka feschos nam be."
         },
         {
           "en": "The old person needs help.",
@@ -3489,12 +3435,11 @@
         },
         {
           "en": "I am looking for my father.",
-          "fon_deterministic": "mi wi fes mi."
+          "fon_deterministic": "mi wi fesshin mi."
         },
         {
           "en": "My mother is sick.",
-          "fon_deterministic": "[mother] du mi.",
-          "note_deterministic": "gap: mother (needs a root)"
+          "fon_deterministic": "feschos du mi."
         },
         {
           "en": "Please hold the baby.",
@@ -3535,7 +3480,7 @@
         },
         {
           "en": "My father is very weak.",
-          "fon_deterministic": "fes femsha mi."
+          "fon_deterministic": "fesshin femsha mi."
         },
         {
           "en": "The child is cold and scared.",
@@ -3551,12 +3496,11 @@
         },
         {
           "en": "Is your father alive?",
-          "fon_deterministic": "ka fes fo be."
+          "fon_deterministic": "ka fesshin fo be."
         },
         {
           "en": "I am the mother of this child.",
-          "fon_deterministic": "mi [mother] to gas.",
-          "note_deterministic": "gap: mother (needs a root)"
+          "fon_deterministic": "mi feschos to gas."
         },
         {
           "en": "The old person cannot walk far.",
@@ -3568,8 +3512,7 @@
         },
         {
           "en": "Do you have a mother here?",
-          "fon_deterministic": "ka be nam [mother].",
-          "note_deterministic": "gap: mother (needs a root)"
+          "fon_deterministic": "ka be nam feschos."
         },
         {
           "en": "Give food to the child first.",
@@ -3594,8 +3537,7 @@
         },
         {
           "en": "My mother is old and tired.",
-          "fon_deterministic": "[mother] di femtam mi.",
-          "note_deterministic": "gap: mother (needs a root)"
+          "fon_deterministic": "feschos di femtam mi."
         },
         {
           "en": "Please stay near the child.",
@@ -3603,7 +3545,7 @@
         },
         {
           "en": "I am the father.",
-          "fon_deterministic": "mi fes."
+          "fon_deterministic": "mi fesshin."
         },
         {
           "en": "The child is hurt.",
@@ -3611,8 +3553,7 @@
         },
         {
           "en": "Are you the mother?",
-          "fon_deterministic": "ka be [mother].",
-          "note_deterministic": "gap: mother (needs a root)"
+          "fon_deterministic": "ka be feschos."
         },
         {
           "en": "I feel sad without my family.",
@@ -3642,8 +3583,7 @@
         },
         {
           "en": "Is the baby a girl or boy?",
-          "fon_deterministic": "ka gas [girl] [boy].",
-          "note_deterministic": "gap: girl, boy (needs a root)"
+          "fon_deterministic": "ka gas gaschos gasshin."
         },
         {
           "en": "The child is tired and hungry.",
@@ -3651,13 +3591,11 @@
         },
         {
           "en": "I need to find my mother.",
-          "fon_deterministic": "mi les wi [mother] mi.",
-          "note_deterministic": "gap: mother (needs a root)"
+          "fon_deterministic": "mi les wi feschos mi."
         },
         {
           "en": "I feel alone without my child.",
-          "fon_deterministic": "mi nes gas [alone] mi.",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "mi nes gas wo mi."
         },
         {
           "en": "The old person needs rest.",
@@ -3823,8 +3761,7 @@
         },
         {
           "en": "I feel unsure and uncertain.",
-          "fon_deterministic": "mi nes [uncertain] metpa.",
-          "note_deterministic": "gap: uncertain (needs a root)"
+          "fon_deterministic": "mi nes no nathu metpa."
         },
         {
           "en": "That is not what I wanted.",
@@ -3990,8 +3927,7 @@
         },
         {
           "en": "I will not go there alone.",
-          "fon_deterministic": "mi sa no gi tak [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "mi sa no gi tak wo."
         },
         {
           "en": "Do you want to come with me?",
@@ -4246,8 +4182,7 @@
         },
         {
           "en": "Did I understand you correctly?",
-          "fon_deterministic": "ka mi ta chu be [correctly].",
-          "note_deterministic": "gap: correctly (needs a root)"
+          "fon_deterministic": "ka mi ta chu be nat."
         },
         {
           "en": "I am glad this day is over.",
@@ -4320,8 +4255,7 @@
         },
         {
           "en": "You did not leave me alone.",
-          "fon_deterministic": "be ta no gi mi [alone].",
-          "note_deterministic": "gap: alone (needs a root)"
+          "fon_deterministic": "be ta no gi mi wo."
         },
         {
           "en": "Are you going to sleep now?",

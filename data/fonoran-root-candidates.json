@@ -1,7 +1,7 @@
 {
   "version": "2.0-editorial-workflow",
   "status": "proposal",
-  "generated_at": "2026-07-31T18:38:49.706Z",
+  "generated_at": "2026-07-31T19:31:10.672Z",
   "collision_profile": "en",
   "philosophy": {
     "premise": "Concepts are canonical. Sounds are editorial proposals until approved.",
@@ -9,9 +9,9 @@
     "source_concepts": "data/fonoran-concept-inventory.json"
   },
   "summary": {
-    "total": 136,
+    "total": 145,
     "pending": 0,
-    "approved": 136,
+    "approved": 145,
     "rejected": 0
   },
   "candidates": [
@@ -139,7 +139,11 @@
           "message": "Reads as a common abbreviation/name."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "air",
@@ -258,7 +262,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "animal",
@@ -719,7 +727,11 @@
           "message": "Strong English homophone (\"bee\"/\"buy\")."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "cause",
@@ -756,7 +768,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "center",
@@ -793,7 +809,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "change",
@@ -830,7 +850,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "child",
@@ -874,7 +898,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "cold",
@@ -959,6 +987,47 @@
       "semantic_usefulness_label": "high"
     },
     {
+      "id": "color",
+      "concept": "color; the visual quality of a surface",
+      "domain": "quality",
+      "plain_description": "color; the visual quality of a surface",
+      "primitive_test_note": "A dimension root: color words become compounds (color+light, color+dark, color+blood) instead of one root each.",
+      "suggested_status": "primitive",
+      "priority_class": "useful",
+      "priority_weight": 60,
+      "priority": 59860,
+      "spelling": "shot",
+      "ipa": "/ʃɑt/",
+      "reason": "color — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 104,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 14,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "conflict",
       "ipa": "/pʌ/",
       "domain": "relationships",
@@ -1041,7 +1110,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "dark",
@@ -1126,7 +1199,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "do",
@@ -1409,7 +1486,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "exclude",
@@ -1446,7 +1527,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "eye",
@@ -1654,6 +1739,47 @@
       "semantic_usefulness_label": "high"
     },
     {
+      "id": "female",
+      "concept": "female; the she-kind of a living being",
+      "domain": "being",
+      "plain_description": "female; the she-kind of a living being",
+      "primitive_test_note": "With male, unlocks mother/father/boy/girl/man/woman as transparent compounds of parent, child, person.",
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79857,
+      "spelling": "chos",
+      "ipa": "/tʃɑs/",
+      "reason": "female — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 101.2,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "fire",
       "ipa": "/dʌt/",
       "domain": "element",
@@ -1736,7 +1862,11 @@
           "message": "Strong English homophone (\"high\"/\"hi\")."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "food",
@@ -1814,7 +1944,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "front",
@@ -1981,6 +2115,47 @@
       "semantic_usefulness_label": "high"
     },
     {
+      "id": "happen",
+      "concept": "an event takes place; occur",
+      "domain": "process",
+      "plain_description": "an event takes place; occur",
+      "primitive_test_note": "NSM prime. Not doing (no agent) and not change (no end state claimed): something simply took place.",
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79864,
+      "spelling": "chik",
+      "ipa": "/tʃɪk/",
+      "reason": "an event takes place — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 100.5,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 24,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "happy",
       "concept": "feeling glad and content",
       "domain": "emotion",
@@ -2022,7 +2197,11 @@
           "message": "Strong English homophone (\"two\"/\"to\")."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "head",
@@ -2148,7 +2327,52 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+    },
+    {
+      "id": "heavy",
+      "concept": "heavy; hard to lift",
+      "domain": "quality",
+      "plain_description": "heavy; hard to lift",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "useful",
+      "priority_weight": 60,
+      "priority": 59858,
+      "spelling": "chom",
+      "ipa": "/tʃɑm/",
+      "reason": "heavy — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 3,
+      "semantic_usefulness_label": "moderate",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 100.9,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "help",
@@ -2308,7 +2532,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "hot",
@@ -2386,7 +2614,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "inside",
@@ -2471,7 +2703,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "joy",
@@ -2508,7 +2744,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "justice",
@@ -2545,7 +2785,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "know",
@@ -2623,7 +2867,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
       "id": "less",
@@ -2783,7 +3031,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "love",
@@ -2868,6 +3120,47 @@
       "semantic_usefulness_label": "high"
     },
     {
+      "id": "male",
+      "concept": "male; the he-kind of a living being",
+      "domain": "being",
+      "plain_description": "male; the he-kind of a living being",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79856,
+      "spelling": "shin",
+      "ipa": "/ʃɪn/",
+      "reason": "male — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 103.2,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "many",
       "ipa": "/lɛk/",
       "domain": "quantity",
@@ -2943,7 +3236,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "metal",
@@ -2980,7 +3277,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "more",
@@ -3065,7 +3366,11 @@
           "message": "Strong English homophone (\"see\")."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "mouth",
@@ -3273,6 +3578,47 @@
       "semantic_usefulness_label": "high"
     },
     {
+      "id": "new",
+      "concept": "new; recently come into being",
+      "domain": "quality",
+      "plain_description": "new; recently come into being",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79863,
+      "spelling": "shok",
+      "ipa": "/ʃɑk/",
+      "reason": "new — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 104.1,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 18,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "now",
       "ipa": "/gɛm/",
       "domain": "time",
@@ -3471,7 +3817,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "part",
@@ -3508,7 +3858,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "path",
@@ -3716,7 +4070,11 @@
           "message": "Strong English homophone (\"lee\")."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "proud",
@@ -3753,7 +4111,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "reach",
@@ -3790,7 +4152,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "right",
@@ -3834,7 +4200,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
       "id": "rule",
@@ -3871,7 +4241,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "social",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "sad",
@@ -3908,7 +4282,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "same",
@@ -3986,7 +4364,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "see",
@@ -4105,7 +4487,52 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "communicative_core",
+      "campfire_pass": true,
+      "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "side",
+      "concept": "the side of a thing; a flank, face or edge",
+      "domain": "space",
+      "plain_description": "the side of a thing; a flank, face or edge",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79862,
+      "spelling": "chon",
+      "ipa": "/tʃɑn/",
+      "reason": "the side of a thing — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 100.8,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 12,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "skin",
@@ -4354,6 +4781,47 @@
       "semantic_usefulness_label": "high"
     },
     {
+      "id": "sound",
+      "concept": "sound; what is heard",
+      "domain": "element",
+      "plain_description": "sound; what is heard",
+      "primitive_test_note": "The phenomenon, not the act: hear is the action root, sound is what reaches the ear. Mirrors light (what lets you see).",
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79861,
+      "spelling": "shim",
+      "ipa": "/ʃɪm/",
+      "reason": "sound — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 103.3,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 12,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "source",
       "concept": "source",
       "domain": "abstract",
@@ -4395,7 +4863,11 @@
           "message": "Strong English homophone (\"key\")."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "speak",
@@ -4562,7 +5034,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "strong",
@@ -4599,7 +5075,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "substance",
@@ -4643,7 +5123,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "surface",
@@ -4687,7 +5171,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "take",
@@ -5018,7 +5506,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "touch",
@@ -5103,7 +5595,11 @@
           "message": "Strong English homophone (\"fee\")."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "tree",
@@ -5147,7 +5643,11 @@
           "message": "Easily confused with grammar particle na."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "true",
@@ -5232,7 +5732,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "emotion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "understand",
@@ -5269,7 +5773,11 @@
         "collision_profile": "en"
       },
       "collision_warnings": [],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "thinking",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "up",
@@ -5395,7 +5903,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "want",
@@ -5480,6 +5992,47 @@
       "semantic_usefulness_label": "very high"
     },
     {
+      "id": "wet",
+      "concept": "wet; soaked with water",
+      "domain": "element",
+      "plain_description": "wet; soaked with water",
+      "primitive_test_note": null,
+      "suggested_status": "primitive",
+      "priority_class": "common",
+      "priority_weight": 80,
+      "priority": 79859,
+      "spelling": "chit",
+      "ipa": "/tʃɪt/",
+      "reason": "wet — basic everyday idea that deserves its own root.",
+      "pronunciation_ease": 2,
+      "pronunciation_ease_label": "somewhat difficult",
+      "semantic_usefulness": 4,
+      "semantic_usefulness_label": "high",
+      "status": "approved",
+      "review": {
+        "approved_at": "2026-07-31T19:19:05.512Z",
+        "rejected_at": null,
+        "edited_at": null,
+        "note": null
+      },
+      "generation": {
+        "phonetic_cost": 100.4,
+        "template": "CVC",
+        "tier": "cvc",
+        "eligible": true,
+        "distinctiveness_score": 0,
+        "editorial_collision_score": 100,
+        "compound_flow_score": 100,
+        "collision_profile": "en"
+      },
+      "collision_warnings": [],
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "will",
       "concept": "will",
       "domain": "abstract",
@@ -5521,7 +6074,11 @@
           "message": "Common English word."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "thinking",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "work",
@@ -5565,7 +6122,11 @@
           "message": "Easily confused with grammar particle mi."
         }
       ],
-      "boundary_warnings": []
+      "boundary_warnings": [],
+      "experience_tier": "survival_body",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     }
   ]
 }

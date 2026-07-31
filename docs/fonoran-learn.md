@@ -163,7 +163,7 @@ Learn and the Translator share **vocabulary** but not the **exercise engine**:
 | Grading | Exact match on expected roman / English gloss | N/A (exploration) |
 | Particles | `fonoran-grammar-particles.json` | Same inventory |
 
-Grammar Learn starts with a **hand-authored Rule 4 lesson** (`data/fonoran-grammar-lessons.json`) — preferred order, `mi`/`ta`/`sa`/`no`, serial want+go, bare destinations, casual Actor drop — then continues into reorder / particle / translation drills from course phrases. It does not replace the full [fonoran-grammar.md](fonoran-grammar.md) reference. For open-ended translation, use [`/language#translator`](/language#translator).
+Grammar Learn starts with a **hand-authored Rule 4 lesson** (`data/fonoran-grammar-lessons.json`) — preferred order, `mi`/`ta`/`sa`/`no`, serial want+go, bare destinations, Actor always spoken — then continues into reorder / particle / translation drills from course phrases. It does not replace the full [fonoran-grammar.md](fonoran-grammar.md) reference. For open-ended translation, use [`/language#translator`](/language#translator).
 
 Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 

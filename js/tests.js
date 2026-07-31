@@ -347,7 +347,10 @@ const fonoranTranslatorResult = await (async () => {
     const script = romanToFonoraScript(person.tokens[0].parts, rules).phrase;
     assert(script.length > 0, 'person script empty');
 
-    const jumped = await translateEnglish('the man jumped');
+    // "man" is no longer the bare person root: the July 2026 register review gave
+    // it a gendered compound (person+male), so the root-vocabulary sentences here
+    // say "person", and the compound is asserted separately below.
+    const jumped = await translateEnglish('the person jumped');
     assert(jumped.unresolved.length === 0, `jumped unresolved: ${jumped.unresolved.join(', ')}`);
     // The 'move' root spelling is a generated artifact; assert structure (man + past particle + move)
     // rather than a fixed spelling so the test survives regeneration.
@@ -360,7 +363,11 @@ const fonoranTranslatorResult = await (async () => {
     assert(jumpedToken && (jumpedToken.concept_id === 'jump' || jumpedToken.concept_id === 'move'), `jumped concept: ${jumpedToken?.concept_id}`);
     assert(jumped.semantic?.slots?.time?.length === 1, 'past tense adds time slot');
 
-    const future = await translateEnglish('the man is going to jump');
+    const man = await translateEnglish('man');
+    assert(man.tokens[0]?.concept_id === 'man', `man concept: ${man.tokens[0]?.concept_id}`);
+    assert((man.tokens[0]?.parts?.length ?? 0) === 2, `man is a two-root compound: ${JSON.stringify(man.tokens[0]?.parts)}`);
+
+    const future = await translateEnglish('the person is going to jump');
     assert(future.unresolved.length === 0, `future unresolved: ${future.unresolved.join(', ')}`);
     const futureMove = future.tokens.find(t => t.english === 'jump' || t.concept_id === 'move')?.fonoran ?? movedRoman;
     // Future is a single particle `sa` (the near-future `na` was retired when the
@@ -370,7 +377,7 @@ const fonoranTranslatorResult = await (async () => {
     assert(!future.surface.roman.includes(' fi '), `future should not use retired fi: ${future.surface.roman}`);
     assert(future.semantic?.slots?.time?.[0]?.english === 'future', 'future time slot');
 
-    const ate = await translateEnglish('the man ate animal');
+    const ate = await translateEnglish('the person ate animal');
     assert(ate.unresolved.length === 0, `ate unresolved: ${ate.unresolved.join(', ')}`);
     // eat/animal root spellings are generated artifacts; assert structure
     // (man + past particle + eat + animal) so the test survives regeneration.
@@ -382,7 +389,7 @@ const fonoranTranslatorResult = await (async () => {
     // so the reported reason is the general one instead of 'irregular past'.
     assert(ate.interpretations.some(i => i.english === 'ate' && i.reason === 'inflected form'), `ate interp: ${JSON.stringify(ate.interpretations)}`);
 
-    const futureEat = await translateEnglish('the man will eat animal');
+    const futureEat = await translateEnglish('the person will eat animal');
     assert(futureEat.unresolved.length === 0, `futureEat unresolved: ${futureEat.unresolved.join(', ')}`);
     const feEat = futureEat.tokens.find(t => t.english === 'eat' || t.concept_id === 'eat')?.fonoran;
     const feAnimal = futureEat.tokens.find(t => t.english === 'animal' || t.concept_id === 'animal')?.fonoran;
@@ -494,15 +501,18 @@ const fonoranTranslatorResult = await (async () => {
     const travelsTok = light.tokens.find(t => t.english === 'travels');
     assert(travelsTok?.concept_id === 'move' && travelsTok?.fonoran === 'gi', `travels token: ${JSON.stringify(travelsTok)}`);
 
-    // Regression: second-person `you` resolves to the addressee root (`ti`).
+    // Regression: second-person `you` resolves lexically to the addressee root (`be`),
+    // not as an "interpreted" stretch — the translator must not gold-highlight it.
     const youSleep = await translateEnglish('You sleep.');
     assert(youSleep.unresolved.length === 0, `you sleep unresolved: ${youSleep.unresolved.join(', ')}`);
     const youTok = youSleep.tokens.find(t => t.english === 'you');
     assert(youTok?.concept_id === 'addressee' && youTok?.fonoran === 'be', `you token: ${JSON.stringify(youTok)}`);
+    assert(youTok?.resolution_kind === 'direct' && !youTok?.interpreted, `you should be direct: ${JSON.stringify(youTok)}`);
 
     const doYouWant = await translateEnglish('do you want to eat in the city');
     const doYouTok = doYouWant.tokens.find(t => t.english === 'you');
     assert(doYouTok?.concept_id === 'addressee' && doYouTok?.fonoran === 'be', `do-you token: ${JSON.stringify(doYouTok)}`);
+    assert(doYouTok?.resolution_kind === 'direct' && !doYouTok?.interpreted, `do-you should be direct: ${JSON.stringify(doYouTok)}`);
 
     // Regression: `from` carries origin meaning and resolves to the `source`
     // root (bel) instead of being silently dropped as a function word.
@@ -590,7 +600,8 @@ const fonoranTranslatorResult = await (async () => {
     // concept_id + provenance (resolution_kind), never a raw English token.
     const framed = await translateEnglish('the man jumped');
     assert(framed.frame && Array.isArray(framed.frame.actor), 'frame object present');
-    assert(framed.frame.actor.some(a => a.concept_id === 'person' && a.resolution_kind), `frame actor: ${JSON.stringify(framed.frame.actor)}`);
+    // man is the person+male compound since the July 2026 register review.
+    assert(framed.frame.actor.some(a => a.concept_id === 'man' && a.resolution_kind), `frame actor: ${JSON.stringify(framed.frame.actor)}`);
     // 'jump' is now a compound; frame action resolves to 'jump' directly rather than 'move'
     assert(framed.frame.action.some(a => a.concept_id === 'jump' || a.concept_id === 'move'), `frame action: ${JSON.stringify(framed.frame.action)}`);
 
@@ -659,8 +670,10 @@ const sourceParserContractResult = await (async () => {
       `stub roman assembles from tokens: ${out.surface.roman}`);
 
     // The same sentence through the English parser must agree word for word:
-    // one engine, and the parser only decides what fills the slots.
-    const viaEnglish = await translateEnglish('the man ate animal');
+    // one engine, and the parser only decides what fills the slots. ("person",
+    // not "man": man is a gendered compound since the July 2026 register review,
+    // and the stub emits the person concept id.)
+    const viaEnglish = await translateEnglish('the person ate animal');
     assert(viaEnglish.surface.roman === out.surface.roman,
       `stub parser and English parser disagree: ${out.surface.roman} vs ${viaEnglish.surface.roman}`);
 

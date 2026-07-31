@@ -1,8 +1,8 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-07-31T18:38:49.691Z",
+  "updated_at": "2026-07-31T19:31:10.654Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
-  "root_count": 136,
+  "root_count": 145,
   "roots": [
     {
       "id": "addressee",
@@ -212,6 +212,15 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
+      "id": "color",
+      "spelling": "shot",
+      "ipa": "/ʃɑt/",
+      "concept": "color; the visual quality of a surface",
+      "domain": "quality",
+      "reason": "color — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
+    },
+    {
       "id": "conflict",
       "spelling": "pa",
       "ipa": "/pʌ/",
@@ -365,6 +374,15 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
+      "id": "female",
+      "spelling": "chos",
+      "ipa": "/tʃɑs/",
+      "concept": "female; the she-kind of a living being",
+      "domain": "being",
+      "reason": "female — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
+    },
+    {
       "id": "fire",
       "spelling": "dat",
       "ipa": "/dʌt/",
@@ -437,6 +455,15 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
+      "id": "happen",
+      "spelling": "chik",
+      "ipa": "/tʃɪk/",
+      "concept": "an event takes place; occur",
+      "domain": "process",
+      "reason": "an event takes place — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
+    },
+    {
       "id": "happy",
       "spelling": "tu",
       "ipa": "/tʊ/",
@@ -471,6 +498,15 @@
       "domain": "body",
       "reason": "your heart — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-29T15:20:51.628Z"
+    },
+    {
+      "id": "heavy",
+      "spelling": "chom",
+      "ipa": "/tʃɑm/",
+      "concept": "heavy; hard to lift",
+      "domain": "quality",
+      "reason": "heavy — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
     },
     {
       "id": "help",
@@ -635,6 +671,15 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
+      "id": "male",
+      "spelling": "shin",
+      "ipa": "/ʃɪn/",
+      "concept": "male; the he-kind of a living being",
+      "domain": "being",
+      "reason": "male — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
+    },
+    {
       "id": "many",
       "spelling": "lek",
       "ipa": "/lɛk/",
@@ -723,6 +768,15 @@
       "domain": "cognition",
       "reason": "to need something — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "new",
+      "spelling": "shok",
+      "ipa": "/ʃɑk/",
+      "concept": "new; recently come into being",
+      "domain": "quality",
+      "reason": "new — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
     },
     {
       "id": "now",
@@ -914,6 +968,15 @@
       "approved_at": "2026-07-12T10:38:20.707Z"
     },
     {
+      "id": "side",
+      "spelling": "chon",
+      "ipa": "/tʃɑn/",
+      "concept": "the side of a thing; a flank, face or edge",
+      "domain": "space",
+      "reason": "the side of a thing — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
+    },
+    {
       "id": "skin",
       "spelling": "tat",
       "ipa": "/tʌt/",
@@ -966,6 +1029,15 @@
       "domain": "quantity",
       "reason": "a few — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "sound",
+      "spelling": "shim",
+      "ipa": "/ʃɪm/",
+      "concept": "sound; what is heard",
+      "domain": "element",
+      "reason": "sound — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
     },
     {
       "id": "source",
@@ -1209,6 +1281,15 @@
       "domain": "element",
       "reason": "water — shows up a lot in compounds, so it needs its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "wet",
+      "spelling": "chit",
+      "ipa": "/tʃɪt/",
+      "concept": "wet; soaked with water",
+      "domain": "element",
+      "reason": "wet — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T19:19:05.512Z"
     },
     {
       "id": "will",

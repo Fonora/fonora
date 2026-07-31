@@ -2,17 +2,17 @@
   "version": "1.0-prefix-safe",
   "rule": "A spelling is algorithmically prefix-safe iff it neither prefixes nor is prefixed by any other approved root. Same detector as Health prefix_overlap.",
   "note": "This is phonetic distinctiveness approval, not Word Manager human approval. Free CV forms that prefix taken CVCs are blocked until those CVCs move.",
-  "generated_at": "2026-07-30T06:06:53.091Z",
+  "generated_at": "2026-07-31T19:32:18.944Z",
   "summary": {
-    "approved_roots": 136,
+    "approved_roots": 145,
     "prefix_pairs": 0,
     "approved_CV_prefix_safe": 54,
-    "approved_CVC_prefix_safe": 82,
+    "approved_CVC_prefix_safe": 91,
     "approved_prefix_unsafe": 0,
     "pool_CV_prefix_safe_free": 0,
     "pool_CV_blocked_free": 11,
-    "pool_CVC_prefix_safe_free": 2,
-    "pool_CVC_blocked_free": 30
+    "pool_CVC_prefix_safe_free": 34,
+    "pool_CVC_blocked_free": 324
   },
   "prefix_pairs": [],
   "approved_prefix_safe": {
@@ -73,6 +73,11 @@
       "yu"
     ],
     "CVC": [
+      "chik",
+      "chit",
+      "chom",
+      "chon",
+      "chos",
       "dak",
       "dal",
       "dam",
@@ -143,6 +148,10 @@
       "san",
       "sas",
       "sat",
+      "shim",
+      "shin",
+      "shok",
+      "shot",
       "tak",
       "tal",
       "tam",
@@ -540,6 +549,41 @@
       }
     ],
     "CVC": [
+      {
+        "id": "happen",
+        "spelling": "chik",
+        "concept": "an event takes place; occur",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "wet",
+        "spelling": "chit",
+        "concept": "wet; soaked with water",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "heavy",
+        "spelling": "chom",
+        "concept": "heavy; hard to lift",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "side",
+        "spelling": "chon",
+        "concept": "the side of a thing; a flank, face or edge",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "female",
+        "spelling": "chos",
+        "concept": "female; the she-kind of a living being",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
       {
         "id": "hand",
         "spelling": "dak",
@@ -1031,6 +1075,34 @@
         "blocked_by": []
       },
       {
+        "id": "sound",
+        "spelling": "shim",
+        "concept": "sound; what is heard",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "male",
+        "spelling": "shin",
+        "concept": "male; the he-kind of a living being",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "new",
+        "spelling": "shok",
+        "concept": "new; recently come into being",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "color",
+        "spelling": "shot",
+        "concept": "color; the visual quality of a surface",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
         "id": "there",
         "spelling": "tak",
         "concept": "at that place",
@@ -1253,8 +1325,40 @@
       }
     ],
     "CVC_prefix_safe": [
+      "chil",
+      "chim",
+      "chin",
+      "chis",
+      "chok",
+      "chol",
+      "chot",
       "fek",
-      "kak"
+      "kak",
+      "mik",
+      "mil",
+      "mim",
+      "min",
+      "mis",
+      "mit",
+      "nok",
+      "nol",
+      "nom",
+      "non",
+      "nos",
+      "not",
+      "shik",
+      "shil",
+      "shis",
+      "shol",
+      "shom",
+      "shon",
+      "shos",
+      "yak",
+      "yal",
+      "yam",
+      "yan",
+      "yas",
+      "yat"
     ],
     "CVC_blocked": [
       {
@@ -1342,6 +1446,258 @@
         ]
       },
       {
+        "form": "bik",
+        "template": "CVC",
+        "blocked_by": [
+          "bi"
+        ]
+      },
+      {
+        "form": "bil",
+        "template": "CVC",
+        "blocked_by": [
+          "bi"
+        ]
+      },
+      {
+        "form": "bim",
+        "template": "CVC",
+        "blocked_by": [
+          "bi"
+        ]
+      },
+      {
+        "form": "bin",
+        "template": "CVC",
+        "blocked_by": [
+          "bi"
+        ]
+      },
+      {
+        "form": "bis",
+        "template": "CVC",
+        "blocked_by": [
+          "bi"
+        ]
+      },
+      {
+        "form": "bit",
+        "template": "CVC",
+        "blocked_by": [
+          "bi"
+        ]
+      },
+      {
+        "form": "bok",
+        "template": "CVC",
+        "blocked_by": [
+          "bo"
+        ]
+      },
+      {
+        "form": "bol",
+        "template": "CVC",
+        "blocked_by": [
+          "bo"
+        ]
+      },
+      {
+        "form": "bom",
+        "template": "CVC",
+        "blocked_by": [
+          "bo"
+        ]
+      },
+      {
+        "form": "bon",
+        "template": "CVC",
+        "blocked_by": [
+          "bo"
+        ]
+      },
+      {
+        "form": "bos",
+        "template": "CVC",
+        "blocked_by": [
+          "bo"
+        ]
+      },
+      {
+        "form": "bot",
+        "template": "CVC",
+        "blocked_by": [
+          "bo"
+        ]
+      },
+      {
+        "form": "buk",
+        "template": "CVC",
+        "blocked_by": [
+          "bu"
+        ]
+      },
+      {
+        "form": "bul",
+        "template": "CVC",
+        "blocked_by": [
+          "bu"
+        ]
+      },
+      {
+        "form": "bum",
+        "template": "CVC",
+        "blocked_by": [
+          "bu"
+        ]
+      },
+      {
+        "form": "bun",
+        "template": "CVC",
+        "blocked_by": [
+          "bu"
+        ]
+      },
+      {
+        "form": "bus",
+        "template": "CVC",
+        "blocked_by": [
+          "bu"
+        ]
+      },
+      {
+        "form": "but",
+        "template": "CVC",
+        "blocked_by": [
+          "bu"
+        ]
+      },
+      {
+        "form": "chak",
+        "template": "CVC",
+        "blocked_by": [
+          "cha"
+        ]
+      },
+      {
+        "form": "chal",
+        "template": "CVC",
+        "blocked_by": [
+          "cha"
+        ]
+      },
+      {
+        "form": "cham",
+        "template": "CVC",
+        "blocked_by": [
+          "cha"
+        ]
+      },
+      {
+        "form": "chan",
+        "template": "CVC",
+        "blocked_by": [
+          "cha"
+        ]
+      },
+      {
+        "form": "chas",
+        "template": "CVC",
+        "blocked_by": [
+          "cha"
+        ]
+      },
+      {
+        "form": "chat",
+        "template": "CVC",
+        "blocked_by": [
+          "cha"
+        ]
+      },
+      {
+        "form": "chek",
+        "template": "CVC",
+        "blocked_by": [
+          "che"
+        ]
+      },
+      {
+        "form": "chel",
+        "template": "CVC",
+        "blocked_by": [
+          "che"
+        ]
+      },
+      {
+        "form": "chem",
+        "template": "CVC",
+        "blocked_by": [
+          "che"
+        ]
+      },
+      {
+        "form": "chen",
+        "template": "CVC",
+        "blocked_by": [
+          "che"
+        ]
+      },
+      {
+        "form": "ches",
+        "template": "CVC",
+        "blocked_by": [
+          "che"
+        ]
+      },
+      {
+        "form": "chet",
+        "template": "CVC",
+        "blocked_by": [
+          "che"
+        ]
+      },
+      {
+        "form": "chuk",
+        "template": "CVC",
+        "blocked_by": [
+          "chu"
+        ]
+      },
+      {
+        "form": "chul",
+        "template": "CVC",
+        "blocked_by": [
+          "chu"
+        ]
+      },
+      {
+        "form": "chum",
+        "template": "CVC",
+        "blocked_by": [
+          "chu"
+        ]
+      },
+      {
+        "form": "chun",
+        "template": "CVC",
+        "blocked_by": [
+          "chu"
+        ]
+      },
+      {
+        "form": "chus",
+        "template": "CVC",
+        "blocked_by": [
+          "chu"
+        ]
+      },
+      {
+        "form": "chut",
+        "template": "CVC",
+        "blocked_by": [
+          "chu"
+        ]
+      },
+      {
         "form": "dek",
         "template": "CVC",
         "blocked_by": [
@@ -1381,6 +1737,678 @@
         "template": "CVC",
         "blocked_by": [
           "de"
+        ]
+      },
+      {
+        "form": "dik",
+        "template": "CVC",
+        "blocked_by": [
+          "di"
+        ]
+      },
+      {
+        "form": "dil",
+        "template": "CVC",
+        "blocked_by": [
+          "di"
+        ]
+      },
+      {
+        "form": "dim",
+        "template": "CVC",
+        "blocked_by": [
+          "di"
+        ]
+      },
+      {
+        "form": "din",
+        "template": "CVC",
+        "blocked_by": [
+          "di"
+        ]
+      },
+      {
+        "form": "dis",
+        "template": "CVC",
+        "blocked_by": [
+          "di"
+        ]
+      },
+      {
+        "form": "dit",
+        "template": "CVC",
+        "blocked_by": [
+          "di"
+        ]
+      },
+      {
+        "form": "dok",
+        "template": "CVC",
+        "blocked_by": [
+          "do"
+        ]
+      },
+      {
+        "form": "dol",
+        "template": "CVC",
+        "blocked_by": [
+          "do"
+        ]
+      },
+      {
+        "form": "dom",
+        "template": "CVC",
+        "blocked_by": [
+          "do"
+        ]
+      },
+      {
+        "form": "don",
+        "template": "CVC",
+        "blocked_by": [
+          "do"
+        ]
+      },
+      {
+        "form": "dos",
+        "template": "CVC",
+        "blocked_by": [
+          "do"
+        ]
+      },
+      {
+        "form": "dot",
+        "template": "CVC",
+        "blocked_by": [
+          "do"
+        ]
+      },
+      {
+        "form": "duk",
+        "template": "CVC",
+        "blocked_by": [
+          "du"
+        ]
+      },
+      {
+        "form": "dul",
+        "template": "CVC",
+        "blocked_by": [
+          "du"
+        ]
+      },
+      {
+        "form": "dum",
+        "template": "CVC",
+        "blocked_by": [
+          "du"
+        ]
+      },
+      {
+        "form": "dun",
+        "template": "CVC",
+        "blocked_by": [
+          "du"
+        ]
+      },
+      {
+        "form": "dus",
+        "template": "CVC",
+        "blocked_by": [
+          "du"
+        ]
+      },
+      {
+        "form": "dut",
+        "template": "CVC",
+        "blocked_by": [
+          "du"
+        ]
+      },
+      {
+        "form": "fik",
+        "template": "CVC",
+        "blocked_by": [
+          "fi"
+        ]
+      },
+      {
+        "form": "fil",
+        "template": "CVC",
+        "blocked_by": [
+          "fi"
+        ]
+      },
+      {
+        "form": "fim",
+        "template": "CVC",
+        "blocked_by": [
+          "fi"
+        ]
+      },
+      {
+        "form": "fin",
+        "template": "CVC",
+        "blocked_by": [
+          "fi"
+        ]
+      },
+      {
+        "form": "fis",
+        "template": "CVC",
+        "blocked_by": [
+          "fi"
+        ]
+      },
+      {
+        "form": "fit",
+        "template": "CVC",
+        "blocked_by": [
+          "fi"
+        ]
+      },
+      {
+        "form": "fok",
+        "template": "CVC",
+        "blocked_by": [
+          "fo"
+        ]
+      },
+      {
+        "form": "fol",
+        "template": "CVC",
+        "blocked_by": [
+          "fo"
+        ]
+      },
+      {
+        "form": "fom",
+        "template": "CVC",
+        "blocked_by": [
+          "fo"
+        ]
+      },
+      {
+        "form": "fon",
+        "template": "CVC",
+        "blocked_by": [
+          "fo"
+        ]
+      },
+      {
+        "form": "fos",
+        "template": "CVC",
+        "blocked_by": [
+          "fo"
+        ]
+      },
+      {
+        "form": "fot",
+        "template": "CVC",
+        "blocked_by": [
+          "fo"
+        ]
+      },
+      {
+        "form": "gik",
+        "template": "CVC",
+        "blocked_by": [
+          "gi"
+        ]
+      },
+      {
+        "form": "gil",
+        "template": "CVC",
+        "blocked_by": [
+          "gi"
+        ]
+      },
+      {
+        "form": "gim",
+        "template": "CVC",
+        "blocked_by": [
+          "gi"
+        ]
+      },
+      {
+        "form": "gin",
+        "template": "CVC",
+        "blocked_by": [
+          "gi"
+        ]
+      },
+      {
+        "form": "gis",
+        "template": "CVC",
+        "blocked_by": [
+          "gi"
+        ]
+      },
+      {
+        "form": "git",
+        "template": "CVC",
+        "blocked_by": [
+          "gi"
+        ]
+      },
+      {
+        "form": "gok",
+        "template": "CVC",
+        "blocked_by": [
+          "go"
+        ]
+      },
+      {
+        "form": "gol",
+        "template": "CVC",
+        "blocked_by": [
+          "go"
+        ]
+      },
+      {
+        "form": "gom",
+        "template": "CVC",
+        "blocked_by": [
+          "go"
+        ]
+      },
+      {
+        "form": "gon",
+        "template": "CVC",
+        "blocked_by": [
+          "go"
+        ]
+      },
+      {
+        "form": "gos",
+        "template": "CVC",
+        "blocked_by": [
+          "go"
+        ]
+      },
+      {
+        "form": "got",
+        "template": "CVC",
+        "blocked_by": [
+          "go"
+        ]
+      },
+      {
+        "form": "guk",
+        "template": "CVC",
+        "blocked_by": [
+          "gu"
+        ]
+      },
+      {
+        "form": "gul",
+        "template": "CVC",
+        "blocked_by": [
+          "gu"
+        ]
+      },
+      {
+        "form": "gum",
+        "template": "CVC",
+        "blocked_by": [
+          "gu"
+        ]
+      },
+      {
+        "form": "gun",
+        "template": "CVC",
+        "blocked_by": [
+          "gu"
+        ]
+      },
+      {
+        "form": "gus",
+        "template": "CVC",
+        "blocked_by": [
+          "gu"
+        ]
+      },
+      {
+        "form": "gut",
+        "template": "CVC",
+        "blocked_by": [
+          "gu"
+        ]
+      },
+      {
+        "form": "hak",
+        "template": "CVC",
+        "blocked_by": [
+          "ha"
+        ]
+      },
+      {
+        "form": "hal",
+        "template": "CVC",
+        "blocked_by": [
+          "ha"
+        ]
+      },
+      {
+        "form": "ham",
+        "template": "CVC",
+        "blocked_by": [
+          "ha"
+        ]
+      },
+      {
+        "form": "han",
+        "template": "CVC",
+        "blocked_by": [
+          "ha"
+        ]
+      },
+      {
+        "form": "has",
+        "template": "CVC",
+        "blocked_by": [
+          "ha"
+        ]
+      },
+      {
+        "form": "hat",
+        "template": "CVC",
+        "blocked_by": [
+          "ha"
+        ]
+      },
+      {
+        "form": "hek",
+        "template": "CVC",
+        "blocked_by": [
+          "he"
+        ]
+      },
+      {
+        "form": "hel",
+        "template": "CVC",
+        "blocked_by": [
+          "he"
+        ]
+      },
+      {
+        "form": "hem",
+        "template": "CVC",
+        "blocked_by": [
+          "he"
+        ]
+      },
+      {
+        "form": "hen",
+        "template": "CVC",
+        "blocked_by": [
+          "he"
+        ]
+      },
+      {
+        "form": "hes",
+        "template": "CVC",
+        "blocked_by": [
+          "he"
+        ]
+      },
+      {
+        "form": "het",
+        "template": "CVC",
+        "blocked_by": [
+          "he"
+        ]
+      },
+      {
+        "form": "hik",
+        "template": "CVC",
+        "blocked_by": [
+          "hi"
+        ]
+      },
+      {
+        "form": "hil",
+        "template": "CVC",
+        "blocked_by": [
+          "hi"
+        ]
+      },
+      {
+        "form": "him",
+        "template": "CVC",
+        "blocked_by": [
+          "hi"
+        ]
+      },
+      {
+        "form": "hin",
+        "template": "CVC",
+        "blocked_by": [
+          "hi"
+        ]
+      },
+      {
+        "form": "his",
+        "template": "CVC",
+        "blocked_by": [
+          "hi"
+        ]
+      },
+      {
+        "form": "hit",
+        "template": "CVC",
+        "blocked_by": [
+          "hi"
+        ]
+      },
+      {
+        "form": "hok",
+        "template": "CVC",
+        "blocked_by": [
+          "ho"
+        ]
+      },
+      {
+        "form": "hol",
+        "template": "CVC",
+        "blocked_by": [
+          "ho"
+        ]
+      },
+      {
+        "form": "hom",
+        "template": "CVC",
+        "blocked_by": [
+          "ho"
+        ]
+      },
+      {
+        "form": "hon",
+        "template": "CVC",
+        "blocked_by": [
+          "ho"
+        ]
+      },
+      {
+        "form": "hos",
+        "template": "CVC",
+        "blocked_by": [
+          "ho"
+        ]
+      },
+      {
+        "form": "hot",
+        "template": "CVC",
+        "blocked_by": [
+          "ho"
+        ]
+      },
+      {
+        "form": "huk",
+        "template": "CVC",
+        "blocked_by": [
+          "hu"
+        ]
+      },
+      {
+        "form": "hul",
+        "template": "CVC",
+        "blocked_by": [
+          "hu"
+        ]
+      },
+      {
+        "form": "hum",
+        "template": "CVC",
+        "blocked_by": [
+          "hu"
+        ]
+      },
+      {
+        "form": "hun",
+        "template": "CVC",
+        "blocked_by": [
+          "hu"
+        ]
+      },
+      {
+        "form": "hus",
+        "template": "CVC",
+        "blocked_by": [
+          "hu"
+        ]
+      },
+      {
+        "form": "hut",
+        "template": "CVC",
+        "blocked_by": [
+          "hu"
+        ]
+      },
+      {
+        "form": "kik",
+        "template": "CVC",
+        "blocked_by": [
+          "ki"
+        ]
+      },
+      {
+        "form": "kil",
+        "template": "CVC",
+        "blocked_by": [
+          "ki"
+        ]
+      },
+      {
+        "form": "kim",
+        "template": "CVC",
+        "blocked_by": [
+          "ki"
+        ]
+      },
+      {
+        "form": "kin",
+        "template": "CVC",
+        "blocked_by": [
+          "ki"
+        ]
+      },
+      {
+        "form": "kis",
+        "template": "CVC",
+        "blocked_by": [
+          "ki"
+        ]
+      },
+      {
+        "form": "kit",
+        "template": "CVC",
+        "blocked_by": [
+          "ki"
+        ]
+      },
+      {
+        "form": "kok",
+        "template": "CVC",
+        "blocked_by": [
+          "ko"
+        ]
+      },
+      {
+        "form": "kol",
+        "template": "CVC",
+        "blocked_by": [
+          "ko"
+        ]
+      },
+      {
+        "form": "kom",
+        "template": "CVC",
+        "blocked_by": [
+          "ko"
+        ]
+      },
+      {
+        "form": "kon",
+        "template": "CVC",
+        "blocked_by": [
+          "ko"
+        ]
+      },
+      {
+        "form": "kos",
+        "template": "CVC",
+        "blocked_by": [
+          "ko"
+        ]
+      },
+      {
+        "form": "kot",
+        "template": "CVC",
+        "blocked_by": [
+          "ko"
+        ]
+      },
+      {
+        "form": "kuk",
+        "template": "CVC",
+        "blocked_by": [
+          "ku"
+        ]
+      },
+      {
+        "form": "kul",
+        "template": "CVC",
+        "blocked_by": [
+          "ku"
+        ]
+      },
+      {
+        "form": "kum",
+        "template": "CVC",
+        "blocked_by": [
+          "ku"
+        ]
+      },
+      {
+        "form": "kun",
+        "template": "CVC",
+        "blocked_by": [
+          "ku"
+        ]
+      },
+      {
+        "form": "kus",
+        "template": "CVC",
+        "blocked_by": [
+          "ku"
+        ]
+      },
+      {
+        "form": "kut",
+        "template": "CVC",
+        "blocked_by": [
+          "ku"
         ]
       },
       {
@@ -1426,6 +2454,384 @@
         ]
       },
       {
+        "form": "lik",
+        "template": "CVC",
+        "blocked_by": [
+          "li"
+        ]
+      },
+      {
+        "form": "lil",
+        "template": "CVC",
+        "blocked_by": [
+          "li"
+        ]
+      },
+      {
+        "form": "lim",
+        "template": "CVC",
+        "blocked_by": [
+          "li"
+        ]
+      },
+      {
+        "form": "lin",
+        "template": "CVC",
+        "blocked_by": [
+          "li"
+        ]
+      },
+      {
+        "form": "lis",
+        "template": "CVC",
+        "blocked_by": [
+          "li"
+        ]
+      },
+      {
+        "form": "lit",
+        "template": "CVC",
+        "blocked_by": [
+          "li"
+        ]
+      },
+      {
+        "form": "lok",
+        "template": "CVC",
+        "blocked_by": [
+          "lo"
+        ]
+      },
+      {
+        "form": "lol",
+        "template": "CVC",
+        "blocked_by": [
+          "lo"
+        ]
+      },
+      {
+        "form": "lom",
+        "template": "CVC",
+        "blocked_by": [
+          "lo"
+        ]
+      },
+      {
+        "form": "lon",
+        "template": "CVC",
+        "blocked_by": [
+          "lo"
+        ]
+      },
+      {
+        "form": "los",
+        "template": "CVC",
+        "blocked_by": [
+          "lo"
+        ]
+      },
+      {
+        "form": "lot",
+        "template": "CVC",
+        "blocked_by": [
+          "lo"
+        ]
+      },
+      {
+        "form": "luk",
+        "template": "CVC",
+        "blocked_by": [
+          "lu"
+        ]
+      },
+      {
+        "form": "lul",
+        "template": "CVC",
+        "blocked_by": [
+          "lu"
+        ]
+      },
+      {
+        "form": "lum",
+        "template": "CVC",
+        "blocked_by": [
+          "lu"
+        ]
+      },
+      {
+        "form": "lun",
+        "template": "CVC",
+        "blocked_by": [
+          "lu"
+        ]
+      },
+      {
+        "form": "lus",
+        "template": "CVC",
+        "blocked_by": [
+          "lu"
+        ]
+      },
+      {
+        "form": "lut",
+        "template": "CVC",
+        "blocked_by": [
+          "lu"
+        ]
+      },
+      {
+        "form": "mok",
+        "template": "CVC",
+        "blocked_by": [
+          "mo"
+        ]
+      },
+      {
+        "form": "mol",
+        "template": "CVC",
+        "blocked_by": [
+          "mo"
+        ]
+      },
+      {
+        "form": "mom",
+        "template": "CVC",
+        "blocked_by": [
+          "mo"
+        ]
+      },
+      {
+        "form": "mon",
+        "template": "CVC",
+        "blocked_by": [
+          "mo"
+        ]
+      },
+      {
+        "form": "mos",
+        "template": "CVC",
+        "blocked_by": [
+          "mo"
+        ]
+      },
+      {
+        "form": "mot",
+        "template": "CVC",
+        "blocked_by": [
+          "mo"
+        ]
+      },
+      {
+        "form": "muk",
+        "template": "CVC",
+        "blocked_by": [
+          "mu"
+        ]
+      },
+      {
+        "form": "mul",
+        "template": "CVC",
+        "blocked_by": [
+          "mu"
+        ]
+      },
+      {
+        "form": "mum",
+        "template": "CVC",
+        "blocked_by": [
+          "mu"
+        ]
+      },
+      {
+        "form": "mun",
+        "template": "CVC",
+        "blocked_by": [
+          "mu"
+        ]
+      },
+      {
+        "form": "mus",
+        "template": "CVC",
+        "blocked_by": [
+          "mu"
+        ]
+      },
+      {
+        "form": "mut",
+        "template": "CVC",
+        "blocked_by": [
+          "mu"
+        ]
+      },
+      {
+        "form": "nik",
+        "template": "CVC",
+        "blocked_by": [
+          "ni"
+        ]
+      },
+      {
+        "form": "nil",
+        "template": "CVC",
+        "blocked_by": [
+          "ni"
+        ]
+      },
+      {
+        "form": "nim",
+        "template": "CVC",
+        "blocked_by": [
+          "ni"
+        ]
+      },
+      {
+        "form": "nin",
+        "template": "CVC",
+        "blocked_by": [
+          "ni"
+        ]
+      },
+      {
+        "form": "nis",
+        "template": "CVC",
+        "blocked_by": [
+          "ni"
+        ]
+      },
+      {
+        "form": "nit",
+        "template": "CVC",
+        "blocked_by": [
+          "ni"
+        ]
+      },
+      {
+        "form": "nuk",
+        "template": "CVC",
+        "blocked_by": [
+          "nu"
+        ]
+      },
+      {
+        "form": "nul",
+        "template": "CVC",
+        "blocked_by": [
+          "nu"
+        ]
+      },
+      {
+        "form": "num",
+        "template": "CVC",
+        "blocked_by": [
+          "nu"
+        ]
+      },
+      {
+        "form": "nun",
+        "template": "CVC",
+        "blocked_by": [
+          "nu"
+        ]
+      },
+      {
+        "form": "nus",
+        "template": "CVC",
+        "blocked_by": [
+          "nu"
+        ]
+      },
+      {
+        "form": "nut",
+        "template": "CVC",
+        "blocked_by": [
+          "nu"
+        ]
+      },
+      {
+        "form": "pak",
+        "template": "CVC",
+        "blocked_by": [
+          "pa"
+        ]
+      },
+      {
+        "form": "pal",
+        "template": "CVC",
+        "blocked_by": [
+          "pa"
+        ]
+      },
+      {
+        "form": "pam",
+        "template": "CVC",
+        "blocked_by": [
+          "pa"
+        ]
+      },
+      {
+        "form": "pan",
+        "template": "CVC",
+        "blocked_by": [
+          "pa"
+        ]
+      },
+      {
+        "form": "pas",
+        "template": "CVC",
+        "blocked_by": [
+          "pa"
+        ]
+      },
+      {
+        "form": "pat",
+        "template": "CVC",
+        "blocked_by": [
+          "pa"
+        ]
+      },
+      {
+        "form": "pek",
+        "template": "CVC",
+        "blocked_by": [
+          "pe"
+        ]
+      },
+      {
+        "form": "pel",
+        "template": "CVC",
+        "blocked_by": [
+          "pe"
+        ]
+      },
+      {
+        "form": "pem",
+        "template": "CVC",
+        "blocked_by": [
+          "pe"
+        ]
+      },
+      {
+        "form": "pen",
+        "template": "CVC",
+        "blocked_by": [
+          "pe"
+        ]
+      },
+      {
+        "form": "pes",
+        "template": "CVC",
+        "blocked_by": [
+          "pe"
+        ]
+      },
+      {
+        "form": "pet",
+        "template": "CVC",
+        "blocked_by": [
+          "pe"
+        ]
+      },
+      {
         "form": "sek",
         "template": "CVC",
         "blocked_by": [
@@ -1465,6 +2871,762 @@
         "template": "CVC",
         "blocked_by": [
           "se"
+        ]
+      },
+      {
+        "form": "shak",
+        "template": "CVC",
+        "blocked_by": [
+          "sha"
+        ]
+      },
+      {
+        "form": "shal",
+        "template": "CVC",
+        "blocked_by": [
+          "sha"
+        ]
+      },
+      {
+        "form": "sham",
+        "template": "CVC",
+        "blocked_by": [
+          "sha"
+        ]
+      },
+      {
+        "form": "shan",
+        "template": "CVC",
+        "blocked_by": [
+          "sha"
+        ]
+      },
+      {
+        "form": "shas",
+        "template": "CVC",
+        "blocked_by": [
+          "sha"
+        ]
+      },
+      {
+        "form": "shat",
+        "template": "CVC",
+        "blocked_by": [
+          "sha"
+        ]
+      },
+      {
+        "form": "shek",
+        "template": "CVC",
+        "blocked_by": [
+          "she"
+        ]
+      },
+      {
+        "form": "shel",
+        "template": "CVC",
+        "blocked_by": [
+          "she"
+        ]
+      },
+      {
+        "form": "shem",
+        "template": "CVC",
+        "blocked_by": [
+          "she"
+        ]
+      },
+      {
+        "form": "shen",
+        "template": "CVC",
+        "blocked_by": [
+          "she"
+        ]
+      },
+      {
+        "form": "shes",
+        "template": "CVC",
+        "blocked_by": [
+          "she"
+        ]
+      },
+      {
+        "form": "shet",
+        "template": "CVC",
+        "blocked_by": [
+          "she"
+        ]
+      },
+      {
+        "form": "shuk",
+        "template": "CVC",
+        "blocked_by": [
+          "shu"
+        ]
+      },
+      {
+        "form": "shul",
+        "template": "CVC",
+        "blocked_by": [
+          "shu"
+        ]
+      },
+      {
+        "form": "shum",
+        "template": "CVC",
+        "blocked_by": [
+          "shu"
+        ]
+      },
+      {
+        "form": "shun",
+        "template": "CVC",
+        "blocked_by": [
+          "shu"
+        ]
+      },
+      {
+        "form": "shus",
+        "template": "CVC",
+        "blocked_by": [
+          "shu"
+        ]
+      },
+      {
+        "form": "shut",
+        "template": "CVC",
+        "blocked_by": [
+          "shu"
+        ]
+      },
+      {
+        "form": "sik",
+        "template": "CVC",
+        "blocked_by": [
+          "si"
+        ]
+      },
+      {
+        "form": "sil",
+        "template": "CVC",
+        "blocked_by": [
+          "si"
+        ]
+      },
+      {
+        "form": "sim",
+        "template": "CVC",
+        "blocked_by": [
+          "si"
+        ]
+      },
+      {
+        "form": "sin",
+        "template": "CVC",
+        "blocked_by": [
+          "si"
+        ]
+      },
+      {
+        "form": "sis",
+        "template": "CVC",
+        "blocked_by": [
+          "si"
+        ]
+      },
+      {
+        "form": "sit",
+        "template": "CVC",
+        "blocked_by": [
+          "si"
+        ]
+      },
+      {
+        "form": "sok",
+        "template": "CVC",
+        "blocked_by": [
+          "so"
+        ]
+      },
+      {
+        "form": "sol",
+        "template": "CVC",
+        "blocked_by": [
+          "so"
+        ]
+      },
+      {
+        "form": "som",
+        "template": "CVC",
+        "blocked_by": [
+          "so"
+        ]
+      },
+      {
+        "form": "son",
+        "template": "CVC",
+        "blocked_by": [
+          "so"
+        ]
+      },
+      {
+        "form": "sos",
+        "template": "CVC",
+        "blocked_by": [
+          "so"
+        ]
+      },
+      {
+        "form": "sot",
+        "template": "CVC",
+        "blocked_by": [
+          "so"
+        ]
+      },
+      {
+        "form": "suk",
+        "template": "CVC",
+        "blocked_by": [
+          "su"
+        ]
+      },
+      {
+        "form": "sul",
+        "template": "CVC",
+        "blocked_by": [
+          "su"
+        ]
+      },
+      {
+        "form": "sum",
+        "template": "CVC",
+        "blocked_by": [
+          "su"
+        ]
+      },
+      {
+        "form": "sun",
+        "template": "CVC",
+        "blocked_by": [
+          "su"
+        ]
+      },
+      {
+        "form": "sus",
+        "template": "CVC",
+        "blocked_by": [
+          "su"
+        ]
+      },
+      {
+        "form": "sut",
+        "template": "CVC",
+        "blocked_by": [
+          "su"
+        ]
+      },
+      {
+        "form": "tik",
+        "template": "CVC",
+        "blocked_by": [
+          "ti"
+        ]
+      },
+      {
+        "form": "til",
+        "template": "CVC",
+        "blocked_by": [
+          "ti"
+        ]
+      },
+      {
+        "form": "tim",
+        "template": "CVC",
+        "blocked_by": [
+          "ti"
+        ]
+      },
+      {
+        "form": "tin",
+        "template": "CVC",
+        "blocked_by": [
+          "ti"
+        ]
+      },
+      {
+        "form": "tis",
+        "template": "CVC",
+        "blocked_by": [
+          "ti"
+        ]
+      },
+      {
+        "form": "tit",
+        "template": "CVC",
+        "blocked_by": [
+          "ti"
+        ]
+      },
+      {
+        "form": "tok",
+        "template": "CVC",
+        "blocked_by": [
+          "to"
+        ]
+      },
+      {
+        "form": "tol",
+        "template": "CVC",
+        "blocked_by": [
+          "to"
+        ]
+      },
+      {
+        "form": "tom",
+        "template": "CVC",
+        "blocked_by": [
+          "to"
+        ]
+      },
+      {
+        "form": "ton",
+        "template": "CVC",
+        "blocked_by": [
+          "to"
+        ]
+      },
+      {
+        "form": "tos",
+        "template": "CVC",
+        "blocked_by": [
+          "to"
+        ]
+      },
+      {
+        "form": "tot",
+        "template": "CVC",
+        "blocked_by": [
+          "to"
+        ]
+      },
+      {
+        "form": "tuk",
+        "template": "CVC",
+        "blocked_by": [
+          "tu"
+        ]
+      },
+      {
+        "form": "tul",
+        "template": "CVC",
+        "blocked_by": [
+          "tu"
+        ]
+      },
+      {
+        "form": "tum",
+        "template": "CVC",
+        "blocked_by": [
+          "tu"
+        ]
+      },
+      {
+        "form": "tun",
+        "template": "CVC",
+        "blocked_by": [
+          "tu"
+        ]
+      },
+      {
+        "form": "tus",
+        "template": "CVC",
+        "blocked_by": [
+          "tu"
+        ]
+      },
+      {
+        "form": "tut",
+        "template": "CVC",
+        "blocked_by": [
+          "tu"
+        ]
+      },
+      {
+        "form": "wak",
+        "template": "CVC",
+        "blocked_by": [
+          "wa"
+        ]
+      },
+      {
+        "form": "wal",
+        "template": "CVC",
+        "blocked_by": [
+          "wa"
+        ]
+      },
+      {
+        "form": "wam",
+        "template": "CVC",
+        "blocked_by": [
+          "wa"
+        ]
+      },
+      {
+        "form": "wan",
+        "template": "CVC",
+        "blocked_by": [
+          "wa"
+        ]
+      },
+      {
+        "form": "was",
+        "template": "CVC",
+        "blocked_by": [
+          "wa"
+        ]
+      },
+      {
+        "form": "wat",
+        "template": "CVC",
+        "blocked_by": [
+          "wa"
+        ]
+      },
+      {
+        "form": "wek",
+        "template": "CVC",
+        "blocked_by": [
+          "we"
+        ]
+      },
+      {
+        "form": "wel",
+        "template": "CVC",
+        "blocked_by": [
+          "we"
+        ]
+      },
+      {
+        "form": "wem",
+        "template": "CVC",
+        "blocked_by": [
+          "we"
+        ]
+      },
+      {
+        "form": "wen",
+        "template": "CVC",
+        "blocked_by": [
+          "we"
+        ]
+      },
+      {
+        "form": "wes",
+        "template": "CVC",
+        "blocked_by": [
+          "we"
+        ]
+      },
+      {
+        "form": "wet",
+        "template": "CVC",
+        "blocked_by": [
+          "we"
+        ]
+      },
+      {
+        "form": "wik",
+        "template": "CVC",
+        "blocked_by": [
+          "wi"
+        ]
+      },
+      {
+        "form": "wil",
+        "template": "CVC",
+        "blocked_by": [
+          "wi"
+        ]
+      },
+      {
+        "form": "wim",
+        "template": "CVC",
+        "blocked_by": [
+          "wi"
+        ]
+      },
+      {
+        "form": "win",
+        "template": "CVC",
+        "blocked_by": [
+          "wi"
+        ]
+      },
+      {
+        "form": "wis",
+        "template": "CVC",
+        "blocked_by": [
+          "wi"
+        ]
+      },
+      {
+        "form": "wit",
+        "template": "CVC",
+        "blocked_by": [
+          "wi"
+        ]
+      },
+      {
+        "form": "wok",
+        "template": "CVC",
+        "blocked_by": [
+          "wo"
+        ]
+      },
+      {
+        "form": "wol",
+        "template": "CVC",
+        "blocked_by": [
+          "wo"
+        ]
+      },
+      {
+        "form": "wom",
+        "template": "CVC",
+        "blocked_by": [
+          "wo"
+        ]
+      },
+      {
+        "form": "won",
+        "template": "CVC",
+        "blocked_by": [
+          "wo"
+        ]
+      },
+      {
+        "form": "wos",
+        "template": "CVC",
+        "blocked_by": [
+          "wo"
+        ]
+      },
+      {
+        "form": "wot",
+        "template": "CVC",
+        "blocked_by": [
+          "wo"
+        ]
+      },
+      {
+        "form": "wuk",
+        "template": "CVC",
+        "blocked_by": [
+          "wu"
+        ]
+      },
+      {
+        "form": "wul",
+        "template": "CVC",
+        "blocked_by": [
+          "wu"
+        ]
+      },
+      {
+        "form": "wum",
+        "template": "CVC",
+        "blocked_by": [
+          "wu"
+        ]
+      },
+      {
+        "form": "wun",
+        "template": "CVC",
+        "blocked_by": [
+          "wu"
+        ]
+      },
+      {
+        "form": "wus",
+        "template": "CVC",
+        "blocked_by": [
+          "wu"
+        ]
+      },
+      {
+        "form": "wut",
+        "template": "CVC",
+        "blocked_by": [
+          "wu"
+        ]
+      },
+      {
+        "form": "yek",
+        "template": "CVC",
+        "blocked_by": [
+          "ye"
+        ]
+      },
+      {
+        "form": "yel",
+        "template": "CVC",
+        "blocked_by": [
+          "ye"
+        ]
+      },
+      {
+        "form": "yem",
+        "template": "CVC",
+        "blocked_by": [
+          "ye"
+        ]
+      },
+      {
+        "form": "yen",
+        "template": "CVC",
+        "blocked_by": [
+          "ye"
+        ]
+      },
+      {
+        "form": "yes",
+        "template": "CVC",
+        "blocked_by": [
+          "ye"
+        ]
+      },
+      {
+        "form": "yet",
+        "template": "CVC",
+        "blocked_by": [
+          "ye"
+        ]
+      },
+      {
+        "form": "yik",
+        "template": "CVC",
+        "blocked_by": [
+          "yi"
+        ]
+      },
+      {
+        "form": "yil",
+        "template": "CVC",
+        "blocked_by": [
+          "yi"
+        ]
+      },
+      {
+        "form": "yim",
+        "template": "CVC",
+        "blocked_by": [
+          "yi"
+        ]
+      },
+      {
+        "form": "yin",
+        "template": "CVC",
+        "blocked_by": [
+          "yi"
+        ]
+      },
+      {
+        "form": "yis",
+        "template": "CVC",
+        "blocked_by": [
+          "yi"
+        ]
+      },
+      {
+        "form": "yit",
+        "template": "CVC",
+        "blocked_by": [
+          "yi"
+        ]
+      },
+      {
+        "form": "yok",
+        "template": "CVC",
+        "blocked_by": [
+          "yo"
+        ]
+      },
+      {
+        "form": "yol",
+        "template": "CVC",
+        "blocked_by": [
+          "yo"
+        ]
+      },
+      {
+        "form": "yom",
+        "template": "CVC",
+        "blocked_by": [
+          "yo"
+        ]
+      },
+      {
+        "form": "yon",
+        "template": "CVC",
+        "blocked_by": [
+          "yo"
+        ]
+      },
+      {
+        "form": "yos",
+        "template": "CVC",
+        "blocked_by": [
+          "yo"
+        ]
+      },
+      {
+        "form": "yot",
+        "template": "CVC",
+        "blocked_by": [
+          "yo"
+        ]
+      },
+      {
+        "form": "yuk",
+        "template": "CVC",
+        "blocked_by": [
+          "yu"
+        ]
+      },
+      {
+        "form": "yul",
+        "template": "CVC",
+        "blocked_by": [
+          "yu"
+        ]
+      },
+      {
+        "form": "yum",
+        "template": "CVC",
+        "blocked_by": [
+          "yu"
+        ]
+      },
+      {
+        "form": "yun",
+        "template": "CVC",
+        "blocked_by": [
+          "yu"
+        ]
+      },
+      {
+        "form": "yus",
+        "template": "CVC",
+        "blocked_by": [
+          "yu"
+        ]
+      },
+      {
+        "form": "yut",
+        "template": "CVC",
+        "blocked_by": [
+          "yu"
         ]
       }
     ]

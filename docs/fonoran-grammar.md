@@ -440,6 +440,18 @@ graph TD
 
 Compounding rules for the translator: prefer the **shortest transparent path** through approved concepts; omit concepts implied by human experience unless emphasis or disambiguation is needed (**semantic economy**); reject opaque shortcuts that break the tree (*implementation Under Development*).
 
+### Word families from dimension roots
+
+A **dimension root** names a kind of thing while staying neutral about which one (the same idea Rule 11 uses for questions), and one dimension root buys a whole family of compounds instead of one word each. These families are conventions, not suggestions: a new member of a family composes the same way its siblings do.
+
+| Family | Pattern | Members |
+| --- | --- | --- |
+| gender | being + **chos**/**shin** (female/male) | mother `feschos`, father `fesshin`, woman, man, girl, boy |
+| color | **shot** (color) + exemplar | white = color + light, black = color + dark |
+| sound | **shim** (sound) + quality | loud = sound + big, noise = sound + bad |
+
+`shim` (sound) deliberately mirrors `kek` (light): one names what reaches the ear, the other what lets you see — the phenomenon, never the act (`len` hear and `wi` see stay action roots). When a family's dimension root is missing, the fix is the dimension root, not another sibling: the July 2026 register review added nine such roots (happen, new, side, sound, color, wet, heavy, female, male) after finding the missing layer was operators and basic dimensions, not more nouns.
+
 ### Compound Boundary Constraint
 
 > **A valid compound may not join two morphemes when the final consonant of the left morpheme is identical to the initial consonant of the right morpheme. Fonoran does not collapse, lengthen, or silently alter boundary sounds. If such a boundary would occur, the compound candidate is invalid and must be regenerated or assigned different roots.**

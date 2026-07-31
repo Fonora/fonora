@@ -120,7 +120,7 @@ flowchart TD
   subgraph translate [3. Translation]
     TOK["tokenize + merge phrases"]
     SLOT["assign 5 slots\nActor Action Target Place Time"]
-    RES["7-tier resolution\nnever guesses"]
+    RES["8-tier resolution\nnever guesses"]
     REND["render roman + script"]
     GAPS["unresolved list\nanything unsayable"]
   end
@@ -186,7 +186,7 @@ Measured, not guessed. Each is a candidate, not a decision.
 **Structural fat, in the order that would help most:**
 
 1. ~~**Collapse the store to one source.**~~ Done. The Postgres path is gone and the seeds are read directly; the lab bucket survives as a derived build artifact.
-2. ~~**Isolate the English front end.**~~ Done as a boundary, not yet proven by a second language. `wink-nlp` owns tokenizing and lemmatizing through the single `tools/fonoran-english-morphology.js`, and the whole English front end now sits behind the parser contract in `tools/fonoran-source-parsers.js`: `sourceLang` selects a parser from the registry (a language with no parser is refused, never silently read as English), and a parser emits the neutral slot structure — particle ids and concept ids, never a Fonoran spelling. English is `tools/fonoran-source-english.js`, and it also supplies the resolver's language: `buildResolveContext` takes the parser's `lang` and `morphology` hooks, loads `localizations/<lang>.json`, and never calls an English function by name — a stub non-English parser in the test suite proves that contract end to end. What remains before a real second language: a localization seed for it, a per-language home for the curated interpretation rules (today English data in `data/fonoran-interpretation-rules.json` plus word lists in `fonoran-interpretation.js`), and the parser itself.
+2. ~~**Isolate the English front end.**~~ Done as a boundary, not yet proven by a second language. `wink-nlp` owns tokenizing and lemmatizing through the single `tools/fonoran-english-morphology.js` (derivational affixes — safety→safe, unsafe→`no`+safe — are the one English thing the model does not carry, and live as resolve-guarded candidates in `tools/fonoran-english-derivation.js`), and the whole English front end now sits behind the parser contract in `tools/fonoran-source-parsers.js`: `sourceLang` selects a parser from the registry (a language with no parser is refused, never silently read as English), and a parser emits the neutral slot structure — particle ids and concept ids, never a Fonoran spelling. English is `tools/fonoran-source-english.js`, and it also supplies the resolver's language: `buildResolveContext` takes the parser's `lang` and `morphology` hooks, loads `localizations/<lang>.json`, and never calls an English function by name — a stub non-English parser in the test suite proves that contract end to end. What remains before a real second language: a localization seed for it, a per-language home for the curated interpretation rules (today English data in `data/fonoran-interpretation-rules.json` plus word lists in `fonoran-interpretation.js`), and the parser itself.
 3. **The GUI.** If the workflow is you and me editing seeds directly, then Word Manager and the proposal review screens are surface area maintaining a second way to change the language.
 
 ## If this page and the code disagree

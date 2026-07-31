@@ -483,7 +483,16 @@ export const LANGUAGE_POLICY = Object.freeze({
     "surface": "fluent_core",
     "timid": "fluent_core",
     "travel": "fluent_core",
-    "will": "fluent_core"
+    "will": "fluent_core",
+    "happen": "fluent_core",
+    "new": "fluent_core",
+    "side": "fluent_core",
+    "sound": "fluent_core",
+    "color": "fluent_core",
+    "wet": "fluent_core",
+    "heavy": "fluent_core",
+    "female": "fluent_core",
+    "male": "fluent_core"
   },
   "ring_caps": {
     "ring_1": 50,

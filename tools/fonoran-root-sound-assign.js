@@ -65,11 +65,29 @@ export function buildSyllablePool(config) {
     cost++;
   }
 
+  // CVC uses all five vowels and all onset tiers. It was preferred onsets with a/e
+  // only, an economy choice, until July 2026, when that pool ran dry: with 136 roots
+  // claimed, prefix-safety (rule 5) left exactly two free forms and the documented
+  // 150-root cap was unreachable. Wider forms cost more, so they are drawn only when
+  // the cheap rhymes are gone; the clean reserve this opens is the tertiary CVC band
+  // (chi-/cho-/shi-/sho- rhymes), which no root or particle prefixes.
   cost = 50;
   for (const onset of phonetics.coda_onsets) {
-    for (const vowel of ['a', 'e']) {
+    for (const vowel of phonetics.vowels_by_cost) {
+      const vowelCost = phonetics.vowels_by_cost.indexOf(vowel) >= 2 ? 12 : 0;
       for (const coda of ['n', 'm', 't', 'k', 's', 'l']) {
-        add(onset + vowel + coda, 'CVC', cost, 'cvc');
+        add(onset + vowel + coda, 'CVC', cost + vowelCost, 'cvc');
+        cost += 0.1;
+      }
+    }
+  }
+
+  cost = 75;
+  for (const onset of [...phonetics.secondary_onsets, ...phonetics.tertiary_onsets]) {
+    for (const vowel of phonetics.vowels_by_cost) {
+      const vowelCost = phonetics.vowels_by_cost.indexOf(vowel) >= 2 ? 12 : 0;
+      for (const coda of ['n', 'm', 't', 'k', 's', 'l']) {
+        add(onset + vowel + coda, 'CVC', cost + vowelCost, 'cvc');
         cost += 0.1;
       }
     }
@@ -123,8 +141,16 @@ function spreadMultiplier(priorityWeight) {
 
 function particleFlowPenalty(root, particles) {
   let penalty = 0;
+  // A root that begins with any reserved particle is audibly risky next to that
+  // particle in speech: `no` precedes content words in every negated clause, so a
+  // root `nok` makes "no nok" a stutter. This used to check only the mi- phrases,
+  // which is how a 2026 candidate run offered `nok`, `nos` and `mik` while clean
+  // tertiary forms sat unused.
+  for (const particle of particles ?? []) {
+    const p = String(particle).toLowerCase();
+    if (root !== p && root.startsWith(p)) { penalty += 1200; break; }
+  }
   for (const phrase of GRAMMAR_PARTICLE_PHRASES) {
-    if (root.startsWith(phrase[phrase.length - 1])) penalty += 200;
     if (phrase.some(p => p === root)) penalty += 5000;
     const lastParticle = phrase[phrase.length - 1];
     if (root.endsWith(lastParticle) && root.length > lastParticle.length) penalty += 80;

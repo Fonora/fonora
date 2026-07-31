@@ -6,7 +6,7 @@
 
 ## The problem it solves
 
-There are 136 concepts and a limited supply of easy syllables. Short, easy sounds must go to the concepts you say most, and no two roots may be confusable. Doing that by hand at this scale produces favouritism and collisions, so it is scored instead.
+There are 145 concepts and a limited supply of easy syllables. Short, easy sounds must go to the concepts you say most, and no two roots may be confusable. Doing that by hand at this scale produces favouritism and collisions, so it is scored instead.
 
 **In:** `data/fonoran-concept-inventory.json` (concepts, each with a priority class)
 **Out:** one spelling per concept, into `data/fonoran-approved-roots.json` after human approval
@@ -38,9 +38,19 @@ Only one-syllable forms: **CV** or **CVC**. Multi-syllable forms are reserved fo
 | preferred CV | b d f g k l m n s t | a e i o u | 1 |
 | secondary CV | h w y | a e i o u | 20 |
 | tertiary CV | p ch sh | a e u | 35 |
-| CVC | the 10 preferred, coda n m t k s l | a e | 50 |
+| CVC | the 10 preferred, coda n m t k s l | a e i o u | 50 (i o u +12) |
+| CVC (reserve) | h w y p ch sh, same codas | a e i o u | 75 (i o u +12) |
 
 Vowels are themselves ordered by cost in that order, so `ba` is cheaper than `bu`.
+
+The two CVC bands were preferred onsets with a/e only until July 2026, when that
+pool ran dry: 136 claimed roots plus prefix-safety (no root may start another —
+rule 5, and every claimed CV blocks its six CVC extensions) left exactly two free
+forms, so the documented 150-root cap was unreachable. The widened bands restore
+real headroom; the clean reserve is the tertiary rhymes (`chi- cho- shi- sho-`),
+which no existing root or particle prefixes. A raw pool count overstates capacity —
+what matters is how many forms survive claims, retirements and prefix-safety
+together.
 
 Three sets never enter the pool: the 15 reserved particle forms, an excluded list (`pi`, `pee`, `po`, `poo`, `pu`, `fa`, `fu`), and anything starting with `r` or `j`, which rulebook rule 4 bans outright.
 
@@ -73,7 +83,7 @@ Every surviving form gets one number. Lowest wins; a cost tie breaks toward the 
 | Distance from target cost | difference × 12 |
 | Sounds too like an existing root | 60 to 90 per kind of similarity, scaled (below) |
 | Form is a particle, or repeats a nearby root | 5000 |
-| Form starts with a particle it will follow in speech | 200 |
+| Form starts with any reserved particle | 1200 |
 | Same onset beyond 5 already used | 120 each |
 | Same onset beyond 3, for a high-priority concept | 200 each |
 | Same rhyme beyond 4 already used | 150 each |
@@ -94,7 +104,7 @@ Approved spellings are reserved before the run starts, and are emitted unchanged
 
 ## Does it work?
 
-The observable result across the 135 approved roots. Cheap CV forms concentrate at the top, and the bottom of the inventory gets no premium syllables at all:
+The observable result across the 145 approved roots. Cheap CV forms concentrate at the top, and the bottom of the inventory gets no premium syllables at all:
 
 | Class | CV | CVC |
 | --- | --- | --- |

@@ -33,6 +33,23 @@ import { isMainModule } from './is-main.js';
  * exactly the variety the experiment is about. Each entry is a list of compositions.
  */
 export const ASSOCIATION_SEEDS = {
+  // --- July 2026 register review: words the new operator/dimension roots unlock ---
+  mother: [['parent', 'female'], ['female', 'parent']],
+  father: [['parent', 'male'], ['male', 'parent']],
+  woman: [['person', 'female'], ['female', 'person']],
+  man: [['person', 'male'], ['male', 'person']],
+  girl: [['child', 'female'], ['female', 'child']],
+  boy: [['child', 'male'], ['male', 'child']],
+  white: [['color', 'light'], ['light', 'color']],
+  black: [['color', 'dark'], ['dark', 'color']],
+  noise: [['sound', 'bad'], ['bad', 'sound']],
+  loud: [['sound', 'big'], ['big', 'sound']],
+  dry: [['water', 'empty'], ['empty', 'water']],
+  wound: [['pain', 'mark'], ['mark', 'pain'], ['body', 'pain', 'mark']],
+  weather: [['sky', 'change'], ['change', 'sky']],
+  deep: [['inside', 'far'], ['far', 'inside'], ['down', 'far']],
+  spirit: [['life', 'air'], ['air', 'life'], ['life', 'breath']],
+  tradition: [['before', 'path'], ['path', 'before'], ['before', 'do', 'collective']],
   // --- semantic foundation / demo trees ---
   community: [['collective', 'person'], ['many', 'person'], ['bond', 'collective']],
   family: [['person', 'bond'], ['love', 'person'], ['bond', 'near'], ['parent', 'collective']],
