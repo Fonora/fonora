@@ -9,63 +9,421 @@
     "particle_near_miss": 800
   },
   "blocked_forms": [
-    { "form": "fa", "category": "profanity", "reason": "English /fʌ/; compounds like fa+kan (beginning) read as a slur." },
-    { "form": "fu", "category": "profanity", "reason": "Near-profanity onset in English." },
-    { "form": "fak", "category": "profanity", "reason": "Near-profanity in English." },
-    { "form": "fuk", "category": "profanity", "reason": "Near-profanity in English." },
-    { "form": "fek", "category": "profanity", "reason": "Near-profanity in English." },
-    { "form": "kok", "category": "profanity", "reason": "Reads as crude slang in English." },
-    { "form": "kak", "category": "profanity", "reason": "Reads as crude slang in English." },
-    { "form": "dik", "category": "profanity", "reason": "Reads as crude slang in English." },
-    { "form": "tit", "category": "profanity", "reason": "Reads as crude slang in English." },
-    { "form": "suk", "category": "profanity", "reason": "Reads as crude slang in English." },
-    { "form": "mi", "category": "reserved_particle", "reason": "Reserved grammar particle." },
-    { "form": "ta", "category": "reserved_particle", "reason": "Reserved grammar particle." },
-    { "form": "na", "category": "reserved_particle", "reason": "Reserved grammar particle." }
+    {
+      "form": "fa",
+      "category": "profanity",
+      "reason": "English /fʌ/; compounds like fa+kan (beginning) read as a slur."
+    },
+    {
+      "form": "fu",
+      "category": "profanity",
+      "reason": "Near-profanity onset in English."
+    },
+    {
+      "form": "fak",
+      "category": "profanity",
+      "reason": "Near-profanity in English."
+    },
+    {
+      "form": "fuk",
+      "category": "profanity",
+      "reason": "Near-profanity in English."
+    },
+    {
+      "form": "fek",
+      "category": "profanity",
+      "reason": "Near-profanity in English."
+    },
+    {
+      "form": "kok",
+      "category": "profanity",
+      "reason": "Reads as crude slang in English."
+    },
+    {
+      "form": "kak",
+      "category": "profanity",
+      "reason": "Reads as crude slang in English."
+    },
+    {
+      "form": "dik",
+      "category": "profanity",
+      "reason": "Reads as crude slang in English."
+    },
+    {
+      "form": "tit",
+      "category": "profanity",
+      "reason": "Reads as crude slang in English."
+    },
+    {
+      "form": "suk",
+      "category": "profanity",
+      "reason": "Reads as crude slang in English."
+    },
+    {
+      "form": "mi",
+      "category": "reserved_particle",
+      "reason": "Reserved grammar particle."
+    },
+    {
+      "form": "ta",
+      "category": "reserved_particle",
+      "reason": "Reserved grammar particle."
+    },
+    {
+      "form": "na",
+      "category": "reserved_particle",
+      "reason": "Reserved grammar particle."
+    },
+    {
+      "form": "gap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "map",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "nap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "tap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "tip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "top",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "dip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "lap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "lip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "lop",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "sip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "sap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "sop",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "sup",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "hip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "hop",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "kap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "kip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "kup",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "ship",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "shop",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "chip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "chop",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "chap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "wip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "yap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "yip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "nip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "pip",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    },
+    {
+      "form": "dap",
+      "category": "english_word",
+      "reason": "Reads as a common English word (p-coda, added with the July 2026 coda expansion); a root spelled like an English word is read as English, not Fonoran."
+    }
   ],
   "discouraged_forms": [
-    { "form": "gas", "category": "common_word", "reason": "Common English word." },
-    { "form": "get", "category": "common_word", "reason": "Common English word." },
-    { "form": "set", "category": "common_word", "reason": "Common English word." },
-    { "form": "fan", "category": "common_word", "reason": "Common English word." },
-    { "form": "bet", "category": "common_word", "reason": "Common English word." },
-    { "form": "let", "category": "common_word", "reason": "Common English word." },
-    { "form": "mat", "category": "common_word", "reason": "Common English word." },
-    { "form": "man", "category": "common_word", "reason": "Common English word." },
-    { "form": "men", "category": "common_word", "reason": "Common English word." },
-    { "form": "ten", "category": "common_word", "reason": "Common English word." },
-    { "form": "net", "category": "common_word", "reason": "Common English word." },
-    { "form": "bat", "category": "common_word", "reason": "Common English word." },
-    { "form": "bag", "category": "common_word", "reason": "Common English word." },
-    { "form": "ban", "category": "common_word", "reason": "Common English word." },
-    { "form": "tan", "category": "common_word", "reason": "Common English word." },
-    { "form": "sat", "category": "common_word", "reason": "Common English word." },
-    { "form": "sal", "category": "common_word", "reason": "Reads as a common abbreviation/name." },
-    { "form": "gal", "category": "common_word", "reason": "Common English word." },
-    { "form": "gel", "category": "common_word", "reason": "Common English word." }
+    {
+      "form": "gas",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "get",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "set",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "fan",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "bet",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "let",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "mat",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "man",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "men",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "ten",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "net",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "bat",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "bag",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "ban",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "tan",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "sat",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "sal",
+      "category": "common_word",
+      "reason": "Reads as a common abbreviation/name."
+    },
+    {
+      "form": "gal",
+      "category": "common_word",
+      "reason": "Common English word."
+    },
+    {
+      "form": "gel",
+      "category": "common_word",
+      "reason": "Common English word."
+    }
   ],
   "homophone_warnings": [
-    { "form": "fi", "hears_as": "fee", "reason": "Strong English homophone (\"fee\")." },
-    { "form": "si", "hears_as": "see", "reason": "Strong English homophone (\"see\")." },
-    { "form": "ki", "hears_as": "key", "reason": "Strong English homophone (\"key\")." },
-    { "form": "bi", "hears_as": "bee", "reason": "Strong English homophone (\"bee\"/\"buy\")." },
-    { "form": "ti", "hears_as": "tea", "reason": "Strong English homophone (\"tea\")." },
-    { "form": "li", "hears_as": "lee", "reason": "Strong English homophone (\"lee\")." },
-    { "form": "ni", "hears_as": "knee", "reason": "Strong English homophone (\"knee\")." },
-    { "form": "tu", "hears_as": "two", "reason": "Strong English homophone (\"two\"/\"to\")." },
-    { "form": "su", "hears_as": "sue", "reason": "Strong English homophone (\"sue\")." },
-    { "form": "bu", "hears_as": "boo", "reason": "Strong English homophone (\"boo\")." },
-    { "form": "du", "hears_as": "due", "reason": "Strong English homophone (\"due\"/\"do\")." },
-    { "form": "lu", "hears_as": "loo", "reason": "Strong English homophone (\"loo\")." },
-    { "form": "no", "hears_as": "know", "reason": "Strong English homophone (\"know\")." },
-    { "form": "hi", "hears_as": "high", "reason": "Strong English homophone (\"high\"/\"hi\")." }
+    {
+      "form": "fi",
+      "hears_as": "fee",
+      "reason": "Strong English homophone (\"fee\")."
+    },
+    {
+      "form": "si",
+      "hears_as": "see",
+      "reason": "Strong English homophone (\"see\")."
+    },
+    {
+      "form": "ki",
+      "hears_as": "key",
+      "reason": "Strong English homophone (\"key\")."
+    },
+    {
+      "form": "bi",
+      "hears_as": "bee",
+      "reason": "Strong English homophone (\"bee\"/\"buy\")."
+    },
+    {
+      "form": "ti",
+      "hears_as": "tea",
+      "reason": "Strong English homophone (\"tea\")."
+    },
+    {
+      "form": "li",
+      "hears_as": "lee",
+      "reason": "Strong English homophone (\"lee\")."
+    },
+    {
+      "form": "ni",
+      "hears_as": "knee",
+      "reason": "Strong English homophone (\"knee\")."
+    },
+    {
+      "form": "tu",
+      "hears_as": "two",
+      "reason": "Strong English homophone (\"two\"/\"to\")."
+    },
+    {
+      "form": "su",
+      "hears_as": "sue",
+      "reason": "Strong English homophone (\"sue\")."
+    },
+    {
+      "form": "bu",
+      "hears_as": "boo",
+      "reason": "Strong English homophone (\"boo\")."
+    },
+    {
+      "form": "du",
+      "hears_as": "due",
+      "reason": "Strong English homophone (\"due\"/\"do\")."
+    },
+    {
+      "form": "lu",
+      "hears_as": "loo",
+      "reason": "Strong English homophone (\"loo\")."
+    },
+    {
+      "form": "no",
+      "hears_as": "know",
+      "reason": "Strong English homophone (\"know\")."
+    },
+    {
+      "form": "hi",
+      "hears_as": "high",
+      "reason": "Strong English homophone (\"high\"/\"hi\")."
+    }
   ],
   "particle_near_miss": [
-    { "form": "ma", "particle": "na", "reason": "Easily confused with grammar particles mi/na." },
-    { "form": "mu", "particle": "mi", "reason": "Easily confused with grammar particle mi." },
-    { "form": "me", "particle": "mi", "reason": "Easily confused with grammar particle mi." },
-    { "form": "ne", "particle": "na", "reason": "Easily confused with grammar particle na." },
-    { "form": "nu", "particle": "na", "reason": "Easily confused with grammar particle na." },
-    { "form": "te", "particle": "ta", "reason": "Easily confused with grammar particle ta." }
+    {
+      "form": "ma",
+      "particle": "na",
+      "reason": "Easily confused with grammar particles mi/na."
+    },
+    {
+      "form": "mu",
+      "particle": "mi",
+      "reason": "Easily confused with grammar particle mi."
+    },
+    {
+      "form": "me",
+      "particle": "mi",
+      "reason": "Easily confused with grammar particle mi."
+    },
+    {
+      "form": "ne",
+      "particle": "na",
+      "reason": "Easily confused with grammar particle na."
+    },
+    {
+      "form": "nu",
+      "particle": "na",
+      "reason": "Easily confused with grammar particle na."
+    },
+    {
+      "form": "te",
+      "particle": "ta",
+      "reason": "Easily confused with grammar particle ta."
+    }
   ]
 }

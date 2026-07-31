@@ -9,7 +9,9 @@
 
 ## The governing rule
 
-**It never guesses.** A word with no Fonoran form comes back in `unresolved[]` and appears bracketed in the output, rather than being approximated. An honest gap is worth more than a fluent sentence that means something else. Everything below serves that.
+**It never guesses silently.** A word with no Fonoran form comes back in `unresolved[]` and appears bracketed in the output, rather than being approximated. An honest gap is worth more than a fluent sentence that means something else. Everything below serves that.
+
+One marked exception exists, off by default: a translate request may opt in with `guess: true` (the live translator sends it), which lets the final tier substitute the nearest **existing** concept for a gap word — found by the same deterministic, cached WordNet walk the curation queue uses. A guess can never mint a spelling, it carries `guessed: true` and its reason on the token, and every surface styles it as a guess (dashed underline, review colour, a "guessed" strip beside the gap list). Scripts, tests, goldens, and gap reports do not send the flag, so coverage numbers keep measuring the honest lexicon.
 
 ## Step 1: cut the input into sentences and words
 
@@ -33,7 +35,7 @@ The Action is the verb. The Actor is the head of the noun phrase before it, so a
 
 This is also where English grammar is consumed and discarded. Tense comes from verb form and becomes a particle rather than an ending; irregulars need no list of ours, since the tagger already reports `gave` as `give`. Negation words are re-emitted as the `no` particle in front of what they deny, scoped to their own clause. Ability and necessity modals become ordinary concepts before the Action. Words English marks and Fonoran does not (number, articles, degree adverbs) are dropped; everything else either resolves or is reported.
 
-Negating affixes are read as structure here too (`tools/fonoran-english-derivation.js`): *unsafe* becomes `no` + safe, *fearless* becomes `no` + fear — the same rule-9 constituent negation a speaker would use. The split fires only when the base is a known lexicon alias at full strength and the word is not itself in the lexicon whole; stoplists carry the traps (*unless* is not un+less). A word failing either guard flows on whole and gaps honestly.
+Negating affixes are read as structure here too (`tools/fonoran-english-derivation.js`): *unsafe* becomes `no` + safe, *fearless* becomes `no` + fear — the same rule-9 constituent negation a speaker would use. The prefix check also runs through the suffix chain, so *decentralized* reads as de + central + -ized and renders as `no` + center with the trail named on the token. Reversative *de-* only fires inside that -ize family (*delightful* is not de+light), *dis-* is plain negation (*disconnect* → `no` + connect). The split fires only when the base is a known lexicon alias at full strength and the word is not itself in the lexicon whole; stoplists carry the traps (*unless* is not un+less, *display* is not dis+play). A word failing either guard flows on whole and gaps honestly.
 
 ## Step 3: resolve each word to a concept, in a fixed tier order
 
@@ -48,11 +50,14 @@ For one word, the first tier that hits wins. The order is the whole point: certa
 | 5 | Strong alias, concept id, or lemma | **high** |
 | 6 | Curated interpretation rule (spatial paths, classes, idioms) | medium |
 | 7 | Derivational base through the parser's morphology hooks (`safety`→safe via -ty, `creation`→make via -ion, `badly`→bad via -ly) | medium |
-| 8 | Nothing matched, emit a gap | none |
+| 8 | Guessed nearest existing concept — **opt-in only** (`guess: true`), marked `guessed` on the token and styled as a guess everywhere | low |
+| 9 | Nothing matched, emit a gap | none |
 
 A **weak** alias never produces output. It is recorded as a curation suggestion for a human instead, which is how the lexicon grows without the translator inventing entries.
 
 Tier 7 is not a stemmer: the affix rules (`tools/fonoran-english-derivation.js`) only propose lookup candidates, each candidate must still resolve at full strength, and a hit is marked interpreted with the affix named. A stripped form that resolves to nothing stays an honest gap, which is what separates this from the hand-rolled suffix-stripping the morphology module replaced. The hook is optional in the parser contract; a language whose parser supplies none skips the tier.
+
+Tier 8 is the marked exception described under the governing rule. It is substitution only — the guess points at a concept that already has a human-approved spelling, so it cannot reopen the fabrication class that got the original runtime guessing removed in July 2026 (*behind* → buttocks → can → `ja`). Multiword WordNet co-synonyms are refused as output (that is where the junk senses live: *wolf* lists *woman chaser*), and the word's weak-alias suggestion still reaches the curation queue, because a guess on screen is not an alias approved into the lexicon.
 
 Once a concept is identified, its spelling comes from the approved roots, or from a compound's composition, or is built from parts. Retired spellings are resolved through their live concept id, so a respelled root does not need every downstream artifact rebuilt.
 

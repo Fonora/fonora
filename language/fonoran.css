@@ -2000,6 +2000,10 @@
     .translator-resolved--interpreted { color:var(--fonora-gold-strong); font-weight:600; }
     .translator-resolved--semantic { color:var(--color-review); font-weight:600; }
     .translator-resolved--alias_weak { color:var(--color-review); font-weight:600; }
+    .translator-resolved--guessed {
+      color:var(--color-review); font-weight:600; font-style:italic;
+      text-decoration:underline dashed; text-underline-offset:3px;
+    }
     .translator-resolved--composed { color:#3d7dd6; font-weight:600; }
     .translator-resolved--loan { color:#9a5bd6; font-weight:600; font-style:italic; }
     .translator-playback-bar {
@@ -2358,6 +2362,12 @@
     .translator-token--semantic .translator-token__fonoran { color:var(--color-review); }
     .translator-token--composed .translator-token__fonoran { color:#3d7dd6; }
     .translator-token--loan .translator-token__fonoran { color:#9a5bd6; font-style:italic; }
+    /* A guess is the translator reaching for the nearest concept, not the
+       lexicon speaking — the dashed underline keeps that visible at a glance. */
+    .translator-token--guessed .translator-token__fonoran {
+      color:var(--color-review); font-style:italic;
+      text-decoration:underline dashed; text-underline-offset:3px;
+    }
     .translator-token--guessed .translator-token__fonoran {
       color:var(--color-review);
       text-decoration:underline;
@@ -3428,6 +3438,24 @@
     .align__gap {
       color:var(--error); border:1px dashed var(--error);
       border-radius:5px; padding:0.05rem 0.4rem;
+    }
+
+    /* Guessed words: resolved on screen, but a substitute the engine reached
+       for, not lexicon — same review colour and dashed mark as the translator. */
+    .align__guess {
+      color:var(--color-review); border:1px dashed var(--color-review);
+      border-radius:5px; padding:0.05rem 0.4rem;
+    }
+
+    .align__fblock--guessed .align__roman {
+      font-style:italic;
+      text-decoration:underline dashed; text-underline-offset:3px;
+    }
+
+    .align__guess-badge {
+      color:var(--color-review);
+      font-size:calc(0.62rem * var(--align-scale));
+      text-transform:uppercase; letter-spacing:0.07em;
     }
 
     .align__empty { color:var(--muted); text-align:center; padding:1.5rem 0; }

@@ -2,17 +2,17 @@
   "version": "1.0-prefix-safe",
   "rule": "A spelling is algorithmically prefix-safe iff it neither prefixes nor is prefixed by any other approved root. Same detector as Health prefix_overlap.",
   "note": "This is phonetic distinctiveness approval, not Word Manager human approval. Free CV forms that prefix taken CVCs are blocked until those CVCs move.",
-  "generated_at": "2026-07-31T19:32:18.944Z",
+  "generated_at": "2026-07-31T23:31:30.270Z",
   "summary": {
     "approved_roots": 145,
     "prefix_pairs": 0,
-    "approved_CV_prefix_safe": 54,
-    "approved_CVC_prefix_safe": 91,
+    "approved_CV_prefix_safe": 49,
+    "approved_CVC_prefix_safe": 96,
     "approved_prefix_unsafe": 0,
     "pool_CV_prefix_safe_free": 0,
-    "pool_CV_blocked_free": 11,
-    "pool_CVC_prefix_safe_free": 34,
-    "pool_CVC_blocked_free": 324
+    "pool_CV_blocked_free": 16,
+    "pool_CVC_prefix_safe_free": 85,
+    "pool_CVC_blocked_free": 343
   },
   "prefix_pairs": [],
   "approved_prefix_safe": {
@@ -29,12 +29,10 @@
       "di",
       "do",
       "du",
-      "fi",
       "fo",
       "gi",
       "go",
       "gu",
-      "ha",
       "he",
       "hi",
       "ho",
@@ -56,7 +54,6 @@
       "sha",
       "she",
       "shu",
-      "si",
       "so",
       "su",
       "ti",
@@ -66,10 +63,8 @@
       "we",
       "wi",
       "wo",
-      "wu",
       "ye",
       "yi",
-      "yo",
       "yu"
     ],
     "CVC": [
@@ -80,15 +75,16 @@
       "chos",
       "dak",
       "dal",
-      "dam",
       "dan",
-      "das",
       "dat",
       "fel",
       "fem",
       "fen",
       "fes",
       "fet",
+      "fim",
+      "fip",
+      "fis",
       "gak",
       "gal",
       "gam",
@@ -100,7 +96,7 @@
       "gem",
       "gen",
       "ges",
-      "get",
+      "hap",
       "kal",
       "kam",
       "kan",
@@ -110,10 +106,10 @@
       "kel",
       "kem",
       "ken",
+      "kep",
       "kes",
       "ket",
       "lek",
-      "lel",
       "lem",
       "len",
       "les",
@@ -124,13 +120,11 @@
       "man",
       "mas",
       "mat",
-      "mek",
       "mel",
       "mem",
-      "men",
+      "mep",
       "mes",
       "met",
-      "nak",
       "nal",
       "nam",
       "nan",
@@ -141,9 +135,7 @@
       "nem",
       "nen",
       "nes",
-      "net",
       "sak",
-      "sal",
       "sam",
       "san",
       "sas",
@@ -152,18 +144,26 @@
       "shin",
       "shok",
       "shot",
+      "sil",
       "tak",
       "tal",
       "tam",
       "tan",
-      "tas",
       "tat",
       "tek",
       "tel",
       "tem",
-      "ten",
       "tes",
-      "tet"
+      "tet",
+      "wuk",
+      "wul",
+      "wum",
+      "wun",
+      "wus",
+      "yok",
+      "yom",
+      "yos",
+      "yot"
     ]
   },
   "approved_prefix_unsafe": [],
@@ -254,13 +254,6 @@
         "blocked_by": []
       },
       {
-        "id": "travel",
-        "spelling": "fi",
-        "concept": "going from one place to another",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
         "id": "life",
         "spelling": "fo",
         "concept": "being alive",
@@ -285,13 +278,6 @@
         "id": "good",
         "spelling": "gu",
         "concept": "good; works well or is wanted",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "rule",
-        "spelling": "ha",
-        "concept": "a pattern to follow; how things must be done",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -443,13 +429,6 @@
         "blocked_by": []
       },
       {
-        "id": "motion",
-        "spelling": "si",
-        "concept": "movement itself; something in motion",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
         "id": "back",
         "spelling": "so",
         "concept": "behind; the back side; rear",
@@ -513,13 +492,6 @@
         "blocked_by": []
       },
       {
-        "id": "straight",
-        "spelling": "wu",
-        "concept": "a direct line without bend",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
         "id": "water",
         "spelling": "ye",
         "concept": "water",
@@ -530,13 +502,6 @@
         "id": "around",
         "spelling": "yi",
         "concept": "encircling; going in a circle; again",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "proud",
-        "spelling": "yo",
-        "concept": "proud",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -599,23 +564,9 @@
         "blocked_by": []
       },
       {
-        "id": "mouth",
-        "spelling": "dam",
-        "concept": "your mouth",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
         "id": "collective",
         "spelling": "dan",
         "concept": "a group seen as one; togetherness",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "reach",
-        "spelling": "das",
-        "concept": "reach",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -658,6 +609,27 @@
         "id": "far",
         "spelling": "fet",
         "concept": "a long way off",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "worried",
+        "spelling": "fim",
+        "concept": "worried; troubled by what may come",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "soon",
+        "spelling": "fip",
+        "concept": "soon; in a short time from now",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "rain",
+        "spelling": "fis",
+        "concept": "rain; water falling from the sky",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -739,9 +711,9 @@
         "blocked_by": []
       },
       {
-        "id": "substance",
-        "spelling": "get",
-        "concept": "substance",
+        "id": "sun",
+        "spelling": "hap",
+        "concept": "the sun; the light of the sky",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -809,6 +781,13 @@
         "blocked_by": []
       },
       {
+        "id": "safe",
+        "spelling": "kep",
+        "concept": "safe; out of danger",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
         "id": "head",
         "spelling": "kes",
         "concept": "your head",
@@ -826,13 +805,6 @@
         "id": "many",
         "spelling": "lek",
         "concept": "a lot; lots of them",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "joy",
-        "spelling": "lel",
-        "concept": "deep gladness; joyful feeling",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -907,13 +879,6 @@
         "blocked_by": []
       },
       {
-        "id": "exclude",
-        "spelling": "mek",
-        "concept": "to keep out of a group",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
         "id": "all",
         "spelling": "mel",
         "concept": "every one of them",
@@ -928,9 +893,9 @@
         "blocked_by": []
       },
       {
-        "id": "timid",
-        "spelling": "men",
-        "concept": "shy fear; hesitation from fear",
+        "id": "meaning",
+        "spelling": "mep",
+        "concept": "meaning; what a word or act points to",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -945,13 +910,6 @@
         "id": "think",
         "spelling": "met",
         "concept": "to use your mind",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "scared",
-        "spelling": "nak",
-        "concept": "feeling afraid; pulled back by fear",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -1026,23 +984,9 @@
         "blocked_by": []
       },
       {
-        "id": "depression",
-        "spelling": "net",
-        "concept": "heavy sadness; spirit pressed down",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
         "id": "want",
         "spelling": "sak",
         "concept": "to wish for something",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "aggression",
-        "spelling": "sal",
-        "concept": "hostile force; attacking energy",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -1103,6 +1047,13 @@
         "blocked_by": []
       },
       {
+        "id": "please",
+        "spelling": "sil",
+        "concept": "please; the softening word of a request",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
         "id": "there",
         "spelling": "tak",
         "concept": "at that place",
@@ -1127,13 +1078,6 @@
         "id": "count",
         "spelling": "tan",
         "concept": "how many of something; the quantity axis, not a value on it",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
-        "id": "justice",
-        "spelling": "tas",
-        "concept": "fair treatment; equal rules for all",
         "prefix_safe": true,
         "blocked_by": []
       },
@@ -1166,13 +1110,6 @@
         "blocked_by": []
       },
       {
-        "id": "surface",
-        "spelling": "ten",
-        "concept": "the outer side you touch",
-        "prefix_safe": true,
-        "blocked_by": []
-      },
-      {
         "id": "pain",
         "spelling": "tes",
         "concept": "hurting; physical or emotional hurt",
@@ -1183,6 +1120,69 @@
         "id": "plant",
         "spelling": "tet",
         "concept": "a plant",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "try",
+        "spelling": "wuk",
+        "concept": "to try; to attempt an action",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "night",
+        "spelling": "wul",
+        "concept": "the night; the dark span of the cycle",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "shelter",
+        "spelling": "wum",
+        "concept": "shelter; a place that protects",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "wound",
+        "spelling": "wun",
+        "concept": "a wound; an injury on the body",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "show",
+        "spelling": "wus",
+        "concept": "to show; to cause to see",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "share",
+        "spelling": "yok",
+        "concept": "to share; to give part while keeping part",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "day",
+        "spelling": "yom",
+        "concept": "a day; the bright span of the cycle",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "tired",
+        "spelling": "yos",
+        "concept": "tired; drained of strength",
+        "prefix_safe": true,
+        "blocked_by": []
+      },
+      {
+        "id": "again",
+        "spelling": "yot",
+        "concept": "again; one more time",
         "prefix_safe": true,
         "blocked_by": []
       }
@@ -1198,9 +1198,7 @@
         "blocked_by": [
           "dak",
           "dal",
-          "dam",
           "dan",
-          "das",
           "dat"
         ]
       },
@@ -1213,6 +1211,15 @@
           "fen",
           "fes",
           "fet"
+        ]
+      },
+      {
+        "form": "fi",
+        "template": "CV",
+        "blocked_by": [
+          "fim",
+          "fip",
+          "fis"
         ]
       },
       {
@@ -1235,8 +1242,14 @@
           "gel",
           "gem",
           "gen",
-          "ges",
-          "get"
+          "ges"
+        ]
+      },
+      {
+        "form": "ha",
+        "template": "CV",
+        "blocked_by": [
+          "hap"
         ]
       },
       {
@@ -1247,6 +1260,7 @@
           "kel",
           "kem",
           "ken",
+          "kep",
           "kes",
           "ket"
         ]
@@ -1256,7 +1270,6 @@
         "template": "CV",
         "blocked_by": [
           "lek",
-          "lel",
           "lem",
           "len",
           "les",
@@ -1279,10 +1292,9 @@
         "form": "me",
         "template": "CV",
         "blocked_by": [
-          "mek",
           "mel",
           "mem",
-          "men",
+          "mep",
           "mes",
           "met"
         ]
@@ -1291,7 +1303,6 @@
         "form": "na",
         "template": "CV",
         "blocked_by": [
-          "nak",
           "nal",
           "nam",
           "nan",
@@ -1307,8 +1318,14 @@
           "nel",
           "nem",
           "nen",
-          "nes",
-          "net"
+          "nes"
+        ]
+      },
+      {
+        "form": "si",
+        "template": "CV",
+        "blocked_by": [
+          "sil"
         ]
       },
       {
@@ -1318,9 +1335,29 @@
           "tek",
           "tel",
           "tem",
-          "ten",
           "tes",
           "tet"
+        ]
+      },
+      {
+        "form": "wu",
+        "template": "CV",
+        "blocked_by": [
+          "wuk",
+          "wul",
+          "wum",
+          "wun",
+          "wus"
+        ]
+      },
+      {
+        "form": "yo",
+        "template": "CV",
+        "blocked_by": [
+          "yok",
+          "yom",
+          "yos",
+          "yot"
         ]
       }
     ],
@@ -1328,37 +1365,88 @@
       "chil",
       "chim",
       "chin",
+      "chip",
       "chis",
       "chok",
       "chol",
+      "chop",
       "chot",
+      "dam",
+      "dap",
+      "das",
       "fek",
+      "fep",
+      "fik",
+      "fil",
+      "fin",
+      "fit",
+      "gap",
+      "gep",
+      "get",
+      "hak",
+      "hal",
+      "ham",
+      "han",
+      "has",
+      "hat",
       "kak",
+      "kap",
+      "lel",
+      "lep",
+      "map",
+      "mek",
+      "men",
       "mik",
       "mil",
       "mim",
       "min",
+      "mip",
       "mis",
       "mit",
+      "nak",
+      "nap",
+      "nep",
+      "net",
       "nok",
       "nol",
       "nom",
       "non",
+      "nop",
       "nos",
       "not",
+      "sal",
+      "sap",
       "shik",
       "shil",
+      "ship",
       "shis",
       "shol",
       "shom",
       "shon",
+      "shop",
       "shos",
+      "sik",
+      "sim",
+      "sin",
+      "sip",
+      "sis",
+      "sit",
+      "tap",
+      "tas",
+      "ten",
+      "tep",
+      "wup",
+      "wut",
       "yak",
       "yal",
       "yam",
       "yan",
+      "yap",
       "yas",
-      "yat"
+      "yat",
+      "yol",
+      "yon",
+      "yop"
     ],
     "CVC_blocked": [
       {
@@ -1384,6 +1472,13 @@
       },
       {
         "form": "ban",
+        "template": "CVC",
+        "blocked_by": [
+          "ba"
+        ]
+      },
+      {
+        "form": "bap",
         "template": "CVC",
         "blocked_by": [
           "ba"
@@ -1432,6 +1527,13 @@
         ]
       },
       {
+        "form": "bep",
+        "template": "CVC",
+        "blocked_by": [
+          "be"
+        ]
+      },
+      {
         "form": "bes",
         "template": "CVC",
         "blocked_by": [
@@ -1468,6 +1570,13 @@
       },
       {
         "form": "bin",
+        "template": "CVC",
+        "blocked_by": [
+          "bi"
+        ]
+      },
+      {
+        "form": "bip",
         "template": "CVC",
         "blocked_by": [
           "bi"
@@ -1516,6 +1625,13 @@
         ]
       },
       {
+        "form": "bop",
+        "template": "CVC",
+        "blocked_by": [
+          "bo"
+        ]
+      },
+      {
         "form": "bos",
         "template": "CVC",
         "blocked_by": [
@@ -1552,6 +1668,13 @@
       },
       {
         "form": "bun",
+        "template": "CVC",
+        "blocked_by": [
+          "bu"
+        ]
+      },
+      {
+        "form": "bup",
         "template": "CVC",
         "blocked_by": [
           "bu"
@@ -1600,6 +1723,13 @@
         ]
       },
       {
+        "form": "chap",
+        "template": "CVC",
+        "blocked_by": [
+          "cha"
+        ]
+      },
+      {
         "form": "chas",
         "template": "CVC",
         "blocked_by": [
@@ -1636,6 +1766,13 @@
       },
       {
         "form": "chen",
+        "template": "CVC",
+        "blocked_by": [
+          "che"
+        ]
+      },
+      {
+        "form": "chep",
         "template": "CVC",
         "blocked_by": [
           "che"
@@ -1684,6 +1821,13 @@
         ]
       },
       {
+        "form": "chup",
+        "template": "CVC",
+        "blocked_by": [
+          "chu"
+        ]
+      },
+      {
         "form": "chus",
         "template": "CVC",
         "blocked_by": [
@@ -1720,6 +1864,13 @@
       },
       {
         "form": "den",
+        "template": "CVC",
+        "blocked_by": [
+          "de"
+        ]
+      },
+      {
+        "form": "dep",
         "template": "CVC",
         "blocked_by": [
           "de"
@@ -1768,6 +1919,13 @@
         ]
       },
       {
+        "form": "dip",
+        "template": "CVC",
+        "blocked_by": [
+          "di"
+        ]
+      },
+      {
         "form": "dis",
         "template": "CVC",
         "blocked_by": [
@@ -1804,6 +1962,13 @@
       },
       {
         "form": "don",
+        "template": "CVC",
+        "blocked_by": [
+          "do"
+        ]
+      },
+      {
+        "form": "dop",
         "template": "CVC",
         "blocked_by": [
           "do"
@@ -1852,6 +2017,13 @@
         ]
       },
       {
+        "form": "dup",
+        "template": "CVC",
+        "blocked_by": [
+          "du"
+        ]
+      },
+      {
         "form": "dus",
         "template": "CVC",
         "blocked_by": [
@@ -1863,48 +2035,6 @@
         "template": "CVC",
         "blocked_by": [
           "du"
-        ]
-      },
-      {
-        "form": "fik",
-        "template": "CVC",
-        "blocked_by": [
-          "fi"
-        ]
-      },
-      {
-        "form": "fil",
-        "template": "CVC",
-        "blocked_by": [
-          "fi"
-        ]
-      },
-      {
-        "form": "fim",
-        "template": "CVC",
-        "blocked_by": [
-          "fi"
-        ]
-      },
-      {
-        "form": "fin",
-        "template": "CVC",
-        "blocked_by": [
-          "fi"
-        ]
-      },
-      {
-        "form": "fis",
-        "template": "CVC",
-        "blocked_by": [
-          "fi"
-        ]
-      },
-      {
-        "form": "fit",
-        "template": "CVC",
-        "blocked_by": [
-          "fi"
         ]
       },
       {
@@ -1930,6 +2060,13 @@
       },
       {
         "form": "fon",
+        "template": "CVC",
+        "blocked_by": [
+          "fo"
+        ]
+      },
+      {
+        "form": "fop",
         "template": "CVC",
         "blocked_by": [
           "fo"
@@ -1978,6 +2115,13 @@
         ]
       },
       {
+        "form": "gip",
+        "template": "CVC",
+        "blocked_by": [
+          "gi"
+        ]
+      },
+      {
         "form": "gis",
         "template": "CVC",
         "blocked_by": [
@@ -2014,6 +2158,13 @@
       },
       {
         "form": "gon",
+        "template": "CVC",
+        "blocked_by": [
+          "go"
+        ]
+      },
+      {
+        "form": "gop",
         "template": "CVC",
         "blocked_by": [
           "go"
@@ -2062,6 +2213,13 @@
         ]
       },
       {
+        "form": "gup",
+        "template": "CVC",
+        "blocked_by": [
+          "gu"
+        ]
+      },
+      {
         "form": "gus",
         "template": "CVC",
         "blocked_by": [
@@ -2073,48 +2231,6 @@
         "template": "CVC",
         "blocked_by": [
           "gu"
-        ]
-      },
-      {
-        "form": "hak",
-        "template": "CVC",
-        "blocked_by": [
-          "ha"
-        ]
-      },
-      {
-        "form": "hal",
-        "template": "CVC",
-        "blocked_by": [
-          "ha"
-        ]
-      },
-      {
-        "form": "ham",
-        "template": "CVC",
-        "blocked_by": [
-          "ha"
-        ]
-      },
-      {
-        "form": "han",
-        "template": "CVC",
-        "blocked_by": [
-          "ha"
-        ]
-      },
-      {
-        "form": "has",
-        "template": "CVC",
-        "blocked_by": [
-          "ha"
-        ]
-      },
-      {
-        "form": "hat",
-        "template": "CVC",
-        "blocked_by": [
-          "ha"
         ]
       },
       {
@@ -2140,6 +2256,13 @@
       },
       {
         "form": "hen",
+        "template": "CVC",
+        "blocked_by": [
+          "he"
+        ]
+      },
+      {
+        "form": "hep",
         "template": "CVC",
         "blocked_by": [
           "he"
@@ -2188,6 +2311,13 @@
         ]
       },
       {
+        "form": "hip",
+        "template": "CVC",
+        "blocked_by": [
+          "hi"
+        ]
+      },
+      {
         "form": "his",
         "template": "CVC",
         "blocked_by": [
@@ -2224,6 +2354,13 @@
       },
       {
         "form": "hon",
+        "template": "CVC",
+        "blocked_by": [
+          "ho"
+        ]
+      },
+      {
+        "form": "hop",
         "template": "CVC",
         "blocked_by": [
           "ho"
@@ -2272,6 +2409,13 @@
         ]
       },
       {
+        "form": "hup",
+        "template": "CVC",
+        "blocked_by": [
+          "hu"
+        ]
+      },
+      {
         "form": "hus",
         "template": "CVC",
         "blocked_by": [
@@ -2308,6 +2452,13 @@
       },
       {
         "form": "kin",
+        "template": "CVC",
+        "blocked_by": [
+          "ki"
+        ]
+      },
+      {
+        "form": "kip",
         "template": "CVC",
         "blocked_by": [
           "ki"
@@ -2356,6 +2507,13 @@
         ]
       },
       {
+        "form": "kop",
+        "template": "CVC",
+        "blocked_by": [
+          "ko"
+        ]
+      },
+      {
         "form": "kos",
         "template": "CVC",
         "blocked_by": [
@@ -2392,6 +2550,13 @@
       },
       {
         "form": "kun",
+        "template": "CVC",
+        "blocked_by": [
+          "ku"
+        ]
+      },
+      {
+        "form": "kup",
         "template": "CVC",
         "blocked_by": [
           "ku"
@@ -2440,6 +2605,13 @@
         ]
       },
       {
+        "form": "lap",
+        "template": "CVC",
+        "blocked_by": [
+          "la"
+        ]
+      },
+      {
         "form": "las",
         "template": "CVC",
         "blocked_by": [
@@ -2476,6 +2648,13 @@
       },
       {
         "form": "lin",
+        "template": "CVC",
+        "blocked_by": [
+          "li"
+        ]
+      },
+      {
+        "form": "lip",
         "template": "CVC",
         "blocked_by": [
           "li"
@@ -2524,6 +2703,13 @@
         ]
       },
       {
+        "form": "lop",
+        "template": "CVC",
+        "blocked_by": [
+          "lo"
+        ]
+      },
+      {
         "form": "los",
         "template": "CVC",
         "blocked_by": [
@@ -2560,6 +2746,13 @@
       },
       {
         "form": "lun",
+        "template": "CVC",
+        "blocked_by": [
+          "lu"
+        ]
+      },
+      {
+        "form": "lup",
         "template": "CVC",
         "blocked_by": [
           "lu"
@@ -2608,6 +2801,13 @@
         ]
       },
       {
+        "form": "mop",
+        "template": "CVC",
+        "blocked_by": [
+          "mo"
+        ]
+      },
+      {
         "form": "mos",
         "template": "CVC",
         "blocked_by": [
@@ -2644,6 +2844,13 @@
       },
       {
         "form": "mun",
+        "template": "CVC",
+        "blocked_by": [
+          "mu"
+        ]
+      },
+      {
+        "form": "mup",
         "template": "CVC",
         "blocked_by": [
           "mu"
@@ -2692,6 +2899,13 @@
         ]
       },
       {
+        "form": "nip",
+        "template": "CVC",
+        "blocked_by": [
+          "ni"
+        ]
+      },
+      {
         "form": "nis",
         "template": "CVC",
         "blocked_by": [
@@ -2728,6 +2942,13 @@
       },
       {
         "form": "nun",
+        "template": "CVC",
+        "blocked_by": [
+          "nu"
+        ]
+      },
+      {
+        "form": "nup",
         "template": "CVC",
         "blocked_by": [
           "nu"
@@ -2776,6 +2997,13 @@
         ]
       },
       {
+        "form": "pap",
+        "template": "CVC",
+        "blocked_by": [
+          "pa"
+        ]
+      },
+      {
         "form": "pas",
         "template": "CVC",
         "blocked_by": [
@@ -2812,6 +3040,13 @@
       },
       {
         "form": "pen",
+        "template": "CVC",
+        "blocked_by": [
+          "pe"
+        ]
+      },
+      {
+        "form": "pep",
         "template": "CVC",
         "blocked_by": [
           "pe"
@@ -2860,6 +3095,13 @@
         ]
       },
       {
+        "form": "sep",
+        "template": "CVC",
+        "blocked_by": [
+          "se"
+        ]
+      },
+      {
         "form": "ses",
         "template": "CVC",
         "blocked_by": [
@@ -2896,6 +3138,13 @@
       },
       {
         "form": "shan",
+        "template": "CVC",
+        "blocked_by": [
+          "sha"
+        ]
+      },
+      {
+        "form": "shap",
         "template": "CVC",
         "blocked_by": [
           "sha"
@@ -2944,6 +3193,13 @@
         ]
       },
       {
+        "form": "shep",
+        "template": "CVC",
+        "blocked_by": [
+          "she"
+        ]
+      },
+      {
         "form": "shes",
         "template": "CVC",
         "blocked_by": [
@@ -2986,6 +3242,13 @@
         ]
       },
       {
+        "form": "shup",
+        "template": "CVC",
+        "blocked_by": [
+          "shu"
+        ]
+      },
+      {
         "form": "shus",
         "template": "CVC",
         "blocked_by": [
@@ -2997,48 +3260,6 @@
         "template": "CVC",
         "blocked_by": [
           "shu"
-        ]
-      },
-      {
-        "form": "sik",
-        "template": "CVC",
-        "blocked_by": [
-          "si"
-        ]
-      },
-      {
-        "form": "sil",
-        "template": "CVC",
-        "blocked_by": [
-          "si"
-        ]
-      },
-      {
-        "form": "sim",
-        "template": "CVC",
-        "blocked_by": [
-          "si"
-        ]
-      },
-      {
-        "form": "sin",
-        "template": "CVC",
-        "blocked_by": [
-          "si"
-        ]
-      },
-      {
-        "form": "sis",
-        "template": "CVC",
-        "blocked_by": [
-          "si"
-        ]
-      },
-      {
-        "form": "sit",
-        "template": "CVC",
-        "blocked_by": [
-          "si"
         ]
       },
       {
@@ -3064,6 +3285,13 @@
       },
       {
         "form": "son",
+        "template": "CVC",
+        "blocked_by": [
+          "so"
+        ]
+      },
+      {
+        "form": "sop",
         "template": "CVC",
         "blocked_by": [
           "so"
@@ -3112,6 +3340,13 @@
         ]
       },
       {
+        "form": "sup",
+        "template": "CVC",
+        "blocked_by": [
+          "su"
+        ]
+      },
+      {
         "form": "sus",
         "template": "CVC",
         "blocked_by": [
@@ -3148,6 +3383,13 @@
       },
       {
         "form": "tin",
+        "template": "CVC",
+        "blocked_by": [
+          "ti"
+        ]
+      },
+      {
+        "form": "tip",
         "template": "CVC",
         "blocked_by": [
           "ti"
@@ -3196,6 +3438,13 @@
         ]
       },
       {
+        "form": "top",
+        "template": "CVC",
+        "blocked_by": [
+          "to"
+        ]
+      },
+      {
         "form": "tos",
         "template": "CVC",
         "blocked_by": [
@@ -3232,6 +3481,13 @@
       },
       {
         "form": "tun",
+        "template": "CVC",
+        "blocked_by": [
+          "tu"
+        ]
+      },
+      {
+        "form": "tup",
         "template": "CVC",
         "blocked_by": [
           "tu"
@@ -3280,6 +3536,13 @@
         ]
       },
       {
+        "form": "wap",
+        "template": "CVC",
+        "blocked_by": [
+          "wa"
+        ]
+      },
+      {
         "form": "was",
         "template": "CVC",
         "blocked_by": [
@@ -3316,6 +3579,13 @@
       },
       {
         "form": "wen",
+        "template": "CVC",
+        "blocked_by": [
+          "we"
+        ]
+      },
+      {
+        "form": "wep",
         "template": "CVC",
         "blocked_by": [
           "we"
@@ -3364,6 +3634,13 @@
         ]
       },
       {
+        "form": "wip",
+        "template": "CVC",
+        "blocked_by": [
+          "wi"
+        ]
+      },
+      {
         "form": "wis",
         "template": "CVC",
         "blocked_by": [
@@ -3406,6 +3683,13 @@
         ]
       },
       {
+        "form": "wop",
+        "template": "CVC",
+        "blocked_by": [
+          "wo"
+        ]
+      },
+      {
         "form": "wos",
         "template": "CVC",
         "blocked_by": [
@@ -3417,48 +3701,6 @@
         "template": "CVC",
         "blocked_by": [
           "wo"
-        ]
-      },
-      {
-        "form": "wuk",
-        "template": "CVC",
-        "blocked_by": [
-          "wu"
-        ]
-      },
-      {
-        "form": "wul",
-        "template": "CVC",
-        "blocked_by": [
-          "wu"
-        ]
-      },
-      {
-        "form": "wum",
-        "template": "CVC",
-        "blocked_by": [
-          "wu"
-        ]
-      },
-      {
-        "form": "wun",
-        "template": "CVC",
-        "blocked_by": [
-          "wu"
-        ]
-      },
-      {
-        "form": "wus",
-        "template": "CVC",
-        "blocked_by": [
-          "wu"
-        ]
-      },
-      {
-        "form": "wut",
-        "template": "CVC",
-        "blocked_by": [
-          "wu"
         ]
       },
       {
@@ -3484,6 +3726,13 @@
       },
       {
         "form": "yen",
+        "template": "CVC",
+        "blocked_by": [
+          "ye"
+        ]
+      },
+      {
+        "form": "yep",
         "template": "CVC",
         "blocked_by": [
           "ye"
@@ -3532,6 +3781,13 @@
         ]
       },
       {
+        "form": "yip",
+        "template": "CVC",
+        "blocked_by": [
+          "yi"
+        ]
+      },
+      {
         "form": "yis",
         "template": "CVC",
         "blocked_by": [
@@ -3543,48 +3799,6 @@
         "template": "CVC",
         "blocked_by": [
           "yi"
-        ]
-      },
-      {
-        "form": "yok",
-        "template": "CVC",
-        "blocked_by": [
-          "yo"
-        ]
-      },
-      {
-        "form": "yol",
-        "template": "CVC",
-        "blocked_by": [
-          "yo"
-        ]
-      },
-      {
-        "form": "yom",
-        "template": "CVC",
-        "blocked_by": [
-          "yo"
-        ]
-      },
-      {
-        "form": "yon",
-        "template": "CVC",
-        "blocked_by": [
-          "yo"
-        ]
-      },
-      {
-        "form": "yos",
-        "template": "CVC",
-        "blocked_by": [
-          "yo"
-        ]
-      },
-      {
-        "form": "yot",
-        "template": "CVC",
-        "blocked_by": [
-          "yo"
         ]
       },
       {
@@ -3610,6 +3824,13 @@
       },
       {
         "form": "yun",
+        "template": "CVC",
+        "blocked_by": [
+          "yu"
+        ]
+      },
+      {
+        "form": "yup",
         "template": "CVC",
         "blocked_by": [
           "yu"

@@ -38,19 +38,27 @@ Only one-syllable forms: **CV** or **CVC**. Multi-syllable forms are reserved fo
 | preferred CV | b d f g k l m n s t | a e i o u | 1 |
 | secondary CV | h w y | a e i o u | 20 |
 | tertiary CV | p ch sh | a e u | 35 |
-| CVC | the 10 preferred, coda n m t k s l | a e i o u | 50 (i o u +12) |
-| CVC (reserve) | h w y p ch sh, same codas | a e i o u | 75 (i o u +12) |
+| CVC | the 10 preferred, coda n m t k s l p | a e i o u | 50 (i o u +12, p +6) |
+| CVC (reserve) | h w y p ch sh, same codas | a e i o u | 75 (i o u +12, p +6) |
 
 Vowels are themselves ordered by cost in that order, so `ba` is cheaper than `bu`.
 
 The two CVC bands were preferred onsets with a/e only until July 2026, when that
 pool ran dry: 136 claimed roots plus prefix-safety (no root may start another —
-rule 5, and every claimed CV blocks its six CVC extensions) left exactly two free
+rule 5, and every claimed CV blocks its CVC extensions) left exactly two free
 forms, so the documented 150-root cap was unreachable. The widened bands restore
 real headroom; the clean reserve is the tertiary rhymes (`chi- cho- shi- sho-`),
 which no existing root or particle prefixes. A raw pool count overstates capacity —
 what matters is how many forms survive claims, retirements and prefix-safety
 together.
+
+`p` joined the coda set later the same month, during the frequency swap: retiring
+a root burns its form forever (retired spellings are never reassigned), so a
+16-for-16 swap needs fresh space, and the particle-prefix gate had pruned the
+clean remainder to 15 forms. A final `p` is as universally pronounceable as `t`
+or `k` (rule 4). The English collision profile blocks the forms that read as
+English words (`gap`, `map`, `ship`, `chop`, …), since a root spelled like an
+English word is read as English, not Fonoran.
 
 Three sets never enter the pool: the 15 reserved particle forms, an excluded list (`pi`, `pee`, `po`, `poo`, `pu`, `fa`, `fu`), and anything starting with `r` or `j`, which rulebook rule 4 bans outright.
 
@@ -71,6 +79,7 @@ These are hard blocks, checked before scoring. A blocked form is skipped entirel
 - the form is already taken
 - it starts with `r` or `j`
 - it is **not prefix-safe** against every root already assigned, meaning no root may be the start of another (rulebook rule 5). Enforced here rather than left to CI
+- it **starts with a reserved particle** (`no-`, `mi-`, `ka-`, …). This began as a 200-point penalty, was raised to 1200, and lost anyway in July 2026: with the onset families crowded, the crowding penalties on clean forms exceeded 1200 and the assigner handed out `nok`, `non` and `mik`. A scoring race cannot express "never"; a gate can. Roots that predate the gate (`sak`, `tak`, `kal`, …) stay locked and grandfathered
 - the editorial collision profile blocks it
 - it duplicates an existing root, or overlaps a prefix while the concept sits in the top half of priority
 
@@ -83,7 +92,6 @@ Every surviving form gets one number. Lowest wins; a cost tie breaks toward the 
 | Distance from target cost | difference × 12 |
 | Sounds too like an existing root | 60 to 90 per kind of similarity, scaled (below) |
 | Form is a particle, or repeats a nearby root | 5000 |
-| Form starts with any reserved particle | 1200 |
 | Same onset beyond 5 already used | 120 each |
 | Same onset beyond 3, for a high-priority concept | 200 each |
 | Same rhyme beyond 4 already used | 150 each |

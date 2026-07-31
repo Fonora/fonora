@@ -481,8 +481,12 @@ async function slotsToTokens(ctx, slots) {
   // Tense particles immediately before Action (Rule 3).
   for (const slot of tenseTime) await pushTimeSlot(slot);
   for (const slot of slots.event) push(await resolveSlot(ctx, slot, 'event'), 'event');
-  for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'), 'path');
+  // Target before Place, as the order comment above and rulebook Rule 8 say. The
+  // path loop sat before the object loop for a long time, unnoticed while place
+  // phrases had no object competing: with both, "she gives food to the child"
+  // rendered as give TO food child.
   for (const slot of slots.object) push(await resolveSlot(ctx, slot, 'object'), 'object');
+  for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'), 'path');
   // Non-scene residual time (rare) stays before trailing modifiers.
   for (const slot of otherTime) await pushTimeSlot(slot);
   for (const slot of slots.modifiers) push(await resolveSlot(ctx, slot, 'modifier'), 'modifier');
@@ -616,6 +620,7 @@ export async function translateFromSource(text, options = {}) {
     devLab: Boolean(options.devLab),
     lang: parser.lang,
     morphology: parser.morphology,
+    guess: Boolean(options.guess),
   });
   const rules = ctx.rules ?? await loadInterpretationRules();
   ctx.rules = rules;

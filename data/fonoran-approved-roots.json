@@ -1,6 +1,6 @@
 {
   "version": "1.0-approved-roots",
-  "updated_at": "2026-07-31T19:31:10.654Z",
+  "updated_at": "2026-07-31T23:31:15.163Z",
   "philosophy": "Only human-approved roots from Root Review are canonical.",
   "root_count": 145,
   "roots": [
@@ -23,13 +23,13 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "aggression",
-      "spelling": "sal",
-      "ipa": "/sʌl/",
-      "concept": "hostile force; attacking energy",
-      "domain": "emotion",
-      "reason": "hostile force — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
+      "id": "again",
+      "spelling": "yot",
+      "ipa": "/jɑt/",
+      "concept": "again; one more time",
+      "domain": "time",
+      "reason": "again — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     },
     {
       "id": "air",
@@ -248,13 +248,13 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "depression",
-      "spelling": "net",
-      "ipa": "/nɛt/",
-      "concept": "heavy sadness; spirit pressed down",
-      "domain": "emotion",
-      "reason": "heavy sadness — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
+      "id": "day",
+      "spelling": "yom",
+      "ipa": "/jɑm/",
+      "concept": "a day; the bright span of the cycle",
+      "domain": "time",
+      "reason": "a day — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     },
     {
       "id": "do",
@@ -317,15 +317,6 @@
       "concept": "equal",
       "domain": "abstract",
       "reason": "equal — shows up a lot in compounds, so it needs its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
-    },
-    {
-      "id": "exclude",
-      "spelling": "mek",
-      "ipa": "/mɛk/",
-      "concept": "to keep out of a group",
-      "domain": "social",
-      "reason": "to keep out of a group — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
@@ -581,24 +572,6 @@
       "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
-      "id": "joy",
-      "spelling": "lel",
-      "ipa": "/lɛl/",
-      "concept": "deep gladness; joyful feeling",
-      "domain": "emotion",
-      "reason": "deep gladness — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
-    },
-    {
-      "id": "justice",
-      "spelling": "tas",
-      "ipa": "/tʌs/",
-      "concept": "fair treatment; equal rules for all",
-      "domain": "social",
-      "reason": "fair treatment — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
-    },
-    {
       "id": "know",
       "spelling": "hu",
       "ipa": "/hʊ/",
@@ -698,6 +671,15 @@
       "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
+      "id": "meaning",
+      "spelling": "mep",
+      "ipa": "/mɛp/",
+      "concept": "meaning; what a word or act points to",
+      "domain": "process",
+      "reason": "meaning — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
+    },
+    {
       "id": "metal",
       "spelling": "su",
       "ipa": "/sʊ/",
@@ -713,24 +695,6 @@
       "concept": "a greater amount",
       "domain": "quantity",
       "reason": "a greater amount — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "motion",
-      "spelling": "si",
-      "ipa": "/sɪ/",
-      "concept": "movement itself; something in motion",
-      "domain": "space",
-      "reason": "movement itself — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
-    },
-    {
-      "id": "mouth",
-      "spelling": "dam",
-      "ipa": "/dʌm/",
-      "concept": "your mouth",
-      "domain": "body",
-      "reason": "your mouth — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
@@ -777,6 +741,15 @@
       "domain": "quality",
       "reason": "new — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-31T19:19:05.512Z"
+    },
+    {
+      "id": "night",
+      "spelling": "wul",
+      "ipa": "/wʊl/",
+      "concept": "the night; the dark span of the cycle",
+      "domain": "time",
+      "reason": "the night — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     },
     {
       "id": "now",
@@ -869,6 +842,15 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
+      "id": "please",
+      "spelling": "sil",
+      "ipa": "/sɪl/",
+      "concept": "please; the softening word of a request",
+      "domain": "social",
+      "reason": "please — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
+    },
+    {
       "id": "point",
       "spelling": "li",
       "ipa": "/lɪ/",
@@ -878,22 +860,13 @@
       "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
-      "id": "proud",
-      "spelling": "yo",
-      "ipa": "/jɑ/",
-      "concept": "proud",
-      "domain": "abstract",
-      "reason": "proud — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
-    },
-    {
-      "id": "reach",
-      "spelling": "das",
-      "ipa": "/dʌs/",
-      "concept": "reach",
-      "domain": "abstract",
-      "reason": "reach — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
+      "id": "rain",
+      "spelling": "fis",
+      "ipa": "/fɪs/",
+      "concept": "rain; water falling from the sky",
+      "domain": "element",
+      "reason": "rain — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     },
     {
       "id": "right",
@@ -905,15 +878,6 @@
       "approved_at": "2026-07-29T15:29:39.853Z"
     },
     {
-      "id": "rule",
-      "spelling": "ha",
-      "ipa": "/hʌ/",
-      "concept": "a pattern to follow; how things must be done",
-      "domain": "social",
-      "reason": "a pattern to follow — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
-    },
-    {
       "id": "sad",
       "spelling": "nem",
       "ipa": "/nɛm/",
@@ -923,6 +887,15 @@
       "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
+      "id": "safe",
+      "spelling": "kep",
+      "ipa": "/kɛp/",
+      "concept": "safe; out of danger",
+      "domain": "quality",
+      "reason": "safe — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
+    },
+    {
       "id": "same",
       "spelling": "ho",
       "ipa": "/hɑ/",
@@ -930,15 +903,6 @@
       "domain": "relationships",
       "reason": "the same — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "scared",
-      "spelling": "nak",
-      "ipa": "/nʌk/",
-      "concept": "feeling afraid; pulled back by fear",
-      "domain": "emotion",
-      "reason": "feeling afraid — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
       "id": "see",
@@ -957,6 +921,33 @@
       "domain": "being",
       "reason": "oneself — shows up a lot in compounds, so it needs its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
+    },
+    {
+      "id": "share",
+      "spelling": "yok",
+      "ipa": "/jɑk/",
+      "concept": "to share; to give part while keeping part",
+      "domain": "social",
+      "reason": "to share — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
+    },
+    {
+      "id": "shelter",
+      "spelling": "wum",
+      "ipa": "/wʊm/",
+      "concept": "shelter; a place that protects",
+      "domain": "space",
+      "reason": "shelter — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
+    },
+    {
+      "id": "show",
+      "spelling": "wus",
+      "ipa": "/wʊs/",
+      "concept": "to show; to cause to see",
+      "domain": "social",
+      "reason": "to show — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     },
     {
       "id": "sick",
@@ -1031,6 +1022,15 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
+      "id": "soon",
+      "spelling": "fip",
+      "ipa": "/fɪp/",
+      "concept": "soon; in a short time from now",
+      "domain": "time",
+      "reason": "soon — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
+    },
+    {
       "id": "sound",
       "spelling": "shim",
       "ipa": "/ʃɪm/",
@@ -1076,15 +1076,6 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "straight",
-      "spelling": "wu",
-      "ipa": "/wʊ/",
-      "concept": "a direct line without bend",
-      "domain": "space",
-      "reason": "a direct line without bend — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
-    },
-    {
       "id": "strong",
       "spelling": "bo",
       "ipa": "/bɑ/",
@@ -1094,22 +1085,13 @@
       "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
-      "id": "substance",
-      "spelling": "get",
-      "ipa": "/gɛt/",
-      "concept": "substance",
-      "domain": "abstract",
-      "reason": "substance — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
-    },
-    {
-      "id": "surface",
-      "spelling": "ten",
-      "ipa": "/tɛn/",
-      "concept": "the outer side you touch",
-      "domain": "space",
-      "reason": "the outer side you touch — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
+      "id": "sun",
+      "spelling": "hap",
+      "ipa": "/hʌp/",
+      "concept": "the sun; the light of the sky",
+      "domain": "element",
+      "reason": "the sun — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     },
     {
       "id": "take",
@@ -1175,13 +1157,13 @@
       "approved_at": "2026-07-02T00:49:33.288Z"
     },
     {
-      "id": "timid",
-      "spelling": "men",
-      "ipa": "/mɛn/",
-      "concept": "shy fear; hesitation from fear",
-      "domain": "emotion",
-      "reason": "shy fear — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
+      "id": "tired",
+      "spelling": "yos",
+      "ipa": "/jɑs/",
+      "concept": "tired; drained of strength",
+      "domain": "being",
+      "reason": "tired — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     },
     {
       "id": "touch",
@@ -1191,15 +1173,6 @@
       "domain": "action",
       "reason": "to touch — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-02T00:49:33.288Z"
-    },
-    {
-      "id": "travel",
-      "spelling": "fi",
-      "ipa": "/fɪ/",
-      "concept": "going from one place to another",
-      "domain": "space",
-      "reason": "going from one place to another — basic everyday idea that deserves its own root.",
-      "approved_at": "2026-07-12T10:31:34.918Z"
     },
     {
       "id": "tree",
@@ -1227,6 +1200,15 @@
       "domain": "emotion",
       "reason": "to believe someone is safe and reliable — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "try",
+      "spelling": "wuk",
+      "ipa": "/wʊk/",
+      "concept": "to try; to attempt an action",
+      "domain": "action",
+      "reason": "to try — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     },
     {
       "id": "understand",
@@ -1308,6 +1290,24 @@
       "domain": "action",
       "reason": "effort done toward a goal — basic everyday idea that deserves its own root.",
       "approved_at": "2026-07-12T10:31:34.918Z"
+    },
+    {
+      "id": "worried",
+      "spelling": "fim",
+      "ipa": "/fɪm/",
+      "concept": "worried; troubled by what may come",
+      "domain": "emotion",
+      "reason": "worried — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
+    },
+    {
+      "id": "wound",
+      "spelling": "wun",
+      "ipa": "/wʊn/",
+      "concept": "a wound; an injury on the body",
+      "domain": "being",
+      "reason": "a wound — basic everyday idea that deserves its own root.",
+      "approved_at": "2026-07-31T23:31:14.959Z"
     }
   ]
 }

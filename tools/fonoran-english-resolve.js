@@ -329,7 +329,7 @@ export function gapToken(surface, role, { reason = 'no confident concept', sugge
  * English for the legacy entry points that predate the parser boundary.
  */
 export async function buildResolveContext(lab = null, {
-  devLab = false, lang = 'en', morphology = null,
+  devLab = false, lang = 'en', morphology = null, guess = false,
 } = {}) {
   const liveLab = lab ?? await getLab();
   const inventory = await loadRuntimeConceptInventory({ lab: liveLab });
@@ -439,6 +439,12 @@ export async function buildResolveContext(lab = null, {
     rules,
     lang,
     morph: morphology ?? ENGLISH_MORPHOLOGY,
+    // Opt-in per request (POST /api/fonoran/translate { guess: true }): lets the
+    // resolver's final tier guess a nearest EXISTING concept for a word below
+    // the confidence floor, marked `guessed` so every surface can style it.
+    // Default off, so gap reports, goldens, and tests still measure the honest
+    // lexicon.
+    guessOnTheFly: Boolean(guess),
   };
 }
 
@@ -717,23 +723,29 @@ function weakSuggestionFromHit(hit) {
  *                         idioms), irregular past, head-noun of a phrase,
  *                         agentive morphology, and transparent compound
  *                         assembly over strong aliases.
+ *   LOW    (guessed):     opt-in only (`ctx.guessOnTheFly`, wired from the
+ *                         translate request): the nearest EXISTING concept via
+ *                         the same deterministic WordNet assistant the curation
+ *                         queue uses. Marked `guessed: true` / kind `guessed`
+ *                         so every surface styles it as a guess; never a
+ *                         fabricated spelling, and off by default so gap
+ *                         metrics stay honest.
  *   BELOW FLOOR:          honest gap — surfaces as `[english]`, never a
  *                         fabricated word (docs Design Rule 0). A demoted weak
  *                         (gloss-derived) alias is carried as a curation
  *                         `suggestion` but is NOT emitted as output.
  *
- * WordNet is no longer consulted at runtime; it is an offline curation
- * assistant (tools/fonoran-semantic-lookup.js). `allowSemantic`/`allowGuess`/
- * `avoidConceptIds` are retained for call-site compatibility but no longer gate
- * any runtime guessing.
+ * `allowSemantic` is retained for call-site compatibility; `allowGuess` lets a
+ * call site (particle pieces, WH scaffolding) refuse the guessed tier even when
+ * the context opted in.
  */
 export async function resolveEnglishToken(english, ctx, {
   role = 'concept',
   hints = {},
   allowSemantic = true, // eslint-disable-line no-unused-vars
-  allowGuess = true, // eslint-disable-line no-unused-vars
+  allowGuess = true,
   surfaceEnglish = null,
-  avoidConceptIds = null, // eslint-disable-line no-unused-vars
+  avoidConceptIds = null,
 } = {}) {
   const surface = String(surfaceEnglish ?? english ?? '').trim();
   // The lemma is what the lexicon is keyed on, so the landmark is reduced from it rather
@@ -899,6 +911,19 @@ export async function resolveEnglishToken(english, ctx, {
     if (bridged) return bridged;
   }
 
+  // Tier LOW (opt-in): guessed nearest concept. Only when the request asked for
+  // it (`guess: true` through the translate API) and the call site allows it.
+  // The candidates come from suggestGapConcepts — the same deterministic,
+  // role-disambiguated WordNet walk the curation queue reads — and each one is
+  // an EXISTING concept looked up with full strength. The token is marked
+  // `guessed` so the translator and alignment views can highlight it, and the
+  // weak suggestion is still carried for the curation queue: a guess shown on
+  // screen is not an alias approved into the lexicon.
+  if (ctx.guessOnTheFly && allowGuess) {
+    const guessed = await guessConceptToken(surface, lookupWord, role, ctx, { weakSuggestion, avoidConceptIds });
+    if (guessed) return guessed;
+  }
+
   // Below the confidence floor → honest gap (never fabricate a word).
   return gapToken(surface, role, {
     reason: weakSuggestion ? 'only a weak (gloss-derived) alias matched' : 'no confident concept',
@@ -907,11 +932,48 @@ export async function resolveEnglishToken(english, ctx, {
 }
 
 /**
- * OFFLINE curation assistant: propose ranked, human-reviewable concept mappings
- * for an unresolved English word, disambiguated by slot role via WordNet (WSD +
- * POS). Each suggestion points at an EXISTING Fonoran root the human can approve
- * into localizations/en.json. This is deliberately NOT called from
- * resolveEnglishToken — the runtime never guesses (docs Design Rule 0).
+ * The guessed tier's worker: take the top-ranked suggestion for a gap word and
+ * dress it as a low-confidence token. Substitution only — the guess points at a
+ * concept that already has a human-approved spelling, so re-enabling this tier
+ * (July 2026, at the language owner's request) does not reopen the fabrication
+ * class that got runtime guessing removed: nothing here can mint a word.
+ */
+async function guessConceptToken(surface, lookupWord, role, ctx, { weakSuggestion = null, avoidConceptIds = null } = {}) {
+  let suggestions;
+  try {
+    suggestions = await suggestGapConcepts(lookupWord, role, ctx, { limit: 3 });
+  } catch {
+    return null;
+  }
+  for (const s of suggestions) {
+    if (avoidConceptIds?.has(s.concept_id)) continue;
+    // A multiword co-synonym is where WordNet's junk senses live ("wolf" lists
+    // "woman chaser"): fine as a ranked suggestion for a human, not as output.
+    const syn = s.reason?.startsWith('synonym:') ? s.reason.slice('synonym:'.length) : null;
+    if (syn && syn.trim().includes(' ')) continue;
+    const hit = lookupByConceptId(ctx, s.concept_id);
+    if (!hit.resolved) continue;
+    return enrichToken({ ...hit, role, english: surface }, {
+      resolution_kind: 'guessed',
+      confidence: 'low',
+      interpreted: true,
+      guessed: true,
+      interpreted_from: surface,
+      interpret_reason: `guess:${s.reason}`,
+      suggestion: weakSuggestion,
+    });
+  }
+  return null;
+}
+
+/**
+ * Propose ranked concept mappings for an unresolved English word, disambiguated
+ * by slot role via WordNet (WSD + POS). Each suggestion points at an EXISTING
+ * Fonoran root. Two callers: the curation queue (a human approves a suggestion
+ * into localizations/en.json), and — only when a translate request opts in —
+ * the resolver's marked `guessed` tier, which shows the top suggestion styled
+ * as a guess. Deterministic either way: WordNet lookups are cached in
+ * data/fonoran-semantic-cache.json.
  *
  * @returns {Promise<Array<{ concept_id, fonoran, gloss, reason, kind }>>}
  */

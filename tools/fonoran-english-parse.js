@@ -218,7 +218,7 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
   const out = {
     actor: null, action: null, target: null, place: null, places: [], time: null,
     wh: null, whDegree: null, negated: false, tense: 'present', tenseSource: null, copula: false, coordinated: [],
-    modifiers: [], actionSurface: null, targetSurface: null, modal: null,
+    modifiers: [], actionSurface: null, targetSurface: null, modal: null, targetChain: [],
   };
   const nominal = t => NOMINAL.has(t.pos);
   const nominalish = t => Boolean(t) && (NOMINAL.has(t.pos) || t.pos === 'ADJ');
@@ -261,6 +261,10 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
     const at = toks.findIndex((t, j) => j > i && (t.pos === 'VERB' || t.pos === 'ADJ' || NOMINAL.has(t.pos)));
     if (at < 0) continue;
     const right = toks[at];
+    // A nominal reached through a preposition is that preposition's landmark,
+    // not a coordinated argument: "angry but not at you" relates at+you, and
+    // claiming you as a Target severed it from its at.
+    if (NOMINAL.has(right.pos) && toks.slice(i + 1, at).some(x => x.pos === 'ADP')) continue;
     const slot = right.pos === 'VERB' ? 'action' : (right.pos === 'ADJ' ? 'predicate' : 'target');
     out.coordinated.push({ conj, word: right.pos === 'ADJ' ? right.value : right.lemma, slot });
     coordinated.add(at);
@@ -291,6 +295,25 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
     });
   }
 
+  // A participle with a whole noun phrase between it and the copula is a postmodifier of
+  // that phrase, not the predication: "is a tradition centered around the Kamlet" says
+  // what the tradition is like, and reading center as the main verb made tradition the
+  // Actor and threw "Fonoran is" away entirely. The copula stays the pivot; the participle
+  // trails as an ordinary modifier through the right-of-predicate pass, its relation still
+  // parses, and its past shape must not set the clause tense. Guarded against subordinate
+  // be-forms ("when the world was young, the animal walked"): a subordinator before the
+  // copula means the real predicate is elsewhere.
+  let postmodifierAt = -1;
+  if (beAt >= 0 && participialAt < 0 && !toks.slice(0, beAt).some(t => t.pos === 'SCONJ')) {
+    postmodifierAt = toks.findIndex((t, i) => i > beAt
+      && t.pos === 'VERB' && t.value !== t.lemma && !/(s|ing)$/.test(t.value)
+      && toks.slice(beAt + 1, i).some(nominal)
+      // A pronoun between the copula and the verb is that verb's own subject —
+      // an embedded clause, not a postmodifier: "I am sorry I took that" keeps
+      // took as the predication (and its past tense).
+      && !toks.slice(beAt + 1, i).some(x => x.pos === 'PRON'));
+  }
+
   // A run of nouns is not a sentence, so when the tagger finds no predicate at all the
   // clause is re-read. "Light travels fast" tags as a noun compound, the same reading as
   // "light rays", and an inflected second nominal is the evidence that separates the two:
@@ -306,6 +329,15 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
   // an inverted "Are you alone?" reports you as the Actor and again as a modifier.
   let actorAt = -1;
   let verbAt = -1;
+  // The copula itself is the pivot (non-inverted "X is a Y"): the right-of-predicate
+  // pass then applies head-final Target selection to the predicate noun phrase.
+  let copulaPivot = false;
+  // A preposition consumed into a here/there locative predicate ("near here"),
+  // so the left-pass must not flush it a second time as a headless relation.
+  let placePrepAt = -1;
+  // An infinitive complement just took the Target ("want to eat …"): the next
+  // bare argument is that verb's own object and chains behind it in the slot.
+  let chainAfterInfinitive = false;
   const declaredAt = predicates?.size
     ? toks.findIndex(t => predicates.has(t.value))
     : -1;
@@ -324,7 +356,7 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
     out.copula = true;
     verbAt = participialAt;
   } else {
-    verbAt = toks.findIndex(t => t.pos === 'VERB');
+    verbAt = toks.findIndex((t, i) => t.pos === 'VERB' && i !== postmodifierAt);
     if (verbAt >= 0) {
       out.action = toks[verbAt].lemma;
       out.actionSurface = toks[verbAt].value;
@@ -348,17 +380,27 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
           verbAt = toks.indexOf(adj);
         } else if (here && inverted) {
           // A locative predicate has no Action in Fonoran: the Place carries it. No
-          // relation word: "here" already names the place, and inventing an "at" for it
-          // only manufactures a gap for a preposition Fonoran has no root for.
-          out.place = { prep: null, head: here.lemma };
+          // relation word is invented: "here" already names the place, and manufacturing
+          // an "at" for it only manufactures a gap for a preposition Fonoran has no root
+          // for. But a relation the speaker DID say belongs to it: "near here" is one
+          // place, and leaving near behind had the left-pass flush it as a headless
+          // relation on the far side of the sentence.
+          const hereAt = toks.indexOf(here);
+          const prev = toks[hereAt - 1];
+          const saidPrep = prev && PLACE_PREPS.has(prev.lemma) && (prev.pos === 'ADP' || prev.pos === 'ADV')
+            ? prev.lemma
+            : null;
+          out.place = { prep: saidPrep, head: here.lemma };
           out.places.push(out.place);
+          if (saidPrep) placePrepAt = hereAt - 1;
           const subj = after.find(head);
           if (subj) { out.actor = subj.lemma; actorAt = toks.indexOf(subj); }
-          verbAt = toks.indexOf(here);
+          verbAt = hereAt;
         } else if (!inverted) {
           // The predicate follows the copula and the Actor precedes it, which is what the
           // ordinary scans already do, so the copula itself is the pivot.
           verbAt = auxAt;
+          copulaPivot = true;
         } else {
           const subjIdx = after.findIndex(head);
           const comp = subjIdx >= 0 ? after.slice(subjIdx + 1).find(head) : after.find(head);
@@ -393,7 +435,7 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
   // present -s or a participle in -ing, which covers the irregulars too: `ate`, `went` and
   // `flew` never end in -ed, so keying off that suffix alone lost the past tense entirely.
   for (const [i, t] of toks.entries()) {
-    if (i === participialAt) continue;
+    if (i === participialAt || i === postmodifierAt) continue;
     if (FUTURE_AUX.has(t.value)) { out.tense = 'future'; out.tenseSource = t.value; }
     else if (PAST_AUX.has(t.value)) { out.tense = 'past'; out.tenseSource = t.value; }
     else if (t.pos === 'VERB' && t.value !== t.lemma && !/(s|ing)$/.test(t.value)) { out.tense = 'past'; out.tenseSource = t.value; }
@@ -470,7 +512,11 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
     // An infinitive complement is the Target: what is wanted in "want to eat" is the eating.
     if (t.pos === 'VERB') {
       if (pendingPrep === 'to' || toks[i - 1]?.lemma === 'to') {
-        if (!out.target) { out.target = t.lemma; out.targetSurface = t.value; }
+        if (!out.target) {
+          out.target = t.lemma;
+          out.targetSurface = t.value;
+          chainAfterInfinitive = true;
+        }
         // "want me to move back" already has me in the Target, and the wanted action was
         // being thrown away rather than chained after it.
         else out.modifiers.push(t.lemma);
@@ -485,12 +531,50 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
 
     if (pendingPrep && TEMPORAL_PREPS.has(pendingPrep)) out.modifiers.push(pendingPrep);
     if (pendingPrep && PLACE_PREPS.has(pendingPrep)) {
-      const place = { prep: pendingPrep, head: word(t) };
+      // The landmark is the head of its phrase too: in "behind that rock" the
+      // demonstrative arrives first and used to become the landmark, pushing
+      // rock into the Target slot. The head is the run's last nominal; what
+      // precedes it trails as a modifier (Fonoran says "rock that").
+      let headAt = i;
+      for (let k = i + 1; k < toks.length; k += 1) {
+        const cand = toks[k];
+        if (coordinated.has(k) || !argument(cand)) break;
+        if (POSSESSIVES.has(cand.value) || TIME_WORDS.has(cand.lemma) || QUANTIFIERS.has(cand.value)) break;
+        out.modifiers.push(word(toks[headAt]));
+        headAt = k;
+      }
+      const place = { prep: pendingPrep, head: word(toks[headAt]) };
       out.places.push(place);
       out.place ??= place;
+      i = headAt;
+      // Once a place phrase begins, later arguments are not the complement's object.
+      chainAfterInfinitive = false;
     } else if (!out.target) {
-      out.target = word(t);
-      out.targetSurface = t.value;
+      // The Target is the head of its noun phrase, not the first nominal the scan
+      // meets: "is a spiritual tradition center" heads at center, and taking the
+      // mis-tagged spiritual left the real head trailing as a modifier. The mirror
+      // of the Actor rule (last nominal wins) applied to the contiguous argument
+      // run only, and only when the copula is the pivot, so a ditransitive's two
+      // separate arguments are untouched.
+      let headAt = i;
+      if (copulaPivot) {
+        for (let k = i + 1; k < toks.length; k += 1) {
+          const cand = toks[k];
+          if (coordinated.has(k) || !argument(cand)) break;
+          if (POSSESSIVES.has(cand.value) || TIME_WORDS.has(cand.lemma) || QUANTIFIERS.has(cand.value)) break;
+          out.modifiers.push(word(toks[headAt]));
+          headAt = k;
+        }
+      }
+      out.target = word(toks[headAt]);
+      out.targetSurface = toks[headAt].value;
+      i = headAt;
+    } else if (chainAfterInfinitive) {
+      // The complement verb's own object stays chained behind it: "want to eat
+      // food in the city" is want · eat · food, then the place. Demoted to a
+      // trailing modifier it rendered after the place, severing eat from food.
+      out.targetChain.push(word(t));
+      chainAfterInfinitive = false;
     } else {
       // A second argument, or the object of a non-spatial preposition ("a story about the
       // old king"). Fonoran has one Target slot, so the rest trail instead of vanishing.
@@ -506,7 +590,7 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
   let leftPrep = null;
   for (let i = 0; i < verbAt; i += 1) {
     const t = toks[i];
-    if (i === actorAt || i === whIndex || i === quantityWhAt || coordinated.has(i)) continue;
+    if (i === actorAt || i === whIndex || i === quantityWhAt || i === placePrepAt || coordinated.has(i)) continue;
     if (POSSESSIVES.has(t.value)) continue;
     if (t.pos === 'ADP') { flushPrep(leftPrep); leftPrep = t.lemma; continue; }
     if (TIME_WORDS.has(t.lemma)) { out.time ??= t.lemma; leftPrep = flushPrep(leftPrep); continue; }

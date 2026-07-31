@@ -123,9 +123,48 @@ export function mergeEnglishCompounds(tokens, aliasIndex = null) {
  */
 export const MODAL_COMPOSITION = modalComposition();
 
-/** A source sentence is a written question when it ends with `?`. */
+/**
+ * English marks a question three ways, and only one of them is punctuation.
+ * Requiring the `?` made the whole interrogative reading hinge on a keystroke:
+ * "how many animals do you have" parsed as a statement, dropped `how many` and
+ * `have`, and produced word salad. The shape is the signal; the `?` is optional.
+ */
+const AUX_LEADS = new Set([
+  'is', 'are', 'am', 'was', 'were',
+  'can', 'could', 'will', 'would', 'shall', 'should', 'may', 'might', 'must',
+]);
+// `do`/`have` leads are also imperatives ("do not eat", "have a good day"), so
+// they only read as questions before an explicit subject pronoun ("do you…").
+const NARROW_AUX_LEADS = new Set(['do', 'does', 'did', 'have', 'has', 'had']);
+const SUBJECT_LEADS = new Set([
+  'i', 'you', 'we', 'they', 'he', 'she', 'it', 'there',
+  'the', 'a', 'an', 'this', 'that', 'these', 'those',
+  'my', 'your', 'his', 'her', 'our', 'their',
+]);
+const PRONOUN_LEADS = new Set(['i', 'you', 'we', 'they', 'he', 'she', 'it']);
+
+/** A source sentence is asked when it ends with `?` or is shaped as a question. */
 export function isQuestionSentence(sentence) {
-  return String(sentence ?? '').trim().endsWith('?');
+  const text = String(sentence ?? '').trim();
+  if (text.endsWith('?')) return true;
+  const words = text.toLowerCase().replace(/[^a-z'\s-]/g, ' ').split(/\s+/).filter(Boolean);
+  if (words.length < 2) return false;
+  const [first, second, third] = words;
+  // Subject–aux inversion: "is the water safe", "can you hear me", "do you want food".
+  if (AUX_LEADS.has(first) && SUBJECT_LEADS.has(second)) return true;
+  if (NARROW_AUX_LEADS.has(first) && PRONOUN_LEADS.has(second)) return true;
+  // Fronted interrogatives. `who`/`what`/`why` lead almost nothing but questions;
+  // `when`/`where` also open subordinate clauses ("when the forest was young"),
+  // so they need the inversion after them; `how` is a question when quantity
+  // ("how many…") or when an aux follows it or its scale word ("how far is…").
+  if (first === 'who' || first === 'what' || first === 'why') return true;
+  if ((first === 'when' || first === 'where') && (AUX_LEADS.has(second) || NARROW_AUX_LEADS.has(second))) return true;
+  if (first === 'how') {
+    if (second === 'many' || second === 'much') return true;
+    if (AUX_LEADS.has(second) || NARROW_AUX_LEADS.has(second)) return true;
+    if (third && (AUX_LEADS.has(third) || NARROW_AUX_LEADS.has(third))) return true;
+  }
+  return false;
 }
 
 /** Split paragraph into sentences on . ! ? or newlines. */
@@ -329,6 +368,7 @@ function restorePhrases(parse, phrases) {
     actionSurface: swap(parse.actionSurface),
     targetSurface: swap(parse.targetSurface),
     modifiers: parse.modifiers.map(swap),
+    targetChain: (parse.targetChain ?? []).map(swap),
     places: parse.places.map(place => ({ ...place, head: swap(place.head) })),
     coordinated: parse.coordinated.map(entry => ({ ...entry, word: swap(entry.word) })),
   };
@@ -426,14 +466,21 @@ function posClauseToSlots(sentence, tokens, {
     slots.event.unshift({ english: 'not', role: 'event', particle_id: 'logic_not' });
   }
 
-  // A relation goes in Place and its landmark trails as a modifier:
-  // "into the forest" is path=into, modifier=forest.
+  // A relation and its landmark are one Place: "into the forest" is path=[into,
+  // forest]. The landmark used to trail as a sentence-final modifier, which read
+  // fine only while nothing sat between — "she gives food to the child" came out
+  // as give TO food child, the relation severed from the thing it relates.
   for (const place of parse.places) {
     if (place.prep) slots.path.push({ english: place.prep, role: 'path' });
-    if (place.head) slots.modifiers.push({ english: place.head, role: 'modifier' });
+    if (place.head) slots.path.push({ english: place.head, role: 'path' });
   }
 
   groupInto(slots.object, parse.target, 'object', ['target'], parse.targetSurface);
+  // An infinitive complement's own object chains directly behind it in the same
+  // slot: "want to eat food" is Target [eat, food], never eat … food apart.
+  for (const chained of parse.targetChain ?? []) {
+    slots.object.push({ english: chained, role: 'object' });
+  }
 
   for (const modifier of parse.modifiers) {
     slots.modifiers.push({ english: modifier, role: 'modifier' });
@@ -484,18 +531,22 @@ function expandNegatedDerivations(slots, aliasIndex) {
       if (baseInLexicon(word)) continue;
       const candidate = negatedBases(word).find(({ base }) => baseInLexicon(base));
       if (!candidate) continue;
+      // Both halves carry the written word: `english_source` is the particle's
+      // anchor for alignment, `surface`/`interpret_note` make the base token
+      // report itself as the word the speaker typed, resolved through the affix.
       entries.splice(at, 1,
         {
           english: 'not',
           role: entry.role,
           particle_id: 'logic_not',
-          interpret_reason: `negating affix:${candidate.affix} (${word})`,
+          english_source: word,
         },
         {
           english: candidate.base,
+          surface: word,
           role: entry.role,
           interpret_from: word,
-          interpret_reason: `negating affix:${candidate.affix}`,
+          interpret_note: `negating affix:${candidate.affix}`,
         });
       at += 1;
     }

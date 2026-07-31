@@ -284,11 +284,15 @@ function sceneHtml(scene, inputLemmas) {
     const glyph = symbols[i] ?? tok.fonoran;
     const gloss = displayGloss(tok);
     const role = roleLabel(tok);
+    // A guessed token is the translator reaching for the nearest concept, not
+    // the lexicon speaking; the mark keeps that difference visible here too.
+    const guessed = tok.guessed === true || tok.resolution_kind === 'guessed';
     return `
-      <div class="align__fblock" data-tidx="${i}">
+      <div class="align__fblock${guessed ? ' align__fblock--guessed' : ''}" data-tidx="${i}">
         <span class="align__glyph" style="color:${ea(color)}">${esc(glyph)}</span>
         <span class="align__roman" style="color:${ea(color)}">${esc(tok.fonoran)}</span>
         ${gloss ? `<span class="align__gloss">${esc(gloss)}</span>` : ''}
+        ${guessed ? '<span class="align__guess-badge">guessed</span>' : ''}
         ${role ? `<span class="align__role">${esc(role)}</span>` : ''}
       </div>`;
   }).join('');
@@ -348,6 +352,22 @@ function gapsHtml(unresolved) {
     <div class="align__gaps">
       <span class="align__gaps-label">No Fonoran form yet for</span>
       ${gaps.map(g => `<span class="align__gap">${esc(g)}</span>`).join('')}
+    </div>`;
+}
+
+/**
+ * Words the engine guessed rather than knew. A guess resolves on screen, so
+ * without this strip it would read as settled vocabulary; naming the substitute
+ * (`decentralized → spread`) keeps the same honesty the gap list has.
+ */
+function guessesHtml(tokens) {
+  const guessed = (Array.isArray(tokens) ? tokens : [])
+    .filter(t => t?.guessed === true || t?.resolution_kind === 'guessed');
+  if (!guessed.length) return '';
+  return `
+    <div class="align__gaps">
+      <span class="align__gaps-label">Guessed</span>
+      ${guessed.map(t => `<span class="align__guess">${esc(t.interpreted_from ?? t.english)} → ${esc(t.fonoran)}</span>`).join('')}
     </div>`;
 }
 
@@ -449,6 +469,7 @@ export function mountAlignment(host, { phrase, result }) {
     <div class="align">
       <div class="align__viewport" data-align-viewport></div>
       ${pagerHtml}
+      ${guessesHtml(result?.tokens)}
       ${gapsHtml(result?.unresolved)}
     </div>`;
 

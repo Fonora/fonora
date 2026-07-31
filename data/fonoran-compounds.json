@@ -112,52 +112,6 @@
       "notes": "Vocab survey proposal — warning your companion you sense danger nearby"
     },
     {
-      "concept": "again",
-      "preferred": {
-        "composition": [
-          "do",
-          "around"
-        ],
-        "gloss": "doing in a cycle"
-      },
-      "preferred_source": "playtest",
-      "alternates": [
-        {
-          "composition": [
-            "around",
-            "do"
-          ],
-          "understandability": 0.78,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "same",
-            "do"
-          ],
-          "understandability": 0.76,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "same",
-            "do",
-            "around"
-          ],
-          "understandability": 0.69,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.78,
-      "notes": "Around-powered compound — the cycle concept applied to action. Playtest-locked 2 cold recovery round(s) on 2026-07-11."
-    },
-    {
       "concept": "age",
       "preferred": {
         "composition": [
@@ -3425,41 +3379,6 @@
       ],
       "understandability": 0.78,
       "notes": "Vocab survey proposal — Marking dangerous ground near unstable cliffs or predator territory"
-    },
-    {
-      "concept": "day",
-      "preferred": {
-        "composition": [
-          "light",
-          "before"
-        ],
-        "gloss": "light that comes before"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "before",
-            "light"
-          ],
-          "understandability": 0.86,
-          "label": "very likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "sun",
-            "time"
-          ],
-          "understandability": 0.62,
-          "label": "plausible",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.86,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested (boundary-safe preferred form) (unique spelling)"
     },
     {
       "concept": "dead_end",
@@ -8703,40 +8622,6 @@
       "notes": "Semantic foundation teaching tree"
     },
     {
-      "concept": "meaning",
-      "preferred": {
-        "composition": [
-          "signal",
-          "know"
-        ],
-        "gloss": "a knowing signal"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "know",
-            "signal"
-          ],
-          "understandability": 0.73,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "shared_meaning"
-          ],
-          "understandability": 0.65,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.73,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
-    },
-    {
       "concept": "meanwhile",
       "preferred": {
         "composition": [
@@ -9272,6 +9157,41 @@
       "notes": "Semantic foundation teaching tree"
     },
     {
+      "concept": "mouth",
+      "preferred": {
+        "composition": [
+          "body",
+          "speak"
+        ],
+        "gloss": "the mouth; the speaking part of the body"
+      },
+      "preferred_source": "human",
+      "alternates": [
+        {
+          "composition": [
+            "body",
+            "speak"
+          ],
+          "understandability": 0.8,
+          "label": "likely understood",
+          "status": "plausible",
+          "source": "human"
+        },
+        {
+          "composition": [
+            "body",
+            "eat"
+          ],
+          "understandability": 0.75,
+          "label": "likely understood",
+          "status": "plausible",
+          "source": "human"
+        }
+      ],
+      "understandability": 0.8,
+      "notes": "Demoted from root 2026-07-31 (frequency swap): body parts compose (arm, tongue already do); dam retired."
+    },
+    {
       "concept": "mushroom",
       "preferred": {
         "composition": [
@@ -9311,37 +9231,26 @@
       "concept": "music",
       "preferred": {
         "composition": [
-          "joy",
-          "speak"
+          "sound",
+          "good"
         ],
-        "gloss": "joyful speaking in pulse"
+        "gloss": "good sound; music"
       },
-      "preferred_source": "heuristic",
+      "preferred_source": "human",
       "alternates": [
         {
           "composition": [
-            "speak",
-            "pulse",
-            "joy"
-          ],
-          "understandability": 0.68,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "pulse",
+            "sound",
             "good"
           ],
-          "understandability": 0.66,
-          "label": "likely understood",
+          "understandability": 0.85,
+          "label": "very likely understood",
           "status": "plausible",
-          "source": "heuristic"
+          "source": "human"
         }
       ],
       "understandability": 0.86,
-      "notes": "Semantic foundation teaching tree"
+      "notes": "Recomposed 2026-07-31: the joy root was retired in the frequency swap (happy covers it); sound+good is head-first and transparent."
     },
     {
       "concept": "nail",
@@ -9695,42 +9604,6 @@
       ],
       "understandability": 0.73,
       "notes": "Vocab survey proposal — Deciding what the next task is keeps two people coordinated."
-    },
-    {
-      "concept": "night",
-      "preferred": {
-        "composition": [
-          "dark",
-          "time"
-        ],
-        "gloss": "the time of dark"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "time",
-            "dark"
-          ],
-          "understandability": 0.86,
-          "label": "very likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "empty",
-            "light",
-            "time"
-          ],
-          "understandability": 0.71,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.86,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested"
     },
     {
       "concept": "noise",
@@ -10823,55 +10696,6 @@
       "notes": "Campfire fix: plant+stone (cut wood) over make+plant"
     },
     {
-      "concept": "please",
-      "preferred": {
-        "composition": [
-          "give",
-          "good"
-        ],
-        "gloss": "please"
-      },
-      "preferred_source": "playtest",
-      "alternates": [
-        {
-          "composition": [
-            "want",
-            "good"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "feel",
-            "good"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "request",
-            "good"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "good",
-            "want"
-          ],
-          "understandability": 0.84,
-          "label": "very likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.84,
-      "notes": "Please is a politeness softener meaning 'I want this in a good/kind way' — best conveyed as want+good, which a campfire stranger would read as 'wanting with goodwill' rather than demanding. Concrete a Playtest-locked 2 cold recovery round(s) on 2026-07-11."
-    },
-    {
       "concept": "poison",
       "preferred": {
         "composition": [
@@ -11303,42 +11127,6 @@
       ],
       "understandability": 0.73,
       "notes": "Vocab survey proposal — needed to cross rivers when no boat is available Playtest-locked 1 cold recovery round(s) on 2026-07-11."
-    },
-    {
-      "concept": "rain",
-      "preferred": {
-        "composition": [
-          "air",
-          "water"
-        ],
-        "gloss": "water falling down"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "sky",
-            "water"
-          ],
-          "understandability": 0.74,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "sky",
-            "water",
-            "move"
-          ],
-          "understandability": 0.71,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.77,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "raindrop",
@@ -12508,42 +12296,6 @@
       "notes": "Vocab survey proposal — needed to store and transport large quantities of food or materials"
     },
     {
-      "concept": "safe",
-      "preferred": {
-        "composition": [
-          "bond",
-          "good"
-        ],
-        "gloss": "fear emptied; no danger"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "empty",
-            "fear"
-          ],
-          "understandability": 0.79,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "good",
-            "empty",
-            "fear"
-          ],
-          "understandability": 0.71,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.73,
-      "notes": "Retired-to-compound / gap concept (vocabulary remediation)"
-    },
-    {
       "concept": "safe_ground",
       "preferred": {
         "composition": [
@@ -12924,42 +12676,6 @@
       "notes": "Vocab survey proposal — admitting you made a mistake that hurt the group Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
-      "concept": "share",
-      "preferred": {
-        "composition": [
-          "give",
-          "some"
-        ],
-        "gloss": "to give a portion to another; to share"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "some",
-            "give"
-          ],
-          "understandability": 0.79,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "give",
-            "collective",
-            "some"
-          ],
-          "understandability": 0.71,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.79,
-      "notes": "Vocab survey proposal — dividing food or resources between two people at camp"
-    },
-    {
       "concept": "shared_meaning",
       "preferred": {
         "composition": [
@@ -12995,31 +12711,6 @@
       ],
       "understandability": 0.79,
       "notes": "Semantic foundation teaching tree Playtest-locked 1 cold recovery round(s) on 2026-07-11."
-    },
-    {
-      "concept": "shelter",
-      "preferred": {
-        "composition": [
-          "bound",
-          "place"
-        ],
-        "gloss": "a protected enclosed place to stay; refuge from elements"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "inside",
-            "place"
-          ],
-          "understandability": 0.77,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "vocab_survey"
-        }
-      ],
-      "understandability": 0.78,
-      "notes": "Vocab survey proposal — finding or building shelter is the first survival priority"
     },
     {
       "concept": "shield",
@@ -13116,55 +12807,6 @@
       ],
       "understandability": 0.73,
       "notes": "Vocab survey proposal — shoulder injuries affect carrying loads and building shelter Playtest-locked 1 cold recovery round(s) on 2026-07-11."
-    },
-    {
-      "concept": "show",
-      "preferred": {
-        "composition": [
-          "move",
-          "see"
-        ],
-        "gloss": "show"
-      },
-      "preferred_source": "playtest",
-      "alternates": [
-        {
-          "composition": [
-            "give",
-            "see"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "see",
-            "give"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "light",
-            "see"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "speak",
-            "see"
-          ],
-          "understandability": 0.84,
-          "label": "very likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.84,
-      "notes": "Show means making something visible to another person — a stranger would guess 'give+see' as 'make someone see something', which is the core campfire act of showing. Concrete and directional. Playtest-locked 1 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "shrink",
@@ -13473,42 +13115,6 @@
       ],
       "understandability": 0.77,
       "notes": "Vocab survey proposal — snow signals extreme cold and the need for insulation and water sourcing"
-    },
-    {
-      "concept": "soon",
-      "preferred": {
-        "composition": [
-          "near",
-          "after"
-        ],
-        "gloss": "in a short time from now; happening shortly"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "now",
-            "after"
-          ],
-          "understandability": 0.74,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "after",
-            "near",
-            "time"
-          ],
-          "understandability": 0.71,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.73,
-      "notes": "Vocab survey proposal — Warning that the storm is coming soon so we take shelter."
     },
     {
       "concept": "sorry",
@@ -14206,42 +13812,6 @@
       ],
       "understandability": 0.73,
       "notes": "Vocab survey proposal — A sudden storm or animal attack requires a shared warning concept."
-    },
-    {
-      "concept": "sun",
-      "preferred": {
-        "composition": [
-          "source",
-          "light",
-          "hot"
-        ],
-        "gloss": "source of light and hot"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "light",
-            "source"
-          ],
-          "understandability": 0.84,
-          "label": "very likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "sky",
-            "fire"
-          ],
-          "understandability": 0.77,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.78,
-      "notes": "Semantic foundation teaching tree"
     },
     {
       "concept": "sunrise",
@@ -15106,31 +14676,6 @@
       "notes": "Playtest miss (kamdak): bond+hand did not recover — needs new seed composition"
     },
     {
-      "concept": "tired",
-      "preferred": {
-        "composition": [
-          "body",
-          "empty"
-        ],
-        "gloss": "tired; the body is drained of energy and needs rest"
-      },
-      "preferred_source": "playtest",
-      "alternates": [
-        {
-          "composition": [
-            "move",
-            "empty"
-          ],
-          "understandability": 0.77,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "vocab_survey"
-        }
-      ],
-      "understandability": 0.79,
-      "notes": "Vocab survey proposal — communicating exhaustion prevents dangerous overexertion in survival situations Playtest-locked 1 cold recovery round(s) on 2026-07-11."
-    },
-    {
       "concept": "tomorrow",
       "preferred": {
         "composition": [
@@ -15530,55 +15075,6 @@
       ],
       "understandability": 0.71,
       "notes": "Phase 4 hierarchy (depth 3): community → identity"
-    },
-    {
-      "concept": "try",
-      "preferred": {
-        "composition": [
-          "move",
-          "want"
-        ],
-        "gloss": "try"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "will",
-            "do"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "do",
-            "hope"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "move",
-            "hope"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "do",
-            "want"
-          ],
-          "understandability": 0.82,
-          "label": "very likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.84,
-      "notes": "Try = doing something with effort toward an uncertain outcome — best captured as 'want+do' (attempting = wanting to do) or 'will+do' (pushing effort into action). A campfire stranger would quickly gue"
     },
     {
       "concept": "turn",
@@ -16587,92 +16083,6 @@
       ],
       "understandability": 0.86,
       "notes": "Teaching tree (depth 2): whole + place + earth + life"
-    },
-    {
-      "concept": "worried",
-      "preferred": {
-        "composition": [
-          "fear",
-          "think"
-        ],
-        "gloss": "worried"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "think",
-            "danger"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "think",
-            "bad"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "fear",
-            "feel"
-          ],
-          "understandability": 0.82,
-          "label": "very likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "feel",
-            "fear"
-          ],
-          "understandability": 0.78,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.84,
-      "notes": "Worried is fear-thinking — the mind running ahead to bad outcomes. A stranger would immediately guess 'fear+think' as anxious mental anticipation of danger."
-    },
-    {
-      "concept": "wound",
-      "preferred": {
-        "composition": [
-          "pain",
-          "body"
-        ],
-        "gloss": "a body in pain"
-      },
-      "preferred_source": "playtest",
-      "alternates": [
-        {
-          "composition": [
-            "bad",
-            "body"
-          ],
-          "understandability": 0.79,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "bad",
-            "skin"
-          ],
-          "understandability": 0.71,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.86,
-      "notes": "preferred is the seed recipe; alternates are heuristic until playtested Playtest-locked 2 cold recovery round(s) on 2026-07-11."
     },
     {
       "concept": "wrap",

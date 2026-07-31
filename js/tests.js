@@ -565,6 +565,17 @@ const fonoranTranslatorResult = await (async () => {
     );
     assert(!seafoodA.tokens.some(t => t.interpret_reason?.includes('hypernym:eat')), 'seafood must not collapse to eat');
 
+    // The infinitive complement's own object chains behind it: eat + food stay
+    // adjacent, the place follows. It used to render want eat in-city food.
+    const eatInCity = await translateEnglish('do you want to eat food in the city tomorrow?');
+    // 'in' stays an honest gap without the opt-in guess tier; ordering is the point here.
+    assert(eatInCity.unresolved.every(w => w === 'in'), `eat-in-city unresolved: ${eatInCity.unresolved.join(', ')}`);
+    const eatAt = eatInCity.tokens.findIndex(t => t.concept_id === 'eat');
+    const foodAt = eatInCity.tokens.findIndex(t => t.concept_id === 'food');
+    const cityAt = eatInCity.tokens.findIndex(t => t.english === 'city');
+    assert(eatAt >= 0 && foodAt === eatAt + 1, `food chains right behind eat: ${eatInCity.surface.roman}`);
+    assert(cityAt > foodAt, `the place follows the eat+food chain: ${eatInCity.surface.roman}`);
+
     // Concept-first honest gaps (docs Design Rule 0): `behind` is a preposition
     // 'behind' is now a compound (outside+back = nenso) added by the vocab survey.
     // Regression: it must resolve to 'behind' directly, NOT fabricate via WordNet
@@ -573,6 +584,36 @@ const fonoranTranslatorResult = await (async () => {
     const behindTok = behind.tokens.find(t => t.english === 'behind');
     assert(behindTok?.resolved && behindTok?.concept_id === 'behind', `behind must resolve to behind concept: ${JSON.stringify(behindTok)}`);
     assert(!behindTok?.guessed, `behind must not be guessed/fabricated: ${JSON.stringify(behindTok)}`);
+
+    // Negating affixes read through derivation chains (July 2026): decentralized
+    // is de + central + -ized, so it renders as structure — `no` + center — with
+    // the trail named on the token, and no guessing involved.
+    const decentral = await translateEnglish('the tradition is decentralized');
+    assert(decentral.unresolved.length === 0, `decentralized unresolved: ${decentral.unresolved.join(', ')}`);
+    assert(decentral.tokens.some(t => t.role === 'negation'), `decentralized needs the negation particle: ${decentral.surface.roman}`);
+    const decentralBase = decentral.tokens.find(t => t.concept_id === 'center');
+    assert(
+      decentralBase?.resolved && decentralBase.interpret_reason?.includes('negating affix:de'),
+      `decentralized must reach center through de+ized: ${JSON.stringify(decentral.tokens)}`,
+    );
+    // Bare de- words are NOT negations: the rule only fires inside the -ize family.
+    const delight = await translateEnglish('the delightful person');
+    assert(!delight.tokens.some(t => t.role === 'negation'), `delightful must not read as de+light: ${delight.surface.roman}`);
+
+    // The guessed tier is opt-in per request and always marked. Default off:
+    // a word with no confident concept stays an honest gap. With guess: true the
+    // same word substitutes a nearest EXISTING concept, styled as a guess.
+    // (If `wolf` is ever curated into the lexicon, move this to another gap word.)
+    const wolfOff = await translateEnglish('the wolf ate the food');
+    assert(wolfOff.unresolved.includes('wolf'), `wolf must gap without guess: ${JSON.stringify(wolfOff.unresolved)}`);
+    const wolfOn = await translateRouted('the wolf ate the food', { sourceLang: 'en', guess: true });
+    const wolfTok = wolfOn.tokens.find(t => t.interpreted_from === 'wolf' || t.english === 'wolf');
+    assert(
+      wolfTok?.resolved && wolfTok.guessed === true && wolfTok.resolution_kind === 'guessed',
+      `wolf must resolve as a marked guess when opted in: ${JSON.stringify(wolfTok)}`,
+    );
+    assert(!wolfOn.unresolved.includes('wolf'), 'a guessed word is not also reported as a gap');
+    assert(wolfTok.interpret_reason?.startsWith('guess:'), `guess provenance named: ${wolfTok.interpret_reason}`);
 
     // Locative predicate (grammar Rule 7): a spatial relation in "X is <prep> Y"
     // must reach the Place slot instead of being silently dropped by head-noun
@@ -1228,6 +1269,25 @@ async function runLanguagePolicyTests() {
     assert(howMany.unresolved.length === 0, `how many gaps: ${howMany.unresolved.join(', ')}`);
     const count = howMany.tokens.find(t => t.concept_id === 'count');
     assert(count?.fonoran === 'tan', `count token: ${JSON.stringify(count)}`);
+  }));
+
+  // Typed live, the `?` arrives last — the interrogative reading must not
+  // hinge on it. wh-front + do-inversion is a question with or without it.
+  const bare = await translateEnglish('how many animals do you have');
+  const marked = await translateEnglish('how many animals do you have?');
+  const inverted = await translateEnglish('do you want food');
+  const imperative = await translateEnglish('Do not eat the fish.');
+  const subordinate = await translateEnglish('When the dog barked, the child ran to the house.');
+  results.push(test('translation: a question is its shape, not its punctuation', () => {
+    assert(bare.surface.roman.startsWith('ka nohu tan '), `bare how-many: ${bare.surface.roman}`);
+    assert(
+      bare.surface.roman.replace(/\.\s*$/, '') === marked.surface.roman.replace(/\.\s*$/, ''),
+      `punctuation changed the reading: ${bare.surface.roman} vs ${marked.surface.roman}`,
+    );
+    assert(inverted.surface.roman.startsWith('ka '), `bare inversion is a question: ${inverted.surface.roman}`);
+    // Imperatives and subordinate openers keep their statement reading.
+    assert(!imperative.surface.roman.startsWith('ka '), `negative imperative is not a question: ${imperative.surface.roman}`);
+    assert(!subordinate.surface.roman.startsWith('ka '), `subordinate when is not a question: ${subordinate.surface.roman}`);
   }));
 
   results.push(test('translation: outside a question `how` is the manner word, never silence', () => {

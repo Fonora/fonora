@@ -35,8 +35,17 @@ const STOPLISTS = {
   ful: new Set(['awful']),
   ness: new Set(['harness', 'witness', 'business', 'wilderness']),
   ion: new Set(['lion', 'onion', 'union', 'region', 'religion', 'million', 'billion', 'opinion', 'champion', 'companion', 'question', 'fashion', 'cushion']),
+  ize: new Set(['realize', 'realized', 'realizes', 'realizing', 'size', 'sized', 'prize']),
   un: new Set(['under', 'until', 'unless', 'union', 'unit', 'unite', 'united', 'uncle', 'unique', 'uniform', 'universe', 'university']),
   non: new Set(['none', 'noon']),
+  de: new Set([]),
+  dis: new Set([
+    'display', 'displayed', 'displays', 'discover', 'discovered', 'discovery',
+    'discuss', 'discussed', 'discussion', 'distance', 'distant', 'disease',
+    'distinct', 'dismiss', 'district', 'disturb', 'dish', 'dishes', 'discount',
+    'dispute', 'disciple', 'discipline', 'disaster', 'discreet', 'discrete',
+    'disperse', 'dismay', 'disdain',
+  ]),
 };
 
 const MIN_BASE = 3;
@@ -53,6 +62,10 @@ const MIN_BASE = 3;
 const SUFFIX_RULES = [
   { suffix: 'iness', stop: 'ness', bases: stem => [`${stem}y`] },            // happiness → happy
   { suffix: 'ness', stop: 'ness', bases: stem => [stem] },                   // darkness → dark
+  { suffix: 'ization', stop: 'ion', bases: stem => [stem, `${stem}e`] },     // centralization → central
+  { suffix: 'izing', stop: 'ize', bases: stem => [stem, `${stem}e`] },       // centralizing → central
+  { suffix: 'ized', stop: 'ize', bases: stem => [stem, `${stem}e`] },        // centralized → central
+  { suffix: 'ize', stop: 'ize', bases: stem => [stem, `${stem}e`] },         // centralize → central
   { suffix: 'ation', stop: 'ion', bases: stem => [`${stem}ate`, `${stem}e`, stem] }, // celebration → celebrate
   { suffix: 'ion', stop: 'ion', bases: stem => [stem, `${stem}e`] },         // creation → create, action → act
   { suffix: 'ity', stop: 'ty', bases: stem => [stem, `${stem}e`] },          // equality → equal, purity → pure
@@ -74,6 +87,11 @@ const NEGATION_RULES = [
   { kind: 'prefix', affix: 'un', stop: 'un', bases: word => [word.slice(2)] },   // unsafe → no + safe
   { kind: 'prefix', affix: 'non', stop: 'non', bases: word => [word.slice(3)] }, // nonliving → no + living
   { kind: 'suffix', affix: 'less', stop: 'less', bases: word => [word.slice(0, -4)] }, // fearless → no + fear
+  // Reversative de- is only trustworthy inside the -ize verbal family
+  // (decentralized → no + central); bare de- words (delight, depart, design)
+  // are not negations, so the rule refuses to fire without that suffix chain.
+  { kind: 'prefix', affix: 'de', stop: 'de', requireVia: /iz/, bases: word => [word.slice(2)] },
+  { kind: 'prefix', affix: 'dis', stop: 'dis', bases: word => [word.slice(3)] }, // disconnect → no + connect
 ];
 
 function cleanWord(word) {
@@ -121,6 +139,10 @@ export function derivationalBases(word) {
  * lexicon and must itself supply the negation structure. Reversative un-verbs
  * (untie) read as "make un-X-ed", which the same structure carries.
  *
+ * Prefix checks also run on suffix-derived bases, so `decentralized` reaches
+ * `central` through -ized and then de- (`no` + central). The affix names the
+ * whole chain (`de+ized`) so the reader can retrace it.
+ *
  * @param {string} word
  * @returns {Array<{ base: string, affix: string }>}
  */
@@ -129,15 +151,20 @@ export function negatedBases(word) {
   if (!w) return [];
   const out = [];
   const seen = new Set([w]);
-  for (const rule of NEGATION_RULES) {
-    const matches = rule.kind === 'prefix' ? w.startsWith(rule.affix) : w.endsWith(rule.affix);
-    if (!matches) continue;
-    if (STOPLISTS[rule.stop]?.has(w)) continue;
-    for (const base of rule.bases(w)) {
-      if (base.length < MIN_BASE || seen.has(base)) continue;
-      seen.add(base);
-      out.push({ base, affix: rule.affix });
+  const tryForm = (form, via) => {
+    for (const rule of NEGATION_RULES) {
+      if (rule.requireVia && !rule.requireVia.test(via ?? '')) continue;
+      const matches = rule.kind === 'prefix' ? form.startsWith(rule.affix) : form.endsWith(rule.affix);
+      if (!matches) continue;
+      if (STOPLISTS[rule.stop]?.has(form)) continue;
+      for (const base of rule.bases(form)) {
+        if (base.length < MIN_BASE || seen.has(base)) continue;
+        seen.add(base);
+        out.push({ base, affix: via ? `${rule.affix}+${via}` : rule.affix });
+      }
     }
-  }
+  };
+  tryForm(w, null);
+  for (const { base, suffix } of derivationalBases(w)) tryForm(base, suffix);
   return out;
 }

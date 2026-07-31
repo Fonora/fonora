@@ -120,7 +120,7 @@ flowchart TD
   subgraph translate [3. Translation]
     TOK["tokenize + merge phrases"]
     SLOT["assign 5 slots\nActor Action Target Place Time"]
-    RES["8-tier resolution\nnever guesses"]
+    RES["9-tier resolution\nnever guesses silently"]
     REND["render roman + script"]
     GAPS["unresolved list\nanything unsayable"]
   end

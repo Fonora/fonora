@@ -63,6 +63,198 @@
       "concept": "world",
       "reason": "Documented spelling for `world`, which is now `fenfo` (earth+life).",
       "retired_at": "2026-07-01"
+    },
+    {
+      "form": "sal",
+      "concept_id": "aggression",
+      "reason": "frequency swap: root retired (aggression); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "net",
+      "concept_id": "depression",
+      "reason": "frequency swap: root retired (depression); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "lel",
+      "concept_id": "joy",
+      "reason": "frequency swap: root retired (joy); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "nak",
+      "concept_id": "scared",
+      "reason": "frequency swap: root retired (scared); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "men",
+      "concept_id": "timid",
+      "reason": "frequency swap: root retired (timid); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "yo",
+      "concept_id": "proud",
+      "reason": "frequency swap: root retired (proud); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "si",
+      "concept_id": "motion",
+      "reason": "frequency swap: root retired (motion); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "fi",
+      "concept_id": "travel",
+      "reason": "frequency swap: root retired (travel); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "tas",
+      "concept_id": "justice",
+      "reason": "frequency swap: root retired (justice); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "ha",
+      "concept_id": "rule",
+      "reason": "frequency swap: root retired (rule); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "mek",
+      "concept_id": "exclude",
+      "reason": "frequency swap: root retired (exclude); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "das",
+      "concept_id": "reach",
+      "reason": "frequency swap: root retired (reach); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "wu",
+      "concept_id": "straight",
+      "reason": "frequency swap: root retired (straight); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "ten",
+      "concept_id": "surface",
+      "reason": "frequency swap: root retired (surface); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "get",
+      "concept_id": "substance",
+      "reason": "frequency swap: root retired (substance); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "dam",
+      "concept_id": "mouth",
+      "reason": "frequency swap: root retired (mouth); seat given to a corpus-frequent word",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "kugu",
+      "concept_id": "please",
+      "reason": "frequency swap: please promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "kamgu",
+      "concept_id": "safe",
+      "reason": "frequency swap: safe promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "moyi",
+      "concept_id": "again",
+      "reason": "frequency swap: again promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "kenwihu",
+      "concept_id": "meaning",
+      "reason": "frequency swap: meaning promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "gisak",
+      "concept_id": "try",
+      "reason": "frequency swap: try promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "pemet",
+      "concept_id": "worried",
+      "reason": "frequency swap: worried promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "femtam",
+      "concept_id": "tired",
+      "reason": "frequency swap: tired promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "gesye",
+      "concept_id": "rain",
+      "reason": "frequency swap: rain promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "temche",
+      "concept_id": "shelter",
+      "reason": "frequency swap: shelter promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "kuket",
+      "concept_id": "share",
+      "reason": "frequency swap: share promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "giwi",
+      "concept_id": "show",
+      "reason": "frequency swap: show promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "dalshu",
+      "concept_id": "soon",
+      "reason": "frequency swap: soon promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "kekdi",
+      "concept_id": "day",
+      "reason": "frequency swap: day promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "gankan",
+      "concept_id": "night",
+      "reason": "frequency swap: night promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "kikeklem",
+      "concept_id": "sun",
+      "reason": "frequency swap: sun promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
+    },
+    {
+      "form": "tesfem",
+      "concept_id": "wound",
+      "reason": "frequency swap: wound promoted from compound to root; old surface never reassigned",
+      "retired_at": "2026-07-31"
     }
   ]
 }

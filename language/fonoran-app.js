@@ -2844,6 +2844,7 @@
       if (kinds.has('composed')) items.push('<span class="translator-resolved--composed">composed</span> from roots');
       if (kinds.has('loan')) items.push('<span class="translator-resolved--loan">«loan»</span> phonetic borrow');
       if (kinds.has('interpreted')) items.push('<span class="translator-resolved--interpreted">interpreted</span>');
+      if (kinds.has('guessed')) items.push('<span class="translator-resolved--guessed">guessed</span> nearest concept, not in the lexicon');
       if (kinds.has('unknown')) items.push('<span class="translator-unresolved-sample">gap</span>');
       if (items.length < 1) return '';
       return `<p class="translator-output__legend sans">${items.join(' · ')}</p>`;
@@ -3065,6 +3066,7 @@
       if (kind === 'interpreted') return 'translator-resolved--interpreted';
       if (kind === 'semantic') return 'translator-resolved--semantic';
       if (kind === 'alias_weak') return 'translator-resolved--alias_weak';
+      if (kind === 'guessed') return 'translator-resolved--guessed';
       return '';
     }
 
@@ -3077,6 +3079,7 @@
       else if (kind === 'interpreted') cls = ' translator-token--interpreted';
       else if (kind === 'semantic') cls = ' translator-token--semantic';
       else if (kind === 'alias_weak') cls = ' translator-token--semantic';
+      else if (kind === 'guessed') cls = ' translator-token--guessed';
       return cls;
     }
 
@@ -3261,6 +3264,11 @@
           // The alignment view is a presentation of this same response, never a
           // second call with its own answer. Costs one lemma lookup per input word.
           align: !reverse,
+          // Let the engine guess a nearest existing concept for a gap word.
+          // Guessed tokens come back marked `guessed` and are styled as such,
+          // so a reader always sees which words are the lexicon and which are
+          // the translator reaching.
+          guess: !reverse,
         };
         if (reverse) {
           body.direction = 'from-fonoran';

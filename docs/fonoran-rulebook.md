@@ -159,7 +159,7 @@ Negation is positional, and its position *is* its meaning. It scopes over exactl
 ```text
 mi no gamdal         I am not dangerous       (denies the action)
 mi gat no dakpa      I have no weapon         (denies the thing)
-no kamgu             not safe                 (denies the quality)
+no kep             not safe                 (denies the quality)
 ```
 
 In a two-clause sentence, a `no` in one clause does not reach into the other.

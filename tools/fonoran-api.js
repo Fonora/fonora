@@ -266,6 +266,9 @@ export async function handleFonoranApi(req, res, pathname, method) {
         sourceLang: body.sourceLang ?? url.searchParams.get('sourceLang') ?? 'auto',
         direction: body.direction ?? url.searchParams.get('direction') ?? undefined,
         inputMode: body.inputMode ?? url.searchParams.get('inputMode') ?? undefined,
+        // Opt-in: lets the resolver guess a marked nearest concept for a gap
+        // word. The live translator sends this; scripts and tests do not.
+        guess: body.guess === true,
         devLab: body.dev_lab === true
           || process.env.FONORAN_DEV_LAB === '1'
           || process.env.FONORAN_DEV_LAB === 'true',

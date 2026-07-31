@@ -111,7 +111,9 @@
       "aliases": [
         "sorrow",
         "unhappy",
-        "grief"
+        "grief",
+        "depression",
+        "depressed"
       ]
     },
     "see": {
@@ -201,7 +203,8 @@
       "aliases": [
         "afraid",
         "scared",
-        "dread"
+        "dread",
+        "timid"
       ]
     },
     "feel": {
@@ -623,7 +626,8 @@
         "balance",
         "fair",
         "fairness",
-        "match"
+        "match",
+        "justice"
       ]
     },
     "false": {
@@ -772,7 +776,8 @@
         "it",
         "toy",
         "toys",
-        "things"
+        "things",
+        "substance"
       ]
     },
     "think": {
@@ -897,7 +902,8 @@
       "label": "outside",
       "aliases": [
         "exterior",
-        "outer"
+        "outer",
+        "surface"
       ]
     },
     "conflict": {
@@ -1118,7 +1124,8 @@
         "glad",
         "joyful",
         "content",
-        "cheerful"
+        "cheerful",
+        "joy"
       ]
     },
     "angry": {
@@ -1127,7 +1134,9 @@
         "mad",
         "furious",
         "cross",
-        "enraged"
+        "enraged",
+        "aggression",
+        "aggressive"
       ]
     },
     "calm": {

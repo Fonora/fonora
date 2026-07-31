@@ -184,6 +184,8 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 }
 ```
 
+Optional forward fields: `align: true` attaches the alignment keys the Alignment modal draws from; `guess: true` enables the marked guessed tier (see the cascade table below). The live translator sends both; scripts and tests send neither.
+
 **Reverse** (Fonoran → English):
 
 ```json
@@ -241,6 +243,7 @@ Each token carries `resolution_kind` (see [Rule 7 · Resolution cascade](fonoran
 | `composed` | blue | Transparent runtime compound assembled from approved roots via a concept bridge or `+`-path (e.g. `sentience` → `think+self`). Fuses to one word when the Compound Boundary Constraint passes, else renders as a space-separated phrase |
 | `loan` | purple (italic, wrapped `«…»`) | Phonetic loanword for a proper noun / unmappable term (the "iPhone stays iPhone" rule). Never composed from roots; always visibly marked |
 | `semantic` / `alias_weak` | orange | Weaker semantic or gloss-only alias |
+| `guessed` | orange, italic, dashed underline | Opt-in only (`guess: true` in the request; the live translator sends it): nearest existing concept substituted for a gap word, marked `guessed: true`. Never a minted spelling. Listed in a "Guessed" strip on the alignment view |
 | `unknown` | red | No confident concept — honest gap |
 
 ### Concept bridges (abstract / technical vocabulary)

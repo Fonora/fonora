@@ -37,6 +37,7 @@ function resolveDirection(options = {}) {
  *   lab?: object,
  *   skipCache?: boolean,
  *   devLab?: boolean,
+ *   guess?: boolean,
  * }} [options]
  */
 export async function translate(text, options = {}) {
@@ -76,6 +77,7 @@ export async function translate(text, options = {}) {
     parser,
     lab: options.lab,
     devLab: options.devLab,
+    guess: Boolean(options.guess),
   });
   return { ...result, engine: 'legacy', direction: 'to-fonoran' };
 }
