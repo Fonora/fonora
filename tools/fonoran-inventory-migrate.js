@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * One-shot migration: add editorial workflow fields to the concept inventory.
+ * Idempotent maintenance: seed editorial workflow fields on concept-inventory
+ * entries that are missing them (e.g. newly added concepts).
  *
  * Adds, without overwriting any values a human/LLM has already set:
  *   - plain_description    everyday gloss (seeded from description)

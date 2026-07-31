@@ -3,6 +3,7 @@
  * Browser + Node compatible (no fs). Does not modify root generation.
  */
 import { levenshtein } from './fonoran-gen3-distinctiveness.js';
+import { ONSETS, VOWELS, CODAS } from './fonoran-pronunciation.js';
 
 // Re-exported because callers already read it from here.
 export { levenshtein };
@@ -306,21 +307,12 @@ export function auditScores(inventory, derivations, warnings, segByCompound = nu
 // Compound Boundary Constraint
 // ---------------------------------------------------------------------------
 
-// Phoneme tables for boundary analysis. Sorted longest-first so digraphs
-// match before their constituent single characters.
-const _CBC_CODAS = [
-  'ch', 'sh', 'ng', 'kh', 'gh', 'th', 'dh',
-  'p', 't', 'k', 'h', 'm', 'n', 's', 'd', 'b', 'g', 'v', 'z', 'l', 'r', 'x',
-].sort((a, b) => b.length - a.length);
-
-const _CBC_ONSETS = [
-  'gh', 'kh', 'ng', 'sh', 'ch', 'th', 'dh', 'ñ',
-  'x', 'p', 't', 'b', 'd', 'j', 'g', 'h', 'f', 's', 'v', 'z', 'm', 'n', 'w', 'l', 'r', 'y', 'k',
-].sort((a, b) => b.length - a.length);
-
-const _CBC_VOWELS = [
-  'eye', 'ee', 'ae', 'oh', 'ow', 'oy', 'ay', 'a', 'e', 'i', 'o', 'u',
-].sort((a, b) => b.length - a.length);
+// Phoneme tables for boundary analysis, imported from the pronunciation parser so
+// they cannot drift. Already sorted longest-first so digraphs match before their
+// constituent single characters.
+const _CBC_CODAS = CODAS;
+const _CBC_ONSETS = ONSETS;
+const _CBC_VOWELS = VOWELS;
 
 /** Extract the trailing phoneme of a roman-alphabet Fonoran string. */
 function _trailingPhoneme(str) {

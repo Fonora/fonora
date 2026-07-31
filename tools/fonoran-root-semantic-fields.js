@@ -45,25 +45,3 @@ export function isLazyGlueRoot(rootId, fields = null) {
   return LAZY_GLUE_ROOTS.has(rootId);
 }
 
-/** Prompt block for LLM proposers — roots as ideas, not words. */
-export function semanticFieldsPromptBrief(fields) {
-  const lazy = (fields?.lazy_glue_roots ?? [...LAZY_GLUE_ROOTS]).join(', ');
-  const samples = ['stone', 'make', 'hand', 'use', 'water', 'feel']
-    .map(id => {
-      const f = fields?.roots?.[id];
-      if (!f) return null;
-      const ideas = (f.association_ideas ?? []).slice(0, 3).join('; ');
-      return `  ${id}: ${f.core_idea}${ideas ? ` — evokes: ${ideas}` : ''}`;
-    })
-    .filter(Boolean)
-    .join('\n');
-
-  return [
-    'ROOT SEMANTICS (roots are IDEAS, not English words):',
-    '- Compose from what a root-knower would GUESS, not English etymology.',
-    '- Each root evokes a cluster of ideas; pick roots whose ideas overlap the target concept.',
-    '- Lazy glue roots (' + lazy + ') cannot carry a specific tool/object alone.',
-    'Examples:',
-    samples,
-  ].join('\n');
-}

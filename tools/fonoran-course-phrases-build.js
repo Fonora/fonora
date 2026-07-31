@@ -11,6 +11,7 @@
  *
  * Run:
  *   node tools/fonoran-course-phrases-build.js
+ *   node tools/fonoran-course-phrases-build.js --check   # verify freshness (CI)
  *   node tools/fonoran-course-phrases-build.js --dry-run
  *   node tools/fonoran-course-phrases-build.js --domain first_contact
  *   node tools/fonoran-course-phrases-build.js --limit 20
@@ -27,6 +28,7 @@ const OUTPUT_PATH = join(ROOT, 'data/fonoran-course-phrases.json');
 
 const argv = process.argv.slice(2);
 const dryRun = argv.includes('--dry-run');
+const checkMode = argv.includes('--check');
 const domainIdx = argv.indexOf('--domain');
 const onlyDomain = domainIdx !== -1 ? argv[domainIdx + 1] : null;
 const limitIdx = argv.indexOf('--limit');
@@ -73,9 +75,11 @@ async function main() {
       if (fonoran.status === 'translated') translated += 1;
       else if (fonoran.status === 'gap') gap += 1;
 
-      console.log(
-        `[${fonoran.status.padEnd(10)}] ${domain.id}: ${phrase.id} → ${fonoran.roman || '(gap)'}`,
-      );
+      if (!checkMode) {
+        console.log(
+          `[${fonoran.status.padEnd(10)}] ${domain.id}: ${phrase.id} → ${fonoran.roman || '(gap)'}`,
+        );
+      }
 
       outputPhrases.push({
         id: phrase.id,
@@ -104,6 +108,30 @@ async function main() {
     gap,
     domains: outputDomains,
   };
+
+  if (checkMode) {
+    // `generated_at` is the only intentionally unstable field; everything else must
+    // re-derive identically from the corpus and the seeds, or the committed offline
+    // snapshot is teaching roman the language no longer produces.
+    const normalize = doc => JSON.stringify({ ...doc, generated_at: null });
+    let committed = null;
+    try {
+      committed = JSON.parse(await readFile(OUTPUT_PATH, 'utf8'));
+    } catch {
+      console.error('data/fonoran-course-phrases.json is missing. Run: node tools/fonoran-course-phrases-build.js');
+      process.exitCode = 1;
+      return;
+    }
+    if (normalize(committed) !== normalize(output)) {
+      console.error('data/fonoran-course-phrases.json is STALE relative to the corpus and seeds.');
+      console.error('The Learn API recompiles at runtime, but the committed offline snapshot has drifted.');
+      console.error('Run: node tools/fonoran-course-phrases-build.js');
+      process.exitCode = 1;
+      return;
+    }
+    console.log(`✓ course phrases current — offline snapshot matches the corpus and seeds (${translated} translated, ${gap} gap).`);
+    return;
+  }
 
   if (!dryRun) {
     await mkdir(dirname(OUTPUT_PATH), { recursive: true });

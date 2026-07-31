@@ -89,13 +89,25 @@ const stripComments = obj => Object.fromEntries(
 
 // Function words: emit both directions. `english` drives "which token does this typed
 // word point at"; `byForm` is the convenience an aligner wants when walking tokens.
+//
+// Compile triggers are owned by the particle inventory (particles[].triggers); the
+// policy lists only alignment extras — words that reach the form through other
+// machinery ("was" -> tense_past). They are merged here so no English word is
+// declared in two seed files.
+const particleTriggers = new Map(
+  particles.map(p => [p.id, (p.triggers ?? []).map(t => String(t).toLowerCase())]),
+);
 const functionWords = {};
 for (const [conceptId, english] of Object.entries(stripComments(policy.function_word_english))) {
   const form = spellingFor(conceptId);
   if (!form) { unresolved.push(`function_word_english: ${conceptId}`); continue; }
+  const merged = [...english];
+  for (const trigger of particleTriggers.get(conceptId) ?? []) {
+    if (!merged.includes(trigger)) merged.push(trigger);
+  }
   functionWords[conceptId] = {
     form,
-    english,
+    english: merged,
     label: stripComments(policy.function_word_labels)[conceptId] ?? conceptId,
   };
 }

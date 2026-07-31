@@ -1,6 +1,6 @@
 {
   "name": "fonora",
-  "version": "0.1.24",
+  "version": "0.1.25",
   "description": "Open-source research exploring phonetic writing, constructed language design, and fast cross-linguistic communication",
   "homepage": "https://fonora.org",
   "repository": {
@@ -18,7 +18,7 @@
   "scripts": {
     "postinstall": "node scripts/copy-espeak.js && node scripts/copy-espeak-audio.js && node scripts/copy-onnx-wasm.js && node scripts/copy-piper.js && node scripts/fonoran-data-fetch.js",
     "start": "node server.js",
-    "test": "node js/tests.js && npm run fonoran:prefix-safe -- --check && npm run fonoran:policy:check && npm run fonoran:verify-refs && npm run fonoran:verify-invariants && npm run fonoran:verify-quarantine && npm run test:translator",
+    "test": "node js/tests.js && npm run fonoran:prefix-safe -- --check && npm run fonoran:policy:check && npm run fonoran:course-phrases:check && npm run fonoran:verify-refs && npm run fonoran:verify-invariants && npm run fonoran:verify-quarantine && npm run test:translator",
     "test:translator": "node scripts/fonoran-grammar-spec-test.js && node scripts/fonoran-translation-gaps.js --assert && node scripts/fonoran-translation-probes.js --assert",
     "test:translator:grammar-spec": "node scripts/fonoran-grammar-spec-test.js",
     "test:translator:golden": "node scripts/fonoran-translation-gaps.js --assert",
@@ -54,10 +54,10 @@
     "fonoran:regen-compounds": "node scripts/fonoran-regen-compounds.js",
     "fonoran:regen:four-rules": "node scripts/fonoran-regen-four-rules.js",
     "fonoran:course-phrases:build": "node tools/fonoran-course-phrases-build.js",
+    "fonoran:course-phrases:check": "node tools/fonoran-course-phrases-build.js --check",
     "fonoran:course-phrases:build:dry": "node tools/fonoran-course-phrases-build.js --dry-run",
     "fonoran:root-candidates": "node tools/fonoran-root-candidates.js",
     "fonoran:inventory-migrate": "node tools/fonoran-inventory-migrate.js",
-    "fonoran:reconcile-inventory": "node scripts/fonoran-reconcile-inventory.js",
     "fonoran:root-capacity": "node scripts/fonoran-root-capacity.js",
     "fonoran:root-capacity:tiers": "node scripts/fonoran-root-capacity-tiers.js",
     "fonoran:prefix-safe": "node scripts/fonoran-prefix-safe-inventory.js",

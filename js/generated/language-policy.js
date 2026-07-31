@@ -43,11 +43,11 @@ export const LANGUAGE_POLICY = Object.freeze({
     "pronoun_i": {
       "form": "mi",
       "english": [
-        "i",
-        "me",
         "my",
         "myself",
-        "mine"
+        "mine",
+        "i",
+        "me"
       ],
       "label": "I / me"
     },
@@ -105,19 +105,22 @@ export const LANGUAGE_POLICY = Object.freeze({
     "logic_not": {
       "form": "no",
       "english": [
-        "not",
-        "never",
-        "no",
         "none",
         "nothing",
-        "cannot"
+        "cannot",
+        "not",
+        "never",
+        "n't",
+        "no"
       ],
       "label": "not"
     },
     "logic_yes": {
       "form": "ya",
       "english": [
-        "yes"
+        "yes",
+        "yeah",
+        "yep"
       ],
       "label": "yes"
     },

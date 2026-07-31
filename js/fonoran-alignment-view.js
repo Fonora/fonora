@@ -214,11 +214,29 @@ function buildMapping(englishPhrase, tokens, alignKeys, inputLemmas) {
     return weak?.length ? [weak[0]] : [];
   };
 
-  const words = splitEnglishWords(englishPhrase).map((part, wi) => ({
-    ...part,
-    coreAnchor: `c${wi}`,
-    tokenIdxs: lookupAll(part.core),
-  }));
+  const words = splitEnglishWords(englishPhrase).map((part, wi) => {
+    const tokenIdxs = lookupAll(part.core);
+    const word = { ...part, coreAnchor: `c${wi}`, tokenIdxs };
+    word.contentIdxs = tokenIdxs.filter(i => !isGrammarOnly(tokens[i]));
+    word.grammarIdxs = tokenIdxs.filter(i => isGrammarOnly(tokens[i]));
+
+    // When a content word and a grammar particle share one written word, English is
+    // spelling grammar inside the word: "handed" is hand plus the past that Fonoran
+    // writes as `ta`. The server's lemma says where the stem ends; when it is a
+    // visible prefix, the letters after it are the grammar's, so each half carries
+    // its own line and colour. No suffix rule lives here — an irregular like "ate"
+    // has no such seam and the whole word simply belongs to both tokens.
+    if (word.contentIdxs.length && word.grammarIdxs.length) {
+      const lemma = inputLemmas[normWord(part.core)];
+      const lower = part.core.toLowerCase();
+      if (lemma && lower.startsWith(lemma) && lower.length > lemma.length) {
+        word.stem = part.core.slice(0, lemma.length);
+        word.suffix = part.core.slice(lemma.length);
+        word.suffixAnchor = `s${wi}`;
+      }
+    }
+    return word;
+  });
 
   const tokenToAnchors = new Map();
   const link = (tokenIdx, anchor) => {
@@ -227,8 +245,13 @@ function buildMapping(englishPhrase, tokens, alignKeys, inputLemmas) {
     if (!list.includes(anchor)) list.push(anchor);
   };
 
-  words.forEach(({ tokenIdxs, coreAnchor }) => {
-    for (const ti of tokenIdxs) link(ti, coreAnchor);
+  words.forEach(({ tokenIdxs, contentIdxs, grammarIdxs, coreAnchor, suffixAnchor }) => {
+    if (suffixAnchor) {
+      for (const ti of contentIdxs) link(ti, coreAnchor);
+      for (const ti of grammarIdxs) link(ti, suffixAnchor);
+    } else {
+      for (const ti of tokenIdxs) link(ti, coreAnchor);
+    }
   });
 
   // The question marker is the one token English writes as punctuation rather than
@@ -271,15 +294,22 @@ function sceneHtml(scene, inputLemmas) {
   }).join('');
 
   // Built without inner whitespace so punctuation stays flush against its word.
-  const engWords = words.map(({ pre, core, post, tokenIdxs, coreAnchor, postAnchor }) => {
+  const engWords = words.map(({ pre, core, post, tokenIdxs, contentIdxs, grammarIdxs, coreAnchor, postAnchor, stem, suffix, suffixAnchor }) => {
     const parts = [];
     if (pre) parts.push(`<span class="align__epunct">${esc(pre)}</span>`);
-    if (core) {
+    if (suffix) {
+      // The stem is the content word and keeps that word's colour; the suffix is
+      // the grammar written out, so it wears the particle's colour and line.
+      parts.push(`<span class="align__ecore" data-anchor="${ea(coreAnchor)}" style="color:${ea(colors[contentIdxs[0]])}">${esc(stem)}</span>`);
+      parts.push(`<span class="align__ecore" data-anchor="${ea(suffixAnchor)}" style="color:${ea(colors[grammarIdxs[0]])}">${esc(suffix)}</span>`);
+    } else if (core) {
       const matched = tokenIdxs.length > 0;
       const cls = matched ? 'align__ecore' : 'align__ecore align__ecore--omitted';
-      // Where several Fonoran words converge on one English word, the first supplies
-      // the colour and every one still gets its own line.
-      const style = matched ? ` style="color:${ea(colors[tokenIdxs[0]])}"` : '';
+      // Where several Fonoran words converge on one English word, the first content
+      // word supplies the colour and every one still gets its own line: "ate" is the
+      // verb's word even though the past particle also reaches it.
+      const colorIdx = contentIdxs[0] ?? tokenIdxs[0];
+      const style = matched ? ` style="color:${ea(colors[colorIdx])}"` : '';
       parts.push(`<span class="${cls}" data-anchor="${ea(coreAnchor)}"${style}>${esc(core)}</span>`);
     }
     if (post) {

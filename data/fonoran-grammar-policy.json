@@ -9,10 +9,8 @@
     "note": "This file owns POLICY (which concept expresses which function, and which English words map to it). It never owns spellings."
   },
   "function_word_english": {
-    "_comment": "English words a speaker actually types, mapped to the concept that carries them. Used by the Showcase aligner to draw links, because technical glosses like 'addressee' never match typed English like 'you'. Previously PARTICLE_ENGLISH in showcase/showcase.js, keyed by roman, where it had drifted badly: 'ko' was mapped to negation though it is the live root for 'to drink', 'ban' was mapped to 'the/this/that' though no such form exists anywhere in the seeds, the real negation particle was absent, and 'we/us/our' were attached to the first-person singular instead of the collective.",
+    "_comment": "English words a speaker actually types, mapped to the concept that carries them. Used by the Showcase aligner to draw links, because technical glosses like 'addressee' never match typed English like 'you'. Compile triggers (particles[].triggers in data/fonoran-grammar-particles.json) are the particle inventory's to own and are merged in at build time — list here only the ALIGNMENT EXTRAS that reach the form through other machinery (e.g. 'was' -> tense_past via the tense pass). Previously PARTICLE_ENGLISH in showcase/showcase.js, keyed by roman, where it had drifted badly: 'ko' was mapped to negation though it is the live root for 'to drink', 'ban' was mapped to 'the/this/that' though no such form exists anywhere in the seeds, the real negation particle was absent, and 'we/us/our' were attached to the first-person singular instead of the collective.",
     "pronoun_i": [
-      "i",
-      "me",
       "my",
       "myself",
       "mine"
@@ -53,19 +51,12 @@
       "later"
     ],
     "logic_not": [
-      "not",
-      "never",
-      "no",
       "none",
       "nothing",
       "cannot"
     ],
-    "logic_yes": [
-      "yes"
-    ],
-    "logic_if": [
-      "if"
-    ],
+    "logic_yes": [],
+    "logic_if": [],
     "one": [
       "one",
       "single",

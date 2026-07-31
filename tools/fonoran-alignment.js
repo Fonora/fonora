@@ -108,6 +108,14 @@ export function buildAlignment(englishPhrase, tokens = []) {
       const key = lemmaKey(word);
       if (key) strong.add(key);
     }
+    // Grammar English spells inside another word: the past of "handed" surfaces as
+    // its own particle, whose `english` ("past") is never a word the speaker typed.
+    // The translator reports the carrying word as `english_source`, and it is the
+    // particle's one honest anchor in the sentence.
+    for (const word of String(tok?.english_source ?? '').split(/[\s,;/]+/)) {
+      const key = lemmaKey(word);
+      if (key) strong.add(key);
+    }
     for (const alt of particleEnglish.get(tok?.fonoran) ?? []) {
       const key = lemmaKey(alt);
       if (key) strong.add(key);

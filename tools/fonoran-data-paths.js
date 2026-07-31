@@ -16,7 +16,6 @@ export const EXTERNAL_DATA_REL = {
   translation_test_latest: 'data/fonoran-translation-test-latest.json',
   stranger_corpus: 'data/fonoran-stranger-corpus.json',
   stranger_gap_report: 'data/fonoran-stranger-gap-report.json',
-  phonetic_analytics: 'data/fonoran-phonetic-analytics.json',
 };
 
 /**

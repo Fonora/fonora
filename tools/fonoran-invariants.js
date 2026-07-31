@@ -34,13 +34,14 @@ async function readJson(relPath) {
  * @returns {Promise<{ config: object, roots: object[], compounds: object[] }>}
  */
 export async function loadInvariantContext() {
-  const [config, approvedRoots, dimensions, compoundDoc, localization, ownership] = await Promise.all([
+  const [config, approvedRoots, dimensions, compoundDoc, localization, ownership, particlesDoc] = await Promise.all([
     readJson('data/fonoran-primitive-roots-config.json'),
     readJson('data/fonoran-approved-roots.json'),
     readJson('data/fonoran-semantic-dimensions.json'),
     readJson('data/fonoran-compounds.json'),
     readJson('data/localizations/en.json'),
     readJson('data/fonoran-word-ownership.json').catch(() => ({ contested: [] })),
+    readJson('data/fonoran-grammar-particles.json'),
   ]);
   const roots = approvedRoots.roots ?? [];
   const compoundSeed = compoundDoc.compounds ?? [];
@@ -49,6 +50,7 @@ export async function loadInvariantContext() {
     dimensions,
     roots,
     compoundSeed,
+    particles: particlesDoc.particles ?? [],
     compounds: deriveCompoundSpellings(roots, compoundSeed),
     retired: loadRetiredSpellings(),
     localization,
@@ -292,11 +294,44 @@ export const englishWordOwnershipRule = {
   },
 };
 
+/**
+ * Every active particle form must be reserved in the phonetics config, so the root
+ * generator can never hand a particle spelling to a lexical concept. The particle
+ * inventory is the authority; the reservation list is a copy the generator reads,
+ * and this rule is what keeps the copy honest when a particle is added or respelled.
+ */
+export const particleReservationRule = {
+  id: 'particle-reservation',
+  title: 'every particle form is reserved from the root generator',
+  severity: 'error',
+  run(ctx) {
+    const reserved = new Set(
+      (ctx.config?.reserved_particles?.forms ?? []).map(f => String(f).toLowerCase()),
+    );
+    const findings = [];
+    for (const particle of ctx.particles ?? []) {
+      const form = String(particle.form ?? '').toLowerCase();
+      if (!form || reserved.has(form)) continue;
+      findings.push({
+        rule: particleReservationRule.id,
+        severity: 'error',
+        subject: `particle ${form}`,
+        concept: String(particle.id ?? ''),
+        detail: `${form} (${particle.id}) is missing from reserved_particles.forms in data/fonoran-primitive-roots-config.json, so the root generator could assign it to a lexical concept`,
+        waived: false,
+        reason: null,
+      });
+    }
+    return findings;
+  },
+};
+
 export const RULES = [
   excludedSyllableRule,
   retiredReassignmentRule,
   englishWordOwnershipRule,
   dimensionConsistencyRule,
+  particleReservationRule,
 ];
 
 /**

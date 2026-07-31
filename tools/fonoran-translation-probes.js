@@ -4,7 +4,7 @@
 import { readFile } from 'node:fs/promises';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { translateEnglish, resetTranslatorCache } from './fonoran-translator.js';
+import { translateEnglishLegacy as translateEnglish, resetTranslatorCache } from './fonoran-translator.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PROBES_PATH = join(ROOT, 'data/fonoran-translation-probes.json');

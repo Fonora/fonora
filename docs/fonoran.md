@@ -75,7 +75,7 @@ npm run fonoran:build    # assign roots + build curated compounds → lab
 | **Concept Editor** | Sign-in | Edit concept gloss, aliases, and spelling (unlinked sounds become new concepts here) |
 | **Review** | Sign-in | **Root queue** (pending spellings) · **Roots** · **Words** · **Generated** |
 | **Health** | Public | Readability scores and warnings |
-| **Advanced** | Sign-in | Import build, lab reset, snapshot export |
+| **Advanced** | Sign-in | Regenerate, import build, lab reset, review-state tools |
 
 **Language Explorer** (from Dictionary): derivation trees, “used in” lists, Mermaid family graphs. Read-only graph API, no sign-in.
 
@@ -216,20 +216,13 @@ Reserved particles (never roots): `mi`, `ta`, `sa`, `no`, `ya`, `von`.
 
 | Endpoint | Method | Auth | Purpose |
 | --- | --- | --- | --- |
-| `/api/fonoran/lab` | GET | Public | Lab bucket (sounds, compounds) |
 | `/api/fonoran/lab/health` | GET | Public | Readability scores |
 | `/api/fonoran/lab/graph/:kind/:ref` | GET | Public | Derivation / family graph |
 | `/api/fonoran/lab/compounds` | POST | Sign-in | Save compound |
-| `/api/fonoran/lab/run-dda` | POST | Sign-in | Run DDA inference (archive-only; no UI) |
 | `/api/fonoran/lab/build` | POST | Sign-in | Import build into lab |
 | `/api/fonoran/roots/candidates` | GET | Sign-in | Root queue (`?status=pending`) |
 | `/api/fonoran/roots/candidates/:id` | PATCH | Sign-in | Approve / reject / edit / reopen |
 | `/api/fonoran/roots/candidates/:id/regenerate` | POST | Sign-in | New spelling for one concept |
-| `/api/fonoran/roots/canonical` | GET | Public | Approved root export |
-| `/api/fonoran/snapshot/status` | GET | Public | Storage mode and doc counts |
-| `/api/fonoran/snapshot/export` | GET | Admin | Download full-state zip |
-| `/api/fonoran/snapshot/preview` | POST | Sign-in | Preview zip before restore |
-| `/api/fonoran/snapshot/import` | POST | Admin | Replace all state (`confirm: RESTORE`) |
 | `/api/fonoran/translate` | POST | Public | English → Fonoran, deterministic, no API key needed |
 | `/api/fonoran/concepts` | GET | Public | Concept inventory + spellings |
 
@@ -237,7 +230,7 @@ Auth and production release checklist: [fonoran-auth-and-release.md](fonoran-aut
 
 ## Credits
 
-The translator's semantic lookup uses **WordNet** (via **wordpos**). See [third-party.md](third-party.md) for full attribution and licenses.
+The offline curation assistant uses **WordNet** (via **wordpos**); English parsing in the translator uses **wink-nlp**. See [third-party.md](third-party.md) for full attribution and licenses.
 
 ## Related
 

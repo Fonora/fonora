@@ -4,8 +4,6 @@
  * Interpretive layer: docs/fonoran-interpretive-translator.md
  */
 
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import {
   phoneticKeyBold,
   compoundPhoneticKey,
@@ -17,19 +15,18 @@ import {
   resetInterpretationCache,
   matchLeadingTimeAdverbial,
   mergePhrasalTokens,
-  MODALS,
-  LEADING_TIME_WORDS,
+  POSSESSIVE_OWNERS,
   TEMPORAL_SCENE_CONCEPT_IDS,
   TEMPORAL_SCENE_TOPIC_IDS,
   TEMPORAL_SCENE_FRONT_ORDER,
 } from './fonoran-interpretation.js';
+import { LEADING_TIME_WORDS, TEMPORAL_SUBORDINATORS } from './fonoran-english-morphology.js';
 import {
   buildResolveContext,
   resolveEnglishToken,
   tokenizeEnglish,
   mergeEnglishCompounds,
   lemmatizeEnglish,
-  CONJUNCTIONS,
   resolveConceptId,
   gapToken,
 } from './fonoran-english-resolve.js';
@@ -48,6 +45,28 @@ import { attachTranslatorPlayback } from './fonoran-playback-build.js';
  * Loaded once per process; reset via resetTranslatorCache().
  */
 let PARTICLES = null;
+
+/**
+ * Particle spelling by id, from data/fonoran-grammar-particles.json only.
+ * Spellings are never hardcoded here: a respelled particle in the seed must
+ * flow through, and a missing id is a data error, not something to paper over.
+ */
+function particleFormById(id) {
+  const form = PARTICLES?.byId?.get(id)?.form;
+  if (!form) throw new Error(`Grammar particle missing from data/fonoran-grammar-particles.json: ${id}`);
+  return form;
+}
+
+/** Like particleFormById, but null when the runtime is not loaded (comparisons only). */
+function particleFormSafe(id) {
+  return PARTICLES?.byId?.get(id)?.form ?? null;
+}
+
+/** English trigger word -> pronoun-group particle entry (only `mi` today), or null. */
+function pronounParticle(word) {
+  const entry = PARTICLES?.index?.get(String(word ?? '').toLowerCase());
+  return entry?.group === 'pronoun' ? entry : null;
+}
 
 // User-facing skeleton (docs/fonoran-grammar.md Rule 4). Internal slot keys keep
 // their historical names (subject/event/object/path) and map onto these roles:
@@ -181,8 +200,7 @@ function isPunctuationToken(token) {
  * while `nohu ba` names an unknown person.
  */
 function questionParticleToken() {
-  const form = PARTICLES?.byId?.get('clause_question')?.form ?? 'ka';
-  return particleToken('question', form, 'question');
+  return particleToken('question', particleFormById('clause_question'), 'question');
 }
 
 /**
@@ -200,24 +218,6 @@ function markSentence(tokens, { isQuestion, sourceText }) {
   if (mark) out.push(punctuationToken(mark === '?' ? '.' : mark));
   return out;
 }
-
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const PARTICLES_PATH = join(ROOT, 'data/fonoran-grammar-particles.json');
-
-// Contentless words dropped from the lexical stream. Meaning-bearing relational
-// words (e.g. `from` -> source) are NOT skipped: they resolve to a concept or
-// surface as an honest gap rather than being silently discarded.
-const SKIP = new Set([
-  'a', 'an', 'the', 'to', 'at', 'in', 'on', 'of', 'for', 'with', 'by', 'into', 'about',
-  'my', 'your', 'his', 'her', 'its', 'our', 'their', 'mine', 'yours', 'this', 'that', 'these', 'those',
-  ...CONJUNCTIONS,
-  ...MODALS,
-]);
-
-const PRONOUNS = {
-  i: 'mi',
-  me: 'mi',
-};
 
 /**
  * Subject pronouns → nearest concept id for resolution.
@@ -237,8 +237,9 @@ const PRONOUN_CONCEPTS = {
 function subjectSlot(english) {
   const surface = String(english ?? '').trim();
   const p = surface.toLowerCase();
-  if (PRONOUNS[p]) {
-    return { english: surface, role: 'subject', particle: PRONOUNS[p] };
+  const pronoun = pronounParticle(p);
+  if (pronoun) {
+    return { english: surface, role: 'subject', particle: pronoun.form, particle_id: pronoun.id };
   }
   const conceptHint = PRONOUN_CONCEPTS[p];
   return {
@@ -248,33 +249,10 @@ function subjectSlot(english) {
   };
 }
 
-const TENSE_AUX = {
-  is: 'present',
-  am: 'present',
-  are: 'present',
-  was: 'past',
-  were: 'past',
-  be: 'present',
-  been: 'past',
-  being: 'present',
-  do: 'present',
-  does: 'present',
-  did: 'past',
-  have: 'present',
-  has: 'present',
-  had: 'past',
-};
-
-const PARTICLE_PLACEHOLDERS = {
-  pronoun_i: 'mi',
-  tense_past: 'ta',
-  tense_future: 'sa',
-};
-
 /**
  * Classify every have-form in a clause by the job it is doing.
  *
- * `have`, `has`, and `had` sat in TENSE_AUX unconditionally, so the content filter
+ * `have`, `has`, and `had` sat in a tense-auxiliary lookup unconditionally, so the content filter
  * consumed each one as a bare tense marker and dropped the word. In a possession
  * clause that deletes the predicate: "I have water" compiled to `mi ye`, which is
  * also what "I am water" and the bare phrase "my water" compiled to. It also
@@ -296,7 +274,7 @@ const PARTICLE_PLACEHOLDERS = {
  *
  * The policy for this lives in `data/fonoran-grammar-policy.json` and in the
  * MODAL_COMPOSITION doc block, and for a long time nothing applied it: every modal
- * sat in SKIP, so "we must run now" and "we run now" produced the same sentence and
+ * sat in a skip list, so "we must run now" and "we run now" produced the same sentence and
  * "I can make fire" asserted that fire is being made rather than that the speaker
  * is able to.
  *
@@ -324,12 +302,12 @@ function pronunciationForParts(parts) {
   };
 }
 
-function particleToken(role, placeholder, english) {
+function particleToken(role, placeholder, english, { englishSource = null } = {}) {
   const parts = [placeholder];
   return {
     // Negation is clause grammar, not a time element: label it honestly even
     // when it rides in the internal time slot (display + frame provenance).
-    role: placeholder === 'no' ? 'negation' : role,
+    role: placeholder === particleFormSafe('logic_not') ? 'negation' : role,
     english,
     fonoran: placeholder,
     parts,
@@ -337,6 +315,10 @@ function particleToken(role, placeholder, english) {
     kind: 'particle',
     source: 'grammar',
     gloss: english,
+    // The written word this particle stands for when English spells the grammar
+    // inside another word: "handed" carries the past that Fonoran writes as its
+    // own particle. Alignment uses it to draw the particle's line to that word.
+    ...(englishSource ? { english_source: englishSource } : {}),
     interpreted: false,
     resolution_kind: 'direct',
     confidence: 'high',
@@ -399,17 +381,12 @@ export function splitSentences(text) {
  * @param {object} rules
  */
 /**
- * Possessive determiner -> the pronoun particle that carries it. Fonoran encodes the
- * possessor (`gamba be` = enemy-your), but `my`/`your`/`our` sit in SKIP and were deleted
- * before the parse, so the possessor vanished: `mi` and `be` were the two most-dropped
- * tokens across the corpus. Third person is left out on purpose, since there is no
- * approved pronoun for it and inventing one is not this layer's job.
+ * Possessive re-attachment: Fonoran encodes the possessor (`gamba be` = enemy-your),
+ * but `my`/`your`/`our` used to be skipped and deleted before the parse, so the
+ * possessor vanished: `mi` and `be` were the two most-dropped tokens across the
+ * corpus. The owner map (POSSESSIVE_OWNERS) lives in fonoran-interpretation.js and
+ * is shared with the structure parser, which skips exactly those words.
  */
-const POSSESSIVE_PARTICLES = new Map([
-  ['my', 'mi'], ['mine', 'mi'],
-  ['your', 'be'], ['yours', 'be'],
-  ['our', 'dan'], ['ours', 'dan'],
-]);
 
 /**
  * Slots from a word-class parse. The Fonoran side is untouched: every entry is handed to
@@ -548,9 +525,6 @@ function restorePhrases(parse, phrases) {
   };
 }
 
-/** Subordinators whose job is to locate the clause in time, as opposed to relating it logically. */
-const TEMPORAL_SUBORDINATORS = new Set(['when', 'while', 'after', 'before', 'until', 'since']);
-
 function posClauseToSlots(sentence, tokens, {
   isQuestion = false, connector = null, rules = null, phrases = null,
 } = {}) {
@@ -603,9 +577,9 @@ function posClauseToSlots(sentence, tokens, {
     slots.time.push({ english: parse.time, role: 'time' });
   }
   if (parse.tense === 'past') {
-    slots.time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
+    slots.time.push({ english: 'past', role: 'time', particle: particleFormById('tense_past'), particle_id: 'tense_past', english_source: parse.tenseSource ?? null });
   } else if (parse.tense === 'future') {
-    slots.time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
+    slots.time.push({ english: 'future', role: 'time', particle: particleFormById('tense_future'), particle_id: 'tense_future', english_source: parse.tenseSource ?? null });
   }
 
   // Rule 13: side by side already means "and", so a conjunction needs no word, while a
@@ -640,8 +614,7 @@ function posClauseToSlots(sentence, tokens, {
 
   // Clause-scoped negation sits at the head of Event (Actor · Time · no · Action).
   if (parse.negated) {
-    const negForm = PARTICLES?.byId.get('logic_not')?.form ?? 'no';
-    slots.event.unshift({ english: 'not', role: 'event', particle: negForm });
+    slots.event.unshift({ english: 'not', role: 'event', particle: particleFormById('logic_not'), particle_id: 'logic_not' });
   }
 
   // A relation goes in Place and its landmark trails as a modifier:
@@ -658,8 +631,8 @@ function posClauseToSlots(sentence, tokens, {
   }
 
   for (const token of tokens) {
-    const form = POSSESSIVE_PARTICLES.get(String(token ?? '').toLowerCase());
-    if (form) slots.modifiers.push({ english: token, role: 'modifier', particle: form });
+    const owner = POSSESSIVE_OWNERS.get(String(token ?? '').toLowerCase());
+    if (owner) slots.modifiers.push({ english: token, role: 'modifier', possessor: owner });
   }
 
   applyIdiomHints(slots, rules);
@@ -779,7 +752,16 @@ async function resolveSlot(ctx, slot, role) {
   const lower = surface.toLowerCase();
 
   if (slot.particle) {
-    return particleToken(role, slot.particle, surface || slot.particle);
+    return particleToken(role, slot.particle, surface || slot.particle, { englishSource: slot.english_source });
+  }
+
+  // Possessives carry their owner as a reference, never a spelling: pronoun_i is a
+  // grammar particle, addressee/collective are lexical roots resolved from the lab.
+  if (slot.possessor) {
+    const form = slot.possessor.particle_id
+      ? particleFormById(slot.possessor.particle_id)
+      : resolveConceptId(slot.possessor.concept_id, ctx, role).fonoran;
+    return particleToken(role, form, surface);
   }
 
   if (slot.unknown_word) {
@@ -791,8 +773,9 @@ async function resolveSlot(ctx, slot, role) {
     return { ...token, role };
   }
 
-  if (PRONOUNS[lower]) {
-    return particleToken(role, PRONOUNS[lower], surface);
+  const pronoun = pronounParticle(lower);
+  if (pronoun) {
+    return particleToken(role, pronoun.form, surface);
   }
 
   // Lexicalized "unknown" (nohu) is a word in its own right, not just the WH base.
@@ -942,8 +925,11 @@ async function slotsToTokens(ctx, slots) {
   // Order: [scene time] · Actor · [ta/sa] · Action · Target · Place · modifiers
 
   const timeKey = (slot) => String(slot.particle ?? slot.concept_id ?? slot.english ?? '').toLowerCase();
-  const isTenseParticle = (slot) => slot.particle === 'ta' || slot.particle === 'sa'
-    || timeKey(slot) === 'ta' || timeKey(slot) === 'sa';
+  // Tense identity is the particle ID, with the seed-loaded forms as a fallback for
+  // slots that carry only a surface (never spellings hardcoded in code).
+  const tenseForms = new Set([particleFormSafe('tense_past'), particleFormSafe('tense_future')].filter(Boolean));
+  const isTenseParticle = (slot) => slot.particle_id === 'tense_past' || slot.particle_id === 'tense_future'
+    || tenseForms.has(slot.particle) || tenseForms.has(timeKey(slot));
   const isSceneTime = (slot) => {
     if (isTenseParticle(slot)) return false;
     const key = timeKey(slot);
@@ -961,7 +947,7 @@ async function slotsToTokens(ctx, slots) {
   const otherTime = slots.time.filter(s => !isSceneTime(s) && !isTenseParticle(s));
 
   const pushTimeSlot = async (slot) => {
-    if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
+    if (slot.particle) out.push(particleToken('time', slot.particle, slot.english, { englishSource: slot.english_source }));
     else push(await resolveSlot(ctx, slot, 'time'), 'time');
   };
   const pushSubjectSlot = async (slot) => {
@@ -1214,9 +1200,6 @@ export async function translateEnglishLegacy(text, options = {}) {
     unresolved,
   });
 }
-
-/** @deprecated Alias for translateEnglishLegacy — use translate() from fonoran-translate.js. */
-export const translateEnglish = translateEnglishLegacy;
 
 /** Reset cached vocabulary (tests). */
 export function resetTranslatorCache() {

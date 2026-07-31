@@ -41,7 +41,7 @@ import {
   piperSkipsLaxAutoStress,
 } from './piper-audio.js';
 import { buildMermaidGraph } from '../tools/fonoran-graph.js';
-import { translateEnglish, resetTranslatorCache } from '../tools/fonoran-translator.js';
+import { translateEnglishLegacy as translateEnglish, resetTranslatorCache } from '../tools/fonoran-translator.js';
 import { loadLanguageRulesFromMarkdown } from './load-language-rules.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { parseSyllable, isValidSyllable, buildSyllable, enumerateOpenSyllables, enumerateAllSyllables } from '../tools/fonoran-pronunciation.js';

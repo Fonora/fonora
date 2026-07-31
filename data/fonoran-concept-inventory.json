@@ -1,51 +1,7 @@
 {
-  "source": "merge of data/fonoran-semantic-primitives.json (core) + data/fonoran-primitive-roots-config.json (extended)",
+  "source": "merge of data/archive/fonoran-semantic-primitives.json (core, archived) + data/fonoran-primitive-roots-config.json (extended)",
   "status": "canonical",
   "version": "1.0-converged-editorial",
-  "particles": [
-    {
-      "id": "speaker",
-      "form": "mi",
-      "note": "first person singular; the speaker",
-      "role": "pronoun"
-    },
-    {
-      "id": "past",
-      "form": "ta",
-      "note": "marks an event in the past; present is unmarked",
-      "role": "tense"
-    },
-    {
-      "id": "future",
-      "form": "sa",
-      "note": "marks an event in the future",
-      "role": "tense"
-    },
-    {
-      "id": "negation",
-      "form": "no",
-      "note": "negates the constituent it precedes (false = no + true)",
-      "role": "polarity"
-    },
-    {
-      "id": "affirmation",
-      "form": "ya",
-      "note": "affirms / yes",
-      "role": "polarity"
-    },
-    {
-      "id": "conditional",
-      "form": "von",
-      "note": "marks a condition; if",
-      "role": "mood"
-    },
-    {
-      "id": "question",
-      "form": "ka",
-      "note": "opens a question, polar or content; replaces the borrowed ?",
-      "role": "mood"
-    }
-  ],
   "core_count": 136,
   "primitives": [
     {
@@ -1883,5 +1839,5 @@
     },
     "spec": "data/fonoran-root-rings.json"
   },
-  "particles_authority": "data/fonoran-grammar-particles.json is the single source of truth for the closed particle class; it is the file the translator loads. This array mirrors it for editorial convenience only. Do not add a particle here without adding it there. It previously drifted: future was listed as na (it is sa, kept phonemically distinct from the negation no), mi and von were missing, and wo was still claimed as a question particle after v1 removed question particles entirely (v1 asks content questions compositionally with nohu + a dimension concept). wo is now the lexical root for lonely."
+  "particles_authority": "data/fonoran-grammar-particles.json is the single source of truth for the closed particle class; it is the file the translator loads. This inventory deliberately carries NO copy of it: a mirror kept here drifted (future listed as na instead of sa, mi and von missing, wo still claimed as a question particle after v1 removed it). Particle forms are also reserved for the root generator in data/fonoran-primitive-roots-config.json reserved_particles."
 }

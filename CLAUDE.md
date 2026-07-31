@@ -121,6 +121,6 @@ npm start          # http://localhost:8000
 npm test           # REQUIRED before every commit / PR
 ```
 
-**Agents: never commit or push until `npm test` passes.** Translator/lexicon/seed surface changes usually need golden refresh in the same change set (`node scripts/fonoran-translation-gaps.js --update-golden` or `npm run test:translator:update`). Learn phrase roman is compiled at runtime by the deterministic translator (`GET /api/fonoran/learn/course-phrases`), so lexicon respells do **not** require a course-phrases rebuild for Learn freshness. Optionally refresh the committed offline snapshot with `node tools/fonoran-course-phrases-build.js` when you want CI fixtures / static fallback updated. Do not leave CI golden failures for the human to clean up.
+**Agents: never commit or push until `npm test` passes.** Translator/lexicon/seed surface changes usually need golden refresh in the same change set (`node scripts/fonoran-translation-gaps.js --update-golden` or `npm run test:translator:update`). Learn phrase roman is compiled at runtime by the deterministic translator (`GET /api/fonoran/learn/course-phrases`), but the committed offline snapshot is freshness-gated: `npm run fonoran:course-phrases:check` runs in `npm test`, so a surface change also needs `node tools/fonoran-course-phrases-build.js` in the same change set. Do not leave CI golden failures for the human to clean up.
 
 Admin tools: `/tools#word-manager` (requires `ADMIN_EMAILS` when OAuth is configured).

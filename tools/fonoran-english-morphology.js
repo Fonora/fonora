@@ -55,6 +55,32 @@ const LEMMA_OVERRIDES = new Map([
 export const BE_FORMS = new Set(['am', 'is', 'are', 'was', 'were', 'be', 'been', 'being']);
 export const MODAL_WORDS = new Set(['can', 'could', 'must', 'should', 'may', 'might', 'would', 'shall']);
 
+/** Possessive determiners/pronouns, stripped before nominal lookup. */
+export const POSSESSIVE_DETERMINERS = new Set([
+  'my', 'your', 'his', 'her', 'its', 'our', 'their', 'mine', 'yours',
+]);
+
+/** Calendar words that can open a clause as a time adverbial. */
+export const LEADING_TIME_WORDS = new Set(['yesterday', 'today', 'tomorrow', 'now', 'tonight']);
+
+/**
+ * All bare time adverbs the structure parser routes to the Time slot. Derived
+ * from LEADING_TIME_WORDS so the two lists cannot drift: `later`/`soon` fill
+ * Time but do not front a clause the way calendar words do.
+ */
+export const TIME_WORDS = new Set([...LEADING_TIME_WORDS, 'later', 'soon']);
+
+/** Subordinators that relate two clauses in time; their clause fills the Time slot. */
+export const TEMPORAL_SUBORDINATORS = new Set(['when', 'while', 'after', 'before', 'until', 'since']);
+
+/**
+ * All words that open a subordinate clause. `as` is left out: "as big as" is
+ * not a clause. Derived from TEMPORAL_SUBORDINATORS so the two cannot drift.
+ */
+export const SUBORDINATORS = new Set([
+  ...TEMPORAL_SUBORDINATORS, 'because', 'if', 'unless', 'although', 'though', 'whereas',
+]);
+
 /**
  * Words that carry no content when mining meaning out of gloss prose.
  *

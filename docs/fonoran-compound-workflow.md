@@ -215,10 +215,10 @@ the deterministic pipeline described in
 [fonoran-algorithm-compounds.md](fonoran-algorithm-compounds.md).
 
 The survey, refine loop, model playtest, and intuition scripts were **deleted** in July 2026.
-`data/fonoran-llm-quarantine.json` lists what remains reachable, and
-`npm run fonoran:verify-quarantine` fails the build if deterministic code gains a new
-dependency on model code or model output. The proposal store and Review UI remain usable for
-human-authored proposals.
+`data/fonoran-llm-quarantine.json` now holds only empty lists — nothing in the repository
+talks to a model — and `npm run fonoran:verify-quarantine` fails the build if deterministic
+code gains a new dependency on model code or model output. The proposal store and Review UI
+remain usable for human-authored proposals.
 
 ### Storage reminder
 

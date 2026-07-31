@@ -159,7 +159,7 @@ Learn and the Translator share **vocabulary** but not the **exercise engine**:
 | | Learn | Translator |
 | --- | --- | --- |
 | Vocabulary | `GET /api/fonoran/bootstrap` | Same lab inventory |
-| Grammar sentences | Template compiler in `fonoran-grammar-generate.js` | `POST /api/fonoran/translate` (LLM semantic compiler) |
+| Grammar sentences | Template compiler in `fonoran-grammar-generate.js` | `POST /api/fonoran/translate` (deterministic English compiler) |
 | Grading | Exact match on expected roman / English gloss | N/A (exploration) |
 | Particles | `fonoran-grammar-particles.json` | Same inventory |
 

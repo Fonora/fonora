@@ -13,6 +13,7 @@
 
   "_model_authored_inputs_comment": "English source text a model drafted, which the rule above deliberately permits. The distinction that matters: these files say what to translate, never what the answer is. A model that writes an English sentence makes no claim about Fonoran, so the same corpus through the same seeds still yields the same Fonoran by rule, and a human can read and edit the English. Model-written Fonoran is the thing that is banned, because it cannot be derived and so cannot be checked. Each file must be committed and pinned by hash in the fonora-data manifest so a corpus cannot change under a golden test.",
   "model_authored_inputs": {
-    "fonoran-stranger-corpus.json": "The 1,000-phrase English corpus behind the golden translation tests and the Learn phrase lessons. Read by tools/fonoran-translation-gaps.js, tools/fonoran-course-phrases-build.js, and their tests. Pinned by sha256 in external/fonora-data/manifest.json."
+    "fonoran-stranger-corpus.json": "The 1,000-phrase English corpus behind the golden translation tests and the Learn phrase lessons. Read by tools/fonoran-translation-gaps.js, tools/fonoran-course-phrases-build.js, and their tests. Pinned by sha256 in external/fonora-data/manifest.json.",
+    "fonoran-compound-proposals.json": "Human review queue from the deleted 2026-07 vocab survey. The rationale and gloss prose is model-written English and carries no authority; the composition suggestions are candidates only. Nothing enters the language until a human accepts a proposal and it lands in the seeds, so deterministic output never depends on this file. Mutable editorial state, not pinned."
   }
 }

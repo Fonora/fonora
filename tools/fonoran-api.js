@@ -1,5 +1,5 @@
 /**
- * Fonoran language API: Postgres-backed store with JSON seed/snapshot interchange.
+ * Fonoran language API: file-backed store over the editorial seeds and the lab bucket.
  */
 
 import {
@@ -8,14 +8,10 @@ import {
   loadBucket,
   getLabGraph,
   getLabGraphPreview,
-  runDda,
-  patchSound,
   assignCompoundMeaning,
   addCompound,
-  addSound,
   resetReviewStates,
   setReviewState,
-  previewSoundImpact,
   undoLast,
   recomposeCompound,
 } from './fonoran-sound-bucket.js';
@@ -24,24 +20,21 @@ import { resetProject } from './fonoran-reset.js';
 import { loadEnglishLexicon } from './fonoran-english-lexicon.js';
 import { translate } from './fonoran-translate.js';
 import { buildAlignment } from './fonoran-alignment.js';
-import { loadTranslationCorpus, runTranslationGapReport, loadLatestGapReport } from './fonoran-translation-gaps.js';
+import { runTranslationGapReport, loadLatestGapReport } from './fonoran-translation-gaps.js';
 import { loadParticles } from './fonoran-particles.js';
 import { buildFonoran } from './fonoran-build.js';
 import {
   getRootCandidates,
   getRootCandidate,
-  getCanonicalRoots,
   patchRootCandidate,
   regenerateRootCandidate,
-  runRootCandidateGeneration,
   reconcileInventoryFromLab,
 } from './fonoran-root-store.js';
-import { loadConceptInventory, loadRuntimeConceptInventory } from './fonoran-concepts.js';
+import { loadRuntimeConceptInventory } from './fonoran-concepts.js';
 import {
   createConcept,
   deleteConcept,
   getConceptForEditor,
-  listConceptDomains,
   patchConcept,
 } from './fonoran-concept-store.js';
 import {
@@ -55,7 +48,6 @@ import {
   isCommunityWriteRequired,
   isAdminUser,
   isCommunityUser,
-  isSnapshotAdminRequired,
   isRegenAdminRequired,
   adminRequiredResponse,
   unauthorizedResponse,
@@ -65,10 +57,6 @@ import {
   getLearnProgress,
   saveLearnProgress,
   mergeLearnProgress,
-  createProposal,
-  listProposals,
-  getProposal,
-  resolveProposal,
   setVote,
   getVoteAggregate,
   getUserVote,
@@ -76,7 +64,7 @@ import {
   getUserAnalytics,
 } from './fonoran-community-store.js';
 import { analyzeWord, analysisDelta } from './fonoran-word-analysis.js';
-import { listWordInventory, getWordDetail, acceptProposal } from './fonoran-word-manager.js';
+import { listWordInventory, getWordDetail } from './fonoran-word-manager.js';
 import {
   generateCandidates,
   loadCandidateContext,
@@ -84,13 +72,11 @@ import {
 import {
   listCompoundProposals,
   resolveCompoundProposal,
-  createCompoundProposals,
   getProposalStats,
 } from './fonoran-compound-proposals.js';
 import {
   getRegenStatus,
   runRegenerate,
-  optimizeCompoundsInStore,
   runTranslatorRegression,
 } from './fonoran-regen.js';
 import { sanitizeForJsonResponse } from '../js/utils.js';
@@ -150,10 +136,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     return true;
   }
-  if (isSnapshotAdminRequired(pathname, method) && !isAdminUser(req)) {
-    adminRequiredResponse(res);
-    return true;
-  }
   if (isRegenAdminRequired(pathname, method) && !isAdminUser(req)) {
     adminRequiredResponse(res);
     return true;
@@ -209,9 +191,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/analyze/word' && method === 'POST') {
       const body = await readJsonBody(req);
       const lab = await getLab();
-      const current = body.compare_ref
-        ? analyzeWord({ ...body, lab })
-        : null;
       const analysis = analyzeWord({ ...body, lab });
       let delta = null;
       if (body.compare_ref) {
@@ -230,66 +209,7 @@ export async function handleFonoranApi(req, res, pathname, method) {
           /* ignore missing compare target */
         }
       }
-      return done(200, { analysis, delta, current });
-    }
-    if (pathname === '/api/fonoran/proposals' && method === 'GET') {
-      const url = new URL(req.url ?? '', 'http://localhost');
-      return done(200, {
-        proposals: await listProposals({
-          status: url.searchParams.get('status') ?? 'open',
-          limit: Number(url.searchParams.get('limit') ?? 100),
-        }),
-      });
-    }
-    if (pathname === '/api/fonoran/proposals' && method === 'POST') {
-      const user = getSessionUser(req);
-      if (!user?.userId) return done(401, { error: 'Sign in required' });
-      checkRateLimit(`proposal:${user.userId}`, { max: 30 });
-      const body = await readJsonBody(req);
-      if (!body.target_type || !body.target_ref || !body.kind) {
-        return done(400, { error: 'target_type, target_ref, and kind are required' });
-      }
-      const proposal = await createProposal(user.userId, body);
-      return done(201, proposal);
-    }
-    const proposalMatch = pathname.match(/^\/api\/fonoran\/proposals\/([^/]+)$/);
-    if (proposalMatch && method === 'GET') {
-      const proposal = await getProposal(decodeURIComponent(proposalMatch[1]));
-      if (!proposal) return done(404, { error: 'Proposal not found' });
-      const votes = await getVoteAggregate('proposal', proposal.id);
-      return done(200, { proposal, votes });
-    }
-    const proposalVoteMatch = pathname.match(/^\/api\/fonoran\/proposals\/([^/]+)\/vote$/);
-    if (proposalVoteMatch && method === 'POST') {
-      const user = getSessionUser(req);
-      if (!user?.userId) return done(401, { error: 'Sign in required' });
-      checkRateLimit(`vote:${user.userId}`, { max: 120 });
-      const id = decodeURIComponent(proposalVoteMatch[1]);
-      const body = await readJsonBody(req);
-      const vote = body.vote === 0 || body.vote == null ? 0 : body.vote > 0 ? 1 : -1;
-      await setVote(user.userId, 'proposal', id, vote);
-      return done(200, { ...(await getVoteAggregate('proposal', id)), userVote: vote });
-    }
-    const proposalResolveMatch = pathname.match(/^\/api\/fonoran\/proposals\/([^/]+)\/resolve$/);
-    if (proposalResolveMatch && method === 'POST') {
-      const user = getSessionUser(req);
-      if (!isAdminUser(req)) {
-        adminRequiredResponse(res);
-        return true;
-      }
-      const id = decodeURIComponent(proposalResolveMatch[1]);
-      const body = await readJsonBody(req);
-      const proposal = await getProposal(id);
-      if (!proposal) return done(404, { error: 'Proposal not found' });
-      if (body.action === 'accept') {
-        await acceptProposal(proposal, user.email);
-        return done(200, { ok: true, status: 'accepted' });
-      }
-      if (body.action === 'reject') {
-        await resolveProposal(id, { status: 'rejected', resolvedBy: user.email });
-        return done(200, { ok: true, status: 'rejected' });
-      }
-      return done(400, { error: 'action must be accept or reject' });
+      return done(200, { analysis, delta });
     }
     if (pathname === '/api/fonoran/bootstrap' && method === 'GET') {
       return done(200, await getBootstrap());
@@ -314,9 +234,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
       res.end(body);
       return true;
     }
-    if (pathname === '/api/fonoran/lab' && method === 'GET') {
-      return done(200, await getLab());
-    }
     if (pathname === '/api/fonoran/lexicon' && method === 'GET') {
       const lab = await getLab();
       return done(200, await loadEnglishLexicon(lab));
@@ -324,9 +241,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/concepts' && method === 'GET') {
       const lab = await getLab();
       return done(200, await loadRuntimeConceptInventory({ lab }));
-    }
-    if (pathname === '/api/fonoran/concepts/domains' && method === 'GET') {
-      return done(200, { domains: await listConceptDomains() });
     }
     if (pathname === '/api/fonoran/concepts' && method === 'POST') {
       const body = await readJsonBody(req);
@@ -429,9 +343,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
       });
       return done(200, { concept_id: body.concept_id, candidates });
     }
-    if (pathname === '/api/fonoran/translation-tests' && method === 'GET') {
-      return done(200, await loadTranslationCorpus());
-    }
     if (pathname === '/api/fonoran/translation-tests/latest' && method === 'GET') {
       return done(200, await loadLatestGapReport());
     }
@@ -453,10 +364,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
       }
       return done(200, await getUserAnalytics());
     }
-    if (pathname === '/api/fonoran/lab/run-dda' && method === 'POST') {
-      const body = await readJsonBody(req);
-      return done(200, await runDda(body.scope ?? 'pending'));
-    }
     if (pathname === '/api/fonoran/lab/graph/preview' && method === 'POST') {
       const body = await readJsonBody(req);
       return done(200, await getLabGraphPreview(body));
@@ -472,12 +379,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     if (pathname === '/api/fonoran/lab/regen/status' && method === 'GET') {
       return done(200, await getRegenStatus());
-    }
-    if (pathname === '/api/fonoran/lab/optimize-compounds' && method === 'POST') {
-      const body = await readJsonBody(req);
-      return done(200, await optimizeCompoundsInStore({
-        lengthOnly: Boolean(body.length_only),
-      }));
     }
     if (pathname === '/api/fonoran/lab/regenerate' && method === 'POST') {
       const body = await readJsonBody(req);
@@ -497,7 +398,7 @@ export async function handleFonoranApi(req, res, pathname, method) {
     }
     // The stale-seed guard that used to sit here compared the seeds against a Postgres copy of
     // them. A build now reads the seed files directly, so it cannot be stale by construction.
-    if ((pathname === '/api/fonoran/lab/build' || pathname === '/api/fonoran/lab/import-vocabulary') && method === 'POST') {
+    if (pathname === '/api/fonoran/lab/build' && method === 'POST') {
       const body = await readJsonBody(req);
       return done(200, await buildFonoran({ approveAll: Boolean(body.approve_all) }));
     }
@@ -507,33 +408,12 @@ export async function handleFonoranApi(req, res, pathname, method) {
     if (pathname === '/api/fonoran/lab/reconcile-inventory' && method === 'POST') {
       return done(200, await reconcileInventoryFromLab());
     }
-    const impactMatch = pathname.match(/^\/api\/fonoran\/lab\/impact\/sounds\/([^/]+)$/);
-    if (impactMatch && method === 'GET') {
-      return done(200, await previewSoundImpact(decodeURIComponent(impactMatch[1])));
-    }
     const stateMatch = pathname.match(/^\/api\/fonoran\/lab\/state\/(sound|compound)\/([^/]+)$/);
     if (stateMatch && method === 'PATCH') {
       const kind = stateMatch[1];
       const id = decodeURIComponent(stateMatch[2]);
       const body = await readJsonBody(req);
       return done(200, await setReviewState(kind, id, body.state));
-    }
-    if (pathname === '/api/fonoran/lab/sounds' && method === 'POST') {
-      const body = await readJsonBody(req);
-      return done(201, await addSound(body));
-    }
-    const labSoundMatch = pathname.match(/^\/api\/fonoran\/lab\/sounds\/([^/]+)$/);
-    if (labSoundMatch && method === 'PATCH') {
-      const spelling = decodeURIComponent(labSoundMatch[1]);
-      const body = await readJsonBody(req);
-      const newSp = body.spelling?.trim().toLowerCase();
-      return done(200, await patchSound(spelling, {
-        new_spelling: newSp && newSp !== spelling.trim().toLowerCase() ? newSp : undefined,
-        meaning: body.meaning,
-        state: body.state,
-        concept_id: body.concept_id,
-        clear_affected_compounds: Boolean(body.clear_affected_compounds),
-      }));
     }
     const labCompoundMatch = pathname.match(/^\/api\/fonoran\/lab\/compounds\/([^/]+)$/);
     if (labCompoundMatch && method === 'PATCH') {
@@ -579,12 +459,6 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const url = new URL(req.url ?? '', 'http://localhost');
       const status = url.searchParams.get('status');
       return done(200, await getRootCandidates({ status: status || null }));
-    }
-    if (pathname === '/api/fonoran/roots/canonical' && method === 'GET') {
-      return done(200, await getCanonicalRoots());
-    }
-    if (pathname === '/api/fonoran/roots/generate' && method === 'POST') {
-      return done(200, await runRootCandidateGeneration());
     }
     const rootCandidateMatch = pathname.match(/^\/api\/fonoran\/roots\/candidates\/([^/]+)$/);
     if (rootCandidateMatch && method === 'GET') {

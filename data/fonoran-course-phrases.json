@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-07-30T15:14:17.602Z",
+  "generated_at": "2026-07-31T03:18:34.162Z",
   "total_domains": 20,
   "total_phrases": 1000,
-  "translated": 787,
-  "gap": 213,
+  "translated": 791,
+  "gap": 209,
   "domains": [
     {
       "id": "first_contact",
@@ -1871,17 +1871,14 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "ka femnan [broken] be.",
+            "roman": "ka femnan pato be.",
             "tokens": [
               "ka",
               "femnan",
-              "[broken]",
+              "pato",
               "be."
             ],
-            "status": "gap",
-            "unresolved": [
-              "broken"
-            ]
+            "status": "translated"
           }
         },
         {
@@ -2057,16 +2054,13 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "femnan [broken] mi.",
+            "roman": "femnan pato mi.",
             "tokens": [
               "femnan",
-              "[broken]",
+              "pato",
               "mi."
             ],
-            "status": "gap",
-            "unresolved": [
-              "broken"
-            ]
+            "status": "translated"
           }
         },
         {
@@ -2202,16 +2196,13 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "bu [broken] to.",
+            "roman": "bu pato to.",
             "tokens": [
               "bu",
-              "[broken]",
+              "pato",
               "to."
             ],
-            "status": "gap",
-            "unresolved": [
-              "broken"
-            ]
+            "status": "translated"
           }
         },
         {
@@ -17440,15 +17431,12 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mu [done].",
+            "roman": "mu mo.",
             "tokens": [
               "mu",
-              "[done]."
+              "mo."
             ],
-            "status": "gap",
-            "unresolved": [
-              "done"
-            ]
+            "status": "translated"
           }
         },
         {

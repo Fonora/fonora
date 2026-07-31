@@ -11,7 +11,8 @@
  * by position, so "the tall man walks" made tall the Actor and man the Action. Word
  * class is what English actually marks, so an adjective can no longer shift every role.
  */
-import { nlp, its, BE_FORMS, MODAL_WORDS } from './fonoran-english-morphology.js';
+import { nlp, its, BE_FORMS, MODAL_WORDS, TIME_WORDS, SUBORDINATORS } from './fonoran-english-morphology.js';
+import { POSSESSIVE_OWNERS } from './fonoran-interpretation.js';
 
 /** Prepositions that open a Place phrase. Time words are handled separately. */
 const PLACE_PREPS = new Set([
@@ -21,17 +22,10 @@ const PLACE_PREPS = new Set([
   'against', 'along', 'off', 'past', 'opposite',
 ]);
 
-const TIME_WORDS = new Set(['yesterday', 'today', 'tomorrow', 'now', 'tonight', 'later', 'soon']);
 const PAST_AUX = new Set(['did', 'was', 'were', 'had']);
 const FUTURE_AUX = new Set(['will', 'shall']);
 const NEGATORS = new Set(['not', "n't", 'never', 'no', 'nobody', 'nothing', 'none']);
 const WH_WORDS = ['why', 'how', 'where', 'when', 'who', 'what', 'which'];
-
-/** Words that open a subordinate clause. `as` is left out: "as big as" is not a clause. */
-const SUBORDINATORS = new Set([
-  'when', 'while', 'after', 'before', 'because', 'since', 'if', 'unless', 'until',
-  'although', 'though', 'whereas',
-]);
 const NOMINAL = new Set(['NOUN', 'PROPN', 'PRON']);
 
 /**
@@ -81,10 +75,11 @@ const FUNCTION_ADVERBS = new Set([
 ]);
 
 /**
- * A possessor is carried by a particle, and the words are read straight off the clause, so
- * repeating them here renders the possessor twice: "my hands" came out as hands, [my], mine.
+ * A possessor is re-attached by the translator, and the words are read straight off the
+ * clause, so repeating them here renders the possessor twice: "my hands" came out as
+ * hands, [my], mine. Derived from the shared owner map so the two passes cannot drift.
  */
-const POSSESSIVES = new Set(['my', 'mine', 'your', 'yours', 'our', 'ours']);
+const POSSESSIVES = new Set(POSSESSIVE_OWNERS.keys());
 
 /**
  * Split a sentence into clauses, each of which is one predication.
@@ -188,6 +183,9 @@ export function splitClauses(text) {
  *   two-word form and leave this null, so the translator can expand them as unknown+count
  * @property {boolean} negated
  * @property {'past'|'present'|'future'} tense
+ * @property {string|null} tenseSource the word, as written, whose form set the tense — an
+ *   inflected verb ("handed"), an auxiliary ("will", "did"), or the "going" of "going to".
+ *   Kept so the tense particle can point back at the English that carries the tense
  * @property {boolean} copula predicate is a quality, not an event
  * @property {{ conj: string, word: string, slot: string }[]} coordinated
  * @property {string[]} modifiers qualities and further arguments, in reading order
@@ -219,7 +217,7 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
   /** @type {EnglishParse} */
   const out = {
     actor: null, action: null, target: null, place: null, places: [], time: null,
-    wh: null, whDegree: null, negated: false, tense: 'present', copula: false, coordinated: [],
+    wh: null, whDegree: null, negated: false, tense: 'present', tenseSource: null, copula: false, coordinated: [],
     modifiers: [], actionSurface: null, targetSurface: null, modal: null,
   };
   const nominal = t => NOMINAL.has(t.pos);
@@ -386,6 +384,7 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
       out.action = next.lemma;
       out.actionSurface = next.value;
       out.tense = 'future';
+      out.tenseSource = toks[verbAt]?.value ?? null;
       verbAt = toks.indexOf(next);
     }
   }
@@ -395,9 +394,9 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
   // `flew` never end in -ed, so keying off that suffix alone lost the past tense entirely.
   for (const [i, t] of toks.entries()) {
     if (i === participialAt) continue;
-    if (FUTURE_AUX.has(t.value)) out.tense = 'future';
-    else if (PAST_AUX.has(t.value)) out.tense = 'past';
-    else if (t.pos === 'VERB' && t.value !== t.lemma && !/(s|ing)$/.test(t.value)) out.tense = 'past';
+    if (FUTURE_AUX.has(t.value)) { out.tense = 'future'; out.tenseSource = t.value; }
+    else if (PAST_AUX.has(t.value)) { out.tense = 'past'; out.tenseSource = t.value; }
+    else if (t.pos === 'VERB' && t.value !== t.lemma && !/(s|ing)$/.test(t.value)) { out.tense = 'past'; out.tenseSource = t.value; }
   }
   if (verbAt < 0) verbAt = toks.length;
 

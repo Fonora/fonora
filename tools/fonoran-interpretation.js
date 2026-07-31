@@ -6,7 +6,7 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { lemmatizeEnglish, BE_FORMS, MODAL_WORDS as MODALS } from './fonoran-english-morphology.js';
+import { lemmatizeEnglish, POSSESSIVE_DETERMINERS, LEADING_TIME_WORDS } from './fonoran-english-morphology.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const RULES_PATH = join(ROOT, 'data/fonoran-interpretation-rules.json');
@@ -16,18 +16,20 @@ let rulesCache = null;
 
 const ARTICLES = new Set(['a', 'an', 'the']);
 
-/** Possessive determiners stripped before nominal lookup (grammar particles TBD). */
-export const POSSESSIVES = new Set([
-  'my', 'your', 'his', 'her', 'its', 'our', 'their', 'mine', 'yours',
+/**
+ * Possessive determiner -> the reference that carries the possessor in Fonoran.
+ * Spellings are never stored here: `my` rides the pronoun_i particle and
+ * `your`/`our` resolve through the addressee/collective lexical roots, so a
+ * seed respell flows through with no code change. Third person is left out on
+ * purpose: there is no approved pronoun for it and inventing one is not this
+ * layer's job. The structure parser skips exactly these words (and no others),
+ * so a possessor is rendered once, by the translator's re-attachment pass.
+ */
+export const POSSESSIVE_OWNERS = new Map([
+  ['my', { particle_id: 'pronoun_i' }], ['mine', { particle_id: 'pronoun_i' }],
+  ['your', { concept_id: 'addressee' }], ['yours', { concept_id: 'addressee' }],
+  ['our', { concept_id: 'collective' }], ['ours', { concept_id: 'collective' }],
 ]);
-
-/** Prepositions that introduce an object landmark after an idiom or clause. */
-export const PREP_OBJECT = new Set([
-  'with', 'against', 'versus', 'vs', 'toward', 'towards', 'from', 'by',
-]);
-
-/** Calendar words that open a clause as a time adverbial. */
-export const LEADING_TIME_WORDS = new Set(['yesterday', 'today', 'tomorrow', 'now', 'tonight']);
 
 /**
  * Lexical time / scene-setting concept ids. These are the Time periphery
@@ -98,21 +100,16 @@ function buildClassIndex(rules) {
   return byWord;
 }
 
-/** Lemma candidates for past-tense and past-participle surface forms. */
+/**
+ * Lemma candidates for a surface form: the word itself plus its dictionary form.
+ * Morphology is wink-nlp's job (see fonoran-english-morphology.js); the hand
+ * -ed/-en stripping that used to sit here was the exact drift that module warns
+ * against, and produced non-words the alias index then had to absorb.
+ */
 export function lemmaCandidates(word, rules) {
   const w = String(word ?? '').trim().toLowerCase();
   if (!w) return [];
-  const out = new Set([w]);
-  out.add(lemmatizeEnglish(w));
-  if (w.endsWith('ed') && w.length > 4) {
-    out.add(w.slice(0, -1));
-    out.add(w.slice(0, -2));
-  }
-  if (w.endsWith('en') && w.length > 4) {
-    out.add(w.slice(0, -2));
-    out.add(w.slice(0, -1));
-  }
-  return [...out].filter(Boolean);
+  return [...new Set([w, lemmatizeEnglish(w)])].filter(Boolean);
 }
 
 /**
@@ -122,7 +119,7 @@ export function stripLeadingFunctionWords(tokens, { skip = null } = {}) {
   const out = [...tokens];
   while (out.length) {
     const w = out[0].toLowerCase();
-    if (ARTICLES.has(w) || POSSESSIVES.has(w) || skip?.has(w)) {
+    if (ARTICLES.has(w) || POSSESSIVE_DETERMINERS.has(w) || skip?.has(w)) {
       out.shift();
       continue;
     }
@@ -212,17 +209,6 @@ const TIME_NOUNS = new Set([
   'september', 'october', 'november', 'december',
 ]);
 
-/** Copula-like verbs: SUBJECT + linking + ADJ. */
-export const LINKING_VERBS = new Set([
-  'feel', 'feels', 'felt', 'feeling',
-  'seem', 'seems', 'seemed',
-  'look', 'looks', 'looked',
-  'sound', 'sounds', 'sounded',
-  'taste', 'tastes', 'tasted',
-  'smell', 'smells', 'smelled', 'smelt',
-  'appear', 'appears', 'appeared',
-]);
-
 /** Merge phrasal particles: wake + up → wake up. */
 export function mergePhrasalTokens(tokens) {
   const out = [];
@@ -261,103 +247,6 @@ export function matchLeadingTimeAdverbial(tokens) {
     english: `${tokens[0]} ${tokens[1]}`.toLowerCase(),
     consumed: 2,
   };
-}
-
-const SUBORDINATORS = new Set([
-  'after', 'before', 'when', 'while', 'until', 'since', 'because', 'although', 'if', 'as',
-]);
-
-/** Verbs that begin a new coordinated clause after and. */
-const COORD_CLAUSE_VERBS = new Set([
-  ...LINKING_VERBS,
-  'drink', 'drinks', 'drank', 'drinking',
-  'eat', 'eats', 'ate', 'eating',
-  'walk', 'walks', 'walked', 'walking',
-  'take', 'takes', 'took', 'taking',
-  'make', 'makes', 'made', 'making',
-  'give', 'gives', 'gave', 'giving',
-  'get', 'gets', 'got', 'getting',
-  'see', 'sees', 'saw', 'seeing',
-  'hear', 'hears', 'heard', 'hearing',
-  'know', 'knows', 'knew', 'knowing',
-  'think', 'thinks', 'thought', 'thinking',
-  'want', 'wants', 'wanted', 'wanting',
-  'love', 'loves', 'loved', 'loving',
-  'sing', 'sings', 'sang', 'singing',
-  'wake', 'wakes', 'woke', 'waking',
-  'act', 'acts', 'acted', 'acting',
-  'go', 'goes', 'went', 'going', 'leave', 'left', 'leaves', 'leaving',
-  'run', 'runs', 'ran', 'running', 'bark', 'barks', 'barked', 'barking',
-]);
-
-/**
- * Additional verbs recognized when checking whether a word group IS a clause
- * (looksLikeClause). Kept separate from COORD_CLAUSE_VERBS because many double
- * as nouns (rest, work, help…) and must never act as clause-STARTERS after a
- * conjunction ("I want food and rest" is noun coordination, one clause).
- */
-const CLAUSE_BODY_VERBS = new Set([
-  'hurt', 'hurts', 'hurting',
-  'stand', 'stands', 'stood', 'standing',
-  'stay', 'stays', 'stayed', 'staying',
-  'stop', 'stops', 'stopped', 'stopping',
-  'try', 'tries', 'tried', 'trying',
-  'help', 'helps', 'helped', 'helping',
-  'live', 'lives', 'lived', 'living',
-  'sleep', 'sleeps', 'slept', 'sleeping',
-  'come', 'comes', 'came', 'coming',
-  'wait', 'waits', 'waited', 'waiting',
-  'rest', 'rests', 'rested', 'resting',
-  'speak', 'speaks', 'spoke', 'speaking',
-  'work', 'works', 'worked', 'working',
-  'keep', 'keeps', 'kept', 'keeping',
-  'understand', 'understands', 'understood', 'understanding',
-  'survive', 'survives', 'survived', 'surviving',
-  'finish', 'finishes', 'finished', 'finishing',
-  // Common transitive verbs whose irregular past forms are frequent clause markers.
-  'buy', 'buys', 'bought', 'buying',
-  'like', 'likes', 'liked', 'liking',
-  'hate', 'hates', 'hated', 'hating',
-  'hold', 'holds', 'held', 'holding',
-  'find', 'finds', 'found', 'finding',
-  'lose', 'loses', 'lost', 'losing',
-  'send', 'sends', 'sent', 'sending',
-  'tell', 'tells', 'told', 'telling',
-  'sell', 'sells', 'sold', 'selling',
-  'feel', 'feels', 'felt', 'feeling',
-  'build', 'builds', 'built', 'building',
-  'show', 'shows', 'showed', 'shown', 'showing',
-  'bring', 'brings', 'brought', 'bringing',
-  'catch', 'catches', 'caught', 'catching',
-  'meet', 'meets', 'met', 'meeting',
-  'read', 'reads', 'reading',
-  'write', 'writes', 'wrote', 'written', 'writing',
-  'kill', 'kills', 'killed', 'killing',
-  'open', 'opens', 'opened', 'opening',
-  'close', 'closes', 'closed', 'closing',
-  'use', 'uses', 'used', 'using',
-  'own', 'owns', 'owned', 'owning',
-]);
-
-/** Modals — start a new coordinated clause when followed by a main verb. */
-export { MODALS };
-
-/** Auxiliaries/tense carriers that mark a word group as a full clause. */
-const CLAUSE_VERB_MARKERS = new Set([
-  ...BE_FORMS,
-  ...MODALS,
-  'do', 'does', 'did', 'have', 'has', 'had', 'will', 'cannot',
-  'need', 'needs', 'needed', 'needing',
-]);
-
-const normalizeWord = w => String(w ?? '').toLowerCase().replace(/[^a-z']/g, '');
-
-function looksLikeClause(words) {
-  return words.some((w) => {
-    const n = normalizeWord(w);
-    return CLAUSE_VERB_MARKERS.has(n) || COORD_CLAUSE_VERBS.has(n)
-      || CLAUSE_BODY_VERBS.has(n) || n.endsWith("n't");
-  });
 }
 
 /**

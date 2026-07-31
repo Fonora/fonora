@@ -2,7 +2,7 @@
 > **Superseded spec.** The live translator is described in [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md) and [fonoran-translator.md](fonoran-translator.md). Kept for the original interpretive compiler design.
 
 
-> **Status**: Superseded for live translation by the multilingual LLM semantic compiler. **Current architecture:** [fonoran-translator.md](fonoran-translator.md). This document describes the legacy English-only frame parser kept for regression comparison (`engine=legacy`).
+> **Status**: Historical design document. The frame-parser approach described here grew into the live deterministic compiler (`translateEnglishLegacy()`, named `engine=legacy` in the API). **Current architecture:** [fonoran-translator.md](fonoran-translator.md).
 
 > **Status (legacy)**: Compiles English into **nearest approved Fonoran concepts** — not word-for-word glosses.
 

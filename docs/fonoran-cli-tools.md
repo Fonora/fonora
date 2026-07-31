@@ -72,7 +72,6 @@ npm run fonoran:reset && npm run fonoran:build
 | Command | What it does |
 | --- | --- |
 | `npm run fonoran:inventory-migrate` | Seed editorial metadata (`plain_description`, `priority_class`, etc.) on `data/fonoran-concept-inventory.json`. |
-| `npm run fonoran:reconcile-inventory` | Reconcile concept inventory against lab state. |
 | `npm run fonoran:root-capacity` | Report how many CV/CVC slots remain for new roots. |
 | `npm run fonoran:root-capacity:tiers` | Capacity broken down by experience tier. |
 | `npm run fonoran:root-rings:apply` | Apply ring assignments to the concept inventory. |
@@ -136,6 +135,7 @@ Live translator architecture: [fonoran-translator.md](fonoran-translator.md). Al
 | Command | What it does |
 | --- | --- |
 | `npm run fonoran:course-phrases:build` | Rebuild the committed Learn phrase snapshot. |
+| `npm run fonoran:course-phrases:check` | Fail when the committed snapshot drifts from the corpus and seeds (runs in `npm test`). |
 
 Learn compiles phrase roman at runtime, so a rebuild is only needed to refresh the offline snapshot and CI fixtures.
 
@@ -159,7 +159,7 @@ External vocabulary data lives in the `fonora-data` submodule.
 | --- | --- |
 | `npm test` | Unit tests, seed invariants, LLM quarantine check, translator golden regression. |
 | `npm run fonoran:verify-invariants` | Structural invariants across the seed files. |
-| `npm run fonoran:verify-refs` | Fail on links to files that do not exist. |
+| `npm run fonoran:verify-refs` | Fail when a doc or lesson teaches a Fonoran form the seeds no longer contain. |
 | `npm run fonoran:verify-quarantine` | Fail if deterministic code gains a new dependency on model code or model output. |
 | `npm run audit:collisions` | Surface collisions across the lexicon. |
 | `npm run test:vowels` | Vowel readability report. |
