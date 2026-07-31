@@ -3,6 +3,7 @@
  */
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { createTypingPractice } from './fonora-typing-practice.js';
+import { loadFonoranBootstrap } from './fonoran-bootstrap.js';
 
 /** @typedef {{ spelling: string, meaning: string, parts: string[], expected: string }} PracticeWord */
 
@@ -69,9 +70,7 @@ export function buildPracticeWordList(lab, rules) {
 
 async function loadPracticeWords(rules) {
   try {
-    const res = await fetch('/api/fonoran/bootstrap');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const data = await loadFonoranBootstrap();
     return buildPracticeWordList(data.lab, rules);
   } catch {
     return [];

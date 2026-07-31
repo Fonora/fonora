@@ -107,10 +107,6 @@ How many people?        →  ka nohu tan ba.
 How far is the water?   →  ka ye fet.            degree probe, deferred
 ```
 
-## Known impurity
-
-`tools/fonoran-translator.js` currently imports three grammar helpers from `tools/fonoran-llm-grammar-brief.js`. They are ordinary grammar rules that happen to live in an LLM-named file, so the behaviour is deterministic, but the dependency should not exist. It is recorded in `data/fonoran-llm-quarantine.json` and enforced by `npm run fonoran:verify-quarantine`.
-
 ## Where the truth lives
 
 If this page and the code disagree, the code wins, and this page is the bug.

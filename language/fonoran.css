@@ -3266,3 +3266,177 @@
     }
     .wm-publish-panel__label { font-weight: 600; }
     .wm-publish-panel__hint { color: var(--muted); flex: 1 1 12rem; }
+
+    /* ── Alignment view ───────────────────────────────────────────────────────
+       Which Fonoran word stands for which English word. Lives in a modal on the
+       translator; the markup is built by js/fonoran-alignment-view.js.
+
+       Sizes are all relative to --align-scale, which the view sets when a sentence
+       is too wide for the panel. Scaling the stage rather than each row keeps the
+       two rows in proportion, which matters because the curves join them. */
+
+    /* Sized to the small button's text rather than the 1.25rem icon default, so the
+       glyph reads as part of the label instead of towering over it. */
+    #tr-alignment-btn { display:inline-flex; align-items:center; gap:0.35rem; }
+    .align-btn-icon { width:1.05rem; height:1.05rem; flex-shrink:0; }
+
+    /* Palette. Earthy and desaturated to sit with the gold/green/clay theme rather
+       than the saturated web hues this started with, and every hue clears AA on the
+       surface it is drawn on. Dark mode lightens each one instead of reusing it,
+       because these same values are the SVG stroke colours. */
+    .align {
+      --align-hue-1:#1f6f7d;
+      --align-hue-2:#8a6220;
+      --align-hue-3:#6f4a89;
+      --align-hue-4:#a03a36;
+      --align-hue-5:#2f6b46;
+      --align-hue-6:#a2552c;
+      --align-hue-particle:#77706a;
+
+      --align-scale:1; display:flex; flex-direction:column; gap:0.9rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme='light']) .align {
+        --align-hue-1:#6fc7d4;
+        --align-hue-2:#dcb162;
+        --align-hue-3:#c4a0e0;
+        --align-hue-4:#f0a09c;
+        --align-hue-5:#7fce9f;
+        --align-hue-6:#e39b6f;
+        --align-hue-particle:#9d968e;
+      }
+    }
+
+    :root[data-theme='dark'] .align {
+      --align-hue-1:#6fc7d4;
+      --align-hue-2:#dcb162;
+      --align-hue-3:#c4a0e0;
+      --align-hue-4:#f0a09c;
+      --align-hue-5:#7fce9f;
+      --align-hue-6:#e39b6f;
+      --align-hue-particle:#9d968e;
+    }
+
+    .align__viewport { overflow-x:auto; overflow-y:hidden; }
+
+    .align__stage {
+      display:flex; flex-direction:column;
+      min-width:100%; width:max-content;
+      padding:0.25rem 0.15rem;
+    }
+
+    .align__row {
+      display:flex; align-items:flex-end; justify-content:center;
+      flex-wrap:nowrap; white-space:nowrap;
+      gap:calc(1.15rem * var(--align-scale));
+    }
+
+    .align__row--english {
+      align-items:flex-start;
+      gap:calc(0.5rem * var(--align-scale));
+      font-family:var(--font-serif);
+      font-size:calc(1.05rem * var(--align-scale));
+    }
+
+    /* ── Fonoran side ── */
+
+    .align__fblock {
+      display:flex; flex-direction:column; align-items:center;
+      gap:calc(0.15rem * var(--align-scale));
+      text-align:center;
+    }
+
+    .align__glyph {
+      font-family:var(--font-symbol);
+      font-size:calc(2.1rem * var(--align-scale));
+      line-height:1.1;
+    }
+
+    .align__roman {
+      font-family:var(--font-serif); font-weight:700;
+      font-size:calc(1rem * var(--align-scale));
+      letter-spacing:0.01em;
+    }
+
+    .align__gloss {
+      color:var(--muted);
+      font-size:calc(0.78rem * var(--align-scale));
+    }
+
+    .align__role {
+      color:var(--muted); opacity:0.7;
+      font-size:calc(0.62rem * var(--align-scale));
+      text-transform:uppercase; letter-spacing:0.07em;
+    }
+
+    /* ── Connector zone ── */
+
+    .align__lines { position:relative; height:calc(4.5rem * var(--align-scale)); width:100%; }
+    .align__svg { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+
+    /* ── English side ── */
+
+    .align__eword { display:inline-flex; }
+    .align__ecore { font-weight:600; }
+
+    /* An English word with no Fonoran token is a real result, not a rendering
+       failure: the language has no form for it yet. Say so quietly. */
+    .align__ecore--omitted {
+      color:var(--muted); opacity:0.55;
+      text-decoration:underline dotted; text-underline-offset:3px;
+    }
+
+    .align__epunct { color:var(--muted); }
+
+    /* A "?" that carries the question marker is a real target, so it is weighted
+       like a word instead of receding like the punctuation around it. */
+    .align__epunct--anchor { font-weight:600; }
+
+    /* ── Pager ── */
+
+    .align__pager {
+      display:flex; align-items:center; justify-content:center; gap:0.75rem;
+      padding-top:0.35rem; border-top:1px solid var(--border);
+    }
+
+    .align__nav {
+      min-width:2rem; padding:0.15rem 0.55rem;
+      font-size:1.15rem; line-height:1.3;
+    }
+
+    .align__nav:disabled { opacity:0.35; cursor:default; }
+
+    .align__count {
+      color:var(--muted); font-size:0.78rem;
+      text-transform:uppercase; letter-spacing:0.06em;
+    }
+
+    /* ── Gaps ── */
+
+    .align__gaps {
+      display:flex; flex-wrap:wrap; align-items:center; gap:0.4rem;
+      padding-top:0.6rem; border-top:1px solid var(--border);
+      font-size:0.82rem;
+    }
+
+    .align__gaps-label {
+      color:var(--muted); text-transform:uppercase;
+      letter-spacing:0.06em; font-size:0.7rem;
+    }
+
+    .align__gap {
+      color:var(--error); border:1px dashed var(--error);
+      border-radius:5px; padding:0.05rem 0.4rem;
+    }
+
+    .align__empty { color:var(--muted); text-align:center; padding:1.5rem 0; }
+
+    /* The alignment needs far more width than the auth dialog this shares a
+       pattern with, because a sentence is laid out horizontally. */
+    .wm-modal__box--wide { width:min(1100px, 100%); }
+
+    @media (max-width:600px) {
+      .align__row { gap:calc(0.75rem * var(--align-scale)); }
+      .align__lines { height:calc(3.5rem * var(--align-scale)); }
+    }

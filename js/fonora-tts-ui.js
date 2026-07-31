@@ -21,6 +21,7 @@ import { parseSyllable, toSpeakable, compoundPhoneticKey, romanToIpa } from '../
 import { getPiperVoiceForLang, PIPER_VOICE_OPTIONS } from './piper-audio.js';
 import { primeAudioContext } from './espeak-audio.js';
 import { initPiperAudio, isPiperAudioReady } from './piper-audio.js';
+import { warmOnEngage } from './warm-on-engage.js';
 import { setPlayButtonLabel, setPlayButtonText } from './play-button-ui.js';
 
 let rulesRef = null;
@@ -1047,7 +1048,7 @@ export function setupTranslatePlayback(rules) {
   syncTransliterateModeUi();
   syncTranslatePlaybackControls();
   hideLoading();
-  warmReaderResources();
+  warmOnEngage(warmReaderResources);
   bindPlaybackUiOnce();
   renderTranslateOutput();
   transliterateDock?.refresh(rules);

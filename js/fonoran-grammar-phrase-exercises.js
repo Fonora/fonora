@@ -4,6 +4,7 @@
  */
 
 import { particleForms } from '../tools/fonoran-language-policy.js';
+import { shuffle } from './utils.js';
 
 /**
  * The closed particle class, from the seed rather than restated here. A learner drilling
@@ -12,14 +13,6 @@ import { particleForms } from '../tools/fonoran-language-policy.js';
  */
 const GRAMMAR_PARTICLES = new Set(particleForms());
 
-function shuffle(list) {
-  const copy = [...list];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
 
 function normalize(text) {
   return String(text ?? '').trim().toLowerCase().replace(/\s+/g, ' ');

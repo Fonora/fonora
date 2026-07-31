@@ -9,6 +9,8 @@ import { labEntryMatchesQuery } from '../tools/fonoran-lab-search.js';
 import { checkCompoundBoundary } from '../tools/fonoran-gen3-readability.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { createWordManager } from '../language/word-manager/index.js';
+import { loadFonoranBootstrap } from './fonoran-bootstrap.js';
+import { api } from './api-client.js';
 
 const TAB_ROOT = () => document.getElementById('tab-word-manager');
 
@@ -30,16 +32,6 @@ function toast(msg) {
   toast._t = setTimeout(() => { el.hidden = true; }, 3200);
 }
 
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
-    ...opts,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
-  return data;
-}
 
 /** @type {ReturnType<typeof createWordManager> | null} */
 let manager = null;
@@ -65,7 +57,7 @@ async function ensureRulesLoaded() {
 async function ensureLab() {
   await ensureRulesLoaded();
   if (lab) return lab;
-  const bootstrap = await api('/api/fonoran/bootstrap');
+  const bootstrap = await loadFonoranBootstrap();
   lab = bootstrap.lab;
   return lab;
 }

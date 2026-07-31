@@ -53,6 +53,7 @@ import { translateIpaPhrase } from './ipa-pipeline.js';
 import { prepareChineseForPipeline } from './cjk-text.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
 import { getPiperVoiceForLang, initPiperAudio } from './piper-audio.js';
+import { warmOnEngage } from './warm-on-engage.js';
 import { loadLanguagePreference } from './language-preferences.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { mountSymbolSpotlight } from './symbol-spotlight.js';
@@ -1256,18 +1257,21 @@ function applyRulesBundle(loaded) {
   renderAlphabetInventory(rules);
   setupAlphabetInventoryOrderToggle(rules);
 
-  initEspeak().then((result) => {
-    if (!result.ok) {
-      const banner = document.getElementById('fallback-banner');
-      if (banner) {
-        banner.hidden = false;
-        banner.textContent = `eSpeak NG failed to load: ${getEspeakInitError() || result.error}. IPA pipeline unavailable.`;
+  // Both engines are multi-megabyte downloads that nothing on the first screen needs.
+  warmOnEngage(() => {
+    initEspeak().then((result) => {
+      if (!result.ok) {
+        const banner = document.getElementById('fallback-banner');
+        if (banner) {
+          banner.hidden = false;
+          banner.textContent = `eSpeak NG failed to load: ${getEspeakInitError() || result.error}. IPA pipeline unavailable.`;
+        }
       }
-    }
-  });
+    });
 
-  const piperVoice = getPiperVoiceForLang(loadLanguagePreference()) || 'en_US-lessac-medium';
-  initPiperAudio(piperVoice).catch(() => {});
+    const piperVoice = getPiperVoiceForLang(loadLanguagePreference()) || 'en_US-lessac-medium';
+    initPiperAudio(piperVoice).catch(() => {});
+  });
 
   if (new URLSearchParams(window.location.search).has('test')) {
     import('./tests-core.js').then(({ runTests }) => {

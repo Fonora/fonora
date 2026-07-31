@@ -3,7 +3,7 @@
  */
 
 import { escapeHtml } from './utils.js';
-import { refreshAuth } from './auth-session.js';
+import { api } from './api-client.js';
 
 const TAB_ROOT = () => document.getElementById('tab-advanced');
 
@@ -28,20 +28,6 @@ function toast(msg, isError = false) {
   }, 4000);
 }
 
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
-    ...opts,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (res.status === 401) {
-    await refreshAuth();
-    throw new Error('Sign in required');
-  }
-  if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
-  return data;
-}
 
 function confirmDangerAction({ title, message, typeToConfirm }) {
   if (!confirm(`${title}\n\n${message}\n\nAre you sure you want to continue?`)) return false;

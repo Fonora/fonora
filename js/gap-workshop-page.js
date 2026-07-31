@@ -10,6 +10,8 @@ import { escapeHtml } from './utils.js';
 import { loadLanguageRules } from './load-language-rules.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { patchCompoundProposal } from './proposal-actions.js';
+import { loadFonoranBootstrap } from './fonoran-bootstrap.js';
+import { api } from './api-client.js';
 
 const TAB_ROOT = () => document.getElementById('tab-gap-workshop');
 
@@ -75,16 +77,6 @@ function toast(msg, isError = false) {
   toast._t = setTimeout(() => { el.hidden = true; }, 4000);
 }
 
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
-    ...opts,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
-  return data;
-}
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
@@ -116,7 +108,7 @@ async function ensureLab() {
     rules = bundle.rules ?? null;
   }
   if (lab) return lab;
-  const bootstrap = await api('/api/fonoran/bootstrap');
+  const bootstrap = await loadFonoranBootstrap();
   lab = bootstrap.lab ?? null;
   return lab;
 }

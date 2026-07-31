@@ -18,7 +18,7 @@
  * This runs only when the caller asks for it, because only the poster needs it.
  */
 import { lemmatizeEnglish, GLOSS_STOPWORDS } from './fonoran-english-morphology.js';
-import { functionWordEnglishByForm } from './fonoran-language-policy.js';
+import { functionWordEnglishByForm, whComposition } from './fonoran-language-policy.js';
 
 /** Must match the browser's own splitting of the phrase, or no key will line up. */
 function normWord(word) {
@@ -28,6 +28,41 @@ function normWord(word) {
 function lemmaKey(word) {
   const normalized = normWord(word);
   return normalized ? lemmatizeEnglish(normalized) : '';
+}
+
+/**
+ * Fonoran has no interrogative words. It asks by naming an unknown value and the
+ * dimension probed, so English "who" is two Fonoran words: `nohu ba`, unknown plus
+ * person. Only the first reports itself as "who"; the dimension reports its own
+ * concept, which is never a word the speaker typed.
+ *
+ * So the dimension is given the WH word as well, and both halves of the spelling
+ * point at the one English word they jointly translate. Without it the second word
+ * dangles with no line and reads as a broken graph rather than as grammar.
+ *
+ * Driven by the composition table, so a language that spelled a question with three
+ * words, or respelled these, needs no change here.
+ */
+function whCompanionWords(tokens) {
+  const composition = whComposition();
+  const phraseKey = value => String(value ?? '').trim().toLowerCase();
+  const extra = tokens.map(() => []);
+
+  tokens.forEach((tok, i) => {
+    const whWord = phraseKey(tok?.english);
+    const parts = composition[whWord];
+    if (!parts) return;
+
+    // The probe itself is parts[0]; the rest are the dimensions that follow it.
+    const dimensions = parts.slice(1).map(phraseKey);
+    for (let step = 1; step <= dimensions.length; step += 1) {
+      const next = tokens[i + step];
+      if (!next || !dimensions.includes(phraseKey(next.english))) break;
+      extra[i + step].push(...whWord.split(/\s+/));
+    }
+  });
+
+  return extra;
 }
 
 /** Content words from gloss prose, with parentheticals and stopwords removed. */
@@ -65,7 +100,9 @@ export function buildAlignment(englishPhrase, tokens = []) {
     if (core && !(core in input)) input[core] = lemmatizeEnglish(core);
   }
 
-  const tokenKeys = tokens.map(tok => {
+  const whCompanions = whCompanionWords(tokens);
+
+  const tokenKeys = tokens.map((tok, i) => {
     const strong = new Set();
     for (const word of String(tok?.english ?? '').split(/[\s,;/]+/)) {
       const key = lemmaKey(word);
@@ -73,6 +110,10 @@ export function buildAlignment(englishPhrase, tokens = []) {
     }
     for (const alt of particleEnglish.get(tok?.fonoran) ?? []) {
       const key = lemmaKey(alt);
+      if (key) strong.add(key);
+    }
+    for (const word of whCompanions[i]) {
+      const key = lemmaKey(word);
       if (key) strong.add(key);
     }
 

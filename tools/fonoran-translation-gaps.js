@@ -215,8 +215,18 @@ export async function loadStrangerGapReport() {
   }
 }
 
-/** Persist a full-corpus gap report as the "latest" snapshot. */
+/**
+ * Persist a full-corpus gap report as the "latest" snapshot.
+ *
+ * Skipped when nothing but the timestamp moved: the file lives in the data repo,
+ * and rewriting it on every test run left that submodule permanently dirty over a
+ * one-line `generated_at` diff.
+ */
 export async function saveLatestGapReport(report) {
+  const next = { ...report, generated_at: undefined };
+  const prev = { ...((await loadLatestGapReport()) ?? {}), generated_at: undefined };
+  if (JSON.stringify(next) === JSON.stringify(prev)) return report;
+
   await writeFile(LATEST_PATH(), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   return report;
 }

@@ -23,11 +23,50 @@ function stripIpaDecorations(ipa) {
     .trim();
 }
 
+const WASM_URL = new URL('../vendor/espeak-ng/espeak-ng.wasm', import.meta.url);
+let wasmPromise = null;
+
+/**
+ * The compiled eSpeak binary, fetched and compiled once.
+ *
+ * eSpeak's Emscripten module runs its `main()` at instantiation, so a fresh
+ * instance really is needed per phrase. Re-downloading and re-compiling 18 MB for
+ * each one is not: the home page renders around thirty pronunciations, which came
+ * to over half a gigabyte of transfer for a file that never changes.
+ *
+ * Returns null when the binary cannot be fetched, which is the normal case under
+ * Node, where the URL is a `file:` path that `fetch` will not read. Emscripten
+ * then loads the binary itself exactly as it did before.
+ */
+function espeakWasm() {
+  if (!wasmPromise) {
+    wasmPromise = (async () => {
+      try {
+        const res = await fetch(WASM_URL);
+        if (!res.ok) return null;
+        return await WebAssembly.compile(await res.arrayBuffer());
+      } catch {
+        return null;
+      }
+    })();
+  }
+  return wasmPromise;
+}
+
 async function runEspeak(text, voice) {
   const outfile = `ipa-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.out`;
-  const espeak = await ESpeakNg({
-    arguments: ['--phonout', outfile, '-q', '--ipa=3', '-v', voice, text],
-  });
+  const wasmModule = await espeakWasm();
+
+  const config = { arguments: ['--phonout', outfile, '-q', '--ipa=3', '-v', voice, text] };
+  if (wasmModule) {
+    // Hand Emscripten the module we already compiled instead of letting it fetch again.
+    config.instantiateWasm = (imports, done) => {
+      WebAssembly.instantiate(wasmModule, imports).then((instance) => done(instance, wasmModule));
+      return {};
+    };
+  }
+
+  const espeak = await ESpeakNg(config);
   try {
     return espeak.FS.readFile(outfile, { encoding: 'utf8' });
   } finally {

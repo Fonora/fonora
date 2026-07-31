@@ -276,9 +276,9 @@
 
             <div class="translator-panel translator-panel--output content-card">
               <div class="translator-panel__header translator-panel__header--output">
-                <span class="translator-panel__lang" id="tr-output-label">Fonoran</span>
-                <span class="translator-panel__lang" id="tr-target-lang-wrap" hidden>English</span>
+                <span class="translator-panel__lang" id="tr-output-label">Translation</span>
                 <div id="tr-output-meta" class="translator-panel__meta"></div>
+                <button type="button" class="btn btn--ghost btn--sm" id="tr-alignment-btn" hidden><svg class="align-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false"><circle class="learn-icon__dot" cx="7" cy="4.5" r="1.5"/><circle class="learn-icon__dot" cx="17" cy="4.5" r="1.5"/><circle class="learn-icon__dot" cx="7" cy="19.5" r="1.5"/><circle class="learn-icon__dot" cx="17" cy="19.5" r="1.5"/><path d="M7 7C7 12 17 12 17 17"/><path d="M17 7C17 12 7 12 7 17"/></svg><span>Alignment</span></button>
               </div>
               <div id="tr-output" class="translator-output" aria-live="polite" aria-labelledby="tr-output-label">
                 <p class="translator-output__empty sans">Type any language on the left to see Fonoran script and pronunciation.</p>
@@ -369,6 +369,17 @@
         <p class="sans">Sign in with Google to vote on community words.</p>
         <a href="/auth/google" class="btn btn--primary auth-gate__sign-in" id="auth-sign-in-google">Continue with Google</a>
       </div>
+    </div>
+  </div>
+
+  <div id="tr-alignment-modal" class="wm-modal" hidden role="dialog" aria-modal="true" aria-labelledby="tr-alignment-title">
+    <div class="wm-modal__backdrop"></div>
+    <div class="wm-modal__box wm-modal__box--wide">
+      <div class="wm-modal__head">
+        <span class="wm-modal__title" id="tr-alignment-title">Alignment</span>
+        <button type="button" class="wm-modal__close" data-modal-close aria-label="Close">✕</button>
+      </div>
+      <div class="wm-modal__body" id="tr-alignment-body" tabindex="-1"></div>
     </div>
   </div>
 

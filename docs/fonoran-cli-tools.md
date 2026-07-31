@@ -136,7 +136,6 @@ Live translator architecture: [fonoran-translator.md](fonoran-translator.md). Al
 | Command | What it does |
 | --- | --- |
 | `npm run fonoran:course-phrases:build` | Rebuild the committed Learn phrase snapshot. |
-| `npm run fonoran:course-phrases:build:cache` | Same, without new translation work. |
 
 Learn compiles phrase roman at runtime, so a rebuild is only needed to refresh the offline snapshot and CI fixtures.
 

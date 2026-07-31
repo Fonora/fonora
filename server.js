@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { handleAuthRoutes, logAuthStatus } from './tools/fonoran-auth.js';
 import { handleFonoranApi } from './tools/fonoran-api.js';
 import { initCommunityStore } from './tools/fonoran-community-store.js';
+import { sendBody } from './tools/http-compress.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const host = process.env.HOST || '0.0.0.0';
@@ -96,6 +97,16 @@ function isScriptAppRoute(pathname) {
   return path === '/script' || path === '/tools' || path === '/learn';
 }
 
+/**
+ * /showcase was a standalone alignment poster. That view is now the Alignment
+ * modal on the translator, built from the same translate response, so the old URL
+ * points at where the feature lives.
+ */
+function legacyShowcaseRedirect(pathname) {
+  if (pathname === '/showcase' || pathname === '/showcase/') return '/language#translator';
+  return null;
+}
+
 /** /fonoran is a legacy alias for the Language tab (Fonoran the language). */
 function legacyFonoranRedirect(pathname, search, hash) {
   if (pathname === '/fonoran' || pathname.startsWith('/fonoran/')) {
@@ -112,8 +123,7 @@ function sectionCanonicalRedirect(pathname, search, hash) {
     pathname === '/script/' ||
     pathname === '/tools/' ||
     pathname === '/learn/' ||
-    pathname === '/language/' ||
-    pathname === '/showcase/'
+    pathname === '/language/'
   ) {
     return `${pathname.slice(0, -1)}${search}${hash}`;
   }
@@ -126,7 +136,6 @@ function normalizePathname(pathname) {
   if (path === '/learn' || path === '/learn/') path = '/index.html';
   if (path === '/tools' || path === '/tools/') path = '/index.html';
   if (path === '/language' || path === '/language/') path = '/language/index.html';
-  if (path === '/showcase' || path === '/showcase/') path = '/showcase/index.html';
   if (path.endsWith('/')) path += 'index.html';
   if (path === '/') path = '/index.html';
   return path;
@@ -160,21 +169,34 @@ function cacheControl(pathname) {
     pathname === '/script' ||
     pathname === '/learn' ||
     pathname === '/tools' ||
-    pathname === '/language' ||
-    pathname === '/showcase'
+    pathname === '/language'
   ) {
     return 'no-cache';
   }
   // WASM / large binary assets are content-stable and safe to pin.
   if (/\.(wasm|data)$/.test(pathname)) return 'public, max-age=31536000, immutable';
+  // Vendored bundles are third-party artifacts pinned by package.json, not our code,
+  // so the staleness argument below does not apply. The speech bundle alone is 44 MB;
+  // revalidating it on every page load was the single largest cost on the site.
+  if (pathname.startsWith('/vendor/')) return 'public, max-age=31536000, immutable';
   // App JS/CSS are served at stable URLs with no content hashes. Never mark them
   // immutable: a year-long pin keeps stale homepage showcases and dictionary
-  // examples alive after deploys (e.g. pakal → yenan).
+  // examples alive after deploys (e.g. pakal → yenan). They still revalidate cheaply,
+  // because every static response carries an ETag.
   if (/\.(js|mjs|css)$/.test(pathname)) return 'no-cache';
   // Markdown docs are edited in place and fetched by the in-app viewer; revalidate
   // so content updates appear immediately instead of being pinned for max-age.
   if (/\.md$/.test(pathname)) return 'no-cache';
   return 'public, max-age=3600';
+}
+
+/**
+ * A validator built from what a stat already tells us, so `no-cache` costs a 304
+ * instead of a full re-download. Without one, "revalidate every time" meant
+ * "re-send every byte every time".
+ */
+function etagFor(info) {
+  return `W/"${info.size.toString(16)}-${Math.floor(info.mtimeMs).toString(16)}"`;
 }
 
 // The language is read from the committed seeds, so it needs no startup step. Only user data
@@ -242,6 +264,13 @@ createServer(async (req, res) => {
       return;
     }
 
+    const showcaseRedirect = legacyShowcaseRedirect(url.pathname);
+    if (showcaseRedirect) {
+      res.writeHead(301, { Location: showcaseRedirect, ...SECURITY_HEADERS });
+      res.end();
+      return;
+    }
+
     const legacyRedirect = legacyFonoranRedirect(url.pathname, url.search, url.hash);
     if (legacyRedirect) {
       res.writeHead(301, { Location: legacyRedirect, ...SECURITY_HEADERS });
@@ -258,13 +287,11 @@ createServer(async (req, res) => {
 
     if (isScriptAppRoute(url.pathname)) {
       const indexPath = join(root, 'index.html');
-      const body = await readFile(indexPath);
-      res.writeHead(200, {
+      sendBody(req, res, 200, {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-cache',
         ...SECURITY_HEADERS,
-      });
-      res.end(body);
+      }, await readFile(indexPath));
       return;
     }
 
@@ -273,25 +300,21 @@ createServer(async (req, res) => {
       // /docs is the in-app viewer shell; the repo also has a docs/ directory on disk.
       if (bare === '/docs') {
         const indexPath = join(root, 'index.html');
-        const body = await readFile(indexPath);
-        res.writeHead(200, {
+        sendBody(req, res, 200, {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache',
           ...SECURITY_HEADERS,
-        });
-        res.end(body);
+        }, await readFile(indexPath));
         return;
       }
       const staticPath = resolveFilePath(normalizePathname(url.pathname));
       if (!staticPath || !existsSync(staticPath)) {
         const indexPath = join(root, 'index.html');
-        const body = await readFile(indexPath);
-        res.writeHead(200, {
+        sendBody(req, res, 200, {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache',
           ...SECURITY_HEADERS,
-        });
-        res.end(body);
+        }, await readFile(indexPath));
         return;
       }
     }
@@ -311,14 +334,24 @@ createServer(async (req, res) => {
       return;
     }
 
-    const body = await readFile(filePath);
-    const type = MIME[extname(filePath)] ?? 'application/octet-stream';
-    res.writeHead(200, {
-      'Content-Type': type,
+    const etag = etagFor(info);
+    const headers = {
+      'Content-Type': MIME[extname(filePath)] ?? 'application/octet-stream',
       'Cache-Control': cacheControl(pathname),
+      ETag: etag,
+      'Last-Modified': new Date(info.mtimeMs).toUTCString(),
       ...SECURITY_HEADERS,
-    });
-    res.end(body);
+    };
+
+    if (req.headers['if-none-match'] === etag) {
+      res.writeHead(304, headers);
+      res.end();
+      return;
+    }
+
+    // The ETag doubles as the identity of this exact file version, so a large
+    // compression is computed once rather than once per visitor.
+    sendBody(req, res, 200, headers, await readFile(filePath), etag);
   } catch {
     res.writeHead(404, SECURITY_HEADERS);
     res.end('Not found');

@@ -4,6 +4,7 @@
 import { buildMeaningChoices } from '../tools/fonoran-meaning-choices.js';
 import { experienceMetaFor, LANGUAGE_TIERS } from '../tools/fonoran-experience-tiers.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
+import { loadFonoranBootstrap } from './fonoran-bootstrap.js';
 
 /** @typedef {{ spelling: string, meaning: string, parts: string[], script: string, conceptId?: string, languageTier: string, tierRank: number }} PracticeEntry */
 
@@ -130,14 +131,8 @@ export function spellingMatchesEntry(answer, entry, pool) {
   return candidates.has(normalized);
 }
 
-let cachedLab = null;
-
 export async function loadFonoranPracticeLab() {
-  if (cachedLab) return cachedLab;
-  const res = await fetch('/api/fonoran/bootstrap');
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  cachedLab = await res.json();
-  return cachedLab;
+  return loadFonoranBootstrap();
 }
 
 export async function loadFonoranPracticeEntries(rules, opts = {}) {

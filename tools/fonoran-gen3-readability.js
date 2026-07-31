@@ -2,6 +2,10 @@
  * Fonoran Gen 3 human-readability layer.
  * Browser + Node compatible (no fs). Does not modify root generation.
  */
+import { levenshtein } from './fonoran-gen3-distinctiveness.js';
+
+// Re-exported because callers already read it from here.
+export { levenshtein };
 
 export const PLACE_SYM = { '1': '∋', '2': '∩', '3': '⌓', '4': '∪', '5': '⊃' };
 export const MANNER_SYM = {
@@ -168,20 +172,6 @@ export function parseCompound(compound, inventory, derivations = []) {
   };
 }
 
-export function levenshtein(a, b) {
-  const m = a.length;
-  const n = b.length;
-  const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-  for (let i = 0; i <= m; i++) dp[i][0] = i;
-  for (let j = 0; j <= n; j++) dp[0][j] = j;
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
-    }
-  }
-  return dp[m][n];
-}
 
 export function rootSimilarity(a, b) {
   if (a === b) return 1;

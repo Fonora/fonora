@@ -97,7 +97,7 @@ flowchart LR
   end
 ```
 
-The grammar passes live in `tools/fonoran-frame-grammar.js` and `tools/fonoran-interpretation.js`. They read the frame, the particle seed, and the temporal-scene lists, and nothing else, so the same input always produces the same surface.
+The grammar passes live in `tools/fonoran-interpretation.js`. They read the frame, the particle seed, and the temporal-scene lists, and nothing else, so the same input always produces the same surface.
 
 ---
 
@@ -111,11 +111,11 @@ flowchart TB
   end
 
   subgraph OutputPanel["Output panel (auto height, no scroll)"]
-    HDR["Header: Fonoran, or English when source is Fonoran · Why this reading"]
+    HDR["Header: Translation · Why this reading · Alignment"]
     SURF["Surface block"]
     SCRIPT["Fonora script (forward) / English reading (reverse)"]
     ROMAN["Roman line + resolution colors"]
-    PRON["Pronunciation ▸ (collapsed details)"]
+    PRON["Pronunciation ▸ /IPA/ (collapsed details)"]
     TOK["Token list (role → english → fonoran)"]
     HDR --- SURF
     SURF --> SCRIPT --> ROMAN --> PRON --> TOK
@@ -139,12 +139,13 @@ flowchart TB
 
 | Element | Behavior |
 | --- | --- |
-| **Source language** | English plus **Fonoran (Roman)** and **Fonoran (Fonora)**. Choosing either switches to reverse mode and shows a target-language select (default English) |
+| **Source language** | English plus **Fonoran (Roman)** and **Fonoran (Fonora)**. Choosing either switches to reverse mode |
 | **Translate** | Debounced (~280 ms) POST to `/api/fonoran/translate`; spinner while busy. Every keystroke is answerable because nothing costs money. Reverse sends `direction: "from-fonoran"` and `inputMode` |
 | **Resolution colors** | Default text = direct lexicon hit; gold = interpreted; orange = semantic / weak alias; red = unresolved |
-| **Pronunciation** | Collapsed `<details>` under roman; phonetic key + “sounds like” hint |
+| **Pronunciation** | Collapsed `<details>` under roman; teaching IPA key built from token syllable parts (e.g. `/kʌ · bɛ · sʌk/`) |
 | **Why this reading** | Hover/focus popup in output header; shows the compiler's one-sentence note |
 | **Listen** | Uses server `playback` as source of truth; speaks Fonoran IPA via Piper; unresolved gaps may use English TTS; Fonoran tokens never fall back to English orthography; `.` and `!` retained on roman/script and pause Listen between sentences; a question's `?` is written as `.`, because `ka` already marks it as a question |
+| **Alignment** | Button in the output header, shown once a translation has tokens. Opens a modal drawing a curve from each Fonoran word to the English word(s) it stands for. Multi-sentence input pages one sentence at a time; a sentence too wide for the panel is scaled down so it stays on one line. Where several Fonoran words spell one English word they all link to it, so both halves of `nohu ba` reach *who*; the question marker links to the `?`, which is the only thing English writes it as. An English word with no Fonoran form is dotted and unlinked, which is the honest result rather than a rendering failure |
 | **Layout** | 15 px gap below nav; panels `align-items: start`; independent auto heights |
 
 Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
@@ -156,13 +157,14 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 | Module | Role |
 | --- | --- |
 | `tools/fonoran-translate.js` | Unified `translate()` router (`to-fonoran` / `from-fonoran`) |
-| `tools/fonoran-translator.js` | `translateEnglishLegacy()`, `translateFromFrame()`, `slotsToTokens()`, `buildSurface()` |
-| `tools/fonoran-frame-grammar.js` | Frame grammar passes: time fronting, temporal scene promotion, disjunction |
+| `tools/fonoran-translator.js` | `translateEnglishLegacy()`, `slotsToTokens()`, `buildSurface()` |
 | `tools/fonoran-reverse-translate.js` | Fonoran → English (script/roman normalize, lexical resolve) |
 | `tools/fonoran-english-resolve.js` | Concept resolution cascade, spelling fallback |
 | `tools/fonoran-interpretation.js` | Motion rules, existential *there* peel, frame helpers |
+| `tools/fonoran-alignment.js` | Lemma keys saying which English words each token stands for |
 | `tools/fonoran-playback-build.js` | Server wrapper; attaches `playback` to every result |
 | `js/fonoran-playback-build.js` | Browser-safe playback builder (shared with Samples pipeline) |
+| `js/fonoran-alignment-view.js` | Renders the Alignment modal from a translate response |
 | `language/fonoran-app.js` | Translator page UI |
 
 ---
@@ -253,7 +255,7 @@ Abstract source words with no root are resolved through curated **concept bridge
 | `npm run test:translator:update` | Accept current output as new baseline |
 | `npm run test:translator:probes` | Frame probes with full output |
 
-The golden corpus is 1,000 phrases in `data/fonoran-translation-tests.json`, with measured gaps in `data/fonoran-translation-gap-baseline.json`. Both are reproducible from the repo with no network access.
+The golden corpus is 1,000 phrases in `data/fonoran-translation-tests.json`, with measured gaps in `data/fonoran-translation-gap-baseline-deterministic.json`. Both are reproducible from the repo with no network access.
 
 ---
 

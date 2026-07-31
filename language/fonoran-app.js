@@ -3,6 +3,9 @@
     import { romanToFonoraScript, romanWordToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
     import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
     import { createKeyboardDockController } from '../js/fonora-keyboard-dock.js';
+    import { mountAlignment } from '../js/fonoran-alignment-view.js';
+    import { loadFonoranBootstrap } from '../js/fonoran-bootstrap.js';
+    import { warmOnEngage } from '../js/warm-on-engage.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
     import { getSamplePlaybackPlan, getPiperVoiceForLang, initPiperAudio } from '../js/piper-audio.js';
@@ -443,7 +446,7 @@
         STATE.health = null;
         STATE.healthKey = null;
         STATE.lexicon = null;
-        const bootstrap = await api('/api/fonoran/bootstrap');
+        const bootstrap = await loadFonoranBootstrap({ refresh: true });
         STATE.lab = bootstrap.lab;
         STATE.lexicon = bootstrap.lexicon ?? null;
         if (bootstrap.health) {
@@ -452,8 +455,10 @@
         }
         $('load-error').hidden = true;
         setFonoranUndoDisabled(!STATE.lab.can_undo || !canWrite());
-        const piperVoice = getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
-        initPiperAudio(piperVoice).catch(() => {});
+        warmOnEngage(() => {
+          const piperVoice = getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
+          initPiperAudio(piperVoice).catch(() => {});
+        });
         if (!opts.skipRender) renderActivePage();
       } catch { $('load-error').hidden = false; }
     }
@@ -1992,6 +1997,41 @@
       document.documentElement.classList.remove('modal-open');
     }
 
+    let alignmentView = null;
+
+    function openAlignmentModal() {
+      const result = STATE.translatorResult;
+      const host = $('tr-alignment-body');
+      if (!host || !result || result.mode === 'error') return;
+
+      alignmentView?.destroy();
+      alignmentView = mountAlignment(host, {
+        phrase: STATE.translatorInput ?? '',
+        result,
+      });
+
+      $('tr-alignment-modal')?.removeAttribute('hidden');
+      document.documentElement.classList.add('modal-open');
+      host.focus();
+      // The stage measures itself against a panel that had no width while hidden.
+      requestAnimationFrame(() => alignmentView?.redraw());
+    }
+
+    function closeAlignmentModal() {
+      $('tr-alignment-modal')?.setAttribute('hidden', '');
+      document.documentElement.classList.remove('modal-open');
+      alignmentView?.destroy();
+      alignmentView = null;
+    }
+
+    /** Alignment needs Fonoran tokens to draw, so it is offered only when there are some. */
+    function syncAlignmentButton(result) {
+      const btn = $('tr-alignment-btn');
+      if (!btn) return;
+      const usable = Boolean(result?.alignment && Array.isArray(result.tokens) && result.tokens.length);
+      btn.hidden = !usable;
+    }
+
     function openChain(kind, id) {
       openExplorer(kind === 'sound' ? 'root' : 'word', kind === 'sound' ? id : id);
     }
@@ -2707,12 +2747,7 @@
       const sourceLang = readTranslatorSourceLang();
       const reverse = isFonoranSourceLang(sourceLang);
       const input = $('tr-input');
-      const outputLabel = $('tr-output-label');
-      const targetWrap = $('tr-target-lang-wrap');
       const examples = $('tr-examples');
-
-      if (outputLabel) outputLabel.hidden = reverse;
-      if (targetWrap) targetWrap.hidden = !reverse;
 
       if (input) {
         const fonoraMode = reverse && sourceLang === 'fonoran-fonora';
@@ -2780,6 +2815,7 @@
     }
 
     function syncTranslatorOutputHeader(result) {
+      syncAlignmentButton(result);
       const meta = $('tr-output-meta');
       if (!meta) return;
       const reasoning = result?.reasoning?.trim();
@@ -2814,16 +2850,32 @@
     }
 
 
-    function translatorPronHtml(pron) {
-      if (!pron?.sayLine) return '';
-      const likeHtml = pron.englishLine
-        ? `<p class="translator-output__pron-line translator-output__like">${escapeHtml(pron.englishLine)}</p>`
-        : '';
+    /** Phrase IPA from token syllable parts, e.g. `/kʌ · bɛ · sʌk · jɛ·tɛm/`. */
+    function translatorIpaLine(result) {
+      const chunks = [];
+      for (const t of result?.tokens ?? []) {
+        if (t.kind === 'punctuation' || t.role === 'punctuation') continue;
+        if (!t.resolved) continue;
+        const parts = Array.isArray(t.parts) && t.parts.length
+          ? t.parts
+          : (t.fonoran ? [t.fonoran] : []);
+        const inner = parts
+          .map((p) => String(p ?? '').trim().toLowerCase())
+          .filter((p) => p && isValidSyllable(p))
+          .map((p) => romanToIpa(p).replace(/^\/+|\/+$/g, ''))
+          .join('·');
+        if (inner) chunks.push(inner);
+      }
+      return chunks.length ? `/${chunks.join(' · ')}/` : '';
+    }
+
+    function translatorPronHtml(result) {
+      const ipa = translatorIpaLine(result);
+      if (!ipa) return '';
       return `<details class="translator-output__pron sans">
         <summary>Pronunciation</summary>
         <div class="translator-output__pron-body">
-          <p class="translator-output__pron-line"><strong class="translator-output__phonetic-key mono">${escapeHtml(pron.sayLine)}</strong></p>
-          ${likeHtml}
+          <p class="translator-output__pron-line"><strong class="translator-output__phonetic-key mono">${escapeHtml(ipa)}</strong></p>
         </div>
       </details>`;
     }
@@ -3085,7 +3137,7 @@
       const literal = String(result.literal ?? '').trim();
       const showLiteral = literal && literal !== translation;
       const roman = result.surface?.roman || '';
-      const pronHtml = translatorPronHtml(result.surface?.pronunciation);
+      const pronHtml = translatorPronHtml(result);
 
       syncTranslatorOutputHeader(result);
 
@@ -3153,8 +3205,7 @@
       }
       const romanHtml = romanChunks.join(' ');
 
-      const pron = result.surface?.pronunciation;
-      const pronHtml = translatorPronHtml(pron);
+      const pronHtml = translatorPronHtml(result);
 
       syncTranslatorOutputHeader(result);
 
@@ -3207,6 +3258,9 @@
           text,
           sourceLang,
           dev_lab: isLocalDevHost(),
+          // The alignment view is a presentation of this same response, never a
+          // second call with its own answer. Costs one lemma lookup per input word.
+          align: !reverse,
         };
         if (reverse) {
           body.direction = 'from-fonoran';
@@ -3511,6 +3565,14 @@
       STATE.dictShowReconsider = filters.showReconsider;
       renderDictionary();
     });
+    $('tr-alignment-btn')?.addEventListener('click', openAlignmentModal);
+    bindModalDismiss({
+      backdrop: $('tr-alignment-modal')?.querySelector('.wm-modal__backdrop'),
+      panel: $('tr-alignment-modal')?.querySelector('.wm-modal__box'),
+      close: closeAlignmentModal,
+      isOpen: () => !$('tr-alignment-modal')?.hasAttribute('hidden'),
+    });
+
     bindModalDismiss({
       backdrop: $('sheet-backdrop'),
       panel: $('sheet'),

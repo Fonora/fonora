@@ -11,7 +11,9 @@ import { setActiveLanguageRulesBundle } from '../js/fonora-config.js';
 import { runFullCollisionAudit, formatCollisionAuditMarkdown } from '../js/collision-audit.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const outPath = join(__dirname, '..', 'docs', 'archive', 'FONORA_COLLISION_AUDIT.md');
+// A regenerated snapshot, not prose, so it lives in reports/ (untracked) alongside
+// the compound audit. The archived copy stays put as the historical record.
+const outPath = join(__dirname, '..', 'reports', 'fonora-collision-audit.md');
 
 const bundle = loadActiveRulesFixture();
 applyIpaVowelMap(bundle);

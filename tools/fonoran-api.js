@@ -94,13 +94,15 @@ import {
   runTranslatorRegression,
 } from './fonoran-regen.js';
 import { sanitizeForJsonResponse } from '../js/utils.js';
+import { sendBody } from './http-compress.js';
 
 function writeJsonPayload(res, status, payload) {
-  res.writeHead(status, {
+  // `res.req` is the request Node already paired with this response, which saves
+  // threading it through every caller just to read one header.
+  sendBody(res.req, res, status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
-  });
-  res.end(payload);
+  }, payload);
 }
 
 export function jsonResponse(res, status, body) {

@@ -3,7 +3,9 @@
  */
 
 import { escapeHtml } from './utils.js';
-import { refreshAuth, canAccessWordManager } from './auth-session.js';
+import { canAccessWordManager } from './auth-session.js';
+import { loadFonoranBootstrap } from './fonoran-bootstrap.js';
+import { api } from './api-client.js';
 
 const TAB_ROOT = () => document.getElementById('tab-progress');
 
@@ -11,20 +13,6 @@ function $(id) {
   return TAB_ROOT()?.querySelector(`#${id}`) ?? document.getElementById(id);
 }
 
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
-    ...opts,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (res.status === 401) {
-    await refreshAuth();
-    throw new Error('Sign in required');
-  }
-  if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
-  return data;
-}
 
 const isOpen = (st) => st === 'draft' || st === 'needs_review';
 const reviewed = (st) => st === 'approved' || st === 'revised' || st === 'rejected';
@@ -178,7 +166,7 @@ async function loadProgress(force = false) {
   render();
   try {
     const [bootstrap, rootCandidates] = await Promise.all([
-      api('/api/fonoran/bootstrap'),
+      loadFonoranBootstrap({ refresh: true }),
       api('/api/fonoran/roots/candidates').catch(() => ({ candidates: [] })),
     ]);
     state.lab = bootstrap.lab;
