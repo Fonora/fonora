@@ -4,7 +4,7 @@
 
 The Fonoran Translator compiles **meaning** into Fonoran, not a word-for-word gloss. It also supports the reverse path, **Fonoran → English**, with input as **Fonoran (Roman)** or **Fonoran (Fonora)** script. Grammar is language-neutral ([Rule 7](fonoran-grammar.md#rule-7-translator-architecture)); concepts are canonical; spellings come only from the approved lab inventory.
 
-There is **one engine**, the deterministic English compiler (`translateEnglishLegacy()` in `tools/fonoran-translator.js`, named `engine=legacy` in the API and scripts). It needs no API key, costs nothing per phrase, answers offline, and brackets what it cannot say, for example `[how]`, instead of inventing a form.
+There is **one engine**, the deterministic compiler (`translateFromSource()` in `tools/fonoran-translator.js`, named `engine=legacy` in the API and scripts; `translateEnglishLegacy()` is its English wrapper). The source language is a parser selected by `sourceLang` from the registry in `tools/fonoran-source-parsers.js` — English is the one installed today, and a language with no parser is refused honestly rather than silently read as English. The engine needs no API key, costs nothing per phrase, answers offline, and brackets what it cannot say, for example `[how]`, instead of inventing a form.
 
 A model-driven semantic compiler ran as the default until July 2026. It was removed: it answered essentially every request, so every public translation cost money, the translator failed outright wherever no key was configured, and no golden output could be reproduced from the repo alone. Its cache outlived it for a while because Learn replayed cached frames; Learn now compiles through this engine, so the cache, the client, and the model grammar brief are all deleted and `data/fonoran-llm-quarantine.json` is empty.
 
@@ -27,7 +27,7 @@ flowchart TB
 
   subgraph API["Server"]
     RT["tools/fonoran-translate.js<br/>translate() router"]
-    LEG["tools/fonoran-translator.js<br/>translateEnglishLegacy()"]
+    LEG["tools/fonoran-translator.js<br/>translateFromSource()"]
     REV["tools/fonoran-reverse-translate.js<br/>lexical gloss"]
     PLAY["attachTranslatorPlayback()"]
     ALT["attachTranslateAlternates()"]
@@ -156,8 +156,10 @@ Client modules: `language/fonoran-app.js`, `js/fonoran-playback-build.js`.
 
 | Module | Role |
 | --- | --- |
-| `tools/fonoran-translate.js` | Unified `translate()` router (`to-fonoran` / `from-fonoran`) |
-| `tools/fonoran-translator.js` | `translateEnglishLegacy()`, `slotsToTokens()`, `buildSurface()` |
+| `tools/fonoran-translate.js` | Unified `translate()` router (`to-fonoran` / `from-fonoran`, `sourceLang` → parser) |
+| `tools/fonoran-source-parsers.js` | Parser contract + registry; the neutral slot structure |
+| `tools/fonoran-source-english.js` | English parser: clauses, masking, modals, tense → neutral slots |
+| `tools/fonoran-translator.js` | The engine: `translateFromSource()`, `slotsToTokens()`, `buildSurface()` |
 | `tools/fonoran-reverse-translate.js` | Fonoran → English (script/roman normalize, lexical resolve) |
 | `tools/fonoran-english-resolve.js` | Concept resolution cascade, spelling fallback |
 | `tools/fonoran-interpretation.js` | Motion rules, existential *there* peel, frame helpers |

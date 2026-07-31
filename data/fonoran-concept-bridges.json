@@ -19,6 +19,16 @@
       "concept": "mind",
       "gloss": "mind"
     },
+    "reason": {
+      "forms": ["reason", "reasons"],
+      "concept": "think",
+      "gloss": "reasoning is thinking"
+    },
+    "from": {
+      "forms": ["from"],
+      "concept": "source",
+      "gloss": "origin; where something comes from"
+    },
     "intelligence": {
       "forms": ["intelligence", "intelligent"],
       "compose": ["big", "think"],

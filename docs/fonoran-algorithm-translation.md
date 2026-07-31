@@ -1,9 +1,11 @@
 # Algorithm: how English becomes Fonoran
 
 > **One page. The deterministic translator, start to finish.**
-> Code: [`tools/fonoran-translator.js`](../tools/fonoran-translator.js) (`translateEnglishLegacy`), English reading in [`tools/fonoran-english-parse.js`](../tools/fonoran-english-parse.js), word lookup in [`tools/fonoran-english-resolve.js`](../tools/fonoran-english-resolve.js).
+> Code: the engine in [`tools/fonoran-translator.js`](../tools/fonoran-translator.js) (`translateFromSource`; `translateEnglishLegacy` is its English-parser wrapper), the parser boundary in [`tools/fonoran-source-parsers.js`](../tools/fonoran-source-parsers.js), the English parser in [`tools/fonoran-source-english.js`](../tools/fonoran-source-english.js) with English reading in [`tools/fonoran-english-parse.js`](../tools/fonoran-english-parse.js), word lookup in [`tools/fonoran-english-resolve.js`](../tools/fonoran-english-resolve.js).
 > No model is involved. It needs no API key, costs nothing, and returns instantly.
 > It is the default engine. `legacy` and `lexical` are older names for it in scripts and tests.
+>
+> `sourceLang` selects a parser from the registry; English is the one installed today. Steps 1 and 2 below are the English parser's side of the boundary, and everything from step 3 on is the language-neutral engine. A parser hands the engine roles, source surfaces, concept hints, and grammar facts named by particle id — never a Fonoran spelling. A language with no parser is refused honestly rather than read as English.
 
 ## The governing rule
 
@@ -113,6 +115,8 @@ If this page and the code disagree, the code wins, and this page is the bug.
 
 | Thing | Source |
 | --- | --- |
+| Parser contract, registry, neutral slot structure | `tools/fonoran-source-parsers.js` |
+| English → neutral slots (clauses, masking, modals, tense) | `tools/fonoran-source-english.js` |
 | Pipeline and slot ordering | `tools/fonoran-translator.js` |
 | Word to concept resolution tiers | `tools/fonoran-english-resolve.js` |
 | Curated interpretation rules | `tools/fonoran-interpretation.js` |

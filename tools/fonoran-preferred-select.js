@@ -10,8 +10,13 @@ import { readDoc } from './fonoran-store.js';
 import { segmentCompound, checkCompoundBoundary } from './fonoran-gen3-readability.js';
 import { maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { scoreUnderstandability } from './fonoran-understandability.js';
-import { rankCandidates, ASSOCIATION_SEEDS } from './fonoran-expression-candidates.js';
+import { rankCandidates, multisetKey, ASSOCIATION_SEEDS } from './fonoran-expression-candidates.js';
 import { computeBoundaryQuality } from './fonoran-compound-confusability.js';
+import { loadRetiredSpellings } from './fonoran-retired-spellings.js';
+
+// Claimant id for retired spellings. Never a real concept, so spellingTakenBy()
+// reports every retired form as taken for everyone.
+const RETIRED_CLAIMANT = '__retired__';
 
 // 'playtest' is historical provenance: the guess-the-meaning game that produced those 54
 // decisions was removed in July 2026, but the decisions themselves were human judgements and
@@ -52,18 +57,49 @@ export function isCompoundEditoriallyLocked(row) {
 export function createBuildValidationContext({ rootById, rootSpellings, primitiveIds }) {
   const segInventory = rootSpellings.map(root => ({ root, id: root }));
   const resolvedById = new Map();
-  const usedSpellings = new Set(rootSpellings);
+  // spelling → set of claimant ids. Claims are refcounted per claimant so that two concepts
+  // holding the same spelling (a committed homograph like "tamhu") can be registered
+  // together, and releasing one claim does not silently free the spelling for the other.
+  const spellingClaims = new Map();
   const primitiveIdSet = new Set(primitiveIds ?? Object.keys(rootById));
 
+  // A retired spelling is never handed to a different concept (invariant
+  // `retired-reassignment`). Claiming them here makes retirement a hard gate at
+  // selection time instead of a CI failure after the fact: a force run once promoted
+  // `safe` onto `tampe`, which had been retired from `peace`.
+  for (const entry of loadRetiredSpellings()) {
+    if (!spellingClaims.has(entry.form)) spellingClaims.set(entry.form, new Set());
+    spellingClaims.get(entry.form).add(RETIRED_CLAIMANT);
+  }
+
+  function claim(spelling, claimantId) {
+    if (!spellingClaims.has(spelling)) spellingClaims.set(spelling, new Set());
+    spellingClaims.get(spelling).add(claimantId);
+  }
+  function release(spelling, claimantId) {
+    const claimants = spellingClaims.get(spelling);
+    if (!claimants) return;
+    claimants.delete(claimantId);
+    if (!claimants.size) spellingClaims.delete(spelling);
+  }
+
+  for (const spelling of rootSpellings) claim(spelling, `root:${spelling}`);
   for (const [id, spelling] of Object.entries(rootById)) {
     resolvedById.set(id, { roots: [spelling], spelling });
   }
 
   return {
     resolvedById,
-    usedSpellings,
     segInventory,
     primitiveIdSet,
+
+    /** Is this spelling claimed by anyone other than conceptId? */
+    spellingTakenBy(spelling, conceptId) {
+      const claimants = spellingClaims.get(spelling);
+      if (!claimants) return false;
+      for (const c of claimants) if (c !== conceptId) return true;
+      return false;
+    },
 
     /** Register a compound's preferred form in the working graph. */
     recordCompound(conceptId, composition) {
@@ -72,8 +108,8 @@ export function createBuildValidationContext({ rootById, rootSpellings, primitiv
       const rootSeq = composition.flatMap(id => resolvedById.get(id).roots);
       const spelling = rootSeq.join('');
       const prev = resolvedById.get(conceptId);
-      if (prev?.spelling) usedSpellings.delete(prev.spelling);
-      usedSpellings.add(spelling);
+      if (prev?.spelling) release(prev.spelling, conceptId);
+      claim(spelling, conceptId);
       resolvedById.set(conceptId, { roots: rootSeq, spelling });
       return { rootSeq, spelling };
     },
@@ -82,7 +118,7 @@ export function createBuildValidationContext({ rootById, rootSpellings, primitiv
     clearCompound(conceptId) {
       const prev = resolvedById.get(conceptId);
       if (prev?.spelling && primitiveIdSet.has(conceptId) === false) {
-        usedSpellings.delete(prev.spelling);
+        release(prev.spelling, conceptId);
         resolvedById.delete(conceptId);
       }
     },
@@ -108,11 +144,8 @@ export function validateComposition(conceptId, composition, buildCtx) {
 
   const rootSeq = composition.flatMap(id => buildCtx.resolvedById.get(id).roots);
   const spelling = rootSeq.join('');
-  const existing = buildCtx.resolvedById.get(conceptId);
-  const spellingTaken = buildCtx.usedSpellings.has(spelling)
-    && existing?.spelling !== spelling;
 
-  if (spellingTaken) {
+  if (buildCtx.spellingTakenBy(spelling, conceptId)) {
     return { valid: false, reason: `spelling "${spelling}" collides` };
   }
 
@@ -200,8 +233,11 @@ export function selectPreferred(conceptId, {
   const currentPhoneticPenalty = current.some(r => difficultRootIds.has(r)) ? 0.005 : 0;
   const currentScore = Math.max(0, scoreUnderstandability(current, {
     metaFor: rankCtx.metaFor,
-    collisionCount: rankCtx.collisionCounts?.get(currentKey) ?? 1,
+    collisionCount: rankCtx.collisionCountFor?.(conceptId, current)
+      ?? (rankCtx.collisionCounts?.get(currentKey) ?? 1),
+    orderCollisionCount: rankCtx.orderCollisionCountFor?.(conceptId, current) ?? 0,
     flatCount: currentFlat,
+    glossAlignment: rankCtx.glossAlignFor?.(conceptId, current) ?? null,
   }).score - currentPhoneticPenalty);
 
   if (locked || isPreferredLocked(preferredSource)) {
@@ -228,17 +264,37 @@ export function selectPreferred(conceptId, {
 
   const ranked = rankCandidates(conceptId, pool, rankCtx);
   let validRanked = ranked
-    .map(r => ({ ...r, validation: validateComposition(conceptId, r.composition, buildCtx) }))
+    .map(r => ({
+      ...r,
+      validation: validateComposition(conceptId, r.composition, buildCtx),
+      order_collisions: rankCtx.orderCollisionCountFor?.(conceptId, r.composition) ?? 0,
+    }))
     .filter(r => r.validation.valid);
 
-  // Prefer campfire-passing candidates, then heuristic understandability / flat / boundary.
+  // Prefer campfire-passing candidates, then collision-free ones, then heuristic
+  // understandability / flat / boundary. Collision-freedom is a tier, not a score nudge:
+  // a composition whose root multiset another concept already claims (fire+food vs
+  // food+fire) is a riddle for both concepts. But it may not buy its way out with
+  // length: a clean candidate only outranks a colliding one when it is not longer.
+  // Editorial review showed padding a compound to dodge a collision (gift give+thing →
+  // give+thing+good) is always the wrong resolution — the collision wants an editorial
+  // fix (merge the concepts or recompose one), not a longer word (semantic economy).
   validRanked = validRanked.sort((a, b) => {
     const aCamp = a.campfire_score ?? 0;
     const bCamp = b.campfire_score ?? 0;
     if (bCamp !== aCamp) return bCamp - aCamp;
-    if (b.understandability !== a.understandability) return b.understandability - a.understandability;
     const aFlat = a.validation.flat_count ?? flatCountFor(a.composition) ?? 99;
     const bFlat = b.validation.flat_count ?? flatCountFor(b.composition) ?? 99;
+    const aCollides = a.order_collisions > 0 ? 1 : 0;
+    const bCollides = b.order_collisions > 0 ? 1 : 0;
+    if (aCollides !== bCollides) {
+      const clean = aCollides ? b : a;
+      const colliding = aCollides ? a : b;
+      const cleanFlat = aCollides ? bFlat : aFlat;
+      const collidingFlat = aCollides ? aFlat : bFlat;
+      if (cleanFlat <= collidingFlat) return clean === a ? -1 : 1;
+    }
+    if (b.understandability !== a.understandability) return b.understandability - a.understandability;
     if (aFlat !== bFlat) return aFlat - bFlat;
     const aBoundary = computeBoundaryQuality(a.validation.rootSeq ?? []).score;
     const bBoundary = computeBoundaryQuality(b.validation.rootSeq ?? []).score;
@@ -267,8 +323,18 @@ export function selectPreferred(conceptId, {
   let promoteReason = currentTooLong && !beatScore ? 'flattened length' : 'score';
   let promoteSource = 'heuristic';
 
+  // An order-only change (same roots, different order) is noise by definition unless the
+  // scoring can actually tell the orders apart, so even a force run must beat the current
+  // form by the real margin before swapping. Without this, pairs like walk/stop churn
+  // between move+still and still+move on tie-break differences.
+  const orderOnlyChange = topKey !== currentKey
+    && multisetKey(top.composition) === multisetKey(current);
+  const orderOnlyHold = orderOnlyChange
+    && top.understandability < currentScore + DEFAULT_SCORE_MARGIN
+    && currentValid;
+
   if (force) {
-    shouldPromote = topKey !== currentKey;
+    shouldPromote = topKey !== currentKey && !orderOnlyHold;
     promoteReason = 'four_rules_force';
     promoteSource = 'heuristic';
     winner = top;
@@ -291,7 +357,7 @@ export function selectPreferred(conceptId, {
       promoteSource = 'heuristic';
     }
   } else {
-    shouldPromote = topKey !== currentKey && beatScore;
+    shouldPromote = topKey !== currentKey && beatScore && !orderOnlyHold;
     promoteReason = 'score';
 
     if (!currentValid && topKey !== currentKey) {
@@ -308,7 +374,9 @@ export function selectPreferred(conceptId, {
       ? 'within length limit'
       : (lengthOnly && currentTooLong
         ? 'no shorter alternate'
-        : (winnerKey === currentKey ? 'already optimal' : 'policy held current'));
+        : (orderOnlyHold
+          ? 'order-only change below margin'
+          : (winnerKey === currentKey ? 'already optimal' : 'policy held current')));
     return {
       preferred: { composition: current, gloss },
       preferred_source: 'heuristic',
@@ -328,8 +396,11 @@ export function selectPreferred(conceptId, {
       understandability: currentScore,
       label: scoreUnderstandability(current, {
         metaFor: rankCtx.metaFor,
-        collisionCount: rankCtx.collisionCounts?.get(currentKey) ?? 1,
+        collisionCount: rankCtx.collisionCountFor?.(conceptId, current)
+          ?? (rankCtx.collisionCounts?.get(currentKey) ?? 1),
+        orderCollisionCount: rankCtx.orderCollisionCountFor?.(conceptId, current) ?? 0,
         flatCount: currentFlat,
+        glossAlignment: rankCtx.glossAlignFor?.(conceptId, current) ?? null,
       }).label,
       status: statusFromScore(currentScore),
       source: 'demoted_heuristic',
@@ -397,13 +468,46 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
     primitiveIds: ctx.primitiveIds,
   });
 
+  // Every row's committed spelling is claimed up front (refcounted, so committed homographs
+  // register cleanly). Without this, a row processed earlier in topological order can be
+  // promoted *into* a spelling that a later row currently owns — how `forget` (heuristic)
+  // ended up sharing "tamhu" with the locked `ignorance`, and how a force run once moved
+  // `shake` onto `wheel`'s spelling. Rows are re-recorded with their final form as the loop
+  // decides them; compositions whose parts are not yet resolvable register in loop order.
+  const sorted = topologicalSortCompounds(rows);
+  for (const row of sorted) {
+    buildCtx.recordCompound(row.concept, row.composition);
+  }
+
+  // Working order-collision claims: which concepts currently hold each root multiset.
+  // Initialized from every row's committed preferred and updated as the loop re-decides
+  // rows, so a candidate is penalized for colliding with any concept's *current* claim,
+  // not just with the state of the committed file.
+  const workingMultiset = new Map();
+  const claimMultiset = (conceptId, comp) => {
+    if (!comp?.length) return;
+    const mk = multisetKey(comp);
+    if (!workingMultiset.has(mk)) workingMultiset.set(mk, new Set());
+    workingMultiset.get(mk).add(conceptId);
+  };
+  const releaseMultiset = (conceptId, comp) => {
+    if (!comp?.length) return;
+    const claimants = workingMultiset.get(multisetKey(comp));
+    if (!claimants) return;
+    claimants.delete(conceptId);
+  };
+  for (const row of rows) claimMultiset(row.concept, row.composition);
+  const orderCollisionCountFor = (conceptId, comp) => {
+    const claimants = workingMultiset.get(multisetKey(comp));
+    if (!claimants) return 0;
+    return claimants.size - (claimants.has(conceptId) ? 1 : 0);
+  };
+
   const workingPreferred = new Map();
   const promotions = [];
   const demoTrees = ctx.demoTrees ?? new Map();
   // Pass difficultRootIds through options so selectPreferred can waive its score margin.
   const effectiveOptions = { ...options, difficultRootIds: ctx.difficultRootIds ?? new Set() };
-
-  const sorted = topologicalSortCompounds(rows);
 
   for (const row of sorted) {
     const current = row.composition;
@@ -420,6 +524,9 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
     const rankCtx = {
       metaFor: ctx.metaFor,
       collisionCounts: ctx.collisionCounts,
+      collisionCountFor: ctx.collisionCountFor,
+      orderCollisionCountFor,
+      glossAlignFor: ctx.glossAlignFor,
       flatCountFor,
       difficultRootIds: ctx.difficultRootIds,
     };
@@ -440,6 +547,8 @@ export function optimizeCompoundInventory(compounds, ctx, options = {}) {
     const preferredComposition = selection.preferred.composition;
     workingPreferred.set(row.concept, preferredComposition);
     buildCtx.recordCompound(row.concept, preferredComposition);
+    releaseMultiset(row.concept, current);
+    claimMultiset(row.concept, preferredComposition);
 
     if (selection.promoted) {
       promotions.push({
@@ -483,8 +592,11 @@ export function deriveAlternatesForCompound(row, rankCtx) {
       const k = compositionKey(comp);
       const s = scoreUnderstandability(comp, {
         metaFor: rankCtx.metaFor,
-        collisionCount: rankCtx.collisionCounts?.get(k) ?? 1,
+        collisionCount: rankCtx.collisionCountFor?.(row.concept, comp)
+          ?? (rankCtx.collisionCounts?.get(k) ?? 1),
+        orderCollisionCount: rankCtx.orderCollisionCountFor?.(row.concept, comp) ?? 0,
         flatCount: rankCtx.flatCountFor?.(comp) ?? null,
+        glossAlignment: rankCtx.glossAlignFor?.(row.concept, comp) ?? null,
       });
       return {
         composition: comp,

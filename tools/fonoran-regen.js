@@ -99,6 +99,7 @@ export async function optimizeCompoundsInStore({ lengthOnly = false } = {}) {
     ...rootGraph,
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
     demoTrees,
   }, { lengthOnly });
 
@@ -111,6 +112,7 @@ export async function optimizeCompoundsInStore({ lengthOnly = false } = {}) {
   const rankCtx = {
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
     flatCountFor,
   };
 

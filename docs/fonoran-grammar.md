@@ -213,7 +213,7 @@ Polarity is grammar, not vocabulary — **false** is `no` + **true**, **differen
 
 Particles occupy fixed positions within the sentence skeleton; they never fuse into adjacent spellings.
 
-- **Negation** immediately precedes the constituent it negates. Usually that is the Action, which negates the clause (*I am not dangerous* -> `mi no daltes`), but it can equally be a Target noun (*I have no weapon* -> `mi gat no dakpa`) or a quality (*not safe* -> `no kamgu`). Scope is the constituent it precedes, so in a multi-clause sentence a `no` in one clause does not negate the others: *I will try and I will not stop* is `mi sa gisak mi sa no tigi`, where the negation reaches only the second clause.
+- **Negation** immediately precedes the constituent it negates. Usually that is the Action, which negates the clause (*I am not dangerous* -> `mi no gamdal`), but it can equally be a Target noun (*I have no weapon* -> `mi gat no dakpa`) or a quality (*not safe* -> `no kamgu`). Scope is the constituent it precedes, so in a multi-clause sentence a `no` in one clause does not negate the others: *I will try and I will not stop* is `mi sa gisak mi sa no gitam`, where the negation reaches only the second clause.
 - **Quantifier pronouns compose** rather than taking their own root: *nobody* = `no` + **person**, *nothing* = `no` + **thing**, *everyone* = **all** + **person**, *everything* = **all** + **thing**, *someone* = **some** + **person**.
 - **Questions** open with `ka` and are written with no terminator: content questions compose from concepts behind it (see above).
 
@@ -351,7 +351,7 @@ Time and Place may front as scene-setting (they cannot be mistaken for core role
 ```text
 mi tel lo gem         (I eat food now)
 gem mi tel lo         (now, I eat food)
-mi tel lo nalche      (I eat food at-home)
+mi tel lo mesche      (I eat food at-home)
 mi gi ye              (I go to the water — bare destination)
 ```
 
@@ -835,7 +835,7 @@ The following topics extend this specification without breaking Rules 1 through 
 | Topic | Status |
 | --- | --- |
 | Pronouns | **Partial** — `mi` particle; `you`/`we`/`he`/`she` resolve to roots |
-| Negation | **v1** — `no` immediately precedes the negated constituent, whether an Action (`mi no daltes`, I am not dangerous), a Target noun (`mi gat no dakpa`, I have no weapon), or a quality (`no kamgu`, not safe). Measured across 209 negated corpus phrases. Scope is the constituent it precedes, so one clause's `no` does not negate another's. The frame slot that carries `no` varies by parse and is not a placement rule |
+| Negation | **v1** — `no` immediately precedes the negated constituent, whether an Action (`mi no gamdal`, I am not dangerous), a Target noun (`mi gat no dakpa`, I have no weapon), or a quality (`no kamgu`, not safe). Measured across 209 negated corpus phrases. Scope is the constituent it precedes, so one clause's `no` does not negate another's. The frame slot that carries `no` varies by parse and is not a placement rule |
 | Questions | **v1** — clause-initial **ka**, both polar and content; content questions add *nohu* "unknown" + a **dimension** (person/thing/place/time/cause/manner/count). *how* → `nohu moyu` (manner = do+form). *how many* / *how much* → `nohu tan` (count). Degree (*how far*) is a polar probe for now. Never `nohu lek`: many is a value, not the axis. |
 | Comparisons | Open |
 | Numbers | **Open** — cardinals 1–99 are specified in [fonoran-numerals.md](fonoran-numerals.md) but **not implemented**: no numeral appears in any seed file and the translator returns number words unresolved |

@@ -128,6 +128,7 @@ async function main() {
     ...rootGraph,
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
     demoTrees,
   });
 
@@ -138,6 +139,7 @@ async function main() {
   const rankCtx = {
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
     flatCountFor: comp => finalResolver.flatCount(comp),
   };
 

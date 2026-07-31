@@ -337,6 +337,7 @@ export async function handleFonoranApi(req, res, pathname, method) {
       const candidates = generateCandidates(body.concept_id, {
         metaFor: ctx.metaFor,
         collisionCounts: ctx.collisionCounts,
+        collisionCountFor: ctx.collisionCountFor,
         knownComposition: ctx.knownByConcept.get(body.concept_id),
         flatCountFor: ctx.flatCountFor,
         extraCompositions: extra,

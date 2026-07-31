@@ -157,7 +157,7 @@ Closed means closed. Adding a particle changes the grammar itself, not the vocab
 Negation is positional, and its position *is* its meaning. It scopes over exactly the thing to its right.
 
 ```text
-mi no daltes         I am not dangerous       (denies the action)
+mi no gamdal         I am not dangerous       (denies the action)
 mi gat no dakpa      I have no weapon         (denies the thing)
 no kamgu             not safe                 (denies the quality)
 ```

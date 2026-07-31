@@ -156,18 +156,18 @@ Each row is the transitive import closure of one entry point, so a module needed
 | --- | --- | --- |
 | Root generation, everything it needs | `tools/fonoran-root-sound-assign.js` | 8 |
 | Compound selection, everything it needs | `tools/fonoran-preferred-select.js` | 15 |
-| Translation, everything it needs | `tools/fonoran-translate.js` | 35 |
-| **The language, all three combined** | | **49** |
+| Translation, everything it needs | `tools/fonoran-translate.js` | 37 |
+| **The language, all three combined** | | **51** |
 | Booting the web server | `server.js` | 71 |
-| The whole repo, excluding vendored code | | 234 |
+| The whole repo, excluding vendored code | | 236 |
 
-Supporting cast: 114 browser files under `js/`, 76 under `tools/`, 35 under `scripts/`, 38 vendored text-to-speech files, 47 JSON files in `data/`, and 4 more in the external data repo.
+Supporting cast: 114 browser files under `js/`, 78 under `tools/`, 35 under `scripts/`, 38 vendored text-to-speech files, 47 JSON files in `data/`, and 4 more in the external data repo.
 
-**38 of the 76 `tools/` files are not part of the language at any point.**
+**38 of the 78 `tools/` files are not part of the language at any point.**
 
 ## So could it be five files?
 
-Not five, but 49 is closer than the 56 this page reported before the hand-written English rules came out. Translation fell from 48 modules to 35 when the pattern cascade, the irregular verb table, and the second and third lemmatizers were deleted and `wink-nlp` was left to own English. Fonoran itself was never the big part; understanding English was.
+Not five, but close to the 49 this page reported before the parser boundary landed, and well under the 56 before the hand-written English rules came out. Translation fell from 48 modules to 35 when the pattern cascade, the irregular verb table, and the second and third lemmatizers were deleted and `wink-nlp` was left to own English; it then took back 2 small modules (`fonoran-source-parsers.js`, `fonoran-source-english.js`) to make the source-language boundary real — a trade of count for shape, since those two are what let a second language be a module instead of a pipeline. Fonoran itself was never the big part; understanding English was.
 
 A realistic target is still one module per stage, roughly 10 to 15 for the language.
 
@@ -186,7 +186,7 @@ Measured, not guessed. Each is a candidate, not a decision.
 **Structural fat, in the order that would help most:**
 
 1. ~~**Collapse the store to one source.**~~ Done. The Postgres path is gone and the seeds are read directly; the lab bucket survives as a derived build artifact.
-2. ~~**Isolate the English front end.**~~ Mostly done. `wink-nlp` owns tokenizing and lemmatizing through the single `tools/fonoran-english-morphology.js`, and the hand-written pattern cascade, the 48-entry irregular past table, and the duplicate lemmatizers are gone. What remains is `fonoran-interpretation.js` and `fonoran-english-resolve.js`, which still hold English-shaped rules and are the next thing to shrink.
+2. ~~**Isolate the English front end.**~~ Done as a boundary, not yet proven by a second language. `wink-nlp` owns tokenizing and lemmatizing through the single `tools/fonoran-english-morphology.js`, and the whole English front end now sits behind the parser contract in `tools/fonoran-source-parsers.js`: `sourceLang` selects a parser from the registry (a language with no parser is refused, never silently read as English), and a parser emits the neutral slot structure — particle ids and concept ids, never a Fonoran spelling. English is `tools/fonoran-source-english.js`, and it also supplies the resolver's language: `buildResolveContext` takes the parser's `lang` and `morphology` hooks, loads `localizations/<lang>.json`, and never calls an English function by name — a stub non-English parser in the test suite proves that contract end to end. What remains before a real second language: a localization seed for it, a per-language home for the curated interpretation rules (today English data in `data/fonoran-interpretation-rules.json` plus word lists in `fonoran-interpretation.js`), and the parser itself.
 3. **The GUI.** If the workflow is you and me editing seeds directly, then Word Manager and the proposal review screens are surface area maintaining a second way to change the language.
 
 ## If this page and the code disagree

@@ -22,9 +22,15 @@ export const LAZY_GLUE_ROOTS = new Set([
   'make', 'do', 'thing', 'form', 'part', 'change', 'source', 'substance', 'mark',
 ]);
 
-/** Functional anchors for tool-like concepts — at least one required. */
+/**
+ * Functional anchors for tool-like concepts — at least one required.
+ *
+ * `hand` is deliberately absent: treating the body-part root as a "manipulate/give" verb
+ * is English polysemy (hand-the-verb, as in "hand me the tool") leaking into the heuristic.
+ * The Fonoran concept `hand` is only the body part; function is carried by use/hold/take/give.
+ */
 export const TOOL_FUNCTION_ROOTS = new Set([
-  'use', 'hand', 'hold', 'take', 'bound', 'conflict', 'help', 'give', 'move',
+  'use', 'hold', 'take', 'bound', 'conflict', 'help', 'give', 'move',
 ]);
 
 let _cache = null;

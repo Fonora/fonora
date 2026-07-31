@@ -80,6 +80,9 @@ export async function runFourRulesRegen(argv = []) {
     ...rootGraph,
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
+    orderCollisionCountFor: candidateCtx.orderCollisionCountFor,
+    glossAlignFor: candidateCtx.glossAlignFor,
     difficultRootIds: candidateCtx.difficultRootIds,
   }, {
     force: opts.force && !forceConcepts,
@@ -95,6 +98,9 @@ export async function runFourRulesRegen(argv = []) {
   const rankCtx = {
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
+    orderCollisionCountFor: candidateCtx.orderCollisionCountFor,
+    glossAlignFor: candidateCtx.glossAlignFor,
     flatCountFor: comp => finalResolver.flatCount(comp),
     difficultRootIds: candidateCtx.difficultRootIds,
   };

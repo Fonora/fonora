@@ -318,11 +318,14 @@ export function scoreCompound(row, ctx) {
 /**
  * How well does one candidate composition match a gloss?
  *
+ * Exported so candidate ranking can use gloss alignment as a scoring factor
+ * (tools/fonoran-expression-candidates.js), not just the audit report.
+ *
  * @param {string[]} composition
  * @param {string[]} glossTokens
  * @param {ReturnType<typeof buildSemanticContext>} ctx
  */
-function glossSupportFor(composition, glossTokens, ctx) {
+export function glossSupportFor(composition, glossTokens, ctx) {
   if (!composition.length) return { supported: 0, total: 0, score: 0, by_name: 0 };
   let supported = 0;
   let byName = 0;

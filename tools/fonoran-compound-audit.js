@@ -113,9 +113,11 @@ export async function runCompoundAudit() {
   const roots = approved?.roots ?? [];
   const metaFor = candidateCtx.metaFor;
   const collisionCounts = candidateCtx.collisionCounts;
+  const collisionCountFor = candidateCtx.collisionCountFor;
   const rankCtx = {
     metaFor,
     collisionCounts,
+    collisionCountFor,
     flatCountFor: comp => resolver.flatCount(comp),
   };
   const rootGraph = {
@@ -132,6 +134,7 @@ export async function runCompoundAudit() {
     primitiveIds: rootGraph.primitiveIds,
     metaFor,
     collisionCounts,
+    collisionCountFor,
     demoTrees,
   };
   const { compounds: optimizedRows } = optimizeCompoundInventory(

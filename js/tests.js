@@ -41,7 +41,8 @@ import {
   piperSkipsLaxAutoStress,
 } from './piper-audio.js';
 import { buildMermaidGraph } from '../tools/fonoran-graph.js';
-import { translateEnglishLegacy as translateEnglish, resetTranslatorCache } from '../tools/fonoran-translator.js';
+import { translateEnglishLegacy as translateEnglish, translateFromSource, resetTranslatorCache } from '../tools/fonoran-translator.js';
+import { translate as translateRouted } from '../tools/fonoran-translate.js';
 import { loadLanguageRulesFromMarkdown } from './load-language-rules.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { parseSyllable, isValidSyllable, buildSyllable, enumerateOpenSyllables, enumerateAllSyllables } from '../tools/fonoran-pronunciation.js';
@@ -612,6 +613,65 @@ const fonoranTranslatorResult = await (async () => {
       assert(t.resolution_kind !== 'semantic' && t.resolution_kind !== 'alias_weak',
         `runtime must not use WordNet/weak tier: ${t.english} -> ${t.resolution_kind}`);
     }
+
+    return { name: testName, ok: true };
+  } catch (e) {
+    return { name: testName, ok: false, error: e.message };
+  }
+})();
+
+const sourceParserContractResult = await (async () => {
+  const testName = 'source parser contract: engine renders any parser; unknown languages are refused';
+  try {
+    // A stub parser for a language the repo has never seen. It emits ONLY the
+    // neutral meaning — concept ids and particle ids, no English surfaces and
+    // no Fonoran spellings — which is exactly what the contract in
+    // tools/fonoran-source-parsers.js promises is enough.
+    const stubParser = {
+      lang: 'xx',
+      morphology: {
+        lemmatize: w => String(w ?? '').toLowerCase(),
+        inflectedLemma: () => null,
+        lemmaCandidates: w => [String(w ?? '').toLowerCase()],
+      },
+      splitSentences: text => [String(text ?? '').trim()],
+      isQuestionSentence: () => false,
+      compileSlots: async () => ({
+        subject: [{ english: 'stub-person', role: 'subject', concept_id: 'person' }],
+        time: [{ english: 'past', role: 'time', particle_id: 'tense_past' }],
+        event: [{ english: 'stub-eat', role: 'event', concept_id: 'eat' }],
+        path: [],
+        object: [{ english: 'stub-animal', role: 'object', concept_id: 'animal' }],
+        modifiers: [],
+        mode: 'sentence',
+      }),
+    };
+
+    const out = await translateFromSource('opaque source text', { parser: stubParser });
+    assert(out.unresolved.length === 0, `stub parser unresolved: ${out.unresolved.join(', ')}`);
+    assert(out.tokens.length === 4, `stub parser token count: ${out.tokens.length}`);
+    assert(out.tokens[0].concept_id === 'person', `stub actor: ${JSON.stringify(out.tokens[0])}`);
+    assert(out.tokens[1].kind === 'particle' && out.tokens[1].english === 'past',
+      `stub tense from particle_id: ${JSON.stringify(out.tokens[1])}`);
+    assert(out.tokens[2].concept_id === 'eat', `stub action: ${JSON.stringify(out.tokens[2])}`);
+    assert(out.tokens[3].concept_id === 'animal', `stub target: ${JSON.stringify(out.tokens[3])}`);
+    assert(out.surface.roman === out.tokens.map(t => t.fonoran).join(' '),
+      `stub roman assembles from tokens: ${out.surface.roman}`);
+
+    // The same sentence through the English parser must agree word for word:
+    // one engine, and the parser only decides what fills the slots.
+    const viaEnglish = await translateEnglish('the man ate animal');
+    assert(viaEnglish.surface.roman === out.surface.roman,
+      `stub parser and English parser disagree: ${out.surface.roman} vs ${viaEnglish.surface.roman}`);
+
+    // A language with no installed parser is refused honestly, never silently
+    // read as English.
+    const unsupported = await translateRouted('hola amigo', { sourceLang: 'es' });
+    assert(unsupported.mode === 'unsupported-source-language',
+      `unsupported language mode: ${unsupported.mode}`);
+    assert(unsupported.supported_source_langs.includes('en'),
+      `supported langs: ${JSON.stringify(unsupported.supported_source_langs)}`);
+    assert(unsupported.surface.roman === '', `unsupported must not emit output: ${unsupported.surface.roman}`);
 
     return { name: testName, ok: true };
   } catch (e) {
@@ -1384,6 +1444,7 @@ const allFailed = [
   ...(flapResult.ok ? [] : [flapResult]),
   ...(perroResult.ok ? [] : [perroResult]),
   ...(fonoranTranslatorResult.ok ? [] : [fonoranTranslatorResult]),
+  ...(sourceParserContractResult.ok ? [] : [sourceParserContractResult]),
   ...(ipaFormatResult.ok ? [] : [ipaFormatResult]),
   ...(voiceResult.ok ? [] : [voiceResult]),
   ...(boundaryResult.ok ? [] : [boundaryResult]),
@@ -1420,6 +1481,7 @@ const allPassed =
   + (flapResult.ok ? 1 : 0)
   + (perroResult.ok ? 1 : 0)
   + (fonoranTranslatorResult.ok ? 1 : 0)
+  + (sourceParserContractResult.ok ? 1 : 0)
   + (voiceResult.ok ? 1 : 0)
   + (boundaryResult.ok ? 1 : 0)
   + (boundaryPassResult.ok ? 1 : 0)
@@ -1428,7 +1490,7 @@ const allPassed =
   + (prefixSafeResult.ok ? 1 : 0)
   + (rootWorkflowResult.ok ? 1 : 0)
   + (labSearchResult.ok ? 1 : 0);
-const allTotal = total + keyboardTotal + authResults.length + coursePhrasesResults.length + corpusResults.length + languagePolicyResults.length + 27;
+const allTotal = total + keyboardTotal + authResults.length + coursePhrasesResults.length + corpusResults.length + languagePolicyResults.length + 28;
 
 for (const f of allFailed) console.error('FAIL:', f.name, '-', f.error);
 console.log(`${allPassed}/${allTotal} tests passed`);

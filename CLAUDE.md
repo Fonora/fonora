@@ -35,12 +35,25 @@ disagree, that is a bug in the architecture, not a difference in features.
 adding a constant, a list, or a helper, search for it: it usually exists. This
 codebase has had three separate English lemmatizers at once, all with the same bug.
 
-**The honest gap.** We are not there yet. The forward path is English-only and about
-5,000 lines, most of which is rule-by-rule English handling that rules 1 and 4 say
-should not exist. `sourceLang` currently only asks "is this Fonoran or not". Closing
-that gap is the standing priority; every change should move toward the diagram, and
-none should move away from it. When you are unsure whether something is an exception
-worth making, it is not. Ask.
+**The honest gap.** The boundary in the diagram now exists in code:
+`tools/fonoran-source-parsers.js` is the parser registry, `sourceLang` selects a
+parser from it (an uninstalled language is refused honestly, never silently read as
+English), and a parser hands the engine a language-neutral slot structure that names
+grammar facts by particle id and concepts by concept id — never a Fonoran spelling.
+English is the one installed parser (`tools/fonoran-source-english.js` plus the
+wink-nlp-backed parse/morphology modules, ~1,200 lines), and `wink-nlp` owns part of
+speech, lemma, and clause shape. Resolution is parameterized too: the parser supplies
+its language code and morphology hooks, and `buildResolveContext` loads
+`localizations/<lang>.json` and lemmatizes through those hooks — a stub non-English
+parser in the test suite proves the engine side of the contract end to end. What
+remains: only an English localization seed exists, the curated interpretation rules
+(`data/fonoran-interpretation-rules.json` and the word lists in
+`fonoran-interpretation.js`) are English data with no per-language equivalent yet,
+and no real second parser has been installed. Adding a language means adding a parser
+module and a localization seed, never adding rules to the engine. That is the
+standing priority; every change should move toward the diagram, and none should move
+away from it. When you are unsure whether something is an exception worth making, it
+is not. Ask.
 
 ## Read first
 

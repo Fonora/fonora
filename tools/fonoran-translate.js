@@ -1,15 +1,19 @@
 /**
- * Unified Fonoran translate API: the deterministic English compiler, or the reverse
+ * Unified Fonoran translate API: the deterministic forward compiler, or the reverse
  * Fonoran to English gloss.
  *
- * There is one forward engine, and it is the language. A model-backed compiler used to sit
- * behind `engine: 'llm'` here, which meant every consumer of this module loaded LLM code and
- * any caller could silently opt into output no rule can reproduce. It is gone.
+ * There is one forward engine, and it is the language. The source language selects a
+ * parser from fonoran-source-parsers.js (English is the one installed today); a language
+ * with no parser is answered honestly rather than silently read as English. A
+ * model-backed compiler used to sit behind `engine: 'llm'` here, which meant every
+ * consumer of this module loaded LLM code and any caller could silently opt into output
+ * no rule can reproduce. It is gone.
  *
  * `legacy` and `lexical` remain accepted engine names, since scripts and tests pass them.
  */
 
-import { translateEnglishLegacy } from './fonoran-translator.js';
+import { translateFromSource } from './fonoran-translator.js';
+import { getSourceParser, supportedSourceLangs } from './fonoran-source-parsers.js';
 import {
   translateFromFonoran,
   isFonoranSourceLang,
@@ -48,7 +52,31 @@ export async function translate(text, options = {}) {
     });
   }
 
-  const result = await translateEnglishLegacy(text, { lab: options.lab });
+  const parser = getSourceParser(options.sourceLang);
+  if (!parser) {
+    // An honest refusal beats reading Spanish with the English parser: the output
+    // would be fluent-looking and wrong, which is exactly what the engine never does.
+    return {
+      input: String(text ?? ''),
+      mode: 'unsupported-source-language',
+      error: `no parser installed for source language "${options.sourceLang}"`,
+      supported_source_langs: supportedSourceLangs(),
+      tokens: [],
+      surface: { roman: '', parts: [], pronunciation: { sayLine: '', englishLine: '' } },
+      semantic: null,
+      frame: null,
+      interpretations: [],
+      unresolved: [],
+      engine: 'legacy',
+      direction: 'to-fonoran',
+    };
+  }
+
+  const result = await translateFromSource(text, {
+    parser,
+    lab: options.lab,
+    devLab: options.devLab,
+  });
   return { ...result, engine: 'legacy', direction: 'to-fonoran' };
 }
 
