@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-07-20T06:22:28.927Z",
+  "generated_at": "2026-07-31T18:00:39.407Z",
   "phonetic_seed_pass": true,
   "primitive_phonetic_pass": true,
   "banned_primitive_roots": [],
   "dirty_seeds": [],
-  "total": 454,
-  "pass_count": 451,
+  "total": 455,
+  "pass_count": 448,
   "failure_count": 0,
-  "warning_count": 3,
-  "pass_rate": 0.9933920704845814,
+  "warning_count": 7,
+  "pass_rate": 0.9846153846153847,
   "failures": [],
   "warnings": [
     {
@@ -24,7 +24,7 @@
       "composition": "thing+water",
       "score": 0.65,
       "issues": [
-        "boat (tool or handheld object) needs one of: use, hand, hold, take, bound, conflict, help, give…"
+        "boat (tool or handheld object) needs one of: use, hold, take, bound, conflict, help, give, move…"
       ]
     },
     {
@@ -33,6 +33,38 @@
       "score": 0.6,
       "issues": [
         "too many lazy-glue roots (conflict+thing) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "manner",
+      "composition": "do+form",
+      "score": 0.6,
+      "issues": [
+        "too many lazy-glue roots (do+form) — need a concrete functional anchor"
+      ]
+    },
+    {
+      "concept": "needle",
+      "composition": "hand+through",
+      "score": 0.65,
+      "issues": [
+        "needle (tool or handheld object) needs one of: use, hold, take, bound, conflict, help, give, move…"
+      ]
+    },
+    {
+      "concept": "plank",
+      "composition": "plant+hand",
+      "score": 0.65,
+      "issues": [
+        "plank (tool or handheld object) needs one of: use, hold, take, bound, conflict, help, give, move…"
+      ]
+    },
+    {
+      "concept": "rope",
+      "composition": "hand+plant",
+      "score": 0.65,
+      "issues": [
+        "rope (tool or handheld object) needs one of: use, hold, take, bound, conflict, help, give, move…"
       ]
     }
   ],

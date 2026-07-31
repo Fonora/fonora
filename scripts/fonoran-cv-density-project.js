@@ -274,7 +274,7 @@ const report = {
     go_no_go_for_pilot: [
       'Projections show free CVC headroom or a clear reshuffle path for Ring-1 excess CV',
       'Estimated compound length delta stays campfire-friendly (mean compound chars ideally ≤7)',
-      'Production ease (RN-32 CVC×0.62) does not collapse pronounceability Health below ~90',
+      'Production ease (CVC×0.62) does not collapse pronounceability Health below ~90',
       'Only then consider a 5–10 root non-Ring-1 CV→CVC pilot with Learn/golden refresh',
     ],
   },

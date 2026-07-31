@@ -6,17 +6,8 @@ import { extname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { handleAuthRoutes, logAuthStatus } from './tools/fonoran-auth.js';
 import { handleFonoranApi } from './tools/fonoran-api.js';
-import { handleResearchApi } from './tools/research-notes-api.js';
-import { maybeAutoSeedOnStartup, initStore } from './tools/fonoran-store.js';
-import {
-  initCompoundProposalsStore,
-  maybeImportCompoundProposalsFromJson,
-} from './tools/fonoran-compound-proposals.js';
-import {
-  getResearchBootstrapData,
-  initResearchNotesStore,
-  warmPublishedCache,
-} from './tools/research-notes-store.js';
+import { initCommunityStore } from './tools/fonoran-community-store.js';
+import { sendBody } from './tools/http-compress.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const host = process.env.HOST || '0.0.0.0';
@@ -106,10 +97,14 @@ function isScriptAppRoute(pathname) {
   return path === '/script' || path === '/tools' || path === '/learn';
 }
 
-/** /research, /research/timeline, /research/notes/* all render the research notebook shell. */
-function isResearchAppRoute(pathname) {
-  const path = pathname.replace(/\/$/, '') || '/';
-  return path === '/research' || path.startsWith('/research/');
+/**
+ * /showcase was a standalone alignment poster. That view is now the Alignment
+ * modal on the translator, built from the same translate response, so the old URL
+ * points at where the feature lives.
+ */
+function legacyShowcaseRedirect(pathname) {
+  if (pathname === '/showcase' || pathname === '/showcase/') return '/language#translator';
+  return null;
 }
 
 /** /fonoran is a legacy alias for the Language tab (Fonoran the language). */
@@ -128,8 +123,7 @@ function sectionCanonicalRedirect(pathname, search, hash) {
     pathname === '/script/' ||
     pathname === '/tools/' ||
     pathname === '/learn/' ||
-    pathname === '/language/' ||
-    pathname === '/research/'
+    pathname === '/language/'
   ) {
     return `${pathname.slice(0, -1)}${search}${hash}`;
   }
@@ -175,16 +169,20 @@ function cacheControl(pathname) {
     pathname === '/script' ||
     pathname === '/learn' ||
     pathname === '/tools' ||
-    pathname === '/language' ||
-    pathname === '/research'
+    pathname === '/language'
   ) {
     return 'no-cache';
   }
   // WASM / large binary assets are content-stable and safe to pin.
   if (/\.(wasm|data)$/.test(pathname)) return 'public, max-age=31536000, immutable';
+  // Vendored bundles are third-party artifacts pinned by package.json, not our code,
+  // so the staleness argument below does not apply. The speech bundle alone is 44 MB;
+  // revalidating it on every page load was the single largest cost on the site.
+  if (pathname.startsWith('/vendor/')) return 'public, max-age=31536000, immutable';
   // App JS/CSS are served at stable URLs with no content hashes. Never mark them
   // immutable: a year-long pin keeps stale homepage showcases and dictionary
-  // examples alive after deploys (e.g. pakal → yenan).
+  // examples alive after deploys (e.g. pakal → yenan). They still revalidate cheaply,
+  // because every static response carries an ETag.
   if (/\.(js|mjs|css)$/.test(pathname)) return 'no-cache';
   // Markdown docs are edited in place and fetched by the in-app viewer; revalidate
   // so content updates appear immediately instead of being pinned for max-age.
@@ -192,45 +190,22 @@ function cacheControl(pathname) {
   return 'public, max-age=3600';
 }
 
-function researchNoteSlugFromPath(pathname) {
-  const match = pathname.match(/^\/research\/notes\/([^/]+)/);
-  return match ? decodeURIComponent(match[1]) : null;
+/**
+ * A validator built from what a stat already tells us, so `no-cache` costs a 304
+ * instead of a full re-download. Without one, "revalidate every time" meant
+ * "re-send every byte every time".
+ */
+function etagFor(info) {
+  return `W/"${info.size.toString(16)}-${Math.floor(info.mtimeMs).toString(16)}"`;
 }
 
-function injectResearchBootstrap(html, bootstrap) {
-  const json = JSON.stringify(bootstrap).replace(/</g, '\\u003c');
-  const script = `<script type="application/json" id="research-notes-bootstrap">${json}</script>`;
-  return html.replace('</head>', `${script}\n</head>`);
-}
-
-async function serveResearchApp(res, pathname) {
-  const indexPath = join(root, 'research', 'index.html');
-  let body = await readFile(indexPath, 'utf8');
-  try {
-    const slug = researchNoteSlugFromPath(pathname);
-    const bootstrap = await getResearchBootstrapData(slug);
-    body = injectResearchBootstrap(body, bootstrap);
-  } catch (err) {
-    console.warn('Research bootstrap skipped:', err instanceof Error ? err.message : err);
-  }
-  res.writeHead(200, {
-    'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'no-cache',
-    ...SECURITY_HEADERS,
-  });
-  res.end(body);
-}
-
+// The language is read from the committed seeds, so it needs no startup step. Only user data
+// (accounts, lesson progress, votes) lives in Postgres, and only that needs a warm pool.
 async function bootstrapServerData() {
   try {
-    await initStore();
-    await initResearchNotesStore();
-    await initCompoundProposalsStore();
-    await warmPublishedCache();
-    await maybeAutoSeedOnStartup();
-    await maybeImportCompoundProposalsFromJson();
+    await initCommunityStore();
   } catch (err) {
-    console.warn('Fonoran startup init skipped:', err instanceof Error ? err.message : err);
+    console.warn('Fonoran user store init skipped:', err instanceof Error ? err.message : err);
   }
 }
 
@@ -289,11 +264,10 @@ createServer(async (req, res) => {
       return;
     }
 
-    if (url.pathname.startsWith('/api/research/')) {
-      const handled = await handleResearchApi(req, res, url.pathname, method);
-      if (handled) return;
-      res.writeHead(404, { 'Content-Type': 'application/json', ...SECURITY_HEADERS });
-      res.end(JSON.stringify({ error: 'Not found' }));
+    const showcaseRedirect = legacyShowcaseRedirect(url.pathname);
+    if (showcaseRedirect) {
+      res.writeHead(301, { Location: showcaseRedirect, ...SECURITY_HEADERS });
+      res.end();
       return;
     }
 
@@ -313,18 +287,11 @@ createServer(async (req, res) => {
 
     if (isScriptAppRoute(url.pathname)) {
       const indexPath = join(root, 'index.html');
-      const body = await readFile(indexPath);
-      res.writeHead(200, {
+      sendBody(req, res, 200, {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-cache',
         ...SECURITY_HEADERS,
-      });
-      res.end(body);
-      return;
-    }
-
-    if (isResearchAppRoute(url.pathname)) {
-      await serveResearchApp(res, url.pathname);
+      }, await readFile(indexPath));
       return;
     }
 
@@ -333,25 +300,21 @@ createServer(async (req, res) => {
       // /docs is the in-app viewer shell; the repo also has a docs/ directory on disk.
       if (bare === '/docs') {
         const indexPath = join(root, 'index.html');
-        const body = await readFile(indexPath);
-        res.writeHead(200, {
+        sendBody(req, res, 200, {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache',
           ...SECURITY_HEADERS,
-        });
-        res.end(body);
+        }, await readFile(indexPath));
         return;
       }
       const staticPath = resolveFilePath(normalizePathname(url.pathname));
       if (!staticPath || !existsSync(staticPath)) {
         const indexPath = join(root, 'index.html');
-        const body = await readFile(indexPath);
-        res.writeHead(200, {
+        sendBody(req, res, 200, {
           'Content-Type': 'text/html; charset=utf-8',
           'Cache-Control': 'no-cache',
           ...SECURITY_HEADERS,
-        });
-        res.end(body);
+        }, await readFile(indexPath));
         return;
       }
     }
@@ -371,14 +334,24 @@ createServer(async (req, res) => {
       return;
     }
 
-    const body = await readFile(filePath);
-    const type = MIME[extname(filePath)] ?? 'application/octet-stream';
-    res.writeHead(200, {
-      'Content-Type': type,
+    const etag = etagFor(info);
+    const headers = {
+      'Content-Type': MIME[extname(filePath)] ?? 'application/octet-stream',
       'Cache-Control': cacheControl(pathname),
+      ETag: etag,
+      'Last-Modified': new Date(info.mtimeMs).toUTCString(),
       ...SECURITY_HEADERS,
-    });
-    res.end(body);
+    };
+
+    if (req.headers['if-none-match'] === etag) {
+      res.writeHead(304, headers);
+      res.end();
+      return;
+    }
+
+    // The ETag doubles as the identity of this exact file version, so a large
+    // compression is computed once rather than once per visitor.
+    sendBody(req, res, 200, headers, await readFile(filePath), etag);
   } catch {
     res.writeHead(404, SECURITY_HEADERS);
     res.end('Not found');

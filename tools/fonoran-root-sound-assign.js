@@ -12,6 +12,7 @@ import {
 import { scoreEditorialCollision, collisionSafetyScore } from './fonoran-root-collision.js';
 import { scoreCompoundBoundary, boundaryPenalty } from './fonoran-root-boundary-score.js';
 import { isBannedPrimitiveSpelling } from './fonoran-phonetic-weights.js';
+import { isPrefixSafe } from './fonoran-prefix-rule.js';
 
 const GRAMMAR_PARTICLE_PHRASES = [
   ['mi'],
@@ -64,11 +65,38 @@ export function buildSyllablePool(config) {
     cost++;
   }
 
+  // CVC uses all five vowels and all onset tiers. It was preferred onsets with a/e
+  // only, an economy choice, until July 2026, when that pool ran dry: with 136 roots
+  // claimed, prefix-safety (rule 5) left exactly two free forms and the documented
+  // 150-root cap was unreachable. Wider forms cost more, so they are drawn only when
+  // the cheap rhymes are gone; the clean reserve this opens is the tertiary CVC band
+  // (chi-/cho-/shi-/sho- rhymes), which no root or particle prefixes.
+  //
+  // `p` joined the coda set in the July 2026 frequency swap: retiring a root
+  // burns its form forever (retired spellings are never reassigned), so a
+  // 16-for-16 swap needs fresh space, and the particle-prefix hard gate had
+  // pruned the clean remainder to 15 forms. A final p is as universally
+  // pronounceable as t or k (rule 4), and costs slightly more so the older
+  // codas still go first.
+  const CODAS = ['n', 'm', 't', 'k', 's', 'l', 'p'];
+  const codaCost = coda => (coda === 'p' ? 6 : 0);
   cost = 50;
   for (const onset of phonetics.coda_onsets) {
-    for (const vowel of ['a', 'e']) {
-      for (const coda of ['n', 'm', 't', 'k', 's', 'l']) {
-        add(onset + vowel + coda, 'CVC', cost, 'cvc');
+    for (const vowel of phonetics.vowels_by_cost) {
+      const vowelCost = phonetics.vowels_by_cost.indexOf(vowel) >= 2 ? 12 : 0;
+      for (const coda of CODAS) {
+        add(onset + vowel + coda, 'CVC', cost + vowelCost + codaCost(coda), 'cvc');
+        cost += 0.1;
+      }
+    }
+  }
+
+  cost = 75;
+  for (const onset of [...phonetics.secondary_onsets, ...phonetics.tertiary_onsets]) {
+    for (const vowel of phonetics.vowels_by_cost) {
+      const vowelCost = phonetics.vowels_by_cost.indexOf(vowel) >= 2 ? 12 : 0;
+      for (const coda of CODAS) {
+        add(onset + vowel + coda, 'CVC', cost + vowelCost + codaCost(coda), 'cvc');
         cost += 0.1;
       }
     }
@@ -120,10 +148,27 @@ function spreadMultiplier(priorityWeight) {
   return 1;
 }
 
-function particleFlowPenalty(root, particles) {
+/**
+ * A root that begins with a reserved particle is audibly ambiguous next to that
+ * particle in speech: `no` precedes content words in every negated clause, so a
+ * root `nok` makes "no nok" a stutter. This started as a 200-point penalty on
+ * mi- phrases, was raised to 1200 across all particles, and lost anyway in July
+ * 2026: with the ch/s onset families crowded, the crowding penalties on clean
+ * forms exceeded 1200 and the assigner handed out nok, non, mik and five more.
+ * A scoring race cannot express "never"; this gate can. Legacy roots that
+ * predate it (sak, tak, kal, kan…) stay locked and grandfathered.
+ */
+function startsWithReservedParticle(root, particles) {
+  for (const particle of particles ?? []) {
+    const p = String(particle).toLowerCase();
+    if (root !== p && root.startsWith(p)) return true;
+  }
+  return false;
+}
+
+function particleFlowPenalty(root) {
   let penalty = 0;
   for (const phrase of GRAMMAR_PARTICLE_PHRASES) {
-    if (root.startsWith(phrase[phrase.length - 1])) penalty += 200;
     if (phrase.some(p => p === root)) penalty += 5000;
     const lastParticle = phrase[phrase.length - 1];
     if (root.endsWith(lastParticle) && root.length > lastParticle.length) penalty += 80;
@@ -171,6 +216,11 @@ function pickBestSyllable(concept, syllablePool, config, usedRoots, rhymeCounts,
   for (const syllable of syllablePool) {
     if (usedRoots.includes(syllable.form)) continue;
     if (isBannedPrimitiveSpelling(syllable.form)) continue;
+    // Hard constraint, not the soft prefix_overlap penalty below: a form that prefixes an
+    // approved root (or is prefixed by one) fails the prefix-safe audit, so handing it out
+    // here only defers the failure to CI.
+    if (!isPrefixSafe(syllable.form, usedRoots)) continue;
+    if (startsWithReservedParticle(syllable.form, config.reserved_particles.forms)) continue;
 
     const collision = scoreEditorialCollision(syllable.form, collisionProfile);
     if (collision.blocked) continue;
@@ -181,7 +231,7 @@ function pickBestSyllable(concept, syllablePool, config, usedRoots, rhymeCounts,
       && concept.priority > minP + (maxP - minP) * 0.5) continue;
 
     const costMismatch = Math.abs(syllable.phonetic_cost - targetCost);
-    const flowPenalty = particleFlowPenalty(syllable.form, config.reserved_particles.forms)
+    const flowPenalty = particleFlowPenalty(syllable.form)
       + compoundFlowPenalty(syllable.form, usedRoots);
 
     const boundary = scoreCompoundBoundary(concept.id, syllable.form, partnerMap, spellingByConcept);
@@ -229,6 +279,8 @@ function pickBestSyllable(concept, syllablePool, config, usedRoots, rhymeCounts,
     for (const syllable of syllablePool) {
       if (usedRoots.includes(syllable.form)) continue;
       if (isBannedPrimitiveSpelling(syllable.form)) continue;
+      if (!isPrefixSafe(syllable.form, usedRoots)) continue;
+      if (startsWithReservedParticle(syllable.form, config.reserved_particles.forms)) continue;
       if (scoreEditorialCollision(syllable.form, collisionProfile).blocked) continue;
       const collision = scoreEditorialCollision(syllable.form, collisionProfile);
       const boundary = scoreCompoundBoundary(concept.id, syllable.form, partnerMap, spellingByConcept);
@@ -399,5 +451,3 @@ export function usefulnessLabel(score) {
   if (score >= 3) return 'moderate';
   return 'low';
 }
-
-export { pickEasiestSyllable } from './fonoran-phonetic-weights.js';

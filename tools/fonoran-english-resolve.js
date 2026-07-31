@@ -17,7 +17,13 @@ import {
   compoundEnglishGuide,
 } from './fonoran-pronunciation.js';
 import { checkCompoundBoundary } from './fonoran-gen3-readability.js';
-import { buildConceptAliasIndex, loadRuntimeConceptInventory, buildRootById, loadLocalization } from './fonoran-concepts.js';
+import {
+  buildConceptAliasIndex,
+  registerAliasEntry,
+  loadRuntimeConceptInventory,
+  buildRootById,
+  loadLocalization,
+} from './fonoran-concepts.js';
 // WordNet is imported ONLY for the offline curation assistant (suggestGapConcepts).
 // It is never used by resolveEnglishToken / the runtime translate path.
 import { expandWord, pickHypernymConcept } from './fonoran-semantic-lookup.js';
@@ -25,13 +31,15 @@ import { getLab } from './fonoran-sound-bucket.js';
 import {
   loadInterpretationRules,
   interpretToConceptRelaxed,
-  irregularPastLemma,
   landmarkPhrase,
   lemmaCandidates,
   nominalPhrase,
   headNounToken,
 } from './fonoran-interpretation.js';
+import { tokenizeEnglish, lemmatizeEnglish, inflectedLemma } from './fonoran-english-morphology.js';
+import { derivationalBases } from './fonoran-english-derivation.js';
 import { REUSABLE_WORD_STATES } from './fonoran-derivation.js';
+import { retiredSpellingConceptIds } from './fonoran-retired-spellings.js';
 
 const RESOLVE_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CONCEPT_BRIDGES_PATH = join(RESOLVE_ROOT, 'data/fonoran-concept-bridges.json');
@@ -40,10 +48,11 @@ const CONCEPT_BRIDGES_PATH = join(RESOLVE_ROOT, 'data/fonoran-concept-bridges.js
  * Former root spellings that still appear as concept ids in cached LLM frames
  * after a respell (e.g. banned fa → one/lu). Resolve through the live concept id
  * so Learn / translator recompiles stay current without rewarming every cache row.
+ *
+ * Read from data/fonoran-retired-spellings.json rather than hardcoded here: a
+ * retirement recorded in code drifts from the seeds, which is how `fa` was retired
+ * from `one` and later reassigned to `child` with nothing objecting.
  */
-const RETIRED_SPELLING_CONCEPT_IDS = Object.freeze({
-  fa: 'one',
-});
 
 // Optional local-only loanword glossaries (not tracked in this repo). Drop a
 // JSON glossary at data/local/glossary.json to pin proper-noun/loanword
@@ -108,91 +117,8 @@ export async function loadConceptBridges() {
   return map;
 }
 
-/** Reset the concept-bridge cache (tests / hot reload). */
-export function resetConceptBridgeCache() {
-  conceptBridgeCache = null;
-}
-
-/** Hardcoded surface → lemma shortcuts shared with translator frame parser. */
-export const IRREGULAR = {
-  fought: 'war',
-  fight: 'war',
-  fighting: 'war',
-  fights: 'war',
-  loved: 'love',
-  loves: 'love',
-  loving: 'love',
-  laughed: 'laugh',
-  laughing: 'laugh',
-  laughs: 'laugh',
-  lost: 'lose',
-  went: 'move',
-  go: 'move',
-  goes: 'move',
-  going: 'move',
-  gone: 'move',
-  said: 'speak',
-  say: 'speak',
-  says: 'speak',
-  saying: 'speak',
-  knew: 'know',
-  knows: 'know',
-  knowing: 'know',
-  children: 'child',
-  men: 'person',
-  man: 'person',
-  women: 'person',
-  woman: 'person',
-  people: 'person',
-  war: 'conflict',
-  wars: 'conflict',
-};
-
-/**
- * Curated English → concept bridges. Deliberate, human-authored mappings for
- * meaning-bearing words that have no direct alias but a clear nearest concept
- * (e.g. `reason` → think, `from` → source). This is NOT WordNet guessing: each
- * entry is a reviewed decision, applied as a concept hint.
- */
-const SEMANTIC_BRIDGE = new Map([
-  ['reason', 'think'],
-  ['from', 'source'],
-]);
-
 /** Conjunctions — not content words. */
 export const CONJUNCTIONS = new Set(['and', 'or', 'but', 'nor', 'yet', 'so']);
-
-const CLOSED_ENGLISH_COMPOUNDS = new Set([
-  'seafood', 'something', 'someone', 'anyone', 'everyone', 'nothing', 'anything', 'everything',
-  'somebody', 'anybody', 'everybody', 'nobody', 'somewhere', 'anywhere', 'everywhere', 'nowhere',
-  'somehow', 'anyhow', 'into', 'onto', 'upon', 'within', 'without', 'throughout', 'underneath',
-]);
-
-export function mergeEnglishCompounds(tokens, aliasIndex = null) {
-  const out = [];
-  let i = 0;
-  while (i < tokens.length) {
-    let merged = null;
-    let consumed = 0;
-    for (let len = Math.min(3, tokens.length - i); len >= 2; len -= 1) {
-      const slice = tokens.slice(i, i + len);
-      if (slice.some(t => String(t).toLowerCase() === 'to')) break;
-      const spaced = slice.join(' ').toLowerCase();
-      const closed = slice.join('').toLowerCase();
-      if (aliasIndex?.has(spaced)) { merged = spaced; consumed = len; break; }
-      if (CLOSED_ENGLISH_COMPOUNDS.has(closed)) { merged = closed; consumed = len; break; }
-    }
-    if (merged) { out.push(merged); i += consumed; continue; }
-    if (i + 1 < tokens.length) {
-      const closed = `${tokens[i]}${tokens[i + 1]}`.toLowerCase();
-      const hasTo = String(tokens[i]).toLowerCase() === 'to' || String(tokens[i + 1]).toLowerCase() === 'to';
-      if (!hasTo && CLOSED_ENGLISH_COMPOUNDS.has(closed)) { out.push(closed); i += 2; continue; }
-    }
-    out.push(tokens[i]);
-    i += 1;
-  }
-  return out;
-}
 
 const ASSEMBLY_STOP = new Set([
   'to', 'in', 'at', 'on', 'of', 'by', 'as', 'an', 'or', 'if', 'so', 'do', 'be', 'we', 'he', 'ye',
@@ -253,7 +179,7 @@ async function tryTransparentWordAssembly(word, ctx, role) {
   if (!parts) return null;
   const resolved = [];
   for (const part of parts) {
-    const hit = lookupByKeys(ctx, buildTryKeys(part, ctx.rules));
+    const hit = lookupByKeys(ctx, buildTryKeys(part, ctx));
     if (!hit.resolved || hit.alias_strength === 'weak') return null;
     resolved.push(hit);
   }
@@ -265,62 +191,14 @@ async function tryTransparentPhraseAssembly(phrase, ctx, role) {
   if (words.length < 2) return null;
   const resolved = [];
   for (const word of words) {
-    const hit = lookupByKeys(ctx, buildTryKeys(word, ctx.rules));
+    const hit = lookupByKeys(ctx, buildTryKeys(word, ctx));
     if (!hit.resolved || hit.alias_strength === 'weak') return null;
     resolved.push(hit);
   }
   return assemblyToken(words, resolved, phrase, role, `transparent assembly:${words.join('+')}`);
 }
 
-export function tokenizeEnglish(text) {
-  return String(text ?? '')
-    .trim()
-    .match(/[A-Za-z']+/g)
-    ?.map(t => {
-      // Possession is not lexical in Fonoran: strip the possessive clitic so the
-      // bare noun resolves (man's -> man, children's -> children, dogs'/James' -> dogs/james).
-      const possessive = t.toLowerCase().replace(/'s$/, '');
-      return possessive.replace(/^'+|'+$/g, '');
-    })
-    .filter(Boolean) ?? [];
-}
-
-export function lemmatizeEnglish(word, rules = null) {
-  const w = String(word ?? '').toLowerCase();
-  if (IRREGULAR[w]) return IRREGULAR[w];
-  const pastLemma = rules ? irregularPastLemma(w, rules) : null;
-  if (pastLemma) return pastLemma;
-  if (w.endsWith('ies') && w.length > 4) return `${w.slice(0, -3)}y`;
-  if (w.endsWith('ied') && w.length > 4) return `${w.slice(0, -3)}y`;
-  if (w.endsWith('ing') && w.length > 5) {
-    const base = w.slice(0, -3);
-    if (base.endsWith(base.at(-1)) && !base.endsWith('ing')) return base.slice(0, -1);
-    return base;
-  }
-  if (w.endsWith('ed') && w.length > 4) {
-    if (w.endsWith('ied')) return `${w.slice(0, -3)}y`;
-    if (w.endsWith('ted') || w.endsWith('ded')) return w.slice(0, -1);
-    const base = w.slice(0, -2);
-    if (base.length >= 2 && base.at(-1) === base.at(-2)) return base.slice(0, -1);
-    return base;
-  }
-  if (w.endsWith('en') && w.length > 4) {
-    const base = w.slice(0, -2);
-    if (base.length >= 2 && base.at(-1) === base.at(-2)) return base.slice(0, -1);
-    return base;
-  }
-  if (w.endsWith('s') && w.length > 3 && !w.endsWith('ss')) return w.slice(0, -1);
-  return w;
-}
-
-/** Agentive forms: traveler → travel (+ person). */
-export function agentiveBase(word) {
-  const w = String(word ?? '').toLowerCase();
-  if (w.endsWith('er') && w.length > 4) return [w.slice(0, -2), `${w.slice(0, -2)}e`];
-  if (w.endsWith('or') && w.length > 4) return [w.slice(0, -2), `${w.slice(0, -2)}e`];
-  if (w.endsWith('ist') && w.length > 5) return [w.slice(0, -3)];
-  return null;
-}
+export { tokenizeEnglish, lemmatizeEnglish };
 
 function partsForEntry(entry) {
   if (entry.parts?.length) return entry.parts;
@@ -337,31 +215,46 @@ function pronunciationForParts(parts) {
   };
 }
 
-function buildTryKeys(raw, rules) {
-  return [...new Set([...lemmaCandidates(raw, rules), IRREGULAR[raw]].filter(Boolean))];
+/**
+ * The morphology hooks used when the caller supplies none: English, delegated
+ * to wink-nlp. This is a declared default for the legacy entry points (tests,
+ * gap reports, reverse-translate), not a hidden hardcode — the forward engine
+ * always passes the active parser's morphology.
+ */
+const ENGLISH_MORPHOLOGY = {
+  lemmatize: lemmatizeEnglish,
+  inflectedLemma,
+  lemmaCandidates: word => lemmaCandidates(word),
+  derivationalBases,
+};
+
+/** Lookup keys for a surface form, via the context's language morphology. */
+function buildTryKeys(raw, ctx) {
+  const morph = ctx?.morph ?? ENGLISH_MORPHOLOGY;
+  return [...new Set([...morph.lemmaCandidates(raw), morph.lemmatize(raw)].filter(Boolean))];
 }
 
-function phraseLookupKeys(phrase, rules, skip = null) {
-  const raw = String(phrase ?? '').trim().toLowerCase();
-  if (!raw) return [];
-  const parts = raw.split(/\s+/).filter(Boolean);
-  const keys = [
-    raw,
-    landmarkPhrase(raw),
-    nominalPhrase(raw, { skip }),
-  ];
-  const head = headNounToken(parts, { skip });
-  if (head) keys.push(...buildTryKeys(head, rules));
-  for (const part of parts) keys.push(...buildTryKeys(part, rules));
-  return [...new Set(keys.filter(Boolean))];
-}
-
+/**
+ * Find the best alias entry for a candidate key list.
+ *
+ * Keys arrive most-specific-first (raw surface, then lemmas), but strength beats
+ * specificity: a weak gloss-derived entry on an early key must not block a strong
+ * curated entry on a later one. Returning the first hit of any strength made
+ * `animals` unresolvable, because the raw plural was claimed weakly by trap's
+ * definition ("catch animals for food") and the resolver abandoned the key list
+ * before reaching the lemma `animal`, which the `kal` root claims strongly. The
+ * weak hit is still returned when nothing strong matches, so it can be carried as
+ * a curation suggestion.
+ */
 function lookupAliasEntry(aliasIndex, keys) {
+  let weak = null;
   for (const key of keys) {
     const hit = aliasIndex.get(key);
-    if (hit) return { hit, lookup: key };
+    if (!hit) continue;
+    if (hit.alias_strength !== 'weak') return { hit, lookup: key };
+    weak = weak ?? { hit, lookup: key };
   }
-  return null;
+  return weak;
 }
 
 function entryToHit(entry, { lookup, rules, pastLemma }) {
@@ -417,7 +310,7 @@ function enrichToken(base, meta) {
  * optional `suggestion` (e.g. a demoted weak/gloss alias) is carried for the
  * curation queue but is deliberately not used as output.
  */
-function gapToken(surface, role, { reason = 'no confident concept', suggestion = null, conceptId = null } = {}) {
+export function gapToken(surface, role, { reason = 'no confident concept', suggestion = null, conceptId = null } = {}) {
   return enrichToken({ ...unknownHit(surface), role, english: surface, resolved: false, fonoran: null }, {
     resolution_kind: 'unknown',
     confidence: 'low',
@@ -429,21 +322,40 @@ function gapToken(surface, role, { reason = 'no confident concept', suggestion =
 
 /**
  * Build shared resolution context (alias index + roots + compounds + rules).
+ *
+ * `lang` and `morphology` come from the active source parser: the localization
+ * seed keys the lexicon in that language's surface forms, and the morphology
+ * hooks answer "what is this word's dictionary form" for it. Both default to
+ * English for the legacy entry points that predate the parser boundary.
  */
-export async function buildResolveContext(lab = null, { devLab = false } = {}) {
+export async function buildResolveContext(lab = null, {
+  devLab = false, lang = 'en', morphology = null, guess = false,
+} = {}) {
   const liveLab = lab ?? await getLab();
   const inventory = await loadRuntimeConceptInventory({ lab: liveLab });
   const rules = await loadInterpretationRules().catch(() => null);
-  const locData = await loadLocalization('en');
+  const locData = await loadLocalization(lang);
   const bridges = await loadConceptBridges();
   const aliasIndex = buildConceptAliasIndex(inventory.concepts, liveLab, locData, {
     labFirst: !devLab,
     devLab,
   });
 
+  // Compounds join the same alias index the primitives use, and they must obey the
+  // same strength rule. A compound's stored `aliases` array is not a synonym list:
+  // `mergeLocaleAliases` folds curated locale aliases in beside the definition
+  // sentence and the individual words mined out of it, so `trap` ("a device or
+  // method to catch animals for food") also claims `device`, `method`, `catch`,
+  // `animals`, and `food`. Registering those with a bare `Map.set` left them with
+  // no `alias_strength`, which is neither strong nor weak, so the resolver's
+  // weak-alias rejection never fired and 367 ordinary English words resolved to an
+  // unrelated concept: `animals` returned `gatkal` (trap), `liquid` returned water
+  // only by luck, `black` returned coal. Curated claims stay strong; anything left
+  // is gloss-derived and may only fill a gap it does not shadow.
   for (const compound of liveLab?.compounds ?? []) {
     const meaning = String(compound.meaning ?? '').trim().toLowerCase();
     if (!meaning || !compound.spelling) continue;
+    const conceptId = String(compound.concept_id ?? '').trim().toLowerCase();
     const entry = {
       english: meaning,
       concept_id: compound.concept_id ?? null,
@@ -456,11 +368,22 @@ export async function buildResolveContext(lab = null, { devLab = false } = {}) {
       source: 'lab',
       state: compound.state,
     };
-    aliasIndex.set(meaning, entry);
+    const strongKeys = new Set([meaning]);
+    if (conceptId) {
+      strongKeys.add(conceptId);
+      strongKeys.add(conceptId.replace(/_/g, ' '));
+      for (const alias of locData?.[compound.concept_id]?.aliases ?? []) {
+        const key = String(alias).trim().toLowerCase();
+        if (key) strongKeys.add(key);
+      }
+    }
+    for (const key of strongKeys) {
+      registerAliasEntry(aliasIndex, key, { ...entry, matched_alias: key }, { strength: 'strong' });
+    }
     for (const alias of compound.aliases ?? []) {
       const key = String(alias).trim().toLowerCase();
-      if (!key || aliasIndex.has(key)) continue;
-      aliasIndex.set(key, { ...entry, matched_alias: key });
+      if (!key || strongKeys.has(key)) continue;
+      registerAliasEntry(aliasIndex, key, { ...entry, matched_alias: key }, { strength: 'weak' });
     }
   }
 
@@ -514,16 +437,21 @@ export async function buildResolveContext(lab = null, { devLab = false } = {}) {
     spellingByConceptId,
     bridges,
     rules,
+    lang,
+    morph: morphology ?? ENGLISH_MORPHOLOGY,
+    // Opt-in per request (POST /api/fonoran/translate { guess: true }): lets the
+    // resolver's final tier guess a nearest EXISTING concept for a word below
+    // the confidence floor, marked `guessed` so every surface can style it.
+    // Default off, so gap reports, goldens, and tests still measure the honest
+    // lexicon.
+    guessOnTheFly: Boolean(guess),
   };
 }
-
-/** @deprecated alias — word generator uses buildResolveContext */
-export const buildContext = buildResolveContext;
 
 function lookupByKeys(ctx, keys) {
   const found = lookupAliasEntry(ctx.aliasIndex, keys);
   if (!found) return unknownHit(keys[0] ?? '');
-  const pastLemma = irregularPastLemma(keys[0], ctx.rules);
+  const pastLemma = (ctx.morph ?? ENGLISH_MORPHOLOGY).inflectedLemma(keys[0]);
   return entryToHit(found.hit, { lookup: found.lookup, rules: ctx.rules, pastLemma });
 }
 
@@ -562,7 +490,7 @@ function lookupByConceptId(ctx, conceptId) {
   if (mappedId && mappedId !== conceptId) {
     return lookupByConceptId(ctx, mappedId);
   }
-  const retiredId = RETIRED_SPELLING_CONCEPT_IDS[String(conceptId).toLowerCase()];
+  const retiredId = retiredSpellingConceptIds()[String(conceptId).toLowerCase()];
   if (retiredId && retiredId !== conceptId) {
     return lookupByConceptId(ctx, retiredId);
   }
@@ -582,7 +510,10 @@ function partSpellings(ctx, conceptIds) {
   for (const id of conceptIds) {
     const hit = lookupByConceptId(ctx, id);
     if (!hit.resolved || !hit.fonoran) return null;
-    specs.push({ id, spelling: hit.fonoran, gloss: hit.gloss ?? id });
+    // The requested part may be a spelling rather than a concept id (the LLM
+    // sometimes writes `tes` for `pain`). Record what the lexicon resolved it
+    // to, so the composition is described in concept ids either way.
+    specs.push({ id: hit.concept_id ?? id, spelling: hit.fonoran, gloss: hit.gloss ?? id });
   }
   return specs;
 }
@@ -604,7 +535,22 @@ export function composeConceptToken(ctx, conceptIds, { role = 'concept', english
   const boundary = checkCompoundBoundary(parts);
   const fused = boundary.valid ? parts.join('') : parts.join(' ');
   const composedGloss = gloss ?? specs.map(s => s.gloss).join(' + ');
-  const conceptKey = ids.join('+');
+  const conceptKey = specs.map(s => s.id).join('+');
+  // The parts may spell a word the lexicon already owns (the LLM wrote out a
+  // composition instead of naming the approved concept). Prefer the approved
+  // entry: same surface, but an honest concept id and no "invented" marking.
+  const approvedId = boundary.valid ? ctx.spellingByConceptId?.get(fused.toLowerCase()) : null;
+  if (approvedId) {
+    const approvedHit = lookupByConceptId(ctx, approvedId);
+    if (approvedHit.resolved) {
+      return enrichToken(approvedHit, {
+        role,
+        concept_id: approvedId,
+        resolution_kind: 'direct',
+        confidence: 'high',
+      });
+    }
+  }
   return enrichToken({
     english: english || conceptKey,
     fonoran: fused,
@@ -616,6 +562,9 @@ export function composeConceptToken(ctx, conceptIds, { role = 'concept', english
     source: 'bridge_compose',
     concept_id: conceptKey,
     pronunciation: pronunciationForParts(parts),
+    // Built from approved parts at runtime, but the lexicon does not own this
+    // word. Surfaces that teach vocabulary must not present it as approved.
+    ad_hoc_composition: true,
   }, {
     role,
     resolution_kind: 'composed',
@@ -766,41 +715,47 @@ function weakSuggestionFromHit(hit) {
  * Deterministic, concept-first English → Fonoran resolution for one token or
  * phrase. Ordered tiers with a hard confidence floor:
  *
- *   HIGH   (direct):      curated strong alias / concept id / lemma / phrase.
- *   MEDIUM (interpreted): curated concept hint, curated interpretation rule
- *                         (spatial_path / classes / idioms), irregular past,
- *                         head-noun of a phrase, agentive morphology, and
- *                         transparent compound assembly over strong aliases.
+ *   HIGH   (direct):      curated strong alias / concept id / lemma / phrase;
+ *                         also a concept hint whose surface is already a strong
+ *                         alias of that concept (you→addressee).
+ *   MEDIUM (interpreted): curated concept hint (nearest-concept pin only),
+ *                         curated interpretation rule (spatial_path / classes /
+ *                         idioms), irregular past, head-noun of a phrase,
+ *                         agentive morphology, and transparent compound
+ *                         assembly over strong aliases.
+ *   LOW    (guessed):     opt-in only (`ctx.guessOnTheFly`, wired from the
+ *                         translate request): the nearest EXISTING concept via
+ *                         the same deterministic WordNet assistant the curation
+ *                         queue uses. Marked `guessed: true` / kind `guessed`
+ *                         so every surface styles it as a guess; never a
+ *                         fabricated spelling, and off by default so gap
+ *                         metrics stay honest.
  *   BELOW FLOOR:          honest gap — surfaces as `[english]`, never a
  *                         fabricated word (docs Design Rule 0). A demoted weak
  *                         (gloss-derived) alias is carried as a curation
  *                         `suggestion` but is NOT emitted as output.
  *
- * WordNet is no longer consulted at runtime; it is an offline curation
- * assistant (tools/fonoran-semantic-lookup.js). `allowSemantic`/`allowGuess`/
- * `avoidConceptIds` are retained for call-site compatibility but no longer gate
- * any runtime guessing.
+ * `allowSemantic` is retained for call-site compatibility; `allowGuess` lets a
+ * call site (particle pieces, WH scaffolding) refuse the guessed tier even when
+ * the context opted in.
  */
 export async function resolveEnglishToken(english, ctx, {
   role = 'concept',
   hints = {},
   allowSemantic = true, // eslint-disable-line no-unused-vars
-  allowGuess = true, // eslint-disable-line no-unused-vars
+  allowGuess = true,
   surfaceEnglish = null,
-  avoidConceptIds = null, // eslint-disable-line no-unused-vars
+  avoidConceptIds = null,
 } = {}) {
   const surface = String(surfaceEnglish ?? english ?? '').trim();
-  const lookupWord = role === 'object' ? landmarkPhrase(surface) : String(english ?? '').trim().toLowerCase();
+  // The lemma is what the lexicon is keyed on, so the landmark is reduced from it rather
+  // than from the written form: an Object given as "these" with the lemma "this" was looked
+  // up as written and gapped, even though this has a root.
+  const lookupWord = role === 'object'
+    ? landmarkPhrase(String(english ?? '').trim())
+    : String(english ?? '').trim().toLowerCase();
   if (!lookupWord) {
     return gapToken(surface, role, { reason: 'empty token' });
-  }
-
-  // Curated semantic bridge (e.g. reason → think, from → source): a deliberate
-  // English → concept mapping, treated as a concept hint (not a WordNet guess).
-  const bridgeConcept = SEMANTIC_BRIDGE.get(lookupWord);
-  if (bridgeConcept && !hints.concept_hint) {
-    hints.concept_hint = bridgeConcept;
-    hints.interpret_reason = hints.interpret_reason ?? 'semantic bridge';
   }
 
   // Pinned loanword: a proper noun / coined name explicitly locked as a loan in
@@ -811,16 +766,23 @@ export async function resolveEnglishToken(english, ctx, {
     return loanToken({ role, english: surface, roman: pinnedLoan.roman, gloss: pinnedLoan.gloss });
   }
 
-  // Tier MEDIUM: curated concept hint.
+  // Curated concept hint. When the typed word is already a strong alias of the
+  // hinted concept (you→addressee, we→collective), this is lexical resolution —
+  // the hint only pins the concept against a colliding alias. Mark it direct so
+  // the translator does not style ordinary pronoun roots as "interpreted".
   if (hints.concept_hint) {
     const hintHit = lookupByConceptId(ctx, hints.concept_hint);
     if (hintHit.resolved) {
+      const aliasHit = lookupByKeys(ctx, buildTryKeys(surface.toLowerCase(), ctx));
+      const lexical = aliasHit.resolved
+        && aliasHit.alias_strength !== 'weak'
+        && aliasHit.concept_id === hints.concept_hint;
       return enrichToken({ ...hintHit, role, english: surface }, {
-        resolution_kind: 'interpreted',
-        confidence: 'medium',
-        interpreted: true,
-        interpreted_from: surface,
-        interpret_reason: hints.interpret_reason ?? 'concept hint',
+        resolution_kind: lexical ? 'direct' : 'interpreted',
+        confidence: lexical ? 'high' : 'medium',
+        interpreted: !lexical,
+        interpreted_from: lexical ? null : surface,
+        interpret_reason: lexical ? null : (hints.interpret_reason ?? 'concept hint'),
       });
     }
   }
@@ -862,13 +824,13 @@ export async function resolveEnglishToken(english, ctx, {
     if (phraseAssembly) return phraseAssembly;
   }
 
-  const keys = buildTryKeys(lookupWord, ctx.rules);
+  const keys = buildTryKeys(lookupWord, ctx);
   let hit = lookupByKeys(ctx, keys);
   if (hit.resolved) {
     const weakAlias = hit.alias_strength === 'weak';
     if (!weakAlias) {
       // Tier HIGH: strong alias / concept id / lemma.
-      const pastLemma = irregularPastLemma(surface, ctx.rules);
+      const pastLemma = (ctx.morph ?? ENGLISH_MORPHOLOGY).inflectedLemma(surface);
       const interpretedPast = Boolean(pastLemma && hit.past_lemma);
       return enrichToken({ ...hit, role, english: surface }, {
         resolution_kind: interpretedPast ? 'interpreted' : 'direct',
@@ -885,7 +847,7 @@ export async function resolveEnglishToken(english, ctx, {
 
   // Tier MEDIUM: curated interpretation rule (spatial_path / classes / idioms).
   const interp = interpretToConceptRelaxed(surface, role, ctx.rules)
-    ?? interpretToConceptRelaxed(lemmatizeEnglish(surface, ctx.rules), role, ctx.rules);
+    ?? interpretToConceptRelaxed((ctx.morph ?? ENGLISH_MORPHOLOGY).lemmatize(surface), role, ctx.rules);
   if (interp?.concept_id) {
     hit = lookupByConceptId(ctx, interp.concept_id);
     if (hit.resolved) {
@@ -913,6 +875,26 @@ export async function resolveEnglishToken(english, ctx, {
   // curated as explicit aliases; unknown ones surface as honest gaps and the
   // offline WordNet assistant proposes agentive splits for human review.
 
+  // Tier MEDIUM: derivational morphology through the parser's hooks — safety
+  // reaches `safe` through -ty, creation reaches `make` through -ion + the
+  // create alias, badly reaches `bad` through -ly. Unlike the banned agentive
+  // stripping, each candidate must still resolve strongly, so a stripped
+  // non-word stays an honest gap, and the hit is marked interpreted with the
+  // affix named. The hook is optional in the parser contract: a language whose
+  // parser supplies none skips this tier.
+  const derived = (ctx.morph ?? ENGLISH_MORPHOLOGY).derivationalBases?.(lookupWord) ?? [];
+  for (const { base, suffix } of derived) {
+    const baseHit = lookupByKeys(ctx, buildTryKeys(base, ctx));
+    if (!baseHit.resolved || baseHit.alias_strength === 'weak') continue;
+    return enrichToken({ ...baseHit, role, english: surface }, {
+      resolution_kind: 'interpreted',
+      confidence: 'medium',
+      interpreted: true,
+      interpreted_from: surface,
+      interpret_reason: `derivation:-${suffix}\u2192${base}`,
+    });
+  }
+
   // Tier MEDIUM: transparent single-word assembly over strong aliases only.
   const wordAssembly = await tryTransparentWordAssembly(lookupWord, ctx, role);
   if (wordAssembly) return wordAssembly;
@@ -922,11 +904,24 @@ export async function resolveEnglishToken(english, ctx, {
   // gap so direct/interpreted lexicon still wins, but abstract prose composes
   // from roots (or falls back to a marked loanword) instead of red-gapping.
   const bridge = lookupBridge(ctx, lookupWord)
-    ?? lookupBridge(ctx, lemmatizeEnglish(lookupWord, ctx.rules))
+    ?? lookupBridge(ctx, (ctx.morph ?? ENGLISH_MORPHOLOGY).lemmatize(lookupWord))
     ?? lookupBridge(ctx, surface);
   if (bridge) {
     const bridged = bridgeToToken(ctx, bridge, { role, english: surface });
     if (bridged) return bridged;
+  }
+
+  // Tier LOW (opt-in): guessed nearest concept. Only when the request asked for
+  // it (`guess: true` through the translate API) and the call site allows it.
+  // The candidates come from suggestGapConcepts — the same deterministic,
+  // role-disambiguated WordNet walk the curation queue reads — and each one is
+  // an EXISTING concept looked up with full strength. The token is marked
+  // `guessed` so the translator and alignment views can highlight it, and the
+  // weak suggestion is still carried for the curation queue: a guess shown on
+  // screen is not an alias approved into the lexicon.
+  if (ctx.guessOnTheFly && allowGuess) {
+    const guessed = await guessConceptToken(surface, lookupWord, role, ctx, { weakSuggestion, avoidConceptIds });
+    if (guessed) return guessed;
   }
 
   // Below the confidence floor → honest gap (never fabricate a word).
@@ -937,11 +932,48 @@ export async function resolveEnglishToken(english, ctx, {
 }
 
 /**
- * OFFLINE curation assistant: propose ranked, human-reviewable concept mappings
- * for an unresolved English word, disambiguated by slot role via WordNet (WSD +
- * POS). Each suggestion points at an EXISTING Fonoran root the human can approve
- * into localizations/en.json. This is deliberately NOT called from
- * resolveEnglishToken — the runtime never guesses (docs Design Rule 0).
+ * The guessed tier's worker: take the top-ranked suggestion for a gap word and
+ * dress it as a low-confidence token. Substitution only — the guess points at a
+ * concept that already has a human-approved spelling, so re-enabling this tier
+ * (July 2026, at the language owner's request) does not reopen the fabrication
+ * class that got runtime guessing removed: nothing here can mint a word.
+ */
+async function guessConceptToken(surface, lookupWord, role, ctx, { weakSuggestion = null, avoidConceptIds = null } = {}) {
+  let suggestions;
+  try {
+    suggestions = await suggestGapConcepts(lookupWord, role, ctx, { limit: 3 });
+  } catch {
+    return null;
+  }
+  for (const s of suggestions) {
+    if (avoidConceptIds?.has(s.concept_id)) continue;
+    // A multiword co-synonym is where WordNet's junk senses live ("wolf" lists
+    // "woman chaser"): fine as a ranked suggestion for a human, not as output.
+    const syn = s.reason?.startsWith('synonym:') ? s.reason.slice('synonym:'.length) : null;
+    if (syn && syn.trim().includes(' ')) continue;
+    const hit = lookupByConceptId(ctx, s.concept_id);
+    if (!hit.resolved) continue;
+    return enrichToken({ ...hit, role, english: surface }, {
+      resolution_kind: 'guessed',
+      confidence: 'low',
+      interpreted: true,
+      guessed: true,
+      interpreted_from: surface,
+      interpret_reason: `guess:${s.reason}`,
+      suggestion: weakSuggestion,
+    });
+  }
+  return null;
+}
+
+/**
+ * Propose ranked concept mappings for an unresolved English word, disambiguated
+ * by slot role via WordNet (WSD + POS). Each suggestion points at an EXISTING
+ * Fonoran root. Two callers: the curation queue (a human approves a suggestion
+ * into localizations/en.json), and — only when a translate request opts in —
+ * the resolver's marked `guessed` tier, which shows the top suggestion styled
+ * as a guess. Deterministic either way: WordNet lookups are cached in
+ * data/fonoran-semantic-cache.json.
  *
  * @returns {Promise<Array<{ concept_id, fonoran, gloss, reason, kind }>>}
  */
@@ -965,7 +997,7 @@ export async function suggestGapConcepts(word, role, ctx, { limit = 5 } = {}) {
   };
 
   // A demoted weak (gloss-derived) alias is the cheapest suggestion.
-  const weakHit = lookupByKeys(ctx, buildTryKeys(lookupWord, ctx.rules));
+  const weakHit = lookupByKeys(ctx, buildTryKeys(lookupWord, ctx));
   if (weakHit.resolved && weakHit.alias_strength === 'weak' && weakHit.concept_id) {
     push(weakHit.concept_id, `weak alias:${weakHit.matched_alias ?? lookupWord}`);
   }
@@ -985,10 +1017,12 @@ export async function suggestGapConcepts(word, role, ctx, { limit = 5 } = {}) {
   for (const cid of rankedHypernyms) push(cid, `hypernym:${cid}`);
 
   for (const syn of synonyms) {
+    // WordNet is English, so its synonyms are lemmatized with the English
+    // morphology regardless of the context language.
     const synKeys = [...new Set([
-      ...buildTryKeys(syn.replace(/\s+/g, '_'), ctx.rules),
+      ...buildTryKeys(syn.replace(/\s+/g, '_'), ctx),
       syn,
-      lemmatizeEnglish(syn, ctx.rules),
+      lemmatizeEnglish(syn),
     ])];
     const synHit = lookupAliasEntry(ctx.aliasIndex, synKeys);
     if (synHit?.hit?.concept_id && synHit.hit.alias_strength !== 'weak') {

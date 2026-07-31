@@ -29,14 +29,12 @@ data/local/
 data/lore/
 docs/lore/
 
-# External research data (canonical copy in Fonora/fonora-data submodule)
-data/fonoran-llm-evaluations.json
-data/fonoran-playtests.json
+# Bulk data whose canonical copy lives in the Fonora/fonora-data submodule
 data/fonoran-translation-test-latest.json
-data/research-notes-store.json
 
+# Derived from the seeds by `npm run fonoran:build`, never hand-edited
 data/fonoran-sound-bucket.json
-data/fonoran-compound-proposals.json
+
 data/fonoran-english-lexicon.json
 data/fonoran-stress-test-report.json
 data/fonoran-semantic-cache.json

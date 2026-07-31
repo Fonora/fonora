@@ -4,27 +4,28 @@ Command-line tools for building, reviewing, and maintaining the Fonoran vocabula
 
 Most npm scripts wrap modules in `tools/` or `scripts/`. The [Fonoran guide](fonoran.md) covers the language model and web UI; [compound workflow](fonoran-compound-workflow.md) covers local vs Heroku sequences. This page is the command reference.
 
+Every command here is deterministic: same seeds in, same output out. No command in this document calls a language model. The model-driven proposal, playtest, and ranking loops were removed in July 2026, and vocabulary is now authored by hand in the seed files (see [compound workflow](fonoran-compound-workflow.md)).
+
 ## Pipeline overview
 
 ```mermaid
 flowchart LR
-  Survey["vocab-survey\ngenerate proposals"] --> Review["Review UI\naccept / reject"]
-  Review --> Regen["regenerate\npromote + build"]
-  Gaps["translation-gaps\nor stranger-corpus:gaps"] --> Refine["refine loop\ngap → propose → build"]
-  Refine --> Regen
-  Optimize["optimize-compounds\nlength / heuristic / LLM"] --> Build["build:approved\nlab from seeds"]
+  Edit["edit seeds by hand\nconcept inventory + compounds"] --> Build["build:approved\nlab from seeds"]
+  Edit --> Regen["regenerate\npromote + build"]
   Regen --> Build
+  Rank["regen:four-rules\npreferred form scoring"] --> Build
   Build --> Audit["compound-audit\n+ npm test"]
+  Gaps["translation-gaps\nwhat the corpus cannot say"] --> Edit
   Audit --> Deploy["git push → Heroku\nAdvanced regenerate"]
 ```
 
 | Stage | Primary commands | Web UI |
 | --- | --- | --- |
-| Propose | `fonoran:vocab-survey`, `fonoran:gap-analyze-batch` | Review — `/tools#gap-workshop` |
+| Author vocabulary | edit `data/fonoran-concept-inventory.json`, `data/fonoran-compounds.json` | Words — `/tools#word-manager` |
 | Accept & publish | `fonoran:regenerate` | Advanced — `/tools#advanced` |
-| Optimize editorial | `fonoran:optimize-compounds` | — |
+| Rank preferred forms | `fonoran:regen:four-rules` | — |
 | Build lab | `fonoran:build`, `fonoran:build:approved` | — |
-| Measure | `fonoran:translation-gaps`, `fonoran:refine` | Translation Test |
+| Measure | `fonoran:translation-gaps`, `npm test` | Translation Test |
 | Ship | `git push heroku` + regenerate on dyno | Advanced regenerate |
 
 ---
@@ -32,12 +33,10 @@ flowchart LR
 | Goal | Command |
 | --- | --- |
 | Fresh lab + full build | `npm run fonoran:reset && npm run fonoran:build` |
-| Generate compound proposals | `npm run fonoran:vocab-survey` |
-| Review proposals in UI | Open **Review** at [`/tools#gap-workshop`](/tools#gap-workshop) |
 | Edit roots & words in UI | Open **Words** at [`/tools#word-manager`](/tools#word-manager) |
+| Review the proposal queue | Open **Review** at [`/tools#gap-workshop`](/tools#gap-workshop) |
 | Publish after approvals | **Advanced** → regenerate dictionary, or `npm run fonoran:regenerate` |
 | Find translation gaps | `npm run fonoran:translation-gaps` |
-| Automated gap loop | `npm run fonoran:refine` |
 
 ---
 
@@ -53,7 +52,9 @@ These commands assign root spellings, resolve compounds, and import into the lab
 | `npm run fonoran:root-candidates` | Refresh root candidate spellings and scores without importing into the lab. |
 | `npm run fonoran:regenerate` | Regenerate the live dictionary export after lab changes (used after accepting proposals in Review). |
 | `npm run fonoran:regen-compounds` | Re-resolve compound compositions from current roots. |
-| `npm run fonoran:editorial:import` | Import editorial compound data into the lab. |
+| `npm run fonoran:regen:four-rules` | Re-rank preferred compound forms by the four word rules. Add `-- --apply` to write. |
+| `npm run fonoran:build:policy` | Rebuild the generated language policy module from seeds. |
+| `npm run fonoran:policy:check` | Fail if the generated policy is stale (wired into `npm test`). |
 
 **Typical loop:**
 
@@ -71,92 +72,50 @@ npm run fonoran:reset && npm run fonoran:build
 | Command | What it does |
 | --- | --- |
 | `npm run fonoran:inventory-migrate` | Seed editorial metadata (`plain_description`, `priority_class`, etc.) on `data/fonoran-concept-inventory.json`. |
-| `npm run fonoran:reconcile-inventory` | Reconcile concept inventory against lab state. |
 | `npm run fonoran:root-capacity` | Report how many CV/CVC slots remain for new roots. |
 | `npm run fonoran:root-capacity:tiers` | Capacity broken down by experience tier. |
+| `npm run fonoran:root-rings:apply` | Apply ring assignments to the concept inventory. |
 | `npm run fonoran:prefix-safe` | Regenerate algorithmically prefix-safe CV/CVC inventory ([`data/fonoran-prefix-safe-roots.json`](../data/fonoran-prefix-safe-roots.json)). |
 | `npm run fonoran:prefix-safe -- --check` | Fail if the inventory is stale or any `prefix_overlap` pair exists (wired into `npm test`). |
-| `npm run fonoran:cv-density:project` | Thought-experiment projections: CV/CVC density by ring/priority, exclusivity examples, counterfactuals ([RN-35](research-notes/RN-35-cv-density-and-cvc-audibility.md)). |
-| `npm run fonoran:canonical:init` | Bootstrap canonical constitution data. |
-| `npm run fonoran:canonical:constitution` | Stabilize constitution-linked canonical records. |
+| `npm run fonoran:cv-density:project` | Thought-experiment projections: CV/CVC density by ring/priority, exclusivity examples, counterfactuals. |
 
 ---
 
-## Vocabulary proposals & review
+## Vocabulary review
 
-LLM-generated compound proposals land in a queue reviewed in the **Review** tab (`/tools#gap-workshop`).
+New vocabulary is authored by a human, either in the **Words** tab or directly in the seed JSON. The **Review** tab (`/tools#gap-workshop`) shows translation gaps and any compound proposals still sitting in the queue.
 
-| Command | What it does |
-| --- | --- |
-| `npm run fonoran:vocab-survey` | Domain-batch LLM survey: proposes 300–500 compound concepts, validates compositions, writes to proposal queue. Requires `ANTHROPIC_API_KEY`. |
-| `npm run fonoran:vocab-survey:dry` | Dry run with seed output only — no writes. |
-| `npm run fonoran:gap-analyze-batch` | Batch LLM gap analysis from stranger corpus (top gaps). |
-| `npm run fonoran:refine` | Automated loop: find gaps → propose → gate → accept → build → measure coverage. |
-| `npm run fonoran:refine:dry` | Refine loop dry run (limited gaps, no writes). |
+Accepted compounds require dictionary regeneration (Advanced tab or `npm run fonoran:regenerate`).
 
-After `fonoran:vocab-survey`, open **Review** to accept, skip, or reject proposals. Accepted compounds require dictionary regeneration (Advanced tab or `npm run fonoran:regenerate`).
-
-**Production storage:** With `DATABASE_URL` set, the proposal queue uses PostgreSQL (shared by web dynos and `heroku run` one-offs). Without Postgres, proposals use local JSON only. Research artifacts (translation cache, gap reports, refine iterations) live in the **fonora-data** submodule via `resolveDataPath()`.
-
----
-
-## Stranger corpus
-
-The stranger phrase corpus stress-tests translation coverage with realistic multi-word English.
-
-| Command | What it does |
-| --- | --- |
-| `npm run fonoran:stranger-corpus:generate` | Generate new stranger phrase corpus entries via LLM. |
-| `npm run fonoran:stranger-corpus:promote` | Promote corpus entries into the vocabulary pipeline. |
-| `npm run fonoran:stranger-corpus:gaps` | Gap report scoped to the stranger corpus. |
+The queue lives in `data/fonoran-compound-proposals.json` and is committed, so it is the same list on every machine. Generated artifacts (gap reports, test snapshots) live in the **fonora-data** submodule via `resolveDataPath()`.
 
 ---
 
 ## Translation gaps & probes
 
-Live translator architecture: [fonoran-translator.md](fonoran-translator.md).
+Live translator architecture: [fonoran-translator.md](fonoran-translator.md). Algorithm: [fonoran-algorithm-translation.md](fonoran-algorithm-translation.md).
 
 | Command | What it does |
 | --- | --- |
 | `npm run fonoran:translation-gaps` | Full gap report: unknown words, coverage stats, quality findings. |
-| `npm run test:translator` | Golden regression — fails on unexpected translator drift. |
+| `npm run test:translator` | Grammar spec, golden regression, and frame probes. Fails on unexpected translator drift. |
+| `npm run test:translator:golden` | Golden regression only. |
 | `npm run test:translator:update` | Accept current translator output as new golden baseline. |
+| `npm run test:translator:probes` | Frame probes with full output. |
 
 ---
 
-## Compound optimization & audit
+## Compound audit
 
 | Command | What it does |
 | --- | --- |
-| `npm run fonoran:optimize-compounds` | Heuristic preferred-form promotion in `compounds.json`. |
-| `npm run fonoran:optimize-compounds -- --use-llm` | Rank alternates using LLM intuition weights when available. |
-| `npm run fonoran:optimize-compounds -- --length-only` | Demote only when flat length > 4 and a shorter seed exists. |
-| `npm run fonoran:compound-audit` | Compound quality audit (includes LLM split / promotion findings). |
+| `npm run fonoran:compound-audit` | Compound quality audit, written to `reports/` (not committed). |
+| `npm run fonoran:compound-prune` | Remove compounds that no longer resolve. |
+| `npm run fonoran:compound-confusability` | Report near-collisions between compound surfaces. |
+| `npm run fonoran:concept-gap-audit` | Concepts with no root and no compound. |
+| `npm run fonoran:seed-quality-audit` | Structural problems in the seed files. |
 
-**Authority tiers for preferred forms:** `human` / `playtest` (locked) → `llm_consensus` → `heuristic`.
-
----
-
-## LLM evaluation
-
-Requires `ANTHROPIC_API_KEY` in `.env`. LLMs evaluate seed candidates; they do not invent compositions.
-
-| Command | What it does |
-| --- | --- |
-| `npm run fonoran:llm-intuition` | v3 intuition battery — ranks compound alternates. |
-| `npm run fonoran:llm-intuition -- --pilot` | Smoke test (~80 calls). |
-| `npm run fonoran:llm-intuition -- --calibration` | Calibration batch (~320 calls). |
-| `npm run fonoran:llm-intuition -- --dry-run` | Cost estimate only. |
-| `npm run fonoran:llm-playtest` | Run LLM playtest rounds. |
-| `npm run fonoran:playtest:baseline` | Record playtest baseline metrics. |
-
-Typical optimization after intuition batch:
-
-```bash
-npm run fonoran:llm-intuition -- --calibration
-npm run fonoran:optimize-compounds -- --use-llm
-npm run fonoran:build:approved
-```
+**Authority tiers for preferred forms:** `human` / `playtest` (locked) → `four_rules`. `playtest` is historical provenance from the retired guess-the-meaning game; those decisions were human and stay locked.
 
 ---
 
@@ -171,6 +130,17 @@ npm run fonoran:build:approved
 
 ---
 
+## Learn course phrases
+
+| Command | What it does |
+| --- | --- |
+| `npm run fonoran:course-phrases:build` | Rebuild the committed Learn phrase snapshot. |
+| `npm run fonoran:course-phrases:check` | Fail when the committed snapshot drifts from the corpus and seeds (runs in `npm test`). |
+
+Learn compiles phrase roman at runtime, so a rebuild is only needed to refresh the offline snapshot and CI fixtures.
+
+---
+
 ## Data management
 
 External vocabulary data lives in the `fonora-data` submodule.
@@ -180,10 +150,6 @@ External vocabulary data lives in the `fonora-data` submodule.
 | `npm run fonoran:data:init` | Initialize git submodules (`fonora-data`). |
 | `npm run fonoran:data:fetch` | Fetch latest pinned data from remote. |
 | `npm run fonoran:data:status` | Show submodule commit vs manifest pin. |
-| `npm run fonoran:snapshot:export -- --to=data/` | Export Postgres lab state → seed JSON (commit milestones). |
-| `npm run fonoran:snapshot:import -- --from=data/` | Import seed JSON → Postgres (local bootstrap). |
-| `npm run fonoran:import` | Import JSON bundle into runtime store. |
-| `npm run fonoran:export` | Export runtime store to JSON. |
 
 ---
 
@@ -191,8 +157,14 @@ External vocabulary data lives in the `fonora-data` submodule.
 
 | Command | What it does |
 | --- | --- |
-| `npm run fonoran:stress-test` | Stress-test build pipeline edge cases. |
-| `npm test` | Unit tests + translator golden regression. |
+| `npm test` | Unit tests, seed invariants, LLM quarantine check, translator golden regression. |
+| `npm run fonoran:verify-invariants` | Structural invariants across the seed files. |
+| `npm run fonoran:verify-refs` | Fail when a doc or lesson teaches a Fonoran form the seeds no longer contain. |
+| `npm run fonoran:verify-quarantine` | Fail if deterministic code gains a new dependency on model code or model output. |
+| `npm run audit:collisions` | Surface collisions across the lexicon. |
+| `npm run test:vowels` | Vowel readability report. |
+| `npm run test:minimal-pairs` | Minimal-pair collision report. |
+| `npm run test:pronunciation-validation` | Pronunciation validation report. |
 
 ---
 
@@ -201,9 +173,8 @@ External vocabulary data lives in the `fonora-data` submodule.
 | CLI workflow | Web UI |
 | --- | --- |
 | Approve roots & compounds | **Words** — [`/tools#word-manager`](/tools#word-manager) |
-| Review LLM proposals | **Review** — [`/tools#gap-workshop`](/tools#gap-workshop) |
-| Regenerate dictionary, snapshots, lab reset | **Advanced** — [`/tools#advanced`](/tools#advanced) |
-| Puzzle playtests | **Puzzle** — [`/language#puzzle`](/language#puzzle) |
+| Review the proposal queue | **Review** — [`/tools#gap-workshop`](/tools#gap-workshop) |
+| Regenerate dictionary, lab reset | **Advanced** — [`/tools#advanced`](/tools#advanced) |
 | Translation gap visualization | **Translation Test** — [`/tools#translation-test`](/tools#translation-test) |
 
 ---
@@ -212,10 +183,7 @@ External vocabulary data lives in the `fonora-data` submodule.
 
 | Variable | Purpose |
 | --- | --- |
-| `ANTHROPIC_API_KEY` | Backend tooling: vocab survey, gap analysis, LLM intuition, refine loop |
-| `ANTHROPIC_API_KEY_FONORA_TRANSLATOR` | User-facing Language translator (`/api/fonoran/translate`) and `npm run fonoran:translate:cache-warm` |
-| `ANTHROPIC_MODEL` | Override default model (default: `claude-sonnet-4-6`) |
-| `DATABASE_URL` | PostgreSQL for production lab state |
+| `DATABASE_URL` | PostgreSQL for user data (accounts, lesson progress, votes). The language reads from `data/`. |
 | `PORT` | Dev server port (default `8000`) |
 
-See also: [Fonoran guide](fonoran.md) · [Compound workflow](fonoran-compound-workflow.md) · [Deploy](deploy.md)
+See also: [Rulebook](fonoran-rulebook.md) · [Architecture](fonoran-architecture.md) · [Compound workflow](fonoran-compound-workflow.md) · [Deploy](deploy.md)

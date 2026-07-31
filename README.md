@@ -4,7 +4,7 @@
 
 **Central hypothesis:** can a language designed from first principles be learned quickly enough that two people with no shared native language can achieve practical communication after only a short period of study?
 
-This repository contains the **Fonora script**, the **Fonoran experimental language**, builder tools, a public research notebook, and interactive web apps.
+This repository contains the **Fonora script**, the **Fonoran experimental language**, builder tools, and interactive web apps.
 
 See **[docs/platform-overview.md](docs/platform-overview.md)** for the full platform map.
 
@@ -38,21 +38,19 @@ Docs: [language-rules.md](docs/language-rules.md) · [multilingual-support.md](d
 | Asset | Route |
 | --- | --- |
 | [Language app](https://fonora.org/language) | About, Translator, Dictionary, Grammar |
-| [Puzzle Conversation](https://fonora.org/language#puzzle) | Guess-the-meaning playtests |
 | [fonoran.md](docs/fonoran.md) | Guide, pipeline, API |
-| [Constitution](docs/fonoran-constitution.md) | Philosophy and campfire test |
+| [Rulebook](docs/fonoran-rulebook.md) | The whole language: three layers, 13 rules |
 
 Live vocabulary: `data/fonoran-sound-bucket.json` (local runtime; gitignored).
 
-### 3. Tools and research
+### 3. Tools
 
 | Area | Route |
 | --- | --- |
 | [Learn](https://fonora.org/learn) | Public script practice |
 | [Tools](https://fonora.org/tools) | QA and builder utilities (sign-in when OAuth configured) |
-| [Research notebook](https://fonora.org/research) | RN-01 through RN-27 experiment write-ups |
 
-CLI: `npm run fonoran:build`, `fonoran:root-candidates`, `fonoran:refine`. See [docs/fonoran-cli-tools.md](docs/fonoran-cli-tools.md) for the full operator reference.
+CLI: `npm run fonoran:build`, `fonoran:root-candidates`, `fonoran:translation-gaps`. See [docs/fonoran-cli-tools.md](docs/fonoran-cli-tools.md) for the full operator reference.
 
 ## Live site
 
@@ -60,7 +58,6 @@ CLI: `npm run fonoran:build`, `fonoran:root-candidates`, `fonoran:refine`. See [
 - **https://fonora.org/script** — Fonora Script
 - **https://fonora.org/language** — Fonoran language app
 - **https://fonora.org/learn** — learner exercises
-- **https://fonora.org/research** — research notebook
 
 (`/fonoran/` redirects to `/language`.)
 
@@ -76,7 +73,7 @@ npm install
 npm start
 ```
 
-Research datasets (LLM evaluations, playtests, translation snapshots, research notes) live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data). After clone, run `npm run fonoran:data:status` to verify paths.
+Generated datasets (gap reports, phrase corpus, test snapshots) live in [Fonora/fonora-data](https://github.com/Fonora/fonora-data). After clone, run `npm run fonoran:data:status` to verify paths.
 
 Open [http://localhost:8000](http://localhost:8000). Browsers block `fetch()` and WASM over `file://` — always use the HTTP server.
 

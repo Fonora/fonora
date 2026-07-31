@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "status": "canonical",
+  "description": "English words claimed by more than one Fonoran concept. A word with two owners has no deterministic translation, so the translator must guess or drop it. Words resolvable by the naming rule (a word belongs to the concept it names) are fixed in the localization itself by scripts/fonoran-word-ownership.js and do not appear here. What remains is either English polysemy, where one word carries two unrelated meanings, or a pair of concepts that are genuinely the same idea and should merge.",
+  "enforcement": "scripts/fonoran-verify-invariants.js fails on any contested word not listed here, so new ambiguity cannot be introduced while this backlog is worked down.",
+  "contested": [
+    {
+      "word": "cross",
+      "concepts": [
+        "angry",
+        "move"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "glad",
+      "concepts": [
+        "happy",
+        "joy"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "grasp",
+      "concepts": [
+        "hand",
+        "understand"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "healer",
+      "concepts": [
+        "doctor",
+        "person"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "healers",
+      "concepts": [
+        "doctor",
+        "person"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "ill",
+      "concepts": [
+        "pain",
+        "sick"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "nearby",
+      "concepts": [
+        "here",
+        "near"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "peaceful",
+      "concepts": [
+        "calm",
+        "still"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "rest",
+      "concepts": [
+        "sleep",
+        "still"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "sight",
+      "concepts": [
+        "eye",
+        "see"
+      ],
+      "ruling": null
+    },
+    {
+      "word": "stay",
+      "concepts": [
+        "still",
+        "wait"
+      ],
+      "ruling": null
+    }
+  ]
+}

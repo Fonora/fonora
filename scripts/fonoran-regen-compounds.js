@@ -104,7 +104,7 @@ async function main() {
       concept: c.concept,
       composition: c.composition,
       gloss: c.gloss,
-      notes: c.notes || 'Phase IV: constitution-valid live concept retained',
+      notes: c.notes || 'Phase IV: rule-valid live concept retained',
       preferred_source: c.preferred_source ?? 'heuristic',
       alternates: [],
     });
@@ -128,6 +128,7 @@ async function main() {
     ...rootGraph,
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
     demoTrees,
   });
 
@@ -138,6 +139,7 @@ async function main() {
   const rankCtx = {
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
     flatCountFor: comp => finalResolver.flatCount(comp),
   };
 
@@ -156,7 +158,7 @@ async function main() {
     philosophy:
       'Compounds are meaning-attempts, not canonical answers. Each concept keeps a preferred '
       + 'form and alternate understandable forms. understandability is an advisory ranking aid; '
-      + 'human guess-the-meaning playtests decide the preferred form (docs/fonoran-constitution.md).',
+      + 'a human decides the preferred form (docs/fonoran-rulebook.md).',
     description:
       'Phase IV regenerated from semantic-foundation teaching trees '
       + '(data/fonoran-semantic-demo-compounds.json) with deterministic preferred selection.',

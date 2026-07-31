@@ -12,7 +12,7 @@ Same detector as lab Health `prefix_overlap` in [`tools/fonoran-gen3-readability
 
 ### Exclusivity ≠ semantic ban
 
-This is **prefix-family exclusivity**, not “ban this intuitive concept.” If `dak` (hand) exists, `da` cannot — and vice versa. An editor may *feel* that a short CV is arbitrarily blocked; the conflict is structural (segmentation / audible distinction), and the resolution is to choose which member of the family occupies the slot. See the thought experiment in [RN-35 · CV density and CVC audibility](research-notes/RN-35-cv-density-and-cvc-audibility.md).
+This is **prefix-family exclusivity**, not “ban this intuitive concept.” If `dak` (hand) exists, `da` cannot — and vice versa. An editor may *feel* that a short CV is arbitrarily blocked; the conflict is structural (segmentation / audible distinction), and the resolution is to choose which member of the family occupies the slot.
 
 ## Practical rule
 

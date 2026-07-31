@@ -233,7 +233,7 @@ function sanitizeReturnTo(raw) {
   if (path === '/script/') path = '/script';
 
   if (path === '/') return '/';
-  const allowedRoots = ['/language', '/script', '/learn', '/tools', '/research'];
+  const allowedRoots = ['/language', '/script', '/learn', '/tools'];
   for (const root of allowedRoots) {
     if (path === root || path.startsWith(`${root}/`)) return path;
   }
@@ -337,49 +337,25 @@ export function isAdminWriteRequired(pathname, method) {
   if (m === 'POST' && pathname === '/api/fonoran/lab/graph/preview') return false;
   if (m === 'POST' && pathname === '/api/fonoran/translate') return false;
   if (m === 'POST' && pathname === '/api/fonoran/translation-tests/run') return false;
-  if (m === 'POST' && pathname === '/api/fonoran/snapshot/preview') return false;
-  if (m === 'POST' && pathname === '/api/fonoran/puzzle/guess') return false;
-  if (m === 'POST' && pathname === '/api/fonoran/puzzle/feedback') return false;
   if (m === 'POST' && pathname === '/api/fonoran/expressions/candidates') return false;
   if (m === 'POST' && pathname === '/api/fonoran/analyze/word') return false;
   // Vote endpoints are community-only (handled by isCommunityWriteRequired); everything else requires admin
-  if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/vote$/) && m === 'POST') return false;
   if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return false;
-  // Community proposal creation is handled by isCommunityWriteRequired
-  if (pathname === '/api/fonoran/proposals' && m === 'POST') return false;
   // Learn progress sync is community-only (handler checks session user)
   if (pathname === '/api/fonoran/me/progress' && m === 'PUT') return false;
   return m === 'POST' || m === 'PATCH' || m === 'PUT' || m === 'DELETE';
 }
 
-/** @deprecated use isAdminWriteRequired */
-export function isWriteAuthRequired(pathname, method) {
-  return isAdminWriteRequired(pathname, method);
-}
-
 export function isCommunityWriteRequired(pathname, method) {
   const m = method.toUpperCase();
   if (m !== 'POST') return false;
-  if (pathname === '/api/fonoran/proposals') return true;
-  if (pathname.match(/^\/api\/fonoran\/proposals\/[^/]+\/vote$/) && m === 'POST') return true;
-  if (pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/) && m === 'POST') return true;
-  return false;
-}
-
-export function isSnapshotAdminRequired(pathname, method) {
-  const m = method.toUpperCase();
-  if (pathname === '/api/fonoran/snapshot/status' && m === 'GET') return false;
-  if (pathname === '/api/fonoran/snapshot/preview' && m === 'POST') return false;
-  return pathname.startsWith('/api/fonoran/snapshot/');
+  return Boolean(pathname.match(/^\/api\/fonoran\/words\/[^/]+\/vote$/));
 }
 
 export function isRegenAdminRequired(pathname, method) {
   const m = method.toUpperCase();
-  if (pathname === '/api/fonoran/lab/regen/status' && m === 'GET') return false;
   if (m !== 'POST') return false;
-  return pathname === '/api/fonoran/lab/regenerate'
-    || pathname === '/api/fonoran/lab/editorial/import'
-    || pathname === '/api/fonoran/lab/optimize-compounds';
+  return pathname === '/api/fonoran/lab/regenerate';
 }
 
 export function adminRequiredResponse(res) {

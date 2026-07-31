@@ -3,12 +3,13 @@
  */
 
 import { escapeHtml } from './utils.js';
-import { refreshAuth } from './auth-session.js';
 import {
   buildChartSvg,
   buildMultiLineChartSvg,
   chartTypeToggleHtml,
 } from './fonoran-analytics-charts.js';
+import { loadFonoranBootstrap } from './fonoran-bootstrap.js';
+import { api } from './api-client.js';
 
 const PERIODS = [
   { id: 'day', label: 'Day' },
@@ -44,21 +45,6 @@ const state = {
   },
 };
 
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
-    ...opts,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (res.status === 401) {
-    await refreshAuth();
-    throw new Error('Sign in required');
-  }
-  if (res.status === 403) throw new Error(data.error || 'Admin access required');
-  if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
-  return data;
-}
 
 function periodCount(metric, period) {
   if (!metric) return 0;
@@ -366,7 +352,7 @@ async function loadProductHealth() {
     const [health, translation, bootstrap] = await Promise.all([
       api('/api/fonoran/lab/health').catch(() => null),
       api('/api/fonoran/translation-tests/latest').catch(() => null),
-      api('/api/fonoran/bootstrap').catch(() => null),
+      loadFonoranBootstrap({ refresh: true }).catch(() => null),
     ]);
     const lab = bootstrap?.lab ?? bootstrap;
     const items = reviewItems(lab);

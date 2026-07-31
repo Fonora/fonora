@@ -54,9 +54,6 @@ export function docViewerHrefForContext(repoPath, loc = window.location) {
   return docViewerHref(repoPath);
 }
 
-/** Base path for the public research notebook (path-routed for SEO). */
-export const RESEARCH_BASE = '/research';
-
 const ALLOWED_EXACT = new Set(['CONTRIBUTING.md', 'README.md', 'SECURITY.md']);
 const ALLOWED_PREFIX = 'docs/';
 
@@ -87,6 +84,14 @@ const DOC_PATH_ALIASES = {
   'docs/FONORA_COLLISION_AUDIT.md': 'docs/archive/FONORA_COLLISION_AUDIT.md',
   'docs/IPA_VOWEL_NORMALIZATION_AUDIT.md': 'docs/archive/IPA_VOWEL_NORMALIZATION_AUDIT.md',
   'docs/FONORA_VOWEL_DECISION_REPORT.md': 'docs/archive/FONORA_VOWEL_DECISION_REPORT.md',
+  'docs/fonoran-gap-assessment.md': 'docs/archive/fonoran-gap-assessment.md',
+  'docs/fonoran-generation-2.md': 'docs/archive/fonoran-generation-2.md',
+  'docs/fonoran-grammar-constitutional-audit.md': 'docs/archive/fonoran-grammar-constitutional-audit.md',
+  'docs/fonoran-grammar-redesign-proposal.md': 'docs/archive/fonoran-grammar-redesign-proposal.md',
+  'docs/fonoran-learning-sessions-log.md': 'docs/archive/fonoran-learning-sessions-log.md',
+  'docs/fonoran-llm-playtest-experiment.md': 'docs/archive/fonoran-llm-playtest-experiment.md',
+  'docs/fonoran-constitution.md': 'docs/archive/fonoran-constitution.md',
+  'docs/fonoran-philosophy.md': 'docs/archive/fonoran-philosophy.md',
 };
 
 /** @param {string} path */
@@ -99,17 +104,8 @@ export const DOC_LAYER_ORDER = [
   { id: 'essential', label: 'Essential' },
   { id: 'script', label: 'Script layer' },
   { id: 'language', label: 'Language layer' },
-  { id: 'research', label: 'Research notebook' },
   { id: 'archive', label: 'Archive' },
 ];
-
-/** Populated at runtime from /api/research/notes when docs viewer loads. */
-export let RESEARCH_DOC_ENTRIES = [];
-
-/** @param {Array<{ path: string, label: string, layer: string }>} entries */
-export function setResearchDocEntries(entries) {
-  RESEARCH_DOC_ENTRIES = entries;
-}
 
 function buildDocCatalog() {
   return [
@@ -129,9 +125,12 @@ function buildDocCatalog() {
     { path: 'docs/pronunciation-validation.md', label: 'Pronunciation validation', layer: 'script' },
     { path: 'docs/ipa-normalize.md', label: 'IPA normalization', layer: 'script' },
 
-    { path: 'docs/fonoran-constitution.md', label: 'Fonoran constitution', layer: 'language' },
+    { path: 'docs/fonoran-rulebook.md', label: 'Fonoran rulebook', layer: 'language' },
+    { path: 'docs/fonoran-algorithm-roots.md', label: 'Algorithm: root sounds', layer: 'language' },
+    { path: 'docs/fonoran-algorithm-compounds.md', label: 'Algorithm: compounds', layer: 'language' },
+    { path: 'docs/fonoran-algorithm-translation.md', label: 'Algorithm: translation', layer: 'language' },
+    { path: 'docs/fonoran-architecture.md', label: 'Architecture map', layer: 'language' },
     { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
-    { path: 'docs/fonoran-philosophy.md', label: 'Fonoran philosophy', layer: 'language' },
     { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
     { path: 'docs/fonoran-compound-workflow.md', label: 'Compound workflow', layer: 'language' },
     { path: 'docs/fonoran-cli-tools.md', label: 'CLI tools reference', layer: 'language' },
@@ -140,8 +139,6 @@ function buildDocCatalog() {
     { path: 'docs/fonoran-learn.md', label: 'Fonoran Learn', layer: 'language' },
     { path: 'docs/fonoran-translator.md', label: 'Fonoran translator', layer: 'language' },
     { path: 'docs/fonoran-interpretive-translator.md', label: 'Interpretive translator (legacy)', layer: 'language' },
-
-    ...RESEARCH_DOC_ENTRIES,
 
     { path: 'docs/archive/fonoran-gen3.md', label: 'DDA Gen 3 (archive)', layer: 'archive' },
     { path: 'docs/archive/fonoran-gen3-1.md', label: 'Gen 3.1 phonetic layer', layer: 'archive' },
@@ -152,10 +149,19 @@ function buildDocCatalog() {
     { path: 'docs/archive/FONORA_COLLISION_AUDIT.md', label: 'Collision audit', layer: 'archive' },
     { path: 'docs/archive/IPA_VOWEL_NORMALIZATION_AUDIT.md', label: 'Vowel normalization audit', layer: 'archive' },
     { path: 'docs/archive/FONORA_VOWEL_DECISION_REPORT.md', label: 'Vowel decision report (v2)', layer: 'archive' },
+    { path: 'docs/archive/fonoran-gap-assessment.md', label: 'Gap assessment (archive)', layer: 'archive' },
+    { path: 'docs/archive/fonoran-generation-2.md', label: 'Generation 2 pipeline', layer: 'archive' },
+    { path: 'docs/archive/fonoran-grammar-constitutional-audit.md', label: 'Grammar constitutional audit', layer: 'archive' },
+    { path: 'docs/archive/fonoran-grammar-redesign-proposal.md', label: 'Grammar redesign proposal', layer: 'archive' },
+    { path: 'docs/archive/fonoran-learning-sessions-log.md', label: 'Learning sessions log', layer: 'archive' },
+    { path: 'docs/archive/fonoran-llm-playtest-experiment.md', label: 'LLM playtest experiment', layer: 'archive' },
+    { path: 'docs/archive/fonoran-constitution.md', label: 'Constitution (retired)', layer: 'archive' },
+    { path: 'docs/archive/fonoran-philosophy.md', label: 'Philosophy (retired)', layer: 'archive' },
+    { path: 'docs/archive/research-notes/README.md', label: 'Research notes (archived)', layer: 'archive' },
   ];
 }
 
-/** Curated doc list for the viewer sidebar (includes runtime research entries). */
+/** Curated doc list for the viewer sidebar. */
 export function getDocCatalog() {
   return buildDocCatalog();
 }
@@ -179,7 +185,7 @@ export function getDocLayerId(repoPath) {
   return entry?.layer || 'essential';
 }
 
-/** Docs the viewer can fetch and render (excludes runtime research notebook routes). */
+/** Docs the viewer can fetch and render. */
 export function getNavigableDocCatalog() {
   return getDocCatalog().filter(
     (entry) =>
@@ -364,54 +370,4 @@ export function openDocViewer(repoPath) {
     window.showTab('docs');
   }
   return path;
-}
-
-/* ------------------------------------------------------------------ *
- * Research notebook routing (/research, /research/timeline, notes)
- * ------------------------------------------------------------------ */
-
-/** Repo path for a research note's markdown source. */
-export function researchNoteRepoPath(slug) {
-  return `docs/research/${String(slug || '').replace(/[^a-z0-9-]/gi, '')}.md`;
-}
-
-/**
- * Canonical href for a research view.
- * @param {string} [slug] omit for the index, 'timeline' for the timeline, otherwise a note slug
- */
-export function researchHref(slug) {
-  if (!slug) return RESEARCH_BASE;
-  if (slug === 'timeline') return `${RESEARCH_BASE}/timeline`;
-  if (slug === 'open') return `${RESEARCH_BASE}#open`;
-  return `${RESEARCH_BASE}/notes/${encodeURIComponent(slug)}`;
-}
-
-/** Absolute canonical URL for a research view (for SEO tags / sitemap). */
-export function researchCanonical(slug, origin = 'https://fonora.org') {
-  return `${origin}${researchHref(slug)}`;
-}
-
-/**
- * @param {Pick<Location, 'pathname' | 'hash'>} [loc]
- * @returns {{ view: 'index' | 'open' | 'timeline' | 'note', slug?: string } | null}
- */
-export function parseResearchLocation(loc = window.location) {
-  const path = loc.pathname.replace(/\/+$/, '') || '/';
-  if (path === RESEARCH_BASE) {
-    return { view: loc.hash.replace(/^#/, '') === 'open' ? 'open' : 'index' };
-  }
-  if (path === `${RESEARCH_BASE}/timeline`) {
-    return { view: 'timeline' };
-  }
-  if (path.startsWith(`${RESEARCH_BASE}/notes/`)) {
-    const slug = decodeURIComponent(path.slice(`${RESEARCH_BASE}/notes/`.length).replace(/\/+$/, ''));
-    return { view: 'note', slug };
-  }
-  return null;
-}
-
-/** @param {Pick<Location, 'pathname'>} [loc] */
-export function isResearchRoute(loc = window.location) {
-  const path = loc.pathname.replace(/\/+$/, '') || '/';
-  return path === RESEARCH_BASE || path.startsWith(`${RESEARCH_BASE}/`);
 }

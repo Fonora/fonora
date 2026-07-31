@@ -25,7 +25,6 @@
       "label": "air",
       "aliases": [
         "atmosphere",
-        "breath",
         "wind"
       ]
     },
@@ -33,8 +32,7 @@
       "label": "all",
       "aliases": [
         "every",
-        "everything",
-        "whole"
+        "everything"
       ]
     },
     "bad": {
@@ -61,8 +59,7 @@
     "eat": {
       "label": "eat",
       "aliases": [
-        "eating",
-        "food"
+        "eating"
       ]
     },
     "eye": {
@@ -90,7 +87,6 @@
     "joy": {
       "label": "joy",
       "aliases": [
-        "happy",
         "happiness",
         "delight",
         "glad"
@@ -115,7 +111,9 @@
       "aliases": [
         "sorrow",
         "unhappy",
-        "grief"
+        "grief",
+        "depression",
+        "depressed"
       ]
     },
     "see": {
@@ -140,7 +138,6 @@
     "body": {
       "label": "body",
       "aliases": [
-        "form",
         "physique"
       ]
     },
@@ -153,9 +150,11 @@
         "family",
         "friend",
         "friendship",
-        "trust",
         "trusts",
-        "trusted"
+        "trusted",
+        "relationship",
+        "relation",
+        "relationships"
       ]
     },
     "bone": {
@@ -204,7 +203,8 @@
       "aliases": [
         "afraid",
         "scared",
-        "dread"
+        "dread",
+        "timid"
       ]
     },
     "feel": {
@@ -235,7 +235,6 @@
       "label": "food",
       "aliases": [
         "meal",
-        "eat",
         "mana",
         "bread",
         "this meat"
@@ -310,6 +309,17 @@
         "guards"
       ]
     },
+    "own": {
+      "label": "own",
+      "aliases": [
+        "have",
+        "owns",
+        "owning",
+        "owned",
+        "possess",
+        "possesses"
+      ]
+    },
     "know": {
       "label": "know",
       "aliases": [
@@ -353,7 +363,8 @@
         "builds",
         "cook",
         "cooked",
-        "cooks"
+        "cooks",
+        "creation"
       ]
     },
     "many": {
@@ -362,7 +373,8 @@
         "multiple",
         "plenty",
         "several",
-        "a lot"
+        "a lot",
+        "much"
       ]
     },
     "mark": {
@@ -406,7 +418,6 @@
         "returned",
         "returns",
         "leave",
-        "left",
         "continue",
         "continues",
         "continued",
@@ -431,7 +442,6 @@
         "hurting",
         "ache",
         "suffering",
-        "sick",
         "ill"
       ]
     },
@@ -475,15 +485,13 @@
       "label": "skin",
       "aliases": [
         "skin",
-        "your skin",
-        "your"
+        "your skin"
       ]
     },
     "some": {
       "label": "some",
       "aliases": [
-        "few",
-        "part"
+        "few"
       ]
     },
     "take": {
@@ -615,11 +623,11 @@
     "equal": {
       "label": "equal",
       "aliases": [
-        "same",
         "balance",
         "fair",
         "fairness",
-        "match"
+        "match",
+        "justice"
       ]
     },
     "false": {
@@ -666,15 +674,14 @@
         "shop",
         "shops",
         "market",
-        "markets"
+        "markets",
+        "area"
       ]
     },
     "plant": {
       "label": "plant",
       "aliases": [
         "vegetation",
-        "tree",
-        "trees",
         "grass",
         "leaf",
         "leaves",
@@ -742,8 +749,7 @@
         "rest",
         "rested",
         "rests",
-        "peaceful",
-        "calm"
+        "peaceful"
       ]
     },
     "stone": {
@@ -770,7 +776,8 @@
         "it",
         "toy",
         "toys",
-        "things"
+        "things",
+        "substance"
       ]
     },
     "think": {
@@ -789,8 +796,7 @@
     "water": {
       "label": "water",
       "aliases": [
-        "liquid",
-        "drink"
+        "liquid"
       ]
     },
     "whole": {
@@ -848,16 +854,10 @@
         "someone",
         "somebody",
         "people",
-        "man",
-        "woman",
-        "men",
-        "women",
         "healer",
         "healers",
         "she",
         "he",
-        "parents",
-        "parent",
         "king",
         "kings",
         "queen",
@@ -893,14 +893,17 @@
         "strength",
         "power",
         "force",
-        "hard"
+        "hard",
+        "solid",
+        "firm"
       ]
     },
     "outside": {
       "label": "outside",
       "aliases": [
         "exterior",
-        "outer"
+        "outer",
+        "surface"
       ]
     },
     "conflict": {
@@ -928,8 +931,7 @@
       "label": "container",
       "aliases": [
         "box",
-        "vessel",
-        "hold"
+        "vessel"
       ]
     },
     "different": {
@@ -951,7 +953,6 @@
     "collective": {
       "label": "collective",
       "aliases": [
-        "all",
         "group",
         "groups",
         "community",
@@ -969,8 +970,7 @@
       "label": "parent",
       "aliases": [
         "parent",
-        "parents",
-        "father"
+        "parents"
       ]
     },
     "grandparent": {
@@ -1124,7 +1124,8 @@
         "glad",
         "joyful",
         "content",
-        "cheerful"
+        "cheerful",
+        "joy"
       ]
     },
     "angry": {
@@ -1133,7 +1134,9 @@
         "mad",
         "furious",
         "cross",
-        "enraged"
+        "enraged",
+        "aggression",
+        "aggressive"
       ]
     },
     "calm": {
@@ -1264,6 +1267,14 @@
         "meant"
       ]
     },
+    "manner": {
+      "label": "manner",
+      "aliases": [
+        "how",
+        "method",
+        "means"
+      ]
+    },
     "small": {
       "label": "small",
       "aliases": [
@@ -1272,9 +1283,7 @@
     },
     "breath": {
       "label": "breath",
-      "aliases": [
-        "breathe"
-      ]
+      "aliases": []
     },
     "doubt": {
       "label": "doubt",
@@ -1285,7 +1294,10 @@
     "wound": {
       "label": "wound",
       "aliases": [
-        "injured"
+        "injured",
+        "injury",
+        "injuries",
+        "wounds"
       ]
     },
     "closer": {
@@ -1347,8 +1359,166 @@
       "aliases": [
         "raw"
       ]
+    },
+    "center": {
+      "label": "center",
+      "aliases": [
+        "central",
+        "centre",
+        "middle",
+        "centered",
+        "centred"
+      ]
+    },
+    "include": {
+      "label": "include",
+      "aliases": [
+        "participate",
+        "participates",
+        "participated",
+        "join",
+        "joins",
+        "joined"
+      ]
+    },
+    "open_space": {
+      "label": "open space",
+      "aliases": [
+        "space"
+      ]
+    },
+    "cause": {
+      "label": "cause",
+      "aliases": [
+        "because"
+      ]
+    },
+    "greeting": {
+      "label": "greeting",
+      "aliases": [
+        "hello",
+        "hi"
+      ]
+    },
+    "lonely": {
+      "label": "lonely",
+      "aliases": [
+        "alone"
+      ]
+    },
+    "happen": {
+      "label": "happen",
+      "aliases": [
+        "occur",
+        "occurs",
+        "occurred",
+        "happens"
+      ]
+    },
+    "new": {
+      "label": "new",
+      "aliases": [
+        "fresh"
+      ]
+    },
+    "side": {
+      "label": "side",
+      "aliases": [
+        "sides",
+        "flank"
+      ]
+    },
+    "sound": {
+      "label": "sound",
+      "aliases": [
+        "sounds"
+      ]
+    },
+    "color": {
+      "label": "color",
+      "aliases": [
+        "colour",
+        "colors",
+        "colours"
+      ]
+    },
+    "wet": {
+      "label": "wet",
+      "aliases": [
+        "damp",
+        "moist",
+        "soaked"
+      ]
+    },
+    "heavy": {
+      "label": "heavy",
+      "aliases": [
+        "weight"
+      ]
+    },
+    "female": {
+      "label": "female",
+      "aliases": []
+    },
+    "male": {
+      "label": "male",
+      "aliases": []
+    },
+    "spirit": {
+      "label": "spirit",
+      "aliases": [
+        "spiritual",
+        "soul",
+        "souls"
+      ]
+    },
+    "tradition": {
+      "label": "tradition",
+      "aliases": [
+        "traditions",
+        "traditional",
+        "custom",
+        "customs"
+      ]
+    },
+    "weather": {
+      "label": "weather",
+      "aliases": []
+    },
+    "mother": {
+      "label": "mother",
+      "aliases": [
+        "mothers",
+        "mom",
+        "mama"
+      ]
+    },
+    "father": {
+      "label": "father",
+      "aliases": [
+        "fathers",
+        "dad",
+        "papa"
+      ]
+    },
+    "noise": {
+      "label": "noise",
+      "aliases": [
+        "noises"
+      ]
+    },
+    "worried": {
+      "label": "worried",
+      "aliases": [
+        "worry",
+        "worries",
+        "worrying",
+        "nervous",
+        "uneasy"
+      ]
     }
   },
   "version": "1.0-localization",
-  "description": "English labels and word bank for Fonoran concept identifiers. English is one localization — not the semantic authority."
+  "description": "English labels and word bank for Fonoran concept identifiers. English is one localization — not the semantic authority.",
+  "count": 176
 }

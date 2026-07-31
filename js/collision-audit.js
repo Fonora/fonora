@@ -562,7 +562,6 @@ export function formatCollisionAuditMarkdown(audit) {
   lines.push('');
   lines.push('Every simple or long vowel followed by a glide consonant (`w`, `l`, `r`, `y`) concatenates to v3 diphthong shape `⚬XᵔY`. Four pairs are registered diphthong keys (Category A, also listed in §3). The remainder are **phantom diphthongs**: valid vowel grammar, decode as two phonemes, but look like single vowel tokens in unsegmented text.');
   lines.push('');
-  lines.push('See [RN-23 · Vowel+glide phantom diphthongs](/research/notes/vowel-glide-phantom-diphthongs) for the full matrix and phonetic expansion analysis.');
   lines.push('');
 
   const registeredRows = audit.vowelShaped.filter((r) => r.category === 'registered-diphthong');
@@ -691,7 +690,7 @@ export function formatCollisionAuditMarkdown(audit) {
         ['Recovered keys looked like English (boy)', 'code bug / display', 'no, fixed'],
         ['o+r symbol sequence equals oy', 'language-design collision', 'yes'],
         ['Vowel+glide sequences equal diphthongs (eye/ow/oy/ay)', 'language-design collision', 'yes, homograph note exists'],
-        ['Unregistered ⚬XᵔY phantom diphthongs (o+l, o+r, …)', 'compositional readability', 'documented in RN-23; optional new keys'],
+        ['Unregistered ⚬XᵔY phantom diphthongs (o+l, o+r, …)', 'compositional readability', 'documented in docs/language-rules.md; optional new keys'],
         ['th+t equals t+s symbol strings', 'language-design collision', 'yes'],
         ['Unspaced greedy decode mis-recovery', 'decoder + boundary issue', 'partially mitigated by spacing'],
         ['v2 test "0 collisions" wording', 'test/documentation bug', 'no, rename/clarify'],

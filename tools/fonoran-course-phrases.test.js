@@ -4,6 +4,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isMainModule } from './is-main.js';
 import { buildGrammarPhraseExercises, grammarPhraseExerciseMatches } from '../js/fonoran-grammar-phrase-exercises.js';
 import {
   lessonsDocToExercises,
@@ -96,7 +97,11 @@ const rule4LessonTest = test('Rule 4 grammar basics lesson has 10 live-lexicon d
   const beach = exercises.find((e) => e.id === 'gb-beach');
   assert(beach, 'beach drill present');
   assert(grammarLessonAnswerMatches(beach, 'be sak gi yetem ?'), 'full beach form');
-  assert(grammarLessonAnswerMatches(beach, 'sak gi yetem'), 'casual beach form accepted');
+  assert(!grammarLessonAnswerMatches(beach, 'sak gi yetem'), 'actorless beach form rejected');
+  const actorSpoken = exercises.find((e) => e.id === 'gb-actor-spoken');
+  assert(actorSpoken, 'actor-spoken drill present');
+  assert(grammarLessonAnswerMatches(actorSpoken, 'be sak gi yetem ?'), 'actor kept');
+  assert(!grammarLessonAnswerMatches(actorSpoken, 'sak gi yetem ?'), 'actor drop rejected');
   const bare = exercises.find((e) => e.id === 'gb-bare-dest');
   assert(
     grammarPhraseExerciseMatches(bare, 'to-fonoran', 'mi gi ye'),
@@ -163,7 +168,7 @@ export function runFonoranCoursePhrasesTests() {
   ];
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const results = runFonoranCoursePhrasesTests();
   const failed = results.filter((r) => !r.ok);
   for (const r of results) {

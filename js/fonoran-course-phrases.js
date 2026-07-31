@@ -50,11 +50,13 @@ import { loadFonoranPracticeEntries, loadFonoranPracticeLab } from './fonoran-pr
 let cachedData = null;
 /** @type {string | null} */
 let cachedLabRev = null;
+let pendingLoad = null;
 
 /** Clear module-scope course phrase cache (e.g. after lab changes). */
 export function invalidateCoursePhrasesCache() {
   cachedData = null;
   cachedLabRev = null;
+  pendingLoad = null;
 }
 
 /**
@@ -106,18 +108,25 @@ export async function loadCoursePhrasesData() {
   if (cachedData !== null && (labRev == null || cachedLabRev === labRev)) {
     return cachedData;
   }
+  // Caching only the result is not enough: the Learn widgets all ask during page
+  // setup, before the first answer is back, so each one missed and refetched.
+  if (pendingLoad) return pendingLoad;
 
-  const runtime = await loadRuntimeCoursePhrases();
-  if (runtime?.domains?.length) {
-    cachedData = runtime;
-    cachedLabRev = runtime.lab_rev ?? labRev;
+  pendingLoad = (async () => {
+    const runtime = await loadRuntimeCoursePhrases();
+    if (runtime?.domains?.length) {
+      cachedData = runtime;
+      cachedLabRev = runtime.lab_rev ?? labRev;
+      return cachedData;
+    }
+
+    const baked = await loadStaticCoursePhrases();
+    cachedData = baked;
+    cachedLabRev = labRev;
     return cachedData;
-  }
+  })().finally(() => { pendingLoad = null; });
 
-  const baked = await loadStaticCoursePhrases();
-  cachedData = baked;
-  cachedLabRev = labRev;
-  return cachedData;
+  return pendingLoad;
 }
 
 /**

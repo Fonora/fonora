@@ -25,10 +25,6 @@ async function countJson(path, key) {
   if (!existsSync(path)) return null;
   const body = JSON.parse(await readFile(path, 'utf8'));
   switch (key) {
-    case 'llm_evaluations':
-      return { rounds: body.rounds?.length ?? 0 };
-    case 'playtests':
-      return { rounds: body.rounds?.length ?? 0 };
     case 'translation_test_latest':
       return { phrases: body.phrases?.length ?? body.results?.length ?? 0 };
     default:

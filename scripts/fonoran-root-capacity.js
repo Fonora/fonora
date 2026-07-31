@@ -13,7 +13,7 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseSyllable, isValidSyllable } from '../tools/fonoran-pronunciation.js';
+import { parseSyllable, isValidSyllable, ONSETS, VOWELS, CODAS } from '../tools/fonoran-pronunciation.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -29,15 +29,10 @@ const { phonetics, reserved_particles, excluded_syllables } = config;
 
 // ── 1–3: Phoneme inventories ──────────────────────────────────────────────────
 
-const ALL_ONSETS = [
-  'gh', 'kh', 'ng', 'sh', 'ch', 'th', 'dh', 'ñ',
-  'x', 'p', 't', 'b', 'd', 'j', 'g', 'h', 'f', 's', 'v', 'z', 'm', 'n', 'w', 'l', 'r', 'y', 'k',
-];
-const ALL_VOWELS = ['ee', 'ae', 'oh', 'eye', 'ow', 'oy', 'ay', 'a', 'e', 'i', 'o', 'u'];
-const ALL_CODAS = [
-  'ch', 'sh', 'ng', 'kh', 'gh', 'th', 'dh',
-  'p', 't', 'k', 'h', 'm', 'n', 's', 'd', 'b', 'g', 'v', 'z', 'l', 'r', 'x',
-];
+// The parser's own inventories, so this audit can never disagree with it.
+const ALL_ONSETS = ONSETS;
+const ALL_VOWELS = VOWELS;
+const ALL_CODAS = CODAS;
 
 // Subset used by the generator (from config)
 const GEN_ONSETS = [

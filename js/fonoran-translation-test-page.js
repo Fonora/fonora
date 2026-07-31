@@ -4,7 +4,7 @@
  */
 
 import { escapeHtml } from './utils.js';
-import { refreshAuth } from './auth-session.js';
+import { api } from './api-client.js';
 
 const TAB_ROOT = () => document.getElementById('tab-translation-test');
 
@@ -18,20 +18,6 @@ function $(id) {
   return TAB_ROOT()?.querySelector(`#${id}`) ?? document.getElementById(id);
 }
 
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
-    ...opts,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (res.status === 401) {
-    await refreshAuth();
-    throw new Error('Sign in required');
-  }
-  if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
-  return data;
-}
 
 function gapCoverageColor(pct) {
   return pct >= 80 ? 'var(--ok)' : pct >= 50 ? 'var(--review)' : 'var(--reject)';

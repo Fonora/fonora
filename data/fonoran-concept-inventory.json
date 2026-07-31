@@ -1,40 +1,8 @@
 {
-  "source": "merge of data/fonoran-semantic-primitives.json (core) + data/fonoran-primitive-roots-config.json (extended)",
+  "source": "merge of data/archive/fonoran-semantic-primitives.json (core, archived) + data/fonoran-primitive-roots-config.json (extended)",
   "status": "canonical",
   "version": "1.0-converged-editorial",
-  "particles": [
-    {
-      "id": "past",
-      "form": "ta",
-      "note": "marks an event in the past; present is unmarked",
-      "role": "tense"
-    },
-    {
-      "id": "future",
-      "form": "na",
-      "note": "marks an event in the future",
-      "role": "tense"
-    },
-    {
-      "id": "negation",
-      "form": "no",
-      "note": "negates the following concept (false = no + true)",
-      "role": "polarity"
-    },
-    {
-      "id": "affirmation",
-      "form": "ya",
-      "note": "affirms / yes",
-      "role": "polarity"
-    },
-    {
-      "id": "question",
-      "form": "wo",
-      "note": "marks a clause as a question",
-      "role": "mood"
-    }
-  ],
-  "core_count": 135,
+  "core_count": 145,
   "primitives": [
     {
       "id": "addressee",
@@ -63,14 +31,14 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
-      "id": "aggression",
+      "id": "again",
       "tier": "core",
-      "domain": "emotion",
-      "description": "hostile force; attacking energy",
-      "priority_class": "extended",
+      "domain": "time",
+      "description": "again; one more time",
+      "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "hostile force; attacking energy",
-      "experience_tier": "emotion",
+      "plain_description": "again; one more time",
+      "experience_tier": "time",
       "language_tier": "fluent_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
@@ -336,6 +304,20 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "color",
+      "tier": "core",
+      "domain": "quality",
+      "description": "color; the visual quality of a surface",
+      "priority_class": "useful",
+      "suggested_status": "primitive",
+      "plain_description": "color; the visual quality of a surface",
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap.",
+      "primitive_test_note": "A dimension root: color words become compounds (color+light, color+dark) instead of one root each."
+    },
+    {
       "id": "conflict",
       "tier": "core",
       "domain": "relationships",
@@ -347,6 +329,20 @@
       "language_tier": "extended_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+    },
+    {
+      "id": "count",
+      "tier": "core",
+      "domain": "quantity",
+      "description": "how many of something; the quantity axis, not a value on it",
+      "priority_class": "essential",
+      "suggested_status": "primitive",
+      "plain_description": "how many of something; the quantity axis, not a value on it",
+      "primitive_test_note": "Distinct from many/some/all/one (values on the scale). Pairing unknown with count is what English packs into how many and how much. One axis covers both people and water: Fonoran does not mark the English count/mass split, so the noun names what is being counted.",
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "dark",
@@ -362,17 +358,17 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
-      "id": "depression",
+      "id": "day",
       "tier": "core",
-      "domain": "emotion",
-      "description": "heavy sadness; spirit pressed down",
-      "priority_class": "extended",
+      "domain": "time",
+      "description": "a day; the bright span of the cycle",
+      "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "heavy sadness; spirit pressed down",
-      "experience_tier": "emotion",
-      "language_tier": "fluent_core",
+      "plain_description": "a day; the bright span of the cycle",
+      "experience_tier": "time",
+      "language_tier": "extended_core",
       "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "do",
@@ -465,19 +461,6 @@
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
-      "id": "exclude",
-      "tier": "core",
-      "domain": "social",
-      "description": "to keep out of a group",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "to keep out of a group",
-      "experience_tier": "social",
-      "language_tier": "fluent_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
-    },
-    {
       "id": "eye",
       "tier": "core",
       "domain": "body",
@@ -506,7 +489,7 @@
     {
       "id": "fast",
       "tier": "core",
-      "domain": "quantity",
+      "domain": "quality",
       "description": "quick; moving at high speed",
       "priority_class": "common",
       "suggested_status": "primitive",
@@ -514,7 +497,8 @@
       "experience_tier": "space_motion",
       "language_tier": "extended_core",
       "campfire_pass": false,
-      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core.",
+      "domain_note": "Speed is a rate, not a cardinality. Filed with the other scalar properties (big, small) rather than with the quantity values it was grouped under."
     },
     {
       "id": "fear",
@@ -541,6 +525,20 @@
       "language_tier": "communicative_core",
       "campfire_pass": true,
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "female",
+      "tier": "core",
+      "domain": "being",
+      "description": "female; the she-kind of a living being",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "female; the she-kind of a living being",
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap.",
+      "primitive_test_note": "With male, unlocks mother/father/boy/girl/man/woman as transparent compounds of parent, child, person."
     },
     {
       "id": "fire",
@@ -648,6 +646,20 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "happen",
+      "tier": "core",
+      "domain": "process",
+      "description": "an event takes place; occur",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "an event takes place; occur",
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap.",
+      "primitive_test_note": "NSM prime. Not doing (no agent) and not change (no end state claimed): something simply took place."
+    },
+    {
       "id": "happy",
       "domain": "emotion",
       "description": "feeling glad and content",
@@ -697,6 +709,19 @@
       "language_tier": "extended_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+    },
+    {
+      "id": "heavy",
+      "tier": "core",
+      "domain": "quality",
+      "description": "heavy; hard to lift",
+      "priority_class": "useful",
+      "suggested_status": "primitive",
+      "plain_description": "heavy; hard to lift",
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "help",
@@ -797,32 +822,6 @@
       "suggested_status": "primitive",
       "plain_description": "the experience of traveling; a path through life",
       "experience_tier": "space_motion",
-      "language_tier": "fluent_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
-    },
-    {
-      "id": "joy",
-      "tier": "core",
-      "domain": "emotion",
-      "description": "deep gladness; joyful feeling",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "deep gladness; joyful feeling",
-      "experience_tier": "emotion",
-      "language_tier": "fluent_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
-    },
-    {
-      "id": "justice",
-      "tier": "core",
-      "domain": "social",
-      "description": "fair treatment; equal rules for all",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "fair treatment; equal rules for all",
-      "experience_tier": "social",
       "language_tier": "fluent_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
@@ -931,6 +930,19 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
+      "id": "male",
+      "tier": "core",
+      "domain": "being",
+      "description": "male; the he-kind of a living being",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "male; the he-kind of a living being",
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "many",
       "tier": "core",
       "domain": "quantity",
@@ -952,6 +964,19 @@
       "suggested_status": "primitive",
       "plain_description": "mark",
       "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
+      "id": "meaning",
+      "tier": "core",
+      "domain": "process",
+      "description": "meaning; what a word or act points to",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "meaning; what a word or act points to",
+      "experience_tier": "thinking",
       "language_tier": "fluent_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
@@ -980,32 +1005,6 @@
       "language_tier": "fluent_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
-    },
-    {
-      "id": "motion",
-      "tier": "core",
-      "domain": "space",
-      "description": "movement itself; something in motion",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "movement itself; something in motion",
-      "experience_tier": "space_motion",
-      "language_tier": "fluent_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
-    },
-    {
-      "id": "mouth",
-      "tier": "extended",
-      "domain": "body",
-      "description": "your mouth",
-      "priority_class": "useful",
-      "suggested_status": "primitive",
-      "plain_description": "your mouth",
-      "experience_tier": "survival_body",
-      "language_tier": "extended_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "move",
@@ -1058,6 +1057,32 @@
       "language_tier": "communicative_core",
       "campfire_pass": true,
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "new",
+      "tier": "core",
+      "domain": "quality",
+      "description": "new; recently come into being",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "new; recently come into being",
+      "experience_tier": "abstract",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
+      "id": "night",
+      "tier": "core",
+      "domain": "time",
+      "description": "the night; the dark span of the cycle",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "the night; the dark span of the cycle",
+      "experience_tier": "time",
+      "language_tier": "extended_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "now",
@@ -1189,6 +1214,19 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
+      "id": "please",
+      "tier": "core",
+      "domain": "social",
+      "description": "please; the softening word of a request",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "please; the softening word of a request",
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "point",
       "tier": "core",
       "domain": "space",
@@ -1202,27 +1240,14 @@
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
-      "id": "proud",
+      "id": "rain",
       "tier": "core",
-      "domain": "abstract",
-      "description": "proud",
+      "domain": "element",
+      "description": "rain; water falling from the sky",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "proud",
-      "experience_tier": "emotion",
-      "language_tier": "fluent_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
-    },
-    {
-      "id": "reach",
-      "tier": "core",
-      "domain": "abstract",
-      "description": "reach",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "reach",
-      "experience_tier": "abstract",
+      "plain_description": "rain; water falling from the sky",
+      "experience_tier": "space_motion",
       "language_tier": "fluent_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
@@ -1240,19 +1265,6 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
-      "id": "rule",
-      "tier": "core",
-      "domain": "social",
-      "description": "a pattern to follow; how things must be done",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "a pattern to follow; how things must be done",
-      "experience_tier": "social",
-      "language_tier": "extended_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
-    },
-    {
       "id": "sad",
       "tier": "core",
       "domain": "abstract",
@@ -1266,6 +1278,19 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
+      "id": "safe",
+      "tier": "core",
+      "domain": "quality",
+      "description": "safe; out of danger",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "safe; out of danger",
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "same",
       "tier": "core",
       "domain": "relationships",
@@ -1277,19 +1302,6 @@
       "language_tier": "extended_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
-    },
-    {
-      "id": "scared",
-      "tier": "core",
-      "domain": "emotion",
-      "description": "feeling afraid; pulled back by fear",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "feeling afraid; pulled back by fear",
-      "experience_tier": "emotion",
-      "language_tier": "fluent_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "see",
@@ -1318,6 +1330,45 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "share",
+      "tier": "core",
+      "domain": "social",
+      "description": "to share; to give part while keeping part",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "to share; to give part while keeping part",
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
+      "id": "shelter",
+      "tier": "core",
+      "domain": "space",
+      "description": "shelter; a place that protects",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "shelter; a place that protects",
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
+      "id": "show",
+      "tier": "core",
+      "domain": "social",
+      "description": "to show; to cause to see",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "to show; to cause to see",
+      "experience_tier": "social",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "sick",
       "tier": "core",
       "domain": "being",
@@ -1329,6 +1380,19 @@
       "language_tier": "communicative_core",
       "campfire_pass": true,
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
+    },
+    {
+      "id": "side",
+      "tier": "core",
+      "domain": "space",
+      "description": "the side of a thing; a flank, face or edge",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "the side of a thing; a flank, face or edge",
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "skin",
@@ -1408,6 +1472,33 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
+      "id": "soon",
+      "tier": "core",
+      "domain": "time",
+      "description": "soon; in a short time from now",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "soon; in a short time from now",
+      "experience_tier": "time",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
+      "id": "sound",
+      "tier": "core",
+      "domain": "element",
+      "description": "sound; what is heard",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "sound; what is heard",
+      "experience_tier": "space_motion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap.",
+      "primitive_test_note": "The phenomenon, not the act: hear is the action root, sound is what reaches the ear. Mirrors light (what lets you see)."
+    },
+    {
       "id": "source",
       "tier": "core",
       "domain": "abstract",
@@ -1460,19 +1551,6 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
-      "id": "straight",
-      "tier": "core",
-      "domain": "space",
-      "description": "a direct line without bend",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "a direct line without bend",
-      "experience_tier": "space_motion",
-      "language_tier": "extended_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
-    },
-    {
       "id": "strong",
       "tier": "core",
       "domain": "abstract",
@@ -1486,30 +1564,17 @@
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
-      "id": "substance",
+      "id": "sun",
       "tier": "core",
-      "domain": "abstract",
-      "description": "substance",
+      "domain": "element",
+      "description": "the sun; the light of the sky",
       "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "substance",
-      "experience_tier": "abstract",
-      "language_tier": "fluent_core",
+      "plain_description": "the sun; the light of the sky",
+      "experience_tier": "space_motion",
+      "language_tier": "extended_core",
       "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
-    },
-    {
-      "id": "surface",
-      "tier": "core",
-      "domain": "space",
-      "description": "the outer side you touch",
-      "priority_class": "useful",
-      "suggested_status": "primitive",
-      "plain_description": "the outer side you touch",
-      "experience_tier": "abstract",
-      "language_tier": "fluent_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+      "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
       "id": "take",
@@ -1604,14 +1669,14 @@
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
     },
     {
-      "id": "timid",
+      "id": "tired",
       "tier": "core",
-      "domain": "emotion",
-      "description": "shy fear; hesitation from fear",
-      "priority_class": "extended",
+      "domain": "being",
+      "description": "tired; drained of strength",
+      "priority_class": "common",
       "suggested_status": "primitive",
-      "plain_description": "shy fear; hesitation from fear",
-      "experience_tier": "emotion",
+      "plain_description": "tired; drained of strength",
+      "experience_tier": "survival_body",
       "language_tier": "fluent_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
@@ -1628,19 +1693,6 @@
       "language_tier": "communicative_core",
       "campfire_pass": true,
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
-    },
-    {
-      "id": "travel",
-      "tier": "core",
-      "domain": "space",
-      "description": "going from one place to another",
-      "priority_class": "common",
-      "suggested_status": "primitive",
-      "plain_description": "going from one place to another",
-      "experience_tier": "space_motion",
-      "language_tier": "fluent_core",
-      "campfire_pass": false,
-      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "tree",
@@ -1678,6 +1730,19 @@
       "language_tier": "extended_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+    },
+    {
+      "id": "try",
+      "tier": "core",
+      "domain": "action",
+      "description": "to try; to attempt an action",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "to try; to attempt an action",
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     },
     {
       "id": "understand",
@@ -1758,6 +1823,19 @@
       "campfire_reason": "Ring 1: two strangers would plausibly need this in their first week."
     },
     {
+      "id": "wet",
+      "tier": "core",
+      "domain": "element",
+      "description": "wet; soaked with water",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "wet; soaked with water",
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
       "id": "will",
       "tier": "core",
       "domain": "abstract",
@@ -1782,11 +1860,37 @@
       "language_tier": "extended_core",
       "campfire_pass": false,
       "campfire_reason": "Ring 2: everyday fluency beyond the campfire core."
+    },
+    {
+      "id": "worried",
+      "tier": "core",
+      "domain": "emotion",
+      "description": "worried; troubled by what may come",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "worried; troubled by what may come",
+      "experience_tier": "emotion",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
+    },
+    {
+      "id": "wound",
+      "tier": "core",
+      "domain": "being",
+      "description": "a wound; an injury on the body",
+      "priority_class": "common",
+      "suggested_status": "primitive",
+      "plain_description": "a wound; an injury on the body",
+      "experience_tier": "survival_body",
+      "language_tier": "fluent_core",
+      "campfire_pass": false,
+      "campfire_reason": "Ring 3: broad fluency within the 150-root cap."
     }
   ],
   "description": "Converged Fonoran concept inventory: ring-redesigned primitive set with 4 new spatial primitives (around/front/back/through) and 16 demoted to compound_candidate. Derivable concepts live in data/fonoran-compounds.json; polarity/tense/mood are particles, not roots.",
   "extended_count": 8,
-  "primitive_count": 135,
+  "primitive_count": 145,
   "productive_dimensions": {
     "bond": [
       "family",
@@ -1850,10 +1954,11 @@
     "summary": {
       "ring_1": 50,
       "ring_2": 50,
-      "ring_3": 35,
-      "total_assigned": 135,
+      "ring_3": 45,
+      "total_assigned": 145,
       "cap": 150
     },
     "spec": "data/fonoran-root-rings.json"
-  }
+  },
+  "particles_authority": "data/fonoran-grammar-particles.json is the single source of truth for the closed particle class; it is the file the translator loads. This inventory deliberately carries NO copy of it: a mirror kept here drifted (future listed as na instead of sa, mi and von missing, wo still claimed as a question particle after v1 removed it). Particle forms are also reserved for the root generator in data/fonoran-primitive-roots-config.json reserved_particles."
 }

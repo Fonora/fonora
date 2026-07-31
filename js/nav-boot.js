@@ -67,11 +67,6 @@
 
   if (path === '/language' || path.startsWith('/language/')) {
     const page = hash.split('?')[0];
-    if (page === 'puzzle') {
-      const query = hash.includes('?') ? hash.slice(hash.indexOf('?')) : '';
-      window.location.replace(`/learn#puzzle${query}${window.location.search}`);
-      return;
-    }
     if (page === 'advanced') {
       window.location.replace(`/tools#advanced${window.location.search}`);
       return;
@@ -96,15 +91,6 @@
     html.setAttribute('data-fonora-nav', 'language');
     html.setAttribute('data-fonora-tab', resolved);
     html.setAttribute('data-fonora-page', resolved);
-    return;
-  }
-
-  if (path === '/research' || path.startsWith('/research/')) {
-    let tab = 'research';
-    if (path === '/research/timeline') tab = 'timeline';
-    else if (hash === 'open') tab = 'open';
-    html.setAttribute('data-fonora-nav', 'platform');
-    html.setAttribute('data-fonora-tab', tab);
     return;
   }
 

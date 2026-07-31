@@ -40,7 +40,6 @@ import {
   setupFonoranSpeaking,
   onFonoranSpeakingTabActivated,
 } from './fonoran-speaking-practice.js';
-import { setupPuzzleLearn, onPuzzleTabActivated } from './puzzle-learn.js';
 import {
   loadLanguageRulesFromString,
   buildKeyboardMap,
@@ -54,6 +53,7 @@ import { translateIpaPhrase } from './ipa-pipeline.js';
 import { prepareChineseForPipeline } from './cjk-text.js';
 import { initEspeak, getEspeakInitError } from './ipa.js';
 import { getPiperVoiceForLang, initPiperAudio } from './piper-audio.js';
+import { warmOnEngage } from './warm-on-engage.js';
 import { loadLanguagePreference } from './language-preferences.js';
 import { escapeHtml, insertAtCursor, deleteSymbolBeforeCursor } from './utils.js';
 import { mountSymbolSpotlight } from './symbol-spotlight.js';
@@ -691,12 +691,6 @@ function migrateLegacyUrl() {
   }
   if (path === '/language' || path.startsWith('/language/')) {
     const page = window.location.hash.replace(/^#/, '').split('?')[0];
-    if (page === 'puzzle') {
-      const rawHash = window.location.hash.replace(/^#/, '');
-      const query = rawHash.includes('?') ? rawHash.slice(rawHash.indexOf('?')) : '';
-      history.replaceState(null, '', `/learn#puzzle${query}${window.location.search}`);
-      return;
-    }
     if (page === 'advanced') {
       history.replaceState(null, '', `/tools#advanced${window.location.search}`);
       return;
@@ -736,9 +730,7 @@ function migrateLegacyUrl() {
           : LEARN_TAB_IDS.has(hashPage)
             ? hashPage
             : LEGACY_LEARN_HASH[hashPage] ?? LEARN_DEFAULT_TAB;
-      const nextHash = navTab === 'puzzle' && hash.includes('?')
-        ? `#puzzle${hash.slice(hash.indexOf('?'))}`
-        : learnNavTabToHash(navTab);
+      const nextHash = learnNavTabToHash(navTab);
       history.replaceState(null, '', `/learn${nextHash}${window.location.search}`);
       return;
     }
@@ -881,15 +873,9 @@ function setHashForTab(tabId) {
 
   const base = basePathForTab(tabId);
   const currentHash = window.location.hash.replace(/^#/, '');
-  const currentHashPage = currentHash.split('?')[0];
   let hashSuffix = '';
   if (tabId !== defaultTabForBase(base)) {
-    if (tabId === 'puzzle' && currentHashPage === 'puzzle') {
-      const query = currentHash.includes('?') ? currentHash.slice(currentHash.indexOf('?')) : '';
-      hashSuffix = `#puzzle${query}`;
-    } else {
-      hashSuffix = `#${tabId}`;
-    }
+    hashSuffix = `#${tabId}`;
   } else if (
     base === '/learn'
     && (currentHash === 'fonora-script' || currentHash === 'fonoran-language' || currentHash === 'learn-progress')
@@ -1067,10 +1053,6 @@ function showTab(tabId) {
 
   if (panelId === 'fonoran-speaking') {
     onFonoranSpeakingTabActivated();
-  }
-
-  if (panelId === 'puzzle') {
-    onPuzzleTabActivated();
   }
 
   if (panelId !== 'translator') {
@@ -1266,9 +1248,6 @@ function applyRulesBundle(loaded) {
   void setupFonoranHearing(rules);
   void setupFonoranGrammar(rules);
   void setupFonoranSpeaking(rules);
-  if (document.querySelector('#tab-puzzle.tab-panel--active')) {
-    onPuzzleTabActivated();
-  }
   setupLearningLanguageSelect('learn-language-global', () => {
     updateLearningLanguageNote('script-writing-language-note');
     updateLearningLanguageNote('script-reading-language-note');
@@ -1278,18 +1257,21 @@ function applyRulesBundle(loaded) {
   renderAlphabetInventory(rules);
   setupAlphabetInventoryOrderToggle(rules);
 
-  initEspeak().then((result) => {
-    if (!result.ok) {
-      const banner = document.getElementById('fallback-banner');
-      if (banner) {
-        banner.hidden = false;
-        banner.textContent = `eSpeak NG failed to load: ${getEspeakInitError() || result.error}. IPA pipeline unavailable.`;
+  // Both engines are multi-megabyte downloads that nothing on the first screen needs.
+  warmOnEngage(() => {
+    initEspeak().then((result) => {
+      if (!result.ok) {
+        const banner = document.getElementById('fallback-banner');
+        if (banner) {
+          banner.hidden = false;
+          banner.textContent = `eSpeak NG failed to load: ${getEspeakInitError() || result.error}. IPA pipeline unavailable.`;
+        }
       }
-    }
-  });
+    });
 
-  const piperVoice = getPiperVoiceForLang(loadLanguagePreference()) || 'en_US-lessac-medium';
-  initPiperAudio(piperVoice).catch(() => {});
+    const piperVoice = getPiperVoiceForLang(loadLanguagePreference()) || 'en_US-lessac-medium';
+    initPiperAudio(piperVoice).catch(() => {});
+  });
 
   if (new URLSearchParams(window.location.search).has('test')) {
     import('./tests-core.js').then(({ runTests }) => {
@@ -1302,7 +1284,6 @@ function applyRulesBundle(loaded) {
 
 function bootstrapShell() {
   captureLearnRef();
-  setupPuzzleLearn(() => rules);
   const initialNavTab = resolveTabForAuth(getTabFromHash());
   const { navTab, panelId } = normalizeLearnTab(initialNavTab);
   initUniversalNav({

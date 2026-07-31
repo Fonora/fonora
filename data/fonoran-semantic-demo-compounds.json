@@ -2,7 +2,7 @@
   "version": "1.3-four-rules",
   "status": "reference",
   "description": "Reference teaching trees aligned with four-rules ASSOCIATION_SEEDS. Preferred forms are selected by fonoran:regen:four-rules, not by matching these trees exactly.",
-  "philosophy_source": "docs/fonoran-constitution.md",
+  "philosophy_source": "docs/fonoran-rulebook.md",
   "compound_count": 49,
   "compounds": [
     { "id": "community", "gloss": "many persons as one", "tree": ["collective", "person"], "depth": 1 },

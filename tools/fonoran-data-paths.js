@@ -1,6 +1,6 @@
 /**
- * Resolve paths for optional research datasets in Fonora/fonora-data.
- * Core editorial seeds always stay under the main repo data/ directory.
+ * Resolve paths for generated datasets in Fonora/fonora-data.
+ * All editorial seeds live under the main repo data/ directory.
  */
 
 import { existsSync } from 'node:fs';
@@ -13,18 +13,10 @@ const MANIFEST_PATH = join(ROOT, 'data/fonora-data.manifest.json');
 
 /** Relative paths inside the data repo (or legacy in-repo data/). */
 export const EXTERNAL_DATA_REL = {
-  llm_evaluations: 'data/fonoran-llm-evaluations.json',
-  playtests: 'data/fonoran-playtests.json',
   translation_test_latest: 'data/fonoran-translation-test-latest.json',
   stranger_corpus: 'data/fonoran-stranger-corpus.json',
   stranger_gap_report: 'data/fonoran-stranger-gap-report.json',
-  phonetic_analytics: 'data/fonoran-phonetic-analytics.json',
-  refine_iterations: 'data/fonoran-refine-iterations.json',
-  translation_cache: 'data/fonoran-translation-cache.json',
 };
-
-/** Editorial doc keys stored in fonora-data when external dir is active. */
-export const EXTERNAL_EDITORIAL_KEYS = new Set(['llm_evaluations', 'playtests']);
 
 /**
  * Root of Fonora/fonora-data: explicit env, or vendor/fonora-data submodule if present.
@@ -52,16 +44,13 @@ export function resolveDataPath(key) {
 }
 
 /**
- * Seed path for an editorial doc — external data dir for optional docs when configured.
- * @param {string} key
+ * Seed path for an editorial doc. Every editorial doc now lives in the main repo, so this is
+ * a plain join; the key is kept in the signature because callers iterate EDITORIAL_DOCS.
+ * @param {string} _key
  * @param {string} rel  path relative to repo root (from EDITORIAL_DOCS)
  * @param {string} [baseDir]
  */
-export function editorialSeedPath(key, rel, baseDir = ROOT) {
-  if (EXTERNAL_EDITORIAL_KEYS.has(key)) {
-    const dataDir = resolveDataDir();
-    if (dataDir) return join(dataDir, rel);
-  }
+export function editorialSeedPath(_key, rel, baseDir = ROOT) {
   return join(baseDir, rel);
 }
 

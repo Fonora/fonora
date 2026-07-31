@@ -5,7 +5,8 @@
  * height/backness for vowels) — not orthographic Levenshtein — to flag
  * compound surfaces that may be hard to distinguish by ear.
  *
- * See RN-30 / synthetic-only validity strategy.
+ * The scores are only valid against synthesized speech, which is the only listener the
+ * pipeline has. Treat them as a ranking, not a measurement of human confusability.
  */
 
 import { parseSyllable } from './fonoran-pronunciation.js';

@@ -215,7 +215,7 @@
             </div>
             <article class="content-card script-explore-more">
               <p class="home-layer-card__tag">Learn more</p>
-              <p class="script-explore-more__text">For design rationale and experiments behind Fonoran, see the <a href="/research">Research notebook</a>.</p>
+              <p class="script-explore-more__text">For the design rationale behind Fonoran, read the <a href="/?path=docs/fonoran-rulebook.md">rulebook</a> and the <a href="/?path=docs/fonoran-architecture.md">architecture map</a>.</p>
             </article>
           </section>
         </div>
@@ -276,19 +276,9 @@
 
             <div class="translator-panel translator-panel--output content-card">
               <div class="translator-panel__header translator-panel__header--output">
-                <span class="translator-panel__lang" id="tr-output-label">Fonoran</span>
-                <label class="translator-panel__lang translator-panel__lang--select" id="tr-target-lang-wrap" hidden for="tr-target-lang">
-                  <select id="tr-target-lang" class="translator-panel__lang-select" aria-label="Target language">
-                    <option value="en" selected>English</option>
-                    <option value="es">Spanish</option>
-                    <option value="fr">French</option>
-                    <option value="de">German</option>
-                    <option value="ja">Japanese</option>
-                    <option value="ar">Arabic</option>
-                    <option value="zh">Mandarin</option>
-                  </select>
-                </label>
+                <span class="translator-panel__lang" id="tr-output-label">Translation</span>
                 <div id="tr-output-meta" class="translator-panel__meta"></div>
+                <button type="button" class="btn btn--ghost btn--sm" id="tr-alignment-btn" hidden><svg class="align-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false"><circle class="learn-icon__dot" cx="7" cy="4.5" r="1.5"/><circle class="learn-icon__dot" cx="17" cy="4.5" r="1.5"/><circle class="learn-icon__dot" cx="7" cy="19.5" r="1.5"/><circle class="learn-icon__dot" cx="17" cy="19.5" r="1.5"/><path d="M7 7C7 12 17 12 17 17"/><path d="M17 7C17 12 7 12 7 17"/></svg><span>Alignment</span></button>
               </div>
               <div id="tr-output" class="translator-output" aria-live="polite" aria-labelledby="tr-output-label">
                 <p class="translator-output__empty sans">Type any language on the left to see Fonoran script and pronunciation.</p>
@@ -343,7 +333,7 @@
                 </div>
                 <a class="btn page-toolbar__action" href="../docs/fonoran-grammar.md" target="_blank" rel="noopener noreferrer">Source markdown</a>
               </header>
-              <p class="section-lead">The constitution of Fonoran. Semantic, compositional, and designed for the future translator.</p>
+              <p class="section-lead">The rules of Fonoran. Semantic, compositional, and built for the translator.</p>
             </div>
             <div class="page-doc-layout page-doc-layout--no-sidebar">
               <article id="grammar-body" class="page-doc-content markdown-body" aria-live="polite">
@@ -382,6 +372,17 @@
     </div>
   </div>
 
+  <div id="tr-alignment-modal" class="wm-modal" hidden role="dialog" aria-modal="true" aria-labelledby="tr-alignment-title">
+    <div class="wm-modal__backdrop"></div>
+    <div class="wm-modal__box wm-modal__box--wide">
+      <div class="wm-modal__head">
+        <span class="wm-modal__title" id="tr-alignment-title">Alignment</span>
+        <button type="button" class="wm-modal__close" data-modal-close aria-label="Close">✕</button>
+      </div>
+      <div class="wm-modal__body" id="tr-alignment-body" tabindex="-1"></div>
+    </div>
+  </div>
+
   <div id="sheet-backdrop" class="modal-backdrop" hidden aria-hidden="true"></div>
   <div id="sheet" class="sheet explorer-sheet" role="dialog" aria-modal="true" aria-label="Word explorer" hidden>
     <div class="sheet__chrome">
@@ -398,7 +399,6 @@
   </div>
 
   <div id="toast" class="toast"></div>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script type="module" src="/language/fonoran-app.js"></script>
 </body>
 </html>

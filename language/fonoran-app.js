@@ -2,7 +2,10 @@
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
     import { romanToFonoraScript, romanWordToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
     import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
-    import { createFonoraKeyboard } from '../js/fonora-keyboard-ui.js';
+    import { createKeyboardDockController } from '../js/fonora-keyboard-dock.js';
+    import { mountAlignment } from '../js/fonoran-alignment-view.js';
+    import { loadFonoranBootstrap } from '../js/fonoran-bootstrap.js';
+    import { warmOnEngage } from '../js/warm-on-engage.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
     import { getSamplePlaybackPlan, getPiperVoiceForLang, initPiperAudio } from '../js/piper-audio.js';
@@ -443,7 +446,7 @@
         STATE.health = null;
         STATE.healthKey = null;
         STATE.lexicon = null;
-        const bootstrap = await api('/api/fonoran/bootstrap');
+        const bootstrap = await loadFonoranBootstrap({ refresh: true });
         STATE.lab = bootstrap.lab;
         STATE.lexicon = bootstrap.lexicon ?? null;
         if (bootstrap.health) {
@@ -452,8 +455,10 @@
         }
         $('load-error').hidden = true;
         setFonoranUndoDisabled(!STATE.lab.can_undo || !canWrite());
-        const piperVoice = getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
-        initPiperAudio(piperVoice).catch(() => {});
+        warmOnEngage(() => {
+          const piperVoice = getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
+          initPiperAudio(piperVoice).catch(() => {});
+        });
         if (!opts.skipRender) renderActivePage();
       } catch { $('load-error').hidden = false; }
     }
@@ -691,7 +696,6 @@
       const footer = preferredPct != null || alts.length
         ? `<footer class="dict-alternates-panel__footer">
             ${preferredPct != null ? `<span class="dict-alt__pill dict-alt__pill--preferred">Preferred · ${preferredPct}%</span>` : ''}
-            <a class="dict-alternates-panel__cta" href="/learn#puzzle">Try in Puzzle Conversation</a>
           </footer>`
         : '';
       return `<div class="dict-alternates-panel">
@@ -1184,9 +1188,12 @@
     }
 
     async function renderExplorerMermaidIn(rootEl, mermaidSource, graphNodes, onNavigate) {
-      if (!window.mermaid || !mermaidSource || !rootEl) return;
-      const { MERMAID_INIT } = await import('../js/mermaid-theme.js');
-      window.mermaid.initialize(MERMAID_INIT);
+      if (!mermaidSource || !rootEl) return;
+      const { ensureMermaidLoaded } = await import('../js/mermaid-render.js');
+      await ensureMermaidLoaded().catch(() => {});
+      if (!window.mermaid) return;
+      const { getMermaidInit } = await import('../js/mermaid-theme.js');
+      window.mermaid.initialize(getMermaidInit());
       await new Promise((resolve) => requestAnimationFrame(resolve));
       const nodes = rootEl.querySelectorAll('.mermaid');
       try {
@@ -1990,6 +1997,41 @@
       document.documentElement.classList.remove('modal-open');
     }
 
+    let alignmentView = null;
+
+    function openAlignmentModal() {
+      const result = STATE.translatorResult;
+      const host = $('tr-alignment-body');
+      if (!host || !result || result.mode === 'error') return;
+
+      alignmentView?.destroy();
+      alignmentView = mountAlignment(host, {
+        phrase: STATE.translatorInput ?? '',
+        result,
+      });
+
+      $('tr-alignment-modal')?.removeAttribute('hidden');
+      document.documentElement.classList.add('modal-open');
+      host.focus();
+      // The stage measures itself against a panel that had no width while hidden.
+      requestAnimationFrame(() => alignmentView?.redraw());
+    }
+
+    function closeAlignmentModal() {
+      $('tr-alignment-modal')?.setAttribute('hidden', '');
+      document.documentElement.classList.remove('modal-open');
+      alignmentView?.destroy();
+      alignmentView = null;
+    }
+
+    /** Alignment needs Fonoran tokens to draw, so it is offered only when there are some. */
+    function syncAlignmentButton(result) {
+      const btn = $('tr-alignment-btn');
+      if (!btn) return;
+      const usable = Boolean(result?.alignment && Array.isArray(result.tokens) && result.tokens.length);
+      btn.hidden = !usable;
+    }
+
     function openChain(kind, id) {
       openExplorer(kind === 'sound' ? 'root' : 'word', kind === 'sound' ? id : id);
     }
@@ -2644,15 +2686,13 @@
 
     /* ---------- TRANSLATOR ---------- */
     let translatorToken = 0;
-    /** @type {ReturnType<typeof createFonoraKeyboard> | null} */
-    let translatorKeyboard = null;
-    let translatorKeyboardOpen = false;
+    /** @type {ReturnType<typeof createKeyboardDockController> | null} */
+    let translatorDock = null;
 
     const TRANSLATOR_SPEED_KEY = 'fonoran:translator:speed';
     const TRANSLATOR_SYLLABLE_MODE_KEY = 'fonoran:translator:syllable-by-syllable';
     const TRANSLATOR_SYLLABLE_MODE_LEGACY_KEY = 'fonoran:translator:word-by-word';
     const TRANSLATOR_SOURCE_LANG_KEY = 'fonoran:translator:source-lang';
-    const TRANSLATOR_TARGET_LANG_KEY = 'fonoran:translator:target-lang';
 
     const TRANSLATOR_FORWARD_EXAMPLES = [
       'Do you want to go to the beach?',
@@ -2676,62 +2716,24 @@
       return readTranslatorSourceLang() === 'fonoran-fonora';
     }
 
-    function isTranslatorKeyboardActive() {
-      return translatorKeyboardOpen
-        && STATE.page === 'translator'
-        && isTranslatorFonoraMode();
-    }
-
-    function syncTranslatorKeyboardToggle() {
-      const toggle = $('tr-keyboard-toggle');
-      const fonoraMode = isTranslatorFonoraMode();
-      if (toggle) {
-        toggle.hidden = !fonoraMode;
-        toggle.setAttribute('aria-pressed', translatorKeyboardOpen && fonoraMode ? 'true' : 'false');
-        toggle.textContent = translatorKeyboardOpen && fonoraMode ? 'Hide keyboard' : 'Keyboard';
+    function translatorDockController() {
+      if (!translatorDock) {
+        translatorDock = createKeyboardDockController({
+          toggleId: 'tr-keyboard-toggle',
+          dockId: 'tr-keyboard-dock',
+          inputId: 'tr-input',
+          keyboardId: 'tr-keyboard',
+          getRules: () => ensureRules(),
+          isFonoraMode: isTranslatorFonoraMode,
+          isViewActive: () => STATE.page === 'translator',
+          onEnter: () => { void runTranslator(); },
+        });
       }
-      const dock = $('tr-keyboard-dock');
-      if (dock) dock.hidden = !(translatorKeyboardOpen && fonoraMode);
-      document.body.classList.toggle(
-        'fonora-keyboard-dock-open',
-        Boolean(document.querySelector('.fonora-keyboard-dock:not([hidden])')),
-      );
-    }
-
-    async function ensureTranslatorKeyboard() {
-      const input = $('tr-input');
-      const container = $('tr-keyboard');
-      if (!input || !container) return null;
-      const rules = await ensureRules();
-      if (!rules) return null;
-      if (translatorKeyboard) {
-        translatorKeyboard.refresh(rules);
-        translatorKeyboard.setTarget(input);
-        return translatorKeyboard;
-      }
-      translatorKeyboard = createFonoraKeyboard({
-        rules,
-        container,
-        target: input,
-        isActive: isTranslatorKeyboardActive,
-        layout: 'practice',
-        enterKeyLabel: 'go',
-        onEnter: () => { void runTranslator(); },
-      });
-      return translatorKeyboard;
+      return translatorDock;
     }
 
     async function setTranslatorKeyboardOpen(open) {
-      if (open && !isTranslatorFonoraMode()) open = false;
-      if (open) {
-        await ensureTranslatorKeyboard();
-        translatorKeyboardOpen = true;
-        translatorKeyboard?.activate();
-      } else {
-        translatorKeyboardOpen = false;
-        translatorKeyboard?.deactivate();
-      }
-      syncTranslatorKeyboardToggle();
+      await translatorDockController().setOpen(open);
     }
 
     function readTranslatorSourceLang() {
@@ -2741,23 +2743,11 @@
       return localStorage.getItem(TRANSLATOR_SOURCE_LANG_KEY) || 'auto';
     }
 
-    function readTranslatorTargetLang() {
-      const el = $('tr-target-lang');
-      const fromSelect = el?.value?.trim();
-      if (fromSelect) return fromSelect;
-      return localStorage.getItem(TRANSLATOR_TARGET_LANG_KEY) || 'en';
-    }
-
     function syncTranslatorDirectionUi() {
       const sourceLang = readTranslatorSourceLang();
       const reverse = isFonoranSourceLang(sourceLang);
       const input = $('tr-input');
-      const outputLabel = $('tr-output-label');
-      const targetWrap = $('tr-target-lang-wrap');
       const examples = $('tr-examples');
-
-      if (outputLabel) outputLabel.hidden = reverse;
-      if (targetWrap) targetWrap.hidden = !reverse;
 
       if (input) {
         const fonoraMode = reverse && sourceLang === 'fonoran-fonora';
@@ -2802,10 +2792,10 @@
         });
       }
 
-      if (!isTranslatorFonoraMode() && translatorKeyboardOpen) {
+      if (!isTranslatorFonoraMode() && translatorDockController().isOpen()) {
         void setTranslatorKeyboardOpen(false);
       } else {
-        syncTranslatorKeyboardToggle();
+        translatorDockController().sync();
       }
     }
 
@@ -2818,14 +2808,14 @@
     }
 
     function translatorEngineLabel(engine) {
-      if (engine === 'cached') return 'Cached';
-      if (engine === 'legacy') return 'Legacy';
-      if (engine === 'lexical') return 'Lexical';
-      if (engine === 'llm') return 'LLM';
+      // "Legacy" and "lexical" are the internal tokens, kept because scripts and tests pass
+      // them, but they are the wrong words for the reader: there is one rule-based engine.
+      if (engine === 'legacy' || engine === 'lexical') return 'Deterministic';
       return engine ? String(engine) : '';
     }
 
     function syncTranslatorOutputHeader(result) {
+      syncAlignmentButton(result);
       const meta = $('tr-output-meta');
       if (!meta) return;
       const reasoning = result?.reasoning?.trim();
@@ -2854,41 +2844,39 @@
       if (kinds.has('composed')) items.push('<span class="translator-resolved--composed">composed</span> from roots');
       if (kinds.has('loan')) items.push('<span class="translator-resolved--loan">«loan»</span> phonetic borrow');
       if (kinds.has('interpreted')) items.push('<span class="translator-resolved--interpreted">interpreted</span>');
+      if (kinds.has('guessed')) items.push('<span class="translator-resolved--guessed">guessed</span> nearest concept, not in the lexicon');
       if (kinds.has('unknown')) items.push('<span class="translator-unresolved-sample">gap</span>');
-      if ((result?.tokens ?? []).some(t => t.droppable)) {
-        items.push('<span class="translator-token__droppable">can drop</span> optional in casual speech');
-      }
       if (items.length < 1) return '';
       return `<p class="translator-output__legend sans">${items.join(' · ')}</p>`;
     }
 
-    function translatorSimplifiedHtml(result) {
-      const simplified = result?.simplified;
-      const clauses = Array.isArray(simplified?.clauses) ? simplified.clauses.filter(Boolean) : [];
-      if (!clauses.length) return '';
-      const items = clauses.map(c => `<li>${escapeHtml(c)}</li>`).join('');
-      const note = simplified.note
-        ? `<p class="translator-output__plain-note sans">${escapeHtml(simplified.note)}</p>`
-        : '';
-      return `<details class="translator-output__plain sans">
-        <summary>Plain meaning <span class="translator-output__plain-hint">(what we translated)</span></summary>
-        <div class="translator-output__plain-body">
-          <ol class="translator-output__plain-list">${items}</ol>
-          ${note}
-        </div>
-      </details>`;
+
+    /** Phrase IPA from token syllable parts, e.g. `/kʌ · bɛ · sʌk · jɛ·tɛm/`. */
+    function translatorIpaLine(result) {
+      const chunks = [];
+      for (const t of result?.tokens ?? []) {
+        if (t.kind === 'punctuation' || t.role === 'punctuation') continue;
+        if (!t.resolved) continue;
+        const parts = Array.isArray(t.parts) && t.parts.length
+          ? t.parts
+          : (t.fonoran ? [t.fonoran] : []);
+        const inner = parts
+          .map((p) => String(p ?? '').trim().toLowerCase())
+          .filter((p) => p && isValidSyllable(p))
+          .map((p) => romanToIpa(p).replace(/^\/+|\/+$/g, ''))
+          .join('·');
+        if (inner) chunks.push(inner);
+      }
+      return chunks.length ? `/${chunks.join(' · ')}/` : '';
     }
 
-    function translatorPronHtml(pron) {
-      if (!pron?.sayLine) return '';
-      const likeHtml = pron.englishLine
-        ? `<p class="translator-output__pron-line translator-output__like">${escapeHtml(pron.englishLine)}</p>`
-        : '';
+    function translatorPronHtml(result) {
+      const ipa = translatorIpaLine(result);
+      if (!ipa) return '';
       return `<details class="translator-output__pron sans">
         <summary>Pronunciation</summary>
         <div class="translator-output__pron-body">
-          <p class="translator-output__pron-line"><strong class="translator-output__phonetic-key mono">${escapeHtml(pron.sayLine)}</strong></p>
-          ${likeHtml}
+          <p class="translator-output__pron-line"><strong class="translator-output__phonetic-key mono">${escapeHtml(ipa)}</strong></p>
         </div>
       </details>`;
     }
@@ -2960,26 +2948,11 @@
       document.querySelectorAll('.translator-token--speaking').forEach(el => {
         el.classList.remove('translator-token--speaking');
       });
-      document.querySelectorAll('.translator-alternate--speaking').forEach(el => {
-        el.classList.remove('translator-alternate--speaking');
-      });
-      $('tr-output')?.classList.remove('translator-output--alternate-playing');
     }
 
-    function highlightTranslatorToken(tokenIndex, { alternateIndex = null } = {}) {
+    function highlightTranslatorToken(tokenIndex) {
       clearTranslatorSpeakingHighlight();
       if (tokenIndex == null || tokenIndex < 0) return;
-
-      if (alternateIndex != null) {
-        $('tr-output')?.classList.add('translator-output--alternate-playing');
-        document.querySelector(`.translator-alternate[data-tr-alt-index="${alternateIndex}"]`)
-          ?.classList.add('translator-alternate--speaking');
-        document.querySelector(
-          `.translator-alternate[data-tr-alt-index="${alternateIndex}"] .translator-token[data-tr-word="${tokenIndex}"]`,
-        )?.classList.add('translator-token--speaking');
-        return;
-      }
-
       document.querySelector(
         `.translator-token-list--primary .translator-token[data-tr-word="${tokenIndex}"]`,
       )?.classList.add('translator-token--speaking');
@@ -2993,7 +2966,7 @@
       el.classList.toggle('translator-playback-status--error', Boolean(isError));
     }
 
-    async function speakTranslatorResult(result, { alternateIndex = null } = {}) {
+    async function speakTranslatorResult(result) {
       if (!result?.tokens?.some(t => !isSkippablePlaybackToken(t)) || STATE.translatorPlaying) return;
       await ensureRules();
       primeAudioContext();
@@ -3028,7 +3001,7 @@
           if (STATE.translatorCancel) break;
 
           const seg = playback.segments[i];
-          highlightTranslatorToken(seg.tokenIndex ?? -1, { alternateIndex });
+          highlightTranslatorToken(seg.tokenIndex ?? -1);
 
           if (seg.kind === 'pause') {
             const pauseMs = pauseMsForPunctuation(
@@ -3093,6 +3066,7 @@
       if (kind === 'interpreted') return 'translator-resolved--interpreted';
       if (kind === 'semantic') return 'translator-resolved--semantic';
       if (kind === 'alias_weak') return 'translator-resolved--alias_weak';
+      if (kind === 'guessed') return 'translator-resolved--guessed';
       return '';
     }
 
@@ -3105,7 +3079,7 @@
       else if (kind === 'interpreted') cls = ' translator-token--interpreted';
       else if (kind === 'semantic') cls = ' translator-token--semantic';
       else if (kind === 'alias_weak') cls = ' translator-token--semantic';
-      if (token?.droppable) cls += ' translator-token--droppable';
+      else if (kind === 'guessed') cls = ' translator-token--guessed';
       return cls;
     }
 
@@ -3122,85 +3096,24 @@
           ? `<span class="${resClass}">${escapeHtml(token.fonoran)}</span>`
           : escapeHtml(token.fonoran))
         : `<span class="translator-unresolved-sample">${escapeHtml(token.english)}</span>`;
-      const gloss = token.gloss ? `<span class="translator-token__gloss">${escapeHtml(token.gloss)}</span>` : '';
+      // Reverse tokens name the concept by its id, so their gloss repeats the English column;
+      // the dictionary definition is the part worth showing beside it.
+      const glossText = token.definition || token.gloss || '';
+      const gloss = glossText && glossText !== token.english
+        ? `<span class="translator-token__gloss">${escapeHtml(glossText)}</span>`
+        : '';
       const showInterp = token.interpreted || (kind !== 'direct' && kind !== 'unknown');
       const interp = showInterp
         ? `<span class="translator-token__interp">${escapeHtml(token.interpreted_from ?? token.english)} → ${escapeHtml(token.concept_id ?? token.lookup ?? '')}${token.interpret_reason ? ` (${escapeHtml(token.interpret_reason)})` : ''}</span>`
-        : '';
-      const droppable = token.droppable
-        ? `<span class="translator-token__droppable" title="${escapeHtml(token.droppable_note || 'Can drop in casual speech')}">can drop</span>`
         : '';
       return `<li class="translator-token${translatorTokenClass(token)}" data-tr-word="${index}">
         <span class="translator-token__role">${escapeHtml(token.role)}</span>
         <span class="translator-token__english">${escapeHtml(token.english)}</span>
         <span class="translator-token__arrow" aria-hidden="true">→</span>
         <span class="translator-token__fonoran">${fonoran}</span>
-        ${droppable}
         ${gloss}
         ${interp}
       </li>`;
-    }
-
-    function swapTranslatorAlternate(index) {
-      const r = STATE.translatorResult;
-      const alt = r?.alternates?.[index];
-      if (!alt) return;
-      const previous = {
-        id: 'previous_primary',
-        note: 'Previous primary reading.',
-        roman: r.surface?.roman ?? '',
-        surface: r.surface,
-        playback: r.playback,
-        tokens: r.tokens,
-        frame: r.llm_frame,
-      };
-      const otherAlts = (r.alternates ?? []).filter((_, i) => i !== index);
-      STATE.translatorResult = {
-        ...r,
-        tokens: alt.tokens,
-        surface: alt.surface,
-        playback: alt.playback,
-        llm_frame: alt.frame ?? r.llm_frame,
-        alternates: [...otherAlts, previous],
-      };
-      void renderTranslatorOutput(STATE.translatorResult);
-    }
-
-    async function speakTranslatorAlternate(index) {
-      const alt = STATE.translatorResult?.alternates?.[index];
-      if (!alt?.tokens?.length || STATE.translatorPlaying) return;
-      await speakTranslatorResult({
-        ...STATE.translatorResult,
-        tokens: alt.tokens,
-        playback: alt.playback,
-        surface: alt.surface,
-      }, { alternateIndex: index });
-    }
-
-    function translatorAlternatesHtml(result) {
-      if (!result?.alternates?.length) return '';
-      const items = result.alternates.map((alt, i) => {
-        const script = alt.playback?.script || alt.roman || '';
-        const tokenList = alt.tokens?.length
-          ? `<ul class="translator-token-list translator-token-list--alternate">${alt.tokens.map((t, ti) => translatorTokenHtml(t, ti)).join('')}</ul>`
-          : '';
-        return `<li class="translator-alternate" data-tr-alt-index="${i}">
-          <div class="translator-alternate__actions">
-            <button type="button" class="chip translator-alternate__use" data-tr-alt-use="${i}">Use</button>
-            <button type="button" class="chip translator-alternate__hear" data-tr-alt-hear="${i}" aria-label="Listen to alternate">${playButtonMarkup('', { iconOnly: true, solo: true })}</button>
-          </div>
-          <div class="translator-alternate__body">
-            ${script ? `<div class="translator-alternate__script fonora-script symbol-text">${escapeHtml(script)}</div>` : ''}
-            <p class="translator-alternate__roman sans">${escapeHtml(alt.roman)}</p>
-            <p class="translator-alternate__note sans">${escapeHtml(alt.note)}</p>
-            ${tokenList}
-          </div>
-        </li>`;
-      }).join('');
-      return `<div class="translator-output__alternates">
-        <p class="translator-output__alternates-label sans">Also sayable</p>
-        <ul class="translator-alternates-list">${items}</ul>
-      </div>`;
     }
 
     function translatorReverseEmptyMessage() {
@@ -3227,7 +3140,7 @@
       const literal = String(result.literal ?? '').trim();
       const showLiteral = literal && literal !== translation;
       const roman = result.surface?.roman || '';
-      const pronHtml = translatorPronHtml(result.surface?.pronunciation);
+      const pronHtml = translatorPronHtml(result);
 
       syncTranslatorOutputHeader(result);
 
@@ -3285,14 +3198,9 @@
         } else if (isPunct) {
           piece = escapeHtml(t.fonoran);
         } else {
-          const kindCls = translatorResolutionClass(translatorResolutionKind(t));
-          const dropCls = t.droppable ? ' translator-roman--droppable' : '';
-          const classes = `${kindCls || ''}${dropCls}`.trim();
-          const title = t.droppable
-            ? ` title="${escapeHtml(t.droppable_note || 'Can drop in casual speech')}"`
-            : '';
+          const classes = translatorResolutionClass(translatorResolutionKind(t)) || '';
           piece = classes
-            ? `<span class="${classes}"${title}>${escapeHtml(t.fonoran)}</span>`
+            ? `<span class="${classes}">${escapeHtml(t.fonoran)}</span>`
             : escapeHtml(t.fonoran);
         }
         if (isPunct && romanChunks.length) romanChunks[romanChunks.length - 1] += piece;
@@ -3300,28 +3208,18 @@
       }
       const romanHtml = romanChunks.join(' ');
 
-      const pron = result.surface?.pronunciation;
-      const pronHtml = translatorPronHtml(pron);
+      const pronHtml = translatorPronHtml(result);
 
       syncTranslatorOutputHeader(result);
 
       out.innerHTML = `
-        ${translatorSimplifiedHtml(result)}
         <div class="translator-output__surface">
           ${playbackScript ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(playbackScript)}</div>` : ''}
           <p class="translator-output__roman">${romanHtml}</p>
           ${pronHtml}
         </div>
         ${translatorLegendHtml(result)}
-        <ul class="translator-token-list translator-token-list--primary">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>
-        ${translatorAlternatesHtml(result)}`;
-
-      out.querySelectorAll('[data-tr-alt-use]').forEach((btn) => {
-        btn.addEventListener('click', () => swapTranslatorAlternate(Number(btn.dataset.trAltUse)));
-      });
-      out.querySelectorAll('[data-tr-alt-hear]').forEach((btn) => {
-        btn.addEventListener('click', () => { void speakTranslatorAlternate(Number(btn.dataset.trAltHear)); });
-      });
+        <ul class="translator-token-list translator-token-list--primary">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>`;
 
       syncTranslatorPlaybackUi(result);
     }
@@ -3334,7 +3232,14 @@
       syncTranslatorPlaybackUi(null);
     }
 
-    async function runTranslator() {
+    /**
+     * @param {{ live?: boolean }} [opts] `live` marks a call fired by typing rather than by
+     *   the reader asking for a translation. A live call is served from the cache only, so
+     *   half-typed text costs nothing: the cache used to fill up with paid-for fragments
+     *   like "i am thirsty s". Submitting (Enter, or the controls) spends deliberately.
+     */
+    async function runTranslator(opts = {}) {
+      const live = opts.live === true;
       const input = $('tr-input');
       const text = (input?.value ?? STATE.translatorInput ?? '').trim();
       STATE.translatorInput = input?.value ?? text;
@@ -3355,13 +3260,19 @@
         const body = {
           text,
           sourceLang,
-          simplify: reverse ? false : 'auto',
           dev_lab: isLocalDevHost(),
+          // The alignment view is a presentation of this same response, never a
+          // second call with its own answer. Costs one lemma lookup per input word.
+          align: !reverse,
+          // Let the engine guess a nearest existing concept for a gap word.
+          // Guessed tokens come back marked `guessed` and are styled as such,
+          // so a reader always sees which words are the lexicon and which are
+          // the translator reaching.
+          guess: !reverse,
         };
         if (reverse) {
           body.direction = 'from-fonoran';
           body.inputMode = sourceLang === 'fonoran-fonora' ? 'fonora' : 'roman';
-          body.targetLang = readTranslatorTargetLang();
         }
         const result = await api('/api/fonoran/translate', {
           method: 'POST',
@@ -3416,9 +3327,6 @@
       const langEl = $('tr-source-lang');
       const savedLang = localStorage.getItem(TRANSLATOR_SOURCE_LANG_KEY);
       if (langEl && savedLang) langEl.value = savedLang;
-      const targetEl = $('tr-target-lang');
-      const savedTarget = localStorage.getItem(TRANSLATOR_TARGET_LANG_KEY);
-      if (targetEl && savedTarget) targetEl.value = savedTarget;
       void syncTranslatorDirectionUiAsync();
       syncTranslatorSpeedLabel();
       syncTranslatorPlaybackUi(STATE.translatorResult);
@@ -3432,7 +3340,10 @@
     let grammarMarkdownCache = null;
 
     async function renderGrammarMermaidIn(rootEl) {
-      if (!window.mermaid || !rootEl) return;
+      if (!rootEl) return;
+      const { ensureMermaidLoaded } = await import('../js/mermaid-render.js');
+      await ensureMermaidLoaded().catch(() => {});
+      if (!window.mermaid) return;
       const { getMermaidInit } = await import('../js/mermaid-theme.js');
       window.mermaid.initialize(getMermaidInit());
       await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -3595,7 +3506,7 @@
         return;
       }
       if (name !== 'dictionary') closeSheet();
-      if (name !== 'translator' && translatorKeyboardOpen) {
+      if (name !== 'translator' && translatorDockController().isOpen()) {
         void setTranslatorKeyboardOpen(false);
       }
       STATE.page = name;
@@ -3662,6 +3573,14 @@
       STATE.dictShowReconsider = filters.showReconsider;
       renderDictionary();
     });
+    $('tr-alignment-btn')?.addEventListener('click', openAlignmentModal);
+    bindModalDismiss({
+      backdrop: $('tr-alignment-modal')?.querySelector('.wm-modal__backdrop'),
+      panel: $('tr-alignment-modal')?.querySelector('.wm-modal__box'),
+      close: closeAlignmentModal,
+      isOpen: () => !$('tr-alignment-modal')?.hasAttribute('hidden'),
+    });
+
     bindModalDismiss({
       backdrop: $('sheet-backdrop'),
       panel: $('sheet'),
@@ -3685,13 +3604,18 @@
       STATE.translatorInput = e.target.value;
       if (isTranslatorFonoraMode()) return;
       clearTimeout(translatorDebounce);
-      translatorDebounce = setTimeout(() => { void runTranslator(); }, 280);
+      translatorDebounce = setTimeout(() => { void runTranslator({ live: true }); }, 280);
     });
     $('tr-input')?.addEventListener('keydown', (e) => {
       if (e.key !== 'Enter' || e.shiftKey) return;
-      if (!isTranslatorFonoraMode()) return;
-      // Physical Enter while Fonora keyboard is active is handled by the keyboard module.
-      if (translatorKeyboardOpen) return;
+      // Enter submits in every mode. It used to submit only in Fonora mode, which was fine
+      // while typing auto-translated: English input answered on its own and Enter had nothing
+      // to do. Keystrokes are now served from the cache only so they cost nothing, so a phrase
+      // the cache has not seen shows "Press Enter to translate" and Enter is the only way to
+      // ask. In a textarea an unhandled Enter just inserts a newline, so the hint sat there
+      // while nothing happened. Shift+Enter still breaks the line.
+      // Physical Enter while the Fonora keyboard is active belongs to the keyboard module.
+      if (isTranslatorFonoraMode() && translatorDockController().isOpen()) return;
       e.preventDefault();
       void runTranslator();
     });
@@ -3706,12 +3630,8 @@
       localStorage.setItem(TRANSLATOR_SOURCE_LANG_KEY, e.target.value);
       void syncTranslatorDirectionUiAsync().then(() => runTranslator());
     });
-    $('tr-target-lang')?.addEventListener('change', (e) => {
-      localStorage.setItem(TRANSLATOR_TARGET_LANG_KEY, e.target.value);
-      void runTranslator();
-    });
     $('tr-keyboard-toggle')?.addEventListener('click', () => {
-      void setTranslatorKeyboardOpen(!translatorKeyboardOpen);
+      void translatorDockController().toggle();
     });
     $('tr-keyboard-close')?.addEventListener('click', () => {
       void setTranslatorKeyboardOpen(false);

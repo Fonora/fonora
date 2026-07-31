@@ -28,6 +28,4 @@ jobs:
 
       - run: npm run fonoran:build
 
-      - run: npm run research:verify-md
-
       - run: npm test

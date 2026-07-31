@@ -1,5 +1,5 @@
 # Language Rules
-> **Now a research note.** This document is preserved as a primary source. Related narrative in the research notebook: [RN-01 · Writing sound instead of spelling](/research/notes/writing-sound-instead-of-spelling).
+> **Authoritative symbol rules.** This document defines the Fonora script encoding (`fonora_version: v3`).
 
 
 These are the authoritative **encoding rules** for the Fonora phonetic script (Script Layer). The experimental **Fonoran** language is written using this script, see [platform-overview.md](platform-overview.md) and [fonoran.md](fonoran.md) for the language and builder tools.
@@ -152,6 +152,6 @@ Non-grid orderings composed from primary symbols at load time (reversed `place +
 * **Symbol core:** 5 places + 4 manner modifiers + **⚬** vowel indicator (keyboard 0).
 * **V3 vowel grammar:** simple = 2 symbols; diphthong = 4 symbols. The legacy double-vowel marker **⚬⚬** is not used.
 * **`docs/language-rules.md`** supplies structure and default symbols; Alphabet tab overrides replace primaries for browser testing.
-* Consonant IPA→phoneme normalization is documented in [docs/ipa-normalize.md](docs/ipa-normalize.md) and enforced by `npm test`.
+* Consonant IPA→phoneme normalization is documented in [ipa-normalize.md](ipa-normalize.md) and enforced by `npm test`.
 * Sound grid, vowels, derived sounds, and CV examples recompose from active primaries on load.
 * Do not use ASCII `=` (U+003D) as a symbol.

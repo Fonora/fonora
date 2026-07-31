@@ -1,7 +1,7 @@
 {
   "version": "1.0-rule4-basics",
   "title": "Grammar basics",
-  "description": "A short Rule 4 lesson: preferred order, particles, serial want+go, bare destinations, and casual Actor drop. Uses the live lexicon.",
+  "description": "A short Rule 4 lesson: preferred order, particles, serial want+go, bare destinations, and the Actor always spoken. Uses the live lexicon.",
   "lessons": [
     {
       "id": "rule4-basics",
@@ -94,20 +94,19 @@
           "promptFonoran": "be sak gi yetem ?",
           "answerLang": "Do you want to go to the beach?",
           "parts": ["be", "sak", "gi", "yetem"],
-          "alternates": ["be sak gi yetem", "sak gi yetem ?", "sak gi yetem"],
+          "alternates": ["be sak gi yetem"],
           "tierRank": 0
         },
         {
-          "id": "gb-drop",
+          "id": "gb-actor-spoken",
           "kind": "choose",
-          "tip": "In casual yes/no to “you”, Actor be can drop. Full form still includes it.",
-          "promptLang": "Which is also OK for “want to go to the beach?” (casual)",
-          "answerRoman": "sak gi yetem ?",
-          "promptFonoran": "sak gi yetem ?",
-          "answerLang": "Want to go to the beach?",
-          "parts": ["sak", "gi", "yetem"],
-          "choices": ["sak gi yetem ?", "be sak nan yetem gi ?"],
-          "alternates": ["sak gi yetem"],
+          "tip": "The Actor is always spoken. A yes/no to “you” keeps be — without it, nobody is named.",
+          "promptLang": "Which is correct for “do you want to go to the beach?”",
+          "answerRoman": "be sak gi yetem ?",
+          "promptFonoran": "be sak gi yetem ?",
+          "answerLang": "Do you want to go to the beach?",
+          "parts": ["be", "sak", "gi", "yetem"],
+          "choices": ["be sak gi yetem ?", "sak gi yetem ?"],
           "tierRank": 0
         },
         {

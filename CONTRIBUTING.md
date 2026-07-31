@@ -21,7 +21,7 @@ Use the issue templates under [`.github/ISSUE_TEMPLATE/`](.github/ISSUE_TEMPLATE
 
 ### Fonoran (the language)
 
-Read [docs/fonoran-constitution.md](docs/fonoran-constitution.md) first. Agents: see [CLAUDE.md](CLAUDE.md).
+Read [docs/fonoran-rulebook.md](docs/fonoran-rulebook.md) first. Agents: see [CLAUDE.md](CLAUDE.md).
 
 Fonoran vocabulary is curated, not open PRs against the live dictionary. To propose roots, compounds, or meanings:
 

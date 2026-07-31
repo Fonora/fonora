@@ -1,24 +1,24 @@
 /**
- * Unified Fonoran translate API — routes to LLM compiler (default), legacy English compiler,
- * or reverse Fonoran → natural-language path.
+ * Unified Fonoran translate API: the deterministic forward compiler, or the reverse
+ * Fonoran to English gloss.
+ *
+ * There is one forward engine, and it is the language. The source language selects a
+ * parser from fonoran-source-parsers.js (English is the one installed today); a language
+ * with no parser is answered honestly rather than silently read as English. A
+ * model-backed compiler used to sit behind `engine: 'llm'` here, which meant every
+ * consumer of this module loaded LLM code and any caller could silently opt into output
+ * no rule can reproduce. It is gone.
+ *
+ * `legacy` and `lexical` remain accepted engine names, since scripts and tests pass them.
  */
 
-import { translateViaLlm, translatorLlmConfigured } from './fonoran-llm-translate.js';
-import { translateEnglishLegacy } from './fonoran-translator.js';
-import { ANTHROPIC_TRANSLATOR_API_KEY_ENV } from './fonoran-llm-client.js';
+import { translateFromSource } from './fonoran-translator.js';
+import { getSourceParser, supportedSourceLangs } from './fonoran-source-parsers.js';
 import {
   translateFromFonoran,
   isFonoranSourceLang,
   resolveInputMode,
-  normalizeTargetLang,
 } from './fonoran-reverse-translate.js';
-
-function resolveEngine(requested) {
-  const fromEnv = process.env.FONORAN_TRANSLATOR_ENGINE?.trim().toLowerCase();
-  const engine = (requested ?? fromEnv ?? 'llm').toLowerCase();
-  if (engine === 'legacy' || engine === 'lexical') return engine;
-  return 'llm';
-}
 
 function resolveDirection(options = {}) {
   const explicit = String(options.direction ?? '').trim().toLowerCase();
@@ -32,15 +32,12 @@ function resolveDirection(options = {}) {
  * @param {string} text
  * @param {{
  *   sourceLang?: string,
- *   targetLang?: string,
  *   direction?: string,
  *   inputMode?: string,
  *   lab?: object,
- *   engine?: string,
  *   skipCache?: boolean,
- *   cacheOnly?: boolean,
- *   simplify?: boolean|'auto',
  *   devLab?: boolean,
+ *   guess?: boolean,
  * }} [options]
  */
 export async function translate(text, options = {}) {
@@ -51,46 +48,39 @@ export async function translate(text, options = {}) {
       lab: options.lab,
       sourceLang: options.sourceLang,
       inputMode: resolveInputMode(options.sourceLang, options.inputMode),
-      targetLang: normalizeTargetLang(options.targetLang),
-      engine: resolveEngine(options.engine),
       skipCache: options.skipCache,
       devLab: options.devLab,
     });
   }
 
-  const engine = resolveEngine(options.engine);
-
-  if (engine === 'legacy' || engine === 'lexical') {
-    const result = await translateEnglishLegacy(text, { lab: options.lab });
-    return { ...result, engine: 'legacy', direction: 'to-fonoran' };
-  }
-
-  // Cache-only mode never calls the API, so it does not require a configured key.
-  if (!options.cacheOnly && !translatorLlmConfigured()) {
+  const parser = getSourceParser(options.sourceLang);
+  if (!parser) {
+    // An honest refusal beats reading Spanish with the English parser: the output
+    // would be fluent-looking and wrong, which is exactly what the engine never does.
     return {
-      ok: false,
-      error: `${ANTHROPIC_TRANSLATOR_API_KEY_ENV} not set. Configure translator API key or use engine=legacy.`,
-      engine: 'llm',
-      status: 503,
+      input: String(text ?? ''),
+      mode: 'unsupported-source-language',
+      error: `no parser installed for source language "${options.sourceLang}"`,
+      supported_source_langs: supportedSourceLangs(),
+      tokens: [],
+      surface: { roman: '', parts: [], pronunciation: { sayLine: '', englishLine: '' } },
+      semantic: null,
+      frame: null,
+      interpretations: [],
+      unresolved: [],
+      engine: 'legacy',
+      direction: 'to-fonoran',
     };
   }
 
-  const result = await translateViaLlm(text, {
-    sourceLang: options.sourceLang,
+  const result = await translateFromSource(text, {
+    parser,
     lab: options.lab,
-    skipCache: options.skipCache,
-    cacheOnly: options.cacheOnly,
-    simplify: options.simplify,
     devLab: options.devLab,
+    guess: Boolean(options.guess),
   });
-
-  if (result.ok === false) {
-    return result;
-  }
-
-  return { ...result, direction: 'to-fonoran' };
+  return { ...result, engine: 'legacy', direction: 'to-fonoran' };
 }
 
-export { translateViaLlm } from './fonoran-llm-translate.js';
-export { translateEnglishLegacy, translateFromFrame } from './fonoran-translator.js';
+export { translateEnglishLegacy } from './fonoran-translator.js';
 export { translateFromFonoran } from './fonoran-reverse-translate.js';

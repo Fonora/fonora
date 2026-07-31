@@ -1,6 +1,6 @@
 # Grammar
 
-> **Read [the Fonoran Constitution](fonoran-constitution.md) first** — hypothesis, four rules, vocabulary tiers, and grammar skeleton. For extended rationale see [fonoran-philosophy.md](fonoran-philosophy.md). Why grammar lives in closed-class particles: [RN-14 · Grammar as particles, not words](/research/notes/grammar-as-particles-not-words).
+> **Read [the Fonoran rulebook](fonoran-rulebook.md) first** — the three layers and all thirteen rules on one page. This document is the detailed syntax reference for layer 3. Why grammar lives in closed-class particles: rulebook rule 9 and `data/fonoran-grammar-particles.json`.
 
 > **Status**: Living specification. Authoritative syntax reference for humans and the Fonoran Translator. Sections marked *Under Development* are intentional placeholders.
 
@@ -14,7 +14,7 @@ This is the filter every other rule answers to. Before adding any particle, mark
 
 - no dedicated *who / what / where / when / why / how* particles (questions are compositional — see [Rule 3](#rule-3-grammar-uses-particles));
 - no *only / also / even* focus particles (these are refinements, expressed lexically if and when usage demands them);
-- an intentionally tiny particle inventory (`mi`, `ta`, `sa`, `no`, `ya`, `von`);
+- an intentionally tiny particle inventory (`mi`, `ta`, `sa`, `no`, `ya`, `von`, `ka`);
 - a strong preference for transparent compounds over new grammatical machinery.
 
 A distinction earns a particle only once real usage shows it *cannot* be carried by concepts and word order alone.
@@ -23,7 +23,7 @@ Roots are organized by **human experience** (survival/body, space/motion, social
 time, thinking, abstract) and gated by the **campfire test**: *could two strangers stranded
 with no common language plausibly need this root in their first week?* If yes, it belongs in
 the communicative core; if no, it belongs in the extended or complete vocabulary. See the
-[constitution](fonoran-constitution.md) for the tiered language model (~50 core → ~100
+[rulebook](fonoran-rulebook.md) for the tiered language model (~50 core → ~100
 extended → unlimited).
 
 ### The fundamental experience test
@@ -86,7 +86,7 @@ Read the examples first. You can already start understanding this language.
 
 Fonoran grammar **minimizes lexical categories**. Every lexical item is an **invariant concept**; its role comes from **grammar particles** and **sentence position**, not from noun, verb, or adjective labels.
 
-For the *why* — the communication experiment, campfire test, meaning-attempts, and tiered vocabulary — read **[the Fonoran Constitution](fonoran-constitution.md)**. The **Rules** below are the authoritative syntax reference.
+For the vocabulary rings and the four word rules, read **[the Fonoran rulebook](fonoran-rulebook.md)**. The **Rules** below are the authoritative syntax reference.
 
 | Idea | Rule |
 | --- | --- |
@@ -94,13 +94,13 @@ For the *why* — the communication experiment, campfire test, meaning-attempts,
 | Concepts, not parts of speech | [Rule 1](#rule-1-concepts-are-universal) |
 | Words never inflect | [Rule 2](#rule-2-words-never-change) |
 | Grammar uses particles | [Rule 3](#rule-3-grammar-uses-particles) |
-| Preferred order, drop what’s obvious | [Rule 4](#rule-4-preferred-order-drop-whats-obvious) |
+| Preferred order | [Rule 4](#rule-4-preferred-order) |
 | Meaning through composition | [Rule 5](#rule-5-semantic-compounding) |
 | English → Fonoran compiler | [Rule 7](#rule-7-translator-architecture) |
 
 **Present has no time particle.** Past uses **ta**, future **sa**. The event concept stays identical across tenses: `mi san` / `mi ta san` / `mi sa san` → I love / loved / will love.
 
-Modifier chains use the same invariant spellings — **san ba** (loving person), **san dan** (loving community) — with the modifier placed **before its head** ([Rule 4](#rule-4-preferred-order-drop-whats-obvious)). Compounds like **yenan** (water + path) and **sanba** (love + person) preserve their ancestry in the spelling; see [Rule 5](#rule-5-semantic-compounding).
+Modifier chains use the same invariant spellings — **san ba** (loving person), **san dan** (loving community) — with the modifier placed **before its head** ([Rule 4](#rule-4-preferred-order)). Compounds like **yenan** (water + path) and **sanba** (love + person) preserve their ancestry in the spelling; see [Rule 5](#rule-5-semantic-compounding).
 
 ## Rule 1: Concepts Are Universal
 
@@ -195,10 +195,13 @@ The full inventory (forms, roles, English triggers) lives in [../data/fonoran-gr
 | Negation | no | Active |
 | Affirmation | ya | Active |
 | Conditional (if) | von | Active |
+| Question | ka | Active |
 
-That is the entire grammatical inventory. Everything else — questions, focus, possession, comparison — is expressed with **concepts and word order**, not particles, until usage proves a distinction genuinely needs one.
+That is the entire grammatical inventory. Everything else — focus, possession, comparison — is expressed with **concepts and word order**, not particles, until usage proves a distinction genuinely needs one. Asking is the one distinction that could not be: it is not a concept in the sentence, it is what the speaker is doing with the whole sentence, and no ordinary word carries it.
 
-**Questions carry no particle.** There is no question marker and no interrogative pro-form. Content (*wh*) questions are formed **compositionally from ordinary concepts** (e.g. an "unknown person / thing / place / time" placed in the relevant role), and written questions are marked with **`?`**; spoken questions rely on **intonation**. How a given question is composed is a matter of the lexicon and the translator, not grammar — so the grammar never fixes a particular form. The current lexical form is **`nohu`** "unknown" — a *lexicalized word* built from the negation form + `hu` (know), written and taught as one unit (`nohu ba` = who, `nohu to` = what, `nohu che` = where, `nohu kan` = when). Playtesting showed the separated `no hu …` read as clause negation ("not know…") rather than as a question word; lexicalizing it is a deliberate vocabulary decision, not productive particle fusion — the `no` particle itself still never fuses in grammar. *Why* and *how* are deliberately **not yet expressible** in v1: Fonoran has no robust *reason* or *method* concept, and the language admits that rather than approximating it. (Removed in v1: the former question marker `wo`, the interrogatives `vus/zas/zes/zis/zos/zus`, and the focus particles `vat/vet/vit`.)
+**Questions open with `ka`.** Every question, polar or content, begins with the particle, and no `?` is written: the nine-symbol script has no such glyph, and without a word for it `be len mi` is both *you hear me* and *do you hear me*. The ordinary `.` still closes the sentence, because a terminator says only that the sentence ended and `ka` is what says it was a question. `ka` is clause-initial for the same reason `no` precedes what it denies, since a particle sits immediately before what it scopes over and a question scopes the whole clause. There is still no interrogative pro-form. Content (*wh*) questions are formed **compositionally from ordinary concepts** (an "unknown *X*" placed in the relevant role) behind `ka`, which is also what separates the question `ka nohu ba` from the statement `nohu ba` ("an unknown person"). How a given question is composed is a matter of the lexicon and the translator, not grammar — so the grammar never fixes a particular form. The current lexical form is **`nohu`** "unknown" — a *lexicalized word* built from the negation form + `hu` (know), written and taught as one unit (`ka nohu ba` = who, `ka nohu to` = what, `ka nohu che` = where, `ka nohu kan` = when, `ka nohu gak` = why). Playtesting showed the separated `no hu …` read as clause negation ("not know…") rather than as a question word; lexicalizing it is a deliberate vocabulary decision, not productive particle fusion — the `no` particle itself still never fuses in grammar.
+
+The *X* in `nohu X` must be a **dimension**: a root naming a kind of thing while staying neutral about which one. `che` does not say which place, `kan` does not say when, `gak` does not say which cause, `tan` (`count`) does not say how many. A root naming a *value* cannot fill the slot, because it answers the question before it is asked: there is no `nohu lek` ("unknown a-lot"). English *how many* / *how much* are one interrogative, unknown + count (`ka nohu tan`); the noun names what is counted, and Fonoran does not mark the English count/mass split. Manner *how* is unknown + manner (`ka nohu moyu`, the compound do + form). Degree on a quality (*how far*, *how big*) is not yet a dimension question and is asked as a polar probe on the scale word. (Removed in v1 and still removed: the interrogatives `vus/zas/zes/zis/zos/zus` and the focus particles `vat/vet/vit`. The v1 question marker `wo` is not the current one, because `wo` became the lexical root for *lonely*; the marker is `ka`.)
 
 Particles are **reserved**: the root generator never assigns particle forms to a lexical concept. The reserved set is enumerated in [../data/fonoran-primitive-roots-config.json](../data/fonoran-primitive-roots-config.json) (`reserved_particles.forms`) — it includes the active v1 forms plus the forms freed by v1 removals, which stay blocked from lexical reuse for spelling stability pending a future decision.
 
@@ -210,9 +213,9 @@ Polarity is grammar, not vocabulary — **false** is `no` + **true**, **differen
 
 Particles occupy fixed positions within the sentence skeleton; they never fuse into adjacent spellings.
 
-- **Negation** attaches near the action, before the Action concept (e.g. *I never said that* -> `mi no` + action). It is clause-scoped.
+- **Negation** immediately precedes the constituent it negates. Usually that is the Action, which negates the clause (*I am not dangerous* -> `mi no gamdal`), but it can equally be a Target noun (*I have no weapon* -> `mi gat no dakpa`) or a quality (*not safe* -> `no kep`). Scope is the constituent it precedes, so in a multi-clause sentence a `no` in one clause does not negate the others: *I will try and I will not stop* is `mi sa wuk mi sa no gitam`, where the negation reaches only the second clause.
 - **Quantifier pronouns compose** rather than taking their own root: *nobody* = `no` + **person**, *nothing* = `no` + **thing**, *everyone* = **all** + **person**, *everything* = **all** + **thing**, *someone* = **some** + **person**.
-- **Questions** add no particle: content questions compose from concepts and are written with `?` (see above).
+- **Questions** open with `ka` and are written with no terminator: content questions compose from concepts behind it (see above).
 
 Even before the full inventory exists, you can already read sentences by treating each slot as a labeled relationship:
 
@@ -226,7 +229,7 @@ I love someone.
 
 Particles are separate from concepts. They never fuse into word spellings.
 
-## Rule 4: Preferred Order, Drop What’s Obvious
+## Rule 4: Preferred Order
 
 Fonoran's sentence structure follows how people naturally think about an event — **who did what to what, where, and when**:
 
@@ -244,7 +247,7 @@ flowchart LR
   Actor --> Action --> Target --> Place --> Time
 ```
 
-Fonoran has no case markers, so a **preferred order** keeps who-did-what-to-whom clear. The language is campfire-simple: stack actions, name the place, drop what the listener already knows. Core roles do **not** freely scramble.
+Fonoran has no case markers, so a **preferred order** keeps who-did-what-to-whom clear. The language is campfire-simple: stack actions, name the place, say who is acting. Core roles do **not** freely scramble.
 
 ### Preferred order
 
@@ -255,11 +258,65 @@ Fonoran has no case markers, so a **preferred order** keeps who-did-what-to-whom
 Stacked predicates stay in the **Action** chain — no infinitive particle:
 
 ```text
-be sak gi yetem ?     (do you want to go to the beach?)
+ka be sak gi yetem    (do you want to go to the beach?)
 mi no sak gi lu de    (I do not want to go alone)
 ```
 
 `want` + `move` → `sak gi`. Do **not** park the second verb in Target.
+
+### Modality
+
+Modality is **lexical, not grammatical**. Modal senses are ordinary concepts chained in the Action slot on the Serial Action pattern above, so none of them costs a particle, a new root, or a change to the sentence skeleton:
+
+| Sense | Form | Example |
+| --- | --- | --- |
+| Ability | `hu` (know) + Action | `mi hu kel dat` — I can make fire |
+| Necessity | `les` (need) + Action | `gem dan les ginek` — we must run now |
+| Possibility, suggestion | `ketnat` (maybe) | `dan ketnat tinal nam` — we can rest here |
+| Inability | `no` + Action | `mi no giti` — I cannot walk |
+
+The marker sits immediately **before** the Action it modifies, the same position as `sak` (want) and `no`.
+
+`hu` for ability is the ordinary "know how to" route, and it stays decomposable: `hu kel dat` reads literally as *know make fire*. `ketnat` is the existing `some` + `true` compound, not a new form.
+
+Three cases take **no** modal marker, and adding one is an error:
+
+- **Requests.** An interrogative *can* is a request, and `ka` already carries it: *can you hear me?* is `ka be len mi`, never `ka be hu len mi`.
+- **Inability.** Plain negation is sufficient: *I cannot walk* is `mi no giti`.
+- **Proposals.** *We can go together* invites; it does not claim skill. `dan gi ho`, optionally with `ketnat`. Rendering it `dan hu gi ho` would say *we know how to walk*.
+
+**Not yet expressible.** *should* / *ought* and permission-granting *you can keep this* are honest gaps. `les` deliberately does **not** cover *should*, because the two diverge under negation: *should not go* forbids, while *les no gi* ("need not go") permits.
+
+### Coordination and disjunction
+
+**`and` needs no marker.** Juxtaposition already reads as conjunction:
+
+```text
+mi nes mak saklo      (I am cold and hungry)
+dan les lo ye         (we need food and water)
+```
+
+**`or` does need one**, because it would otherwise be identical to `and` and therefore assert the opposite of a choice: bare `guba gamba` for *friend or enemy* says the person is both. The group is closed with **`lu`** (`one`, "a single one"), quantifying over the alternatives:
+
+```text
+ba guba gamba lu      (that person is a friend or an enemy)
+ka be nes yos du lu   (are you tired or sick?)
+ka tes nam tak lu        (is the pain here or there?)
+ka be sak times gi lu    (do you want to stay or go?)
+```
+
+This is lexical, not grammatical, per Design Rule 0: `lu` is an existing quantity root, so disjunction costs no new particle and no new root. `mel` (`all`, "every one of them") is available for emphatic conjunction, and `ket` (`some`, "part of them") for partial selection.
+
+**Position carries the distinction.** `lu` *before* a concept quantifies that concept, which is the existing *alone* idiom `lu de` (one + self):
+
+```text
+mi no sak gi lu de    (I do not want to go alone)
+ka be sak times gi lu    (do you want to stay or go?)
+```
+
+In the first, `lu` precedes a single concept. In the second, it *follows* a group of two or more. Marking only ever attaches after the group it closes, so the two never compete for the same slot.
+
+**Alternatives must be grouped to be marked.** When they are lost before the marking step there is nothing to close, and the gap stays visible rather than `lu` attaching to a lone item. *Is the baby a girl or boy?* reports `girl` and `boy` as gaps because neither has a root, and *Do you mean this or that?* keeps `or` as a gap because demonstratives are skipped as function words.
 
 ### Bare destination
 
@@ -267,7 +324,7 @@ A plain “go to X” puts the landmark in **Place** after the motion concept. D
 
 ```text
 mi gi ye              (I go to the water)
-be sak gi yetem ?     (do you want to go to the beach?)
+ka be sak gi yetem    (do you want to go to the beach?)
 ```
 
 Use direction concepts (`nan`, `lo`, `fet`, …) only when the source contrasts direction — *toward*, *from*, *away*:
@@ -277,23 +334,24 @@ mi sak gi nan ye      (I want to go toward the water)
 gi fet ki lekche      (go away from the city)
 ```
 
-### Drop what’s obvious
+### The Actor is spoken
 
-Recoverable **Actor** may be omitted — same meaning, shorter surface:
+There is **no casual Actor drop**. A yes/no question to the addressee keeps `be`:
 
-| Register | Surface | When |
-| --- | --- | --- |
-| Full / clear | `be sak gi yetem ?` | Default teaching & translator primary |
-| Casual | `sak gi yetem ?` | Yes/no to the addressee; Actor is obvious |
+```text
+ka be sak gi yetem    (do you want to go to the beach?)
+```
 
-**Do not drop Actor** when dropping would create a vague reference — multi-clause discourse, contrasting actors, or when the Actor is not the addressee. Weather and imperatives already allow empty Actor (`[rain]`, `gi …`).
+Fonoran marks nothing on the verb, so a subjectless clause carries no trace of who is acting. `sak gi yetem` is equally readable as *I want to go to the beach*, and the reader has no way to choose. The saving is one short word; the cost is that every clause becomes context-dependent, and recovering the Actor from context is exactly the machinery a language without agreement does not have.
+
+An **empty Actor** still occurs where there is genuinely no actor to name: weather (`[rain]`) and imperatives (`gi …`). Those are not drops; nothing was there.
 
 Time and Place may front as scene-setting (they cannot be mistaken for core roles):
 
 ```text
 mi tel lo gem         (I eat food now)
 gem mi tel lo         (now, I eat food)
-mi tel lo nalche      (I eat food at-home)
+mi tel lo mesche      (I eat food at-home)
 mi gi ye              (I go to the water — bare destination)
 ```
 
@@ -324,7 +382,7 @@ I will love the tribe.
 ```
 
 ```example
-be sak gi yetem ?
+ka be sak gi yetem
 
 ↓
 
@@ -381,6 +439,18 @@ graph TD
 ```
 
 Compounding rules for the translator: prefer the **shortest transparent path** through approved concepts; omit concepts implied by human experience unless emphasis or disambiguation is needed (**semantic economy**); reject opaque shortcuts that break the tree (*implementation Under Development*).
+
+### Word families from dimension roots
+
+A **dimension root** names a kind of thing while staying neutral about which one (the same idea Rule 11 uses for questions), and one dimension root buys a whole family of compounds instead of one word each. These families are conventions, not suggestions: a new member of a family composes the same way its siblings do.
+
+| Family | Pattern | Members |
+| --- | --- | --- |
+| gender | being + **chos**/**shin** (female/male) | mother `feschos`, father `fesshin`, woman, man, girl, boy |
+| color | **shot** (color) + exemplar | white = color + light, black = color + dark |
+| sound | **shim** (sound) + quality | loud = sound + big, noise = sound + bad |
+
+`shim` (sound) deliberately mirrors `kek` (light): one names what reaches the ear, the other what lets you see — the phenomenon, never the act (`len` hear and `wi` see stay action roots). When a family's dimension root is missing, the fix is the dimension root, not another sibling: the July 2026 register review added nine such roots (happen, new, side, sound, color, wet, heavy, female, male) after finding the missing layer was operators and basic dimensions, not more nouns.
 
 ### Compound Boundary Constraint
 
@@ -476,9 +546,9 @@ English surface forms diverge. Meaning converges. The translator **compiles mean
 
 ```mermaid
 flowchart TD
-  SRC["Source (any language)"]
-  subgraph Probabilistic["Probabilistic (LLM @ temperature 0)"]
-    ME["Meaning extraction"]
+  SRC["Source sentence"]
+  subgraph Source["Source language (third-party tagger)"]
+    ME["Word class and lemma"]
     SG["Concept frame: slots + concept ids"]
   end
   subgraph Deterministic["Deterministic render (hard rules)"]
@@ -490,19 +560,19 @@ flowchart TD
   SRC --> ME --> SG --> PC --> CC --> GP --> FO
 ```
 
-The LLM only chooses **meaning** (concept ids + slot roles); everything from concept ids onward is **deterministic** and never invents a spelling.
+Only the left half knows the source language, and it is a maintained third-party dependency rather than our own rules. Everything from concept ids onward is deterministic and never invents a spelling.
 
-**Current implementation (July 2026).** The live translator is a **multilingual LLM semantic compiler** plus deterministic render. See **[fonoran-translator.md](fonoran-translator.md)** for architecture diagrams, UI behavior, API fields, and module map.
+**Current implementation (July 2026).** One engine, `translateEnglishLegacy` in `tools/fonoran-translator.js`, serves the translator, Learn, and the alignment view alike. See **[fonoran-algorithm-translation.md](fonoran-algorithm-translation.md)** for the full walk from sentence to surface, and **[fonoran-translator.md](fonoran-translator.md)** for API fields and the module map.
 
 At a high level:
 
-1. **Any language** → LLM emits a language-neutral **concept frame** (`{ slots, is_question, unresolved, reasoning }`).
-2. **Repair** — grammar brief validates the frame; rule-based fallback fixes WH misuse on yes/no questions and removed v1 particles.
-3. **Render** — `translateFromFrame()` maps concept ids to approved spellings via `slotsToTokens()` + `buildSurface()`. No invented roots.
-4. **Playback** — `attachTranslatorPlayback()` builds Fonora script + TTS segments (same pipeline as Samples).
-5. **Alternates** — optional rule-based readings (e.g. collective vs dyadic *we*) without a second LLM call.
+1. **Source sentence** → [`wink-nlp`](https://winkjs.org/wink-nlp/) supplies word class and dictionary form.
+2. **Roles** — Actor, Action, Target, Place, Time are read off word class, never off position.
+3. **Resolve** — each word becomes a concept id through a fixed tier order, or is reported as an honest gap.
+4. **Render** — `slotsToTokens()` and `buildSurface()` map concept ids to approved spellings. No invented roots.
+5. **Playback** — `attachTranslatorPlayback()` builds Fonora script + TTS segments (same pipeline as Samples).
 
-The legacy English slot-filling compiler in `tools/fonoran-translator.js` (`translateEnglishLegacy`, `engine=legacy`) remains for golden regression. It uses programmatic motion matching (`matchMotionPhrase` in `tools/fonoran-interpretation.js`) from `data/fonoran-interpretation-rules.json`. The per-sentence **semantic frame** below is still the pivot object — now produced by the LLM path as well as the legacy parser.
+The hand-written pattern cascade that preceded the tagger was deleted in July 2026.
 
 **The semantic frame is a real pivot object.** Between the parse and the surface,
 `translateEnglish` builds an explicit, language-neutral frame:
@@ -534,13 +604,9 @@ Do you want to go to the beach?
 
 addressee · want · move · beach
 
-↓ surface (full)
+↓ surface
 
-be sak gi yetem ?
-
-↓ casual (Actor dropped)
-
-sak gi yetem ?
+ka be sak gi yetem
 ```
 
 ```example
@@ -576,8 +642,8 @@ Plain destinations are bare Place landmarks. `nan` / `lo` / `fet` appear only fo
 3. **Semantic graph**: entities, events, relations, time, negation
 4. **Primitive concepts**: map graph nodes to approved Fonoran roots
 5. **Compound construction**: build or select transparent compounds for complex nodes
-6. **Grammar particles**: attach past (**ta**), future (**sa**), negation (**no**), conditional (**von**). **Omit time particles for present.** Questions add no particle — content questions compose from concepts and are written with `?`.
-7. **Fonoran sentence**: emit preferred-order surface string; mark recoverable addressee as droppable in the UI when safe
+6. **Grammar particles**: attach past (**ta**), future (**sa**), negation (**no**), conditional (**von**). **Omit time particles for present.** A question opens with **ka** and takes no terminator; content questions compose the unknown from concepts behind it.
+7. **Fonoran sentence**: emit preferred-order surface string
 
 Full implementation spec: [fonoran-translator.md](fonoran-translator.md) (live path) · [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) (legacy English compiler).
 
@@ -631,9 +697,10 @@ appear in the gap report (`suggestGapConcepts`) and the concept editor; they are
 never authoritative runtime output.
 
 **Curated relational vocabulary.** Spatial/relational words are added
-deliberately, not guessed. `beside → near` is a curated interpretation rule;
-`behind`, `front`, and `between` have no Fonoran root yet and remain **tracked
-honest gaps** until one is grown through the normal root pipeline.
+deliberately, not guessed. `beside → near` is a curated interpretation rule.
+`behind` (`so`) and `front` (`cha`) have since been grown through the normal
+root pipeline; `between` still has no Fonoran root and remains a **tracked
+honest gap** until one is grown the same way.
 
 **Locative predicates keep the relation.** In a static locative predicate
 (`the cat is behind the tree`) the parser routes the leading spatial preposition
@@ -680,7 +747,7 @@ node scripts/fonoran-translation-gaps.js --update-gap-baseline  # accept current
 ```
 
 **Gap baseline — the growth backbone.**
-[../data/fonoran-translation-gap-baseline.json](../data/fonoran-translation-gap-baseline.json)
+[../data/fonoran-translation-gap-baseline-deterministic.json](../data/fonoran-translation-gap-baseline-deterministic.json)
 tracks the set of English words the language does not yet express (honest gaps).
 `--assert` fails on any **new** gap beyond the baseline, so curation is
 measurable and regressions are caught while the baseline can only shrink as roots
@@ -751,10 +818,10 @@ move
 beach
 
 Fonoran:
-be sak gi yetem ?
+ka be sak gi yetem
 ```
 
-Serial Action (`sak gi`), bare Place (`yetem`), no path particle. Casual speech may drop Actor: `sak gi yetem ?`.
+Serial Action (`sak gi`), bare Place (`yetem`), no path particle. The Actor is always spoken.
 
 This architecture allows multiple English expressions to converge into the **same underlying semantic representation**, then diverge again only at the particle layer when needed.
 
@@ -766,11 +833,11 @@ This architecture allows multiple English expressions to converge into the **sam
 
 ## Semantic coordinates (archive / DDA)
 
-> **Constitution demoted the DDA coordinate track** as production design. Roots are organized by human experience and the campfire test; compounds are judged by recoverable meaning, not coordinate correctness. This section documents the **legacy internal mapping** still used by the lab's DDA inference (Advanced tab).
+> **The DDA coordinate track is not production design.** Roots are organized by human experience and the campfire test; compounds are judged by recoverable meaning, not coordinate correctness. This section documents the **legacy internal mapping** still used by the lab's DDA inference (Advanced tab).
 
 Each word may carry internal **depth**, **mode**, and **aspect** coordinates — a compact address in semantic space. They are assigned automatically (**DDA inference**) from sound shape and English gloss match, blended for compounds, with status `pending | inferred | confirmed | stale`. You do not edit them in normal workflow; re-run DDA from the Advanced tab when coordinates go stale after a meaning or recipe change. The word detail view shows the three values plus how they were inferred.
 
-Experiment history: [RN-08 · Meaning from coordinates](/research/notes/meaning-from-coordinates-the-gen-3-dda-experiment) · [fonoran-gen3.md](archive/fonoran-gen3.md).
+Experiment history: [fonoran-gen3.md](archive/fonoran-gen3.md).
 
 ## Future Work
 
@@ -780,10 +847,10 @@ The following topics extend this specification without breaking Rules 1 through 
 | Topic | Status |
 | --- | --- |
 | Pronouns | **Partial** — `mi` particle; `you`/`we`/`he`/`she` resolve to roots |
-| Negation | **Partial** — `no` particle in Time slot |
-| Questions | **v1** — no particle; content questions use the lexicalized word *nohu* "unknown" + person/thing/place/time, written with `?`, spoken via intonation. *why/how* deferred (no *reason*/*method* concept yet) |
+| Negation | **v1** — `no` immediately precedes the negated constituent, whether an Action (`mi no gamdal`, I am not dangerous), a Target noun (`mi gat no dakpa`, I have no weapon), or a quality (`no kep`, not safe). Measured across 209 negated corpus phrases. Scope is the constituent it precedes, so one clause's `no` does not negate another's. The frame slot that carries `no` varies by parse and is not a placement rule |
+| Questions | **v1** — clause-initial **ka**, both polar and content; content questions add *nohu* "unknown" + a **dimension** (person/thing/place/time/cause/manner/count). *how* → `nohu moyu` (manner = do+form). *how many* / *how much* → `nohu tan` (count). Degree (*how far*) is a polar probe for now. Never `nohu lek`: many is a value, not the axis. |
 | Comparisons | Open |
-| Numbers | Open |
+| Numbers | **Open** — cardinals 1–99 are specified in [fonoran-numerals.md](fonoran-numerals.md) but **not implemented**: no numeral appears in any seed file and the translator returns number words unresolved |
 | Quantifiers | **Partial** — `nobody`, `everyone`, etc. expand to particles + roots |
 | Time expressions | **Partial** — `yesterday`/`tomorrow`, `every morning` |
 | Locations / motion | **Partial** — Path slot: `path`, `source`, `far`, `inside`, `up`, `near` |
@@ -791,6 +858,9 @@ The following topics extend this specification without breaking Rules 1 through 
 | Relative clauses | Open |
 | Aspect / progressive | Open — English progressive collapses to `move` (`gi`) for now |
 | Subordinate clauses | **Partial** — `and`/`but` coordination; pure temporal scene-setting fronts via Time periphery; `when` with its own actor+action splits frames (still maturing) |
+| Coordination: `and` | **v1** — bare juxtaposition. "I am cold and hungry" is `mi nes mak saklo`; no marker is needed because juxtaposition already reads as conjunction |
+| Coordination: `or` | **v1** — juxtaposition **plus `lu`** (`one`, "a single one") closing the group. See Disjunction below |
+| Modality | **v1** — lexical, chained in the Action slot: ability `hu` (know), necessity `les` (need), possibility `ketnat` (maybe), inability plain `no`. No particle and no new root. Requests (interrogative *can*), inability, and proposals take **no** marker. *should* / *ought* and permission-granting *you can keep this* remain **Open**: `les` is deliberately not extended to *should*, because the two diverge under negation |
 
 Contributions should preserve: invariant words, particle-based grammar, fixed default order, visible semantic compounding, and semantic economy in compounds.
 

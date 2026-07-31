@@ -1361,7 +1361,7 @@ export function createWordComposer(ctx) {
     try {
       const res = await ctx.api('/api/fonoran/expressions/candidates', {
         method: 'POST',
-        body: JSON.stringify({ concept_id: conceptId, llm: true }),
+        body: JSON.stringify({ concept_id: conceptId }),
       });
       state.compoundSuggestions = res.candidates ?? [];
     } catch (e) {

@@ -1,13 +1,13 @@
 import { escapeHtml } from './utils.js';
 import { initMermaidPanZoomIn } from './mermaid-pan-zoom.js';
-import { MERMAID_INIT } from './mermaid-theme.js';
+import { getMermaidInit } from './mermaid-theme.js';
 
 const MERMAID_CDN = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
 
 /** @type {Promise<void> | null} */
 let mermaidLoadPromise = null;
 
-/** Load mermaid.min.js on demand (research note pages only). */
+/** Load mermaid.min.js on demand. No page pays for it until a diagram is on screen. */
 export function ensureMermaidLoaded() {
   if (typeof window !== 'undefined' && window.mermaid) return Promise.resolve();
   if (mermaidLoadPromise) return mermaidLoadPromise;
@@ -33,7 +33,7 @@ export function buildStaticMermaidHtml(mermaidSource) {
   return `<div class="mermaid-static"><div class="mermaid">${escapeHtml(mermaidSource)}</div></div>`;
 }
 
-async function runMermaidIn(rootEl, { interactive = true, panZoomOptions = {}, mermaidInit = MERMAID_INIT } = {}) {
+async function runMermaidIn(rootEl, { interactive = true, panZoomOptions = {}, mermaidInit } = {}) {
   if (!rootEl) return;
   const nodes = rootEl.querySelectorAll('.mermaid');
   if (!nodes.length) return;
@@ -41,7 +41,8 @@ async function runMermaidIn(rootEl, { interactive = true, panZoomOptions = {}, m
   await ensureMermaidLoaded();
   if (!window.mermaid) return;
 
-  window.mermaid.initialize(mermaidInit);
+  // Resolved per call, not per module load, so the theme matches whichever mode is active now.
+  window.mermaid.initialize(mermaidInit ?? getMermaidInit());
 
   await new Promise((resolve) => requestAnimationFrame(resolve));
   try {
@@ -60,7 +61,7 @@ async function runMermaidIn(rootEl, { interactive = true, panZoomOptions = {}, m
  * @param {{ fitMode?: 'diagram' | 'all' | 'height' | 'timeline', fitPadding?: number, maxInitialScale?: number, initialZoomSteps?: number, zoomStep?: number, anchor?: 'start' | 'center', anchorX?: 'start' | 'center', anchorY?: 'start' | 'center', edgePadding?: number }} [panZoomOptions]
  * @param {object} [mermaidInit]
  */
-export async function renderMermaidIn(rootEl, panZoomOptions = {}, mermaidInit = MERMAID_INIT) {
+export async function renderMermaidIn(rootEl, panZoomOptions = {}, mermaidInit) {
   await runMermaidIn(rootEl, { interactive: true, panZoomOptions, mermaidInit });
 }
 

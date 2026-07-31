@@ -10,18 +10,13 @@ import { fileURLToPath } from 'node:url';
 import { buildFonoran } from './fonoran-build.js';
 import {
   EDITORIAL_DOCS,
-  importEditorialFromSeedPaths,
   readDoc,
-  readDocStatus,
   readBucketRaw,
   readSeedFileStatus,
-  getEditorialSeedsImportedAt,
-  resolveStorageMode,
   writeDoc,
 } from './fonoran-store.js';
 import { loadCandidateContext } from './fonoran-expression-candidates.js';
 import { buildCompositionResolver } from './fonoran-composition-resolve.js';
-import { mergePromptAggregates } from './fonoran-llm-aggregate.js';
 import {
   deriveAlternatesForCompound,
   loadRootGraph,
@@ -39,64 +34,50 @@ function loadDemoTrees() {
   return new Map((demoDoc.compounds ?? []).map(d => [d.id, d.tree]));
 }
 
-/** Stale if lab was updated after the last editorial seed import. */
-function computeRegenWarnings({ labUpdatedAt, importedAt }) {
-  const warnings = [];
-  if (!importedAt && labUpdatedAt) {
-    warnings.push({
-      code: 'never_imported_seeds',
-      message: 'Editorial seeds have never been loaded into Postgres. Rebuild may use stale data.',
-    });
-  }
-  if (importedAt && labUpdatedAt) {
-    const labTs = new Date(labUpdatedAt).getTime();
-    const impTs = new Date(importedAt).getTime();
-    if (labTs > impTs + 1000) {
-      warnings.push({
-        code: 'lab_newer_than_seeds',
-        message: 'Dictionary was rebuilt after the last editorial seed import. Run Regenerate to sync from git seeds.',
-      });
-    }
-  }
-  return warnings;
-}
-
-/** Status for Advanced regen panel. */
+/**
+ * Status for the Advanced regen panel.
+ *
+ * This used to compare the seeds on disk against a Postgres copy of them and warn when the two
+ * had drifted. There is one copy now, so the only question left is whether the built dictionary
+ * is older than the seeds it was built from, which is answered by a timestamp rather than a diff.
+ */
 export async function getRegenStatus({ baseDir = ROOT } = {}) {
   const bucket = await readBucketRaw();
-  const storeDocs = await readDocStatus();
   const seedFiles = await readSeedFileStatus(baseDir);
-  const importedAt = await getEditorialSeedsImportedAt();
   const labUpdatedAt = bucket?.updated_at ?? null;
-  const warnings = computeRegenWarnings({ labUpdatedAt, importedAt });
 
-  const llmStore = storeDocs.llm_evaluations?.counts?.rounds ?? 0;
-  const llmSeed = seedFiles.llm_evaluations?.counts?.rounds ?? 0;
-  const compoundsStore = storeDocs.compounds?.counts?.compounds ?? 0;
-  const compoundsSeed = seedFiles.compounds?.counts?.compounds ?? 0;
+  const warnings = [];
+  if (!bucket) {
+    warnings.push({
+      code: 'never_built',
+      message: 'The dictionary has not been built from the seeds yet. Run Regenerate.',
+    });
+  }
+  const missingSeeds = Object.entries(seedFiles)
+    .filter(([key, s]) => !key.startsWith('_') && !s.present)
+    .map(([key]) => key);
+  if (missingSeeds.length) {
+    warnings.push({
+      code: 'missing_seed_files',
+      message: `Seed file(s) missing or unreadable: ${missingSeeds.join(', ')}`,
+    });
+  }
 
   return {
-    storage_mode: resolveStorageMode(),
     lab: {
       updated_at: labUpdatedAt,
       sounds: bucket?.sounds?.length ?? 0,
       compounds: bucket?.compounds?.length ?? 0,
     },
-    editorial_imported_at: importedAt,
-    store_docs: storeDocs,
     seed_files: seedFiles,
     seed_paths: EDITORIAL_DOCS,
-    drift: {
-      llm_rounds: { store: llmStore, seed: llmSeed, match: llmStore === llmSeed },
-      compounds: { store: compoundsStore, seed: compoundsSeed, match: compoundsStore === compoundsSeed },
-    },
     warnings,
-    ready_to_regenerate: warnings.every(w => w.code !== 'never_imported_seeds') || resolveStorageMode() === 'json',
+    ready_to_regenerate: !missingSeeds.length,
   };
 }
 
-/** Apply LLM rankings from stored eval doc to compounds inventory. */
-export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = false } = {}) {
+/** Re-rank compounds with the deterministic four-rules scorer. */
+export async function optimizeCompoundsInStore({ lengthOnly = false } = {}) {
   let doc = await readDoc('compounds');
   if (!doc?.compounds) throw new Error('compounds doc missing compounds array');
 
@@ -108,24 +89,19 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
     await writeDoc('compounds', doc);
   }
 
-  const [candidateCtx, rootGraph, demoTrees, llmDoc] = await Promise.all([
+  const [candidateCtx, rootGraph, demoTrees] = await Promise.all([
     loadCandidateContext(),
     loadRootGraph(),
     Promise.resolve(loadDemoTrees()),
-    useLlm && !lengthOnly ? readDoc('llm_evaluations') : Promise.resolve(null),
   ]);
-
-  const llmAggregates = useLlm && !lengthOnly
-    ? mergePromptAggregates(llmDoc?.rounds ?? [])
-    : null;
 
   const { compounds: optimized, promotions } = optimizeCompoundInventory(doc.compounds, {
     ...rootGraph,
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
     demoTrees,
-    llmAggregates,
-  }, { useLlm: lengthOnly ? false : useLlm, lengthOnly });
+  }, { lengthOnly });
 
   const finalDefs = optimized.map(r => ({
     concept: r.concept,
@@ -136,6 +112,7 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
   const rankCtx = {
     metaFor: candidateCtx.metaFor,
     collisionCounts: candidateCtx.collisionCounts,
+    collisionCountFor: candidateCtx.collisionCountFor,
     flatCountFor,
   };
 
@@ -164,8 +141,7 @@ export async function optimizeCompoundsInStore({ useLlm = true, lengthOnly = fal
     promotions: promotions.length,
     promotion_details: promotions,
     pruned_shadow_compounds: shadowPruned.length,
-    mode: lengthOnly ? 'length-only' : (useLlm ? 'llm_consensus' : 'heuristic'),
-    llm_rounds: llmDoc?.rounds?.length ?? 0,
+    mode: lengthOnly ? 'length-only' : 'four-rules',
   };
 }
 
@@ -294,11 +270,15 @@ export async function promoteAcceptedAliases(_baseDir = ROOT) {
 }
 
 /**
- * Full generator pipeline: editorial import → optional LLM optimize → build.
+ * Full generator pipeline: promote accepted proposals into the seeds, re-rank, build.
+ *
+ * There is no import step. The promote steps write the seeds and the build reads them, which is
+ * the whole reason the store was collapsed: the two halves of this function can no longer be
+ * looking at different copies of the lexicon.
  */
 export async function runRegenerate({
   baseDir = ROOT,
-  applyLlm = true,
+  reRank = true,
   approveAll = true,
 } = {}) {
   const steps = [];
@@ -309,12 +289,9 @@ export async function runRegenerate({
   const aliasPromoted = await promoteAcceptedAliases(baseDir);
   steps.push({ step: 'promote_aliases', ...aliasPromoted });
 
-  const editorial = await importEditorialFromSeedPaths(baseDir);
-  steps.push({ step: 'editorial_import', ...editorial });
-
   let optimize = null;
-  if (applyLlm) {
-    optimize = await optimizeCompoundsInStore({ useLlm: true });
+  if (reRank) {
+    optimize = await optimizeCompoundsInStore();
     steps.push({ step: 'optimize_compounds', ...optimize });
   }
 

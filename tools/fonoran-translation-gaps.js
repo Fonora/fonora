@@ -16,7 +16,16 @@ import { resolveDataPath } from './fonoran-data-paths.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS_PATH = join(ROOT, 'data/fonoran-translation-tests.json');
-const GAP_BASELINE_PATH = join(ROOT, 'data/fonoran-translation-gap-baseline.json');
+const GAP_BASELINE_PATH = join(ROOT, 'data/fonoran-translation-gap-baseline-deterministic.json');
+
+/**
+ * One engine, one golden. `fon_deterministic` records the rule-based compiler that ships,
+ * which is the only output a user ever sees. The corpus used to carry a second field for
+ * a model compiler replayed from a warmed cache; that engine is retired, and with it the
+ * problem that a defect in the English resolver could move one golden out of 1001 because
+ * the model path never exercised the resolver at all.
+ */
+export const GOLDEN_FIELDS = { golden: 'fon_deterministic', note: 'note_deterministic' };
 const LATEST_PATH = () => resolveDataPath('translation_test_latest');
 const STRANGER_GAP_PATH = () => resolveDataPath('stranger_gap_report');
 
@@ -46,6 +55,8 @@ export function normalizeCorpusLevels(raw) {
         const entry = { en: p.en };
         if (p.note) entry.note = p.note;
         if (p.fon) entry.fon = p.fon;
+        if (p.note_deterministic) entry.note_deterministic = p.note_deterministic;
+        if (p.fon_deterministic) entry.fon_deterministic = p.fon_deterministic;
         return entry;
       }),
     })),
@@ -53,14 +64,9 @@ export function normalizeCorpusLevels(raw) {
 }
 
 /** Resolve translate function for gap reports. */
-async function runTranslate(phrase, { lab, engine = 'legacy', cacheOnly = false } = {}) {
-  const result = await translate(phrase, { lab, engine, cacheOnly, sourceLang: 'en' });
-  if (result.ok === false) {
-    // Cache-only misses are an expected "needs warming" signal, not a crash:
-    // the caller records the phrase so the report can list what to warm.
-    if (result.cache_miss) return result;
-    throw new Error(result.error ?? 'Translation failed');
-  }
+async function runTranslate(phrase, { lab } = {}) {
+  const result = await translate(phrase, { lab, sourceLang: 'en' });
+  if (result.ok === false) throw new Error(result.error ?? 'Translation failed');
   return result;
 }
 
@@ -120,20 +126,15 @@ export async function saveTranslationCorpus(corpus) {
  * from the current translator output. This is the deliberate "accept new
  * baseline" path behind `--update-golden`; the diff is reviewable in git.
  *
- * `concurrency` > 1 (LLM engine) runs phrases in parallel. The first call is
- * primed sequentially so the Anthropic prompt cache is written once and every
- * parallel worker after it bills at the cache-read rate.
- * @param {{ lab?: object, engine?: string, cacheOnly?: boolean, concurrency?: number, onProgress?: (done:number,total:number,phrase:string)=>void }} [opts]
+ * @param {{ lab?: object, onProgress?: (done:number,total:number,phrase:string)=>void }} [opts]
  */
 export async function updateGoldenCorpus({
   lab = null,
-  engine = 'legacy',
-  cacheOnly = false,
-  concurrency = 1,
   onProgress = null,
 } = {}) {
   const corpus = await loadGoldenCorpus();
   resetTranslatorCache();
+  const field = GOLDEN_FIELDS;
   const allGaps = new Set();
 
   // Flatten across levels so phrases can run in parallel; results are re-seated
@@ -151,48 +152,30 @@ export async function updateGoldenCorpus({
 
   const processTask = async (idx) => {
     const { entry, en } = tasks[idx];
-    const r = await runTranslate(en, { lab, engine, cacheOnly });
-    if (r.cache_miss) {
-      // Cannot rebaseline a phrase that is not warmed; keep the existing entry.
-      results[idx] = { rec: typeof entry === 'string' ? { en } : entry, counted: false };
-    } else {
-      const roman = r.surface?.roman ?? '';
-      const grade = gradePhrase(r.tokens ?? []);
-      // Honest-gap baseline must be built from the SAME source the gap report /
-      // --assert measures: the translator's unresolved[] (LLM "cannot express"
-      // flags + token gaps), not just token-level hard gaps. Otherwise the
-      // baseline written here can never satisfy the assert.
-      for (const w of r.unresolved ?? []) allGaps.add(String(w).toLowerCase());
-      const rec = { en, fon: roman };
-      const notes = [];
-      if (grade.gaps.length) {
-        notes.push(`gap: ${[...new Set(grade.gaps.map(g => g.english))].join(', ')} (needs a root)`);
-      }
-      if (grade.review.length) {
-        notes.push(`review: ${grade.review.map(x => `${x.english}→${x.fonoran}(${x.kind})`).join(', ')}`);
-      }
-      if (notes.length) rec.note = notes.join(' | ');
-      results[idx] = { rec, counted: true };
+    const r = await runTranslate(en, { lab });
+    const roman = r.surface?.roman ?? '';
+    const grade = gradePhrase(r.tokens ?? []);
+    // The honest-gap baseline must be built from the SAME source --assert measures:
+    // the translator's unresolved[], not just token-level hard gaps. Otherwise the
+    // baseline written here can never satisfy the assert.
+    for (const w of r.unresolved ?? []) allGaps.add(String(w).toLowerCase());
+    const prior = typeof entry === 'string' ? {} : entry;
+    const rec = { ...prior, en, [field.golden]: roman };
+    const notes = [];
+    if (grade.gaps.length) {
+      notes.push(`gap: ${[...new Set(grade.gaps.map(g => g.english))].join(', ')} (needs a root)`);
     }
+    if (grade.review.length) {
+      notes.push(`review: ${grade.review.map(x => `${x.english}→${x.fonoran}(${x.kind})`).join(', ')}`);
+    }
+    if (notes.length) rec[field.note] = notes.join(' | ');
+    else delete rec[field.note];
+    results[idx] = { rec, counted: true };
     done += 1;
     if (onProgress) onProgress(done, total, en);
   };
 
-  const limit = Math.max(1, concurrency);
-  // Prime the prompt cache with one sequential call (parallel workers then read
-  // the cached prefix). Only worthwhile for the API-backed engine.
-  const prime = engine === 'legacy' || limit === 1 ? 0 : Math.min(1, total);
-  for (let i = 0; i < prime; i += 1) await processTask(i);
-
-  let cursor = prime;
-  const worker = async () => {
-    while (cursor < total) {
-      const idx = cursor;
-      cursor += 1;
-      await processTask(idx);
-    }
-  };
-  await Promise.all(Array.from({ length: Math.min(limit, Math.max(1, total - prime)) }, () => worker()));
+  for (let i = 0; i < total; i += 1) await processTask(i);
 
   let updated = 0;
   const byLevel = corpus.levels.map(() => []);
@@ -232,8 +215,18 @@ export async function loadStrangerGapReport() {
   }
 }
 
-/** Persist a full-corpus gap report as the "latest" snapshot. */
+/**
+ * Persist a full-corpus gap report as the "latest" snapshot.
+ *
+ * Skipped when nothing but the timestamp moved: the file lives in the data repo,
+ * and rewriting it on every test run left that submodule permanently dirty over a
+ * one-line `generated_at` diff.
+ */
 export async function saveLatestGapReport(report) {
+  const next = { ...report, generated_at: undefined };
+  const prev = { ...((await loadLatestGapReport()) ?? {}), generated_at: undefined };
+  if (JSON.stringify(next) === JSON.stringify(prev)) return report;
+
   await writeFile(LATEST_PATH(), `${JSON.stringify(report, null, 2)}\n`, 'utf8');
   return report;
 }
@@ -350,13 +343,11 @@ export async function runTranslationGapReport({
   resetCache = false,
   suggest = false,
   corpus = 'golden',
-  engine = 'legacy',
-  cacheOnly = false,
 } = {}) {
   const corpusDoc = await loadTranslationCorpus(corpus);
   if (resetCache) resetTranslatorCache();
+  const field = GOLDEN_FIELDS;
 
-  const warmNeeded = [];
   const gap = new Map();
   const gapPhrases = new Map();
   const gapRole = new Map();
@@ -382,29 +373,7 @@ export async function runTranslationGapReport({
     for (const entry of lvl.phrases) {
       const phrase = typeof entry === 'string' ? entry : entry.en;
       const golden = typeof entry === 'string' ? null : entry;
-      const r = await runTranslate(phrase, { lab, engine, cacheOnly });
-
-      // Cache-only miss: record the phrase for warming, count it, and continue.
-      if (r.cache_miss) {
-        warmNeeded.push(phrase);
-        totalPhrases += 1;
-        lvlPhrases += 1;
-        phraseResults.push({
-          level: lvl.level,
-          phrase,
-          roman: '',
-          unresolved: [],
-          counts: classifyTokens([]),
-          quality: { gate: 'hard', pass: 0, soft: 0, hard: 0 },
-          review: [],
-          gaps: [],
-          cache_miss: true,
-          ...(golden && typeof golden.fon === 'string'
-            ? { expected: golden.fon, matches_golden: false }
-            : {}),
-        });
-        continue;
-      }
+      const r = await runTranslate(phrase, { lab });
 
       const unresolved = r.unresolved ?? [];
       const tokens = r.tokens ?? [];
@@ -451,10 +420,10 @@ export async function runTranslationGapReport({
         review: quality.review,
         gaps: quality.gaps,
       };
-      if (golden && typeof golden.fon === 'string') {
-        result.expected = golden.fon;
-        result.matches_golden = golden.fon === roman;
-        if (golden.note) result.note = golden.note;
+      if (golden && typeof golden[field.golden] === 'string') {
+        result.expected = golden[field.golden];
+        result.matches_golden = golden[field.golden] === roman;
+        if (golden[field.note]) result.note = golden[field.note];
       }
       phraseResults.push(result);
     }
@@ -498,9 +467,7 @@ export async function runTranslationGapReport({
     generated_at: new Date().toISOString(),
     corpus: corpus === 'golden' ? 'golden' : corpus === 'stranger' ? 'stranger' : corpus,
     corpus_version: corpusDoc.version ?? null,
-    engine,
-    cache_only: cacheOnly,
-    warm_needed: warmNeeded,
+    engine: 'legacy',
     total_phrases: totalPhrases,
     clean_phrases: cleanPhrases,
     coverage_pct: totalPhrases ? Math.round((cleanPhrases / totalPhrases) * 100) : 0,

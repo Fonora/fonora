@@ -3,14 +3,19 @@
  * Based on docs/language-rules.md: teaching aids, not IPA.
  */
 
-const ONSETS = [
+/**
+ * Canonical phoneme inventories (docs/language-rules.md). Sorted longest-first
+ * so digraphs match before their constituent single characters. Exported so
+ * capacity/readability tooling enumerates from here rather than keeping copies.
+ */
+export const ONSETS = [
   'gh', 'kh', 'ng', 'sh', 'ch', 'th', 'dh', 'ñ',
   'x', 'p', 't', 'b', 'd', 'j', 'g', 'h', 'f', 's', 'v', 'z', 'm', 'n', 'w', 'l', 'r', 'y', 'k',
 ].sort((a, b) => b.length - a.length);
 
-const VOWELS = ['ee', 'ae', 'oh', 'eye', 'ow', 'oy', 'ay', 'a', 'e', 'i', 'o', 'u'].sort((a, b) => b.length - a.length);
+export const VOWELS = ['ee', 'ae', 'oh', 'eye', 'ow', 'oy', 'ay', 'a', 'e', 'i', 'o', 'u'].sort((a, b) => b.length - a.length);
 
-const CODAS = [
+export const CODAS = [
   'ch', 'sh', 'ng', 'kh', 'gh', 'th', 'dh',
   'p', 't', 'k', 'h', 'm', 'n', 's', 'd', 'b', 'g', 'v', 'z', 'l', 'r', 'x',
 ].sort((a, b) => b.length - a.length);

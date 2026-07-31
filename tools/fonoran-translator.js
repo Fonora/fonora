@@ -1,12 +1,15 @@
 /**
- * English → Fonoran translator.
+ * The Fonoran engine: neutral meaning slots → Fonoran surface.
  * Compiles meaning into Fonoran per docs/fonoran-grammar.md — not word-for-word substitution.
- * Interpretive layer: docs/fonoran-interpretive-translator.md
+ *
+ * The source language lives on the other side of the parser boundary
+ * (fonoran-source-parsers.js): a parser turns text into the neutral slot
+ * structure, and this module resolves concepts, attaches particles, orders the
+ * output, and reports what it could not say. It reads source-language forms
+ * only as lookup keys into the seed-loaded lexicon; the rules of any human
+ * language belong to a parser, never here.
  */
 
-import { readFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
 import {
   phoneticKeyBold,
   compoundPhoneticKey,
@@ -15,51 +18,28 @@ import {
 } from './fonoran-pronunciation.js';
 import {
   loadInterpretationRules,
-  matchVerbSpatialLandmark,
-  matchSubjectBeAdj,
-  matchBeConstruction,
-  matchSubjectVerbToNp,
-  matchDesireInfinitive,
-  matchIdiomPhrase,
-  peelFutureIntent,
-  irregularPastLemma,
-  isIrregularPastForm,
   resetInterpretationCache,
-  nominalPhraseFromTokens,
-  parseTrailingPhrase,
-  assignFallbackTrailing,
-  matchLeadingTimeAdverbial,
-  matchSubjectLinkingPredicate,
-  splitIntoClauses,
-  mergePhrasalTokens,
-  MODALS,
-  splitLandmarkPhrase,
-  matchMotionPhrase,
-  normalizeMotionSlots,
-  peelFutureFromTokens,
-  LEADING_TIME_WORDS,
   TEMPORAL_SCENE_CONCEPT_IDS,
   TEMPORAL_SCENE_TOPIC_IDS,
   TEMPORAL_SCENE_FRONT_ORDER,
-  peelQuestionAuxiliary,
-  peelExistentialDummyThere,
 } from './fonoran-interpretation.js';
+import { LEADING_TIME_WORDS } from './fonoran-english-morphology.js';
 import {
   buildResolveContext,
   resolveEnglishToken,
   tokenizeEnglish,
-  mergeEnglishCompounds,
   lemmatizeEnglish,
-  IRREGULAR,
-  CONJUNCTIONS,
   resolveConceptId,
+  gapToken,
 } from './fonoran-english-resolve.js';
-import { getPosHint } from './fonoran-semantic-lookup.js';
+import {
+  whComposition,
+  whBlocked,
+  unknownWord,
+} from './fonoran-language-policy.js';
+import { getSourceParser, emptySlots, appendSlots } from './fonoran-source-parsers.js';
 import { getParticleRuntime, resetParticleCache } from './fonoran-particles.js';
 import { attachTranslatorPlayback } from './fonoran-playback-build.js';
-import { enforceModifierOrder } from './fonoran-grammar-spec.js';
-import { promoteTemporalSceneToTime } from './fonoran-llm-grammar-brief.js';
-import { isAddresseeDroppable } from './fonoran-llm-grammar-brief.js';
 
 /**
  * Cached grammar-particle runtime: { index, byId, quantifiers }.
@@ -67,12 +47,26 @@ import { isAddresseeDroppable } from './fonoran-llm-grammar-brief.js';
  */
 let PARTICLES = null;
 
-/** English negation words removed from the lexical stream and emitted as the `no` particle. */
-const NEGATION_WORDS = new Set(['not', 'never', 'no', 'none', 'cannot']);
+/**
+ * Particle spelling by id, from data/fonoran-grammar-particles.json only.
+ * Spellings are never hardcoded here: a respelled particle in the seed must
+ * flow through, and a missing id is a data error, not something to paper over.
+ */
+function particleFormById(id) {
+  const form = PARTICLES?.byId?.get(id)?.form;
+  if (!form) throw new Error(`Grammar particle missing from data/fonoran-grammar-particles.json: ${id}`);
+  return form;
+}
 
-function isNegationWord(word) {
-  const w = String(word ?? '').toLowerCase();
-  return NEGATION_WORDS.has(w) || w.endsWith("n't");
+/** Like particleFormById, but null when the runtime is not loaded (comparisons only). */
+function particleFormSafe(id) {
+  return PARTICLES?.byId?.get(id)?.form ?? null;
+}
+
+/** English trigger word -> pronoun-group particle entry (only `mi` today), or null. */
+function pronounParticle(word) {
+  const entry = PARTICLES?.index?.get(String(word ?? '').toLowerCase());
+  return entry?.group === 'pronoun' ? entry : null;
 }
 
 // User-facing skeleton (docs/fonoran-grammar.md Rule 4). Internal slot keys keep
@@ -86,40 +80,52 @@ const GRAMMAR_SKELETON = 'Actor · Action · Target · Place · Time';
  * with the lexicalized word **nohu** "unknown" (fused from no + hu, playtest
  * decision 2026-07: separated `no hu` read as clause negation, the fused word
  * reads as one learnable concept) applied to a category concept
- * (person/thing/place/time). Grammar only states that questions are
+ * (person/thing/place/time/cause). Grammar only states that questions are
  * compositional (docs/fonoran-grammar.md Rule 3); the concrete mapping lives
- * here and MAY CHANGE as the lexicon evolves (e.g. if a `reason`/`method`
- * concept is later justified by usage).
+ * here and MAY CHANGE as the lexicon evolves (e.g. if a `method` concept is
+ * later justified by usage).
  *   who   -> nohu ba    (unknown person)
  *   what  -> nohu to    (unknown thing)
  *   where -> nohu che   (unknown place)
  *   when  -> nohu kan   (unknown time)
- * why/how are intentionally absent: Fonoran has no robust reason/method concept yet.
- * Applied only in interrogative sentences (source marked with `?`) so relative /
- * subordinate "who"/"when" are left alone.
+ *   why   -> nohu gak   (unknown cause)
+ *   how        -> nohu moyu  (unknown manner)
+ *   how many   -> nohu tan   (unknown count)
+ *   how much   -> nohu tan   (unknown count; same question, mass noun)
+ * Each pairs `nohu` with a concept naming a DIMENSION (a kind of thing, neutral as
+ * to which one), never a value on a scale. `manner` is the compound do + form.
+ * `count` is the quantity axis: English "how many" / "how much" are one interrogative
+ * ("what count?"), and the noun names what is counted — Fonoran does not split the
+ * English count/mass distinction. Degree adjectives ("how far") stay as a polar probe
+ * on the scale word for now (`ka ye fet`).
+ * Applied only in interrogative sentences so relative / subordinate "who"/"when"
+ * are left alone.
  */
-const WH_QUESTION_COMPOSITION = {
-  who: ['unknown', 'person'],
-  whom: ['unknown', 'person'],
-  what: ['unknown', 'thing'],
-  where: ['unknown', 'place'],
-  when: ['unknown', 'time'],
-};
+const WH_QUESTION_COMPOSITION = whComposition();
+
+/** Interrogatives that must surface as a gap instead of being approximated. */
+const WH_BLOCKED = whBlocked();
+
+/** First sentence of a policy reason, for a gap label that stays short. */
+function firstSentence(text) {
+  return String(text ?? '').split(/(?<=\.)\s/)[0].trim();
+}
+
+/** Sanctioned modal compositions; owned by the English parser, re-exported for probes. */
+export { MODAL_COMPOSITION } from './fonoran-source-english.js';
 
 /**
- * Spelling of the lexicalized "unknown" word: negation form + the `know` root.
- * Deliberately transparent (a learner can still decompose it) but written and
- * taught as ONE word so it is not misread as clause negation.
+ * The lexicalized "unknown" word: negation form + the `know` root. Deliberately
+ * transparent (a learner can still decompose it) but written and taught as ONE word so
+ * it is not misread as clause negation.
+ *
+ * Resolved from the seeds per call rather than held as a literal. This was the one live,
+ * taught word in the language whose only definition anywhere was a hardcoded string in
+ * this file, invisible to the seeds and to every other tool; it is now declared in
+ * `data/fonoran-grammar-policy.json` and assembled from its parts, so respelling either
+ * part carries it along.
  */
-const UNKNOWN_WORD = { spelling: 'nohu', parts: ['no', 'hu'] };
-
-/** Category concepts that mark a within-slot no+know sequence as an "unknown" composition. */
-const UNKNOWN_CATEGORY_IDS = new Set(['person', 'thing', 'place', 'time']);
-
-/** A source sentence is a written question when it ends with `?`. */
-function isQuestionSentence(sentence) {
-  return String(sentence ?? '').trim().endsWith('?');
-}
+const unknownWordForm = () => unknownWord();
 
 /** Trailing punctuation token (`.` `!` `?`) for surface + readback pauses. */
 export function punctuationToken(mark) {
@@ -150,93 +156,32 @@ function isPunctuationToken(token) {
   return token?.kind === 'punctuation' || token?.role === 'punctuation';
 }
 
-/** Drop trailing punctuation tokens so we can re-attach the source terminator. */
-export function stripTrailingPunctuationTokens(tokens) {
-  const out = Array.isArray(tokens) ? [...tokens] : [];
-  while (out.length && isPunctuationToken(out[out.length - 1])) out.pop();
-  return out;
+/**
+ * The question particle (`ka`), opening the clause it asks about.
+ *
+ * Fonoran writes no `?`: the nine-symbol script has no such glyph, and without a word
+ * for it `be len mi` is both "you hear me" and "do you hear me". The particle also
+ * separates an interrogative `nohu` from a lexical one, since `ka nohu ba` asks who
+ * while `nohu ba` names an unknown person.
+ */
+function questionParticleToken() {
+  return particleToken('question', particleFormById('clause_question'), 'question');
 }
-
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const PARTICLES_PATH = join(ROOT, 'data/fonoran-grammar-particles.json');
-
-// Contentless words dropped from the lexical stream. Meaning-bearing relational
-// words (e.g. `from` -> source) are NOT skipped: they resolve to a concept or
-// surface as an honest gap rather than being silently discarded.
-const SKIP = new Set([
-  'a', 'an', 'the', 'to', 'at', 'in', 'on', 'of', 'for', 'with', 'by', 'into', 'about',
-  'my', 'your', 'his', 'her', 'its', 'our', 'their', 'mine', 'yours', 'this', 'that', 'these', 'those',
-  ...CONJUNCTIONS,
-  ...MODALS,
-]);
-
-const PRONOUNS = {
-  i: 'mi',
-  me: 'mi',
-};
 
 /**
- * Subject pronouns → nearest concept id for resolution.
+ * Mark one sentence: a question opens with `ka`, and every sentence keeps its source
+ * terminator for readback pauses and for sentence boundaries in multi-sentence output.
+ *
+ * A question's `?` becomes `.`, because the terminator only says the sentence ended;
+ * `ka` is what says it was a question. Dropping it altogether ran sentences together
+ * ("do you hear me? I am here." gave `ka be len mi mi nam`).
  */
-const PRONOUN_CONCEPTS = {
-  you: 'addressee',
-  we: 'collective',
-  us: 'collective',
-  they: 'collective',
-  them: 'collective',
-  he: 'person',
-  him: 'person',
-  she: 'person',
-  it: 'thing',
-};
-
-const PRONOUN_WORDS = new Set([
-  'i', 'me', 'you', 'we', 'us', 'they', 'them', 'he', 'him', 'she', 'her', 'it',
-]);
-
-function subjectSlot(english) {
-  const surface = String(english ?? '').trim();
-  const p = surface.toLowerCase();
-  if (PRONOUNS[p]) {
-    return { english: surface, role: 'subject', particle: PRONOUNS[p] };
-  }
-  const conceptHint = PRONOUN_CONCEPTS[p];
-  return {
-    english: surface,
-    role: 'subject',
-    ...(conceptHint ? { concept_hint: conceptHint, interpret_reason: 'pronoun' } : {}),
-  };
-}
-
-const TENSE_AUX = {
-  is: 'present',
-  am: 'present',
-  are: 'present',
-  was: 'past',
-  were: 'past',
-  be: 'present',
-  been: 'past',
-  being: 'present',
-  do: 'present',
-  does: 'present',
-  did: 'past',
-  have: 'present',
-  has: 'present',
-  had: 'past',
-};
-
-const PARTICLE_PLACEHOLDERS = {
-  pronoun_i: 'mi',
-  tense_past: 'ta',
-  tense_future: 'sa',
-};
-
-function isPastForm(word, rules) {
-  const w = String(word ?? '').toLowerCase();
-  if (TENSE_AUX[w] === 'past') return true;
-  if (isIrregularPastForm(w, rules)) return true;
-  if (w.endsWith('ed') && w.length > 3) return true;
-  return Boolean(IRREGULAR[w] && /ed$/.test(w));
+function markSentence(tokens, { isQuestion, sourceText }) {
+  const out = Array.isArray(tokens) ? [...tokens] : [];
+  if (isQuestion) out.unshift(questionParticleToken());
+  const mark = terminalPunctuationFromText(sourceText);
+  if (mark) out.push(punctuationToken(mark === '?' ? '.' : mark));
+  return out;
 }
 
 function pronunciationForParts(parts) {
@@ -247,12 +192,12 @@ function pronunciationForParts(parts) {
   };
 }
 
-function particleToken(role, placeholder, english) {
+function particleToken(role, placeholder, english, { englishSource = null } = {}) {
   const parts = [placeholder];
   return {
     // Negation is clause grammar, not a time element: label it honestly even
     // when it rides in the internal time slot (display + frame provenance).
-    role: placeholder === 'no' ? 'negation' : role,
+    role: placeholder === particleFormSafe('logic_not') ? 'negation' : role,
     english,
     fonoran: placeholder,
     parts,
@@ -260,6 +205,10 @@ function particleToken(role, placeholder, english) {
     kind: 'particle',
     source: 'grammar',
     gloss: english,
+    // The written word this particle stands for when English spells the grammar
+    // inside another word: "handed" carries the past that Fonoran writes as its
+    // own particle. Alignment uses it to draw the particle's line to that word.
+    ...(englishSource ? { english_source: englishSource } : {}),
     interpreted: false,
     resolution_kind: 'direct',
     confidence: 'high',
@@ -276,8 +225,8 @@ function unknownWordToken(role, english) {
   return {
     role,
     english: english || 'unknown',
-    fonoran: UNKNOWN_WORD.spelling,
-    parts: [...UNKNOWN_WORD.parts],
+    fonoran: unknownWordForm().form,
+    parts: [...unknownWordForm().parts],
     resolved: true,
     kind: 'compound',
     source: 'vocabulary',
@@ -287,479 +236,12 @@ function unknownWordToken(role, english) {
     resolution_kind: 'direct',
     confidence: 'high',
     guessed: false,
-    pronunciation: pronunciationForParts(UNKNOWN_WORD.parts),
+    pronunciation: pronunciationForParts(unknownWordForm().parts),
   };
 }
 
-function unresolvedToken(english, role) {
-  return {
-    role,
-    english,
-    fonoran: null,
-    parts: [],
-    resolved: false,
-    kind: 'unknown',
-    source: null,
-    gloss: null,
-    interpreted: false,
-    resolution_kind: 'unknown',
-    confidence: 'low',
-    guessed: false,
-    pronunciation: { sayLine: '', englishLine: '' },
-  };
-}
-
-function applyIdiomToSlots(idiomMatch, slots, rules) {
-  const { spec, before, after } = idiomMatch;
-  const beforeWords = before.filter(w => !TENSE_AUX[w?.toLowerCase()]);
-  if (beforeWords.length && !slots.subject.length) {
-    const subjectPhrase = nominalPhraseFromTokens(beforeWords, { skip: SKIP });
-    if (subjectPhrase) {
-      slots.subject.push({ english: subjectPhrase, role: 'subject' });
-    }
-  }
-  const slotKey = spec.slot ?? 'event';
-  const entry = {
-    english: idiomMatch.phrase,
-    role: slotKey,
-    concept_hint: spec.concept_id,
-    interpret_reason: spec.reason ?? `idiom: ${idiomMatch.phrase}`,
-  };
-  if (slotKey === 'event') slots.event.push(entry);
-  else if (slotKey === 'modifier') slots.modifiers.push(entry);
-  else if (slotKey === 'object') slots.object.push(entry);
-  else if (slotKey === 'path') slots.path.push(entry);
-
-  const trailing = parseTrailingPhrase(after, { skip: SKIP });
-  slots.path.push(...(trailing.path ?? []));
-  slots.object.push(...trailing.object);
-  slots.modifiers.push(...trailing.modifiers);
-}
-
-function emptySlots() {
-  return {
-    subject: [],
-    time: [],
-    event: [],
-    path: [],
-    object: [],
-    modifiers: [],
-  };
-}
-
-function appendSlots(target, source) {
-  for (const key of ['subject', 'time', 'event', 'path', 'object', 'modifiers']) {
-    target[key].push(...source[key]);
-  }
-}
-
-/** Split paragraph into sentences on . ! ? or newlines. */
-export function splitSentences(text) {
-  return String(text ?? '')
-    .split(/(?<=[.!?])\s+|\n+/)
-    .map(s => s.trim())
-    .filter(Boolean);
-}
-
-function applyTenseToSlots(slots, tense) {
-  if (tense === 'past' && !slots.time.some(t => t.particle === PARTICLE_PLACEHOLDERS.tense_past)) {
-    slots.time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
-  } else if (tense === 'future' && !slots.time.some(t => t.particle === PARTICLE_PLACEHOLDERS.tense_future)) {
-    slots.time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
-  }
-}
-
-function applyMotionPhrase(motionHit, slots, rules, { subject = [] } = {}) {
-  if (motionHit.subject && !subject.length) {
-    slots.subject.push(motionHit.subject);
-  }
-  slots.event.push(motionHit.event);
-  const paths = Array.isArray(motionHit.path) ? motionHit.path : (motionHit.path ? [motionHit.path] : []);
-  slots.path.push(...paths);
-  if (motionHit.object) slots.object.push(motionHit.object);
-  if (motionHit.modifiers?.length) slots.modifiers.push(...motionHit.modifiers);
-  if (motionHit.trailingTime?.length) slots.time.push(...motionHit.trailingTime);
-  applyTenseToSlots(slots, motionHit.tense);
-  return normalizeMotionSlots(slots, rules);
-}
-
-function applyBeConstruction(beHit, slots, rules) {
-  if (!slots.subject.length) {
-    slots.subject.push({ english: beHit.subject, role: 'subject' });
-  }
-  if (beHit.event) slots.event.push(beHit.event);
-
-  const trailingTokens = beHit.trailingTokens ?? [];
-  if (trailingTokens.length) {
-    const trailing = parseTrailingPhrase(trailingTokens, { skip: SKIP });
-    // Locative predicate ("cat is behind/above the tree"): the relation lands in
-    // the Place slot (concept or honest gap), no longer silently dropped.
-    slots.path.push(...(trailing.path ?? []));
-    for (const obj of trailing.object) {
-      const parts = obj.english.split(/\s+and\s+/i).map(s => s.trim()).filter(Boolean);
-      if (parts.length > 1) {
-        slots.object.push({ english: parts[0], role: 'object' });
-        for (const part of parts.slice(1)) {
-          slots.modifiers.push({ english: part, role: 'modifier' });
-        }
-      } else {
-        slots.object.push(obj);
-      }
-    }
-    slots.modifiers.push(...trailing.modifiers);
-  }
-
-  for (const mod of beHit.modifiers ?? []) {
-    if (typeof mod === 'object' && mod.english) slots.modifiers.push(mod);
-  }
-
-  const beTense = TENSE_AUX[beHit.be];
-  if (beTense === 'past' && !slots.time.length) {
-    slots.time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
-  } else if (beTense === 'future' && !slots.time.length) {
-    slots.time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
-  }
-}
-
-/** Tokens for phrase patterns: keep be-forms, drop only articles. */
-function patternScanTokens(tokens, start = 0) {
-  const out = [];
-  for (let k = start; k < tokens.length; k += 1) {
-    const t = tokens[k];
-    if (t === 'a' || t === 'an' || t === 'the') continue;
-    out.push(t);
-  }
-  return out;
-}
-
-/**
- * Compile one clause's tokens into grammar slots.
- * @param {string[]} rawTokens
- * @param {object} rules
- */
-async function compileClause(rawTokens, rules, { carriedSubject = null } = {}) {
-  const subject = [];
-  const time = [];
-  const event = [];
-  const path = [];
-  const object = [];
-  const modifiers = [];
-
-  let tokens = [...rawTokens];
-
-  while (tokens.length && MODALS.has(tokens[0]?.toLowerCase())) {
-    tokens = tokens.slice(1);
-  }
-
-  const questionPeel = peelQuestionAuxiliary(tokens, { pronounWords: PRONOUN_WORDS });
-  tokens = questionPeel.tokens;
-  if (questionPeel.peeled && questionPeel.subjectWord && !subject.length) {
-    subject.push(subjectSlot(questionPeel.subjectWord));
-  }
-
-  const existentialPeel = peelExistentialDummyThere(tokens);
-  tokens = existentialPeel.tokens;
-
-  const timeHit = matchLeadingTimeAdverbial(tokens);
-  if (timeHit) {
-    time.push({ english: timeHit.english, role: 'time' });
-    tokens = tokens.slice(timeHit.consumed);
-  }
-
-  if (tokens.length && PRONOUN_WORDS.has(tokens[0]?.toLowerCase())) {
-    subject.push(subjectSlot(tokens[0]));
-    tokens = tokens.slice(1);
-  }
-
-  let motionTokens = [...tokens];
-  let motionNegated = false;
-  motionTokens = motionTokens.filter((t) => {
-    if (isNegationWord(t)) {
-      motionNegated = true;
-      return false;
-    }
-    return true;
-  });
-  const futureOnRaw = peelFutureFromTokens(motionTokens, rules);
-  if (futureOnRaw.tense === 'future') {
-    motionTokens = futureOnRaw.tokens;
-  }
-  const motionHit = matchMotionPhrase(motionTokens, rules);
-  if (motionHit) {
-    const slots = { subject, time, event, path, object, modifiers };
-    if (futureOnRaw.tense === 'future') motionHit.tense = 'future';
-    applyMotionPhrase(motionHit, slots, rules, { subject });
-    if (motionNegated) {
-      const negForm = PARTICLES?.byId.get('logic_not')?.form ?? 'no';
-      time.push({ english: 'not', role: 'time', particle: negForm });
-    }
-    return slots;
-  }
-
-  if (tokens.length <= 1) {
-    if (tokens.length === 1) {
-      event.push({ english: tokens[0], role: 'event' });
-    }
-    return { subject, time, event, path, object, modifiers };
-  }
-
-  const idiomScan = patternScanTokens(tokens, 0);
-  let scanAuxTense = null;
-  for (const t of idiomScan) {
-    if (TENSE_AUX[t]) scanAuxTense = TENSE_AUX[t];
-  }
-
-  const earlyIdiom = matchIdiomPhrase(idiomScan, rules);
-  if (earlyIdiom) {
-    const beforeContent = earlyIdiom.before.filter(w => {
-      const x = w?.toLowerCase();
-      return !TENSE_AUX[x] && !MODALS.has(x);
-    });
-    const trySpatial = [...beforeContent, earlyIdiom.phrase, ...earlyIdiom.after];
-    const spatialFromIdiom = beforeContent.length >= 1 && trySpatial.length >= 3
-      ? matchVerbSpatialLandmark(trySpatial, rules)
-      : null;
-    if (spatialFromIdiom) {
-      event.push(spatialFromIdiom.event);
-      path.push(spatialFromIdiom.path);
-      const split = splitLandmarkPhrase(spatialFromIdiom.object.english, rules, { skip: SKIP });
-      object.push(...split.object);
-      modifiers.push(...split.modifiers);
-      return { subject, time, event, path, object, modifiers };
-    }
-
-    const slots = { subject, time, event, path, object, modifiers };
-    const tense = scanAuxTense ?? 'present';
-    if (tense === 'past') {
-      time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
-    } else if (tense === 'future') {
-      time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
-    }
-    applyIdiomToSlots(earlyIdiom, slots, rules);
-    return slots;
-  }
-
-  const patternTokens = [...idiomScan];
-  const priorSubject = subject.length === 1 && !subject[0].particle
-    ? subject[0].english
-    : (carriedSubject?.[0]?.english ?? null);
-  const beHit = matchBeConstruction(patternTokens, rules, { priorSubject });
-  if (beHit) {
-    const slots = { subject, time, event, path, object, modifiers };
-    applyBeConstruction(beHit, slots, rules);
-    return slots;
-  }
-
-  const desireInf = matchDesireInfinitive(patternTokens, rules);
-  if (desireInf) {
-    if (desireInf.subject && !subject.length) subject.push(subjectSlot(desireInf.subject.english));
-    event.push(desireInf.event);
-    object.push(desireInf.object);
-    modifiers.push(...desireInf.modifiers);
-    let auxTense = null;
-    let negated = false;
-    for (const t of patternTokens) {
-      if (TENSE_AUX[t]) auxTense = TENSE_AUX[t];
-      if (isNegationWord(t)) negated = true;
-    }
-    if (auxTense === 'past') {
-      time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
-    } else if (auxTense === 'future') {
-      time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
-    }
-    if (negated) {
-      const negForm = PARTICLES?.byId.get('logic_not')?.form ?? 'no';
-      time.push({ english: 'not', role: 'time', particle: negForm });
-    }
-    return { subject, time, event, path, object, modifiers };
-  }
-
-  const content = [];
-  let auxTense = null;
-  let negated = false;
-  for (const t of tokens) {
-    if (SKIP.has(t)) continue;
-    if (isNegationWord(t)) {
-      negated = true;
-      continue;
-    }
-    if (TENSE_AUX[t]) {
-      auxTense = TENSE_AUX[t];
-      continue;
-    }
-    content.push(t);
-  }
-
-  let working = [...content];
-  let tense = auxTense ?? 'present';
-
-  const futurePeel = peelFutureIntent(working, rules);
-  if (futurePeel) {
-    tense = 'future';
-    working = [...futurePeel.before, ...futurePeel.after];
-  } else if (auxTense === 'past') {
-    tense = 'past';
-  } else if (auxTense == null && working.some(w => isPastForm(w, rules))) {
-    tense = 'past';
-  } else {
-    tense = 'present';
-  }
-
-  if (tense === 'past') {
-    time.push({ english: 'past', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_past });
-  } else if (tense === 'future') {
-    time.push({ english: 'future', role: 'time', particle: PARTICLE_PLACEHOLDERS.tense_future });
-  }
-
-  // Negation is clause-scoped and sits between Time and Event (Subject · Time · no · Event).
-  if (negated) {
-    const negForm = PARTICLES?.byId.get('logic_not')?.form ?? 'no';
-    time.push({ english: 'not', role: 'time', particle: negForm });
-  }
-
-  const slots = { subject, time, event, path, object, modifiers };
-
-  const linking = matchSubjectLinkingPredicate(working, rules);
-  if (linking) {
-    if (!subject.length) {
-      subject.push({ english: linking.subject, role: 'subject' });
-    }
-    event.push(linking.event);
-    modifiers.push(linking.modifier);
-    return slots;
-  }
-
-  if (!subject.length && working.length >= 4) {
-    const phraseAfterSubject = matchVerbSpatialLandmark(working.slice(1), rules);
-    if (phraseAfterSubject) {
-      subject.push(subjectSlot(working[0]));
-      event.push(phraseAfterSubject.event);
-      path.push(phraseAfterSubject.path);
-      object.push(phraseAfterSubject.object);
-      return slots;
-    }
-  }
-
-  const beAdj = matchSubjectBeAdj(patternTokens, rules);
-  if (beAdj) {
-    if (!subject.length) subject.push(beAdj.subject);
-    modifiers.push(beAdj.modifier);
-    return slots;
-  }
-
-  const verbTo = matchSubjectVerbToNp(working, rules);
-  if (verbTo) {
-    if (!subject.length) subject.push(verbTo.subject);
-    event.push(verbTo.event);
-    object.push(verbTo.object);
-    return slots;
-  }
-
-  const phrase = matchVerbSpatialLandmark(working, rules);
-  if (phrase) {
-    if (!subject.length && working.length > 3) {
-      const subjParts = working.slice(0, working.indexOf(phrase.event.english)).filter(w => !SKIP.has(w));
-      if (subjParts.length) {
-        subject.push({ english: subjParts.join(' '), role: 'subject' });
-      }
-    }
-    event.push(phrase.event);
-    path.push(phrase.path);
-    const split = splitLandmarkPhrase(phrase.object.english, rules, { skip: SKIP });
-    object.push(...split.object);
-    modifiers.push(...split.modifiers);
-    return slots;
-  }
-
-  if (!subject.length && working.length >= 2) {
-    const firstPos = await getPosHint(working[0]);
-    const secondPos = await getPosHint(working[1]);
-    if (firstPos === 'verb' && secondPos !== 'verb') {
-      event.push({ english: working[0], role: 'event' });
-      object.push({ english: working[1], role: 'object' });
-      const trailing = await assignFallbackTrailing(working.slice(2), rules, { skip: SKIP });
-      object.push(...trailing.object);
-      modifiers.push(...trailing.modifiers);
-      return slots;
-    }
-    subject.push(subjectSlot(working[0]));
-    working = working.slice(1);
-  }
-
-  if (working.length >= 2) {
-    event.push({ english: working[0], role: 'event' });
-    object.push({ english: working[1], role: 'object' });
-    const trailing = await assignFallbackTrailing(working.slice(2), rules, { skip: SKIP });
-    object.push(...trailing.object);
-    modifiers.push(...trailing.modifiers);
-  } else if (working.length === 1) {
-    event.push({ english: working[0], role: 'event' });
-  }
-
-  return normalizeMotionSlots({ subject, time, event, path, object, modifiers }, rules);
-}
-
-/**
- * Compile English tokens into grammar slots with phrase-aware interpretation.
- * @param {string[]} tokens
- * @param {object} rules
- */
-async function compileSemanticSlots(tokens, rules) {
-  const timeHit = matchLeadingTimeAdverbial(tokens);
-  if (timeHit && tokens.length <= timeHit.consumed) {
-    return {
-      mode: 'sentence',
-      subject: [],
-      time: [{ english: timeHit.english, role: 'time' }],
-      event: [],
-      path: [],
-      object: [],
-      modifiers: [],
-    };
-  }
-
-  if (tokens.length <= 1) {
-    return {
-      mode: 'word',
-      subject: [],
-      time: [],
-      event: tokens.length ? [{ english: tokens[0], role: 'concept' }] : [],
-      path: [],
-      object: [],
-      modifiers: [],
-    };
-  }
-
-  const merged = mergePhrasalTokens(tokens);
-  const clauses = splitIntoClauses(merged, { pronounWords: PRONOUN_WORDS });
-
-  if (clauses.length === 1) {
-    const slotData = await compileClause(clauses[0], rules);
-    return { mode: 'sentence', ...slotData };
-  }
-
-  const combined = emptySlots();
-  let carriedSubject = null;
-  for (const clause of clauses) {
-    const slotData = await compileClause(clause, rules, { carriedSubject });
-    if (slotData.subject.length) {
-      const lastSubj = combined.subject.at(-1);
-      const newSubj = slotData.subject[0];
-      const dupPronoun = lastSubj?.particle && newSubj?.particle
-        && lastSubj.particle === newSubj.particle;
-      if (!dupPronoun) {
-        appendSlots(combined, slotData);
-      } else {
-        const { subject: _skip, ...rest } = slotData;
-        appendSlots(combined, { subject: [], ...rest });
-      }
-      carriedSubject = slotData.subject;
-    } else {
-      appendSlots(combined, slotData);
-    }
-  }
-  return { mode: 'discourse', ...combined };
-}
+/** Sentence splitting is parser work; re-exported for callers that had it from here. */
+export { splitSentences } from './fonoran-source-english.js';
 
 /**
  * Expand a quantifier pronoun (e.g. nobody = no + person) into ordered tokens.
@@ -790,8 +272,21 @@ async function resolveSlot(ctx, slot, role) {
   const surface = String(slot.english ?? '').trim();
   const lower = surface.toLowerCase();
 
-  if (slot.particle) {
-    return particleToken(role, slot.particle, surface || slot.particle);
+  // A parser names grammar facts by particle id (tense_past, logic_not…) and never by
+  // spelling; the seed-loaded form is attached here. `slot.particle` (a literal form)
+  // is still honored for engine-internal slots.
+  if (slot.particle || slot.particle_id) {
+    const form = slot.particle ?? particleFormById(slot.particle_id);
+    return particleToken(role, form, surface || form, { englishSource: slot.english_source });
+  }
+
+  // Possessives carry their owner as a reference, never a spelling: pronoun_i is a
+  // grammar particle, addressee/collective are lexical roots resolved from the lab.
+  if (slot.possessor) {
+    const form = slot.possessor.particle_id
+      ? particleFormById(slot.possessor.particle_id)
+      : resolveConceptId(slot.possessor.concept_id, ctx, role).fonoran;
+    return particleToken(role, form, surface);
   }
 
   if (slot.unknown_word) {
@@ -803,13 +298,21 @@ async function resolveSlot(ctx, slot, role) {
     return { ...token, role };
   }
 
-  if (PRONOUNS[lower]) {
-    return particleToken(role, PRONOUNS[lower], surface);
+  const pronoun = pronounParticle(lower);
+  if (pronoun) {
+    return particleToken(role, pronoun.form, surface);
   }
 
   // Lexicalized "unknown" (nohu) is a word in its own right, not just the WH base.
   if (lower === 'unknown') {
     return unknownWordToken(role, surface);
+  }
+
+  // A deliberately unexpressible interrogative must never be approximated. Without this,
+  // "how many" fell through to the head-noun tier and resolved to `many`, so the output
+  // asserted there were many of them while purporting to ask how many there were.
+  if (lower && WH_BLOCKED[lower]) {
+    return gapToken(surface, role, { reason: `blocked interrogative: ${firstSentence(WH_BLOCKED[lower])}` });
   }
 
   // Content-question composition (translator/vocabulary policy, NOT grammar).
@@ -835,14 +338,68 @@ async function resolveSlot(ctx, slot, role) {
     hints.concept_hint = slot.concept_hint;
     hints.interpret_reason = slot.interpret_reason;
   }
-  return resolveEnglishToken(slot.english, ctx, {
+  const token = await resolveEnglishToken(slot.english, ctx, {
     role,
     hints,
     allowSemantic: true,
     allowGuess: true,
-    surfaceEnglish: slot.english,
+    // The parse looks a word up by its lemma but reports it as written, so a reader sees
+    // "ate" while the lexicon is searched for "eat".
+    surfaceEnglish: slot.surface ?? slot.english,
     avoidConceptIds: role === 'modifier' ? ctx.frameConceptIds : null,
   });
+
+  // Some entries are curated in an inflected form and have no lemma entry: "bleeding" has a
+  // word, "bleed" does not. Reducing to the lemma is a lookup strategy, not a rule, so when
+  // it finds nothing the written form gets its turn before the word is called a gap.
+  if (!token?.resolved && slot.surface && slot.surface !== slot.english) {
+    const bySurface = await resolveEnglishToken(slot.surface, ctx, {
+      role,
+      hints,
+      allowSemantic: true,
+      allowGuess: true,
+      surfaceEnglish: slot.surface,
+      avoidConceptIds: role === 'modifier' ? ctx.frameConceptIds : null,
+    });
+    if (bySurface?.resolved) return bySurface;
+  }
+
+  // A liberty the compiler took that is not a concept substitution: the word resolves
+  // normally and the note travels with it so interpretations[] shows what narrowed.
+  if (slot.interpret_note && token?.resolved) {
+    return {
+      ...token,
+      interpreted: true,
+      interpreted_from: slot.interpret_from ?? slot.english,
+      interpret_reason: slot.interpret_note,
+    };
+  }
+
+  // Record the step from written form to lemma. The lookup succeeds directly now, so
+  // nothing else would report it, and a learner reading the Translate output needs to see
+  // why "ate" produced the word for eat plus a past particle.
+  if (slot.surface && slot.surface !== slot.english && token?.resolved && !token.interpreted) {
+    return {
+      ...token,
+      interpreted: true,
+      interpreted_from: slot.surface,
+      interpret_reason: 'inflected form',
+    };
+  }
+  return token;
+}
+
+/**
+ * A verbless clause naming a temporal scene is a Time, not an Actor: "every morning" sets
+ * when, and only the concept can say so, which is why this runs after resolution.
+ * @param {object[]} tokens
+ * @param {object} slots
+ */
+function promoteSceneToTime(tokens, slots) {
+  if (!slots?.verbless) return tokens;
+  return tokens.map(token => (token?.role === 'subject' && TEMPORAL_SCENE_CONCEPT_IDS.has(token.concept_id)
+    ? { ...token, role: 'time' }
+    : token));
 }
 
 async function slotsToTokens(ctx, slots) {
@@ -885,16 +442,19 @@ async function slotsToTokens(ctx, slots) {
     }
   };
 
-  // v1: questions carry no particle. Written questions are marked with `?`
-  // (appended by translateEnglish); content questions compose from concepts.
+  // Questions open with the `ka` particle, prepended once per sentence by markSentence;
+  // content questions additionally compose the unknown from concepts (`ka nohu ba`).
   //
   // Scene structure (Rule 4): lexical Time periphery may front as scene-setting;
   // tense particles ta/sa stay next to the Action (not floating in the scene).
   // Order: [scene time] · Actor · [ta/sa] · Action · Target · Place · modifiers
 
   const timeKey = (slot) => String(slot.particle ?? slot.concept_id ?? slot.english ?? '').toLowerCase();
-  const isTenseParticle = (slot) => slot.particle === 'ta' || slot.particle === 'sa'
-    || timeKey(slot) === 'ta' || timeKey(slot) === 'sa';
+  // Tense identity is the particle ID, with the seed-loaded forms as a fallback for
+  // slots that carry only a surface (never spellings hardcoded in code).
+  const tenseForms = new Set([particleFormSafe('tense_past'), particleFormSafe('tense_future')].filter(Boolean));
+  const isTenseParticle = (slot) => slot.particle_id === 'tense_past' || slot.particle_id === 'tense_future'
+    || tenseForms.has(slot.particle) || tenseForms.has(timeKey(slot));
   const isSceneTime = (slot) => {
     if (isTenseParticle(slot)) return false;
     const key = timeKey(slot);
@@ -911,14 +471,9 @@ async function slotsToTokens(ctx, slots) {
   const tenseTime = slots.time.filter(isTenseParticle);
   const otherTime = slots.time.filter(s => !isSceneTime(s) && !isTenseParticle(s));
 
-  const pushTimeSlot = async (slot) => {
-    if (slot.particle) out.push(particleToken('time', slot.particle, slot.english));
-    else push(await resolveSlot(ctx, slot, 'time'), 'time');
-  };
-  const pushSubjectSlot = async (slot) => {
-    if (slot.particle) out.push(particleToken('subject', slot.particle, slot.english));
-    else push(await resolveSlot(ctx, slot, 'subject'), 'subject');
-  };
+  // resolveSlot's particle branch handles slots carrying a particle id or form.
+  const pushTimeSlot = async (slot) => push(await resolveSlot(ctx, slot, 'time'), 'time');
+  const pushSubjectSlot = async (slot) => push(await resolveSlot(ctx, slot, 'subject'), 'subject');
 
   // Front lexical scene time whenever present (calendar + long_ago/beginning/world…).
   for (const slot of sceneTime) await pushTimeSlot(slot);
@@ -926,8 +481,12 @@ async function slotsToTokens(ctx, slots) {
   // Tense particles immediately before Action (Rule 3).
   for (const slot of tenseTime) await pushTimeSlot(slot);
   for (const slot of slots.event) push(await resolveSlot(ctx, slot, 'event'), 'event');
-  for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'), 'path');
+  // Target before Place, as the order comment above and rulebook Rule 8 say. The
+  // path loop sat before the object loop for a long time, unnoticed while place
+  // phrases had no object competing: with both, "she gives food to the child"
+  // rendered as give TO food child.
   for (const slot of slots.object) push(await resolveSlot(ctx, slot, 'object'), 'object');
+  for (const slot of slots.path) push(await resolveSlot(ctx, slot, 'path'), 'path');
   // Non-scene residual time (rare) stays before trailing modifiers.
   for (const slot of otherTime) await pushTimeSlot(slot);
   for (const slot of slots.modifiers) push(await resolveSlot(ctx, slot, 'modifier'), 'modifier');
@@ -1033,161 +592,16 @@ export function buildSurface(tokens) {
   };
 }
 
-/** Particle surface forms the LLM may emit in frame slots. */
-const LLM_PARTICLE_FORMS = new Set(['mi', 'ta', 'sa', 'no', 'ya', 'von']);
-
 /**
- * Normalize an LLM `unresolved[]` entry into a short, reusable gap token. The
- * compiler sometimes returns verbose reasoning ("second clause '…' omitted per
- * rule 7") or an annotated head ("can (ability modal — no v1 form)"). Keep only
- * the head token so the honest-gap baseline stays a clean list of missing
- * English words; drop sentence-like descriptions and clause meta-labels.
- * @param {string} raw
- * @returns {string|null}
- */
-export function cleanGapToken(raw) {
-  let s = String(raw ?? '').trim();
-  if (!s) return null;
-  // Strip an explanatory tail: "( … )", ": …", or " — …" / " - …".
-  s = s.split(/\s*[(:]|\s+[—-]\s+/)[0].trim();
-  s = s.replace(/^['"“”]+|['"“”]+$/g, '').trim();
-  if (!s) return null;
-  const lower = s.toLowerCase();
-  // Clause meta-labels ("and-clause", "compound clause", "subordinate_clause…")
-  // are structural notes, not gap words.
-  if (/^(second|compound|subordinate|and|but|or)[-\s_]?(clause|conjunction|clause_embedding)/.test(lower)) return null;
-  // Real gap words are short; sentence-like descriptions are noise.
-  if (lower.split(/\s+/).length > 2) return null;
-  return lower;
-}
-
-/**
- * Convert an LLM concept frame into internal grammar slots.
- * @param {object} frameSlots
- */
-export function frameSlotsToSemanticSlots(frameSlots) {
-  // Lexicalize WH "unknown": a within-slot no/neg + know sequence followed by a
-  // category concept (person/thing/place/time) is the WH composition and fuses
-  // to the single word nohu. Other no+know sequences (e.g. "I do not know…")
-  // stay as clause negation.
-  const collapseUnknown = (ids) => {
-    const out = [];
-    for (let i = 0; i < ids.length; i += 1) {
-      const isNeg = ids[i] === 'no' || ids[i] === 'neg';
-      if (isNeg && ids[i + 1] === 'know' && UNKNOWN_CATEGORY_IDS.has(ids[i + 2])) {
-        out.push('unknown');
-        i += 1;
-      } else {
-        out.push(ids[i]);
-      }
-    }
-    return out;
-  };
-
-  const convert = (items, role) => {
-    const list = Array.isArray(items) ? items : [];
-    const ids = list.map(raw => String(raw ?? '').trim().toLowerCase()).filter(Boolean);
-    return collapseUnknown(ids).map((id) => {
-      if (id === 'unknown') {
-        return { english: 'unknown', role, unknown_word: true };
-      }
-      if (id === 'neg') {
-        return { english: 'not', role, particle: 'no' };
-      }
-      if (LLM_PARTICLE_FORMS.has(id)) {
-        return { english: id, role, particle: id };
-      }
-      return { english: id, role, concept_id: id };
-    });
-  };
-
-  return {
-    mode: 'sentence',
-    subject: convert(frameSlots?.subject, 'subject'),
-    time: convert(frameSlots?.time, 'time'),
-    event: convert(frameSlots?.event, 'event'),
-    path: convert(frameSlots?.path, 'path'),
-    object: convert(frameSlots?.object, 'object'),
-    modifiers: convert(frameSlots?.modifiers, 'modifier'),
-  };
-}
-
-/**
- * Compile a language-neutral concept frame into Fonoran surface output.
- * @param {object} frame  { slots, is_question?, unresolved?, reasoning? }
- * @param {{ lab?: object, input?: string, sourceLang?: string }} [options]
- */
-export async function translateFromFrame(frame, options = {}) {
-  const input = String(options.input ?? '').trim();
-  const ctx = await buildResolveContext(options.lab, { devLab: Boolean(options.devLab) });
-  if (!PARTICLES) PARTICLES = await getParticleRuntime();
-
-  ctx.isQuestion = Boolean(frame?.is_question);
-  // Promote temporal scene concepts out of trailing modifiers before render so
-  // structure is preserved even if the LLM (or a cached frame) parked them wrong.
-  const structured = promoteTemporalSceneToTime(frame ?? { slots: {} });
-  const semantic = frameSlotsToSemanticSlots(structured?.slots ?? {});
-  // Deterministic grammar enforcement: canonical modifier order (quality before
-  // place) so floating modifiers render the same regardless of LLM slot order.
-  enforceModifierOrder(semantic, ctx.inventory?.concepts ?? []);
-  const tokens = await slotsToTokens(ctx, semantic);
-  const mark = terminalPunctuationFromText(input)
-    || (ctx.isQuestion ? '?' : null);
-  if (mark) tokens.push(punctuationToken(mark));
-
-  // Full form still includes Actor; flag recoverable addressee for UI highlight.
-  if (isAddresseeDroppable(frame, input, options)) {
-    for (const t of tokens) {
-      if (t.role !== 'subject') continue;
-      const id = String(t.concept_id ?? t.english ?? '').toLowerCase();
-      if (id === 'addressee' || t.fonoran === 'be' || id === 'you') {
-        t.droppable = true;
-        t.droppable_note = 'Can drop in casual speech';
-      }
-    }
-  }
-
-  const surface = buildSurface(tokens);
-  // Frame gaps are cleaned to short tokens; token gaps are already single words.
-  const frameGaps = (frame?.unresolved ?? []).map(cleanGapToken).filter(Boolean);
-  const tokenGaps = tokens.filter(t => !t.resolved).map(t => String(t.english ?? '').toLowerCase());
-  const uniqueUnresolved = [...new Set([...frameGaps, ...tokenGaps])];
-
-  const interpretations = tokens
-    .filter(t => t.interpreted)
-    .map(t => ({
-      english: t.interpreted_from ?? t.english,
-      concept_id: t.concept_id ?? t.english,
-      fonoran: t.fonoran,
-      reason: t.interpret_reason ?? '',
-      role: t.role,
-      resolution_kind: t.resolution_kind,
-    }));
-
-  return attachTranslatorPlayback({
-    input,
-    mode: semantic.mode,
-    tokens,
-    surface,
-    semantic: {
-      skeleton: GRAMMAR_SKELETON,
-      slots: semantic,
-    },
-    frame: buildFrame(tokens),
-    interpretations,
-    unresolved: uniqueUnresolved,
-    reasoning: frame?.reasoning ?? null,
-    sourceLang: options.sourceLang ?? null,
-    actor_droppable: tokens.some(t => t.droppable),
-  });
-}
-
-/**
- * @deprecated Use translate() from fonoran-translate.js (LLM compiler). Kept for regression comparison.
+ * Translate source-language text into Fonoran. This is the only forward engine;
+ * `translate()` in fonoran-translate.js is the public wrapper around it. The
+ * source language arrives as a parser (fonoran-source-parsers.js): the parser
+ * produces the neutral slots, and everything below is Fonoran.
  * @param {string} text
- * @param {{ lab?: object }} [options]
+ * @param {{ parser?: object, lab?: object, devLab?: boolean }} [options]
  */
-export async function translateEnglishLegacy(text, options = {}) {
+export async function translateFromSource(text, options = {}) {
+  const parser = options.parser ?? getSourceParser('en');
   const input = String(text ?? '').trim();
   if (!input) {
     return {
@@ -1202,23 +616,32 @@ export async function translateEnglishLegacy(text, options = {}) {
     };
   }
 
-  const ctx = await buildResolveContext(options.lab, { devLab: Boolean(options.devLab) });
+  const ctx = await buildResolveContext(options.lab, {
+    devLab: Boolean(options.devLab),
+    lang: parser.lang,
+    morphology: parser.morphology,
+    guess: Boolean(options.guess),
+  });
   const rules = ctx.rules ?? await loadInterpretationRules();
   ctx.rules = rules;
   if (!PARTICLES) PARTICLES = await getParticleRuntime();
 
-  const sentences = splitSentences(input);
+  const sentences = parser.splitSentences(input);
   if (sentences.length > 1) {
     const allTokens = [];
     const mergedSlots = emptySlots();
     for (const sent of sentences) {
-      ctx.isQuestion = isQuestionSentence(sent);
-      const englishTokens = mergePhrasalTokens(mergeEnglishCompounds(tokenizeEnglish(sent), ctx.aliasIndex));
-      const semantic = await compileSemanticSlots(englishTokens, rules);
+      ctx.isQuestion = parser.isQuestionSentence(sent);
+      const semantic = await parser.compileSlots(sent, {
+        isQuestion: ctx.isQuestion,
+        rules,
+        aliasIndex: ctx.aliasIndex,
+      });
       appendSlots(mergedSlots, semantic);
-      allTokens.push(...await slotsToTokens(ctx, semantic));
-      const mark = terminalPunctuationFromText(sent) || (ctx.isQuestion ? '?' : null);
-      if (mark) allTokens.push(punctuationToken(mark));
+      allTokens.push(...markSentence(await slotsToTokens(ctx, semantic), {
+        isQuestion: ctx.isQuestion,
+        sourceText: sent,
+      }));
     }
     const tokens = allTokens;
     const surface = buildSurface(tokens);
@@ -1249,12 +672,29 @@ export async function translateEnglishLegacy(text, options = {}) {
     });
   }
 
-  ctx.isQuestion = isQuestionSentence(sentences[0] ?? input);
-  const englishTokens = mergePhrasalTokens(mergeEnglishCompounds(tokenizeEnglish(sentences[0] ?? input), ctx.aliasIndex));
-  const semantic = await compileSemanticSlots(englishTokens, rules);
-  const tokens = await slotsToTokens(ctx, semantic);
-  const mark = terminalPunctuationFromText(sentences[0] ?? input) || (ctx.isQuestion ? '?' : null);
-  if (mark) tokens.push(punctuationToken(mark));
+  ctx.isQuestion = parser.isQuestionSentence(sentences[0] ?? input);
+  const semantic = await parser.compileSlots(sentences[0] ?? input, {
+    isQuestion: ctx.isQuestion,
+    rules,
+    aliasIndex: ctx.aliasIndex,
+  });
+  // Modifier order is deliberately left as the parse produced it. A canonical sort
+  // exists in fonoran-grammar-spec.js for slots that arrive in arbitrary order, but
+  // this parse already carries English order, which for a relation plus its landmark
+  // is the recoverable one: sorting turned "near you" (`dal be`) into `be dal`, and
+  // "stay here" into "here stay".
+  // A multi-clause parse renders clause by clause: slotsToTokens emits one slot at a time,
+  // so handing it merged slots would interleave both predications' Actors and Actions.
+  const rendered = semantic.clauses?.length
+    ? (await Promise.all(semantic.clauses.map(async clause => promoteSceneToTime(
+      await slotsToTokens(ctx, clause),
+      clause,
+    )))).flat()
+    : await slotsToTokens(ctx, semantic);
+  const tokens = markSentence(rendered, {
+    isQuestion: ctx.isQuestion,
+    sourceText: sentences[0] ?? input,
+  });
   const surface = buildSurface(tokens);
   const unresolved = tokens.filter(t => !t.resolved).map(t => t.english);
   const interpretations = tokens
@@ -1290,15 +730,15 @@ export async function translateEnglishLegacy(text, options = {}) {
   });
 }
 
-/** @deprecated Alias for translateEnglishLegacy — use translate() from fonoran-translate.js. */
-export const translateEnglish = translateEnglishLegacy;
-
-export async function loadGrammarParticlesMeta() {
-  try {
-    return JSON.parse(await readFile(PARTICLES_PATH, 'utf8'));
-  } catch {
-    return null;
-  }
+/**
+ * The forward engine under its historical name: English in, Fonoran out.
+ * Kept because scripts and tests import it; it is exactly `translateFromSource`
+ * with the English parser.
+ * @param {string} text
+ * @param {{ lab?: object, devLab?: boolean }} [options]
+ */
+export function translateEnglishLegacy(text, options = {}) {
+  return translateFromSource(text, { ...options, parser: getSourceParser('en') });
 }
 
 /** Reset cached vocabulary (tests). */

@@ -12,6 +12,7 @@ import {
   setSkillCurriculumMeta,
 } from './learn-gamification.js';
 import { LESSON_PASS_RATIO } from './fonoran-learn-curriculum.js';
+import { shuffle } from './utils.js';
 
 const DEFAULT_LESSON_SIZE = 10;
 
@@ -28,14 +29,6 @@ const MODULE_DEFS = [
 const SIMPLE_VOWEL_KEYS = new Set(['a', 'e', 'i', 'o', 'u']);
 const LONG_VOWEL_KEYS = new Set(['ae', 'ee', 'oh', 'ay', 'eye', 'ow', 'oy']);
 
-function shuffle(list) {
-  const copy = [...list];
-  for (let i = copy.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
-  }
-  return copy;
-}
 
 function cellKey(cell) {
   return cell.symbols || cell.sound || '';

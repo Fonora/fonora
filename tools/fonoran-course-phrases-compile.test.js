@@ -2,6 +2,7 @@
  * Unit tests for course-phrase compile helpers.
  */
 import { buildFonoranField, extractTokens } from './fonoran-course-phrases-compile.js';
+import { isMainModule } from './is-main.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(msg);
@@ -44,14 +45,13 @@ const gapTest = test('buildFonoranField marks unresolved as gap', () => {
   assert(field.unresolved?.includes('X'), 'unresolved kept');
 });
 
-const cacheMissTest = test('buildFonoranField marks cache-miss as pending', () => {
-  const field = buildFonoranField({
-    ok: false,
-    cache_miss: true,
-    error: 'cache-miss: "Hello."',
-  });
-  assert(field.status === 'pending', `status=${field.status}`);
-  assert(field.roman === '', 'empty roman on miss');
+// Learn used to replay a translation cache, so a phrase missing from it came back "pending"
+// and was hidden from lessons even when the translator could say it. With one deterministic
+// engine there is no such limbo: every phrase is either teachable or a named gap.
+const noPendingLimboTest = test('buildFonoranField never parks a failed phrase as pending', () => {
+  const field = buildFonoranField({ ok: false, cache_miss: true, error: 'stale miss flag' });
+  assert(field.status === 'gap', `status=${field.status}`);
+  assert(field.roman === '', 'empty roman on failure');
 });
 
 const hardFailTest = test('buildFonoranField marks hard failure as gap', () => {
@@ -60,11 +60,55 @@ const hardFailTest = test('buildFonoranField marks hard failure as gap', () => {
   assert(field.error === 'boom', 'error preserved');
 });
 
+const composedTest = test('buildFonoranField brackets a composition the lexicon does not own', () => {
+  const field = buildFonoranField({
+    surface: { roman: 'dan les kel kalfem.' },
+    unresolved: ['cook', 'meat'],
+    tokens: [
+      { fonoran: 'kalfem', concept_id: 'animal+body', ad_hoc_composition: true },
+    ],
+  });
+  assert(field.roman === 'dan les kel [animal+body].', `roman=${field.roman}`);
+  assert(!field.roman.includes('kalfem'), 'invented word must not be taught');
+  assert(field.status === 'gap', `status=${field.status}`);
+});
+
+const composedWithoutGapsTest = test('buildFonoranField gaps a composition even when nothing is unresolved', () => {
+  const field = buildFonoranField({
+    surface: { roman: 'mi nes testemkan wi be.' },
+    unresolved: [],
+    tokens: [
+      { fonoran: 'testemkan', concept_id: 'pain+ending', ad_hoc_composition: true },
+    ],
+  });
+  assert(field.status === 'gap', `status=${field.status}`);
+  assert(field.roman === 'mi nes [pain+ending] wi be.', `roman=${field.roman}`);
+});
+
+const approvedWordKeptTest = test('buildFonoranField leaves approved compounds alone', () => {
+  const field = buildFonoranField({
+    surface: { roman: 'mi nes nesgu wi be.' },
+    unresolved: [],
+    tokens: [{ fonoran: 'nesgu', concept_id: 'relieved', kind: 'compound' }],
+  });
+  assert(field.status === 'translated', `status=${field.status}`);
+  assert(field.roman === 'mi nes nesgu wi be.', `roman=${field.roman}`);
+});
+
 export function runFonoranCoursePhrasesCompileTests() {
-  return [extractTest, translatedTest, gapTest, cacheMissTest, hardFailTest];
+  return [
+    extractTest,
+    translatedTest,
+    gapTest,
+    noPendingLimboTest,
+    hardFailTest,
+    composedTest,
+    composedWithoutGapsTest,
+    approvedWordKeptTest,
+  ];
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainModule(import.meta.url)) {
   const results = runFonoranCoursePhrasesCompileTests();
   const failed = results.filter((r) => !r.ok);
   for (const r of results) {

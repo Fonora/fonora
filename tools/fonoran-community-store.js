@@ -1,13 +1,21 @@
 /**
- * Community users, learn progress sync, proposals, and votes.
- * Postgres when configured; JSON file fallback for local dev.
+ * User data: accounts, lesson progress, community proposals, votes.
+ *
+ * This is the only part of the project that belongs in a database. It is state a person creates
+ * by using the site, it has to survive a deploy, and it is nobody's business to hand-edit. The
+ * language itself is the opposite on all three counts and lives in committed seed files, so this
+ * store owns its connection pool and its schema outright and shares nothing with the language.
+ *
+ * Postgres when DATABASE_URL is set; a JSON file for local dev, which is why the local file is
+ * gitignored: it holds real people's progress, not editorial content.
  */
+
+import '../load-env.js';
 
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { randomBytes } from 'node:crypto';
-import { resolveStorageMode, ensurePgSchema } from './fonoran-store.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const JSON_PATH = join(ROOT, 'data/fonoran-community.json');
@@ -65,6 +73,17 @@ const REFERRAL_MIGRATION_SQL = `
 ALTER TABLE fonoran_users ADD COLUMN IF NOT EXISTS referred_by TEXT;
 ALTER TABLE fonoran_users ADD COLUMN IF NOT EXISTS referrals_sent INTEGER NOT NULL DEFAULT 0;
 `;
+
+/**
+ * True when user data goes to Postgres. FONORAN_STORAGE forces the choice either way; otherwise
+ * the presence of DATABASE_URL decides, so a local checkout with no database still works.
+ */
+function usePostgres() {
+  const explicit = process.env.FONORAN_STORAGE?.trim().toLowerCase();
+  if (explicit === 'json') return false;
+  if (explicit === 'postgres') return true;
+  return Boolean(process.env.DATABASE_URL);
+}
 
 /** @param {string | null | undefined} ref */
 export function isValidReferralId(ref) {
@@ -128,8 +147,7 @@ async function getPool() {
 
 async function ensureCommunitySchema() {
   if (schemaReady) return;
-  if (resolveStorageMode() === 'postgres') {
-    await ensurePgSchema();
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -142,13 +160,25 @@ async function ensureCommunitySchema() {
   schemaReady = true;
 }
 
+/** Create the tables and warm the pool at server startup. */
+export async function initCommunityStore() {
+  if (!usePostgres()) return;
+  await ensureCommunitySchema();
+  const client = await (await getPool()).connect();
+  try {
+    await client.query('SELECT 1');
+  } finally {
+    client.release();
+  }
+}
+
 /**
  * @param {string | null | undefined} userId
  */
 export async function getReferralCount(userId) {
   if (!userId) return 0;
   await ensureCommunitySchema();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const { rows } = await pool.query(
       'SELECT referrals_sent FROM fonoran_users WHERE id = $1',
@@ -163,7 +193,7 @@ export async function getReferralCount(userId) {
 
 async function referrerExists(referrerId) {
   if (!isValidReferralId(referrerId)) return false;
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const { rows } = await pool.query('SELECT id FROM fonoran_users WHERE id = $1', [referrerId]);
     return Boolean(rows[0]?.id);
@@ -176,7 +206,7 @@ async function referrerExists(referrerId) {
  * @param {string} referrerId
  */
 async function incrementReferralsSent(referrerId) {
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     await pool.query(
       'UPDATE fonoran_users SET referrals_sent = referrals_sent + 1 WHERE id = $1',
@@ -201,7 +231,7 @@ export async function upsertUser({ provider, providerSub, email, name, referredB
   const normalizedEmail = email.trim().toLowerCase();
   const now = new Date().toISOString();
 
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -276,7 +306,7 @@ export async function upsertUser({ provider, providerSub, email, name, referredB
 
 export async function getLearnProgress(userId) {
   await ensureCommunitySchema();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -299,7 +329,7 @@ export async function getLearnProgress(userId) {
 export async function saveLearnProgress(userId, progress) {
   await ensureCommunitySchema();
   const now = new Date().toISOString();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -366,7 +396,7 @@ export async function createProposal(userId, body) {
     resolved_by: null,
   };
 
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -389,7 +419,7 @@ export async function createProposal(userId, body) {
 
 export async function listProposals({ status = 'open', limit = 100 } = {}) {
   await ensureCommunitySchema();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -416,7 +446,7 @@ export async function listProposals({ status = 'open', limit = 100 } = {}) {
 
 export async function getProposal(id) {
   await ensureCommunitySchema();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -433,7 +463,7 @@ export async function getProposal(id) {
 export async function resolveProposal(id, { status, resolvedBy }) {
   await ensureCommunitySchema();
   const now = new Date().toISOString();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -478,7 +508,7 @@ export async function setVote(userId, subjectType, subjectId, vote) {
   const id = newId('vote');
   const now = new Date().toISOString();
 
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -521,7 +551,7 @@ export async function setVote(userId, subjectType, subjectId, vote) {
 
 export async function getVoteAggregate(subjectType, subjectId) {
   await ensureCommunitySchema();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -548,7 +578,7 @@ export async function getVoteAggregate(subjectType, subjectId) {
 
 export async function getUserVote(userId, subjectType, subjectId) {
   await ensureCommunitySchema();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -966,7 +996,7 @@ function buildEngagementBlock(users) {
 
 async function readAnalyticsRows() {
   await ensureCommunitySchema();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {
@@ -1001,7 +1031,7 @@ async function readAnalyticsRows() {
 
 async function readLearnProgressRows() {
   await ensureCommunitySchema();
-  if (resolveStorageMode() === 'postgres') {
+  if (usePostgres()) {
     const pool = await getPool();
     const client = await pool.connect();
     try {

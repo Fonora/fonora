@@ -12,7 +12,7 @@ Instead, email the maintainers or open a private security advisory on GitHub if 
 
 ## Secrets and credentials
 
-- Never commit `.env`, OAuth secrets, `SESSION_SECRET`, `DATABASE_URL`, `ANTHROPIC_API_KEY`, or `ANTHROPIC_API_KEY_FONORA_TRANSLATOR`.
+- Never commit `.env`, OAuth secrets, `SESSION_SECRET`, `DATABASE_URL`, or any API key.
 - Production secrets belong in Heroku config vars (or your host's secret store) only.
 - The repository ships [`.env.example`](.env.example) with empty placeholders.
 
@@ -32,13 +32,10 @@ See [docs/fonoran-auth-and-release.md](docs/fonoran-auth-and-release.md) for the
 
 Intentionally public endpoints (research participation):
 
-- `POST /api/fonoran/puzzle/guess` — puzzle conversation playtests (appends to shared playtest store)
 - `POST /api/fonoran/expressions/candidates` — compound candidate exploration (compute-only)
 - `POST /api/fonoran/translate` — read-only translation (no vocabulary mutation)
 - `POST /api/fonoran/lab/graph/preview` — graph preview (compute-only)
-- `POST /api/fonoran/snapshot/preview` — parse uploaded snapshot zip without restoring
 - `POST /api/fonoran/lab/regenerate` — full generator pipeline (admin; confirm REGENERATE)
-- `POST /api/fonoran/lab/editorial/import` — reload git editorial seeds (admin; confirm IMPORT)
 - `POST /api/fonoran/lab/regression/translator` — golden translation regression report
 - `POST /api/fonoran/translation-tests/run` — regenerates `data/fonoran-translation-test-latest.json` (shared metrics file)
 
@@ -53,6 +50,6 @@ Set `FONORAN_AUTH=off` or `FONORAN_AUTH_OFF=1` only on a trusted development mac
 | In git (public) | Out of git |
 | --- | --- |
 | Reference JSON, docs, builder UI, auth middleware | Live lab bucket, runtime lexicon, PostgreSQL rows |
-| Milestone snapshots (`fonoran-compounds.json`, `fonoran-llm-evaluations.json`, etc.) | `.env`, local backups |
+| Editorial seeds (`fonoran-compounds.json`, `fonoran-concept-inventory.json`, etc.) | `.env`, local backups |
 
 Security does not depend on hiding source code. Admin write access requires a valid session on an `ADMIN_EMAILS`-listed Google account.

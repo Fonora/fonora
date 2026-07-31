@@ -1,12 +1,12 @@
 {
-  "version": "3.1-preferred-order-v1",
+  "version": "3.2-question-particle-v1",
   "status": "active",
   "description": "Fonoran v1 grammar particle inventory. Particles mark relationships in the preferred sentence skeleton (Actor · Action · Target/Place · Time); they are invariant and never fuse into lexical spellings (docs/fonoran-grammar.md Rule 3). All forms are reserved in data/fonoran-primitive-roots-config.json so the root generator never assigns them to a lexical concept.",
   "philosophy_source": "docs/fonoran-grammar.md",
-  "design_rule_0": "If a distinction can be expressed through ordinary concepts, it should not become grammar. Grammar exists only to express relationships that cannot be naturally represented as concepts. This is why v1 has no question particles, no focus particles, and no interrogative pro-form.",
+  "design_rule_0": "If a distinction can be expressed through ordinary concepts, it should not become grammar. Grammar exists only to express relationships that cannot be naturally represented as concepts. This is why there are no focus particles and no interrogative pro-form. Asking is the one exception, and it earns its place: a question is not a concept in the sentence, it is what the speaker is doing with the whole sentence, and no arrangement of ordinary words carries it. Without a marker `be len mi` is both you hear me and do you hear me, distinguished only by a borrowed ? that the nine-symbol script does not contain.",
   "scope_note": "This is a closed, minimal class. A particle belongs here ONLY if it is genuinely grammatical (cannot be expressed as a lexical concept) AND is either sanctioned by the grammar doc or actively wired in the translator. Spatial/relational meaning (in/at/toward/from/with, this/that) is LEXICAL in Fonoran — it lives in concepts/roots such as inside, here, there, near, far, up, down, reach — so those are deliberately NOT particles. Personal pronouns other than mi resolve lexically and are out of scope for now.",
   "note": "Present tense has no particle: it is the default when the Time slot is empty. Polarity is grammar, not vocabulary: false = no + true, different = no + same. Quantifier pronouns compose at the particle/root layer: nobody = no + person, everyone = all + person.",
-  "questions_note": "v1 has NO grammatical question particles and NO interrogative pro-form. Content (wh) questions are expressed compositionally from ordinary concepts, and written questions are marked with '?' (spoken questions rely on intonation). The specific current compositions (who/what/where/when) live in the translation/vocabulary layer, not here — grammar must stay independent of how the lexicon builds them. Removed in v1: the question marker `wo`, the six interrogative forms (vus/zas/zes/zis/zos/zus), and the focus forms (vat/vet/vit).",
+  "questions_note": "Every question, polar or content, opens with `ka`. It is clause-initial because a particle sits immediately before what it scopes over (Rule 10) and a question scopes the whole clause, and because a listener piecing meaning together should know a question is coming before assembling the sentence rather than after. There is NO interrogative pro-form: content questions still name the unknown compositionally (`ka nohu ba` = who), and `ka` is what separates that from the statement `nohu ba` (an unknown person). No '?' is written: the particle carries it, so the script stays at nine symbols. A sentence still closes with the ordinary '.', which says only that it ended. The specific compositions (who/what/where/when) live in the translation/vocabulary layer, not here. Removed in v1 and still removed: the six interrogative forms (vus/zas/zes/zis/zos/zus) and the focus forms (vat/vet/vit). The v1 question marker was `wo`, which is now the lexical root for lonely, so the new marker is `ka`, a free CV with no onset clash against mi/ta/sa/no/ya/von.",
   "triggers_note": "triggers[] are English surface words that compile to this particle. Empty triggers[] means the particle is core grammar emitted programmatically (tense via the translator's tense pass).",
   "existing_placeholders": {
     "mi": { "role": "pronoun", "gloss": "I" },
@@ -22,7 +22,9 @@
 
     { "id": "logic_not", "role": "negation", "gloss": "not; negation", "group": "logical", "form": "no", "triggers": ["not", "never", "n't", "no"] },
     { "id": "logic_yes", "role": "affirmation", "gloss": "yes; affirmative", "group": "logical", "form": "ya", "triggers": ["yes", "yeah", "yep"] },
-    { "id": "logic_if", "role": "conditional", "gloss": "if; condition", "group": "logical", "form": "von", "triggers": ["if"] }
+    { "id": "logic_if", "role": "conditional", "gloss": "if; condition", "group": "logical", "form": "von", "triggers": ["if"] },
+
+    { "id": "clause_question", "role": "question", "gloss": "marks the clause as a question", "group": "clause", "form": "ka", "triggers": [], "note": "Clause-initial, both polar and content questions. Emitted programmatically by the translator, so triggers[] is empty." }
   ],
   "quantifier_pronouns": {
     "note": "Composed at the particle/root layer, not lexical. 'neg' -> logic_not particle; 'all'/'some' resolve to their lexical roots (concepts all/some).",
@@ -41,5 +43,5 @@
     "pronouns": ["you/we/they/he/she/it resolve lexically; only mi is a particle"],
     "connectives": ["and/or/but handled structurally via clause splitting", "because/so handled as clause connectives"]
   },
-  "particle_count": 7
+  "particle_count": 8
 }

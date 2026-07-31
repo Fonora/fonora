@@ -2,6 +2,7 @@
  * Shared roman-prompt typing practice: prompt → Fonora keyboard → check → next word.
  */
 import { createFonoraKeyboard } from './fonora-keyboard-ui.js';
+import { syncKeyboardDockBodyClass } from './fonora-keyboard-dock.js';
 import { normalizeSymbolInput } from './decode.js';
 import { mountPromptHear } from './learn-hear-ui.js';
 import { finishTypingAnswer, setLearnVerdict } from './learn-session-ui.js';
@@ -29,13 +30,6 @@ import { finishTypingAnswer, setLearnVerdict } from './learn-session-ui.js';
  */
 function el(ids, suffix) {
   return document.getElementById(ids[suffix]);
-}
-
-function syncFonoraKeyboardDockBodyClass() {
-  document.body.classList.toggle(
-    'fonora-keyboard-dock-open',
-    Boolean(document.querySelector('.fonora-keyboard-dock:not([hidden])')),
-  );
 }
 
 /**
@@ -103,7 +97,7 @@ export function createTypingPractice({
   function syncLessonKeyboardDock() {
     const dock = ids.dock ? document.getElementById(ids.dock) : el(ids, 'keyboard')?.closest('.fonora-keyboard-dock');
     if (dock) dock.hidden = !isPracticePanelActive();
-    syncFonoraKeyboardDockBodyClass();
+    syncKeyboardDockBodyClass();
   }
 
   function setStatus(message) {
@@ -320,7 +314,7 @@ export function createTypingPractice({
     practiceKeyboard = null;
     const dock = ids.dock ? document.getElementById(ids.dock) : el(ids, 'keyboard')?.closest('.fonora-keyboard-dock');
     if (dock) dock.hidden = true;
-    syncFonoraKeyboardDockBodyClass();
+    syncKeyboardDockBodyClass();
   }
 
   return {

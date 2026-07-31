@@ -2,7 +2,7 @@
 
 > **Status**: Active. Live at [`/learn`](/learn) — public, no sign-in required (optional progress sync when signed in).
 
-Learn is the **structured drill layer** for Fonora Script and Fonoran language skills. It runs 10-question sessions with XP, streaks, and ring-based lesson progression. It is separate from the exploration tools on [`/language`](/language) (Translator, Dictionary, Puzzle).
+Learn is the **structured drill layer** for Fonora Script and Fonoran language skills. It runs 10-question sessions with XP, streaks, and ring-based lesson progression. It is separate from the exploration tools on [`/language`](/language) (Translator, Dictionary, Grammar).
 
 See also: [platform-overview.md](platform-overview.md) · [fonoran-grammar.md](fonoran-grammar.md) · [fonoran-auth-and-release.md](fonoran-auth-and-release.md) (progress sync).
 
@@ -14,7 +14,7 @@ See also: [platform-overview.md](platform-overview.md) · [fonoran-grammar.md](f
 flowchart LR
   subgraph learner [Learner path]
     Learn["/learn\nstructured drills"]
-    Lang["/language\nTranslator · Dictionary · Puzzle"]
+    Lang["/language\nTranslator · Dictionary · Grammar"]
   end
   subgraph builder [Builder path]
     Tools["/tools\nWord Manager · Gap Workshop · Translation Test"]
@@ -27,7 +27,7 @@ flowchart LR
 | Route | Purpose | Progress |
 | --- | --- | --- |
 | [`/learn`](/learn) | Fixed exercises, lesson slicing, mastery | localStorage (+ optional cloud sync) |
-| [`/language`](/language) | Open-ended translation, dictionary browse, puzzle playtests | Session logs, not Learn XP |
+| [`/language`](/language) | Open-ended translation, dictionary browse, grammar reference | Not Learn XP |
 | [`/tools`](/tools) | Build and test vocabulary | Admin/community workflows |
 
 ---
@@ -106,7 +106,9 @@ Ring labels and tier assignment come from [`tools/fonoran-experience-tiers.js`](
 
 ### Phrase roman freshness
 
-English prompts are static (stranger corpus / baked domain structure). Fonoran roman is **compiled at Learn load** from the translation cache via `GET /api/fonoran/learn/course-phrases`, keyed on lab `updated_at`. Lexicon respells therefore show up in Learn without rebuilding `data/fonoran-course-phrases.json`. That baked file remains the offline fallback and CI fixture; rebuild with `npm run fonoran:course-phrases:build -- --force --cache-only` when you need to refresh the committed snapshot.
+English prompts are static (stranger corpus / baked domain structure). Fonoran roman is **compiled at Learn load** by the deterministic translator via `GET /api/fonoran/learn/course-phrases`, keyed on lab `updated_at`. Lexicon respells therefore show up in Learn without rebuilding `data/fonoran-course-phrases.json`. That baked file remains the offline fallback and CI fixture; rebuild with `npm run fonoran:course-phrases:build` when you need to refresh the committed snapshot.
+
+Because lessons and the golden translation tests now run the same engine over the same corpus, a phrase a lesson teaches is exactly a phrase the tests prove the language can say. Of the 1,000 corpus phrases, 787 translate cleanly and are teachable; the other 213 name a missing concept and are held back until the lexicon covers them.
 
 ---
 
@@ -157,11 +159,11 @@ Learn and the Translator share **vocabulary** but not the **exercise engine**:
 | | Learn | Translator |
 | --- | --- | --- |
 | Vocabulary | `GET /api/fonoran/bootstrap` | Same lab inventory |
-| Grammar sentences | Template compiler in `fonoran-grammar-generate.js` | `POST /api/fonoran/translate` (LLM semantic compiler) |
+| Grammar sentences | Template compiler in `fonoran-grammar-generate.js` | `POST /api/fonoran/translate` (deterministic English compiler) |
 | Grading | Exact match on expected roman / English gloss | N/A (exploration) |
 | Particles | `fonoran-grammar-particles.json` | Same inventory |
 
-Grammar Learn starts with a **hand-authored Rule 4 lesson** (`data/fonoran-grammar-lessons.json`) — preferred order, `mi`/`ta`/`sa`/`no`, serial want+go, bare destinations, casual Actor drop — then continues into reorder / particle / translation drills from course phrases. It does not replace the full [fonoran-grammar.md](fonoran-grammar.md) reference. For open-ended translation, use [`/language#translator`](/language#translator).
+Grammar Learn starts with a **hand-authored Rule 4 lesson** (`data/fonoran-grammar-lessons.json`) — preferred order, `mi`/`ta`/`sa`/`no`, serial want+go, bare destinations, Actor always spoken — then continues into reorder / particle / translation drills from course phrases. It does not replace the full [fonoran-grammar.md](fonoran-grammar.md) reference. For open-ended translation, use [`/language#translator`](/language#translator).
 
 Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 
@@ -176,7 +178,7 @@ Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 | [`js/fonoran-learn-curriculum.js`](../js/fonoran-learn-curriculum.js) | Hybrid ring + domain phrase lesson slicing |
 | [`js/fonoran-practice-words.js`](../js/fonoran-practice-words.js) | Builds practice entries from bootstrap |
 | [`js/fonoran-course-phrases.js`](../js/fonoran-course-phrases.js) | Client loader (API first, static fallback) |
-| [`tools/fonoran-course-phrases-compile.js`](../tools/fonoran-course-phrases-compile.js) | Shared cache-first phrase compile |
+| [`tools/fonoran-course-phrases-compile.js`](../tools/fonoran-course-phrases-compile.js) | Shared deterministic phrase compile |
 | [`tools/fonoran-learn-course-phrases.js`](../tools/fonoran-learn-course-phrases.js) | Server lab_rev cache for Learn phrases |
 | [`js/fonoran-*-practice.js`](../js/) | Per-skill exercise modules |
 | [`js/learn-home-progress.js`](../js/learn-home-progress.js) | Learn home streak / daily goal / skill bars |
@@ -187,6 +189,5 @@ Translator architecture: [fonoran-translator.md](fonoran-translator.md).
 ## Related
 
 - Platform overview: [platform-overview.md](platform-overview.md)
-- Fonoran philosophy (campfire tiers): [fonoran-constitution.md](fonoran-constitution.md)
+- Vocabulary rings and caps: [fonoran-rulebook.md](fonoran-rulebook.md)
 - Grammar rules for drills: [fonoran-grammar.md](fonoran-grammar.md)
-- Learning experiment log: [fonoran-learning-sessions-log.md](fonoran-learning-sessions-log.md)

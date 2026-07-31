@@ -16,7 +16,7 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { parseSyllable, isValidSyllable } from '../tools/fonoran-pronunciation.js';
+import { parseSyllable, isValidSyllable, ONSETS, VOWELS, CODAS } from '../tools/fonoran-pronunciation.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -63,16 +63,10 @@ function isBlocked(sp) {
 
 // ── Phoneme inventories ────────────────────────────────────────────────────────
 
-// Full parser inventories (source of truth: fonoran-pronunciation.js)
-const ALL_ONSETS_FULL = [
-  'gh', 'kh', 'ng', 'sh', 'ch', 'th', 'dh', 'ñ',
-  'x', 'p', 't', 'b', 'd', 'j', 'g', 'h', 'f', 's', 'v', 'z', 'm', 'n', 'w', 'l', 'r', 'y', 'k',
-];
-const ALL_VOWELS_FULL = ['ee', 'ae', 'oh', 'eye', 'ow', 'oy', 'ay', 'a', 'e', 'i', 'o', 'u'];
-const ALL_CODAS_FULL  = [
-  'ch', 'sh', 'ng', 'kh', 'gh', 'th', 'dh',
-  'p', 't', 'k', 'h', 'm', 'n', 's', 'd', 'b', 'g', 'v', 'z', 'l', 'r', 'x',
-];
+// Full parser inventories, imported from fonoran-pronunciation.js so they cannot drift.
+const ALL_ONSETS_FULL = ONSETS;
+const ALL_VOWELS_FULL = VOWELS;
+const ALL_CODAS_FULL = CODAS;
 
 // Tier sub-inventories
 const ONSETS_CURRENT   = ['b','d','f','g','k','l','m','n','s','t','h','w','y','p','ch','sh','j','r'];

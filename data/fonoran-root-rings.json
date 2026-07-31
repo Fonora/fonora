@@ -1,6 +1,6 @@
 {
   "version": "1.0-root-rings",
-  "updated_at": "2026-07-12T10:27:01.805Z",
+  "updated_at": "2026-07-31T23:17:48.782Z",
   "philosophy": "Primitive roots are capped at 150. Anything beyond is expressed only as compounds. Rings are cumulative targets, not fill quotas.",
   "caps": {
     "ring_1": 50,
@@ -65,7 +65,8 @@
         "now",
         "know",
         "do"
-      ]
+      ],
+      "count": 50
     },
     {
       "id": "extended_core",
@@ -113,7 +114,6 @@
         "heart",
         "smell",
         "taste",
-        "mouth",
         "big",
         "small",
         "one",
@@ -121,10 +121,12 @@
         "some",
         "same",
         "true",
-        "rule",
-        "straight",
-        "work"
-      ]
+        "work",
+        "day",
+        "night",
+        "sun"
+      ],
+      "count": 50
     },
     {
       "id": "fluent_core",
@@ -136,42 +138,60 @@
         "equal",
         "change",
         "cause",
+        "count",
         "part",
         "all",
         "more",
         "less",
         "will",
         "mark",
-        "justice",
         "include",
-        "exclude",
-        "motion",
         "point",
-        "travel",
         "journey",
         "lonely",
-        "proud",
-        "scared",
-        "aggression",
-        "joy",
-        "depression",
-        "timid",
         "strong",
         "still",
-        "reach",
         "flow",
         "metal",
         "form",
-        "substance",
         "source",
         "empty",
-        "surface",
         "bound",
-        "center"
-      ]
+        "center",
+        "happen",
+        "new",
+        "side",
+        "sound",
+        "color",
+        "wet",
+        "heavy",
+        "female",
+        "male",
+        "rain",
+        "safe",
+        "please",
+        "again",
+        "soon",
+        "try",
+        "share",
+        "show",
+        "tired",
+        "worried",
+        "wound",
+        "shelter",
+        "meaning"
+      ],
+      "count": 45
     }
   ],
   "new_primitives": [
+    {
+      "id": "count",
+      "domain": "quantity",
+      "description": "how many of something; the quantity axis, not a value on it",
+      "priority_class": "essential",
+      "ring": "fluent_core"
+    },
     {
       "id": "rule",
       "domain": "social",
@@ -276,13 +296,76 @@
       "description": "shy fear; hesitation from fear",
       "priority_class": "extended",
       "ring": "fluent_core"
+    },
+    {
+      "id": "happen",
+      "domain": "process",
+      "description": "an event takes place; occur",
+      "priority_class": "common",
+      "ring": "fluent_core"
+    },
+    {
+      "id": "new",
+      "domain": "quality",
+      "description": "new; recently come into being",
+      "priority_class": "common",
+      "ring": "fluent_core"
+    },
+    {
+      "id": "side",
+      "domain": "space",
+      "description": "the side of a thing; a flank, face or edge",
+      "priority_class": "common",
+      "ring": "fluent_core"
+    },
+    {
+      "id": "sound",
+      "domain": "element",
+      "description": "sound; what is heard",
+      "priority_class": "common",
+      "ring": "fluent_core"
+    },
+    {
+      "id": "color",
+      "domain": "quality",
+      "description": "color; the visual quality of a surface",
+      "priority_class": "useful",
+      "ring": "fluent_core"
+    },
+    {
+      "id": "wet",
+      "domain": "element",
+      "description": "wet; soaked with water",
+      "priority_class": "common",
+      "ring": "fluent_core"
+    },
+    {
+      "id": "heavy",
+      "domain": "quality",
+      "description": "heavy; hard to lift",
+      "priority_class": "useful",
+      "ring": "fluent_core"
+    },
+    {
+      "id": "female",
+      "domain": "being",
+      "description": "female; the she-kind of a living being",
+      "priority_class": "common",
+      "ring": "fluent_core"
+    },
+    {
+      "id": "male",
+      "domain": "being",
+      "description": "male; the he-kind of a living being",
+      "priority_class": "common",
+      "ring": "fluent_core"
     }
   ],
   "summary": {
     "ring_1": 50,
     "ring_2": 50,
-    "ring_3": 35,
-    "total_assigned": 135,
+    "ring_3": 45,
+    "total_assigned": 145,
     "cap": 150
   }
 }

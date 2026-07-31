@@ -3,10 +3,9 @@
  * Shared by proposal gate and lexicon audit script.
  */
 
-import { IRREGULAR } from './fonoran-english-resolve.js';
+import { lemmatizeEnglish } from './fonoran-english-morphology.js';
 import { buildCompositionResolver } from './fonoran-composition-resolve.js';
 import {
-  irregularPastLemma,
   lemmaCandidates,
   loadInterpretationRules,
 } from './fonoran-interpretation.js';
@@ -30,10 +29,8 @@ export function inferLemma(word, rules = null) {
   const w = String(word ?? '').trim().toLowerCase().replace(/\s+/g, '_');
   if (!w) return w;
 
-  if (IRREGULAR[w]) return IRREGULAR[w];
-
-  const irregular = irregularPastLemma(w, rules ?? undefined);
-  if (irregular) return irregular;
+  const modelLemma = lemmatizeEnglish(w);
+  if (modelLemma && modelLemma !== w) return modelLemma;
 
   const candidates = lemmaCandidates(w, rules ?? undefined).filter(c => c !== w && c.length >= 2);
   if (!candidates.length) return w;
@@ -49,12 +46,9 @@ export function isInflectedSurface(word, rules = null) {
   const w = String(word ?? '').trim().toLowerCase().replace(/\s+/g, '_');
   if (!w || EMOTION_STATE_WHITELIST.has(w)) return false;
 
-  if (IRREGULAR[w] && IRREGULAR[w] !== w) {
-    if (/ed$|ing$|ies$|ied$|es$|s$/.test(w) || ['went', 'gone', 'knew', 'said', 'men', 'women', 'children', 'people'].includes(w)) {
-      return true;
-    }
-  }
-  if (irregularPastLemma(w, rules ?? undefined)) return true;
+  // A lemma that differs from the surface is what "inflected" means; the model
+  // knows the irregulars (went, children, better) without a list here.
+  if (lemmatizeEnglish(w) !== w) return true;
 
   const lemma = inferLemma(w, rules);
   if (lemma === w) return false;
@@ -240,12 +234,8 @@ export function inferReliableLemma(concept, rules = null, lexicon = {}) {
   const primitiveIds = lexicon.primitiveIds ?? new Set();
   const allIds = new Set([...compoundIds, ...primitiveIds]);
 
-  if (IRREGULAR[w] && IRREGULAR[w] !== w) {
-    if (allIds.has(IRREGULAR[w])) return IRREGULAR[w];
-    if (/ed$|ing$|ies$|ied$|es$|s$/.test(w) || ['people', 'men', 'women', 'children'].includes(w)) {
-      return IRREGULAR[w];
-    }
-  }
+  const modelLemma = lemmatizeEnglish(w);
+  if (modelLemma && modelLemma !== w && allIds.has(modelLemma)) return modelLemma;
 
   if (EXCLUDE_INFLECTION_SUFFIX.test(w)) return null;
 
@@ -291,7 +281,7 @@ function pickAgentiveCanonical(members, compoundByConcept) {
     const def = compoundByConcept.get(m.concept);
     const u = def?.understandability ?? def?.preferred?.understandability ?? 0;
     const source = def?.preferred_source ?? '';
-    const sourceRank = source === 'heuristic' || source === 'llm_consensus' ? 2 : source === 'proposal' ? 1 : 0;
+    const sourceRank = source === 'heuristic' ? 2 : source === 'proposal' ? 1 : 0;
     return { ...m, score: u + sourceRank * 0.01, len: m.concept.length };
   });
   scored.sort((a, b) => b.score - a.score || a.len - b.len || a.concept.localeCompare(b.concept));

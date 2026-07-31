@@ -2,8 +2,8 @@
  * Lab Health — admin tab at /tools#health
  */
 
-import { refreshAuth } from './auth-session.js';
 import { buildHealthReportHtml } from './fonoran-lab-health-ui.js';
+import { api } from './api-client.js';
 
 const TAB_ROOT = () => document.getElementById('tab-health');
 
@@ -11,20 +11,6 @@ function $(id) {
   return TAB_ROOT()?.querySelector(`#${id}`) ?? document.getElementById(id);
 }
 
-async function api(path, opts = {}) {
-  const res = await fetch(path, {
-    credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...(opts.headers ?? {}) },
-    ...opts,
-  });
-  const data = await res.json().catch(() => ({}));
-  if (res.status === 401) {
-    await refreshAuth();
-    throw new Error('Sign in required');
-  }
-  if (!res.ok) throw new Error(data.error || res.statusText || 'Request failed');
-  return data;
-}
 
 const state = {
   health: null,

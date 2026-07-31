@@ -13,13 +13,18 @@ import {
   isLazyGlueRoot,
 } from './fonoran-root-semantic-fields.js';
 
-/** Strong concrete anchors — lazy glue paired with these is often recoverable. */
+/**
+ * Strong concrete anchors — lazy glue paired with these is often recoverable.
+ * Includes the core transfer/manipulation actions (give, take, hold, use, help):
+ * "given thing" recovers *gift* exactly as well as "water path" recovers *river*.
+ */
 export const STRONG_ANCHORS = new Set([
   'person', 'body', 'hand', 'head', 'food', 'water', 'fire', 'stone', 'plant', 'animal',
   'inside', 'outside', 'place', 'path', 'move', 'light', 'dark', 'pain', 'feel', 'air',
   'earth', 'sky', 'eat', 'sleep', 'speak', 'see', 'hear', 'touch', 'smell', 'taste',
   'collective', 'good', 'bad', 'want', 'fear', 'know', 'near', 'far', 'up', 'down',
   'before', 'now', 'same', 'skin', 'bone', 'blood', 'breath',
+  'give', 'take', 'hold', 'use', 'help',
 ]);
 
 /** Concept category → composition requirements. */
@@ -34,7 +39,7 @@ export const CONCEPT_CATEGORIES = {
     ]),
     requires_any: [...TOOL_FUNCTION_ROOTS],
     forbid_patterns: [
-      { head: 'make', modifier_lazy: true, reason: 'material+make does not name a tool — use hand/use/hold/take/bound' },
+      { head: 'make', modifier_lazy: true, reason: 'material+make does not name a tool — use use/hold/take/bound' },
       { head: 'do', modifier_lazy: true, reason: 'material+do is not a recoverable tool name' },
     ],
   },

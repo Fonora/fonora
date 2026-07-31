@@ -1,10 +1,10 @@
 # Fonoran language guide
 
-> **Read the research.** How this build pipeline was designed is told in the research notebook: [RN-13 · Concepts are canonical, sounds are editorial proposals](/research/notes/the-campfire-test-communication-over-correctness).
+> **The algorithms in one page each:** [roots](fonoran-algorithm-roots.md), [compounds](fonoran-algorithm-compounds.md), [translation](fonoran-algorithm-translation.md).
 
 > **Start here** for the experimental Fonoran language and its builder at [`/language`](/language). For structured learner drills (Script + Fonoran skills), see [`/learn`](/learn) and [fonoran-learn.md](fonoran-learn.md); this document covers the builder/lab side.
 >
-> **Why Fonoran exists:** read the one-page [Fonoran Constitution](fonoran-constitution.md). Extended rationale → [fonoran-philosophy.md](fonoran-philosophy.md).
+> **The rules this pipeline enforces:** [fonoran-rulebook.md](fonoran-rulebook.md).
 
 **Fonoran** is a constructed language written in the [Fonora phonetic script](platform-overview.md). You assign CV/CVC sounds to semantic concepts, compose roots into compound words, and approve what enters the live vocabulary. Human review is canonical: generators propose, you decide. Compounds are treated as **meaning-attempts** with a *preferred* form and tracked *alternate understandable* forms, not as single canonical answers.
 
@@ -25,7 +25,7 @@ flowchart TD
 
   subgraph composition [Composition]
     CompoundsJson["compounds.json\n483+ curated compounds"]
-    Proposals["compound-proposals\nvocab-survey queue"]
+    Proposals["compound-proposals\nreview queue"]
     Regen["fonoran:regenerate\npromote accepted"]
     Build["fonoran-build.js\nunique-parse check"]
     Lab["sound-bucket.json\nruntime lab"]
@@ -70,12 +70,12 @@ npm run fonoran:build    # assign roots + build curated compounds → lab
 | --- | --- | --- |
 | **Dictionary** | Public | Browse roots and words; word trees and family graphs |
 | **Grammar** | Public | Language specification ([fonoran-grammar.md](fonoran-grammar.md)) |
-| **Translator** | Public | Multilingual meaning → Fonoran via LLM semantic compiler ([fonoran-translator.md](fonoran-translator.md)) |
+| **Translator** | Public | English meaning → Fonoran via the deterministic compiler ([fonoran-translator.md](fonoran-translator.md)) |
 | **Word Creator** | Sign-in | Stack roots and approved words → save compound |
 | **Concept Editor** | Sign-in | Edit concept gloss, aliases, and spelling (unlinked sounds become new concepts here) |
 | **Review** | Sign-in | **Root queue** (pending spellings) · **Roots** · **Words** · **Generated** |
 | **Health** | Public | Readability scores and warnings |
-| **Advanced** | Sign-in | Import build, lab reset, snapshot export |
+| **Advanced** | Sign-in | Regenerate, import build, lab reset, review-state tools |
 
 **Language Explorer** (from Dictionary): derivation trees, “used in” lists, Mermaid family graphs. Read-only graph API, no sign-in.
 
@@ -147,16 +147,14 @@ Distinctiveness, collision, and boundary scores plus any warnings are surfaced p
 | `data/fonoran-concept-inventory.json` | Semantic concepts + editorial metadata + experience/language tier + campfire pass (no phonetics) |
 | `data/fonoran-root-candidates.json` | Proposed spellings + scores + warnings + review status + tier metadata |
 | `data/fonoran-approved-roots.json` | Canonical approved roots (with experience/language tier + campfire pass) |
-| `data/fonoran-compounds.json` | Curated compounds as ranked meaning-attempts: a `preferred` form + `alternates[]` with advisory `understandability` (see [constitution](fonoran-constitution.md)) |
-| `data/fonoran-playtests.json` | Guess-the-meaning playtest rounds — human authority ([Fonora/fonora-data](https://github.com/Fonora/fonora-data)) |
-| `data/fonoran-llm-evaluations.json` | v3 intuition battery rounds + aggregates — advisory ([Fonora/fonora-data](https://github.com/Fonora/fonora-data)) |
+| `data/fonoran-compounds.json` | Curated compounds as ranked meaning-attempts: a `preferred` form + `alternates[]` with advisory `understandability` (see [how a compound is chosen](fonoran-algorithm-compounds.md)) |
 | `data/fonora-data.manifest.json` | Pin of external data repo commit/tag |
 | `data/fonoran-primitive-roots-config.json` | Phonetics rules + active `collision_profile` |
 | `data/fonoran-collision-profiles/` | Editorial collision profiles (default `en.json`) |
-| `data/fonoran-sound-bucket.json` | Runtime lab: sounds, compounds, history (seed + snapshot format) |
+| `data/fonoran-sound-bucket.json` | The built dictionary: sounds, compounds, history. Derived from the seeds above by `fonoran:build`, so it is not committed. |
 | `data/localizations/en.json` | English word banks per concept |
 
-Runtime state is stored in **PostgreSQL** in production. JSON files are seeds and snapshot interchange format — update git milestones via `npm run fonoran:snapshot:export -- --to=data/`.
+These files are the language, in every environment. PostgreSQL holds user data only: accounts, lesson progress, community proposals, votes.
 
 ### Commands
 
@@ -166,28 +164,21 @@ npm run fonoran:build              # full pipeline → lab (needs review)
 npm run fonoran:build:approved     # same, everything pre-approved (testing)
 npm run fonoran:root-candidates    # refresh candidates only (no lab import)
 npm run fonoran:inventory-migrate  # seed editorial metadata fields on the concept inventory
-npm run fonoran:snapshot:export -- --to=data/   # Postgres → seed JSON (commit milestones)
-npm run fonoran:snapshot:import -- --from=data/ # seed JSON → Postgres (local bootstrap)
-npm run fonoran:optimize-compounds       # heuristic preferred-form promotion
-npm run fonoran:optimize-compounds -- --length-only   # demote only when flat > 4 and shorter seed exists
-npm run fonoran:optimize-compounds -- --use-llm   # rank by intuition_weight when v4/v3 data exists
-npm run fonoran:llm-intuition -- --pilot          # v3 smoke: tool, weapon, tribe (~80 calls)
-npm run fonoran:llm-intuition -- --calibration    # v3 calibration: 10 concepts (~320 calls)
-npm run fonoran:llm-intuition -- --dry-run        # cost estimate
-npm run fonoran:compound-audit           # includes llm_split / llm_would_promote findings
+npm run fonoran:regen:four-rules -- --apply     # rank preferred forms by the four rules
+npm run fonoran:compound-audit                  # quality report → reports/ (not committed)
 ```
 
-See [fonoran-llm-playtest-experiment.md](fonoran-llm-playtest-experiment.md) for protocol design and recorded results. Research note workflow: [research-notes-authoring.md](research-notes-authoring.md).
+The model playtest protocol and its recorded results are archived in [archive/fonoran-llm-playtest-experiment.md](archive/fonoran-llm-playtest-experiment.md). The scripts behind it were deleted in July 2026, and the project no longer uses models to build or judge the language.
 
 **Full sequential workflow (local + Heroku):** [fonoran-compound-workflow.md](fonoran-compound-workflow.md) — optimize → build → audit → deploy commands in order.
 
-**Preferred-form authority tiers:** `human` / `playtest` (locked) → `llm_consensus` (v4 weights + clear margin) → `heuristic` (length/score fallback). Set `ANTHROPIC_API_KEY` in `.env`. LLMs evaluate seed candidates only; they do not invent compositions.
+**Preferred-form authority tiers:** `human` / `playtest` (locked) → `four_rules` (deterministic scoring, length gate wins when flat > 4).
 
-Typical compound optimization loop (after v3 batch):
+Typical compound optimization loop:
 
 ```bash
-npm run fonoran:llm-intuition -- --calibration   # or full inventory when ready
-npm run fonoran:optimize-compounds -- --use-llm
+npm run fonoran:regen:four-rules -- --dry-run
+npm run fonoran:regen:four-rules -- --apply
 npm run fonoran:build:approved
 ```
 
@@ -225,34 +216,27 @@ Reserved particles (never roots): `mi`, `ta`, `sa`, `no`, `ya`, `von`.
 
 | Endpoint | Method | Auth | Purpose |
 | --- | --- | --- | --- |
-| `/api/fonoran/lab` | GET | Public | Lab bucket (sounds, compounds) |
 | `/api/fonoran/lab/health` | GET | Public | Readability scores |
 | `/api/fonoran/lab/graph/:kind/:ref` | GET | Public | Derivation / family graph |
 | `/api/fonoran/lab/compounds` | POST | Sign-in | Save compound |
-| `/api/fonoran/lab/run-dda` | POST | Sign-in | Run DDA inference (archive-only; no UI) |
 | `/api/fonoran/lab/build` | POST | Sign-in | Import build into lab |
 | `/api/fonoran/roots/candidates` | GET | Sign-in | Root queue (`?status=pending`) |
 | `/api/fonoran/roots/candidates/:id` | PATCH | Sign-in | Approve / reject / edit / reopen |
 | `/api/fonoran/roots/candidates/:id/regenerate` | POST | Sign-in | New spelling for one concept |
-| `/api/fonoran/roots/canonical` | GET | Public | Approved root export |
-| `/api/fonoran/snapshot/status` | GET | Public | Storage mode and doc counts |
-| `/api/fonoran/snapshot/export` | GET | Admin | Download full-state zip |
-| `/api/fonoran/snapshot/preview` | POST | Sign-in | Preview zip before restore |
-| `/api/fonoran/snapshot/import` | POST | Admin | Replace all state (`confirm: RESTORE`) |
-| `/api/fonoran/translate` | POST | Public | Any language → Fonoran (LLM semantic compiler; requires `ANTHROPIC_API_KEY_FONORA_TRANSLATOR`; `engine=legacy` for English-only compiler) |
+| `/api/fonoran/translate` | POST | Public | English → Fonoran, deterministic, no API key needed |
 | `/api/fonoran/concepts` | GET | Public | Concept inventory + spellings |
 
 Auth and production release checklist: [fonoran-auth-and-release.md](fonoran-auth-and-release.md).
 
 ## Credits
 
-The translator's semantic lookup uses **WordNet** (via **wordpos**). See [third-party.md](third-party.md) for full attribution and licenses.
+The offline curation assistant uses **WordNet** (via **wordpos**); English parsing in the translator uses **wink-nlp**. See [third-party.md](third-party.md) for full attribution and licenses.
 
 ## Related
 
-- [fonoran-constitution.md](fonoran-constitution.md) — what Fonoran is for: the communication experiment, the campfire test, the tiered language
+- [fonoran-rulebook.md](fonoran-rulebook.md) — the three layers, the 13 rules, the vocabulary rings
 - [fonoran-grammar.md](fonoran-grammar.md) — syntax and composition rules
-- [fonoran-translator.md](fonoran-translator.md) — live translator (LLM compiler, UI, playback, API)
+- [fonoran-translator.md](fonoran-translator.md) — live translator (deterministic compiler, UI, playback, API)
 - [fonoran-interpretive-translator.md](fonoran-interpretive-translator.md) — legacy English compiler
 - [platform-overview.md](platform-overview.md) — three platform layers
 - [deploy.md](deploy.md) — PostgreSQL and production hosting

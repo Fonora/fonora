@@ -45,9 +45,6 @@ GET  /api/fonoran/words/:id          public detail + vote tallies
 POST /api/fonoran/analyze/word       public analysis preview
 POST /api/fonoran/words/:id/vote     community session
 GET/PUT /api/fonoran/me/progress     community session
-POST /api/fonoran/proposals          community session
-POST /api/fonoran/proposals/:id/vote community session
-POST /api/fonoran/proposals/:id/resolve  admin only
 
 POST/PATCH lab + concepts routes     admin only
 ```
@@ -105,7 +102,7 @@ https://docs.google.com/forms/d/e/FORM_ID/viewform
 | In git (public) | Out of git (private / production) |
 | --- | --- |
 | Builder UI, API handlers, auth middleware | `GOOGLE_CLIENT_SECRET`, `SESSION_SECRET`, `DATABASE_URL` |
-| Reference JSON (`fonoran-gen3-*`, `fonoran-canonical-*`) | Live lab: `data/fonoran-sound-bucket.json` (gitignored) |
+| Editorial seeds (`fonoran-concept-inventory.json`, `fonoran-approved-roots.json`, `fonoran-compounds.json`) | Live lab: `data/fonoran-sound-bucket.json` (gitignored) |
 | Docs, tests, CLI tools | PostgreSQL rows for production vocabulary |
 | Auto-built lexicon source logic | `data/fonoran-english-lexicon.json` (gitignored, built at runtime) |
 
@@ -124,7 +121,7 @@ https://docs.google.com/forms/d/e/FORM_ID/viewform
 - [ ] Heroku config: `GOOGLE_*`, `SESSION_SECRET`, `ADMIN_EMAILS`, `DATABASE_URL`
 - [ ] Smoke test: unsigned user can browse dictionary; cannot POST lab writes
 - [ ] Signed-in admin can create and approve words
-- [ ] Export backup: `npm run fonoran:snapshot:export` after deploy
+- [ ] User data backup: Heroku Postgres backups. The language is backed up by git.
 
 ### Post-deploy
 

@@ -7,12 +7,13 @@
  *
  * Run: npm run fonoran:compound-audit
  *      npm run fonoran:compound-audit -- --json
- *      npm run fonoran:compound-audit -- --out=docs/fonoran-compound-audit-latest.md
+ *      npm run fonoran:compound-audit -- --out=reports/compound-audit.md
  */
 
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isMainModule } from './is-main.js';
 import { readDoc } from './fonoran-store.js';
 import { ASSOCIATION_SEEDS, loadCandidateContext } from './fonoran-expression-candidates.js';
 import { experienceMetaFor } from './fonoran-experience-tiers.js';
@@ -20,8 +21,8 @@ import { splitRoot } from './fonoran-gen3-distinctiveness.js';
 import { checkCompoundBoundary } from './fonoran-gen3-readability.js';
 import { buildCompositionResolver, maxFlattenedRoots } from './fonoran-composition-resolve.js';
 import { isPreferredLocked, optimizeCompoundInventory } from './fonoran-preferred-select.js';
-import { pickConsensus, mergePromptAggregates } from './fonoran-llm-aggregate.js';
 import { auditCompoundConfusability } from './fonoran-compound-confusability.js';
+import { buildSemanticContext, rankAllCandidates, scoreAllCompounds } from './fonoran-compound-semantics.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -85,15 +86,13 @@ function topologicalSort(compounds) {
 }
 
 export async function runCompoundAudit() {
-  const [compoundsDoc, inventory, approved, candidatesDoc, playtestsDoc, candidateCtx, llmDoc] =
+  const [compoundsDoc, inventory, approved, candidatesDoc, candidateCtx] =
     await Promise.all([
       readDoc('compounds'),
       readDoc('concept_inventory'),
       readDoc('approved_roots'),
       readDoc('root_candidates'),
-      readDoc('playtests'),
       loadCandidateContext(),
-      readDoc('llm_evaluations'),
     ]);
   const demoDoc = JSON.parse(
     readFileSync(join(ROOT, 'data/fonoran-semantic-demo-compounds.json'), 'utf8'),
@@ -114,9 +113,11 @@ export async function runCompoundAudit() {
   const roots = approved?.roots ?? [];
   const metaFor = candidateCtx.metaFor;
   const collisionCounts = candidateCtx.collisionCounts;
+  const collisionCountFor = candidateCtx.collisionCountFor;
   const rankCtx = {
     metaFor,
     collisionCounts,
+    collisionCountFor,
     flatCountFor: comp => resolver.flatCount(comp),
   };
   const rootGraph = {
@@ -127,20 +128,19 @@ export async function runCompoundAudit() {
     rankCtx,
   };
 
-  const llmAggregates = mergePromptAggregates(llmDoc?.rounds ?? []);
   const optimizeCtx = {
     rootById: rootGraph.rootById,
     rootSpellings: rootGraph.rootSpellings,
     primitiveIds: rootGraph.primitiveIds,
     metaFor,
     collisionCounts,
+    collisionCountFor,
     demoTrees,
-    llmAggregates,
   };
   const { compounds: optimizedRows } = optimizeCompoundInventory(
     compoundsDoc?.compounds ?? [],
     optimizeCtx,
-    { useLlm: Object.keys(llmAggregates).length > 0 },
+    { useLlm: false },
   );
   const optimizedById = new Map(optimizedRows.map(r => [r.concept, r]));
 
@@ -225,47 +225,55 @@ export async function runCompoundAudit() {
       const optKey = compKey(opt?.preferred?.composition);
       const sel = opt?._selection;
       if (liveKey !== optKey && sel?.promoted) {
-        const category = sel.preferred_source === 'llm_consensus' ? 'llm_would_promote' : 'would_promote';
-        add('medium', category, c.concept,
-          `${category === 'llm_would_promote' ? 'LLM consensus would promote' : 'Optimizer would promote'} ${(sel.from ?? c.composition).join(' + ')} → ${sel.to.join(' + ')}`,
+        // Deterministic optimizer only: the LLM consensus branch is gone with useLlm false.
+        add('medium', 'would_promote', c.concept,
+          `Optimizer would promote ${(sel.from ?? c.composition).join(' + ')} → ${sel.to.join(' + ')}`,
           {
             from: sel.from ?? c.composition,
             to: sel.to,
             from_flat: sel.from_flat,
             to_flat: sel.to_flat,
             reason: sel.reason,
-            llm_recovery: sel.llm_consensus?.recovery_rate ?? null,
           });
       }
     }
 
-    const conceptAgg = llmAggregates[c.concept];
-    if (conceptAgg && Object.keys(conceptAgg).length) {
-      const consensus = pickConsensus(llmAggregates, c.concept);
-      const liveKey = compKey(c.composition);
-      const currentStats = conceptAgg[liveKey];
-      if (!consensus) {
-        add('medium', 'llm_split', c.concept,
-          'LLM playtests have no clear consensus winner',
-          { candidates: Object.keys(conceptAgg).length });
-      } else if (compKey(consensus.composition) !== liveKey) {
-        add('info', 'llm_would_promote', c.concept,
-          `LLM consensus prefers ${consensus.composition.join(' + ')} (${(consensus.recovery_rate * 100).toFixed(0)}% recovery) over live preferred`,
-          {
-            llm_winner: consensus.composition,
-            recovery_rate: consensus.recovery_rate,
-            live_recovery: currentStats?.recovery_rate ?? null,
-          });
-      }
-      if (currentStats && currentStats.recovery_rate < 0.75) {
-        const best = Object.entries(conceptAgg).sort((a, b) => b[1].recovery_rate - a[1].recovery_rate)[0];
-        if (best && best[0] !== liveKey) {
-          add('medium', 'llm_low_recovery', c.concept,
-            `Live preferred recovers at ${(currentStats.recovery_rate * 100).toFixed(0)}% in LLM playtests`,
-            { live_recovery: currentStats.recovery_rate, best_candidate: best[0], best_recovery: best[1].recovery_rate });
-        }
-      }
+  }
+
+  // --- Deterministic semantic checks: does the composition match the concept's own gloss? ---
+  const semanticCtx = buildSemanticContext({
+    inventory,
+    compounds: compoundsDoc?.compounds ?? [],
+    approvedRoots: roots,
+    localization: await readDoc('localization_en').catch(() => null),
+    dimensions: JSON.parse(readFileSync(join(ROOT, 'data/fonoran-semantic-dimensions.json'), 'utf8')),
+    candidatesByConcept: ASSOCIATION_SEEDS,
+  });
+  const glossRankings = rankAllCandidates(compoundsDoc?.compounds ?? [], semanticCtx);
+  const glossScores = scoreAllCompounds(compoundsDoc?.compounds ?? [], semanticCtx);
+
+  for (const ranking of glossRankings) {
+    if (!ranking.informative) {
+      // Not pedantry: a gloss that only restates the headword is the reason a compound can
+      // drift without anything noticing, because there is nothing to check the parts against.
+      add('low', 'uninformative_gloss', ranking.concept,
+        `Gloss only restates the headword, so the composition cannot be checked against it`,
+        { gloss: ranking.gloss, composition: ranking.preferred });
+      continue;
     }
+    if (!ranking.better_available) continue;
+    const locked = isPreferredLocked(ranking.preferred_source);
+    add(locked ? 'high' : 'medium', 'gloss_mismatch', ranking.concept,
+      `Gloss supports ${ranking.best.composition.join(' + ')} (${ranking.best.supported}/${ranking.best.total} roots named) over preferred ${ranking.preferred.join(' + ')} (${ranking.current.supported}/${ranking.current.total})`,
+      {
+        gloss: ranking.gloss,
+        from: ranking.preferred,
+        to: ranking.best.composition,
+        from_support: ranking.current.score,
+        to_support: ranking.best.score,
+        preferred_source: ranking.preferred_source,
+        locked,
+      });
   }
 
   // --- Phonetic checks ---
@@ -319,23 +327,13 @@ export async function runCompoundAudit() {
       issue);
   }
 
-  // --- Playtest coverage ---
-  const playtested = new Set((playtestsDoc?.rounds ?? []).map(r => r.concept_id));
-  const untested = live.filter(c => !playtested.has(c.concept)).map(c => c.concept);
-
   // --- Summary stats ---
   const treeAware = live.filter(c => usesIntermediateCompound(c.composition, compoundIds)).length;
   const seeded = live.filter(c => ASSOCIATION_SEEDS[c.concept]?.length).length;
 
-  const llmEvaluated = live.filter(c => llmAggregates[c.concept]).length;
-  const llmConsensusCount = live.filter(c => {
-    const consensus = pickConsensus(llmAggregates, c.concept);
-    return consensus && compKey(consensus.composition) === compKey(c.composition);
-  }).length;
-  const llmSplitCount = live.filter(c => {
-    const agg = llmAggregates[c.concept];
-    return agg && Object.keys(agg).length && !pickConsensus(llmAggregates, c.concept);
-  }).length;
+  const glossInformative = glossRankings.filter(r => r.informative);
+  const glossFullySupported = glossInformative.filter(r => r.current?.score === 1).length;
+  const glossMismatches = glossRankings.filter(r => r.informative && r.better_available);
 
   const summary = {
     generated_at: new Date().toISOString(),
@@ -349,11 +347,11 @@ export async function runCompoundAudit() {
     empty_alternates: live.filter(c => !c.alternates.length).length,
     flattened_length_high: findings.filter(f => f.category === 'flattened_length_high').length,
     would_promote: findings.filter(f => f.category === 'would_promote').length,
-    llm_evaluated_count: llmEvaluated,
-    llm_consensus_count: llmConsensusCount,
-    llm_split_count: llmSplitCount,
-    llm_would_promote: findings.filter(f => f.category === 'llm_would_promote').length,
-    llm_low_recovery: findings.filter(f => f.category === 'llm_low_recovery').length,
+    gloss_auditable: glossInformative.length,
+    gloss_uninformative: glossRankings.length - glossInformative.length,
+    gloss_fully_supported: glossFullySupported,
+    gloss_mismatch: glossMismatches.length,
+    gloss_mismatch_locked: glossMismatches.filter(r => isPreferredLocked(r.preferred_source)).length,
     heuristic_preferred_count: live.filter(c => (c.preferred_source ?? 'heuristic') === 'heuristic').length,
     locked_preferred_count: live.filter(c => isPreferredLocked(c.preferred_source)).length,
     max_flattened_roots: maxFlat,
@@ -366,13 +364,12 @@ export async function runCompoundAudit() {
       low: findings.filter(f => f.severity === 'low').length,
     },
     phonetic: phoneticSummary,
-    playtested_concepts: playtested.size,
-    untested_compound_count: untested.length,
   };
 
   findings.sort((a, b) =>
     severityRank(a.severity) - severityRank(b.severity)
-    || a.concept.localeCompare(b.concept)
+    // Corpus-wide findings carry no concept, so compare defensively rather than throwing.
+    || String(a.concept ?? '').localeCompare(String(b.concept ?? ''))
     || a.category.localeCompare(b.category));
 
   const dependencyGraph = topologicalSort(live).map(c => ({
@@ -404,10 +401,10 @@ function renderMarkdown({ summary, findings, dependencyGraph }) {
   lines.push(`| Empty alternates | ${summary.empty_alternates} |`);
   lines.push(`| Flattened length warnings (>${summary.max_flattened_roots} roots) | ${summary.flattened_length_high} |`);
   lines.push(`| Would promote (run optimize) | ${summary.would_promote} |`);
-  lines.push(`| LLM evaluated / consensus / split | ${summary.llm_evaluated_count} / ${summary.llm_consensus_count} / ${summary.llm_split_count} |`);
-  lines.push(`| LLM would promote / low recovery | ${summary.llm_would_promote} / ${summary.llm_low_recovery} |`);
+  lines.push(`| Auditable against a gloss | ${summary.gloss_auditable} (${summary.gloss_uninformative} glosses only restate the headword) |`);
+  lines.push(`| Every root named by the gloss | ${summary.gloss_fully_supported} |`);
+  lines.push(`| Gloss supports a listed candidate better | ${summary.gloss_mismatch} (${summary.gloss_mismatch_locked} locked) |`);
   lines.push(`| Heuristic preferred / locked | ${summary.heuristic_preferred_count} / ${summary.locked_preferred_count} |`);
-  lines.push(`| Playtested concepts | ${summary.playtested_concepts} |`);
   lines.push('');
   lines.push('### Findings by severity');
   lines.push('');
@@ -463,9 +460,11 @@ async function main() {
   const argv = process.argv.slice(2);
   const jsonOut = argv.includes('--json');
   const outArg = argv.find(a => a.startsWith('--out='));
+  // The report is a regenerated snapshot, not prose: it lives in reports/ (untracked)
+  // so a stale copy never masquerades as documentation.
   const outPath = outArg
     ? outArg.slice('--out='.length)
-    : join(ROOT, 'docs/fonoran-compound-audit-latest.md');
+    : join(ROOT, 'reports/fonoran-compound-audit.md');
 
   const audit = await runCompoundAudit();
 
@@ -475,13 +474,14 @@ async function main() {
   }
 
   const md = renderMarkdown(audit);
+  mkdirSync(dirname(outPath), { recursive: true });
   writeFileSync(outPath, md);
   console.log(`Compound audit written to ${outPath}`);
   console.log(`  ${audit.summary.live_compound_count} compounds, ${audit.findings.length} findings`);
   console.log(`  critical=${audit.summary.findings_by_severity.critical} high=${audit.summary.findings_by_severity.high}`);
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+const isMain = isMainModule(import.meta.url);
 if (isMain) {
   main().catch(err => { console.error(err); process.exit(1); });
 }

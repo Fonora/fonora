@@ -6,8 +6,8 @@
  *   - roles: communicative jobs it can anchor in compounds
  *   - association_ideas: recoverability hints (not lemmas / inflections)
  *
- * Used by campfire composition gates, vocab survey prompts, and seed audits
- * so we reject lazy glue (stone+make = hammer) before expensive LLM runs.
+ * Used by campfire composition gates and seed audits so we reject lazy glue
+ * (stone+make = hammer) before it reaches the lexicon.
  */
 
 import { readFile } from 'node:fs/promises';
@@ -22,9 +22,15 @@ export const LAZY_GLUE_ROOTS = new Set([
   'make', 'do', 'thing', 'form', 'part', 'change', 'source', 'substance', 'mark',
 ]);
 
-/** Functional anchors for tool-like concepts — at least one required. */
+/**
+ * Functional anchors for tool-like concepts — at least one required.
+ *
+ * `hand` is deliberately absent: treating the body-part root as a "manipulate/give" verb
+ * is English polysemy (hand-the-verb, as in "hand me the tool") leaking into the heuristic.
+ * The Fonoran concept `hand` is only the body part; function is carried by use/hold/take/give.
+ */
 export const TOOL_FUNCTION_ROOTS = new Set([
-  'use', 'hand', 'hold', 'take', 'bound', 'conflict', 'help', 'give', 'move',
+  'use', 'hold', 'take', 'bound', 'conflict', 'help', 'give', 'move',
 ]);
 
 let _cache = null;
@@ -45,25 +51,3 @@ export function isLazyGlueRoot(rootId, fields = null) {
   return LAZY_GLUE_ROOTS.has(rootId);
 }
 
-/** Prompt block for LLM proposers — roots as ideas, not words. */
-export function semanticFieldsPromptBrief(fields) {
-  const lazy = (fields?.lazy_glue_roots ?? [...LAZY_GLUE_ROOTS]).join(', ');
-  const samples = ['stone', 'make', 'hand', 'use', 'water', 'feel']
-    .map(id => {
-      const f = fields?.roots?.[id];
-      if (!f) return null;
-      const ideas = (f.association_ideas ?? []).slice(0, 3).join('; ');
-      return `  ${id}: ${f.core_idea}${ideas ? ` — evokes: ${ideas}` : ''}`;
-    })
-    .filter(Boolean)
-    .join('\n');
-
-  return [
-    'ROOT SEMANTICS (roots are IDEAS, not English words):',
-    '- Compose from what a root-knower would GUESS, not English etymology.',
-    '- Each root evokes a cluster of ideas; pick roots whose ideas overlap the target concept.',
-    '- Lazy glue roots (' + lazy + ') cannot carry a specific tool/object alone.',
-    'Examples:',
-    samples,
-  ].join('\n');
-}

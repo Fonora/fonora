@@ -3,7 +3,7 @@
  * Expression candidate generator.
  *
  * The OLD model was: English concept → one deterministic decomposition → one canonical
- * compound. The NEW model (docs/fonoran-constitution.md) is:
+ * compound. The NEW model (docs/fonoran-rulebook.md) is:
  *
  *   communicative intent → several simple root-expression candidates
  *     → understandability ranking → preferred + alternate understandable forms
@@ -17,10 +17,15 @@ import { readDoc } from './fonoran-store.js';
 import { scoreUnderstandability, metaLookupFromRecords } from './fonoran-understandability.js';
 import { experienceMetaFor } from './fonoran-experience-tiers.js';
 import { buildCompositionResolver } from './fonoran-composition-resolve.js';
-import { proposeLlmCandidates } from './fonoran-llm-candidates.js';
-import { getAcceptedCompositionSeeds } from './fonoran-compound-proposals.js';
 import { evaluateCampfireComposition } from './fonoran-campfire-composition.js';
 import { DIFFICULT_ONSETS } from './fonoran-phonetic-weights.js';
+import {
+  buildSemanticContext,
+  glossSupportFor,
+  isInformativeDescription,
+  tokens as glossTokens,
+} from './fonoran-compound-semantics.js';
+import { isMainModule } from './is-main.js';
 
 /**
  * Hand-seeded communicative strategies: intuitive ways a stranger might try to express a
@@ -28,6 +33,23 @@ import { DIFFICULT_ONSETS } from './fonoran-phonetic-weights.js';
  * exactly the variety the experiment is about. Each entry is a list of compositions.
  */
 export const ASSOCIATION_SEEDS = {
+  // --- July 2026 register review: words the new operator/dimension roots unlock ---
+  mother: [['parent', 'female'], ['female', 'parent']],
+  father: [['parent', 'male'], ['male', 'parent']],
+  woman: [['person', 'female'], ['female', 'person']],
+  man: [['person', 'male'], ['male', 'person']],
+  girl: [['child', 'female'], ['female', 'child']],
+  boy: [['child', 'male'], ['male', 'child']],
+  white: [['color', 'light'], ['light', 'color']],
+  black: [['color', 'dark'], ['dark', 'color']],
+  noise: [['sound', 'bad'], ['bad', 'sound']],
+  loud: [['sound', 'big'], ['big', 'sound']],
+  dry: [['water', 'empty'], ['empty', 'water']],
+  wound: [['pain', 'mark'], ['mark', 'pain'], ['body', 'pain', 'mark']],
+  weather: [['sky', 'change'], ['change', 'sky']],
+  deep: [['inside', 'far'], ['far', 'inside'], ['down', 'far']],
+  spirit: [['life', 'air'], ['air', 'life'], ['life', 'breath']],
+  tradition: [['before', 'path'], ['path', 'before'], ['before', 'do', 'collective']],
   // --- semantic foundation / demo trees ---
   community: [['collective', 'person'], ['many', 'person'], ['bond', 'collective']],
   family: [['person', 'bond'], ['love', 'person'], ['bond', 'near'], ['parent', 'collective']],
@@ -585,17 +607,28 @@ function compositionKey(comp) {
   return comp.join('+');
 }
 
+/** Order-insensitive composition key: same roots, any order. */
+export function multisetKey(comp) {
+  return [...(comp ?? [])].sort().join('+');
+}
+
 /**
  * Score and rank a set of candidate compositions for a concept.
  * @param {string} conceptId
  * @param {string[][]} compositions
- * @param {object} ctx { metaFor, collisionCounts: Map<string,number> }
+ * @param {object} ctx { metaFor, collisionCounts: Map<string,number>,
+ *        orderCollisionCountFor?: (conceptId, comp) => number,
+ *        glossAlignFor?: (conceptId, comp) => number|null }
  */
 export function rankCandidates(conceptId, compositions, ctx = {}) {
   const metaFor = ctx.metaFor ?? (id => experienceMetaFor(id));
   const collisionCounts = ctx.collisionCounts ?? new Map();
+  const collisionCountFor = ctx.collisionCountFor
+    ?? ((cid, comp) => collisionCounts.get(compositionKey(comp)) ?? 1);
   const flatCountFor = ctx.flatCountFor ?? (() => null);
   const difficultRootIds = ctx.difficultRootIds ?? new Set();
+  const orderCollisionCountFor = ctx.orderCollisionCountFor ?? (() => 0);
+  const glossAlignFor = ctx.glossAlignFor ?? (() => null);
   const seen = new Set();
   const ranked = [];
 
@@ -604,15 +637,17 @@ export function rankCandidates(conceptId, compositions, ctx = {}) {
     const key = compositionKey(comp);
     if (seen.has(key)) continue;
     seen.add(key);
-    const collisionCount = collisionCounts.get(key) ?? 1;
+    const collisionCount = collisionCountFor(conceptId, comp);
     const flatCount = flatCountFor(comp);
     const campfire = evaluateCampfireComposition(conceptId, comp);
     const scored = scoreUnderstandability(comp, {
       metaFor,
       collisionCount,
+      orderCollisionCount: orderCollisionCountFor(conceptId, comp),
       flatCount,
       conceptId,
       campfireScore: campfire.score,
+      glossAlignment: glossAlignFor(conceptId, comp),
     });
     // Tiny penalty (0.005) for using difficult-onset roots (r/j) so clean alternatives win ties.
     const phoneticPenalty = comp.some(r => difficultRootIds.has(r)) ? 0.005 : 0;
@@ -668,45 +703,95 @@ export function validateSeedIntegrity(primitiveIds, compoundDefs) {
  * Generate ranked candidate expressions for a concept by merging:
  *   - any known preferred/existing composition,
  *   - hand-seeded communicative strategies,
- *   - accepted LLM-generated proposals (from fonoran-compound-proposals),
  *   - caller-supplied extra attempts.
+ *
+ * The pool is committed seed data only. Accepted proposals used to be read live
+ * from the proposals doc, which made a "deterministic" ranking depend on review
+ * state that is not in git: a proposal accepted enters the language by being
+ * written to the seeds, not by being merged here at ranking time.
  */
 export function generateCandidates(conceptId, ctx = {}) {
   const pool = [];
   if (ctx.knownComposition?.length) pool.push(ctx.knownComposition);
   for (const seed of ASSOCIATION_SEEDS[conceptId] ?? []) pool.push(seed);
-  // Merge accepted LLM proposals: these were validated at creation time
-  for (const comp of ctx.llmProposalSeeds?.get(conceptId) ?? []) pool.push(comp);
   for (const extra of ctx.extraCompositions ?? []) pool.push(extra);
   return rankCandidates(conceptId, pool, ctx);
 }
 
 /** Node-only: build ranking context (meta lookup + collision counts) from the data files. */
 export async function loadCandidateContext() {
-  const [inventory, approved, compoundsDoc, llmProposalSeeds] = await Promise.all([
+  const [inventory, approved, compoundsDoc, localization] = await Promise.all([
     readDoc('concept_inventory'),
     readDoc('approved_roots'),
     readDoc('compounds'),
-    getAcceptedCompositionSeeds().catch(() => new Map()),
+    readDoc('localization_en').catch(() => null),
   ]);
   const records = [...(inventory?.primitives ?? []), ...(approved?.roots ?? [])];
   const fromRecords = metaLookupFromRecords(records);
   const metaFor = id => fromRecords(id) ?? experienceMetaFor(id);
 
-  // Count how often each exact composition is claimed across the dictionary.
-  const collisionCounts = new Map();
+  // Track which concepts' *preferred* forms claim each exact composition. Two rules,
+  // both learned from force-run churn:
+  //  - Claimant identity matters: a concept must never be penalized for colliding with
+  //    its own committed form, or every committed compound self-penalizes and the same
+  //    roots in a never-used order look artificially cleaner.
+  //  - Only preferred forms count, never alternates. Alternates are recorded also-rans
+  //    a listener never hears, and they are re-derived on every apply — counting them
+  //    feeds the previous run's alternate shuffle back into this run's scores, which is
+  //    how `belongs` oscillated between bond+place and self+inside+collective forever.
+  //    This also matches the multiset counter and the hard spelling gate, which have
+  //    always looked at preferred forms only.
+  const exactClaims = new Map();
   const knownByConcept = new Map();
+  // Which concepts' *preferred* forms claim each root multiset (order-insensitive).
+  // Seeds for one concept deliberately list reversed orders of the same roots, so an
+  // order collision only counts when a *different* concept owns the same multiset.
+  const multisetClaims = new Map();
   for (const c of compoundsDoc?.compounds ?? []) {
     const preferred = c.preferred?.composition ?? c.composition;
     if (!preferred) continue;
     knownByConcept.set(c.concept, preferred);
-    const all = [preferred, ...(c.alternates ?? []).map(a => a.composition)];
-    for (const comp of all) {
-      if (!comp) continue;
-      const key = comp.join('+');
-      collisionCounts.set(key, (collisionCounts.get(key) ?? 0) + 1);
-    }
+    const mk = multisetKey(preferred);
+    if (!multisetClaims.has(mk)) multisetClaims.set(mk, new Set());
+    multisetClaims.get(mk).add(c.concept);
+    const key = preferred.join('+');
+    if (!exactClaims.has(key)) exactClaims.set(key, new Set());
+    exactClaims.get(key).add(c.concept);
   }
+  // Back-compat map of claimant counts (no self-exclusion) for callers that
+  // score without a concept identity.
+  const collisionCounts = new Map(
+    [...exactClaims].map(([key, claimants]) => [key, claimants.size]),
+  );
+  /** Exact-composition claim count as seen from `conceptId` (self excluded, +1 for itself). */
+  const collisionCountFor = (conceptId, comp) => {
+    const claimants = exactClaims.get((comp ?? []).join('+'));
+    if (!claimants) return 1;
+    return claimants.size - (claimants.has(conceptId) ? 1 : 0) + 1;
+  };
+
+  const orderCollisionCountFor = (conceptId, comp) => {
+    const claimants = multisetClaims.get(multisetKey(comp));
+    if (!claimants) return 0;
+    return claimants.size - (claimants.has(conceptId) ? 1 : 0);
+  };
+
+  // Gloss alignment: fraction of a candidate's parts the concept's own gloss names.
+  // Deterministic (seed glosses + curated aliases only) — see fonoran-compound-semantics.js.
+  const semanticCtx = buildSemanticContext({
+    inventory,
+    compounds: compoundsDoc?.compounds ?? [],
+    approvedRoots: approved?.roots ?? [],
+    localization,
+  });
+  const glossByConcept = new Map(
+    (compoundsDoc?.compounds ?? []).map(c => [c.concept, c.preferred?.gloss ?? c.gloss ?? '']),
+  );
+  const glossAlignFor = (conceptId, comp) => {
+    const gloss = glossByConcept.get(conceptId);
+    if (!gloss || !isInformativeDescription(conceptId, gloss)) return null;
+    return glossSupportFor(comp ?? [], glossTokens(gloss), semanticCtx).score;
+  };
 
   const primitiveIds = (inventory?.primitives ?? []).map(p => p.id);
   const resolver = buildCompositionResolver(primitiveIds, compoundsDoc?.compounds ?? []);
@@ -720,48 +805,32 @@ export async function loadCandidateContext() {
   return {
     metaFor,
     collisionCounts,
+    collisionCountFor,
+    orderCollisionCountFor,
+    glossAlignFor,
     knownByConcept,
     flatCountFor,
     compoundsDoc,
     primitiveIds,
-    llmProposalSeeds,
     difficultRootIds,
   };
 }
 
 async function main() {
   const args = process.argv.slice(2);
-  const useLlm = args.includes('--llm');
   const conceptId = args.find(a => !a.startsWith('--'));
   if (!conceptId) {
-    console.error('Usage: node tools/fonoran-expression-candidates.js <concept-id> [--llm]');
+    console.error('Usage: node tools/fonoran-expression-candidates.js <concept-id>');
     process.exit(1);
   }
   const ctx = await loadCandidateContext();
-  let extraCompositions = [];
-  if (useLlm) {
-    const compound = ctx.compoundsDoc?.compounds?.find(c => c.concept === conceptId);
-    const gloss = compound?.preferred?.gloss ?? compound?.gloss ?? conceptId;
-    const llmResult = await proposeLlmCandidates(conceptId, {
-      gloss,
-      primitiveIds: ctx.primitiveIds,
-      compoundDefs: ctx.compoundsDoc?.compounds ?? [],
-      maxFlattened: 4,
-      rejectComposition: compound?.preferred?.composition ?? compound?.composition,
-    });
-    extraCompositions = llmResult.compositions ?? [];
-    if (extraCompositions.length) {
-      console.log(`LLM proposed ${extraCompositions.length} candidate(s).\n`);
-    } else if (llmResult.error) {
-      console.log(`LLM error: ${llmResult.error}\n`);
-    }
-  }
   const ranked = generateCandidates(conceptId, {
     metaFor: ctx.metaFor,
     collisionCounts: ctx.collisionCounts,
+    orderCollisionCountFor: ctx.orderCollisionCountFor,
+    glossAlignFor: ctx.glossAlignFor,
     knownComposition: ctx.knownByConcept.get(conceptId),
     flatCountFor: ctx.flatCountFor,
-    extraCompositions,
   });
   if (!ranked.length) {
     console.log(`No candidate strategies seeded for "${conceptId}". Add some to ASSOCIATION_SEEDS.`);
@@ -775,7 +844,7 @@ async function main() {
   console.log('\nThe score only ranks. A human guess-the-meaning playtest decides the preferred form.');
 }
 
-const isMain = process.argv[1] && import.meta.url === `file://${process.argv[1]}`;
+const isMain = isMainModule(import.meta.url);
 if (isMain) {
   main().catch(err => { console.error(err); process.exit(1); });
 }

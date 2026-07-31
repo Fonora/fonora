@@ -1,8 +1,10 @@
 # Fonoran numerals
 
-> **Status**: Living specification. Cardinal numerals **1–99** only. Zero, 100+, ordinals, and arithmetic are out of scope.
+> **Status**: Living specification, **not yet implemented**. Cardinal numerals **1–99** only. Zero, 100+, ordinals, and arithmetic are out of scope.
 >
-> **Read first:** [Fonoran Constitution](fonoran-constitution.md) · [Fonoran grammar](fonoran-grammar.md) · [Language rules (Fonora script)](language-rules.md)
+> **Implementation state:** this document describes a designed system that does not exist in the seed layer. No numeral appears in `data/fonoran-approved-roots.json`, `data/fonoran-compounds.json`, or `data/fonoran-concept-inventory.json`, and the translator returns number words as unresolved (translating *two* yields `unresolved: ["two"]`). The only counting-adjacent lexical root is `one` (`lu`), which is a quantity value rather than a numeral. Number words are also absent from `data/fonoran-translation-gap-baseline-deterministic.json`, so nothing currently tracks their absence. Treat the tables below as a proposal pending seed work, not as live language state.
+>
+> **Read first:** [Fonoran rulebook](fonoran-rulebook.md) · [Fonoran grammar](fonoran-grammar.md) · [Language rules (Fonora script)](language-rules.md)
 
 Fonoran cardinal numerals are **phonetic compounds**: speakable CV syllables written in Fonora script by concatenation, the same way lexical compounds (`yenan`, `hudi`) are formed. They are not symbolic place-value notation.
 
@@ -212,24 +214,34 @@ Omit the unit when it is zero (e.g. 30 = `chasa`, not `chasa` + unit).
 
 ## Disambiguation
 
-> **Numerals are phonetic, not semantic.** Digit syllables were assigned by **sound-grid position** (Fonora keypad order: plain places 1–5, manner + lips 6–9, overflow at 10) — not by dictionary meaning. Several digit sounds **happen to match** approved lexical roots or grammar particles, but that overlap is **coincidental, not planned**. For example, **fa** is digit **7** because friction + lips is keypad key 7, while the lexical root **fa** means *one (quantity)* — a mismatch that would not exist if numerals had been designed from meanings outward.
+> **Numerals are phonetic, not semantic.** Digit syllables were assigned by **sound-grid position** (Fonora keypad order: plain places 1–5, manner + lips 6–9, overflow at 10) — not by dictionary meaning. Several digit sounds **happen to match** approved lexical roots or grammar particles, but that overlap is **coincidental, not planned**. For example, **ba** is digit **6** because voice + lips is keypad key 6, while the lexical root **ba** means *person* — a mismatch that would not exist if numerals had been designed from meanings outward.
 
-Several digit syllables double as **grammar particles** or **lexical roots** when not used in a counting context:
+Several digit syllables double as **grammar particles** or **lexical roots** when not used in a counting context. Complete overlap map for all ten digits, verified against [fonoran-approved-roots.json](../data/fonoran-approved-roots.json) and [fonoran-grammar-particles.json](../data/fonoran-grammar-particles.json):
 
 | Syllable | As digit | Also |
 | --- | --- | --- |
-| **ta** | 2 | Past-tense particle ([fonoran-grammar-particles.json](../data/fonoran-grammar-particles.json)) |
-| **sa** | 10 | Future-tense particle |
-| **pa** | 1 | Lexical root: conflict |
-| **cha** | 3 | Lexical root: front |
-| **ba** | 6 | Lexical root: person |
-| **fa** | 7 | Lexical root: one (quantity) |
+| **pa** | 1 | Lexical root: `conflict` |
+| **ta** | 2 | **Past-tense particle**; no lexical root |
+| **cha** | 3 | Lexical root: `front` |
+| **ka** | 4 | No collision |
+| **ha** | 5 | Lexical root: `rule` |
+| **ba** | 6 | Lexical root: `person` |
+| **fa** | 7 | Lexical root: `child` |
+| **ma** | 8 | No collision |
+| **wa** | 9 | Lexical root: `up` |
+| **sa** | 10 | **Future-tense particle**; no lexical root |
 
 In **numeral context**, compounds such as `sa-pa` (11) or `fasa-cha` (73) parse as cardinals, not as tense + concept chains.
 
 **v1 rule:** disambiguation by context and intonation. No dedicated counting particle is required yet. If ambiguity becomes a problem in practice, a future revision may add a numeral-frame marker without changing the syllable inventory.
 
-**Open question (deferred):** Should digit **1** and digit **7** be swapped so the lexical root *one* (**fa**) aligns with numeral 1? That would require redefining the 1–10 grid mapping and is **not** part of this specification. The language is early enough to revisit, but the current numeral inventory is authoritative until a deliberate revision.
+**Open question (unresolved): the tense collision.** The two most serious overlaps are with **grammar particles**, not lexical roots: **ta** is both digit 2 and the past particle, and **sa** is both digit 10 and the future particle. These are not rare forms. Tense marking and counting both occur constantly, and both sit near the Time slot in the preferred order, so `ta kal` reads equally as *past animal* or *2 animals*. The v1 answer of "context and intonation" is weaker here than elsewhere: Fonoran's premise is that strangers recover meaning from **written** shared roots, and intonation is unavailable on the page. Candidate resolutions, none adopted:
+
+1. Add a numeral-frame marker, accepting one more particle.
+2. Reassign digits 2 and 10 to syllables that are not reserved particles.
+3. Keep the collision and constrain counting to contexts where a quantity reading is forced.
+
+**Open question (deferred):** Whether the digit-to-value mapping should be revisited so that high-frequency lexical roots do not sit on low digits. The earlier form of this question proposed swapping digits 1 and 7 so numeral 1 would align with the lexical root for *one*; that framing is obsolete, since *one* was respelled from **fa** to **lu** and **fa** was reassigned to *child*. Any revision would require redefining the 1–10 grid mapping and is **not** part of this specification. The current numeral inventory is authoritative until a deliberate revision.
 
 ## Out of scope
 

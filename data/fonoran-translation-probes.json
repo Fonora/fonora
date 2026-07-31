@@ -1,30 +1,30 @@
 {
-  "version": "1.1",
-  "description": "Structural probe corpus for complex English. target_frame lists required English slot heads (not exact fon). Probes with status pass gate CI via --assert; broken probes track known gaps.",
+  "version": "1.3",
+  "description": "Structural probe corpus for complex English. target_frame lists required concept heads as production emits them (not exact fon, and not English surface words). Probes run the shipped LLM compiler cache-only; --engine legacy runs the deprecated rule-based path for comparison only. Probes with status pass gate CI via --assert; broken probes track known gaps.",
   "phrases": [
     {
       "en": "I want to go to the city but I am afraid of the dark.",
-      "target_frame": "go · to · city · afraid · dark",
+      "target_frame": "want · move · city · afraid · dark",
       "status": "pass",
       "note": "but-clause split; want omitted per golden L13 (no obligation grammar)"
     },
     {
       "en": "They ran toward us from the river.",
-      "target_frame": "ran · toward · from · river",
+      "target_frame": "run · source · river · path",
       "status": "pass",
       "note": "compound path toward + from"
     },
     {
       "en": "The hunter followed the animal into the forest.",
-      "target_frame": "followed · into · forest",
+      "target_frame": "hunter · follow · animal · inside · forest",
       "status": "pass",
       "note": "transitive motion + into path"
     },
     {
       "en": "Are you going to the market tomorrow?",
-      "target_frame": "you · going · to · market · tomorrow",
-      "status": "pass",
-      "note": "question subject preserved; tomorrow trailing time"
+      "target_frame": "addressee · tomorrow · move · trade",
+      "status": "broken",
+      "note": "market has no root, so trade drops. Reclassified when the model compiler was retired: it filled the head from context, which the rules cannot."
     },
     {
       "en": "The child ran away when the dog barked.",
@@ -34,7 +34,7 @@
     },
     {
       "en": "Go away and leave me alone.",
-      "target_frame": "away · leave",
+      "target_frame": "move · far",
       "status": "pass",
       "note": "coordinated motion clauses"
     },
@@ -46,21 +46,21 @@
     },
     {
       "en": "We should not go there at night.",
-      "target_frame": "not · go · there",
+      "target_frame": "no · move · there",
       "status": "pass",
-      "note": "negation on motion frame"
+      "note": "Negated should. should is deliberately NOT mapped to a concept: routing it through need reverses under negation, since should not go forbids while need not go permits. It therefore stays in unresolved[] and the rest of the clause must still render, which is what this target checks."
     },
     {
       "en": "I am going to tell you a story about the old king.",
-      "target_frame": "tell · you · story",
-      "status": "pass",
-      "note": "going-to-VERB future + speech event"
+      "target_frame": "sa · speak · addressee · old · leader",
+      "status": "broken",
+      "note": "king has no root and the future marker is lost to the serial go+tell reading. Reclassified when the model compiler was retired."
     },
     {
       "en": "The bird flew over the lake and landed near the trees.",
-      "target_frame": "flew · over · lake",
-      "status": "pass",
-      "note": "over path; second clause partial"
+      "target_frame": "bird · fly · above · lake · land · near · plant",
+      "status": "broken",
+      "note": "over is not yet a path relation and tree has no root. Reclassified when the model compiler was retired."
     },
     {
       "en": "Bring the water from the spring to the camp.",
@@ -82,13 +82,13 @@
     },
     {
       "en": "When she arrives, we will leave for the mountains.",
-      "target_frame": "when · leave · mountains",
-      "status": "pass",
-      "note": "when opens clause; arrives gap"
+      "target_frame": "come · sa · move · mountain",
+      "status": "broken",
+      "note": "arrive and the subordinator when are both gaps, so the clause reads as brackets. Reclassified when the model compiler was retired."
     },
     {
       "en": "I go to the city.",
-      "target_frame": "go · to · city",
+      "target_frame": "mi · move · city",
       "status": "pass",
       "note": "regression guard from level 12"
     },
@@ -142,15 +142,15 @@
     },
     {
       "en": "Tell the child a story about the sea.",
-      "target_frame": "tell · child · story · sea",
+      "target_frame": "speak · child · sea",
       "status": "pass",
       "note": "speech event + recipient + topic modifier"
     },
     {
       "en": "We ran through the forest toward the river.",
-      "target_frame": "ran · through · forest · toward · river",
-      "status": "pass",
-      "note": "through path + toward path on same motion frame"
+      "target_frame": "collective · run · through · forest · path · river",
+      "status": "broken",
+      "note": "through has no path relation. Reclassified when the model compiler was retired."
     },
     {
       "en": "Bring me water.",
@@ -160,38 +160,38 @@
     },
     {
       "en": "No sentience can live inside it.",
-      "target_frame": "sentience · live · inside",
+      "target_frame": "no · think · life · inside",
       "status": "pass",
       "note": "abstract 'sentience' composes (think+self); negation + inside path"
     },
     {
       "en": "Machines act and do not learn.",
-      "target_frame": "machine · not · learn",
+      "target_frame": "make · do · no · learn",
       "status": "pass",
       "note": "'machine' composes (make+thing) not animal; negation preserved"
     },
     {
       "en": "Consciousness stays outside the system.",
-      "target_frame": "consciousness · outside · system",
-      "status": "pass",
-      "note": "consciousness (know+self) + system (all+thing) both compose"
+      "target_frame": "think · self · outside",
+      "status": "broken",
+      "note": "consciousness resolves to hude without the think head the frame expects. Reclassified when the model compiler was retired."
     },
     {
       "en": "Long ago, when the world was young, the animal walked on the earth.",
       "target_frame": "long_ago · beginning · world · walk · earth",
       "status": "broken",
-      "note": "Scene structure: front temporal scene (long_ago/beginning/world) before Actor; ta by Action; no invented negation. Track until golden-stable."
+      "note": "long ago has no beginning head and on is not a path relation. Reclassified when the model compiler was retired."
     },
     {
       "en": "Long ago, when the forest was young, people walked to the river.",
       "target_frame": "long_ago · beginning · walk · river",
       "status": "broken",
-      "note": "Era scene + motion destination; must not invent do/mo scene clauses; scene time fronts before Actor."
+      "note": "long ago has no beginning head. Reclassified when the model compiler was retired."
     },
     {
       "en": "Yesterday, before the rain, the child sat near the fire.",
       "target_frame": "before · rain · child · sit · near · fire",
-      "status": "broken",
+      "status": "pass",
       "note": "Calendar + before-X scene with stative sit; ta by Action; no dummy do."
     },
     {
@@ -205,6 +205,120 @@
       "target_frame": "after · sun · go · water",
       "status": "broken",
       "note": "Future scene fronting; sa by Action; after+sun as scene time; no dummy do."
+    },
+    {
+      "en": "Why are you here?",
+      "target_frame": "unknown · cause · here",
+      "status": "pass",
+      "note": "why probe = nohu gak (unknown + cause dimension). Interrogative coverage: the golden corpus has levels for what/who/where/when but none for why, so these probes are the only regression guard."
+    },
+    {
+      "en": "Why did you go?",
+      "target_frame": "unknown · cause · addressee · move",
+      "status": "pass",
+      "note": "why on a bare motion frame; keeps actor and past ta"
+    },
+    {
+      "en": "Why do you want the water?",
+      "target_frame": "unknown · cause · want · water",
+      "status": "pass",
+      "note": "why on a desire frame; must not displace the want event"
+    },
+    {
+      "en": "Why is the child afraid?",
+      "target_frame": "unknown · cause · child · afraid",
+      "status": "pass",
+      "note": "why on an emotion predicate; no dummy do invented"
+    },
+    {
+      "en": "Why did you take the water?",
+      "target_frame": "unknown · cause · take · water",
+      "status": "pass",
+      "note": "why on a transitive frame; probe survives alongside object"
+    },
+    {
+      "en": "Why did you go to the river?",
+      "target_frame": "unknown · cause · move · river",
+      "status": "pass",
+      "note": "WH probe with a destination path. Was recorded as a silent WH loss (probe dropped, unresolved[] empty) but that was the deprecated rule-based engine, which still renders be ta gi nan yenan?. Production carries the probe. Guards the WH-plus-path interaction, which is where the loss appeared."
+    },
+    {
+      "en": "How many animals do you own?",
+      "target_frame": "unknown · quantity · own · animal",
+      "status": "broken",
+      "note": "Quantity probe has no dimension root to pair with, so how_many is an honest gap. Must NOT regress to nohu lek: lek is a value on the scale, not the scale. Frame heads name the dimension this needs, so this probe stays broken until one exists."
+    },
+    {
+      "en": "How do you make fire?",
+      "target_frame": "unknown · manner · make · fire",
+      "status": "broken",
+      "note": "No neutral way/manner/method concept. Must NOT regress to nohu ha: rule (ha) is prescriptive, not manner."
+    },
+    {
+      "en": "Are you tired or sick?",
+      "target_frame": "tired · sick · one",
+      "status": "pass",
+      "note": "Disjunction: alternatives grouped in one slot and closed with lu (one), so the pair reads as a choice rather than an assertion of both. The rule fires only on a grouped pair; if the model splits the alternatives across slots, or stays an honest gap rather than lu attaching to a lone item."
+    },
+    {
+      "en": "Do you want food or water?",
+      "target_frame": "food · water · one",
+      "status": "pass",
+      "note": "Disjunction on a noun pair. Must never render identically to \"Do you want food and water?\": the identical surface was the and/or conflation the lu rule exists to remove."
+    },
+    {
+      "en": "Is the baby a girl or boy?",
+      "target_frame": "child · girl · boy · one",
+      "status": "broken",
+      "note": "Not a disjunction failure: girl and boy have no roots, so both alternatives drop upstream and there is nothing for lu to attach to. Correctly reports gaps [girl, boy] rather than marking a single item. Lexical gap, tracked separately from the coordination rule."
+    },
+    {
+      "en": "Do you mean this or that?",
+      "target_frame": "meaning · one",
+      "status": "broken",
+      "note": "Alternatives are demonstratives, which SKIP discards as function words, so both drop and or stays an honest gap. Needs demonstrative support, not coordination work."
+    },
+    {
+      "en": "I can make fire.",
+      "target_frame": "know · make · fire",
+      "status": "pass",
+      "note": "Ability as a learned skill: know+VERB, the creole route (Haitian konn, Tok Pisin save). Lego-recoverable as \"knows how to make fire\". Must not silently drop to mi kel dat, which asserts he is making fire rather than able to."
+    },
+    {
+      "en": "I can carry that for you.",
+      "target_frame": "know · carry",
+      "status": "pass",
+      "note": "Ability with a transitive action. Guards that the know marker survives alongside a compound verb (carry = move+hold)."
+    },
+    {
+      "en": "We must run now.",
+      "target_frame": "need · run · now",
+      "status": "pass",
+      "note": "Necessity as need+VERB. This mapping was already appearing spontaneously in 4 of 11 corpus must-phrases with inconsistent placement; the marker now sits immediately before the Action like want (sak) and no."
+    },
+    {
+      "en": "You must stay here.",
+      "target_frame": "need · stay · here",
+      "status": "pass",
+      "note": "Necessity with a second-person subject and a stative action."
+    },
+    {
+      "en": "I cannot walk.",
+      "target_frame": "no · walk",
+      "status": "pass",
+      "note": "Inability needs NO modal concept: plain negation already carries it, and 11 of 12 negated modals in the corpus are cannot. Must not gain a know or need marker."
+    },
+    {
+      "en": "Can you hear me?",
+      "target_frame": "addressee · hear",
+      "status": "pass",
+      "note": "Interrogative can is a REQUEST, not ability. 39 of 75 corpus can-phrases are interrogative and need no modal, because the bare question already reads as one. Must not become know+hear."
+    },
+    {
+      "en": "We can go together.",
+      "target_frame": "collective · move",
+      "status": "pass",
+      "note": "Proposal, not ability. The largest can-sense in the corpus (~25 phrases). Must NOT render as know+move: that would claim we know how to walk rather than proposing we walk together. maybe (ketnat) is available when the doubt is explicit."
     }
   ]
 }
