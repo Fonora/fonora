@@ -214,6 +214,20 @@ export function parseEnglishStructure(text, { predicates = null } = {}) {
     toks.push({ value: t.out(its.value).toLowerCase(), lemma: t.out(its.lemma).toLowerCase(), pos });
   });
 
+  // English `have` is two words wearing one tag. The auxiliary is always followed by
+  // a verbal continuation — a participle ("have eaten"), a be-form ("have been"), or
+  // the infinitive of obligation ("have to go"). A `have` followed by a noun phrase or
+  // by nothing IS the predicate, possession, and the lexicon knows it (own). The tagger
+  // marks both AUX, which sent every possession sentence down the copula path: "how
+  // many dogs do you have" lost its verb entirely and read dog as the Actor.
+  for (let i = 0; i < toks.length; i += 1) {
+    const t = toks[i];
+    if (t.pos !== 'AUX' || t.lemma !== 'have') continue;
+    const next = toks.slice(i + 1).find(x => x.pos !== 'ADV' && x.value !== 'not');
+    const verbal = next && (next.pos === 'VERB' || next.pos === 'AUX' || next.value === 'to');
+    if (!verbal) t.pos = 'VERB';
+  }
+
   /** @type {EnglishParse} */
   const out = {
     actor: null, action: null, target: null, place: null, places: [], time: null,

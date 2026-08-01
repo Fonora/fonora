@@ -195,7 +195,7 @@
         },
         {
           "en": "I have no weapon.",
-          "fon_deterministic": "mi no dakpa."
+          "fon_deterministic": "mi no dela dakpa."
         },
         {
           "en": "I am not following you.",
@@ -534,7 +534,7 @@
         },
         {
           "en": "Do you have cloth for the wound?",
-          "fon_deterministic": "ka be temtet wun."
+          "fon_deterministic": "ka be dela temtet wun."
         },
         {
           "en": "Let me look at your injury.",
@@ -1544,7 +1544,7 @@
         },
         {
           "en": "What do you have there?",
-          "fon_deterministic": "ka nohu to be tak."
+          "fon_deterministic": "ka nohu to be dela tak."
         },
         {
           "en": "What is this food?",
@@ -2552,7 +2552,7 @@
       "phrases": [
         {
           "en": "I have food.",
-          "fon_deterministic": "mi lo."
+          "fon_deterministic": "mi dela lo."
         },
         {
           "en": "Do you have water?",
@@ -2584,11 +2584,11 @@
         },
         {
           "en": "Do you have more of this?",
-          "fon_deterministic": "ka be mas to."
+          "fon_deterministic": "ka be dela to mas."
         },
         {
           "en": "I have no fire.",
-          "fon_deterministic": "mi no dat."
+          "fon_deterministic": "mi no dela dat."
         },
         {
           "en": "Take some of my food.",
@@ -2612,7 +2612,7 @@
         },
         {
           "en": "I have a knife and a rope.",
-          "fon_deterministic": "mi sutem gektet."
+          "fon_deterministic": "mi dela sutem gektet."
         },
         {
           "en": "Do you want to share this?",
@@ -2641,7 +2641,7 @@
         },
         {
           "en": "I have water and you have food.",
-          "fon_deterministic": "mi ye be lo."
+          "fon_deterministic": "mi ye be dela lo."
         },
         {
           "en": "Let us share everything equally.",
@@ -2666,7 +2666,7 @@
         },
         {
           "en": "I have a small amount of this.",
-          "fon_deterministic": "mi [amount] gen to.",
+          "fon_deterministic": "mi dela [amount] gen to.",
           "note_deterministic": "gap: amount (needs a root)"
         },
         {
@@ -2687,7 +2687,7 @@
         },
         {
           "en": "I feel worried that I have too little.",
-          "fon_deterministic": "mi ta nes fim mi gen to ho."
+          "fon_deterministic": "mi ta nes fim mi dela to ho gen."
         },
         {
           "en": "Can you give me a little water?",
@@ -2707,7 +2707,7 @@
         },
         {
           "en": "Do you have a container I can borrow?",
-          "fon_deterministic": "ka mi lakam be mesgat."
+          "fon_deterministic": "ka be dela mesgat mi lakam."
         },
         {
           "en": "I am sorry, I took the wrong thing.",
@@ -2716,7 +2716,7 @@
         },
         {
           "en": "We each have enough food now.",
-          "fon_deterministic": "gem dan lo [enough] [each].",
+          "fon_deterministic": "gem dan dela lo [enough] [each].",
           "note_deterministic": "gap: enough, each (needs a root)"
         },
         {
@@ -2746,7 +2746,7 @@
         },
         {
           "en": "I have some food here.",
-          "fon_deterministic": "mi lo nam ket."
+          "fon_deterministic": "mi dela lo nam ket."
         },
         {
           "en": "I will give you some of this.",
@@ -2888,7 +2888,7 @@
         },
         {
           "en": "This has a strange taste.",
-          "fon_deterministic": "to tal [strange].",
+          "fon_deterministic": "to dela tal [strange].",
           "note_deterministic": "gap: strange (needs a root)"
         },
         {
@@ -2911,7 +2911,7 @@
         },
         {
           "en": "We have very little food.",
-          "fon_deterministic": "dan lo gen."
+          "fon_deterministic": "dan dela lo gen."
         },
         {
           "en": "I tasted it and it is safe.",
@@ -3450,7 +3450,7 @@
         },
         {
           "en": "Do you have children?",
-          "fon_deterministic": "ka be gas."
+          "fon_deterministic": "ka be dela gas."
         },
         {
           "en": "My family is not here.",
@@ -3507,7 +3507,7 @@
         },
         {
           "en": "Do you have a mother here?",
-          "fon_deterministic": "ka be nam feschos."
+          "fon_deterministic": "ka be dela feschos nam."
         },
         {
           "en": "Give food to the child first.",
@@ -4139,7 +4139,7 @@
         },
         {
           "en": "We have enough food and water.",
-          "fon_deterministic": "dan lo ye [enough].",
+          "fon_deterministic": "dan dela lo ye [enough].",
           "note_deterministic": "gap: enough (needs a root)"
         },
         {
