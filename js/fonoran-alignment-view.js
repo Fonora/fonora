@@ -292,7 +292,6 @@ function sceneHtml(scene, inputLemmas) {
         <span class="align__glyph" style="color:${ea(color)}">${esc(glyph)}</span>
         <span class="align__roman" style="color:${ea(color)}">${esc(tok.fonoran)}</span>
         ${gloss ? `<span class="align__gloss">${esc(gloss)}</span>` : ''}
-        ${guessed ? '<span class="align__guess-badge">guessed</span>' : ''}
         ${role ? `<span class="align__role">${esc(role)}</span>` : ''}
       </div>`;
   }).join('');

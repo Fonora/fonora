@@ -366,11 +366,15 @@ async function resolveSlot(ctx, slot, role) {
 
   // A liberty the compiler took that is not a concept substitution: the word resolves
   // normally and the note travels with it so interpretations[] shows what narrowed.
+  // Keep `english` as the recovered base (`central`), not the written surface
+  // (`decentralized`) — otherwise the gloss under the Fonoran word reads as the
+  // opposite of what the structure says (no + center).
   if (slot.interpret_note && token?.resolved) {
     return {
       ...token,
+      english: slot.english ?? token.english,
       interpreted: true,
-      interpreted_from: slot.interpret_from ?? slot.english,
+      interpreted_from: slot.interpret_from ?? slot.surface ?? slot.english,
       interpret_reason: slot.interpret_note,
     };
   }

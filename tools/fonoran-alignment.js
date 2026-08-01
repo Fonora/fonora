@@ -116,6 +116,13 @@ export function buildAlignment(englishPhrase, tokens = []) {
       const key = lemmaKey(word);
       if (key) strong.add(key);
     }
+    // Affix splits keep the recovered base as `english` (`central`) and the typed
+    // surface as `interpreted_from` (`decentralized`). Both must anchor so the
+    // alignment still draws from the word the speaker typed.
+    for (const word of String(tok?.interpreted_from ?? '').split(/[\s,;/]+/)) {
+      const key = lemmaKey(word);
+      if (key) strong.add(key);
+    }
     for (const alt of particleEnglish.get(tok?.fonoran) ?? []) {
       const key = lemmaKey(alt);
       if (key) strong.add(key);

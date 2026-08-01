@@ -596,6 +596,12 @@ const fonoranTranslatorResult = await (async () => {
       decentralBase?.resolved && decentralBase.interpret_reason?.includes('negating affix:de'),
       `decentralized must reach center through de+ized: ${JSON.stringify(decentral.tokens)}`,
     );
+    // Gloss under the Fonoran word must name the recovered base (central), not the
+    // written surface (decentralized) — that would read as the opposite of no+center.
+    assert(
+      decentralBase?.english === 'central' && decentralBase?.interpreted_from === 'decentralized',
+      `decentralized base token must gloss as central: ${JSON.stringify(decentralBase)}`,
+    );
     // Bare de- words are NOT negations: the rule only fires inside the -ize family.
     const delight = await translateEnglish('the delightful person');
     assert(!delight.tokens.some(t => t.role === 'negation'), `delightful must not read as de+light: ${delight.surface.roman}`);
