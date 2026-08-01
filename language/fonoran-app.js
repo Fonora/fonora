@@ -3316,6 +3316,7 @@
       const scriptPlainParts = []; // plain text for copy
       const glossCells = [];       // HTML gloss-token divs
       const romanCopyParts = [];   // plain roman text for copy
+      const ipaCopyParts = [];     // /ipa/ per word for layered global copy
 
       // Gap words → same Transliterate engine (eSpeak English phonetics → Fonora script).
       const unresolvedEng = [...new Set(
@@ -3377,6 +3378,7 @@
             `</div>`
           );
           romanCopyParts.push(t.fonoran || '');
+          if (ipa) ipaCopyParts.push(ipa);
         } else {
           // Transliterate unresolved word via IPA pipeline (same as Transliterate tab)
           const tlit = tlitCache.get(eng);
@@ -3399,6 +3401,7 @@
               `</div>`
             );
             romanCopyParts.push(eng.toLowerCase());
+            if (tlitIpa) ipaCopyParts.push(tlitIpa);
           } else if (eng) {
             glossCells.push(
               `<div class="tr-gloss-token">` +
@@ -3416,11 +3419,15 @@
       const scriptCopyText = scriptPlainParts.filter(Boolean).join(' ');
       const glossHtml = glossCells.join('');
       const romanCopyText = romanCopyParts.join(' ');
+      const ipaCopyText = ipaCopyParts.join(' ');
 
       syncTranslatorOutputHeader(result);
 
       out.innerHTML = `
-        <div class="translator-output__surface">
+        <div class="translator-output__surface"
+             data-copy-script="${escapeHtml(scriptCopyText)}"
+             data-copy-roman="${escapeHtml(romanCopyText)}"
+             data-copy-ipa="${escapeHtml(ipaCopyText)}">
           ${scriptHtml ? `
           <div class="tr-output-row tr-output-row--script">
             <div class="tr-script-cells fonora-script symbol-text">${scriptHtml}</div>
@@ -3431,12 +3438,29 @@
             <button type="button" class="tr-copy-icon-btn" data-copy-source="roman" data-copy-text="${escapeHtml(romanCopyText)}" title="Copy roman">${TR_COPY_SVG}</button>
           </div>
         </div>
-        ${translatorLegendHtml(result)}`;
+        ${translatorLegendHtml(result)}
+        <div class="translator-output__global-copy">
+          <button type="button" class="tr-copy-icon-btn tr-copy-icon-btn--global" data-copy-source="layered" title="Copy enabled layers">${TR_COPY_SVG}</button>
+        </div>`;
 
-      applyTranslatorSurfaceFlags(out.querySelector('.translator-output__surface'));
+      const surface = out.querySelector('.translator-output__surface');
+      applyTranslatorSurfaceFlags(surface);
 
       out.querySelectorAll('.tr-copy-icon-btn[data-copy-source]').forEach(btn => {
         btn.addEventListener('click', async () => {
+          if (btn.dataset.copySource === 'layered') {
+            const lines = [];
+            const scriptOn = localStorage.getItem('tr-script-visible') !== '0';
+            const pronOn = localStorage.getItem('tr-pron-visible') === '1';
+            const script = surface?.dataset.copyScript || '';
+            const roman = surface?.dataset.copyRoman || '';
+            const ipa = surface?.dataset.copyIpa || '';
+            if (scriptOn && script) lines.push(script);
+            if (roman) lines.push(roman);
+            if (pronOn && ipa) lines.push(ipa);
+            await translatorCopyText(lines.join('\n'), 'layered', btn);
+            return;
+          }
           await translatorCopyText(btn.dataset.copyText || '', btn.dataset.copySource, btn);
         });
       });

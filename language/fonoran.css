@@ -2058,6 +2058,11 @@
       transition:color 0.15s, border-color 0.15s;
     }
     .tr-copy-icon-btn:hover { color:var(--text); border-color:var(--text); }
+    .translator-output__global-copy {
+      display:flex; justify-content:flex-end;
+      margin-top:0.35rem;
+    }
+    .tr-copy-icon-btn--global { width:1.85rem; height:1.85rem; }
     .translator-resolved--interpreted { color:var(--fonora-gold-strong); font-weight:600; }
     .translator-resolved--semantic { color:var(--color-review); font-weight:600; }
     .translator-resolved--alias_weak { color:var(--color-review); font-weight:600; }
