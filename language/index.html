@@ -224,7 +224,6 @@
       <section id="page-translator" class="page">
         <div class="translator-page content-page">
           <div class="translator-playback-bar sans" role="group" aria-label="Translation playback">
-            <p id="tr-dev-banner" class="translator-dev-banner sans" hidden>Dev mode — Translator uses the full lab (not the production-approved set).</p>
             <div class="translator-playback-bar__actions">
               <button type="button" class="btn btn--primary" id="tr-hear" disabled aria-label="Listen to Fonoran translation"><svg class="learn-icon btn-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><polygon points="6 4 20 12 6 20 6 4"/></svg><span class="btn-play-label">Listen</span></button>
               <button type="button" class="btn" id="tr-stop" disabled aria-label="Stop playback"><svg class="learn-icon btn-play-icon" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><rect x="5" y="5" width="14" height="14" rx="1"/></svg><span class="btn-play-label">Stop</span></button>
@@ -276,11 +275,27 @@
 
             <div class="translator-panel translator-panel--output content-card">
               <div class="translator-panel__header translator-panel__header--output">
-                <span class="translator-panel__lang" id="tr-output-label">Translation</span>
+                <div class="translator-panel__actions" id="tr-output-actions">
+                  <button type="button" class="tr-header-btn" id="tr-pron-btn" hidden aria-pressed="false" title="Show pronunciation">
+                    <svg class="tr-header-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7"/><path d="M18.5 5.5a9 9 0 010 13"/></svg>
+                    <span>Pronunciation</span>
+                  </button>
+                  <button type="button" class="tr-header-btn" id="tr-script-btn" hidden aria-pressed="true" title="Show Fonora script">
+                    <svg class="tr-header-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 7h16"/><path d="M4 12h10"/><path d="M4 17h13"/><circle cx="18.5" cy="12" r="1.5"/><circle cx="20.5" cy="17" r="1.5"/></svg>
+                    <span>Script</span>
+                  </button>
+                  <button type="button" class="tr-header-btn" id="tr-breakdown-btn" hidden aria-pressed="true" title="Show word breakdown">
+                    <svg class="tr-header-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h10"/></svg>
+                    <span>Breakdown</span>
+                  </button>
+                  <button type="button" class="tr-header-btn" id="tr-alignment-btn" hidden title="Alignment">
+                    <svg class="align-btn-icon tr-header-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false"><circle class="learn-icon__dot" cx="7" cy="4.5" r="1.5"/><circle class="learn-icon__dot" cx="17" cy="4.5" r="1.5"/><circle class="learn-icon__dot" cx="7" cy="19.5" r="1.5"/><circle class="learn-icon__dot" cx="17" cy="19.5" r="1.5"/><path d="M7 7C7 12 17 12 17 17"/><path d="M17 7C17 12 7 12 7 17"/></svg>
+                    <span>Alignment</span>
+                  </button>
+                </div>
                 <div id="tr-output-meta" class="translator-panel__meta"></div>
-                <button type="button" class="btn btn--ghost btn--sm" id="tr-alignment-btn" hidden><svg class="align-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true" focusable="false"><circle class="learn-icon__dot" cx="7" cy="4.5" r="1.5"/><circle class="learn-icon__dot" cx="17" cy="4.5" r="1.5"/><circle class="learn-icon__dot" cx="7" cy="19.5" r="1.5"/><circle class="learn-icon__dot" cx="17" cy="19.5" r="1.5"/><path d="M7 7C7 12 17 12 17 17"/><path d="M17 7C17 12 7 12 7 17"/></svg><span>Alignment</span></button>
               </div>
-              <div id="tr-output" class="translator-output" aria-live="polite" aria-labelledby="tr-output-label">
+              <div id="tr-output" class="translator-output" aria-live="polite">
                 <p class="translator-output__empty sans">Type any language on the left to see Fonoran script and pronunciation.</p>
               </div>
             </div>

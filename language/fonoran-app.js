@@ -1,12 +1,16 @@
     import { toSpeakable, compoundSpeakable, phoneticKeyBold, compoundPhoneticKey, englishGuide, compoundEnglishGuide, isValidSyllable, romanToIpa } from '../tools/fonoran-pronunciation.js';
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
     import { romanToFonoraScript, romanWordToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
-    import { buildPlaybackFromTokens, isSkippablePlaybackToken } from '../js/fonoran-playback-build.js';
+    import { buildPlaybackFromTokens, isSkippablePlaybackToken, normalizeTokenParts, encodePartsToScript } from '../js/fonoran-playback-build.js';
+    import { translateIpaPhrase } from '../js/ipa-pipeline.js';
     import { createKeyboardDockController } from '../js/fonora-keyboard-dock.js';
     import { mountAlignment } from '../js/fonoran-alignment-view.js';
     import { loadFonoranBootstrap } from '../js/fonoran-bootstrap.js';
     import { warmOnEngage } from '../js/warm-on-engage.js';
     import { loadLanguageRules } from '../js/load-language-rules.js';
+    import { setActiveLanguageRulesBundle } from '../js/fonora-config.js';
+    import { registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules } from '../js/ipa-normalize.js';
+    import { initEspeak, isEspeakReady } from '../js/ipa.js';
     import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
     import { getSamplePlaybackPlan, getPiperVoiceForLang, initPiperAudio } from '../js/piper-audio.js';
     import { resolveEspeakVoice, loadLanguagePreferences } from '../js/language-preferences.js';
@@ -330,8 +334,57 @@
       if (!STATE.rules) {
         const bundle = await loadLanguageRules('../docs/language-rules.md');
         STATE.rules = bundle.rules;
+        STATE.rulesBundle = bundle;
+        // Must mirror js/app.js applyRulesBundle exactly. Without registering the
+        // consonant map, IPA consonants are dropped and only vowels encode —
+        // which is the ⚬∪⚬∪… soup on gap-word script.
+        if (bundle.rules) {
+          setActiveLanguageRulesBundle(bundle);
+          registerIpaVowelMap(bundle.ipaVowelMode, bundle.ipaVowelMap);
+          setActiveIpaVowelMap(bundle.ipaVowelMap);
+          registerConsonantMapFromRules(bundle.rules);
+        }
       }
       return STATE.rules;
+    }
+
+    /**
+     * Gap-word phonetic spelling: identical path to the Transliterate tab
+     * (eSpeak → IPA → Fonora symbols). Sequential — parallel eSpeak WASM races
+     * were returning English letters as "IPA", which encodes as ⚬∪⚬∪… soup.
+     */
+    async function transliterateGapWords(englishWords, rules) {
+      /** @type {Map<string, { symbols: string, ipa: string }>} */
+      const cache = new Map();
+      if (!englishWords.length || !rules) return cache;
+
+      const init = await initEspeak();
+      if (!init?.ok || !isEspeakReady()) return cache;
+
+      const pipelineOptions = {
+        vowelMap: STATE.rulesBundle?.ipaVowelMap,
+      };
+
+      for (const eng of englishWords) {
+        try {
+          // Same entry point as js/app.js applyTranslate → translateIpaPhrase.
+          const phrase = await translateIpaPhrase(eng, rules, 'en', pipelineOptions);
+          const word = phrase?.words?.[0];
+          if (!word?.symbols) continue;
+          const ipa = String(word.ipa || '').replace(/^\/+|\/+$/g, '').trim();
+          const engKey = eng.toLowerCase().replace(/[^a-z']/g, '');
+          const ipaKey = ipa.toLowerCase().replace(/[\sˈˌː.\-\/]/g, '');
+          // If eSpeak never ran, normalizeIpa treats English letters as IPA → ⚬∪ soup.
+          if (!ipa || ipaKey === engKey) continue;
+          cache.set(eng, {
+            symbols: word.symbols,
+            ipa: `/${ipa}/`,
+          });
+        } catch {
+          // leave as unresolved red English
+        }
+      }
+      return cache;
     }
 
     function wordPreviewPron(parts) {
@@ -2032,6 +2085,34 @@
       btn.hidden = !usable;
     }
 
+    function syncTranslatorToolbar(result) {
+      const hasTokens = Boolean(result && !result.error && result.mode !== 'empty' && Array.isArray(result.tokens) && result.tokens.length);
+      const reverse = result?.direction === 'from-fonoran' || result?.mode === 'reverse';
+      const syncToggle = (id, storageKey, { defaultOn = false } = {}) => {
+        const btn = $(id);
+        if (!btn) return;
+        btn.hidden = !hasTokens || reverse;
+        const stored = localStorage.getItem(storageKey);
+        const on = defaultOn ? stored !== '0' : stored === '1';
+        btn.setAttribute('aria-pressed', String(on));
+        btn.classList.toggle('tr-header-btn--on', on);
+      };
+      syncToggle('tr-pron-btn', 'tr-pron-visible', { defaultOn: false });
+      syncToggle('tr-script-btn', 'tr-script-visible', { defaultOn: true });
+      syncToggle('tr-breakdown-btn', 'tr-breakdown-visible', { defaultOn: true });
+      syncAlignmentButton(result);
+    }
+
+    function applyTranslatorSurfaceFlags(root) {
+      if (!root) return;
+      const pronOn = localStorage.getItem('tr-pron-visible') === '1';
+      const scriptOn = localStorage.getItem('tr-script-visible') !== '0';
+      const breakdownOn = localStorage.getItem('tr-breakdown-visible') !== '0';
+      root.toggleAttribute('data-pron-visible', pronOn);
+      root.toggleAttribute('data-script-hidden', !scriptOn);
+      root.toggleAttribute('data-breakdown-hidden', !breakdownOn);
+    }
+
     function openChain(kind, id) {
       openExplorer(kind === 'sound' ? 'root' : 'word', kind === 'sound' ? id : id);
     }
@@ -2815,7 +2896,7 @@
     }
 
     function syncTranslatorOutputHeader(result) {
-      syncAlignmentButton(result);
+      syncTranslatorToolbar(result);
       const meta = $('tr-output-meta');
       if (!meta) return;
       const reasoning = result?.reasoning?.trim();
@@ -3088,14 +3169,46 @@
       return raw.split('?')[0] || 'home';
     }
 
-    function translatorTokenHtml(token, index) {
+    const TR_COPY_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>`;
+    const TR_CHECK_SVG = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"/></svg>`;
+
+    async function translatorCopyText(text, _kind, btn) {
+      // Plain text only — no text/html. Rich paste (Pages, etc.) was picking up a
+      // forced font-family and ignoring the destination's formatting.
+      try {
+        await navigator.clipboard.writeText(text);
+        if (btn) {
+          const isIcon = Boolean(btn.querySelector('svg'));
+          if (isIcon) {
+            const origHtml = btn.innerHTML;
+            btn.innerHTML = TR_CHECK_SVG;
+            setTimeout(() => { btn.innerHTML = origHtml; }, 1500);
+          } else {
+            const orig = btn.textContent;
+            btn.textContent = 'Copied!';
+            setTimeout(() => { btn.textContent = orig; }, 1500);
+          }
+        }
+      } catch { /* silent */ }
+    }
+
+    function translatorTokenHtml(token, index, { rules } = {}) {
       const kind = translatorResolutionKind(token);
       const resClass = translatorResolutionClass(kind);
-      const fonoran = token.resolved
-        ? (resClass
+      let fonoran;
+      if (token.resolved) {
+        fonoran = resClass
           ? `<span class="${resClass}">${escapeHtml(token.fonoran)}</span>`
-          : escapeHtml(token.fonoran))
-        : `<span class="translator-unresolved-sample">${escapeHtml(token.english)}</span>`;
+          : escapeHtml(token.fonoran);
+      } else {
+        const english = String(token.english || '').trim();
+        const tlitScript = (rules && english)
+          ? (romanWordToFonoraScript(english.toLowerCase(), rules).symbols || '')
+          : '';
+        fonoran = tlitScript
+          ? `<span class="translator-transliterated">${escapeHtml(tlitScript)}</span>`
+          : `<span class="translator-unresolved-sample">${escapeHtml(token.english)}</span>`;
+      }
       // Reverse tokens name the concept by its id, so their gloss repeats the English column;
       // the dictionary definition is the part worth showing beside it.
       const glossText = token.definition || token.gloss || '';
@@ -3158,7 +3271,7 @@
           </div>
         </details>
         ${translatorLegendHtml(result)}
-        <ul class="translator-token-list translator-token-list--primary">${(result.tokens ?? []).map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>`;
+        <ul class="translator-token-list translator-token-list--primary">${(result.tokens ?? []).map((t, i) => translatorTokenHtml(t, i, { rules: STATE.rules })).join('')}</ul>`;
 
       syncTranslatorPlaybackUi(result);
     }
@@ -3186,40 +3299,147 @@
       }
 
       await ensureRules();
-      const playbackScript = result.playback?.script
-        || (STATE.rules ? resolveTranslatorPlayback(result).phrase : '');
+      const rules = STATE.rules;
 
-      const romanChunks = [];
+      // IPA per token (computed from roman parts via romanToIpa)
+      function tokenIpa(t) {
+        const parts = rules ? normalizeTokenParts(t) : [t.fonoran].filter(Boolean);
+        const raw = parts.length
+          ? parts.map(p => romanToIpa(String(p || '')).replace(/^\/+|\/+$/g, '')).join('')
+          : romanToIpa(String(t.fonoran || '')).replace(/^\/+|\/+$/g, '');
+        return raw ? `/${raw}/` : '';
+      }
+
+      // Build per-token cells for the script row and the interlinear gloss.
+      // Unresolved words get phonetic transliteration in Fonora script.
+      const scriptCells = [];      // HTML word-cell spans for script row
+      const scriptPlainParts = []; // plain text for copy
+      const glossCells = [];       // HTML gloss-token divs
+      const romanCopyParts = [];   // plain roman text for copy
+
+      // Gap words → same Transliterate engine (eSpeak English phonetics → Fonora script).
+      const unresolvedEng = [...new Set(
+        result.tokens
+          .filter(t => !t.resolved && t.kind !== 'punctuation' && t.role !== 'punctuation')
+          .map(t => String(t.english || '').trim())
+          .filter(Boolean)
+      )];
+      const tlitCache = await transliterateGapWords(unresolvedEng, rules);
+
       for (const t of result.tokens) {
         const isPunct = t.kind === 'punctuation' || t.role === 'punctuation';
-        let piece;
-        if (!t.resolved) {
-          piece = `<span class="translator-unresolved-sample">${escapeHtml(t.english)}</span>`;
-        } else if (isPunct) {
-          piece = escapeHtml(t.fonoran);
-        } else {
-          const classes = translatorResolutionClass(translatorResolutionKind(t)) || '';
-          piece = classes
-            ? `<span class="${classes}">${escapeHtml(t.fonoran)}</span>`
-            : escapeHtml(t.fonoran);
+        if (isPunct) {
+          const ch = String(t.fonoran || t.english || '').trim();
+          if (ch) {
+            const esc = escapeHtml(ch);
+            if (scriptCells.length) scriptCells[scriptCells.length - 1] += esc;
+            else scriptCells.push(esc);
+            if (scriptPlainParts.length) scriptPlainParts[scriptPlainParts.length - 1] += ch;
+            else scriptPlainParts.push(ch);
+            if (glossCells.length) glossCells[glossCells.length - 1] += `<span class="tr-gloss-token--punct">${esc}</span>`;
+            else glossCells.push(`<span class="tr-gloss-token--punct">${esc}</span>`);
+            if (romanCopyParts.length) romanCopyParts[romanCopyParts.length - 1] += ch;
+            else romanCopyParts.push(ch);
+          }
+          continue;
         }
-        if (isPunct && romanChunks.length) romanChunks[romanChunks.length - 1] += piece;
-        else romanChunks.push(piece);
-      }
-      const romanHtml = romanChunks.join(' ');
 
-      const pronHtml = translatorPronHtml(result);
+        const eng = String(t.english || '').trim();
+        const role = String(t.role || '').trim();
+
+        if (t.resolved) {
+          // Script word-cell
+          const parts = rules ? normalizeTokenParts(t) : [];
+          const symbols = parts.length ? encodePartsToScript(parts, rules) : '';
+          scriptPlainParts.push(symbols || '');
+          const ipa = tokenIpa(t);
+          scriptCells.push(
+            `<span class="tr-word-cell">` +
+              `<span class="tr-word-cell__main">${escapeHtml(symbols || '')}</span>` +
+              (ipa ? `<span class="tr-word-cell__ipa">${escapeHtml(ipa)}</span>` : '') +
+            `</span>`
+          );
+          // Gloss cell
+          const cls = translatorResolutionClass(translatorResolutionKind(t));
+          const romanHtml = cls ? `<span class="${cls}">${escapeHtml(t.fonoran)}</span>` : escapeHtml(t.fonoran);
+          const kind = translatorResolutionKind(t);
+          const needsHint = kind === 'guessed' || kind === 'interpreted' || kind === 'alias_weak' || kind === 'semantic';
+          const hint = needsHint
+            ? `${t.interpreted_from ?? t.english} → ${t.concept_id ?? t.lookup ?? ''}${t.interpret_reason ? ` (${t.interpret_reason})` : ''}`
+            : '';
+          const hintAttr = hint ? ` data-hint="${escapeHtml(hint)}"` : '';
+          glossCells.push(
+            `<div class="tr-gloss-token"${hintAttr}>` +
+              `<span class="tr-gloss__roman">${romanHtml}</span>` +
+              (ipa ? `<span class="tr-gloss__ipa">${escapeHtml(ipa)}</span>` : '') +
+              (role ? `<span class="tr-gloss__role">${escapeHtml(role)}</span>` : '') +
+              (eng ? `<span class="tr-gloss__english">${escapeHtml(eng)}</span>` : '') +
+            `</div>`
+          );
+          romanCopyParts.push(t.fonoran || '');
+        } else {
+          // Transliterate unresolved word via IPA pipeline (same as Transliterate tab)
+          const tlit = tlitCache.get(eng);
+          const tlitSymbols = tlit?.symbols || '';
+          const tlitIpa = tlit?.ipa || '';
+          if (tlitSymbols) {
+            scriptPlainParts.push(tlitSymbols);
+            scriptCells.push(
+              `<span class="tr-word-cell">` +
+                `<span class="tr-word-cell__main translator-transliterated">${escapeHtml(tlitSymbols)}</span>` +
+                (tlitIpa ? `<span class="tr-word-cell__ipa">${escapeHtml(tlitIpa)}</span>` : '') +
+              `</span>`
+            );
+            glossCells.push(
+              `<div class="tr-gloss-token">` +
+                `<span class="tr-gloss__roman"><span class="translator-transliterated">${escapeHtml(eng.toLowerCase())}</span></span>` +
+                (tlitIpa ? `<span class="tr-gloss__ipa">${escapeHtml(tlitIpa)}</span>` : '') +
+                (role ? `<span class="tr-gloss__role">${escapeHtml(role)}</span>` : '') +
+                (eng ? `<span class="tr-gloss__english">${escapeHtml(eng)}</span>` : '') +
+              `</div>`
+            );
+            romanCopyParts.push(eng.toLowerCase());
+          } else if (eng) {
+            glossCells.push(
+              `<div class="tr-gloss-token">` +
+                `<span class="tr-gloss__roman"><span class="translator-unresolved-sample">${escapeHtml(eng)}</span></span>` +
+                (role ? `<span class="tr-gloss__role">${escapeHtml(role)}</span>` : '') +
+                (eng ? `<span class="tr-gloss__english">${escapeHtml(eng)}</span>` : '') +
+              `</div>`
+            );
+            romanCopyParts.push(eng);
+          }
+        }
+      }
+
+      const scriptHtml = scriptCells.filter(Boolean).join(' ');
+      const scriptCopyText = scriptPlainParts.filter(Boolean).join(' ');
+      const glossHtml = glossCells.join('');
+      const romanCopyText = romanCopyParts.join(' ');
 
       syncTranslatorOutputHeader(result);
 
       out.innerHTML = `
         <div class="translator-output__surface">
-          ${playbackScript ? `<div class="translator-output__script fonora-script symbol-text">${escapeHtml(playbackScript)}</div>` : ''}
-          <p class="translator-output__roman">${romanHtml}</p>
-          ${pronHtml}
+          ${scriptHtml ? `
+          <div class="tr-output-row tr-output-row--script">
+            <div class="tr-script-cells fonora-script symbol-text">${scriptHtml}</div>
+            <button type="button" class="tr-copy-icon-btn" data-copy-source="script" data-copy-text="${escapeHtml(scriptCopyText)}" title="Copy Fonora script">${TR_COPY_SVG}</button>
+          </div>` : ''}
+          <div class="tr-output-row">
+            <div class="translator-gloss">${glossHtml}</div>
+            <button type="button" class="tr-copy-icon-btn" data-copy-source="roman" data-copy-text="${escapeHtml(romanCopyText)}" title="Copy roman">${TR_COPY_SVG}</button>
+          </div>
         </div>
-        ${translatorLegendHtml(result)}
-        <ul class="translator-token-list translator-token-list--primary">${result.tokens.map((t, i) => translatorTokenHtml(t, i)).join('')}</ul>`;
+        ${translatorLegendHtml(result)}`;
+
+      applyTranslatorSurfaceFlags(out.querySelector('.translator-output__surface'));
+
+      out.querySelectorAll('.tr-copy-icon-btn[data-copy-source]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          await translatorCopyText(btn.dataset.copyText || '', btn.dataset.copySource, btn);
+        });
+      });
 
       syncTranslatorPlaybackUi(result);
     }
@@ -3313,8 +3533,6 @@
     }
 
     function renderTranslator() {
-      const devBanner = $('tr-dev-banner');
-      if (devBanner) devBanner.hidden = !isLocalDevHost();
       const input = $('tr-input');
       if (input && input.value !== STATE.translatorInput) input.value = STATE.translatorInput;
       const speedEl = $('tr-speed');
@@ -3574,6 +3792,36 @@
       renderDictionary();
     });
     $('tr-alignment-btn')?.addEventListener('click', openAlignmentModal);
+    $('tr-pron-btn')?.addEventListener('click', () => {
+      const on = localStorage.getItem('tr-pron-visible') === '1';
+      localStorage.setItem('tr-pron-visible', on ? '0' : '1');
+      const btn = $('tr-pron-btn');
+      if (btn) {
+        btn.setAttribute('aria-pressed', String(!on));
+        btn.classList.toggle('tr-header-btn--on', !on);
+      }
+      applyTranslatorSurfaceFlags($('tr-output')?.querySelector('.translator-output__surface'));
+    });
+    $('tr-script-btn')?.addEventListener('click', () => {
+      const on = localStorage.getItem('tr-script-visible') !== '0';
+      localStorage.setItem('tr-script-visible', on ? '0' : '1');
+      const btn = $('tr-script-btn');
+      if (btn) {
+        btn.setAttribute('aria-pressed', String(!on));
+        btn.classList.toggle('tr-header-btn--on', !on);
+      }
+      applyTranslatorSurfaceFlags($('tr-output')?.querySelector('.translator-output__surface'));
+    });
+    $('tr-breakdown-btn')?.addEventListener('click', () => {
+      const on = localStorage.getItem('tr-breakdown-visible') !== '0';
+      localStorage.setItem('tr-breakdown-visible', on ? '0' : '1');
+      const btn = $('tr-breakdown-btn');
+      if (btn) {
+        btn.setAttribute('aria-pressed', String(!on));
+        btn.classList.toggle('tr-header-btn--on', !on);
+      }
+      applyTranslatorSurfaceFlags($('tr-output')?.querySelector('.translator-output__surface'));
+    });
     bindModalDismiss({
       backdrop: $('tr-alignment-modal')?.querySelector('.wm-modal__backdrop'),
       panel: $('tr-alignment-modal')?.querySelector('.wm-modal__box'),
