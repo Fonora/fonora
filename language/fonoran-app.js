@@ -2,7 +2,6 @@
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
     import { romanToFonoraScript, romanWordToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
     import { buildPlaybackFromTokens, isSkippablePlaybackToken, normalizeTokenParts, encodePartsToScript } from '../js/fonoran-playback-build.js';
-    import { translateIpaPhrase } from '../js/ipa-pipeline.js';
     import { createKeyboardDockController } from '../js/fonora-keyboard-dock.js';
     import { mountAlignment } from '../js/fonoran-alignment-view.js';
     import { loadFonoranBootstrap } from '../js/fonoran-bootstrap.js';
@@ -10,11 +9,7 @@
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { setActiveLanguageRulesBundle } from '../js/fonora-config.js';
     import { registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules } from '../js/ipa-normalize.js';
-    import { initEspeak, isEspeakReady } from '../js/ipa.js';
-    import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
-    import { getSamplePlaybackPlan, getPiperVoiceForLang, initPiperAudio } from '../js/piper-audio.js';
     import { resolveEspeakVoice, loadLanguagePreferences } from '../js/language-preferences.js';
-    import { primeAudioContext } from '../js/espeak-audio.js';
     import { initUniversalNav, setActiveTab, setFonoranUndoDisabled, setFonoranAuth, setNavSelectHandlers } from '../js/universal-nav.js';
     import { mountSiteFooter } from '../js/site-footer.js';
     import { buildComposeScenesFromLab, mountComposeShowcase } from './compose-showcase.js';
@@ -42,6 +37,54 @@
       toggleFilterKey,
       UI_TIER_LABELS,
     } from './lab-filters.js';
+
+    /**
+     * Speech engines (eSpeak JS glue ~294 KB gzip, Piper, IPA pipeline) stay off the
+     * critical path until someone engages or presses Listen. WASM/models are already
+     * deferred further by warmOnEngage / first speak inside those modules.
+     * @type {Promise<{
+     *   initEspeak: typeof import('../js/ipa.js').initEspeak,
+     *   isEspeakReady: typeof import('../js/ipa.js').isEspeakReady,
+     *   speakFonoraPhrase: typeof import('../js/fonora-tts.js').speakFonoraPhrase,
+     *   cancelSpeech: typeof import('../js/fonora-tts.js').cancelSpeech,
+     *   setReaderWordSources: typeof import('../js/fonora-tts.js').setReaderWordSources,
+     *   getSamplePlaybackPlan: typeof import('../js/piper-audio.js').getSamplePlaybackPlan,
+     *   getPiperVoiceForLang: typeof import('../js/piper-audio.js').getPiperVoiceForLang,
+     *   initPiperAudio: typeof import('../js/piper-audio.js').initPiperAudio,
+     *   primeAudioContext: typeof import('../js/espeak-audio.js').primeAudioContext,
+     *   translateIpaPhrase: typeof import('../js/ipa-pipeline.js').translateIpaPhrase,
+     * }> | null}
+     */
+    let ttsModsPromise = null;
+    /** @type {Awaited<NonNullable<typeof ttsModsPromise>> | null} */
+    let ttsMods = null;
+
+    function loadTts() {
+      if (!ttsModsPromise) {
+        ttsModsPromise = Promise.all([
+          import('../js/ipa.js'),
+          import('../js/fonora-tts.js'),
+          import('../js/piper-audio.js'),
+          import('../js/espeak-audio.js'),
+          import('../js/ipa-pipeline.js'),
+        ]).then(([ipa, fonoraTts, piper, espeak, ipaPipeline]) => {
+          ttsMods = {
+            initEspeak: ipa.initEspeak,
+            isEspeakReady: ipa.isEspeakReady,
+            speakFonoraPhrase: fonoraTts.speakFonoraPhrase,
+            cancelSpeech: fonoraTts.cancelSpeech,
+            setReaderWordSources: fonoraTts.setReaderWordSources,
+            getSamplePlaybackPlan: piper.getSamplePlaybackPlan,
+            getPiperVoiceForLang: piper.getPiperVoiceForLang,
+            initPiperAudio: piper.initPiperAudio,
+            primeAudioContext: espeak.primeAudioContext,
+            translateIpaPhrase: ipaPipeline.translateIpaPhrase,
+          };
+          return ttsMods;
+        });
+      }
+      return ttsModsPromise;
+    }
 
     const AUTH = {
       required: false,
@@ -276,7 +319,7 @@
     }
 
     function cancelAllSpeech() {
-      cancelSpeech();
+      ttsMods?.cancelSpeech?.();
       cancelBrowserSpeech();
     }
 
@@ -322,11 +365,12 @@
       const rules = await ensureRules();
       const { phrase } = romanToFonoraScript(list, rules);
       if (!phrase) throw new Error('no script');
-      cancelSpeech();
-      const plan = getSamplePlaybackPlan(lang);
-      await speakFonoraPhrase(phrase, rules, plan ?? {
+      const tts = await loadTts();
+      tts.cancelSpeech();
+      const plan = tts.getSamplePlaybackPlan(lang);
+      await tts.speakFonoraPhrase(phrase, rules, plan ?? {
         engine: 'piper',
-        piperVoice: getPiperVoiceForLang('en'),
+        piperVoice: tts.getPiperVoiceForLang('en'),
         espeakVoice: resolveEspeakVoice(lang, { englishDialect: loadLanguagePreferences().englishDialect }),
       });
     }
@@ -358,8 +402,9 @@
       const cache = new Map();
       if (!englishWords.length || !rules) return cache;
 
-      const init = await initEspeak();
-      if (!init?.ok || !isEspeakReady()) return cache;
+      const tts = await loadTts();
+      const init = await tts.initEspeak();
+      if (!init?.ok || !tts.isEspeakReady()) return cache;
 
       const pipelineOptions = {
         vowelMap: STATE.rulesBundle?.ipaVowelMap,
@@ -368,7 +413,7 @@
       for (const eng of englishWords) {
         try {
           // Same entry point as js/app.js applyTranslate → translateIpaPhrase.
-          const phrase = await translateIpaPhrase(eng, rules, 'en', pipelineOptions);
+          const phrase = await tts.translateIpaPhrase(eng, rules, 'en', pipelineOptions);
           const word = phrase?.words?.[0];
           if (!word?.symbols) continue;
           const ipa = String(word.ipa || '').replace(/^\/+|\/+$/g, '').trim();
@@ -495,13 +540,17 @@
 
     async function load(opts = {}) {
       try {
-        await ensureRules();
         STATE.health = null;
         STATE.healthKey = null;
         STATE.lexicon = null;
-        const bootstrap = await loadFonoranBootstrap({ refresh: true });
+        const [, bootstrap] = await Promise.all([
+          ensureRules(),
+          loadFonoranBootstrap({ refresh: Boolean(opts.refresh) }),
+        ]);
         STATE.lab = bootstrap.lab;
-        STATE.lexicon = bootstrap.lexicon ?? null;
+        // Lexicon is fetched on demand (Dictionary); keeping it off bootstrap
+        // shaves the About critical path.
+        STATE.lexicon = null;
         if (bootstrap.health) {
           STATE.health = bootstrap.health;
           STATE.healthKey = bootstrap.lab?.updated_at ?? bootstrap.health.bucket_updated_at ?? null;
@@ -509,8 +558,10 @@
         $('load-error').hidden = true;
         setFonoranUndoDisabled(!STATE.lab.can_undo || !canWrite());
         warmOnEngage(() => {
-          const piperVoice = getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
-          initPiperAudio(piperVoice).catch(() => {});
+          loadTts().then((tts) => {
+            const piperVoice = tts.getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
+            tts.initPiperAudio(piperVoice).catch(() => {});
+          }).catch(() => {});
         });
         if (!opts.skipRender) renderActivePage();
       } catch { $('load-error').hidden = false; }
@@ -3011,15 +3062,16 @@
       return result?.detected_lang ?? result?.sourceLang ?? 'en';
     }
 
-    function getTranslatorPlaybackOptions(result) {
+    async function getTranslatorPlaybackOptions(result) {
       const lang = readTranslatorPlaybackLang(result);
       const prefs = loadLanguagePreferences();
-      const plan = getSamplePlaybackPlan(lang);
+      const tts = await loadTts();
+      const plan = tts.getSamplePlaybackPlan(lang);
       const playbackRate = readTranslatorSpeed();
       if (plan) return { ...plan, playbackRate };
       return {
         engine: 'piper',
-        piperVoice: getPiperVoiceForLang('en'),
+        piperVoice: tts.getPiperVoiceForLang('en'),
         espeakVoice: resolveEspeakVoice(lang, { englishDialect: prefs.englishDialect }),
         playbackRate,
       };
@@ -3050,7 +3102,8 @@
     async function speakTranslatorResult(result) {
       if (!result?.tokens?.some(t => !isSkippablePlaybackToken(t)) || STATE.translatorPlaying) return;
       await ensureRules();
-      primeAudioContext();
+      const tts = await loadTts();
+      tts.primeAudioContext();
 
       const syllableBySyllable = $('tr-syllable-by-syllable')?.checked === true;
       const playback = resolveTranslatorPlayback(result, { syllableBySyllable });
@@ -3072,7 +3125,7 @@
 
       try {
         cancelAllSpeech();
-        const playbackOpts = getTranslatorPlaybackOptions(result);
+        const playbackOpts = await getTranslatorPlaybackOptions(result);
         const sourceBcp47 = sourceLangToBcp47(readTranslatorPlaybackLang(result));
         const wordGapMs = syllableBySyllable
           ? Math.round(250 + (1 - playbackOpts.playbackRate) * 450)
@@ -3097,9 +3150,9 @@
           if (seg.kind === 'english') {
             await speakAsync(seg.text, sourceBcp47);
           } else {
-            setReaderWordSources([seg.wordSource]);
+            tts.setReaderWordSources([seg.wordSource]);
             try {
-              await speakFonoraPhrase(seg.phrase, STATE.rules, {
+              await tts.speakFonoraPhrase(seg.phrase, STATE.rules, {
                 ...playbackOpts,
                 wordGapMs: 0,
                 shouldCancel: () => STATE.translatorCancel,
@@ -3122,7 +3175,7 @@
         STATE.translatorPlaying = false;
         STATE.translatorCancel = false;
         highlightTranslatorToken(-1);
-        setReaderWordSources(null);
+        ttsMods?.setReaderWordSources?.(null);
         clearTranslatorSpeakingHighlight();
         if (playBtn) { playBtn.disabled = false; setPlayButtonLabel(playBtn, 'Listen'); }
         if (stopBtn) stopBtn.disabled = true;
@@ -3644,7 +3697,7 @@
       if (!canWrite()) { toast('Sign in required'); return; }
       const res = await api('/api/fonoran/lab/undo', { method: 'POST', body: '{}' });
       toast(res.reverted ? `Undid: ${res.label}` : 'Nothing to undo');
-      await load();
+      await load({ refresh: true });
     }
 
     async function renderHealth() {
@@ -3941,6 +3994,8 @@
       || document.documentElement.getAttribute('data-fonora-page')
       || 'home';
     const initialPage = isWordManagerPage(initialPageRaw) ? 'home' : initialPageRaw;
+    // Start lab+health while chrome wires; load() reuses the shared promise.
+    loadFonoranBootstrap();
     setNavSelectHandlers({
       onPage: (page) => switchPage(page),
       onSignOut: () => { signOut(); },
@@ -3955,6 +4010,8 @@
 
     async function boot() {
       STATE.page = initialPage;
+      // Overlap public lab fetch with auth — About does not need a session.
+      const dataReady = load({ skipRender: true });
       await refreshAuth();
       handleAuthUrlErrors();
       updateAuthGate();
@@ -3984,7 +4041,8 @@
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
         if (getStoredTheme() === 'system') refreshGrammarTheme();
       });
-      await load();
+      await dataReady;
+      renderActivePage();
       syncSplitStickyOffsets();
     }
 
