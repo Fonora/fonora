@@ -69,6 +69,7 @@ const ILLUSTRATIVE = new Set([
   'sannan', 'sannnan',   // Rule 7: doubled-consonant collision
   'kaso',                // worked example in the compound graph
   'bem', 'mam',          // boundary-collision example
+  'sesakhu',             // the deleted `what` compound, cited as the interrogative-ownership cautionary tale
 ]);
 
 /**

@@ -34,7 +34,7 @@ async function readJson(relPath) {
  * @returns {Promise<{ config: object, roots: object[], compounds: object[] }>}
  */
 export async function loadInvariantContext() {
-  const [config, approvedRoots, dimensions, compoundDoc, localization, ownership, particlesDoc] = await Promise.all([
+  const [config, approvedRoots, dimensions, compoundDoc, localization, ownership, particlesDoc, grammarPolicy] = await Promise.all([
     readJson('data/fonoran-primitive-roots-config.json'),
     readJson('data/fonoran-approved-roots.json'),
     readJson('data/fonoran-semantic-dimensions.json'),
@@ -42,6 +42,7 @@ export async function loadInvariantContext() {
     readJson('data/localizations/en.json'),
     readJson('data/fonoran-word-ownership.json').catch(() => ({ contested: [] })),
     readJson('data/fonoran-grammar-particles.json'),
+    readJson('data/fonoran-grammar-policy.json'),
   ]);
   const roots = approvedRoots.roots ?? [];
   const compoundSeed = compoundDoc.compounds ?? [];
@@ -55,6 +56,7 @@ export async function loadInvariantContext() {
     retired: loadRetiredSpellings(),
     localization,
     ownership,
+    grammarPolicy,
     conceptIds: new Set([...roots.map(r => String(r.id)), ...compoundSeed.map(c => String(c.concept))]),
   };
 }
@@ -326,12 +328,86 @@ export const particleReservationRule = {
   },
 };
 
+/**
+ * Interrogatives are grammar, not vocabulary. Fonoran has no question words:
+ * `nohu` + a dimension root is the whole system, and data/fonoran-grammar-policy.json
+ * (`wh_composition`) is its single owner. A lexicon entry that also claims an
+ * interrogative word creates a second answer the WH machinery cannot see — this is
+ * not hypothetical: a heuristic compound `what = speak+want+know` sat in the seed
+ * for weeks, so questions said `nohu to` while the bare word said `sesakhu`, and a
+ * stray alias sent `where` to `bound` instead of `place`.
+ *
+ * Outside a question an interrogative word may resolve, but only to the policy's
+ * own dimension for it ("tell me where you live" is the place you live), so the two
+ * moods can never disagree about what the word means.
+ */
+export const interrogativeOwnershipRule = {
+  id: 'interrogative-ownership',
+  title: 'an interrogative word is owned by the WH policy, never by the lexicon',
+  severity: 'error',
+  run(ctx) {
+    const composition = ctx.grammarPolicy?.wh_composition ?? {};
+    /** wh word -> the one concept allowed to claim it (its policy dimension). */
+    const dimensionFor = new Map();
+    for (const [word, parts] of Object.entries(composition)) {
+      if (word.startsWith('_') || !Array.isArray(parts) || !parts.length) continue;
+      dimensionFor.set(word.toLowerCase(), String(parts[parts.length - 1]));
+    }
+    for (const word of Object.keys(ctx.grammarPolicy?.wh_blocked ?? {})) {
+      if (!word.startsWith('_')) dimensionFor.set(word.toLowerCase(), null);
+    }
+    if (!dimensionFor.size) return [];
+
+    const findings = [];
+    const flag = (subject, concept, detail) => findings.push({
+      rule: interrogativeOwnershipRule.id,
+      severity: 'error',
+      subject,
+      concept: String(concept ?? ''),
+      detail,
+      waived: false,
+      reason: null,
+    });
+
+    // An interrogative can never be a concept of its own: no root, no compound.
+    for (const root of ctx.roots ?? []) {
+      if (dimensionFor.has(String(root.id).toLowerCase())) {
+        flag(`root ${root.id}`, root.id, `"${root.id}" is an interrogative; it is asked as nohu + ${dimensionFor.get(String(root.id).toLowerCase()) ?? 'a dimension'}, never spoken as a word of its own`);
+      }
+    }
+    for (const row of ctx.compoundSeed ?? []) {
+      if (dimensionFor.has(String(row.concept).toLowerCase())) {
+        flag(`compound ${row.concept}`, row.concept, `"${row.concept}" is an interrogative and cannot be a compound; the WH policy composes it as nohu + ${dimensionFor.get(String(row.concept).toLowerCase()) ?? 'a dimension'}`);
+      }
+    }
+
+    // A localization may hand an interrogative word only to its policy dimension.
+    for (const [conceptId, entry] of Object.entries(ctx.localization?.entries ?? {})) {
+      for (const word of [conceptId, entry?.label, ...(entry?.aliases ?? [])]) {
+        const key = String(word ?? '').toLowerCase().trim();
+        if (!dimensionFor.has(key)) continue;
+        const allowed = dimensionFor.get(key);
+        if (conceptId === allowed) continue;
+        flag(
+          `"${key}" -> ${conceptId}`,
+          conceptId,
+          allowed
+            ? `the interrogative "${key}" may resolve only to its policy dimension \`${allowed}\`, not to \`${conceptId}\``
+            : `the interrogative "${key}" is policy-blocked and may not resolve to any concept`,
+        );
+      }
+    }
+    return findings;
+  },
+};
+
 export const RULES = [
   excludedSyllableRule,
   retiredReassignmentRule,
   englishWordOwnershipRule,
   dimensionConsistencyRule,
   particleReservationRule,
+  interrogativeOwnershipRule,
 ];
 
 /**
