@@ -3,7 +3,7 @@
  * Mount into #app-header-root.
  */
 
-import { docViewerHref, isDocsRoute } from './doc-urls.js';
+import { DEFAULT_DOC_PATH, docViewerHref, isDocsRoute } from './doc-urls.js';
 import { learnTrackForTab } from './learn-routing.js';
 import { isOnLearnAbout, learnHubNavActive } from './learn-hub-nav.js';
 import { pageTitle, PLATFORM_HOME_TITLE, PLATFORM_PAGE_TITLE, SITE_NAME } from './site-copy.js';
@@ -606,7 +606,7 @@ function handleScriptTab(root, tab) {
   }
   if (typeof window.showTab === 'function') {
     if (tab === 'docs' && typeof window.openDocViewer === 'function') {
-      window.openDocViewer('docs/platform-overview.md');
+      window.openDocViewer(DEFAULT_DOC_PATH);
     } else {
       window.showTab(tab);
     }
@@ -630,6 +630,9 @@ function platformTabHomeHref(tabId) {
 
 /** Whether the browser is already on the default landing view for a top-level tab. */
 function isOnContextHome(tabId) {
+  // Docs uses `/?path=…` on the platform origin — path is `/` but we are not on About.
+  if (tabId === 'platform' && isDocsRoute()) return false;
+
   const homePath = platformTabHomeHref(tabId).replace(/\/$/, '') || '/';
   const path = window.location.pathname.replace(/\/$/, '') || '/';
   if (path !== homePath) return false;
@@ -743,7 +746,7 @@ function handlePlatformTab(root, tab) {
   }
   if (typeof window.showTab === 'function') {
     if (tab === 'docs' && typeof window.openDocViewer === 'function') {
-      window.openDocViewer('docs/platform-overview.md');
+      window.openDocViewer(DEFAULT_DOC_PATH);
     } else {
       window.showTab(tab);
     }

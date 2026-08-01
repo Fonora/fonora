@@ -70,7 +70,7 @@ const TRANSLITERATE_PERIOD_PAUSE_KEY = 'fonora:transliterate:period-pause';
 /** @deprecated migrated to TRANSLITERATE_FLUIDITY_KEY */
 const TRANSLITERATE_FLUID_MODE_KEY = 'fonora:transliterate:fluid';
 
-const DEFAULT_FLUIDITY = 85;
+const DEFAULT_FLUIDITY = 100;
 const DEFAULT_PERIOD_PAUSE = 100;
 const FLUIDITY_FULL_CLAUSE = 92;
 const FLUIDITY_WORD_BY_WORD = 8;
@@ -149,10 +149,12 @@ export function setTransliterateFonoranOutput(symbols, roman, tokens = [], { str
   renderTranslateOutput();
 }
 
+const DEFAULT_SPEED = 0.95;
+
 function readTransliterateSpeed() {
   const el = document.getElementById('translate-speed');
   const raw = el ? parseFloat(el.value) : parseFloat(localStorage.getItem(TRANSLITERATE_SPEED_KEY));
-  return Number.isFinite(raw) ? Math.max(0.45, Math.min(1, raw)) : 1;
+  return Number.isFinite(raw) ? Math.max(0.45, Math.min(1, raw)) : DEFAULT_SPEED;
 }
 
 function syncTransliterateSpeedLabel() {
@@ -471,7 +473,7 @@ export function syncTranslatePlaybackControls() {
 
   if (dialectWrap) dialectWrap.hidden = lang !== 'en';
   if (piperWrap) piperWrap.hidden = lang !== 'en';
-  if (periodPauseWrap) periodPauseWrap.hidden = !fonoran;
+  if (periodPauseWrap) periodPauseWrap.hidden = false;
 
   if (!voiceNote) return;
   if (fonoran) {
@@ -591,6 +593,49 @@ function highlightWord(index, { active = false, done = false } = {}) {
 
 function highlightWords(indices, { active = false, done = false } = {}) {
   for (const index of indices) highlightWord(index, { active, done });
+}
+
+const TRAILING_INPUT_PUNCTUATION = /[.,;:!?·…]+$/;
+
+/**
+ * Punctuation trailing each original input word (index-aligned with the
+ * transliterated symbol words). Snapshot before playback: some playback paths
+ * overwrite the reader word sources while speaking.
+ */
+function snapshotWordPunctuation(wordCount) {
+  const sources = getReaderWordSources();
+  const punctuation = [];
+  for (let i = 0; i < wordCount; i++) {
+    const raw = String(sources?.[i]?.sourceWord || '');
+    const match = raw.match(TRAILING_INPUT_PUNCTUATION);
+    punctuation.push(match ? match[0] : '');
+  }
+  return punctuation;
+}
+
+/** Split transliterated words into clauses at input punctuation, with pause markers between. */
+function buildTransliterateFluidClauses(symbolWords, wordPunctuation) {
+  /** @type {Array<{ kind: 'clause', symbols: string[], wordIndices: number[] } | { kind: 'pause', char: string }>} */
+  const clauses = [];
+  let current = { symbols: [], wordIndices: [] };
+
+  for (let i = 0; i < symbolWords.length; i++) {
+    current.symbols.push(symbolWords[i]);
+    current.wordIndices.push(i);
+    const punctuation = wordPunctuation[i] || '';
+    if (!punctuation) continue;
+    clauses.push({ kind: 'clause', ...current });
+    current = { symbols: [], wordIndices: [] };
+    for (const char of punctuation) {
+      clauses.push({ kind: 'pause', char });
+    }
+  }
+
+  if (current.symbols.length) {
+    clauses.push({ kind: 'clause', ...current });
+  }
+
+  return clauses;
 }
 
 function buildFonoranFluidClauses() {
@@ -777,6 +822,17 @@ export async function playTranslateOutput() {
     ? buildTransliterateSegments(text, { syllableBySyllable: true })
     : null;
 
+  // Trailing punctuation from the original input, captured before playback
+  // mutates the reader word sources.
+  const wordPunctuation = isFonoranTransliterateMode() ? [] : snapshotWordPunctuation(words.length);
+  const punctuationPauseMsAfterWord = (index) => {
+    let ms = 0;
+    for (const char of wordPunctuation[index] || '') {
+      ms += pauseMsForPunctuation(char, playback.playbackRate, periodPauseScale);
+    }
+    return ms;
+  };
+
   let spoken = 0;
   let skipped = 0;
   let cancelled = false;
@@ -877,18 +933,40 @@ export async function playTranslateOutput() {
       }
       setReaderWordSources(null);
     } else if (usesFluidPlayback) {
-      const symbolGroups = chunkSymbolWordsForFluidity(words, fluidity);
-      const wordIndexGroups = symbolGroups.map((group, index) => {
-        const start = symbolGroups.slice(0, index).reduce((sum, chunk) => sum + chunk.length, 0);
-        return group.map((_, offset) => start + offset);
-      });
-      const groupResult = await playFluidSymbolGroups(symbolGroups, wordIndexGroups, playback, {
-        needsLoad,
-        groupGapMs,
-      });
-      spoken = groupResult.spoken;
-      skipped = groupResult.skipped;
-      cancelled = groupResult.cancelled;
+      const clauses = buildTransliterateFluidClauses(words, wordPunctuation);
+      const pauseScale = sentencePauseScaleForFluidity(fluidity);
+
+      for (let i = 0; i < clauses.length; i++) {
+        if (cancelRequested) {
+          cancelled = true;
+          break;
+        }
+
+        const seg = clauses[i];
+        if (seg.kind === 'pause') {
+          await sleepMs(Math.round(
+            pauseMsForPunctuation(seg.char, playback.playbackRate, periodPauseScale) * pauseScale,
+          ));
+          continue;
+        }
+
+        const symbolGroups = chunkSymbolWordsForFluidity(seg.symbols, fluidity);
+        const wordIndexGroups = [];
+        let cursor = 0;
+        for (const group of symbolGroups) {
+          wordIndexGroups.push(seg.wordIndices.slice(cursor, cursor + group.length));
+          cursor += group.length;
+        }
+
+        const groupResult = await playFluidSymbolGroups(symbolGroups, wordIndexGroups, playback, {
+          needsLoad,
+          groupGapMs,
+        });
+        spoken += groupResult.spoken;
+        skipped += groupResult.skipped;
+        cancelled = cancelled || groupResult.cancelled;
+        if (cancelRequested) break;
+      }
     } else if (segments) {
       for (let i = 0; i < segments.length; i++) {
         if (cancelRequested) {
@@ -925,8 +1003,13 @@ export async function playTranslateOutput() {
           cancelled = true;
           break;
         }
-        if (wordGapMs > 0 && i < segments.length - 1) {
-          await sleepMs(wordGapMs);
+        if (i < segments.length - 1) {
+          const next = segments[i + 1];
+          const punctuationMs = next.wordIndex !== seg.wordIndex
+            ? punctuationPauseMsAfterWord(seg.wordIndex)
+            : 0;
+          const gapMs = wordGapMs + punctuationMs;
+          if (gapMs > 0) await sleepMs(gapMs);
         }
       }
       setReaderWordSources(null);
@@ -937,6 +1020,7 @@ export async function playTranslateOutput() {
         espeakVoice: playback.espeakVoice,
         playbackRate: playback.playbackRate,
         wordGapMs,
+        pauseMsAfterWord: punctuationPauseMsAfterWord,
         shouldCancel: () => cancelRequested,
         onPrepare: (message) => {
           if (needsLoad || (playback.piperVoice && !isPiperAudioReady(playback.piperVoice))) {

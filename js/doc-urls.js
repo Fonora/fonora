@@ -24,7 +24,7 @@ export function githubDocUrl(repoPath, ref = 'main') {
   return githubBlobUrl(repoPath, ref);
 }
 
-export const DEFAULT_DOC_PATH = 'docs/platform-overview.md';
+export const DEFAULT_DOC_PATH = 'docs/fonoran-rulebook.md';
 
 /** Default doc when opening Docs from the Tools section. */
 export const TOOLS_DOCS_DEFAULT = 'docs/fonoran-cli-tools.md';
@@ -101,63 +101,25 @@ function resolveDocRepoPath(path) {
 
 /** Display order for grouped docs sidebar. */
 export const DOC_LAYER_ORDER = [
-  { id: 'essential', label: 'Essential' },
-  { id: 'script', label: 'Script layer' },
-  { id: 'language', label: 'Language layer' },
-  { id: 'archive', label: 'Archive' },
+  { id: 'script', label: 'Script' },
+  { id: 'language', label: 'Language' },
 ];
 
+/**
+ * Language docs only. Technical, workflow, and archive docs stay in the repo
+ * (and remain fetchable via direct links) but are not listed in the viewer.
+ */
 function buildDocCatalog() {
   return [
-    { path: 'docs/platform-overview.md', label: 'Platform overview', layer: 'essential' },
-    { path: 'docs/README.md', label: 'Documentation index', layer: 'essential' },
-    { path: 'README.md', label: 'Project README', layer: 'essential' },
-    { path: 'docs/third-party.md', label: 'Third-party licenses', layer: 'essential' },
-    { path: 'docs/deploy.md', label: 'Deploy & PostgreSQL', layer: 'essential' },
-    { path: 'docs/fonoran-auth-and-release.md', label: 'Fonoran auth & release', layer: 'essential' },
-    { path: 'SECURITY.md', label: 'Security', layer: 'essential' },
-    { path: 'CONTRIBUTING.md', label: 'Contributing', layer: 'essential' },
-
     { path: 'docs/language-rules.md', label: 'Language rules', layer: 'script' },
-    { path: 'docs/multilingual-support.md', label: 'Multilingual support', layer: 'script' },
-    { path: 'docs/IPA-PIPELINE-REPORT.md', label: 'IPA pipeline report', layer: 'script' },
-    { path: 'docs/espeak-integration.md', label: 'eSpeak integration', layer: 'script' },
-    { path: 'docs/pronunciation-validation.md', label: 'Pronunciation validation', layer: 'script' },
-    { path: 'docs/ipa-normalize.md', label: 'IPA normalization', layer: 'script' },
 
+    { path: 'docs/fonoran-overview.md', label: 'Overview', layer: 'language' },
     { path: 'docs/fonoran-rulebook.md', label: 'Fonoran rulebook', layer: 'language' },
+    { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
     { path: 'docs/fonoran-algorithm-roots.md', label: 'Algorithm: root sounds', layer: 'language' },
     { path: 'docs/fonoran-algorithm-compounds.md', label: 'Algorithm: compounds', layer: 'language' },
     { path: 'docs/fonoran-algorithm-translation.md', label: 'Algorithm: translation', layer: 'language' },
-    { path: 'docs/fonoran-architecture.md', label: 'Architecture map', layer: 'language' },
-    { path: 'docs/fonoran-grammar.md', label: 'Fonoran grammar', layer: 'language' },
-    { path: 'docs/fonoran.md', label: 'Fonoran guide', layer: 'language' },
-    { path: 'docs/fonoran-compound-workflow.md', label: 'Compound workflow', layer: 'language' },
-    { path: 'docs/fonoran-cli-tools.md', label: 'CLI tools reference', layer: 'language' },
-    { path: 'docs/fonoran-prefix-safe-roots.md', label: 'Prefix-safe CV / CVC roots', layer: 'language' },
     { path: 'docs/fonoran-numerals.md', label: 'Fonoran numerals', layer: 'language' },
-    { path: 'docs/fonoran-learn.md', label: 'Fonoran Learn', layer: 'language' },
-    { path: 'docs/fonoran-translator.md', label: 'Fonoran translator', layer: 'language' },
-    { path: 'docs/fonoran-interpretive-translator.md', label: 'Interpretive translator (legacy)', layer: 'language' },
-
-    { path: 'docs/archive/fonoran-gen3.md', label: 'DDA Gen 3 (archive)', layer: 'archive' },
-    { path: 'docs/archive/fonoran-gen3-1.md', label: 'Gen 3.1 phonetic layer', layer: 'archive' },
-    { path: 'docs/archive/fonoran-generator-archive.md', label: 'Generator archive', layer: 'archive' },
-    { path: 'docs/archive/fonoran-semantic-foundation.md', label: 'Semantic foundation', layer: 'archive' },
-    { path: 'docs/archive/fonoran-primitive-roots-report.md', label: 'Primitive roots report', layer: 'archive' },
-    { path: 'docs/archive/FONORA_CLEANUP_AUDIT.md', label: 'Cleanup audit (2026)', layer: 'archive' },
-    { path: 'docs/archive/FONORA_COLLISION_AUDIT.md', label: 'Collision audit', layer: 'archive' },
-    { path: 'docs/archive/IPA_VOWEL_NORMALIZATION_AUDIT.md', label: 'Vowel normalization audit', layer: 'archive' },
-    { path: 'docs/archive/FONORA_VOWEL_DECISION_REPORT.md', label: 'Vowel decision report (v2)', layer: 'archive' },
-    { path: 'docs/archive/fonoran-gap-assessment.md', label: 'Gap assessment (archive)', layer: 'archive' },
-    { path: 'docs/archive/fonoran-generation-2.md', label: 'Generation 2 pipeline', layer: 'archive' },
-    { path: 'docs/archive/fonoran-grammar-constitutional-audit.md', label: 'Grammar constitutional audit', layer: 'archive' },
-    { path: 'docs/archive/fonoran-grammar-redesign-proposal.md', label: 'Grammar redesign proposal', layer: 'archive' },
-    { path: 'docs/archive/fonoran-learning-sessions-log.md', label: 'Learning sessions log', layer: 'archive' },
-    { path: 'docs/archive/fonoran-llm-playtest-experiment.md', label: 'LLM playtest experiment', layer: 'archive' },
-    { path: 'docs/archive/fonoran-constitution.md', label: 'Constitution (retired)', layer: 'archive' },
-    { path: 'docs/archive/fonoran-philosophy.md', label: 'Philosophy (retired)', layer: 'archive' },
-    { path: 'docs/archive/research-notes/README.md', label: 'Research notes (archived)', layer: 'archive' },
   ];
 }
 

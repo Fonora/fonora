@@ -16,18 +16,7 @@
     import { labEntryMatchesQuery } from '../tools/fonoran-lab-search.js';
     import { experienceMetaFor } from '../tools/fonoran-experience-tiers.js';
     import { bindModalDismiss, setModalBackdropOpen } from '../js/modal-dismiss.js';
-    import { extractMarkdownHeadings, normalizeGrammarSource, renderMarkdown } from '../js/markdown-render.js';
-    import {
-      disconnectTocScrollSpy,
-      ensurePageChromeObserver,
-      mountDocToc,
-      scrollToPageAnchor,
-      setupContentAnchorHandlers,
-      setupTocClickHandlers,
-      setupTocScrollSpy,
-      syncPageChromeOffset,
-    } from '../js/markdown-doc-shell.js';
-    import { getStoredTheme, isDarkTheme } from '../js/theme.js';
+    import { GRAMMAR_EXAMPLE_PROMPTS, renderGrammarView } from '../js/fonoran-grammar-view.js';
     import { buildMermaidPanZoomHtml } from '../js/mermaid-pan-zoom.js';
     import { playButtonMarkup, setPlayButtonLabel, setPlayButtonText } from '../js/play-button-ui.js';
     import {
@@ -2050,7 +2039,12 @@
       const sheet = $('sheet');
       const backdrop = $('sheet-backdrop');
       setModalBackdropOpen(backdrop, true);
-      sheet.hidden = false;
+      if (sheet.hidden) {
+        sheet.hidden = false;
+        // Flush styles so the open transition animates from the closed position
+        // instead of popping straight to the open state.
+        void sheet.getBoundingClientRect();
+      }
       sheet.classList.add('open');
     }
 
@@ -2466,7 +2460,11 @@
       });
     }
 
+    // Community voting is hidden for now; flip to true to bring the vote bar back.
+    const DICT_VOTES_ENABLED = false;
+
     async function appendDictVoteBar(panel, entryKind, id) {
+      if (!DICT_VOTES_ENABLED) return;
       if (entryKind === 'particle') return;
       const sound = entryKind === 'sound' ? STATE.lab?.sounds?.find(s => s.spelling === id) : null;
       const compound = entryKind === 'compound' ? STATE.lab?.compounds?.find(c => c.id === id) : null;
@@ -2534,9 +2532,7 @@
       const local = localExplorerData(entryKind, id);
       if (!local) {
         panel.innerHTML = '<p class="empty">Not found.</p>';
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => openDictDetailSheet());
-        });
+        requestAnimationFrame(() => openDictDetailSheet());
         return;
       }
 
@@ -2553,15 +2549,19 @@
       wireDictionaryExplorerPanel(panel, dataRef, speakParts, entryKind, id);
 
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (token !== dictDetailToken) return;
-          openDictDetailSheet();
-        });
+        if (token !== dictDetailToken) return;
+        openDictDetailSheet();
       });
 
       void appendDictVoteBar(panel, entryKind, id);
 
       try {
+        // On mobile, let the sheet's open transition finish before starting the
+        // graph fetch so the network work does not compete with the animation.
+        if (dictDetailUsesSheet()) {
+          await new Promise((resolve) => setTimeout(resolve, 240));
+          if (token !== dictDetailToken) return;
+        }
         const remote = await fetchExplorerData(explorerKind, id);
         if (token !== dictDetailToken) return;
         dataRef.current = remote;
@@ -2763,10 +2763,6 @@
           '--fonoran-split-chrome-offset',
           `${headerBottom + shell.offsetHeight + gridGap}px`,
         );
-      }
-      const grammarChrome = document.querySelector('#page-grammar.active .page-toolbar-shell');
-      if (grammarChrome) {
-        syncPageChromeOffset(grammarChrome);
       }
     }
 
@@ -3629,67 +3625,46 @@
       else void renderTranslatorOutput(null);
     }
 
-    /* ---------- GRAMMAR SPEC ---------- */
-    const GRAMMAR_DOC_PATH = '../docs/fonoran-grammar.md';
+    /* ---------- GRAMMAR ---------- */
     let grammarLoadToken = 0;
-    let grammarMarkdownCache = null;
+    /** @type {{ particles: object | null, compiled: Map<string, object | null> } | null} */
+    let grammarViewData = null;
 
-    async function renderGrammarMermaidIn(rootEl) {
-      if (!rootEl) return;
-      const { ensureMermaidLoaded } = await import('../js/mermaid-render.js');
-      await ensureMermaidLoaded().catch(() => {});
-      if (!window.mermaid) return;
-      const { getMermaidInit } = await import('../js/mermaid-theme.js');
-      window.mermaid.initialize(getMermaidInit());
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-      await window.mermaid.run({ nodes: rootEl.querySelectorAll('.mermaid') });
-      const { initMermaidPanZoomIn } = await import('../js/mermaid-pan-zoom.js');
-      initMermaidPanZoomIn(rootEl, { fitMode: 'diagram' });
+    /**
+     * The visual grammar page is engine-verified: every example is a curated
+     * English prompt compiled through POST /api/fonoran/translate at first
+     * render, and the particle table comes from the grammar seed via the API.
+     * Compiled once per session, then cached.
+     */
+    async function loadGrammarViewData() {
+      if (grammarViewData) return grammarViewData;
+      const particlesPromise = api('/api/fonoran/grammar-particles').catch(() => null);
+      const compiled = new Map();
+      await Promise.all(GRAMMAR_EXAMPLE_PROMPTS.map(async (en) => {
+        try {
+          const result = await api('/api/fonoran/translate', {
+            method: 'POST',
+            body: JSON.stringify({ text: en, sourceLang: 'en' }),
+          });
+          compiled.set(en, result?.error ? null : result);
+        } catch {
+          compiled.set(en, null);
+        }
+      }));
+      grammarViewData = { particles: await particlesPromise, compiled };
+      return grammarViewData;
     }
 
     async function renderGrammar() {
-      ensureSplitStickyObserver();
-      ensurePageChromeObserver(document.getElementById('grammar-toolbar-root'));
-      syncSplitStickyOffsets();
       const body = $('grammar-body');
-      const toc = $('grammar-toc');
       if (!body) return;
       const token = ++grammarLoadToken;
-      disconnectTocScrollSpy();
-      body.innerHTML = '<p class="page-doc-loading sans">Loading specification…</p>';
-      mountDocToc(toc, []);
-      try {
-        const res = await fetch(GRAMMAR_DOC_PATH, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`Could not load grammar specification (HTTP ${res.status})`);
-        const markdown = normalizeGrammarSource(await res.text());
-        grammarMarkdownCache = markdown;
-        if (token !== grammarLoadToken) return;
-        const headings = extractMarkdownHeadings(markdown, { minLevel: 2, maxLevel: 3 });
-        mountDocToc(toc, headings);
-        body.innerHTML = renderMarkdown(markdown, { docPath: 'docs/fonoran-grammar.md', grammar: true });
-        await renderGrammarMermaidIn(body);
-        if (token !== grammarLoadToken) return;
-        syncSplitStickyOffsets();
-        syncPageChromeOffset(document.getElementById('grammar-toolbar-root'));
-        const onGrammarAnchor = (anchorId) => {
-          scrollToPageAnchor(document.getElementById(anchorId));
-          history.replaceState(null, '', `${window.location.pathname}#grammar`);
-        };
-        setupContentAnchorHandlers(body, onGrammarAnchor);
-        setupTocClickHandlers(onGrammarAnchor);
-        setupTocScrollSpy(body);
-      } catch (e) {
-        if (token !== grammarLoadToken) return;
-        body.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`;
-        mountDocToc(toc, []);
+      if (!grammarViewData) {
+        body.innerHTML = '<p class="g-loading sans">Compiling live examples…</p>';
       }
-    }
-
-    function refreshGrammarTheme() {
-      const body = $('grammar-body');
-      if (!body || !grammarMarkdownCache || STATE.page !== 'grammar') return;
-      body.innerHTML = renderMarkdown(grammarMarkdownCache, { docPath: 'docs/fonoran-grammar.md', grammar: true });
-      void renderGrammarMermaidIn(body);
+      const data = await loadGrammarViewData();
+      if (token !== grammarLoadToken) return;
+      renderGrammarView(body, data);
     }
 
     /* ---------- HEALTH + TIMELINE ---------- */
@@ -3828,7 +3803,7 @@
       scrollPageTop();
       requestAnimationFrame(() => {
         scrollPageTop();
-        if (name === 'dictionary' || name === 'grammar') {
+        if (name === 'dictionary') {
           syncSplitStickyOffsets();
           requestAnimationFrame(syncSplitStickyOffsets);
         }
@@ -4037,10 +4012,6 @@
       });
       wireLander();
       window.addEventListener('resize', syncSplitStickyOffsets);
-      document.addEventListener('fonora-themechange', refreshGrammarTheme);
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        if (getStoredTheme() === 'system') refreshGrammarTheme();
-      });
       await dataReady;
       renderActivePage();
       syncSplitStickyOffsets();

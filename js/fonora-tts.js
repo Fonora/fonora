@@ -170,6 +170,7 @@ function sleep(ms) {
  * @param {'piper'|'espeak'|'auto'} [options.engine='piper'] — `auto` is Piper-only (no eSpeak fallback)
  * @param {string} [options.piperVoice]
  * @param {string} [options.espeakVoice='en-us']
+ * @param {(index: number, word: object) => number} [options.pauseMsAfterWord] extra pause (e.g. sentence punctuation) after a word
  */
 export async function speakFonoraPhrase(text, rules, options = {}) {
   const {
@@ -178,6 +179,7 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
     espeakVoice = 'en-us',
     playbackRate = 1,
     wordGapMs = 0,
+    pauseMsAfterWord,
     onWordStart,
     onWordEnd,
     shouldCancel = () => false,
@@ -253,10 +255,13 @@ export async function speakFonoraPhrase(text, rules, options = {}) {
       return { words, spoken, skipped, cancelled: true };
     }
 
-    if (wordGapMs > 0 && i < words.length - 1) {
-      await sleep(wordGapMs);
-      if (shouldCancel()) {
-        return { words, spoken, skipped, cancelled: true };
+    if (i < words.length - 1) {
+      const gapMs = wordGapMs + (pauseMsAfterWord?.(i, word) || 0);
+      if (gapMs > 0) {
+        await sleep(gapMs);
+        if (shouldCancel()) {
+          return { words, spoken, skipped, cancelled: true };
+        }
       }
     }
   }

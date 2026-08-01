@@ -811,10 +811,10 @@ export function runTests(options) {
     assert(githubDocUrl('docs/foo.md').includes('github.com/Fonora/fonora/blob/main/docs/foo.md'));
     assert(docViewerHref('docs/foo.md') === '/?path=docs%2Ffoo.md');
     assert(docViewerHref('docs/foo.md#section') === '/?path=docs%2Ffoo.md#section');
-    assert(docViewerHref('docs/platform-overview.md') === '/#docs');
-    assert(parseDocFromLocation({ pathname: '/', hash: '#docs', search: '' })?.path === 'docs/platform-overview.md');
+    assert(docViewerHref('docs/fonoran-rulebook.md') === '/#docs');
+    assert(parseDocFromLocation({ pathname: '/', hash: '#docs', search: '' })?.path === 'docs/fonoran-rulebook.md');
     assert(parseDocFromLocation({ pathname: '/', hash: '', search: '?path=docs%2Flanguage-rules.md' })?.path === 'docs/language-rules.md');
-    assert(parseDocFromLocation({ pathname: '/docs', hash: '', search: '' })?.path === 'docs/platform-overview.md');
+    assert(parseDocFromLocation({ pathname: '/docs', hash: '', search: '' })?.path === 'docs/fonoran-rulebook.md');
   });
 
   t('markdown renderer handles headings and tables', () => {

@@ -82,8 +82,12 @@ export function buildPlatformPipelineData(rules, toScript, lexiconExample = null
  */
 export async function fetchPlatformLexiconExample(conceptId = 'river') {
   const wanted = String(conceptId || 'river').toLowerCase();
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = controller ? setTimeout(() => controller.abort(), 2000) : null;
   try {
-    const listRes = await fetch(`/api/fonoran/words?q=${encodeURIComponent(wanted)}`);
+    const listRes = await fetch(`/api/fonoran/words?q=${encodeURIComponent(wanted)}`, {
+      signal: controller?.signal,
+    });
     if (!listRes.ok) return null;
     const list = await listRes.json();
     const hit = (list.items ?? []).find((item) => {
@@ -93,7 +97,9 @@ export async function fetchPlatformLexiconExample(conceptId = 'river') {
     });
     if (!hit?.ref) return null;
 
-    const detailRes = await fetch(`/api/fonoran/words/${encodeURIComponent(hit.ref)}`);
+    const detailRes = await fetch(`/api/fonoran/words/${encodeURIComponent(hit.ref)}`, {
+      signal: controller?.signal,
+    });
     if (!detailRes.ok) return null;
     const detail = await detailRes.json();
     const direct = detail.compound?.derivation?.direct
@@ -113,6 +119,8 @@ export async function fetchPlatformLexiconExample(conceptId = 'river') {
     };
   } catch {
     return null;
+  } finally {
+    if (timer) clearTimeout(timer);
   }
 }
 
