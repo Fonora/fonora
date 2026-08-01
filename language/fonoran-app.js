@@ -2,7 +2,6 @@
     import { checkCompoundBoundary, segmentCompound, pronounceabilityScore, rootSimilarity } from '../tools/fonoran-gen3-readability.js';
     import { romanToFonoraScript, romanWordToFonoraScript, romanTextToFonoraScript, pauseMsForPunctuation } from '../tools/fonoran-fonora-bridge.js';
     import { buildPlaybackFromTokens, isSkippablePlaybackToken, normalizeTokenParts, encodePartsToScript } from '../js/fonoran-playback-build.js';
-    import { translateIpaPhrase } from '../js/ipa-pipeline.js';
     import { createKeyboardDockController } from '../js/fonora-keyboard-dock.js';
     import { mountAlignment } from '../js/fonoran-alignment-view.js';
     import { loadFonoranBootstrap } from '../js/fonoran-bootstrap.js';
@@ -10,29 +9,14 @@
     import { loadLanguageRules } from '../js/load-language-rules.js';
     import { setActiveLanguageRulesBundle } from '../js/fonora-config.js';
     import { registerIpaVowelMap, setActiveIpaVowelMap, registerConsonantMapFromRules } from '../js/ipa-normalize.js';
-    import { initEspeak, isEspeakReady } from '../js/ipa.js';
-    import { speakFonoraPhrase, cancelSpeech, setReaderWordSources } from '../js/fonora-tts.js';
-    import { getSamplePlaybackPlan, getPiperVoiceForLang, initPiperAudio } from '../js/piper-audio.js';
     import { resolveEspeakVoice, loadLanguagePreferences } from '../js/language-preferences.js';
-    import { primeAudioContext } from '../js/espeak-audio.js';
     import { initUniversalNav, setActiveTab, setFonoranUndoDisabled, setFonoranAuth, setNavSelectHandlers } from '../js/universal-nav.js';
     import { mountSiteFooter } from '../js/site-footer.js';
     import { buildComposeScenesFromLab, mountComposeShowcase } from './compose-showcase.js';
     import { labEntryMatchesQuery } from '../tools/fonoran-lab-search.js';
     import { experienceMetaFor } from '../tools/fonoran-experience-tiers.js';
     import { bindModalDismiss, setModalBackdropOpen } from '../js/modal-dismiss.js';
-    import { extractMarkdownHeadings, normalizeGrammarSource, renderMarkdown } from '../js/markdown-render.js';
-    import {
-      disconnectTocScrollSpy,
-      ensurePageChromeObserver,
-      mountDocToc,
-      scrollToPageAnchor,
-      setupContentAnchorHandlers,
-      setupTocClickHandlers,
-      setupTocScrollSpy,
-      syncPageChromeOffset,
-    } from '../js/markdown-doc-shell.js';
-    import { getStoredTheme, isDarkTheme } from '../js/theme.js';
+    import { GRAMMAR_EXAMPLE_PROMPTS, renderGrammarView } from '../js/fonoran-grammar-view.js';
     import { buildMermaidPanZoomHtml } from '../js/mermaid-pan-zoom.js';
     import { playButtonMarkup, setPlayButtonLabel, setPlayButtonText } from '../js/play-button-ui.js';
     import {
@@ -42,6 +26,54 @@
       toggleFilterKey,
       UI_TIER_LABELS,
     } from './lab-filters.js';
+
+    /**
+     * Speech engines (eSpeak JS glue ~294 KB gzip, Piper, IPA pipeline) stay off the
+     * critical path until someone engages or presses Listen. WASM/models are already
+     * deferred further by warmOnEngage / first speak inside those modules.
+     * @type {Promise<{
+     *   initEspeak: typeof import('../js/ipa.js').initEspeak,
+     *   isEspeakReady: typeof import('../js/ipa.js').isEspeakReady,
+     *   speakFonoraPhrase: typeof import('../js/fonora-tts.js').speakFonoraPhrase,
+     *   cancelSpeech: typeof import('../js/fonora-tts.js').cancelSpeech,
+     *   setReaderWordSources: typeof import('../js/fonora-tts.js').setReaderWordSources,
+     *   getSamplePlaybackPlan: typeof import('../js/piper-audio.js').getSamplePlaybackPlan,
+     *   getPiperVoiceForLang: typeof import('../js/piper-audio.js').getPiperVoiceForLang,
+     *   initPiperAudio: typeof import('../js/piper-audio.js').initPiperAudio,
+     *   primeAudioContext: typeof import('../js/espeak-audio.js').primeAudioContext,
+     *   translateIpaPhrase: typeof import('../js/ipa-pipeline.js').translateIpaPhrase,
+     * }> | null}
+     */
+    let ttsModsPromise = null;
+    /** @type {Awaited<NonNullable<typeof ttsModsPromise>> | null} */
+    let ttsMods = null;
+
+    function loadTts() {
+      if (!ttsModsPromise) {
+        ttsModsPromise = Promise.all([
+          import('../js/ipa.js'),
+          import('../js/fonora-tts.js'),
+          import('../js/piper-audio.js'),
+          import('../js/espeak-audio.js'),
+          import('../js/ipa-pipeline.js'),
+        ]).then(([ipa, fonoraTts, piper, espeak, ipaPipeline]) => {
+          ttsMods = {
+            initEspeak: ipa.initEspeak,
+            isEspeakReady: ipa.isEspeakReady,
+            speakFonoraPhrase: fonoraTts.speakFonoraPhrase,
+            cancelSpeech: fonoraTts.cancelSpeech,
+            setReaderWordSources: fonoraTts.setReaderWordSources,
+            getSamplePlaybackPlan: piper.getSamplePlaybackPlan,
+            getPiperVoiceForLang: piper.getPiperVoiceForLang,
+            initPiperAudio: piper.initPiperAudio,
+            primeAudioContext: espeak.primeAudioContext,
+            translateIpaPhrase: ipaPipeline.translateIpaPhrase,
+          };
+          return ttsMods;
+        });
+      }
+      return ttsModsPromise;
+    }
 
     const AUTH = {
       required: false,
@@ -276,7 +308,7 @@
     }
 
     function cancelAllSpeech() {
-      cancelSpeech();
+      ttsMods?.cancelSpeech?.();
       cancelBrowserSpeech();
     }
 
@@ -322,11 +354,12 @@
       const rules = await ensureRules();
       const { phrase } = romanToFonoraScript(list, rules);
       if (!phrase) throw new Error('no script');
-      cancelSpeech();
-      const plan = getSamplePlaybackPlan(lang);
-      await speakFonoraPhrase(phrase, rules, plan ?? {
+      const tts = await loadTts();
+      tts.cancelSpeech();
+      const plan = tts.getSamplePlaybackPlan(lang);
+      await tts.speakFonoraPhrase(phrase, rules, plan ?? {
         engine: 'piper',
-        piperVoice: getPiperVoiceForLang('en'),
+        piperVoice: tts.getPiperVoiceForLang('en'),
         espeakVoice: resolveEspeakVoice(lang, { englishDialect: loadLanguagePreferences().englishDialect }),
       });
     }
@@ -358,8 +391,9 @@
       const cache = new Map();
       if (!englishWords.length || !rules) return cache;
 
-      const init = await initEspeak();
-      if (!init?.ok || !isEspeakReady()) return cache;
+      const tts = await loadTts();
+      const init = await tts.initEspeak();
+      if (!init?.ok || !tts.isEspeakReady()) return cache;
 
       const pipelineOptions = {
         vowelMap: STATE.rulesBundle?.ipaVowelMap,
@@ -368,7 +402,7 @@
       for (const eng of englishWords) {
         try {
           // Same entry point as js/app.js applyTranslate → translateIpaPhrase.
-          const phrase = await translateIpaPhrase(eng, rules, 'en', pipelineOptions);
+          const phrase = await tts.translateIpaPhrase(eng, rules, 'en', pipelineOptions);
           const word = phrase?.words?.[0];
           if (!word?.symbols) continue;
           const ipa = String(word.ipa || '').replace(/^\/+|\/+$/g, '').trim();
@@ -495,13 +529,17 @@
 
     async function load(opts = {}) {
       try {
-        await ensureRules();
         STATE.health = null;
         STATE.healthKey = null;
         STATE.lexicon = null;
-        const bootstrap = await loadFonoranBootstrap({ refresh: true });
+        const [, bootstrap] = await Promise.all([
+          ensureRules(),
+          loadFonoranBootstrap({ refresh: Boolean(opts.refresh) }),
+        ]);
         STATE.lab = bootstrap.lab;
-        STATE.lexicon = bootstrap.lexicon ?? null;
+        // Lexicon is fetched on demand (Dictionary); keeping it off bootstrap
+        // shaves the About critical path.
+        STATE.lexicon = null;
         if (bootstrap.health) {
           STATE.health = bootstrap.health;
           STATE.healthKey = bootstrap.lab?.updated_at ?? bootstrap.health.bucket_updated_at ?? null;
@@ -509,8 +547,10 @@
         $('load-error').hidden = true;
         setFonoranUndoDisabled(!STATE.lab.can_undo || !canWrite());
         warmOnEngage(() => {
-          const piperVoice = getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
-          initPiperAudio(piperVoice).catch(() => {});
+          loadTts().then((tts) => {
+            const piperVoice = tts.getPiperVoiceForLang(loadLanguagePreferences().lang) || 'en_US-lessac-medium';
+            tts.initPiperAudio(piperVoice).catch(() => {});
+          }).catch(() => {});
         });
         if (!opts.skipRender) renderActivePage();
       } catch { $('load-error').hidden = false; }
@@ -1999,7 +2039,12 @@
       const sheet = $('sheet');
       const backdrop = $('sheet-backdrop');
       setModalBackdropOpen(backdrop, true);
-      sheet.hidden = false;
+      if (sheet.hidden) {
+        sheet.hidden = false;
+        // Flush styles so the open transition animates from the closed position
+        // instead of popping straight to the open state.
+        void sheet.getBoundingClientRect();
+      }
       sheet.classList.add('open');
     }
 
@@ -2415,7 +2460,11 @@
       });
     }
 
+    // Community voting is hidden for now; flip to true to bring the vote bar back.
+    const DICT_VOTES_ENABLED = false;
+
     async function appendDictVoteBar(panel, entryKind, id) {
+      if (!DICT_VOTES_ENABLED) return;
       if (entryKind === 'particle') return;
       const sound = entryKind === 'sound' ? STATE.lab?.sounds?.find(s => s.spelling === id) : null;
       const compound = entryKind === 'compound' ? STATE.lab?.compounds?.find(c => c.id === id) : null;
@@ -2483,9 +2532,7 @@
       const local = localExplorerData(entryKind, id);
       if (!local) {
         panel.innerHTML = '<p class="empty">Not found.</p>';
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => openDictDetailSheet());
-        });
+        requestAnimationFrame(() => openDictDetailSheet());
         return;
       }
 
@@ -2502,15 +2549,19 @@
       wireDictionaryExplorerPanel(panel, dataRef, speakParts, entryKind, id);
 
       requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          if (token !== dictDetailToken) return;
-          openDictDetailSheet();
-        });
+        if (token !== dictDetailToken) return;
+        openDictDetailSheet();
       });
 
       void appendDictVoteBar(panel, entryKind, id);
 
       try {
+        // On mobile, let the sheet's open transition finish before starting the
+        // graph fetch so the network work does not compete with the animation.
+        if (dictDetailUsesSheet()) {
+          await new Promise((resolve) => setTimeout(resolve, 240));
+          if (token !== dictDetailToken) return;
+        }
         const remote = await fetchExplorerData(explorerKind, id);
         if (token !== dictDetailToken) return;
         dataRef.current = remote;
@@ -2712,10 +2763,6 @@
           '--fonoran-split-chrome-offset',
           `${headerBottom + shell.offsetHeight + gridGap}px`,
         );
-      }
-      const grammarChrome = document.querySelector('#page-grammar.active .page-toolbar-shell');
-      if (grammarChrome) {
-        syncPageChromeOffset(grammarChrome);
       }
     }
 
@@ -3011,15 +3058,16 @@
       return result?.detected_lang ?? result?.sourceLang ?? 'en';
     }
 
-    function getTranslatorPlaybackOptions(result) {
+    async function getTranslatorPlaybackOptions(result) {
       const lang = readTranslatorPlaybackLang(result);
       const prefs = loadLanguagePreferences();
-      const plan = getSamplePlaybackPlan(lang);
+      const tts = await loadTts();
+      const plan = tts.getSamplePlaybackPlan(lang);
       const playbackRate = readTranslatorSpeed();
       if (plan) return { ...plan, playbackRate };
       return {
         engine: 'piper',
-        piperVoice: getPiperVoiceForLang('en'),
+        piperVoice: tts.getPiperVoiceForLang('en'),
         espeakVoice: resolveEspeakVoice(lang, { englishDialect: prefs.englishDialect }),
         playbackRate,
       };
@@ -3050,7 +3098,8 @@
     async function speakTranslatorResult(result) {
       if (!result?.tokens?.some(t => !isSkippablePlaybackToken(t)) || STATE.translatorPlaying) return;
       await ensureRules();
-      primeAudioContext();
+      const tts = await loadTts();
+      tts.primeAudioContext();
 
       const syllableBySyllable = $('tr-syllable-by-syllable')?.checked === true;
       const playback = resolveTranslatorPlayback(result, { syllableBySyllable });
@@ -3072,7 +3121,7 @@
 
       try {
         cancelAllSpeech();
-        const playbackOpts = getTranslatorPlaybackOptions(result);
+        const playbackOpts = await getTranslatorPlaybackOptions(result);
         const sourceBcp47 = sourceLangToBcp47(readTranslatorPlaybackLang(result));
         const wordGapMs = syllableBySyllable
           ? Math.round(250 + (1 - playbackOpts.playbackRate) * 450)
@@ -3097,9 +3146,9 @@
           if (seg.kind === 'english') {
             await speakAsync(seg.text, sourceBcp47);
           } else {
-            setReaderWordSources([seg.wordSource]);
+            tts.setReaderWordSources([seg.wordSource]);
             try {
-              await speakFonoraPhrase(seg.phrase, STATE.rules, {
+              await tts.speakFonoraPhrase(seg.phrase, STATE.rules, {
                 ...playbackOpts,
                 wordGapMs: 0,
                 shouldCancel: () => STATE.translatorCancel,
@@ -3122,7 +3171,7 @@
         STATE.translatorPlaying = false;
         STATE.translatorCancel = false;
         highlightTranslatorToken(-1);
-        setReaderWordSources(null);
+        ttsMods?.setReaderWordSources?.(null);
         clearTranslatorSpeakingHighlight();
         if (playBtn) { playBtn.disabled = false; setPlayButtonLabel(playBtn, 'Listen'); }
         if (stopBtn) stopBtn.disabled = true;
@@ -3576,67 +3625,46 @@
       else void renderTranslatorOutput(null);
     }
 
-    /* ---------- GRAMMAR SPEC ---------- */
-    const GRAMMAR_DOC_PATH = '../docs/fonoran-grammar.md';
+    /* ---------- GRAMMAR ---------- */
     let grammarLoadToken = 0;
-    let grammarMarkdownCache = null;
+    /** @type {{ particles: object | null, compiled: Map<string, object | null> } | null} */
+    let grammarViewData = null;
 
-    async function renderGrammarMermaidIn(rootEl) {
-      if (!rootEl) return;
-      const { ensureMermaidLoaded } = await import('../js/mermaid-render.js');
-      await ensureMermaidLoaded().catch(() => {});
-      if (!window.mermaid) return;
-      const { getMermaidInit } = await import('../js/mermaid-theme.js');
-      window.mermaid.initialize(getMermaidInit());
-      await new Promise((resolve) => requestAnimationFrame(resolve));
-      await window.mermaid.run({ nodes: rootEl.querySelectorAll('.mermaid') });
-      const { initMermaidPanZoomIn } = await import('../js/mermaid-pan-zoom.js');
-      initMermaidPanZoomIn(rootEl, { fitMode: 'diagram' });
+    /**
+     * The visual grammar page is engine-verified: every example is a curated
+     * English prompt compiled through POST /api/fonoran/translate at first
+     * render, and the particle table comes from the grammar seed via the API.
+     * Compiled once per session, then cached.
+     */
+    async function loadGrammarViewData() {
+      if (grammarViewData) return grammarViewData;
+      const particlesPromise = api('/api/fonoran/grammar-particles').catch(() => null);
+      const compiled = new Map();
+      await Promise.all(GRAMMAR_EXAMPLE_PROMPTS.map(async (en) => {
+        try {
+          const result = await api('/api/fonoran/translate', {
+            method: 'POST',
+            body: JSON.stringify({ text: en, sourceLang: 'en' }),
+          });
+          compiled.set(en, result?.error ? null : result);
+        } catch {
+          compiled.set(en, null);
+        }
+      }));
+      grammarViewData = { particles: await particlesPromise, compiled };
+      return grammarViewData;
     }
 
     async function renderGrammar() {
-      ensureSplitStickyObserver();
-      ensurePageChromeObserver(document.getElementById('grammar-toolbar-root'));
-      syncSplitStickyOffsets();
       const body = $('grammar-body');
-      const toc = $('grammar-toc');
       if (!body) return;
       const token = ++grammarLoadToken;
-      disconnectTocScrollSpy();
-      body.innerHTML = '<p class="page-doc-loading sans">Loading specification…</p>';
-      mountDocToc(toc, []);
-      try {
-        const res = await fetch(GRAMMAR_DOC_PATH, { cache: 'no-store' });
-        if (!res.ok) throw new Error(`Could not load grammar specification (HTTP ${res.status})`);
-        const markdown = normalizeGrammarSource(await res.text());
-        grammarMarkdownCache = markdown;
-        if (token !== grammarLoadToken) return;
-        const headings = extractMarkdownHeadings(markdown, { minLevel: 2, maxLevel: 3 });
-        mountDocToc(toc, headings);
-        body.innerHTML = renderMarkdown(markdown, { docPath: 'docs/fonoran-grammar.md', grammar: true });
-        await renderGrammarMermaidIn(body);
-        if (token !== grammarLoadToken) return;
-        syncSplitStickyOffsets();
-        syncPageChromeOffset(document.getElementById('grammar-toolbar-root'));
-        const onGrammarAnchor = (anchorId) => {
-          scrollToPageAnchor(document.getElementById(anchorId));
-          history.replaceState(null, '', `${window.location.pathname}#grammar`);
-        };
-        setupContentAnchorHandlers(body, onGrammarAnchor);
-        setupTocClickHandlers(onGrammarAnchor);
-        setupTocScrollSpy(body);
-      } catch (e) {
-        if (token !== grammarLoadToken) return;
-        body.innerHTML = `<p class="empty">${escapeHtml(e.message)}</p>`;
-        mountDocToc(toc, []);
+      if (!grammarViewData) {
+        body.innerHTML = '<p class="g-loading sans">Compiling live examples…</p>';
       }
-    }
-
-    function refreshGrammarTheme() {
-      const body = $('grammar-body');
-      if (!body || !grammarMarkdownCache || STATE.page !== 'grammar') return;
-      body.innerHTML = renderMarkdown(grammarMarkdownCache, { docPath: 'docs/fonoran-grammar.md', grammar: true });
-      void renderGrammarMermaidIn(body);
+      const data = await loadGrammarViewData();
+      if (token !== grammarLoadToken) return;
+      renderGrammarView(body, data);
     }
 
     /* ---------- HEALTH + TIMELINE ---------- */
@@ -3644,7 +3672,7 @@
       if (!canWrite()) { toast('Sign in required'); return; }
       const res = await api('/api/fonoran/lab/undo', { method: 'POST', body: '{}' });
       toast(res.reverted ? `Undid: ${res.label}` : 'Nothing to undo');
-      await load();
+      await load({ refresh: true });
     }
 
     async function renderHealth() {
@@ -3775,7 +3803,7 @@
       scrollPageTop();
       requestAnimationFrame(() => {
         scrollPageTop();
-        if (name === 'dictionary' || name === 'grammar') {
+        if (name === 'dictionary') {
           syncSplitStickyOffsets();
           requestAnimationFrame(syncSplitStickyOffsets);
         }
@@ -3941,6 +3969,8 @@
       || document.documentElement.getAttribute('data-fonora-page')
       || 'home';
     const initialPage = isWordManagerPage(initialPageRaw) ? 'home' : initialPageRaw;
+    // Start lab+health while chrome wires; load() reuses the shared promise.
+    loadFonoranBootstrap();
     setNavSelectHandlers({
       onPage: (page) => switchPage(page),
       onSignOut: () => { signOut(); },
@@ -3955,6 +3985,8 @@
 
     async function boot() {
       STATE.page = initialPage;
+      // Overlap public lab fetch with auth — About does not need a session.
+      const dataReady = load({ skipRender: true });
       await refreshAuth();
       handleAuthUrlErrors();
       updateAuthGate();
@@ -3980,11 +4012,8 @@
       });
       wireLander();
       window.addEventListener('resize', syncSplitStickyOffsets);
-      document.addEventListener('fonora-themechange', refreshGrammarTheme);
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-        if (getStoredTheme() === 'system') refreshGrammarTheme();
-      });
-      await load();
+      await dataReady;
+      renderActivePage();
       syncSplitStickyOffsets();
     }
 

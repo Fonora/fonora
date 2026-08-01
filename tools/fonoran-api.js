@@ -110,13 +110,12 @@ export async function readJsonBody(req) {
 }
 
 async function getBootstrap() {
+  // Lab + health only. Lexicon is a separate `/api/fonoran/lexicon` fetch so
+  // About/Learn cold paths are not blocked on English browse metadata.
   const bucket = await loadBucket();
   const lab = await getLab(bucket);
-  const [health, lexicon] = await Promise.all([
-    getHealth(bucket),
-    loadEnglishLexicon(lab),
-  ]);
-  return { lab, health, lexicon };
+  const health = await getHealth(bucket);
+  return { lab, health };
 }
 
 export async function handleFonoranApi(req, res, pathname, method) {

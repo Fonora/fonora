@@ -188,10 +188,19 @@ async function renderPlatformShowcase() {
     platformShowcaseCleanup = null;
   }
   const toScript = (parts) => romanToFonoraScript(parts, rules).phrase ?? '';
+
+  // Mount immediately with the seed fallback so About never waits on the words API.
+  const initial = buildPlatformPipelineData(rules, toScript, null);
+  platformShowcaseCleanup = mountPlatformShowcase(root, { data: initial });
+
   const lexiconExample = await fetchPlatformLexiconExample('river');
-  if (token !== platformShowcaseToken) return;
-  const data = buildPlatformPipelineData(rules, toScript, lexiconExample);
-  platformShowcaseCleanup = mountPlatformShowcase(root, { data });
+  if (token !== platformShowcaseToken || !lexiconExample) return;
+  if (platformShowcaseCleanup) {
+    platformShowcaseCleanup();
+    platformShowcaseCleanup = null;
+  }
+  const live = buildPlatformPipelineData(rules, toScript, lexiconExample);
+  platformShowcaseCleanup = mountPlatformShowcase(root, { data: live });
 }
 
 function renderHomeHowItWorks() {
@@ -846,7 +855,8 @@ function setHashForTab(tabId) {
 
   if (isPlatformTab(tabId)) {
     if (tabId === 'platform') {
-      const next = `/${window.location.search}`;
+      // Drop docs `?path=` (and any other search) so About is a clean `/`.
+      const next = '/';
       if (`${window.location.pathname}${window.location.search}${window.location.hash}` !== next) {
         history.replaceState(null, '', next);
       }

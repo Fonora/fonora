@@ -1,6 +1,6 @@
 # Grammar
 
-> **Read [the Fonoran rulebook](fonoran-rulebook.md) first** — the three layers and all thirteen rules on one page. This document is the detailed syntax reference for layer 3. Why grammar lives in closed-class particles: rulebook rule 9 and `data/fonoran-grammar-particles.json`.
+> **Detailed syntax reference for layer 3.** Read [the Fonoran rulebook](fonoran-rulebook.md) first.
 
 > **Status**: Living specification. Authoritative syntax reference for humans and the Fonoran Translator. Sections marked *Under Development* are intentional placeholders.
 

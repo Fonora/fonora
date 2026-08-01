@@ -81,7 +81,7 @@ The lab bucket still exists, but it is derived rather than authoritative: `fonor
 
 ## How it reaches the browser
 
-The language is small; getting it to a page was not. A first visit to `/language` used to transfer **48 MB**, and a first visit to the home page **560 MB**. Both now sit around 600 KB and 9 MB. Nothing about the language changed, so it is worth naming what did, because every one of these was invisible from the import graph above.
+The language is small; getting it to a page was not. A first visit to `/language` used to transfer **48 MB**, and a first visit to the home page **560 MB**. Compression, ETags, deferred Piper, and a shared bootstrap cut that to roughly 600 KB — then a follow-up removed the remaining critical-path dead weight. Nothing about the language changed, so it is worth naming what did, because every one of these was invisible from the import graph above.
 
 | What was wrong | What it cost | Where it is handled now |
 | --- | --- | --- |
@@ -89,10 +89,13 @@ The language is small; getting it to a page was not. A first visit to `/language
 | `Cache-Control: no-cache` with no validator | Every asset re-downloaded in full on every visit | ETag and 304 in `server.js` |
 | `/vendor/` treated as volatile app code | 44 MB speech bundle revalidated per page load | Vendored bundles are version-pinned, so they are `immutable` |
 | Speech engines warmed during page setup | 44 MB in front of first paint, for everyone | `js/warm-on-engage.js` waits for a real visitor |
-| Seven modules each fetching the bootstrap | The same 1.1 MB fetched 18 times per load | `js/fonoran-bootstrap.js`, one shared promise |
+| Seven modules each fetching the bootstrap | The same payload fetched many times per load | `js/fonoran-bootstrap.js`, one shared promise |
 | eSpeak re-instantiated per phrase | 18 MB fetched and compiled ~31 times | Compiled once in `js/ipa.js`, reused per call |
+| eSpeak **JS glue** static-imported by `/language` | ~294 KB gzip before About could finish | Dynamic `import()` in `language/fonoran-app.js` via `loadTts()` on engage / Listen |
+| Bootstrap bundled English lexicon | Extra JSON on every cold `/language` | Lab + health only; lexicon is `/api/fonoran/lexicon` when Dictionary needs it |
+| Auth then bootstrap in series | Idle wait before About showcase | `boot()` overlaps `refreshAuth()` with `load({ skipRender: true })` |
 
-Two lessons generalise. **Caching a result is not caching a request**: the bootstrap and the course phrases both had result caches, and both still fetched many times over, because the callers all start together during page setup and every one of them looks before the first answer arrives. The fix is to cache the promise. And **a cache header without a validator is not a cache**: `no-cache` means revalidate, but with no ETag to revalidate against, it means re-send everything.
+Three lessons generalise. **Caching a result is not caching a request**: the bootstrap and the course phrases both had result caches, and both still fetched many times over, because the callers all start together during page setup and every one of them looks before the first answer arrives. The fix is to cache the promise. **A cache header without a validator is not a cache**: `no-cache` means revalidate, but with no ETag to revalidate against, it means re-send everything. And **deferring init is not deferring download**: Piper waited for a pointer event, but the eSpeak Emscripten glue was still a static import on the Language entry module, so the browser paid ~300 KB gzip before first paint anyway.
 
 ## The three pipelines, in detail
 

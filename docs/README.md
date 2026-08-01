@@ -44,6 +44,7 @@ Read in this order for a new contributor:
 
 | # | Topic | Document |
 | --- | --- | --- |
+| 0 | **Overview** — thirteen rules at a glance, with links | [fonoran-overview.md](fonoran-overview.md) |
 | 1 | **Rulebook** — the whole language, three layers, 13 rules. Start here | [fonoran-rulebook.md](fonoran-rulebook.md) |
 | 2 | **Algorithm: how a concept gets its sound** | [fonoran-algorithm-roots.md](fonoran-algorithm-roots.md) |
 | 3 | **Algorithm: how a compound is chosen** | [fonoran-algorithm-compounds.md](fonoran-algorithm-compounds.md) |

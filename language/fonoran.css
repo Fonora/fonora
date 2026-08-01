@@ -1488,6 +1488,8 @@
         border-radius:12px 12px 0 0;
         transform:translateY(100%);
         padding-bottom:env(safe-area-inset-bottom);
+        /* Composite the slide-in so mobile Safari animates it off the main thread. */
+        will-change:transform, opacity;
       }
       .sheet.explorer-sheet.open {
         transform:translateY(0);
@@ -2023,6 +2025,11 @@
     /* Script row and gloss row */
     .tr-output-row {
       display:flex; align-items:flex-start; gap:0.5rem; margin-bottom:0.75rem;
+    }
+    /* Divider between the script row and the roman/breakdown row (matches the surface's bottom divider). */
+    .tr-output-row--script {
+      border-bottom:1px solid var(--border);
+      padding-bottom:0.65rem;
     }
     [data-script-hidden] .tr-output-row--script { display:none; }
     [data-breakdown-hidden] .tr-gloss__role,
@@ -3404,6 +3411,213 @@
     }
     .wm-publish-panel__label { font-weight: 600; }
     .wm-publish-panel__hint { color: var(--muted); flex: 1 1 12rem; }
+
+    /* ── Grammar view ─────────────────────────────────────────────────────────
+       The visual grammar page: role-coloured word chips over live sentences
+       compiled by the translator. Markup built by js/fonoran-grammar-view.js.
+
+       Role hues are one per skeleton slot (not per word like the alignment
+       view), reusing the same earthy palette so the two surfaces read as one
+       family. Dark mode lightens each hue. */
+
+    .grammar-page__header {
+      display:flex; flex-wrap:wrap; align-items:flex-start; justify-content:space-between;
+      gap:0.75rem 1.5rem;
+      margin-bottom:2rem;
+    }
+    .grammar-page__title {
+      margin:0 0 0.3rem;
+      font-size:clamp(1.75rem, 3vw, 2.15rem);
+      font-weight:600; letter-spacing:-0.02em; line-height:1.05;
+      color:var(--text-heading, var(--text));
+    }
+    .grammar-page__lead { margin:0; max-width:62ch; }
+    .grammar-page__doc-link { flex-shrink:0; margin-top:0.35rem; }
+
+    .g-loading { color:var(--muted); }
+
+    .g-view {
+      --g-hue-actor:#2f6b46;
+      --g-hue-action:#a03a36;
+      --g-hue-target:#1f6f7d;
+      --g-hue-place:#8a6220;
+      --g-hue-time:#6f4a89;
+      --g-hue-marker:#a2552c;
+      --g-hue-modifier:#77706a;
+      --g-hue-concept:#77706a;
+      display:flex; flex-direction:column;
+      padding-bottom:1rem;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme='light']) .g-view {
+        --g-hue-actor:#7fce9f;
+        --g-hue-action:#f0a09c;
+        --g-hue-target:#6fc7d4;
+        --g-hue-place:#dcb162;
+        --g-hue-time:#c4a0e0;
+        --g-hue-marker:#e39b6f;
+        --g-hue-modifier:#9d968e;
+        --g-hue-concept:#9d968e;
+      }
+    }
+
+    :root[data-theme='dark'] .g-view {
+      --g-hue-actor:#7fce9f;
+      --g-hue-action:#f0a09c;
+      --g-hue-target:#6fc7d4;
+      --g-hue-place:#dcb162;
+      --g-hue-time:#c4a0e0;
+      --g-hue-marker:#e39b6f;
+      --g-hue-modifier:#9d968e;
+      --g-hue-concept:#9d968e;
+    }
+
+    .g-section { display:flex; flex-direction:column; gap:0.65rem; padding:2.4rem 0; }
+    .g-section:first-child { padding-top:0.25rem; }
+    .g-section + .g-section { border-top:1px solid var(--border); }
+    .g-section__rule {
+      margin:0; font-size:0.7rem; font-weight:700;
+      letter-spacing:0.12em; text-transform:uppercase;
+      color:var(--accent);
+    }
+    .g-section h2 { margin:0; font-size:1.35rem; line-height:1.25; }
+    .g-section__lead { margin:0; max-width:56ch; color:var(--muted); line-height:1.55; }
+    .g-subhead { margin:1rem 0 0; font-size:1.05rem; }
+
+    /* Sentence skeleton legend */
+    .g-skeleton {
+      display:flex; flex-wrap:wrap; align-items:flex-start;
+      gap:0.5rem 0.6rem; margin:0.5rem 0 0.25rem;
+    }
+    .g-skeleton__slot { display:flex; flex-direction:column; gap:0.1rem; }
+    .g-skeleton__label {
+      font-family:var(--font-serif); font-weight:700; font-size:1.05rem;
+      border-bottom:3px solid currentColor; padding-bottom:0.1rem;
+    }
+    .g-skeleton__slot--actor .g-skeleton__label { color:var(--g-hue-actor); }
+    .g-skeleton__slot--action .g-skeleton__label { color:var(--g-hue-action); }
+    .g-skeleton__slot--target .g-skeleton__label { color:var(--g-hue-target); }
+    .g-skeleton__slot--place .g-skeleton__label { color:var(--g-hue-place); }
+    .g-skeleton__slot--time .g-skeleton__label { color:var(--g-hue-time); }
+    .g-skeleton__desc { font-size:0.72rem; color:var(--muted); }
+    .g-skeleton__sep { align-self:center; color:var(--muted); opacity:0.6; }
+
+    /* Example cards */
+    .g-example-grid {
+      display:grid; grid-template-columns:repeat(auto-fit, minmax(15rem, 1fr));
+      gap:0.85rem; margin:0.5rem 0 0;
+    }
+    .g-example-grid--compact { grid-template-columns:repeat(auto-fit, minmax(10.5rem, 1fr)); }
+    .g-example {
+      margin:0; padding:0.85rem 1rem 0.9rem;
+      border:1px solid var(--border); border-radius:12px;
+      background:var(--surface);
+      display:flex; flex-direction:column; gap:0.75rem;
+    }
+    .g-example__en { margin:0; font-size:0.85rem; color:var(--muted); }
+    .g-example__note { margin:0; font-size:0.78rem; color:var(--muted); }
+    .g-example__missing { margin:0; font-size:0.8rem; color:var(--muted); font-style:italic; }
+
+    /* One sentence: a row of role chips */
+    .g-sentence {
+      display:flex; flex-wrap:wrap; align-items:flex-start;
+      gap:0.85rem 1rem; row-gap:1.1rem;
+      padding-top:0.15rem;
+    }
+    .g-chip {
+      display:inline-flex; flex-direction:column; align-items:flex-start;
+      gap:0.12rem;
+      --g-hue:var(--g-hue-concept);
+    }
+    .g-chip--actor { --g-hue:var(--g-hue-actor); }
+    .g-chip--action { --g-hue:var(--g-hue-action); }
+    .g-chip--target { --g-hue:var(--g-hue-target); }
+    .g-chip--place { --g-hue:var(--g-hue-place); }
+    .g-chip--time { --g-hue:var(--g-hue-time); }
+    .g-chip--marker { --g-hue:var(--g-hue-marker); }
+    .g-chip--modifier { --g-hue:var(--g-hue-modifier); }
+    .g-chip__roman {
+      font-family:var(--font-serif); font-weight:700; font-size:1.2rem;
+      line-height:1.15;
+      border-bottom:3px solid var(--g-hue);
+      padding:0 0.05rem 0.1rem;
+    }
+    .g-chip--particle .g-chip__roman {
+      background:var(--accent-soft);
+      border-radius:6px 6px 0 0;
+      padding:0.05rem 0.3rem 0.1rem;
+    }
+    .g-chip__role {
+      font-size:0.62rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.08em;
+      color:var(--g-hue);
+    }
+    .g-chip__english { font-size:0.78rem; color:var(--muted); }
+    .g-chip--em .g-chip__roman {
+      outline:2px solid var(--g-hue);
+      outline-offset:2px;
+      border-radius:6px;
+    }
+    .g-chip--gap .g-chip__roman {
+      border-bottom:3px dashed var(--muted); color:var(--muted); font-style:italic;
+    }
+    .g-chip--gap .g-chip__role { color:var(--muted); }
+    .g-punct {
+      align-self:flex-start;
+      font-family:var(--font-serif); font-weight:700; font-size:1.2rem;
+      color:var(--muted);
+    }
+
+    /* Rule 10: negation scope — one continuous underline beneath the negation
+       particle and the word it denies. */
+    .g-scope {
+      display:inline-flex; align-items:flex-start; gap:0.85rem;
+      padding:0 0.3rem 0.45rem;
+      border-bottom:2px solid var(--g-hue-marker);
+      border-radius:0 0 6px 6px;
+    }
+
+    /* Rule 12: an arc over a run of chained Action words. */
+    .g-chain {
+      position:relative;
+      display:inline-flex; align-items:flex-start; gap:0.85rem;
+      padding-top:0.7rem; margin-top:-0.15rem;
+    }
+    .g-chain::before {
+      content:'';
+      position:absolute; top:0.1rem; left:6%; right:6%; height:0.5rem;
+      border:2px solid var(--g-hue-action);
+      border-bottom:none;
+      border-radius:10px 10px 0 0;
+      opacity:0.75;
+    }
+
+    /* Particle inventory table (seed data via the API) */
+    .g-ptable {
+      width:100%; max-width:36rem; margin:0.5rem 0 0;
+      border-collapse:collapse; font-size:0.9rem;
+    }
+    .g-ptable th, .g-ptable td {
+      text-align:left; padding:0.45rem 0.75rem 0.45rem 0;
+      border-bottom:1px solid var(--border);
+    }
+    .g-ptable th {
+      font-size:0.7rem; font-weight:700;
+      text-transform:uppercase; letter-spacing:0.08em;
+      color:var(--muted);
+    }
+    .g-ptable__form { font-family:var(--font-serif); font-weight:700; font-size:1.05rem; }
+    .g-ptable__none { font-weight:400; font-style:italic; color:var(--muted); font-size:0.85rem; }
+    .g-ptable__group { color:var(--muted); font-size:0.78rem; }
+
+    .g-footer {
+      border-top:1px solid var(--border);
+      padding-top:1rem;
+      color:var(--muted); font-size:0.85rem;
+      display:flex; flex-direction:column; gap:0.4rem;
+    }
+    .g-footer p { margin:0; max-width:64ch; }
 
     /* ── Alignment view ───────────────────────────────────────────────────────
        Which Fonoran word stands for which English word. Lives in a modal on the

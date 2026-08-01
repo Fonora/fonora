@@ -6,7 +6,6 @@ import {
   getNavigableDocCatalog,
   DOC_LAYER_ORDER,
   docViewerHrefForContext,
-  githubDocUrl,
   isDocsRoute,
   isToolsPath,
   openDocViewer,
@@ -158,19 +157,14 @@ function setSidebarOpen(open) {
   layout.classList.toggle('page-doc-layout--sidebar-open', open);
 }
 
-function updateViewerChrome({ title, lead, path }) {
+function updateViewerChrome({ title, lead }) {
   const titleEl = document.getElementById('docs-viewer-title');
   const leadEl = document.getElementById('docs-viewer-lead');
-  const githubEl = document.getElementById('docs-viewer-github');
 
   if (titleEl) titleEl.textContent = title;
   if (leadEl) {
     leadEl.textContent = lead;
     leadEl.hidden = !lead;
-  }
-  if (githubEl) {
-    githubEl.href = githubDocUrl(path);
-    githubEl.hidden = false;
   }
   syncPageChromeOffset(document.getElementById('docs-viewer-toolbar-root'));
 }
@@ -195,7 +189,6 @@ function showViewerError(path, error) {
   updateViewerChrome({
     title: 'Error',
     lead: '',
-    path,
   });
   setSidebarActive(path);
 }
@@ -250,7 +243,6 @@ export async function loadDocViewer(repoPath) {
     updateViewerChrome({
       title,
       lead,
-      path,
     });
     setViewerLoading(false);
     contentEl.removeAttribute('aria-busy');
