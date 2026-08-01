@@ -1290,6 +1290,25 @@ async function runLanguagePolicyTests() {
     assert(!subordinate.surface.roman.startsWith('ka '), `subordinate when is not a question: ${subordinate.surface.roman}`);
   }));
 
+  // English `have` is two words wearing one tag: an auxiliary before a participle
+  // ("have eaten"), the possession verb everywhere else. The tagger marks both AUX,
+  // and taking that at face value dropped the verb of every possession sentence:
+  // "how many dogs do you have" came out verbless with dog as the Actor.
+  const haveDogs = await translateEnglish('How many dogs do you have?');
+  const ownDogs = await translateEnglish('How many dogs do you own?');
+  const haveEaten = await translateEnglish('I have eaten the food.');
+  results.push(test('translation: possession `have` is the verb, not an auxiliary', () => {
+    assert(
+      haveDogs.surface.roman === ownDogs.surface.roman,
+      `have and own must read the same: ${haveDogs.surface.roman} vs ${ownDogs.surface.roman}`,
+    );
+    const event = haveDogs.tokens.find(t => t.role === 'event');
+    assert(event?.fonoran === 'dela', `have must resolve as own: ${JSON.stringify(event)}`);
+    // Perfect have stays an auxiliary: it carries tense and is not spoken.
+    assert(!haveEaten.surface.roman.includes('dela'), `perfect have is not possession: ${haveEaten.surface.roman}`);
+    assert(haveEaten.surface.roman.includes('ta'), `perfect have carries past tense: ${haveEaten.surface.roman}`);
+  }));
+
   results.push(test('translation: outside a question `how` is the manner word, never silence', () => {
     assert(howNotKnow.surface.roman === 'mi no hu moyu.', `not know how: ${howNotKnow.surface.roman}`);
     // "know how to" is carried by the infinitive: `hu kel dat` already says it.

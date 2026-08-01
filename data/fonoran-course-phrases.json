@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated_at": "2026-08-01T00:26:10.854Z",
+  "generated_at": "2026-08-01T00:58:55.942Z",
   "total_domains": 20,
   "total_phrases": 1000,
   "translated": 862,
@@ -652,10 +652,11 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi no dakpa.",
+            "roman": "mi no dela dakpa.",
             "tokens": [
               "mi",
               "no",
+              "dela",
               "dakpa."
             ],
             "status": "translated"
@@ -2238,10 +2239,11 @@
           "type": "question",
           "complexity": 2,
           "fonoran": {
-            "roman": "ka be temtet wun.",
+            "roman": "ka be dela temtet wun.",
             "tokens": [
               "ka",
               "be",
+              "dela",
               "temtet",
               "wun."
             ],
@@ -6224,12 +6226,13 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "ka nohu to be tak.",
+            "roman": "ka nohu to be dela tak.",
             "tokens": [
               "ka",
               "nohu",
               "to",
               "be",
+              "dela",
               "tak."
             ],
             "status": "translated"
@@ -10666,9 +10669,10 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi lo.",
+            "roman": "mi dela lo.",
             "tokens": [
               "mi",
+              "dela",
               "lo."
             ],
             "status": "translated"
@@ -10763,10 +10767,11 @@
           "type": "statement",
           "complexity": 1,
           "fonoran": {
-            "roman": "mi no dat.",
+            "roman": "mi no dela dat.",
             "tokens": [
               "mi",
               "no",
+              "dela",
               "dat."
             ],
             "status": "translated"
@@ -10811,9 +10816,10 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi lo nam ket.",
+            "roman": "mi dela lo nam ket.",
             "tokens": [
               "mi",
+              "dela",
               "lo",
               "nam",
               "ket."
@@ -10902,12 +10908,13 @@
           "type": "question",
           "complexity": 2,
           "fonoran": {
-            "roman": "ka be mas to.",
+            "roman": "ka be dela to mas.",
             "tokens": [
               "ka",
               "be",
-              "mas",
-              "to."
+              "dela",
+              "to",
+              "mas."
             ],
             "status": "translated"
           }
@@ -11195,9 +11202,10 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi [amount] gen to.",
+            "roman": "mi dela [amount] gen to.",
             "tokens": [
               "mi",
+              "dela",
               "[amount]",
               "gen",
               "to."
@@ -11252,16 +11260,17 @@
           "type": "feeling",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi ta nes fim mi gen to ho.",
+            "roman": "mi ta nes fim mi dela to ho gen.",
             "tokens": [
               "mi",
               "ta",
               "nes",
               "fim",
               "mi",
-              "gen",
+              "dela",
               "to",
-              "ho."
+              "ho",
+              "gen."
             ],
             "status": "translated"
           }
@@ -11330,10 +11339,11 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "gem dan lo [enough] [each].",
+            "roman": "gem dan dela lo [enough] [each].",
             "tokens": [
               "gem",
               "dan",
+              "dela",
               "lo",
               "[enough]",
               "[each]."
@@ -11411,9 +11421,10 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi sutem gektet.",
+            "roman": "mi dela sutem gektet.",
             "tokens": [
               "mi",
+              "dela",
               "sutem",
               "gektet."
             ],
@@ -11427,11 +11438,12 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi ye be lo.",
+            "roman": "mi ye be dela lo.",
             "tokens": [
               "mi",
               "ye",
               "be",
+              "dela",
               "lo."
             ],
             "status": "translated"
@@ -11483,13 +11495,14 @@
           "type": "question",
           "complexity": 3,
           "fonoran": {
-            "roman": "ka mi lakam be mesgat.",
+            "roman": "ka be dela mesgat mi lakam.",
             "tokens": [
               "ka",
-              "mi",
-              "lakam",
               "be",
-              "mesgat."
+              "dela",
+              "mesgat",
+              "mi",
+              "lakam."
             ],
             "status": "translated"
           }
@@ -12326,9 +12339,10 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "to tal [strange].",
+            "roman": "to dela tal [strange].",
             "tokens": [
               "to",
+              "dela",
               "tal",
               "[strange]."
             ],
@@ -12345,9 +12359,10 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "dan lo gen.",
+            "roman": "dan dela lo gen.",
             "tokens": [
               "dan",
+              "dela",
               "lo",
               "gen."
             ],
@@ -14356,10 +14371,11 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "ka be gas.",
+            "roman": "ka be dela gas.",
             "tokens": [
               "ka",
               "be",
+              "dela",
               "gas."
             ],
             "status": "translated"
@@ -14528,12 +14544,13 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "ka be nam feschos.",
+            "roman": "ka be dela feschos nam.",
             "tokens": [
               "ka",
               "be",
-              "nam",
-              "feschos."
+              "dela",
+              "feschos",
+              "nam."
             ],
             "status": "translated"
           }
@@ -17730,9 +17747,10 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "dan lo ye [enough].",
+            "roman": "dan dela lo ye [enough].",
             "tokens": [
               "dan",
+              "dela",
               "lo",
               "ye",
               "[enough]."
