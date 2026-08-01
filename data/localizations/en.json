@@ -582,7 +582,6 @@
         "bound",
         "an edge",
         "edge",
-        "where",
         "something",
         "ends",
         "finish",
@@ -675,7 +674,8 @@
         "shops",
         "market",
         "markets",
-        "area"
+        "area",
+        "where"
       ]
     },
     "plant": {
@@ -777,7 +777,9 @@
         "toy",
         "toys",
         "things",
-        "substance"
+        "substance",
+        "what",
+        "which"
       ]
     },
     "think": {
@@ -871,7 +873,9 @@
         "traveler",
         "travelers",
         "traveller",
-        "travellers"
+        "travellers",
+        "who",
+        "whom"
       ]
     },
     "source": {
@@ -1318,12 +1322,6 @@
         "sure"
       ]
     },
-    "what": {
-      "label": "what",
-      "aliases": [
-        "which"
-      ]
-    },
     "direction": {
       "label": "direction",
       "aliases": [
@@ -1390,7 +1388,8 @@
     "cause": {
       "label": "cause",
       "aliases": [
-        "because"
+        "because",
+        "why"
       ]
     },
     "greeting": {
@@ -1520,5 +1519,5 @@
   },
   "version": "1.0-localization",
   "description": "English labels and word bank for Fonoran concept identifiers. English is one localization — not the semantic authority.",
-  "count": 176
+  "count": 175
 }

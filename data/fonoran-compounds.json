@@ -15712,51 +15712,6 @@
       "notes": "July 2026 register review — unlocked by the operator/dimension roots."
     },
     {
-      "concept": "what",
-      "preferred": {
-        "composition": [
-          "speak",
-          "want",
-          "know"
-        ],
-        "gloss": "what"
-      },
-      "preferred_source": "heuristic",
-      "alternates": [
-        {
-          "composition": [
-            "question",
-            "thing"
-          ],
-          "status": "plausible",
-          "source": "proposal"
-        },
-        {
-          "composition": [
-            "know",
-            "empty"
-          ],
-          "understandability": 0.76,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        },
-        {
-          "composition": [
-            "thing",
-            "know",
-            "empty"
-          ],
-          "understandability": 0.75,
-          "label": "likely understood",
-          "status": "plausible",
-          "source": "heuristic"
-        }
-      ],
-      "understandability": 0.77,
-      "notes": "\"What\" is a question word pointing to an unknown thing — best captured as 'question+thing', which a stranger would immediately read as 'which thing?' or 'what thing?'. It's a pointer to an unidentifie"
-    },
-    {
       "concept": "wheel",
       "preferred": {
         "composition": [

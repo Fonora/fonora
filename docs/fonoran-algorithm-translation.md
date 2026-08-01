@@ -78,6 +78,8 @@ how much    →  ka … nohu tan    unknown count (same question; the noun is ma
 
 `ka` is what makes the composition unambiguous, since `nohu ba` without it names an unknown person rather than asking who. The expansion is applied **only** in questions, so a relative or subordinate `who` and `when` are left as ordinary words. English "how many" / "how much" are one interrogative ("what count?"), not manner-how plus a quantity value: see [fonoran-rulebook.md](fonoran-rulebook.md) Rule 11. Degree adjectives (*how far*) stay as a polar probe on the scale word for now.
 
+The WH policy is the **single owner** of interrogative words, in both moods. Outside a question, an interrogative may resolve only to its policy dimension (*what* → thing, *where* → place, *who* → person, *why* → cause, *how* → manner), so a statement and a question can never disagree about what the word means. This is enforced as a seed invariant (`interrogative-ownership` in `tools/fonoran-invariants.js`): no root or compound may have an interrogative as its concept, and no localization may alias one to any concept but its dimension. The rule exists because a heuristic compound `what = speak+want+know` sat in the seed for weeks — questions said `nohu to` while the bare word said `sesakhu` — and a stray alias sent `where` to `bound`. `when` is deliberately unclaimed: it is usually a clause connective, which is the parser's job, not a lexicon lookup.
+
 ## Step 5: order the output
 
 ```text

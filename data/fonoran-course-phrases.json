@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-07-31T23:32:27.585Z",
+  "generated_at": "2026-08-01T00:26:10.854Z",
   "total_domains": 20,
   "total_phrases": 1000,
-  "translated": 857,
-  "gap": 143,
+  "translated": 862,
+  "gap": 138,
   "domains": [
     {
       "id": "first_contact",
@@ -6516,12 +6516,12 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi no hu sesakhu to.",
+            "roman": "mi no hu to to.",
             "tokens": [
               "mi",
               "no",
               "hu",
-              "sesakhu",
+              "to",
               "to."
             ],
             "status": "translated"
@@ -6534,12 +6534,12 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi no hu sesakhu to.",
+            "roman": "mi no hu to to.",
             "tokens": [
               "mi",
               "no",
               "hu",
-              "sesakhu",
+              "to",
               "to."
             ],
             "status": "translated"
@@ -6683,12 +6683,12 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi sak hu sesakhu to.",
+            "roman": "mi sak hu to to.",
             "tokens": [
               "mi",
               "sak",
               "hu",
-              "sesakhu",
+              "to",
               "to."
             ],
             "status": "translated"
@@ -6721,12 +6721,12 @@
           "type": "repair",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi no chu sesakhu be sak.",
+            "roman": "mi no chu to be sak.",
             "tokens": [
               "mi",
               "no",
               "chu",
-              "sesakhu",
+              "to",
               "be",
               "sak."
             ],
@@ -6778,13 +6778,13 @@
           "type": "feeling",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi no to nathu sesakhu.",
+            "roman": "mi no to nathu to.",
             "tokens": [
               "mi",
               "no",
               "to",
               "nathu",
-              "sesakhu."
+              "to."
             ],
             "status": "translated"
           }
@@ -6837,13 +6837,13 @@
           "type": "statement",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi ta sak hu sesakhu chik.",
+            "roman": "mi ta sak hu to chik.",
             "tokens": [
               "mi",
               "ta",
               "sak",
               "hu",
-              "sesakhu",
+              "to",
               "chik."
             ],
             "status": "translated"
@@ -6961,11 +6961,11 @@
           "type": "request",
           "complexity": 2,
           "fonoran": {
-            "roman": "wus mi sesakhu be mep sil.",
+            "roman": "wus mi to be mep sil.",
             "tokens": [
               "wus",
               "mi",
-              "sesakhu",
+              "to",
               "be",
               "mep",
               "sil."
@@ -7018,7 +7018,7 @@
           "type": "feeling",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi nes pe mi no hu sesakhu tak.",
+            "roman": "mi nes pe mi no hu to tak.",
             "tokens": [
               "mi",
               "nes",
@@ -7026,7 +7026,7 @@
               "mi",
               "no",
               "hu",
-              "sesakhu",
+              "to",
               "tak."
             ],
             "status": "translated"
@@ -7039,7 +7039,7 @@
           "type": "statement",
           "complexity": 3,
           "fonoran": {
-            "roman": "mi wi tem mi no hu sesakhu to.",
+            "roman": "mi wi tem mi no hu to to.",
             "tokens": [
               "mi",
               "wi",
@@ -7047,7 +7047,7 @@
               "mi",
               "no",
               "hu",
-              "sesakhu",
+              "to",
               "to."
             ],
             "status": "translated"
@@ -7643,18 +7643,15 @@
           "type": "request",
           "complexity": 2,
           "fonoran": {
-            "roman": "se mi [who] be sil.",
+            "roman": "se mi ba be sil.",
             "tokens": [
               "se",
               "mi",
-              "[who]",
+              "ba",
               "be",
               "sil."
             ],
-            "status": "gap",
-            "unresolved": [
-              "who"
-            ]
+            "status": "translated"
           }
         },
         {
@@ -7664,17 +7661,14 @@
           "type": "feeling",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi metgan [who] nam.",
+            "roman": "mi metgan ba nam.",
             "tokens": [
               "mi",
               "metgan",
-              "[who]",
+              "ba",
               "nam."
             ],
-            "status": "gap",
-            "unresolved": [
-              "who"
-            ]
+            "status": "translated"
           }
         },
         {
@@ -7704,18 +7698,15 @@
           "type": "repair",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi no chu [who] to.",
+            "roman": "mi no chu ba to.",
             "tokens": [
               "mi",
               "no",
               "chu",
-              "[who]",
+              "ba",
               "to."
             ],
-            "status": "gap",
-            "unresolved": [
-              "who"
-            ]
+            "status": "translated"
           }
         },
         {
@@ -7798,18 +7789,15 @@
           "type": "request",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi sak hu [who] be.",
+            "roman": "mi sak hu ba be.",
             "tokens": [
               "mi",
               "sak",
               "hu",
-              "[who]",
+              "ba",
               "be."
             ],
-            "status": "gap",
-            "unresolved": [
-              "who"
-            ]
+            "status": "translated"
           }
         },
         {
@@ -7898,20 +7886,17 @@
           "type": "repair",
           "complexity": 2,
           "fonoran": {
-            "roman": "mi ta no chu [who] be mep.",
+            "roman": "mi ta no chu ba be mep.",
             "tokens": [
               "mi",
               "ta",
               "no",
               "chu",
-              "[who]",
+              "ba",
               "be",
               "mep."
             ],
-            "status": "gap",
-            "unresolved": [
-              "who"
-            ]
+            "status": "translated"
           }
         },
         {
@@ -8069,10 +8054,10 @@
           "type": "question",
           "complexity": 1,
           "fonoran": {
-            "roman": "ka sesakhu dan gi nan.",
+            "roman": "ka to dan gi nan.",
             "tokens": [
               "ka",
-              "sesakhu",
+              "to",
               "dan",
               "gi",
               "nan."
