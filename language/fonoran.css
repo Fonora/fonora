@@ -1997,7 +1997,7 @@
 
     .translator-page { max-width:72rem; margin:0 auto; padding:0 1rem 2rem; min-width:0; width:100%; }
     .translator-unresolved-sample { color:var(--color-error); font-weight:600; }
-    .translator-transliterated { color:var(--muted); font-style:italic; }
+    .translator-transliterated { color:var(--color-error); font-weight:600; font-style:italic; }
     .translator-output__copy-bar { display:none; } /* replaced by inline tr-copy-icon-btn */
     .translator-copy-btn { font-family:var(--font-serif); font-size:0.72rem; color:var(--muted); background:none; border:1px solid var(--border); border-radius:99px; padding:0.18rem 0.55rem; cursor:pointer; transition:color 0.15s,border-color 0.15s; line-height:1.5; }
     .translator-copy-btn:hover { color:var(--text); border-color:currentColor; }
