@@ -22,6 +22,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveDataPath } from './fonoran-data-paths.js';
 import { compilePhrase } from './fonoran-course-phrases-compile.js';
+import { compileGrammarLessonsDocument, loadGrammarLessonSeed } from './fonoran-grammar-lessons-compile.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUTPUT_PATH = join(ROOT, 'data/fonoran-course-phrases.json');
@@ -99,6 +100,10 @@ async function main() {
     });
   }
 
+  // Grammar basics ride the same snapshot and the same freshness gate: the seed
+  // stores only English, so the compiled roman here is as perishable as the phrases'.
+  const grammar = dryRun ? null : await compileGrammarLessonsDocument(await loadGrammarLessonSeed());
+
   const output = {
     version: '1.0',
     generated_at: new Date().toISOString(),
@@ -107,6 +112,7 @@ async function main() {
     translated,
     gap,
     domains: outputDomains,
+    ...(grammar ? { grammar } : {}),
   };
 
   if (checkMode) {

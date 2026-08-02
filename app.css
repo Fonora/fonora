@@ -2326,25 +2326,6 @@ html[data-edu-debug='true']::after {
   font-weight: 600;
 }
 
-.learn-migration-banner {
-  margin: 0.75rem 0 1rem;
-  padding: 0.85rem 1rem;
-  border: 1px solid var(--layout-border);
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--color-word) 8%, var(--layout-surface));
-}
-
-.learn-migration-banner p {
-  margin: 0 0 0.65rem;
-  font-size: 0.9rem;
-}
-
-.learn-migration-banner__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
 .learn-domain-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));

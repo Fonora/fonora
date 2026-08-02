@@ -2,11 +2,11 @@
  * Vertical learning-path module viewer for the Progress page.
  */
 import { getSkillLesson, getSkillProgress } from './learn-gamification.js';
-import { countDomainMastered, loadDomainStats } from './fonoran-course-phrases.js';
+import { countDomainMastered, loadDomainCurriculum } from './fonoran-course-phrases.js';
+import { computeDomainLayout } from './fonoran-learn-curriculum.js';
 import { getScriptSoundModuleStates } from './fonora-script-curriculum.js';
 import {
   domainModuleDescription,
-  LESSONS_PER_DOMAIN,
   SCRIPT_SOUND_MODULES,
 } from './learn-module-catalog.js';
 import { icon } from './learn-icons.js';
@@ -59,27 +59,31 @@ function normalizeDomainStates(modules) {
 }
 
 /**
- * @param {Awaited<ReturnType<typeof loadDomainStats>>} stats
+ * @param {{ items: import('./fonoran-course-phrases.js').CourseEntry[], domains: import('./fonoran-course-phrases.js').CourseDomain[] }} course
  * @param {import('./learn-gamification.js').LearnSkillId} skillId
  * @param {'fonoran' | 'fonora'} track
  * @returns {PathModule[]}
  */
-function buildDomainModulesFromStats(stats, skillId, track) {
+function buildDomainModules(course, skillId, track) {
+  // The same layout the curriculum runs on, so the "current" marker and the
+  // lesson counters can never disagree with the lessons actually served.
+  const layout = computeDomainLayout(course.items, course.domains);
   const lessonIndex = getSkillLesson(skillId);
-  const totalLessons = stats.length * LESSONS_PER_DOMAIN;
   const mastery = getSkillProgress(skillId).mastery ?? {};
   const navigateTab = track === 'fonora' ? 'script-writing' : 'fonoran-reading';
 
-  const modules = stats.map((domain, idx) => {
-    const domainMastered = countDomainMastered(mastery, domain.phraseIds ?? []);
-    const startLesson = idx * LESSONS_PER_DOMAIN;
-    const lessonsDone = Math.min(
-      LESSONS_PER_DOMAIN,
-      Math.max(0, lessonIndex - startLesson),
-    );
+  const modules = course.domains.map((domain, idx) => {
+    const layoutDomain = layout.domains[idx];
+    const startLesson = layoutDomain?.startLesson ?? 0;
+    const lessonsTotal = layoutDomain?.lessons ?? 0;
+    const phraseIds = course.items
+      .filter((item) => item.domainIndex === idx && item.itemType === 'phrase')
+      .map((item) => item.id);
+    const domainMastered = countDomainMastered(mastery, phraseIds);
+    const lessonsDone = Math.min(lessonsTotal, Math.max(0, lessonIndex - startLesson));
     /** @type {ModuleNodeState} */
     let state = 'locked';
-    if (lessonIndex >= startLesson + LESSONS_PER_DOMAIN || lessonIndex >= totalLessons) {
+    if (lessonIndex >= startLesson + lessonsTotal || lessonIndex >= layout.totalLessons) {
       state = 'complete';
     } else if (lessonIndex >= startLesson) {
       state = 'current';
@@ -94,10 +98,10 @@ function buildDomainModulesFromStats(stats, skillId, track) {
       description: domainModuleDescription(domain.id, track),
       state,
       mastered: domainMastered,
-      total: domain.translated || domain.total,
+      total: phraseIds.length,
       unit: 'phrases',
-      lessonsDone: state === 'complete' ? LESSONS_PER_DOMAIN : lessonsDone,
-      lessonsTotal: LESSONS_PER_DOMAIN,
+      lessonsDone: state === 'complete' ? lessonsTotal : lessonsDone,
+      lessonsTotal,
       skillId,
       navigateTab,
     };
@@ -175,7 +179,7 @@ function progressLine(mod) {
     return `${mod.mastered}/${mod.total} sounds mastered`;
   }
   const lessonPart =
-    mod.lessonsTotal != null && mod.lessonsDone != null
+    mod.lessonsTotal && mod.lessonsDone != null
       ? `Lesson ${Math.min(mod.lessonsDone + 1, mod.lessonsTotal)}/${mod.lessonsTotal} · `
       : '';
   return `${lessonPart}${mod.mastered}/${mod.total} phrases mastered`;
@@ -345,19 +349,18 @@ export async function renderModulePath(rules = null) {
 
   /** @type {PathModule[]} */
   let modules = [];
+  const course = await loadDomainCurriculum(rules).catch(() => null);
   if (activeTrack === 'fonora') {
     modules = buildFonoraPathModules(rules);
-    const stats = await loadDomainStats();
-    if (stats.length) {
-      const literacy = buildDomainModulesFromStats(stats, 'script-writing', 'fonora').map((mod, i) => ({
+    if (course?.domains?.length) {
+      const literacy = buildDomainModules(course, 'script-writing', 'fonora').map((mod, i) => ({
         ...mod,
         section: i === 0 ? 'Script literacy' : undefined,
       }));
       modules = [...modules, ...literacy];
     }
   } else {
-    const stats = await loadDomainStats();
-    modules = stats.length ? buildDomainModulesFromStats(stats, 'fonoran-reading', 'fonoran') : [];
+    modules = course?.domains?.length ? buildDomainModules(course, 'fonoran-reading', 'fonoran') : [];
   }
 
   renderedModules = normalizeDomainStates(modules);

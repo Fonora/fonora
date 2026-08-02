@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { handleAuthRoutes, logAuthStatus } from './tools/fonoran-auth.js';
 import { handleFonoranApi } from './tools/fonoran-api.js';
 import { initCommunityStore } from './tools/fonoran-community-store.js';
+import { getLearnCoursePhrases } from './tools/fonoran-learn-course-phrases.js';
 import { sendBody } from './tools/http-compress.js';
 
 const root = fileURLToPath(new URL('.', import.meta.url));
@@ -207,6 +208,12 @@ async function bootstrapServerData() {
   } catch (err) {
     console.warn('Fonoran user store init skipped:', err instanceof Error ? err.message : err);
   }
+  // Warm the Learn course-phrases compile (whole-corpus translation, ~seconds) so the
+  // first visitor's page load doesn't wait on it. Fire-and-forget: the server starts
+  // listening immediately and any request arriving mid-compile shares the same promise.
+  getLearnCoursePhrases().catch((err) => {
+    console.warn('Learn course-phrases warmup failed:', err instanceof Error ? err.message : err);
+  });
 }
 
 await bootstrapServerData();

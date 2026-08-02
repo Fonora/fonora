@@ -1,10 +1,10 @@
 /**
  * Fonora Script writing: English prompt → type Fonora script.
- * Uses hybrid curriculum (full ring vocabulary, then domain phrases).
+ * Uses the per-subject domain curriculum (each domain: its words, then its phrases).
  */
 import { createTypingPractice } from './fonora-typing-practice.js';
 import { loadDomainCurriculum } from './fonoran-course-phrases.js';
-import { createHybridCurriculum } from './fonoran-learn-curriculum.js';
+import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curriculum.js';
 import { loadFonoranPracticeEntries } from './fonoran-practice-words.js';
 import {
   setupLearningLanguageSelect,
@@ -34,7 +34,7 @@ let practice = null;
 /** @type {ReturnType<typeof createLearnSession> | null} */
 let session = null;
 
-/** @type {ReturnType<typeof createHybridCurriculum> | null} */
+/** @type {ReturnType<typeof createDomainCurriculum> | ReturnType<typeof createCurriculum> | null} */
 let curriculum = null;
 
 /** @type {object | null} */
@@ -61,13 +61,13 @@ async function loadLessonWords(rules) {
       loadFonoranPracticeEntries(rules).catch(() => []),
       loadDomainCurriculum(rules).catch(() => null),
     ]);
-    if (!courseData?.phraseItems?.length && !labEntries.length) return [];
-    curriculum = createHybridCurriculum(
-      'script-writing',
-      labEntries,
-      courseData?.phraseItems ?? [],
-      courseData?.domains ?? [],
-    );
+    if (courseData?.items?.length) {
+      curriculum = createDomainCurriculum('script-writing', courseData.items, courseData.domains);
+    } else if (labEntries.length) {
+      curriculum = createCurriculum('script-writing', labEntries);
+    } else {
+      return [];
+    }
   }
   return curriculum
     .currentLessonEntries()

@@ -1,9 +1,9 @@
 /**
  * Fonora Script reading — Fonora script → type English meaning.
- * Uses hybrid curriculum (full ring vocabulary, then domain phrases).
+ * Uses the per-subject domain curriculum (each domain: its words, then its phrases).
  */
 import { loadDomainCurriculum } from './fonoran-course-phrases.js';
-import { createHybridCurriculum } from './fonoran-learn-curriculum.js';
+import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curriculum.js';
 import { loadFonoranPracticeEntries } from './fonoran-practice-words.js';
 import { showScriptReadingBreakdown, hideBreakdownFeedback } from './breakdown-feedback.js';
 import {
@@ -23,7 +23,7 @@ let wired = false;
 /** @type {object | null} */
 let rulesRef = null;
 
-/** @type {ReturnType<typeof createHybridCurriculum> | null} */
+/** @type {ReturnType<typeof createDomainCurriculum> | ReturnType<typeof createCurriculum> | null} */
 let curriculum = null;
 
 /** @type {ReturnType<typeof createLearnSession> | null} */
@@ -117,16 +117,13 @@ async function reloadLessonEntries(rules) {
       loadFonoranPracticeEntries(rules).catch(() => []),
       loadDomainCurriculum(rules).catch(() => null),
     ]);
-    if (!courseData?.phraseItems?.length && !labEntries.length) {
+    if (!courseData?.items?.length && !labEntries.length) {
       readingEntries = [];
       curriculum = null;
     } else {
-      curriculum = createHybridCurriculum(
-        'script-words',
-        labEntries,
-        courseData?.phraseItems ?? [],
-        courseData?.domains ?? [],
-      );
+      curriculum = courseData?.items?.length
+        ? createDomainCurriculum('script-words', courseData.items, courseData.domains)
+        : createCurriculum('script-words', labEntries);
       readingEntries = curriculum
         .currentLessonEntries()
         .filter((entry) => entry.script)

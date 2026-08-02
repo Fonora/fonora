@@ -7,12 +7,15 @@ import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
 import { loadBucket } from './fonoran-sound-bucket.js';
 import { compileCoursePhrasesDocument } from './fonoran-course-phrases-compile.js';
+import { compileGrammarLessonsDocument, loadGrammarLessonSeed } from './fonoran-grammar-lessons-compile.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BAKED_PATH = join(ROOT, 'data/fonoran-course-phrases.json');
 
 /** @type {{ labRev: string, etag: string, payload: object } | null} */
 let coursePhrasesCache = null;
+/** @type {Promise<{ payload: object, etag: string, labRev: string }> | null} */
+let pendingCompile = null;
 
 /** @returns {Promise<object>} */
 async function loadBakedCoursePhrases() {
@@ -54,14 +57,30 @@ export async function getLearnCoursePhrases() {
     };
   }
 
-  const baked = await loadBakedCoursePhrases();
-  const payload = await compileCoursePhrasesDocument(baked, { labRev: labRev || null });
-  const etag = etagForPayload(payload);
-  coursePhrasesCache = { labRev, etag, payload };
-  return { payload, etag, labRev };
+  // The compile walks the whole corpus (~seconds). Learn's skill panels all request
+  // during page setup, so concurrent cache misses must share one compile instead of
+  // each running their own.
+  if (pendingCompile) return pendingCompile;
+
+  const compile = (async () => {
+    const baked = await loadBakedCoursePhrases();
+    const payload = await compileCoursePhrasesDocument(baked, { labRev: labRev || null });
+    // Grammar basics recompile from their seed per lab revision, same as the phrases.
+    payload.grammar = await compileGrammarLessonsDocument(await loadGrammarLessonSeed());
+    const etag = etagForPayload(payload);
+    coursePhrasesCache = { labRev, etag, payload };
+    return { payload, etag, labRev };
+  })();
+  pendingCompile = compile;
+  try {
+    return await compile;
+  } finally {
+    if (pendingCompile === compile) pendingCompile = null;
+  }
 }
 
 /** Clear in-memory cache (tests / after lab writes if needed). */
 export function clearLearnCoursePhrasesCache() {
   coursePhrasesCache = null;
+  pendingCompile = null;
 }

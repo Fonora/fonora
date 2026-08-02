@@ -5,7 +5,7 @@
  * validated against cached translations; TTS playback lets learners hear the target
  * phrase after checking (microphone recognition is planned for a future release).
  */
-import { loadCourseEntries, spellingMatchesCourseEntry } from './fonoran-course-phrases.js';
+import { loadDomainCurriculum, spellingMatchesCourseEntry } from './fonoran-course-phrases.js';
 import { createDomainCurriculum } from './fonoran-learn-curriculum.js';
 import { speakFonoraPhrase, cancelSpeech } from './fonora-tts.js';
 import {
@@ -107,9 +107,9 @@ export async function setupFonoranSpeaking(rules) {
   });
 
   try {
-    const courseData = await loadCourseEntries(rules);
-    if (courseData) {
-      curriculum = createDomainCurriculum('fonoran-speaking', courseData.entries, courseData.domains);
+    const courseData = await loadDomainCurriculum(rules);
+    if (courseData?.items?.length) {
+      curriculum = createDomainCurriculum('fonoran-speaking', courseData.items, courseData.domains);
       entries = curriculum.currentLessonEntries();
     } else {
       curriculum = null;

@@ -106,7 +106,7 @@ export function buildGrammarPhraseExercises(entries) {
  * @returns {boolean}
  */
 function normalizeLoose(text) {
-  return normalize(String(text ?? '').replace(/[?？]/g, ''));
+  return normalize(String(text ?? '').replace(/[?？.!]/g, ''));
 }
 
 export function grammarPhraseExerciseMatches(exercise, direction, answer) {
