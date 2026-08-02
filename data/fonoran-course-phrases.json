@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generated_at": "2026-08-01T00:58:55.942Z",
+  "generated_at": "2026-08-01T17:45:11.822Z",
   "total_domains": 20,
   "total_phrases": 1000,
   "translated": 862,
@@ -17855,5 +17855,192 @@
         }
       ]
     }
-  ]
+  ],
+  "grammar": {
+    "version": "2.0-rule4-compiled",
+    "title": "Grammar basics",
+    "lessons": [
+      {
+        "id": "rule4-basics",
+        "title": "The five-minute grammar",
+        "exercises": [
+          {
+            "id": "gb-present",
+            "kind": "translate-to-fonoran",
+            "sourceText": "I love you.",
+            "promptLang": "I love you. (now)",
+            "tip": "Present has no time particle. Past = ta · Future = sa. The action word never changes.",
+            "fonoran": {
+              "roman": "mi san be.",
+              "tokens": [
+                "mi",
+                "san",
+                "be."
+              ],
+              "status": "translated"
+            }
+          },
+          {
+            "id": "gb-past",
+            "kind": "translate-to-fonoran",
+            "sourceText": "I loved you.",
+            "tip": "Put ta next to the action for past. Still: Actor → Action → Target.",
+            "fonoran": {
+              "roman": "mi ta san be.",
+              "tokens": [
+                "mi",
+                "ta",
+                "san",
+                "be."
+              ],
+              "status": "translated"
+            }
+          },
+          {
+            "id": "gb-negation",
+            "kind": "translate-to-fonoran",
+            "sourceText": "I do not want food.",
+            "tip": "Negation no sits immediately in front of what it denies.",
+            "fonoran": {
+              "roman": "mi no sak lo.",
+              "tokens": [
+                "mi",
+                "no",
+                "sak",
+                "lo."
+              ],
+              "status": "translated"
+            }
+          },
+          {
+            "id": "gb-future-neg",
+            "kind": "particles",
+            "sourceText": "I will not want food.",
+            "tip": "Particles are tiny and closed: mi · ta · sa · no · ya · von · ka. Type only the grammar particles you see.",
+            "fonoran": {
+              "roman": "mi sa no sak lo.",
+              "tokens": [
+                "mi",
+                "sa",
+                "no",
+                "sak",
+                "lo."
+              ],
+              "status": "translated"
+            }
+          },
+          {
+            "id": "gb-serial",
+            "kind": "reorder",
+            "sourceText": "I want to go to the water.",
+            "tip": "Want + go stacks in the Action: sak gi. Do not park the second verb as the object.",
+            "fonoran": {
+              "roman": "mi sak gi nan ye.",
+              "tokens": [
+                "mi",
+                "sak",
+                "gi",
+                "nan",
+                "ye."
+              ],
+              "status": "translated"
+            }
+          },
+          {
+            "id": "gb-question",
+            "kind": "choose",
+            "sourceText": "Do you want to go to the beach?",
+            "promptLang": "Which means “do you want to go to the beach?”",
+            "tip": "Questions open with ka. Without it, you have made a statement.",
+            "fonoran": {
+              "roman": "ka be sak gi nan yetem.",
+              "tokens": [
+                "ka",
+                "be",
+                "sak",
+                "gi",
+                "nan",
+                "yetem."
+              ],
+              "status": "translated"
+            },
+            "distractor": {
+              "sourceText": "You want to go to the beach.",
+              "roman": "be sak gi nan yetem.",
+              "status": "translated"
+            }
+          },
+          {
+            "id": "gb-actor-spoken",
+            "kind": "choose",
+            "sourceText": "Do you want to go to the beach?",
+            "promptLang": "Which is correct for “do you want to go to the beach?”",
+            "tip": "The Actor is always spoken. A yes/no to “you” keeps be — without it, nobody is named.",
+            "fonoran": {
+              "roman": "ka be sak gi nan yetem.",
+              "tokens": [
+                "ka",
+                "be",
+                "sak",
+                "gi",
+                "nan",
+                "yetem."
+              ],
+              "status": "translated"
+            },
+            "distractor": {
+              "transform": "drop-token",
+              "index": 2
+            }
+          },
+          {
+            "id": "gb-order",
+            "kind": "reorder",
+            "sourceText": "I see the fire.",
+            "tip": "Preferred order: Actor → Action → Target. Type the full roman phrase.",
+            "fonoran": {
+              "roman": "mi wi dat.",
+              "tokens": [
+                "mi",
+                "wi",
+                "dat."
+              ],
+              "status": "translated"
+            }
+          },
+          {
+            "id": "gb-conditional",
+            "kind": "translate-to-fonoran",
+            "sourceText": "If you go, I go.",
+            "tip": "von joins the condition to the result. The action word keeps the same spelling in both halves.",
+            "fonoran": {
+              "roman": "be gi von mi gi.",
+              "tokens": [
+                "be",
+                "gi",
+                "von",
+                "mi",
+                "gi."
+              ],
+              "status": "translated"
+            }
+          },
+          {
+            "id": "gb-no-inflection",
+            "kind": "translate-to-fonoran",
+            "sourceText": "You are safe.",
+            "tip": "Words never inflect and there is no “is/are” — a state word stands alone after the Actor.",
+            "fonoran": {
+              "roman": "be kep.",
+              "tokens": [
+                "be",
+                "kep."
+              ],
+              "status": "translated"
+            }
+          }
+        ]
+      }
+    ]
+  }
 }

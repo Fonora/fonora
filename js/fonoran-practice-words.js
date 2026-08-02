@@ -5,6 +5,7 @@ import { buildMeaningChoices } from '../tools/fonoran-meaning-choices.js';
 import { experienceMetaFor, LANGUAGE_TIERS } from '../tools/fonoran-experience-tiers.js';
 import { romanToFonoraScript } from '../tools/fonoran-fonora-bridge.js';
 import { loadFonoranBootstrap } from './fonoran-bootstrap.js';
+import { functionWordLabel } from '../tools/fonoran-language-policy.js';
 
 /** @typedef {{ spelling: string, meaning: string, parts: string[], script: string, conceptId?: string, languageTier: string, tierRank: number }} PracticeEntry */
 
@@ -15,7 +16,10 @@ function tierRank(languageTier) {
 }
 
 function meaningOf(item) {
-  return (item.meaning ?? item.concept_id ?? item.gloss ?? '').toString().trim();
+  // Function words have technical concept_ids ("addressee", "collective") that make
+  // bad flash-card labels. The policy knows the right learner-facing word ("you", "we").
+  const policy = item.concept_id ? functionWordLabel(item.concept_id) : null;
+  return (policy ?? item.meaning ?? item.concept_id ?? item.gloss ?? '').toString().trim();
 }
 
 function soundTierRank(sound) {

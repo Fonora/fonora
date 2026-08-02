@@ -1,15 +1,15 @@
 /**
  * Fonoran reading practice: recognize meaning from roman or Fonora script prompt.
  *
- * Uses hybrid curriculum (full ring vocabulary, then domain phrases) when course
- * phrases are available; falls back to ring-only when they are not.
+ * Uses the per-subject domain curriculum (each domain: its words, then its phrases)
+ * when course phrases are available; falls back to ring-only when they are not.
  */
 import {
   loadFonoranPracticeEntries,
   meaningChoicesForEntry,
 } from './fonoran-practice-words.js';
 import { loadDomainCurriculum, meaningChoicesForCourseEntry } from './fonoran-course-phrases.js';
-import { createCurriculum, createHybridCurriculum } from './fonoran-learn-curriculum.js';
+import { createCurriculum, createDomainCurriculum } from './fonoran-learn-curriculum.js';
 import { loadFonoranDisplayMode, setupFonoranDisplayModeToggle } from './learning-display-mode.js';
 import {
   createLearnSession,
@@ -161,12 +161,11 @@ export async function setupFonoranReading(rules) {
       loadFonoranPracticeEntries(rules),
       loadDomainCurriculum(rules).catch(() => null),
     ]);
-    if (courseData?.phraseItems?.length) {
+    if (courseData?.items?.length) {
       usingPhrases = true;
-      curriculum = createHybridCurriculum(
+      curriculum = createDomainCurriculum(
         'fonoran-reading',
-        labEntries,
-        courseData.phraseItems,
+        courseData.items,
         courseData.domains,
       );
     } else {

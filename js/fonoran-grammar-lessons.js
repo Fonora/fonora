@@ -1,7 +1,18 @@
 /**
- * Hand-authored Fonoran grammar lessons (Rule 4 basics).
- * Loaded ahead of course-phrase drills so Learn Grammar teaches before it quizzes stories.
+ * Grammar basics lesson, materialized from the compiled grammar document.
+ *
+ * The seed (data/fonoran-grammar-lessons.json) stores only English sentences,
+ * exercise kinds, and tip templates. The deterministic translator compiles the
+ * roman (server-side, per lab revision — see tools/fonoran-grammar-lessons-compile.js),
+ * and this module turns each compiled exercise into drill material procedurally:
+ * reorder scrambles the compiled tokens, particle drills intersect them with the
+ * closed particle class, and choose options pair the compiled answer with a
+ * compiled contrast sentence or a mechanical token transform. No Fonoran spelling
+ * is ever written by hand on this path.
  */
+import { particleForms } from '../tools/fonoran-language-policy.js';
+import { loadCoursePhrasesData } from './fonoran-course-phrases.js';
+import { shuffle } from './utils.js';
 
 /**
  * @typedef {{
@@ -26,9 +37,13 @@ function normalize(text) {
   return String(text ?? '')
     .trim()
     .toLowerCase()
-    .replace(/[?？]/g, '')
+    .replace(/[?？.!]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
+}
+
+function stripTerminalPunct(text) {
+  return String(text ?? '').replace(/[.?!]+$/, '').trim();
 }
 
 /**
@@ -51,23 +66,96 @@ export function stripMcqPromptOptions(prompt) {
 }
 
 /**
- * @param {object} raw
+ * Resolve a compiled choose exercise's wrong option.
+ * @param {object} exercise compiled exercise
+ * @param {string[]} tokens compiled answer tokens
+ * @returns {string | null}
+ */
+function distractorRoman(exercise, tokens) {
+  const distractor = exercise.distractor;
+  if (!distractor) return null;
+  if (distractor.roman) {
+    return distractor.status === 'translated' ? distractor.roman : null;
+  }
+  if (distractor.transform === 'drop-token') {
+    const index = Number(distractor.index);
+    if (!Number.isInteger(index) || index < 1 || index > tokens.length) return null;
+    return tokens.filter((_, i) => i !== index - 1).join(' ');
+  }
+  return null;
+}
+
+/**
+ * Materialize drill exercises from a compiled grammar document.
+ * Exercises whose sentence (or required distractor) the translator cannot
+ * currently say are dropped — a lesson never teaches stale or bracketed roman.
+ *
+ * @param {{ lessons?: Array<{ exercises?: object[] }> } | null} grammarDoc
  * @returns {GrammarLessonExercise[]}
  */
-export function lessonsDocToExercises(raw) {
+export function grammarLessonExercisesFromCompiled(grammarDoc) {
+  /** @type {GrammarLessonExercise[]} */
   const out = [];
-  for (const lesson of raw?.lessons ?? []) {
-    for (const ex of lesson.exercises ?? []) {
-      const promptLang =
-        ex.kind === 'choose' ? stripMcqPromptOptions(ex.promptLang) : ex.promptLang;
-      out.push({
-        ...ex,
-        promptLang,
-        spelling: ex.answerRoman,
+  const particleSet = new Set(particleForms());
+
+  for (const lesson of grammarDoc?.lessons ?? []) {
+    for (const exercise of lesson.exercises ?? []) {
+      const roman = exercise.fonoran?.roman ?? '';
+      if (exercise.fonoran?.status !== 'translated' || !roman) continue;
+
+      const tokens = exercise.fonoran.tokens ?? roman.split(/\s+/).filter(Boolean);
+      const cleanTokens = tokens.map(stripTerminalPunct).filter(Boolean);
+      const base = {
+        id: exercise.id,
+        kind: exercise.kind,
+        ...(exercise.tip ? { tip: exercise.tip } : {}),
+        promptLang: exercise.promptLang ?? exercise.sourceText,
+        answerRoman: roman,
+        promptFonoran: roman,
+        answerLang: exercise.sourceText,
+        parts: tokens,
+        spelling: roman,
+        alternates: [stripTerminalPunct(roman)],
+        tierRank: 0,
         itemType: /** @type {'phrase'} */ ('phrase'),
         domainIndex: 0,
-        tierRank: ex.tierRank ?? 0,
-      });
+      };
+
+      if (exercise.kind === 'reorder') {
+        const scrambled = shuffle(cleanTokens);
+        out.push({
+          ...base,
+          promptLang: `Put these tokens in order: ${scrambled.join(' · ')}`,
+          promptFonoran: scrambled.join(' · '),
+        });
+        continue;
+      }
+
+      if (exercise.kind === 'particles') {
+        const particles = cleanTokens.filter((t) => particleSet.has(t));
+        if (!particles.length) continue;
+        out.push({
+          ...base,
+          promptLang: `Type the grammar particles in "${roman}" (space-separated):`,
+          answerRoman: particles.join(' '),
+          answerLang: particles.join(' '),
+          alternates: [],
+        });
+        continue;
+      }
+
+      if (exercise.kind === 'choose') {
+        const wrong = distractorRoman(exercise, tokens);
+        if (!wrong || normalize(wrong) === normalize(roman)) continue;
+        out.push({
+          ...base,
+          promptLang: stripMcqPromptOptions(base.promptLang),
+          choices: [roman, wrong],
+        });
+        continue;
+      }
+
+      out.push(base);
     }
   }
   return out;
@@ -78,17 +166,15 @@ export function lessonsDocToExercises(raw) {
  */
 export async function loadGrammarLessonExercises() {
   try {
-    const res = await fetch('/data/fonoran-grammar-lessons.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    return lessonsDocToExercises(data);
+    const data = await loadCoursePhrasesData();
+    return grammarLessonExercisesFromCompiled(data?.grammar ?? null);
   } catch {
     return [];
   }
 }
 
 /**
- * Accept primary answer or listed alternates (question marks optional).
+ * Accept primary answer or listed alternates (terminal punctuation optional).
  * @param {GrammarLessonExercise | { answerRoman?: string, alternates?: string[] }} exercise
  * @param {string} answer
  */

@@ -1,8 +1,9 @@
 /**
  * Fonoran grammar practice: Rule 4 basics lesson, then phrase drills.
  *
- * Lesson 1 is the hand-authored five-minute grammar (preferred order, particles,
- * serial want+go, bare destinations, Actor always spoken). Later lessons mix
+ * Lesson 1 is the five-minute grammar (preferred order, particles, negation,
+ * serial want+go, questions, Actor always spoken), compiled from an
+ * English-only seed by the deterministic translator. Later lessons mix
  * reorder / particle / translation drills from course phrases.
  *
  * Question UI switches per item: typed answer (existing input) or MCQ
@@ -117,20 +118,7 @@ async function loadExercisePool() {
     /* fall through */
   }
 
-  try {
-    const res = await fetch('/data/fonoran-grammar-practice.json');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const seeds = (data.exercises ?? []).map((ex) => ({
-      ...ex,
-      kind: /** @type {'translate-to-fonoran'} */ ('translate-to-fonoran'),
-      tierRank: 1,
-      spelling: ex.answerRoman,
-    }));
-    return { exercises: [...basics, ...seeds] };
-  } catch {
-    return { exercises: basics };
-  }
+  return { exercises: basics };
 }
 
 function tipForPhraseKind(kind) {

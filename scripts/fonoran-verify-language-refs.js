@@ -209,10 +209,10 @@ for (const doc of docs) {
   if (scanMarkdown(doc).skipped) archived += 1;
 }
 const fixtures = [
-  'data/fonoran-grammar-practice.json',
+  // Seed of English + tip templates: any Fonoran-bearing field appearing here is a bug.
   'data/fonoran-grammar-lessons.json',
-  // The published lesson corpus: an unapproved runtime composition reaching this file
-  // would teach a word the lexicon does not own.
+  // The published lesson corpus (phrases + compiled grammar basics): an unapproved
+  // runtime composition reaching this file would teach a word the lexicon does not own.
   'data/fonoran-course-phrases.json',
 ];
 for (const fixture of fixtures) scanFixture(fixture);

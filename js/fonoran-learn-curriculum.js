@@ -1,19 +1,28 @@
 /**
- * Fonoran learning curriculum — ring-based (vocabulary) and domain-based (phrase courses).
+ * Fonoran learning curriculum.
  *
- * Ring-based curriculum: orders words simple → complex by campfire tier.
- * Domain curriculum: 20 stranger-corpus modules (First contact → Closure & gratitude),
- *   50 phrases each, sliced into 5 lessons of 10 items.
- * Hybrid curriculum: full ring vocabulary first, then domain phrase modules.
+ * Every phrase-capable skill teaches per subject: each of the 20 communication
+ * domains first teaches the words its phrases need (only words not already taught
+ * by an earlier domain), then the phrases themselves, complexity 1 → 3. Lesson
+ * counts are computed from the content, so every translated phrase gets a slot.
+ *
+ * Sessions mix up to a few due spaced-repetition review items (Leitner boxes,
+ * see learn-gamification.js) in with the current lesson's new material.
+ *
+ * createCurriculum remains for flat pools (grammar drills, ring-only fallback).
  */
 import { LANGUAGE_TIERS, LANGUAGE_TIER_LABELS } from '../tools/fonoran-experience-tiers.js';
 import { shuffle } from './utils.js';
 import {
   advanceSkillLesson,
   getSkillLesson,
+  getSkillCurriculumMeta,
+  getSkillProgress,
   getMasteryStats,
+  isItemDue,
   recordItemResult,
   setSkillCurriculumMeta,
+  setSkillLesson,
 } from './learn-gamification.js';
 
 export const RING_LABELS = LANGUAGE_TIERS.map((tier) => LANGUAGE_TIER_LABELS[tier] ?? tier);
@@ -22,6 +31,15 @@ export const RING_LABELS = LANGUAGE_TIERS.map((tier) => LANGUAGE_TIER_LABELS[tie
 export const LESSON_PASS_RATIO = 0.7;
 
 const DEFAULT_LESSON_SIZE = 10;
+
+/** Identifies the current lesson-index layout; bump when lesson boundaries change meaning. */
+export const CURRICULUM_LAYOUT_ID = 'domain-v2';
+
+/** Retired layouts always had 5 lessons per domain (3 words + 2 phrases, or 5 phrases). */
+const LEGACY_LESSONS_PER_DOMAIN = 5;
+
+/** How many due review items a session may carry alongside new material. */
+const REVIEW_SLOTS = 3;
 
 /** @param {{ tierRank?: number, parts?: unknown[], spelling?: string, id?: string }} item */
 function ordinal(item) {
@@ -44,6 +62,78 @@ export function orderByDifficulty(items) {
   );
 }
 
+// ─── Spaced-repetition session composition ───────────────────────────────────
+
+/**
+ * @param {import('./learn-gamification.js').LearnSkillId} skillId
+ * @returns {Record<string, import('./learn-gamification.js').ItemStats>}
+ */
+function masteryFor(skillId) {
+  return getSkillProgress(skillId).mastery ?? {};
+}
+
+/**
+ * Compose one session: the lesson's new items first, then up to REVIEW_SLOTS due
+ * review items from previously practiced material. Padding is due-first, then
+ * random from the pool — never duplicates.
+ *
+ * @param {import('./learn-gamification.js').LearnSkillId} skillId
+ * @param {any[]} lessonSlice items scheduled for this lesson
+ * @param {any[]} allEntries full ordered pool (review + padding source)
+ * @param {(item: any) => string} keyOf
+ * @param {number} size
+ * @returns {any[]}
+ */
+function composeSessionEntries(skillId, lessonSlice, allEntries, keyOf, size) {
+  const mastery = masteryFor(skillId);
+  const now = Date.now();
+  const sliceKeys = new Set(lessonSlice.map(keyOf));
+  const dueEntries = allEntries
+    .filter((e) => !sliceKeys.has(keyOf(e)) && isItemDue(mastery[keyOf(e)], now))
+    .sort((a, b) => (mastery[keyOf(a)]?.due ?? 0) - (mastery[keyOf(b)]?.due ?? 0));
+
+  const reviewCount = Math.min(REVIEW_SLOTS, dueEntries.length);
+  const session = lessonSlice.slice(0, Math.max(1, size - reviewCount));
+  const chosen = new Set(session.map(keyOf));
+
+  for (const entry of dueEntries) {
+    if (session.length >= size) break;
+    if (chosen.has(keyOf(entry))) continue;
+    session.push(entry);
+    chosen.add(keyOf(entry));
+  }
+
+  if (session.length < size) {
+    const filler = shuffle(allEntries.filter((e) => !chosen.has(keyOf(e))));
+    session.push(...filler.slice(0, size - session.length));
+  }
+  return session;
+}
+
+/**
+ * A review session: due items first (earliest due first), then the weakest
+ * boxes, shuffled within equal strength.
+ *
+ * @param {import('./learn-gamification.js').LearnSkillId} skillId
+ * @param {any[]} pool
+ * @param {(item: any) => string} keyOf
+ * @param {number} size
+ * @returns {any[]}
+ */
+function reviewSessionEntries(skillId, pool, keyOf, size) {
+  const mastery = masteryFor(skillId);
+  const now = Date.now();
+  const due = pool
+    .filter((e) => isItemDue(mastery[keyOf(e)], now))
+    .sort((a, b) => (mastery[keyOf(a)]?.due ?? 0) - (mastery[keyOf(b)]?.due ?? 0));
+  if (due.length >= size) return due.slice(0, size);
+
+  const dueKeys = new Set(due.map(keyOf));
+  // Stable sort over a shuffle: random order within the same box, weakest boxes first.
+  const rest = shuffle(pool.filter((e) => !dueKeys.has(keyOf(e))))
+    .sort((a, b) => (mastery[keyOf(a)]?.box ?? 0) - (mastery[keyOf(b)]?.box ?? 0));
+  return [...due, ...rest.slice(0, size - due.length)];
+}
 
 /**
  * @typedef {object} SkillCurriculum
@@ -88,16 +178,11 @@ export function createCurriculum(skillId, items, opts = {}) {
     if (!ordered.length) return [];
     const lessonIndex = getSkillLesson(skillId);
     if (lessonIndex >= totalLessons) {
-      return shuffle(ordered).slice(0, size);
+      return reviewSessionEntries(skillId, ordered, keyOf, size);
     }
     const start = lessonIndex * size;
-    let slice = ordered.slice(start, start + size);
-    if (slice.length < size) {
-      const inSlice = new Set(slice);
-      const filler = shuffle(ordered.filter((item) => !inSlice.has(item)));
-      slice = slice.concat(filler.slice(0, size - slice.length));
-    }
-    return slice;
+    const slice = ordered.slice(start, start + size);
+    return composeSessionEntries(skillId, slice, ordered, keyOf, size);
   }
 
   function lessonLabel() {
@@ -176,42 +261,147 @@ export function createCurriculum(skillId, items, opts = {}) {
   };
 }
 
-// ─── Domain-based curriculum (phrase courses) ───────────────────────────────
+// ─── Domain layout (computed per subject) ────────────────────────────────────
 
 /**
- * Each domain has 5 lessons split into two phases:
- *   Words   (lessons 0–2, 3 total): individual vocabulary tokens + grammar particles from the domain
- *   Phrases (lessons 3–4, 2 total): full stranger-corpus sentences, complexity 1→3
- *
- * Three word lessons give learners enough vocabulary to recognise most of the tokens
- * that appear in the phrase exercises. Items are sorted by frequency so the most
- * common words (including grammar particles) are always taught first.
+ * @typedef {object} DomainLayoutEntry
+ * @property {number} domainIndex
+ * @property {number} wordLessons
+ * @property {number} phraseLessons
+ * @property {number} lessons wordLessons + phraseLessons
+ * @property {number} startLesson flat lesson index where this domain begins
  */
-const WORD_LESSONS_PER_DOMAIN = 3;
-const PHRASE_LESSONS_PER_DOMAIN = 2;
-const LESSONS_PER_DOMAIN = WORD_LESSONS_PER_DOMAIN + PHRASE_LESSONS_PER_DOMAIN; // 5
 
 /**
- * Build a domain-based word-then-phrase curriculum.
+ * @typedef {object} DomainLayout
+ * @property {number} size
+ * @property {DomainLayoutEntry[]} domains
+ * @property {number} totalLessons
+ */
+
+/**
+ * Compute the lesson layout from the actual content: each domain gets
+ * ceil(words / size) word lessons and ceil(phrases / size) phrase lessons,
+ * so every teachable item has a lesson slot. Domains with no items get none.
  *
- * Flat lesson index layout (same localStorage `lessonIndex`):
- *   domainIndex         = Math.floor(lessonIndex / LESSONS_PER_DOMAIN)
- *   withinDomain        = lessonIndex % LESSONS_PER_DOMAIN
- *   isWordPhase         = withinDomain < WORD_LESSONS_PER_DOMAIN
+ * @param {Array<{ domainIndex?: number, itemType?: string }>} entries
+ * @param {Array<object>} domains
+ * @param {{ size?: number, phrasesOnly?: boolean }} [opts]
+ * @returns {DomainLayout}
+ */
+export function computeDomainLayout(entries, domains, opts = {}) {
+  const size = opts.size ?? DEFAULT_LESSON_SIZE;
+  const counts = (domains ?? []).map(() => ({ words: 0, phrases: 0 }));
+  for (const entry of entries ?? []) {
+    const idx = entry.domainIndex ?? 0;
+    if (!counts[idx]) continue;
+    if (entry.itemType === 'phrase') counts[idx].phrases += 1;
+    else counts[idx].words += 1;
+  }
+
+  let start = 0;
+  const layoutDomains = counts.map((c, domainIndex) => {
+    const wordLessons = opts.phrasesOnly ? 0 : Math.ceil(c.words / size);
+    const phraseLessons = Math.ceil(c.phrases / size);
+    const lessons = wordLessons + phraseLessons;
+    const out = { domainIndex, wordLessons, phraseLessons, lessons, startLesson: start };
+    start += lessons;
+    return out;
+  });
+
+  return { size, domains: layoutDomains, totalLessons: Math.max(1, start) };
+}
+
+/**
+ * Resolve a flat lesson index into a domain phase.
+ *
+ * @param {number} lessonIndex
+ * @param {DomainLayout} layout
+ * @returns {{ phase: 'words' | 'phrases' | 'review', domainIndex?: number, phaseLesson?: number, phaseTotal?: number }}
+ */
+export function domainPhaseForLesson(lessonIndex, layout) {
+  if (lessonIndex >= layout.totalLessons) return { phase: 'review' };
+  for (const d of layout.domains) {
+    if (!d.lessons || lessonIndex >= d.startLesson + d.lessons) continue;
+    const within = lessonIndex - d.startLesson;
+    if (within < d.wordLessons) {
+      return {
+        phase: 'words',
+        domainIndex: d.domainIndex,
+        phaseLesson: within,
+        phaseTotal: d.wordLessons,
+      };
+    }
+    return {
+      phase: 'phrases',
+      domainIndex: d.domainIndex,
+      phaseLesson: within - d.wordLessons,
+      phaseTotal: d.phraseLessons,
+    };
+  }
+  return { phase: 'review' };
+}
+
+/**
+ * Translate a lesson index recorded under a retired layout (hybrid ring-then-phrases,
+ * or fixed 5-lessons-per-domain) into the computed layout (pure).
+ *
+ * Completed domains carry over one-for-one; position inside the current domain
+ * restarts at that domain's first lesson. A finished course stays finished.
+ *
+ * @param {number} oldIndex
+ * @param {number} oldTotalLessons the totalLessons recorded by the retired layout (0 if unknown)
+ * @param {DomainLayout} layout
+ * @returns {number}
+ */
+export function migratedLessonIndex(oldIndex, oldTotalLessons, layout) {
+  if (!oldIndex || oldIndex <= 0) return 0;
+  if (oldTotalLessons > 0 && oldIndex >= oldTotalLessons) return layout.totalLessons;
+  const domainCount = layout.domains.length;
+  // Hybrid layouts prefixed ring-vocabulary lessons before the per-domain block.
+  const oldRingLessons = Math.max(0, (oldTotalLessons || 0) - domainCount * LEGACY_LESSONS_PER_DOMAIN);
+  const progressed = Math.max(0, oldIndex - oldRingLessons);
+  const domainsCompleted = Math.min(domainCount, Math.floor(progressed / LEGACY_LESSONS_PER_DOMAIN));
+  const target = layout.domains[domainsCompleted];
+  return target ? target.startLesson : layout.totalLessons;
+}
+
+/**
+ * One-time migration of a skill's stored lessonIndex onto the computed layout.
+ * @param {import('./learn-gamification.js').LearnSkillId} skillId
+ * @param {DomainLayout} layout
+ */
+function migrateSkillLessonIndex(skillId, layout) {
+  const meta = getSkillCurriculumMeta(skillId);
+  if (meta.layout === CURRICULUM_LAYOUT_ID) return;
+  const oldIndex = getSkillLesson(skillId);
+  const next = migratedLessonIndex(oldIndex, meta.totalLessons ?? 0, layout);
+  if (next !== oldIndex) setSkillLesson(skillId, next);
+}
+
+// ─── Domain-based curriculum (words then phrases, per subject) ───────────────
+
+/**
+ * Build the per-subject curriculum: for each domain, its word lessons
+ * (vocabulary the domain's phrases need, first-taught here), then its phrase
+ * lessons (every translated phrase, complexity 1 → 3).
  *
  * @param {import('./learn-gamification.js').LearnSkillId} skillId
  * @param {import('./fonoran-course-phrases.js').CourseEntry[]} entries  all items (words + phrases), ordered
  * @param {import('./fonoran-course-phrases.js').CourseDomain[]} domains  raw domain list for labels
- * @param {{ size?: number, phrasesOnly?: boolean }} [opts]  set phrasesOnly=true for grammar practice
- * @returns {ReturnType<typeof createCurriculum>}
+ * @param {{ size?: number, phrasesOnly?: boolean }} [opts]  set phrasesOnly=true for phrase-only drills
+ * @returns {SkillCurriculum & { layout: DomainLayout }}
  */
 export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
   const size = opts.size ?? DEFAULT_LESSON_SIZE;
-  const totalLessons = Math.max(1, domains.length * LESSONS_PER_DOMAIN);
+  const pool = opts.phrasesOnly ? entries.filter((e) => e.itemType === 'phrase') : entries;
+  const layout = computeDomainLayout(pool, domains, { size, phrasesOnly: opts.phrasesOnly });
+  const { totalLessons } = layout;
+  const keyOf = (item) => item.id ?? item.spelling ?? '';
 
   /** Map domainIndex → { words: CourseEntry[], phrases: CourseEntry[] }. */
   const byDomain = new Map();
-  for (const entry of entries) {
+  for (const entry of pool) {
     const idx = entry.domainIndex ?? 0;
     if (!byDomain.has(idx)) byDomain.set(idx, { words: [], phrases: [] });
     const bucket = byDomain.get(idx);
@@ -219,13 +409,22 @@ export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
     else bucket.words.push(entry);
   }
 
-  function currentDomainIndex() {
-    const lesson = getSkillLesson(skillId);
-    return Math.min(Math.floor(lesson / LESSONS_PER_DOMAIN), domains.length - 1);
+  migrateSkillLessonIndex(skillId, layout);
+
+  function currentPhase() {
+    return domainPhaseForLesson(getSkillLesson(skillId), layout);
+  }
+
+  function domainLabelAt(domainIndex) {
+    return domains[domainIndex]?.label ?? `Module ${domainIndex + 1}`;
   }
 
   function domainLabel() {
-    return domains[currentDomainIndex()]?.label ?? `Module ${currentDomainIndex() + 1}`;
+    const phase = currentPhase();
+    if (phase.phase === 'review') {
+      return domains.length ? domainLabelAt(domains.length - 1) : '';
+    }
+    return domainLabelAt(phase.domainIndex ?? 0);
   }
 
   /** Alias for the shared ring-curriculum interface. */
@@ -234,74 +433,46 @@ export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
   }
 
   function lessonLabel() {
-    const lesson = getSkillLesson(skillId);
-    if (lesson >= totalLessons) return 'Review';
-    const withinDomain = lesson % LESSONS_PER_DOMAIN;
-    if (opts.phrasesOnly) {
-      return `${domainLabel()} · ${withinDomain + 1}/${LESSONS_PER_DOMAIN}`;
-    }
-    const isWordPhase = withinDomain < WORD_LESSONS_PER_DOMAIN;
-    const phaseLesson = isWordPhase
-      ? withinDomain + 1
-      : withinDomain - WORD_LESSONS_PER_DOMAIN + 1;
-    const phaseTotal = isWordPhase ? WORD_LESSONS_PER_DOMAIN : PHRASE_LESSONS_PER_DOMAIN;
-    const phaseLabel = isWordPhase ? 'Words' : 'Phrases';
-    return `${domainLabel()} · ${phaseLabel} ${phaseLesson}/${phaseTotal}`;
+    const phase = currentPhase();
+    if (phase.phase === 'review') return 'Review';
+    const label = domainLabelAt(phase.domainIndex ?? 0);
+    const n = (phase.phaseLesson ?? 0) + 1;
+    const total = phase.phaseTotal ?? 1;
+    if (opts.phrasesOnly) return `${label} · ${n}/${total}`;
+    const phaseName = phase.phase === 'words' ? 'Words' : 'Phrases';
+    return `${label} · ${phaseName} ${n}/${total}`;
   }
 
   function currentLessonEntries() {
-    const lesson = getSkillLesson(skillId);
+    const phase = currentPhase();
 
-    // Review mode: shuffle everything.
-    if (lesson >= totalLessons) {
-      const pool = opts.phrasesOnly ? entries.filter((e) => e.itemType === 'phrase') : entries;
-      return shuffle(pool).slice(0, size);
+    if (phase.phase === 'review') {
+      return reviewSessionEntries(skillId, pool, keyOf, size);
     }
 
-    const domainIdx = Math.floor(lesson / LESSONS_PER_DOMAIN);
-    const withinDomain = lesson % LESSONS_PER_DOMAIN;
-    const bucket = byDomain.get(domainIdx) ?? { words: [], phrases: [] };
-    const isWordPhase = withinDomain < WORD_LESSONS_PER_DOMAIN && !opts.phrasesOnly;
-
-    let pool;
-    let phaseLesson;
-    if (isWordPhase) {
-      pool = bucket.words;
-      phaseLesson = withinDomain;
-      // If this domain has no word items (e.g. bootstrap offline), fall through to phrases.
-      if (!pool.length) {
-        pool = bucket.phrases;
-        phaseLesson = 0;
-      }
-    } else {
-      pool = bucket.phrases;
-      phaseLesson = opts.phrasesOnly ? withinDomain : withinDomain - WORD_LESSONS_PER_DOMAIN;
-    }
-
-    const start = phaseLesson * size;
-    let slice = pool.slice(start, start + size);
-    if (slice.length < size) {
-      const inSlice = new Set(slice);
-      const filler = shuffle(pool.filter((e) => !inSlice.has(e)));
-      slice = slice.concat(filler.slice(0, size - slice.length));
-    }
+    const bucket = byDomain.get(phase.domainIndex ?? 0) ?? { words: [], phrases: [] };
+    const phasePool = phase.phase === 'words' ? bucket.words : bucket.phrases;
+    const start = (phase.phaseLesson ?? 0) * size;
+    const slice = phasePool.slice(start, start + size);
     if (!slice.length) {
-      // Last resort: any item from this domain.
+      // Content shrank under a stored index (e.g. lexicon change removed items).
       const any = [...bucket.words, ...bucket.phrases];
-      return any.length ? shuffle(any).slice(0, size) : shuffle(entries).slice(0, size);
+      const fallback = any.length ? any : pool;
+      return composeSessionEntries(skillId, shuffle(fallback).slice(0, size), pool, keyOf, size);
     }
-    return slice;
+    return composeSessionEntries(skillId, slice, pool, keyOf, size);
   }
 
   function recordResult(item, correct) {
-    recordItemResult(skillId, item.id ?? item.spelling ?? '', correct);
+    recordItemResult(skillId, keyOf(item), correct);
   }
 
   function syncMeta() {
     setSkillCurriculumMeta(skillId, {
-      total: entries.length,
+      total: pool.length,
       totalLessons,
       ring: domainLabel(),
+      layout: CURRICULUM_LAYOUT_ID,
     });
   }
 
@@ -319,7 +490,7 @@ export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
       };
     }
 
-    const beforeDomain = currentDomainIndex();
+    const before = currentPhase();
     const afterIndex = advanceSkillLesson(skillId);
     syncMeta();
 
@@ -332,19 +503,17 @@ export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
       };
     }
 
-    const afterDomain = Math.floor(afterIndex / LESSONS_PER_DOMAIN);
-    const domainUp = afterDomain > beforeDomain;
-    const withinDomain = afterIndex % LESSONS_PER_DOMAIN;
-    const isNowWordPhase = withinDomain < WORD_LESSONS_PER_DOMAIN;
+    const after = domainPhaseForLesson(afterIndex, layout);
+    const domainUp = (after.domainIndex ?? 0) > (before.domainIndex ?? 0);
 
     if (domainUp) {
-      const completedModule = domains[beforeDomain]?.label ?? `Module ${beforeDomain + 1}`;
-      const nextModuleLabel = domains[afterDomain]?.label ?? `Module ${afterDomain + 1}`;
+      const completedModule = domainLabelAt(before.domainIndex ?? 0);
+      const nextModuleLabel = domainLabelAt(after.domainIndex ?? 0);
       return {
         primaryLabel: `Start ${nextModuleLabel}`,
-        note: isNowWordPhase
+        note: after.phase === 'words'
           ? `Starting vocabulary for: ${nextModuleLabel}.`
-          : `Vocabulary done — now practicing phrases.`,
+          : `Starting phrases for: ${nextModuleLabel}.`,
         passed: true,
         ringUp: true,
         moduleComplete: true,
@@ -355,7 +524,7 @@ export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
 
     return {
       primaryLabel: 'Next Lesson',
-      note: !opts.phrasesOnly && !isNowWordPhase && withinDomain === WORD_LESSONS_PER_DOMAIN
+      note: before.phase === 'words' && after.phase === 'phrases'
         ? 'Vocabulary done — now practicing phrases.'
         : '',
       passed: true,
@@ -365,251 +534,15 @@ export function createDomainCurriculum(skillId, entries, domains, opts = {}) {
 
   function progress() {
     const mastery = getMasteryStats(skillId);
-    return { ...mastery, total: entries.length, totalLessons, ring: domainLabel() };
+    return { ...mastery, total: pool.length, totalLessons, ring: domainLabel() };
   }
 
   syncMeta();
 
   return {
-    ordered: entries,
+    ordered: pool,
     totalLessons,
-    currentLessonEntries,
-    lessonLabel,
-    ringLabel,
-    recordResult,
-    complete,
-    progress,
-  };
-}
-
-// ─── Hybrid curriculum (full ring vocabulary, then domain phrases) ───────────
-
-/**
- * Lesson layout for hybrid skills: ring lessons then phrase-domain lessons.
- *
- * @param {number} labCount
- * @param {number} domainCount
- * @param {number} [size]
- * @returns {{ ringLessons: number, phraseLessons: number, totalLessons: number, size: number }}
- */
-export function computeHybridLayout(labCount, domainCount, size = DEFAULT_LESSON_SIZE) {
-  const ringLessons = labCount > 0 ? Math.max(1, Math.ceil(labCount / size)) : 0;
-  const phraseLessons = domainCount > 0 ? domainCount * LESSONS_PER_DOMAIN : 0;
-  return {
-    ringLessons,
-    phraseLessons,
-    totalLessons: Math.max(1, ringLessons + phraseLessons),
-    size,
-  };
-}
-
-/**
- * Resolve which hybrid phase a flat lesson index falls into.
- *
- * @param {number} lessonIndex
- * @param {{ ringLessons: number, phraseLessons: number, totalLessons: number }} layout
- * @returns {{ phase: 'ring' | 'phrase' | 'review', ringLesson?: number, phraseLesson?: number, domainIndex?: number, withinDomain?: number }}
- */
-export function hybridPhaseForLesson(lessonIndex, layout) {
-  if (lessonIndex >= layout.totalLessons) return { phase: 'review' };
-  if (lessonIndex < layout.ringLessons) {
-    return { phase: 'ring', ringLesson: lessonIndex };
-  }
-  const phraseLesson = lessonIndex - layout.ringLessons;
-  return {
-    phase: 'phrase',
-    phraseLesson,
-    domainIndex: Math.floor(phraseLesson / LESSONS_PER_DOMAIN),
-    withinDomain: phraseLesson % LESSONS_PER_DOMAIN,
-  };
-}
-
-/**
- * Sequential hybrid curriculum: full lab ring vocabulary, then domain phrases.
- *
- * Lesson index is shared (localStorage `lessonIndex`). Labels show
- * `Ring · 12/45` then `First contact · Phrases 1/5`.
- *
- * @param {import('./learn-gamification.js').LearnSkillId} skillId
- * @param {import('./fonoran-practice-words.js').PracticeEntry[]} labEntries
- * @param {import('./fonoran-course-phrases.js').CourseEntry[]} phraseEntries  phrase items only
- * @param {import('./fonoran-course-phrases.js').CourseDomain[]} domains
- * @param {{ size?: number }} [opts]
- * @returns {SkillCurriculum & { ringLessons: number, phraseLessons: number }}
- */
-export function createHybridCurriculum(skillId, labEntries, phraseEntries, domains, opts = {}) {
-  const size = opts.size ?? DEFAULT_LESSON_SIZE;
-  const orderedRing = orderByDifficulty(labEntries ?? []);
-  // Prefer explicit phrase items; accept entries that look like phrases (have domainId).
-  const phrasePool = (phraseEntries ?? []).filter(
-    (e) => e.itemType === 'phrase' || (e.domainId != null && e.itemType !== 'word'),
-  );
-  const layout = computeHybridLayout(orderedRing.length, domains?.length ?? 0, size);
-  const { ringLessons, phraseLessons, totalLessons } = layout;
-
-  /** @type {Map<number, import('./fonoran-course-phrases.js').CourseEntry[]>} */
-  const phrasesByDomain = new Map();
-  for (const entry of phrasePool) {
-    const idx = entry.domainIndex ?? 0;
-    if (!phrasesByDomain.has(idx)) phrasesByDomain.set(idx, []);
-    phrasesByDomain.get(idx).push(entry);
-  }
-
-  const ordered = [...orderedRing, ...phrasePool];
-
-  function domainLabelAt(domainIndex) {
-    return domains[domainIndex]?.label ?? `Module ${domainIndex + 1}`;
-  }
-
-  function ringLabel() {
-    const lesson = getSkillLesson(skillId);
-    const phase = hybridPhaseForLesson(lesson, layout);
-    if (phase.phase === 'review') {
-      return domains.length ? domainLabelAt(domains.length - 1) : RING_LABELS[0];
-    }
-    if (phase.phase === 'ring') {
-      if (!orderedRing.length) return RING_LABELS[0];
-      const start = (phase.ringLesson ?? 0) * size;
-      const slice = orderedRing.slice(start, start + size);
-      let rank = 0;
-      for (const item of slice) rank = Math.max(rank, item.tierRank ?? 0);
-      return RING_LABELS[rank] ?? RING_LABELS[0];
-    }
-    return domainLabelAt(phase.domainIndex ?? 0);
-  }
-
-  function lessonLabel() {
-    const lesson = getSkillLesson(skillId);
-    const phase = hybridPhaseForLesson(lesson, layout);
-    if (phase.phase === 'review') return 'Review';
-    if (phase.phase === 'ring') {
-      return `Ring · ${(phase.ringLesson ?? 0) + 1}/${ringLessons}`;
-    }
-    const within = (phase.withinDomain ?? 0) + 1;
-    return `${domainLabelAt(phase.domainIndex ?? 0)} · Phrases ${within}/${LESSONS_PER_DOMAIN}`;
-  }
-
-  function padSlice(pool, start) {
-    let slice = pool.slice(start, start + size);
-    if (slice.length < size && pool.length) {
-      const inSlice = new Set(slice);
-      const filler = shuffle(pool.filter((e) => !inSlice.has(e)));
-      slice = slice.concat(filler.slice(0, size - slice.length));
-    }
-    return slice;
-  }
-
-  function currentLessonEntries() {
-    const lesson = getSkillLesson(skillId);
-    const phase = hybridPhaseForLesson(lesson, layout);
-
-    if (phase.phase === 'review') {
-      return shuffle(ordered).slice(0, size);
-    }
-    if (phase.phase === 'ring') {
-      if (!orderedRing.length) {
-        // No lab words: fall through to first phrase lesson.
-        const pool = phrasesByDomain.get(0) ?? phrasePool;
-        return padSlice(pool, 0);
-      }
-      return padSlice(orderedRing, (phase.ringLesson ?? 0) * size);
-    }
-
-    const domainIdx = phase.domainIndex ?? 0;
-    const pool = phrasesByDomain.get(domainIdx) ?? [];
-    const start = (phase.withinDomain ?? 0) * size;
-    let slice = padSlice(pool, start);
-    if (!slice.length) {
-      return shuffle(phrasePool).slice(0, size);
-    }
-    return slice;
-  }
-
-  function recordResult(item, correct) {
-    const key = item.itemType === 'phrase' || item.domainId
-      ? (item.id ?? item.spelling ?? '')
-      : (item.spelling ?? item.id ?? '');
-    recordItemResult(skillId, key, correct);
-  }
-
-  function syncMeta() {
-    setSkillCurriculumMeta(skillId, {
-      total: ordered.length,
-      totalLessons,
-      ring: ringLabel(),
-    });
-  }
-
-  function complete(stats) {
-    const attempts = stats.attempts ?? 0;
-    const correct = stats.correct ?? 0;
-    const passed = attempts > 0 && correct / attempts >= LESSON_PASS_RATIO;
-
-    if (!passed) {
-      syncMeta();
-      return {
-        primaryLabel: 'Try this lesson again',
-        note: `Answer ${Math.round(LESSON_PASS_RATIO * 100)}% correctly to unlock the next lesson.`,
-        passed: false,
-      };
-    }
-
-    const before = hybridPhaseForLesson(getSkillLesson(skillId), layout);
-    const afterIndex = advanceSkillLesson(skillId);
-    syncMeta();
-
-    if (afterIndex >= totalLessons) {
-      return {
-        primaryLabel: 'Practice again',
-        note: 'You have covered the full vocabulary and all phrase modules — keep reviewing to stay sharp.',
-        passed: true,
-        done: true,
-      };
-    }
-
-    const after = hybridPhaseForLesson(afterIndex, layout);
-    if (before.phase === 'ring' && after.phase === 'phrase') {
-      return {
-        primaryLabel: `Start ${domainLabelAt(0)}`,
-        note: 'Ring vocabulary done — now practicing domain phrases.',
-        passed: true,
-        ringUp: true,
-      };
-    }
-    if (after.phase === 'phrase' && before.phase === 'phrase'
-      && (after.domainIndex ?? 0) > (before.domainIndex ?? 0)) {
-      const nextLabel = domainLabelAt(after.domainIndex ?? 0);
-      return {
-        primaryLabel: `Start ${nextLabel}`,
-        note: `Starting phrases for: ${nextLabel}.`,
-        passed: true,
-        ringUp: true,
-        moduleComplete: true,
-        completedModule: domainLabelAt(before.domainIndex ?? 0),
-        nextModule: nextLabel,
-      };
-    }
-
-    return {
-      primaryLabel: 'Next Lesson',
-      note: '',
-      passed: true,
-      ringUp: false,
-    };
-  }
-
-  function progress() {
-    const mastery = getMasteryStats(skillId);
-    return { ...mastery, total: ordered.length, totalLessons, ring: ringLabel() };
-  }
-
-  syncMeta();
-
-  return {
-    ordered,
-    totalLessons,
-    ringLessons,
-    phraseLessons,
+    layout,
     currentLessonEntries,
     lessonLabel,
     ringLabel,

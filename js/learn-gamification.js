@@ -7,9 +7,14 @@ const LEGACY_STORAGE_KEY = 'fonora-learn-progress-v1';
 
 /** @typedef {'script-writing' | 'script-sounds' | 'script-words' | 'fonoran-reading' | 'fonoran-writing' | 'fonoran-hearing' | 'fonoran-grammar' | 'fonoran-speaking'} LearnSkillId */
 
-/** @typedef {{ seen: number, correct: number }} ItemStats */
+/**
+ * Per-item practice record with Leitner spaced-repetition state.
+ * `box` 0 = never answered correctly; boxes 1–5 space reviews further apart.
+ * `due` is an epoch-ms timestamp: the item is reviewable once `Date.now() >= due`.
+ * @typedef {{ seen: number, correct: number, box: number, due: number }} ItemStats
+ */
 
-/** @typedef {{ total: number, totalLessons: number, ring: string }} CurriculumMeta */
+/** @typedef {{ total: number, totalLessons: number, ring: string, layout: string }} CurriculumMeta */
 
 /** @typedef {{ xp: number, sessions: number, lastPlayed: string | null, lessonIndex: number, mastery: Record<string, ItemStats>, curriculum: CurriculumMeta }} SkillProgress */
 
@@ -18,6 +23,67 @@ const LEGACY_STORAGE_KEY = 'fonora-learn-progress-v1';
 export const XP_MCQ = 10;
 export const XP_TYPING = 15;
 export const XP_SESSION_BONUS = 25;
+
+// ─── Spaced repetition (Leitner boxes) ───────────────────────────────────────
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Review interval per box, in days. Index by box (0 is unused: box 0 is "not yet learned"). */
+export const SRS_BOX_INTERVALS_DAYS = [0, 0, 1, 3, 7, 21];
+
+export const SRS_MAX_BOX = SRS_BOX_INTERVALS_DAYS.length - 1;
+
+/** An item counts as mastered once it has climbed to this box. */
+export const SRS_MASTERED_BOX = 3;
+
+/**
+ * Apply one practice result to an item's SRS state (pure).
+ * Correct promotes one box (capped); wrong demotes to box 1.
+ * @param {ItemStats | undefined} stats
+ * @param {boolean} correct
+ * @param {number} [now]
+ * @returns {ItemStats}
+ */
+export function applySrsResult(stats, correct, now = Date.now()) {
+  const base = stats ?? { seen: 0, correct: 0, box: 0, due: 0 };
+  const box = correct ? Math.min(SRS_MAX_BOX, (base.box ?? 0) + 1) : 1;
+  return {
+    seen: (base.seen ?? 0) + 1,
+    correct: (base.correct ?? 0) + (correct ? 1 : 0),
+    box,
+    due: now + SRS_BOX_INTERVALS_DAYS[box] * DAY_MS,
+  };
+}
+
+/**
+ * True when an item has been learned (box ≥ 1) and its review is due (pure).
+ * @param {ItemStats | undefined} stats
+ * @param {number} [now]
+ */
+export function isItemDue(stats, now = Date.now()) {
+  if (!stats) return false;
+  return (stats.box ?? 0) >= 1 && (stats.due ?? 0) <= now;
+}
+
+/**
+ * Merge two records of the same item from different devices (pure).
+ * Progress counters take the max; `due` takes the earliest so no device
+ * can hide a review the other one scheduled.
+ * @param {Partial<ItemStats> | undefined} a
+ * @param {Partial<ItemStats> | undefined} b
+ * @returns {ItemStats}
+ */
+export function mergeItemStats(a, b) {
+  const left = a ?? {};
+  const right = b ?? {};
+  const dues = [left.due, right.due].filter((d) => typeof d === 'number' && d > 0);
+  return {
+    seen: Math.max(left.seen ?? 0, right.seen ?? 0),
+    correct: Math.max(left.correct ?? 0, right.correct ?? 0),
+    box: Math.max(left.box ?? 0, right.box ?? 0),
+    due: dues.length ? Math.min(...dues) : 0,
+  };
+}
 
 /** @type {LearnSkillId[]} */
 export const LEARN_SKILL_IDS = [
@@ -55,7 +121,7 @@ function yesterdayLocal() {
 }
 
 function defaultCurriculumMeta() {
-  return { total: 0, totalLessons: 0, ring: '' };
+  return { total: 0, totalLessons: 0, ring: '', layout: '' };
 }
 
 function defaultSkill() {
@@ -117,9 +183,14 @@ function normalizeMastery(raw) {
   for (const [key, value] of Object.entries(/** @type {Record<string, unknown>} */ (raw))) {
     if (!value || typeof value !== 'object') continue;
     const v = /** @type {Record<string, unknown>} */ (value);
+    const correct = typeof v.correct === 'number' ? v.correct : 0;
     out[key] = {
       seen: typeof v.seen === 'number' ? v.seen : 0,
-      correct: typeof v.correct === 'number' ? v.correct : 0,
+      correct,
+      // Pre-SRS records: an item ever answered correctly starts in box 1,
+      // due immediately, so past learning enters the review queue.
+      box: typeof v.box === 'number' ? v.box : (correct > 0 ? 1 : 0),
+      due: typeof v.due === 'number' ? v.due : 0,
     };
   }
   return out;
@@ -133,6 +204,7 @@ function normalizeCurriculumMeta(raw) {
   base.total = typeof v.total === 'number' ? v.total : 0;
   base.totalLessons = typeof v.totalLessons === 'number' ? v.totalLessons : 0;
   base.ring = typeof v.ring === 'string' ? v.ring : '';
+  base.layout = typeof v.layout === 'string' ? v.layout : '';
   return base;
 }
 
@@ -227,11 +299,7 @@ function mergeProgressLocal(local, remote) {
     merged.lessonIndex = Math.max(ls.lessonIndex ?? 0, rs.lessonIndex ?? 0);
     merged.mastery = { ...(rs.mastery ?? {}) };
     for (const [key, ms] of Object.entries(ls.mastery ?? {})) {
-      const rm = merged.mastery[key] ?? { seen: 0, correct: 0 };
-      merged.mastery[key] = {
-        seen: Math.max(ms.seen ?? 0, rm.seen ?? 0),
-        correct: Math.max(ms.correct ?? 0, rm.correct ?? 0),
-      };
+      merged.mastery[key] = mergeItemStats(ms, merged.mastery[key]);
     }
     out.skills[id] = merged;
   }
@@ -347,7 +415,20 @@ export function advanceSkillLesson(skillId) {
 }
 
 /**
- * Record that a curriculum item was practiced (seen, and whether answered correctly).
+ * Set the lesson index directly (curriculum layout migration).
+ * @param {LearnSkillId} skillId
+ * @param {number} lessonIndex
+ */
+export function setSkillLesson(skillId, lessonIndex) {
+  const state = loadProgress();
+  const skill = state.skills[skillId];
+  if (!skill) return;
+  skill.lessonIndex = Math.max(0, Math.floor(lessonIndex));
+  saveProgress(state);
+}
+
+/**
+ * Record that a curriculum item was practiced, updating its SRS box and due date.
  * @param {LearnSkillId} skillId
  * @param {string} key stable item key (spelling or exercise id)
  * @param {boolean} correct
@@ -357,10 +438,7 @@ export function recordItemResult(skillId, key, correct) {
   const state = loadProgress();
   const skill = state.skills[skillId];
   if (!skill) return;
-  const stats = skill.mastery[key] ?? { seen: 0, correct: 0 };
-  stats.seen += 1;
-  if (correct) stats.correct += 1;
-  skill.mastery[key] = stats;
+  skill.mastery[key] = applySrsResult(skill.mastery[key], correct);
   saveProgress(state);
 }
 
@@ -374,7 +452,7 @@ export function getMasteryStats(skillId) {
   let mastered = 0;
   for (const stats of Object.values(mastery)) {
     seen += 1;
-    if (stats.correct > 0) mastered += 1;
+    if ((stats.box ?? 0) >= SRS_MASTERED_BOX) mastered += 1;
   }
   return { seen, mastered };
 }
@@ -398,50 +476,3 @@ export function getSkillCurriculumMeta(skillId) {
   return getSkillProgress(skillId).curriculum ?? defaultCurriculumMeta();
 }
 
-/** Fonoran language skills that share the domain phrase curriculum. */
-export const FONORAN_LANGUAGE_SKILL_IDS = [
-  'fonoran-reading',
-  'fonoran-writing',
-  'fonoran-hearing',
-  'fonoran-grammar',
-  'fonoran-speaking',
-];
-
-/** localStorage flag set after migrating to domain-based phrase courses. */
-export const COURSE_CURRICULUM_MIGRATION_KEY = 'fonoran-course-curriculum-v1';
-
-/** Reset progress for all Fonoran language skills (phrase course migration). */
-export function resetFonoranLanguageSkills() {
-  const state = loadProgress();
-  for (const id of FONORAN_LANGUAGE_SKILL_IDS) {
-    state.skills[id] = defaultSkill();
-  }
-  saveProgress(state);
-}
-
-/**
- * True when the learner has ring-vocabulary progress but has not acknowledged
- * the switch to domain phrase courses.
- * @param {LearnProgress} [progress]
- */
-export function needsCourseCurriculumMigration(progress = loadProgress()) {
-  if (localStorage.getItem(COURSE_CURRICULUM_MIGRATION_KEY)) return false;
-  return FONORAN_LANGUAGE_SKILL_IDS.some((id) => {
-    const skill = progress.skills[id];
-    if (!skill) return false;
-    const hasLesson = (skill.lessonIndex ?? 0) > 0;
-    const hasXp = (skill.xp ?? 0) > 0;
-    const masteryKeys = Object.keys(skill.mastery ?? {});
-    const ringBasedKeys = masteryKeys.some((k) => !/^[a-z]{2,4}-\d{3}$/i.test(k));
-    return (hasLesson || hasXp) && ringBasedKeys;
-  });
-}
-
-/** Mark domain phrase curriculum as acknowledged (banner dismissed or reset). */
-export function markCourseCurriculumMigrated() {
-  try {
-    localStorage.setItem(COURSE_CURRICULUM_MIGRATION_KEY, new Date().toISOString());
-  } catch {
-    /* ignore */
-  }
-}

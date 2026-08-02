@@ -6,9 +6,6 @@
 
 /** @typedef {{ id: string, label: string, description: string, skillId: string }} ScriptSoundModuleMeta */
 
-/** Lessons per communication domain (words + phrases). */
-export const LESSONS_PER_DOMAIN = 5;
-
 /** @type {ScriptSoundModuleMeta[]} */
 export const SCRIPT_SOUND_MODULES = [
   {

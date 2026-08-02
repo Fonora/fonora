@@ -1,7 +1,7 @@
 {
-  "version": "1.0-rule4-basics",
+  "version": "2.0-rule4-compiled",
   "title": "Grammar basics",
-  "description": "A short Rule 4 lesson: preferred order, particles, serial want+go, bare destinations, and the Actor always spoken. Uses the live lexicon.",
+  "description": "A short Rule 4 lesson: preferred order, particles, negation, serial verbs, questions, and the Actor always spoken. This seed stores no Fonoran: every answer is compiled from the deterministic translator at build/runtime, tips resolve {particle:…}/{concept:…}/{particles} placeholders from the seeds, and choose distractors are either a compiled contrast sentence or a mechanical token transform.",
   "lessons": [
     {
       "id": "rule4-basics",
@@ -10,115 +10,67 @@
         {
           "id": "gb-present",
           "kind": "translate-to-fonoran",
-          "tip": "Present has no time particle. Past = ta · Future = sa. The action word never changes.",
+          "sourceText": "I love you.",
           "promptLang": "I love you. (now)",
-          "answerRoman": "mi san be",
-          "promptFonoran": "mi san be",
-          "answerLang": "I love you.",
-          "parts": ["mi", "san", "be"],
-          "tierRank": 0
+          "tip": "Present has no time particle. Past = {particle:tense_past} · Future = {particle:tense_future}. The action word never changes."
         },
         {
           "id": "gb-past",
           "kind": "translate-to-fonoran",
-          "tip": "Put ta next to the action for past. Still: Actor → Action → Target.",
-          "promptLang": "I loved you.",
-          "answerRoman": "mi ta san be",
-          "promptFonoran": "mi ta san be",
-          "answerLang": "I loved you.",
-          "parts": ["mi", "ta", "san", "be"],
-          "tierRank": 0
-        },
-        {
-          "id": "gb-future-neg",
-          "kind": "particles",
-          "tip": "Particles are tiny and closed: mi, ta, sa, no, ya, von. Type only the grammar particles you see.",
-          "promptLang": "Type the grammar particles in: mi sa no sak lo",
-          "answerRoman": "mi sa no",
-          "promptFonoran": "mi sa no sak lo",
-          "answerLang": "mi sa no",
-          "parts": ["mi", "sa", "no", "sak", "lo"],
-          "tierRank": 0
+          "sourceText": "I loved you.",
+          "tip": "Put {particle:tense_past} next to the action for past. Still: Actor → Action → Target."
         },
         {
           "id": "gb-negation",
           "kind": "translate-to-fonoran",
-          "tip": "Negation no sits in front of the action: mi no sak …",
-          "promptLang": "I do not want food.",
-          "answerRoman": "mi no sak lo",
-          "promptFonoran": "mi no sak lo",
-          "answerLang": "I do not want food.",
-          "parts": ["mi", "no", "sak", "lo"],
-          "tierRank": 0
+          "sourceText": "I do not want food.",
+          "tip": "Negation {particle:logic_not} sits immediately in front of what it denies."
+        },
+        {
+          "id": "gb-future-neg",
+          "kind": "particles",
+          "sourceText": "I will not want food.",
+          "tip": "Particles are tiny and closed: {particles}. Type only the grammar particles you see."
         },
         {
           "id": "gb-serial",
           "kind": "reorder",
-          "tip": "Want + go stacks in the Action: sak gi. Do not park the second verb as the object.",
-          "promptLang": "Put these in order: gi · sak · mi · ye",
-          "answerRoman": "mi sak gi ye",
-          "promptFonoran": "gi · sak · mi · ye",
-          "answerLang": "I want to go to the water.",
-          "parts": ["mi", "sak", "gi", "ye"],
-          "tierRank": 0
+          "sourceText": "I want to go to the water.",
+          "tip": "Want + go stacks in the Action: {concept:want} {concept:move}. Do not park the second verb as the object."
         },
         {
-          "id": "gb-bare-dest",
+          "id": "gb-question",
           "kind": "choose",
-          "tip": "Plain “go to X” needs no nan. Destination sits bare after the motion.",
-          "promptLang": "Which means “I go to the water”?",
-          "answerRoman": "mi gi ye",
-          "promptFonoran": "mi gi ye",
-          "answerLang": "I go to the water.",
-          "parts": ["mi", "gi", "ye"],
-          "choices": ["mi gi ye", "mi gi nan ye"],
-          "tierRank": 0
-        },
-        {
-          "id": "gb-toward",
-          "kind": "translate-to-fonoran",
-          "tip": "Use nan only for real direction contrast — toward / from / away — not for plain “to”.",
-          "promptLang": "I want to go toward the water.",
-          "answerRoman": "mi sak gi nan ye",
-          "promptFonoran": "mi sak gi nan ye",
-          "answerLang": "I want to go toward the water.",
-          "parts": ["mi", "sak", "gi", "nan", "ye"],
-          "tierRank": 0
-        },
-        {
-          "id": "gb-beach",
-          "kind": "translate-to-fonoran",
-          "tip": "Preferred order: Actor → Action → Place. Serial want+go, bare beach.",
-          "promptLang": "Do you want to go to the beach?",
-          "answerRoman": "be sak gi yetem ?",
-          "promptFonoran": "be sak gi yetem ?",
-          "answerLang": "Do you want to go to the beach?",
-          "parts": ["be", "sak", "gi", "yetem"],
-          "alternates": ["be sak gi yetem"],
-          "tierRank": 0
+          "sourceText": "Do you want to go to the beach?",
+          "promptLang": "Which means “do you want to go to the beach?”",
+          "distractor": { "sourceText": "You want to go to the beach." },
+          "tip": "Questions open with {particle:clause_question}. Without it, you have made a statement."
         },
         {
           "id": "gb-actor-spoken",
           "kind": "choose",
-          "tip": "The Actor is always spoken. A yes/no to “you” keeps be — without it, nobody is named.",
+          "sourceText": "Do you want to go to the beach?",
           "promptLang": "Which is correct for “do you want to go to the beach?”",
-          "answerRoman": "be sak gi yetem ?",
-          "promptFonoran": "be sak gi yetem ?",
-          "answerLang": "Do you want to go to the beach?",
-          "parts": ["be", "sak", "gi", "yetem"],
-          "choices": ["be sak gi yetem ?", "sak gi yetem ?"],
-          "tierRank": 0
+          "distractor": { "transform": "drop-token", "index": 2 },
+          "tip": "The Actor is always spoken. A yes/no to “you” keeps {concept:addressee} — without it, nobody is named."
         },
         {
-          "id": "gb-tribe",
+          "id": "gb-order",
+          "kind": "reorder",
+          "sourceText": "I see the fire.",
+          "tip": "Preferred order: Actor → Action → Target. Type the full roman phrase."
+        },
+        {
+          "id": "gb-conditional",
           "kind": "translate-to-fonoran",
-          "tip": "Words never inflect. Tribe and war are compounds from roots — same spelling every time.",
-          "promptLang": "The tribe is at war.",
-          "answerRoman": "danbakam danpaba",
-          "promptFonoran": "danbakam danpaba",
-          "answerLang": "The tribe is at war.",
-          "parts": ["danbakam", "danpaba"],
-          "tierRank": 0
+          "sourceText": "If you go, I go.",
+          "tip": "{particle:logic_if} joins the condition to the result. The action word keeps the same spelling in both halves."
+        },
+        {
+          "id": "gb-no-inflection",
+          "kind": "translate-to-fonoran",
+          "sourceText": "You are safe.",
+          "tip": "Words never inflect and there is no “is/are” — a state word stands alone after the Actor."
         }
       ]
     }

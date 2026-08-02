@@ -11,9 +11,6 @@ import {
   getTotalLevel,
   LEARN_SKILL_IDS,
   loadProgress,
-  markCourseCurriculumMigrated,
-  needsCourseCurriculumMigration,
-  resetFonoranLanguageSkills,
   SKILL_TRACK,
 } from './learn-gamification.js';
 import { renderModulePath } from './learn-module-path.js';
@@ -249,25 +246,4 @@ export function refreshLearnHomeProgress(rules = null) {
   });
 
   void renderModulePath(rules);
-  maybeShowCourseMigrationBanner();
-}
-
-function maybeShowCourseMigrationBanner() {
-  const banner = document.getElementById('learn-course-migration-banner');
-  if (!banner) return;
-  if (!needsCourseCurriculumMigration()) {
-    banner.hidden = true;
-    return;
-  }
-  banner.hidden = false;
-  banner.querySelector('[data-course-migration-reset]')?.addEventListener('click', () => {
-    resetFonoranLanguageSkills();
-    markCourseCurriculumMigrated();
-    banner.hidden = true;
-    refreshLearnHomeProgress();
-  }, { once: true });
-  banner.querySelector('[data-course-migration-keep]')?.addEventListener('click', () => {
-    markCourseCurriculumMigrated();
-    banner.hidden = true;
-  }, { once: true });
 }
